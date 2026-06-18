@@ -52,7 +52,6 @@ public class HttpRequest {
         url = url.replaceAll("\\s", "%20");
         URL obj = new URL(url);
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-        // optional default is GET
         con.setRequestMethod("GET");
         addHttpRequestHEaders(headers, con);
 
@@ -60,17 +59,9 @@ public class HttpRequest {
         logger.debug("Send GET http request, url: {}", url);
         logger.debug("Response Code: {}", responseCode);
 
-        StringBuffer response = new StringBuffer();
-        String result;
-		result = IOUtils.toString(con.getInputStream());
-		response.append(result);
-        if (con.getErrorStream() != null) {
-            throw new IOException(IOUtils.toString(con.getErrorStream()));
-        }
+        StringBuffer response = readResponseBody(con);
 
         logger.debug("Response body: {}", response);
-
-        // print result
         setHttpResponseToObject(restResponse, con, responseCode, response);
         con.disconnect();
 
@@ -95,10 +86,9 @@ public class HttpRequest {
         int responseCode = con.getResponseCode();
         logger.debug("Send {} http request, url: {}", method, url);
         logger.debug("Response Code: {}", responseCode);
-        StringBuffer response = generateHttpResponse(con, false);
-        if (con.getErrorStream() != null) {
-            throw new IOException(IOUtils.toString(con.getErrorStream()));
-        }
+
+        StringBuffer response = readResponseBody(con);
+
         logger.debug("Response body: {}", response);
         setHttpResponseToObject(restResponse, con, responseCode, response);
         con.disconnect();
@@ -156,12 +146,9 @@ public class HttpRequest {
         logger.debug("Send DELETE http request, url: {}", url);
         logger.debug("Response Code: {}", responseCode);
 
-        StringBuffer response = generateHttpResponse(con, false);
-        if (con.getErrorStream() != null) {
-            throw new IOException(IOUtils.toString(con.getErrorStream()));
-        }
-        logger.debug("Response body: {}", response);
+        StringBuffer response = readResponseBody(con);
 
+        logger.debug("Response body: {}", response);
         setHttpResponseToObject(restResponse, con, responseCode, response);
         con.disconnect();
 
@@ -217,7 +204,6 @@ public class HttpRequest {
         url = url.replaceAll("\\s", "%20");
         URL obj = new URL(null, url);
         HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
-// optional default is GET
         con.setRequestMethod("GET");
         addHttpsRequestHeaders(headers, con);
         boolean multiPart = false;
@@ -230,10 +216,8 @@ public class HttpRequest {
         logger.debug("Send GET http request, url: {}", url);
         logger.debug("Response Code: {}", responseCode);
 
-        StringBuffer response = generateHttpsResponse(con, multiPart);
-		if (con.getErrorStream() != null) {
-            throw new IOException(IOUtils.toString(con.getErrorStream()));
-		}
+        StringBuffer response = readHttpsResponseBody(con, multiPart);
+
         logger.debug("Response body: {}", response);
         setHttpsResponseToObject(restResponse, con, responseCode, response);
         con.disconnect();
@@ -259,10 +243,8 @@ public class HttpRequest {
         logger.debug("Send {} http request, url: {}", method, url);
         logger.debug("Response Code: {}", responseCode);
 
-        StringBuffer response = generateHttpResponse(con, false);
-		if (con.getErrorStream() != null) {
-            throw new IOException(IOUtils.toString(con.getErrorStream()));
-		}
+        StringBuffer response = readResponseBody(con);
+
         logger.debug("Response body: {}", response);
         setHttpResponseToObject(restResponse, con, responseCode, response);
         con.disconnect();
@@ -276,7 +258,6 @@ public class HttpRequest {
         RestResponse restResponse = new RestResponse();
         URL obj = new URL(null, url);
         HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
-// add request headers
         addHttpRequestHEaders(headers, con);
 
         con.setDoOutput(true);
@@ -285,13 +266,9 @@ public class HttpRequest {
         logger.debug("Send DELETE http request, url: {}", url);
         logger.debug("Response Code: {}", responseCode);
 
-        StringBuffer response = generateHttpsResponse(con, false);
+        StringBuffer response = readHttpsResponseBody(con, false);
 
-		if (con.getErrorStream() != null) {
-            throw new IOException(IOUtils.toString(con.getErrorStream()));
-		}
         logger.debug("Response body: {}", response);
-// print result
         setHttpResponseToObject(restResponse, con, responseCode, response);
         con.disconnect();
 
@@ -299,6 +276,55 @@ public class HttpRequest {
     }
 
     //	---------------------------------------
+    private StringBuffer readResponseBody(HttpURLConnection con) {
+        StringBuffer response = new StringBuffer();
+        try (InputStream stream = con.getInputStream();
+             BufferedReader in = new BufferedReader(new InputStreamReader(stream))) {
+            String inputLine;
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+        } catch (IOException e) {
+            logger.debug("Could not read input stream, reading error stream: {}", e.getMessage());
+            try (InputStream errorStream = con.getErrorStream()) {
+                if (errorStream != null) {
+                    response.append(IOUtils.toString(errorStream, Charset.defaultCharset()));
+                }
+            } catch (IOException e2) {
+                logger.debug("Could not read error stream", e2);
+            }
+        }
+        return response;
+    }
+
+    private StringBuffer readHttpsResponseBody(HttpsURLConnection con, boolean multiPart) {
+        StringBuffer response = new StringBuffer();
+        try {
+            if (multiPart) {
+                StringWriter writer = new StringWriter();
+                IOUtils.copy(con.getInputStream(), writer, Charset.forName("UTF-8"));
+                response = writer.getBuffer();
+            } else {
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
+                    String inputLine;
+                    while ((inputLine = in.readLine()) != null) {
+                        response.append(inputLine);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            logger.debug("Could not read input stream, reading error stream: {}", e.getMessage());
+            try (InputStream errorStream = con.getErrorStream()) {
+                if (errorStream != null) {
+                    response.append(IOUtils.toString(errorStream, Charset.defaultCharset()));
+                }
+            } catch (IOException e2) {
+                logger.debug("Could not read error stream", e2);
+            }
+        }
+        return response;
+    }
+
     private void addHttpsRequestHeaders(Map<String, String> headers, HttpsURLConnection con) {
         // add request header
         if (headers != null) {
@@ -336,23 +362,6 @@ public class HttpRequest {
         restResponse.setResponseMessage(responseMessage);
     }
 
-    private StringBuffer generateHttpResponse(HttpURLConnection con, Boolean isMultiPart) throws IOException {
-        StringBuffer response = new StringBuffer();
-        StringWriter writer = new StringWriter();
-            if (isMultiPart) {
-                IOUtils.copy((con.getInputStream()), writer, Charset.forName("UTF-8"));
-                response = writer.getBuffer();
-            } else {
-                try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
-					String inputLine;
-					while ((inputLine = in.readLine()) != null) {
-						response.append(inputLine);
-					}
-				}
-            }
-
-        return response;
-    }
 
     private void setHttpsResponseToObject(RestResponse restResponse, HttpsURLConnection con, int responseCode, StringBuffer response) throws IOException {
         if (response != null) {
@@ -367,22 +376,5 @@ public class HttpRequest {
         restResponse.setResponseMessage(responseMessage);
     }
 
-    private StringBuffer generateHttpsResponse(HttpsURLConnection con, Boolean isMultiPart) throws IOException {
-        StringBuffer response = new StringBuffer();
-        StringWriter writer = new StringWriter();
-		if (isMultiPart) {
-			IOUtils.copy((con.getInputStream()), writer, Charset.forName("UTF-8"));
-			response = writer.getBuffer();
-		} else {
-
-			try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
-				String inputLine;
-				while ((inputLine = in.readLine()) != null) {
-					response.append(inputLine);
-				}
-			}
-		}
-        return response;
-    }
 
 }

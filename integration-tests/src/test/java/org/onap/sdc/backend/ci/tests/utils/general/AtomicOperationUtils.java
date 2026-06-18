@@ -514,10 +514,11 @@ public final class AtomicOperationUtils {
             if (validateState) {
                 if (createComponentInstance.getErrorCode() == ServiceRestUtils.STATUS_CODE_NOT_FOUND) {
                     throw new SkipException("Open bug DE262001");
-                } else {
-                    assertTrue("error - " + createComponentInstance.getErrorCode() + "instead - " +
-                            ServiceRestUtils.STATUS_CODE_CREATED,
-                        createComponentInstance.getErrorCode() == ServiceRestUtils.STATUS_CODE_CREATED);
+                } else if (createComponentInstance.getErrorCode() != ServiceRestUtils.STATUS_CODE_CREATED) {
+                    throw new AtomicOperationException(new Exception(
+                        "Failed to create component instance, expected " + ServiceRestUtils.STATUS_CODE_CREATED +
+                        " but received " + createComponentInstance.getErrorCode() +
+                        ": " + createComponentInstance.getResponse()));
                 }
             }
 
@@ -549,9 +550,11 @@ public final class AtomicOperationUtils {
             if (validateState) {
                 if (createComponentInstance.getErrorCode() == ServiceRestUtils.STATUS_CODE_NOT_FOUND) {
                     throw new SkipException("Open bug DE262001");
-                } else {
-                    assertTrue("error - " + createComponentInstance.getErrorCode() + "instead - " + ServiceRestUtils.STATUS_CODE_CREATED,
-                        createComponentInstance.getErrorCode() == ServiceRestUtils.STATUS_CODE_CREATED);
+                } else if (createComponentInstance.getErrorCode() != ServiceRestUtils.STATUS_CODE_CREATED) {
+                    throw new AtomicOperationException(new Exception(
+                        "Failed to create component instance, expected " + ServiceRestUtils.STATUS_CODE_CREATED +
+                        " but received " + createComponentInstance.getErrorCode() +
+                        ": " + createComponentInstance.getResponse()));
                 }
             }
 
