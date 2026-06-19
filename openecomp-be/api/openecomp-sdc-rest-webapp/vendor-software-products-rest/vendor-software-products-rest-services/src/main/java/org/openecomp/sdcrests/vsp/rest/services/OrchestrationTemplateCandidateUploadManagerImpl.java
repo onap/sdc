@@ -139,7 +139,24 @@ public class OrchestrationTemplateCandidateUploadManagerImpl implements Orchestr
         }
         updateStatusLock.lock();
         try {
-            final Optional<VspUploadStatusRecord> vspUploadStatusRecordOptional = vspUploadStatusRecordDao.findLatest(vspId, vspVersionId);
+            Optional<VspUploadStatusRecord> vspUploadStatusRecordOptional = Optional.empty();
+            final int maxRetries = 3;
+            final long retryDelayMs = 100;
+            for (int attempt = 1; attempt <= maxRetries; attempt++) {
+                vspUploadStatusRecordOptional = vspUploadStatusRecordDao.findLatest(vspId, vspVersionId);
+                if (vspUploadStatusRecordOptional.isPresent()) {
+                    break;
+                }
+                if (attempt < maxRetries) {
+                    LOGGER.warn("Upload status not found for VSP id '{}', version '{}'. Retry {}/{}", vspId, vspVersionId, attempt, maxRetries);
+                    try {
+                        Thread.sleep(retryDelayMs);
+                    } catch (final InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        break;
+                    }
+                }
+            }
             if (vspUploadStatusRecordOptional.isEmpty()) {
                 throw couldNotFindStatus(vspId, vspVersionId).get();
             }
