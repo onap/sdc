@@ -24,12 +24,26 @@
   "jest": {
     "preset": "jest-preset-angular",
     "collectCoverageFrom": [
-      "<rootDir>/src/app/ng2/**/*.ts"
+      "<rootDir>/src/app/ng2/**/*.ts",
+      "<rootDir>/src/app/services/event-listener-service.ts",
+      "<rootDir>/src/app/utils/change-lifecycle-state-handler.ts",
+      "<rootDir>/src/app/utils/component-factory.ts",
+      "!**/*.module.ts",
+      "!**/index.ts",
+      "!**/*.d.ts"
     ],
     "coverageDirectory": "<rootDir>/target/code-coverage/",
     "coverageReporters": [
       "lcov"
     ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 15,
+        "functions": 18,
+        "lines": 25,
+        "statements": 25
+      }
+    },
     "setupTestFrameworkScriptFile": "<rootDir>/src/jest/setup-jest.ts",
     "transformIgnorePatterns": [
       "<rootDir>/node_modules/(?!onap-ui-angular)"
