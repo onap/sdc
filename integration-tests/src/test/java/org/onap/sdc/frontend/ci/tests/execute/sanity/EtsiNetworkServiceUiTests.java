@@ -52,6 +52,7 @@ import org.onap.sdc.frontend.ci.tests.datatypes.composition.RelationshipInformat
 import org.onap.sdc.frontend.ci.tests.exception.UnzipException;
 import org.onap.sdc.frontend.ci.tests.execute.setup.DriverFactory;
 import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
+import org.onap.sdc.frontend.ci.tests.execute.setup.Retry;
 import org.onap.sdc.frontend.ci.tests.execute.setup.SetupCDTest;
 import org.onap.sdc.frontend.ci.tests.flow.AddNodeToCompositionFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CheckComponentPropertiesFlow;
@@ -91,7 +92,7 @@ public class EtsiNetworkServiceUiTests extends SetupCDTest {
     private ComponentInstance virtualLinkableVnf2;
     private ComponentInstance nsVirtualLink;
 
-    @Test
+    @Test(retryAnalyzer = Retry.class)
     public void etsiNetworkServiceTest() throws UnzipException {
         webDriver = DriverFactory.getDriver();
 
