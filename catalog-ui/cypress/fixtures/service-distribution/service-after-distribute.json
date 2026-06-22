@@ -1,0 +1,41 @@
+{
+    "metadata": {
+        "uniqueId": "svc22222-2222-2222-2222-222222222222",
+        "name": "TestService",
+        "version": "1.0",
+        "isHighestVersion": true,
+        "creationDate": 1700000000000,
+        "lastUpdateDate": 1700000300000,
+        "description": "Test Service for distribution",
+        "lifecycleState": "CERTIFIED",
+        "tags": ["TestService"],
+        "icon": "defaulticon",
+        "normalizedName": "testservice",
+        "systemName": "TestService",
+        "contactId": "m08740",
+        "allVersions": {
+            "0.1": "svc11111-1111-1111-1111-111111111111",
+            "1.0": "svc22222-2222-2222-2222-222222222222"
+        },
+        "invariantUUID": "inv-svc-1111",
+        "componentType": "SERVICE",
+        "categories": [
+            {
+                "name": "Mobility",
+                "normalizedName": "mobility",
+                "uniqueId": "serviceNewCategory.mobility",
+                "subcategories": []
+            }
+        ],
+        "creatorUserId": "m08740",
+        "creatorFullName": "Carlos Santana",
+        "lastUpdaterUserId": "m08740",
+        "lastUpdaterFullName": "Carlos Santana",
+        "distributionStatus": "DISTRIBUTED",
+        "uuid": "uuid-svc-1111",
+        "archived": false,
+        "serviceType": "Service",
+        "instantiationType": "A-la-carte",
+        "ecompGeneratedNaming": true
+    }
+}

@@ -1,0 +1,53 @@
+{
+    "metadata": {
+        "uniqueId": "bbb22222-2222-2222-2222-222222222222",
+        "name": "TestVF",
+        "version": "1.0",
+        "isHighestVersion": true,
+        "creationDate": 1700000000000,
+        "lastUpdateDate": 1700000200000,
+        "description": "Test VF for lifecycle",
+        "lifecycleState": "CERTIFIED",
+        "tags": ["TestVF"],
+        "icon": "defaulticon",
+        "normalizedName": "testvf",
+        "systemName": "TestVF",
+        "contactId": "m08740",
+        "allVersions": {
+            "0.1": "aaa11111-1111-1111-1111-111111111111",
+            "1.0": "bbb22222-2222-2222-2222-222222222222"
+        },
+        "csarUUID": null,
+        "csarVersion": null,
+        "invariantUUID": "inv-uuid-1111",
+        "componentType": "RESOURCE",
+        "categories": [
+            {
+                "name": "Generic",
+                "normalizedName": "generic",
+                "uniqueId": "resourceNewCategory.generic",
+                "subcategories": [
+                    {
+                        "name": "Abstract",
+                        "normalizedName": "abstract",
+                        "uniqueId": "resourceNewCategory.generic.abstract",
+                        "icons": ["objectStorage"]
+                    }
+                ]
+            }
+        ],
+        "creatorUserId": "m08740",
+        "creatorFullName": "Carlos Santana",
+        "lastUpdaterUserId": "m08740",
+        "lastUpdaterFullName": "Carlos Santana",
+        "archiveTime": 0,
+        "vendorName": "TestVendor",
+        "vendorRelease": "1.0",
+        "resourceVendorModelNumber": "",
+        "resourceType": "VF",
+        "toscaResourceName": "org.openecomp.resource.vf.TestVF",
+        "uuid": "uuid-testvf-1111",
+        "archived": false,
+        "vspArchived": false
+    }
+}
