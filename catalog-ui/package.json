@@ -25,6 +25,7 @@
     "preset": "jest-preset-angular",
     "collectCoverageFrom": [
       "<rootDir>/src/app/ng2/**/*.ts",
+      "<rootDir>/src/app/view-models/workspace/**/*.ts",
       "<rootDir>/src/app/services/event-listener-service.ts",
       "<rootDir>/src/app/utils/change-lifecycle-state-handler.ts",
       "<rootDir>/src/app/utils/component-factory.ts",
