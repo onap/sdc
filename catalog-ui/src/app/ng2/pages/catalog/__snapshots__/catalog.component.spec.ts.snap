@@ -2,7 +2,6 @@
 
 exports[`catalog component should match current snapshot of catalog component 1`] = `
 <catalog
-  $state={[Function Object]}
   cacheService={[Function Object]}
   catalogService={[Function Object]}
   componentShouldReload={[Function Function]}
@@ -14,6 +13,7 @@ exports[`catalog component should match current snapshot of catalog component 1`
   isDefaultFilter={[Function Function]}
   loaderService={[Function Object]}
   models={[Function Array]}
+  navigationService={[Function Object]}
   resourceNamePipe={[Function Object]}
   sdcConfig={[Function Object]}
   sdcMenu={[Function Object]}

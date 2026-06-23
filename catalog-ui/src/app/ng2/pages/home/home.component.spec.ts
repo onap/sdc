@@ -12,6 +12,7 @@ import {ModalsHandler} from "../../../../app/utils";
 import {SdcUiServices} from "onap-ui-angular";
 import {ComponentType, ResourceType} from "../../../utils/constants";
 import {HomeFilter} from "../../../models/home-filter";
+import {NavigationService} from "../../services/navigation.service";
 
 
 describe('home component', () => {
@@ -39,8 +40,10 @@ describe('home component', () => {
             }
 
             mockStateService = {
-                // go: jest.fn().mockReturnValue( new Promise.resolve((resolve, reject )=> resolve()))
-                go: jest.fn()
+                go: jest.fn(),
+                current: {name: 'dashboard'},
+                params: {},
+                includes: jest.fn()
             }
 
             translateServiceMock = {
@@ -73,7 +76,7 @@ describe('home component', () => {
                     providers: [
                         {provide: SdcConfigToken, useValue: {"csarFileExtension":"csar", "toscaFileExtension":"yaml,yml"}},
                         {provide: SdcMenuToken, useValue: {}},
-                        {provide: "$state", useValue: mockStateService},
+                        {provide: NavigationService, useValue: {navigate: mockStateService.go, getParams: () => mockStateService.params, getCurrentStateName: () => mockStateService.current.name, includes: mockStateService.includes, updateUrlParams: mockStateService.go}},
                         {provide: HomeService, useValue: {}},
                         {provide: AuthenticationService, useValue: {}},
                         {provide: CacheService, useValue: {}},

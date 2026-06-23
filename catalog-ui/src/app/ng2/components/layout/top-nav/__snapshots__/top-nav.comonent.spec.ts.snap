@@ -2,9 +2,9 @@
 
 exports[`artifact form component should match current snapshot of top-nav component 1`] = `
 <top-nav
-  $state={[Function Object]}
   _getTopLvlSelectedIndexByState={[Function Function]}
   authService={[Function Object]}
+  navigationService={[Function Object]}
   sdcConfig={[Function Object]}
   searchTermChange={[Function EventEmitter]}
   translateService={[Function Object]}

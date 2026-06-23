@@ -20,6 +20,7 @@
 
 import * as _ from "lodash";
 import { Component as NgComponent, Inject } from '@angular/core';
+import { NavigationService } from "../../services/navigation.service";
 import { SdcUiCommon, SdcUiServices } from "onap-ui-angular";
 import { CacheService, CatalogService } from "app/services-ng2";
 import { SdcConfigToken, ISdcConfig } from "../../config/sdc-config.config";
@@ -126,7 +127,7 @@ export class CatalogComponent {
     constructor(
         @Inject(SdcConfigToken) private sdcConfig:ISdcConfig,
         @Inject(SdcMenuToken) public sdcMenu:IAppMenu,
-        @Inject("$state") private $state:ng.ui.IStateService,
+        private navigationService: NavigationService,
         private cacheService:CacheService,
         private catalogService:CatalogService,
         private resourceNamePipe:ResourceNamePipe,
@@ -363,9 +364,9 @@ export class CatalogComponent {
 
     public goToComponent(component: Component | DataTypeCatalogComponent): void {
         if (component instanceof DataTypeCatalogComponent) {
-            this.$state.go(States.TYPE_WORKSPACE,  {type: component.getComponentSubType().toLowerCase(), id: component.uniqueId});
+            this.navigationService.navigate(States.TYPE_WORKSPACE,  {type: component.getComponentSubType().toLowerCase(), id: component.uniqueId});
         } else {
-            this.$state.go(States.WORKSPACE_GENERAL, {id: component.uniqueId, type: component.componentType.toLowerCase()});
+            this.navigationService.navigate(States.WORKSPACE_GENERAL, {id: component.uniqueId, type: component.componentType.toLowerCase()});
         }
     }
 
@@ -433,7 +434,7 @@ export class CatalogComponent {
     }
 
     private componentShouldReload = ():boolean => {
-        let breadcrumbsValid: boolean = (this.$state.current.name === this.cacheService.get('breadcrumbsComponentsState') && this.cacheService.contains('breadcrumbsComponents'));
+        let breadcrumbsValid: boolean = (this.navigationService.getCurrentStateName() === this.cacheService.get('breadcrumbsComponentsState') && this.cacheService.contains('breadcrumbsComponents'));
         return !breadcrumbsValid || this.isDefaultFilter();
     }
 
@@ -444,7 +445,7 @@ export class CatalogComponent {
             let onSuccess = (followedResponse:Array<Component | DataTypeCatalogComponent>):void => {
                 this.updateCatalogItems(followedResponse);
                 this.loaderService.deactivate();
-                this.cacheService.set('breadcrumbsComponentsState', this.$state.current.name);  //catalog
+                this.cacheService.set('breadcrumbsComponentsState', this.navigationService.getCurrentStateName());  //catalog
                 this.cacheService.set('breadcrumbsComponents', followedResponse);
                 
             };
@@ -573,7 +574,7 @@ export class CatalogComponent {
     }
 
     private loadFilterParams() {
-        const params = this.$state.params;
+        const params = this.navigationService.getParams();
         this.filterParams = angular.copy(this.defaultFilterParams);
         Object.keys(params).forEach((k) => {
             if (!angular.isUndefined(params[k])) {
@@ -641,7 +642,7 @@ export class CatalogComponent {
             this.filterParams[k] = changedFilterParams[k];
             newParams['filter.' + k] = newVal;
         });
-        this.$state.go('.', newParams, {location: 'replace', notify: false}).then(() => {
+        this.navigationService.navigate('.', newParams, {location: 'replace', notify: false}).then(() => {
             if (rebuild) {
                 // fix the filter params to only valid values for checkboxes
                 this.changeFilterParams({

@@ -10,6 +10,7 @@ import { AuthenticationService } from '../../../services/authentication.service'
 import { TranslateModule } from '../../../shared/translator/translate.module';
 import { TranslateService } from '../../../shared/translator/translate.service';
 import { TopNavComponent } from './top-nav.component';
+import { NavigationService } from '../../../services/navigation.service';
 
 describe('artifact form component', () => {
 
@@ -94,7 +95,7 @@ describe('artifact form component', () => {
                     schemas: [NO_ERRORS_SCHEMA],
                     providers: [
                         {provide: TranslateService, useValue: translateServiceMock},
-                        {provide: '$state', useValue: mockStateService},
+                        {provide: NavigationService, useValue: {navigate: mockStateService.go, getParams: () => mockStateService.params, getCurrentStateName: () => mockStateService.current.name, includes: mockStateService.includes, updateUrlParams: mockStateService.go}},
                         {provide: AuthenticationService, useValue: authServiceMock},
                         {provide: SdcConfigToken, useValue: {csarFileExtension: 'csar', toscaFileExtension: 'yaml,yml'}},
                     ],

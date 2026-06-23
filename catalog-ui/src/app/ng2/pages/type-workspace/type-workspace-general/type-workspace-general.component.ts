@@ -28,6 +28,7 @@ import {ServiceDataTypeReader} from "../../../../utils/service-data-type-reader"
 import {TranslateService} from "../../../shared/translator/translate.service";
 import {SdcUiServices} from "onap-ui-angular/dist";
 import {ModelService} from "../../../services/model.service";
+import {NavigationService} from "../../../services/navigation.service";
 import {Model} from "../../../../models/model";
 import {DataTypesMap} from "../../../../models/data-types-map";
 import {DataTypeService} from "../../../services/data-type.service";
@@ -66,7 +67,7 @@ export class TypeWorkspaceGeneralComponent implements OnInit {
   });
 
   constructor(@Inject('$scope') private $scope: IWorkspaceViewModelScope,
-              @Inject('$state') private $state: ng.ui.IStateService,
+              private navigationService: NavigationService,
               protected dataTypeService: DataTypeService,
               private modalServiceSdcUI: SdcUiServices.ModalService,
               private modelService: ModelService,
@@ -118,7 +119,7 @@ export class TypeWorkspaceGeneralComponent implements OnInit {
                   console.error(error.reason);
                   this.modalServiceSdcUI.openErrorDetailModal('Error', errorMsg,
                       'error-modal', errorDetails);
-                  this.$state.go('dashboard');
+                  this.navigationService.navigate('dashboard');
               });
       }
     this.initForm();

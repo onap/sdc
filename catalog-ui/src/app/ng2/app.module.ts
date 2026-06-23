@@ -112,6 +112,7 @@ import {ToscaArtifactService} from "./services/tosca-artifact.service";
 import {InterfaceDefinitionModule} from "./pages/interface-definition/interface-definition.module";
 import {TypeWorkspaceModule} from "./pages/type-workspace/type-workspace.module";
 import {DeclareInputModule} from "./pages/properties-assignment/declare-input/declare-input.module";
+import {NavigationService} from "./services/navigation.service";
 
 declare const __ENV__: string;
 
@@ -238,6 +239,7 @@ export function configServiceFactory(config: ConfigService, authService: Authent
     CatalogService,
     EventBusService,
     FileUtilsService,
+    NavigationService,
     {
       provide: APP_INITIALIZER,
       useFactory: configServiceFactory,

@@ -2,7 +2,6 @@
 
 exports[`home component should match current snapshot 1`] = `
 <home-page
-  $state={[Function Object]}
   authService={[Function Object]}
   cacheService={[Function Object]}
   componentShouldReload={[Function Function]}
@@ -14,6 +13,7 @@ exports[`home component should match current snapshot 1`] = `
   modalService={[Function Object]}
   modalServiceSdc="undefined"
   modalsHandler={[Function Object]}
+  navigationService={[Function Object]}
   openModalImportType={[Function Function]}
   resourceService={[Function Object]}
   sdcConfig={[Function Object]}

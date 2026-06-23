@@ -33,6 +33,7 @@ import {ModelService} from "../../../services/model.service";
 import {IWorkspaceViewModelScope} from "../../../../view-models/workspace/workspace-view-model";
 import {IScope} from "angular";
 import {States} from "../../../../utils/constants";
+import {NavigationService} from "../../../services/navigation.service";
 
 describe('TypeWorkspaceGeneralComponent', () => {
   let component: TypeWorkspaceGeneralComponent;
@@ -69,7 +70,7 @@ describe('TypeWorkspaceGeneralComponent', () => {
       providers: [
         {provide: TranslateService, useValue: translateServiceMock},
         {provide: "$scope", useValue: scopeMock_ },
-        {provide: "$state", useValue: {}},
+        {provide: NavigationService, useValue: {navigate: jest.fn(), getParams: () => ({}), getCurrentStateName: () => '', includes: jest.fn(), updateUrlParams: jest.fn()}},
         {provide: DataTypeService, useValue: dataTypeServiceMock},
         {provide: ModelService, useValue: modelServiceMock},
         {provide: TranslateService, useValue: translateServiceMock}

@@ -56,7 +56,6 @@ export class TypeWorkspacePropertiesComponent implements OnInit {
     tableSearchTermUpdate = new Subject<string>();
 
     constructor(@Inject('$scope') private $scope: IWorkspaceViewModelScope,
-                @Inject('$state') private $state: ng.ui.IStateService,
                 protected dataTypeService: DataTypeService,
                 private modalServiceSdcUI: SdcUiServices.ModalService,
                 private modalService: ModalService,

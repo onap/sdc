@@ -27,6 +27,7 @@ import {DataTypeModel} from "../../../models/data-types";
 import {DataTypeService} from "../../services/data-type.service";
 import {IWorkspaceViewModelScope} from "../../../view-models/workspace/workspace-view-model";
 import {TranslateService} from "../../shared/translator/translate.service";
+import {NavigationService} from "../../services/navigation.service";
 import {HttpErrorResponse} from "@angular/common/http";
 import {ServerErrorResponse} from "../../../models/server-error-response";
 import {Observable} from "rxjs/Observable";
@@ -53,8 +54,7 @@ export class TypeWorkspaceComponent implements OnInit {
               private dataTypeService: DataTypeService, private cacheService: CacheService,
               @Inject('Notification') private Notification: any,
               private translateService: TranslateService,
-              @Inject('$state') private $state: ng.ui.IStateService,
-              @Inject('$stateParams') private stateParams,
+              private navigationService: NavigationService,
               private injector: Injector,
               private modalServiceSdcUI: SdcUiServices.ModalService,
               @Inject(SdcMenuToken) public sdcMenu: IAppMenu) { }
@@ -67,12 +67,12 @@ export class TypeWorkspaceComponent implements OnInit {
   }
 
   private loadDataType(): void {
-    if (this.stateParams.id && this.stateParams.id != "import") {
-      this.dataTypeService.findById(this.stateParams.id).subscribe(dataType => {
+    if (this.navigationService.getParams().id && this.navigationService.getParams().id != "import") {
+      this.dataTypeService.findById(this.navigationService.getParams().id).subscribe(dataType => {
         this.dataType = dataType;
         this.updateTypeBreadcrumb();
       }, error => {
-        console.debug('Could not find data type %s', this.stateParams.id, error);
+        console.debug('Could not find data type %s', this.navigationService.getParams().id, error);
         this.goToBreadcrumbHome();
       });
         this.isViewOnly = true;
@@ -96,7 +96,7 @@ export class TypeWorkspaceComponent implements OnInit {
                   message: this.$scope.dataType.name + ' ' + this.translateService.translate('IMPORT_DATA_TYPE_SUCCESS_MESSAGE_TEXT'),
                   title: this.translateService.translate('IMPORT_DATA_TYPE_TITLE_TEXT')
               });
-              this.$state.go(this.$state.current.name, {importedFile: null, id: this.$scope.dataType.uniqueId, isViewOnly: true}, {reload: true});
+              this.navigationService.navigate(this.navigationService.getCurrentStateName(), {importedFile: null, id: this.$scope.dataType.uniqueId, isViewOnly: true}, {reload: true});
           }, error => {//because overriding http interceptor
                   if (error instanceof HttpErrorResponse) {
                       const errorResponse: ServerErrorResponse = new ServerErrorResponse(error);
@@ -139,14 +139,14 @@ export class TypeWorkspaceComponent implements OnInit {
             message: this.dataType.model + ' ' + this.dataType.name + ' ' + this.translateService.translate('DELETE_SUCCESS_MESSAGE_TEXT'),
             title: this.translateService.translate("DELETE_SUCCESS_MESSAGE_TITLE")
         });
-        if (this.$state.params.previousState) {
-            switch (this.$state.params.previousState) {
+        if (this.navigationService.getParams().previousState) {
+            switch (this.navigationService.getParams().previousState) {
                 case 'catalog':
                 case 'dashboard':
-                    this.$state.go(this.$state.params.previousState);
+                    this.navigationService.navigate(this.navigationService.getParams().previousState);
                     break;
                 default:
-                    this.$state.go('dashboard');
+                    this.navigationService.navigate('dashboard');
                     break;
             }
         }
@@ -180,7 +180,7 @@ export class TypeWorkspaceComponent implements OnInit {
 
   goToBreadcrumbHome(): void {
     const homeMenuItemGroup: MenuItemGroup = this.breadcrumbsModel[0];
-    this.$state.go(homeMenuItemGroup.menuItems[homeMenuItemGroup.selectedIndex].state);
+    this.navigationService.navigate(homeMenuItemGroup.menuItems[homeMenuItemGroup.selectedIndex].state);
   }
 
   onMenuUpdate(menuItemGroup: MenuItemGroup): void {

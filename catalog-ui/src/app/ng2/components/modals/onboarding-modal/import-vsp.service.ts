@@ -1,4 +1,4 @@
-import { Injectable, Inject } from "@angular/core";
+import { Injectable } from "@angular/core";
 import {ImportVSPdata, OnboardingModalComponent} from "./onboarding-modal.component";
 import { SdcUiServices, SdcUiCommon } from "onap-ui-angular";
 import { Observable, Subject } from "rxjs";
@@ -9,8 +9,7 @@ import { CacheService } from "../../../services/cache.service";
 export class ImportVSPService {
 
     constructor(private modalService: SdcUiServices.ModalService,
-                private cacheService:CacheService,
-                @Inject("$state") private $state:ng.ui.IStateService){
+                private cacheService:CacheService){
 
     }
     

@@ -19,6 +19,7 @@
  */
 'use strict';
 import {Component as NgComponent, Inject, OnInit} from '@angular/core';
+import {NavigationService} from '../../services/navigation.service';
 import {
     ButtonModel,
     Component,
@@ -68,7 +69,7 @@ export class HomeComponent implements OnInit {
     constructor(
         @Inject(SdcConfigToken) private sdcConfig: ISdcConfig,
         @Inject(SdcMenuToken) public sdcMenu: IAppMenu,
-        @Inject('$state') private $state: ng.ui.IStateService,
+        private navigationService: NavigationService,
         private homeService: HomeService,
         private authService: AuthenticationService,
         private cacheService: CacheService,
@@ -86,9 +87,9 @@ export class HomeComponent implements OnInit {
         this.initFolders();
         this.initEntities();
 
-        if (this.$state.params) {
-            if (this.$state.params.folder) {
-                const folderName = this.$state.params.folder.replaceAll('_', ' ');
+        if (this.navigationService.getParams()) {
+            if (this.navigationService.getParams().folder) {
+                const folderName = this.navigationService.getParams().folder.replaceAll('_', ' ');
 
                 const selectedFolder = this.folders.getFolders().find((tmpFolder: FoldersItemsMenu) => tmpFolder.text === folderName);
                 if (selectedFolder) {
@@ -96,7 +97,7 @@ export class HomeComponent implements OnInit {
                 }
                 // Show the tutorial if needed when the dashboard page is opened.<script src="bower_components/angular-filter/dist/angular-filter.min.js"></script>
                 // This is called from the welcome page.
-            } else if (this.$state.params.show === 'tutorial') {
+            } else if (this.navigationService.getParams().show === 'tutorial') {
                 this.showTutorial = true;
                 this.isFirstTime = true;
             }
@@ -115,7 +116,7 @@ export class HomeComponent implements OnInit {
                 this.checkoutAndRedirectToWorkspace(importVSPdata);
                 return;
             }
-            this.$state.go('workspace.general', {
+            this.navigationService.navigate('workspace.general', {
                 id: actualComponent && actualComponent.uniqueId,
                 componentCsar: importVSPdata.componentCsar,
                 type: importVSPdata.type
@@ -127,7 +128,7 @@ export class HomeComponent implements OnInit {
         this.loaderService.activate();
         this.resourceService.checkout(importVSPdata.previousComponent.uniqueId)
         .subscribe((componentMetadata: ComponentMetadata) => {
-            this.$state.go('workspace.general', {
+            this.navigationService.navigate('workspace.general', {
                 id: componentMetadata.uniqueId,
                 componentCsar: importVSPdata.componentCsar,
                 type: importVSPdata.type
@@ -144,7 +145,7 @@ export class HomeComponent implements OnInit {
             // Check that the file has valid extension.
             const fileExtension: string = file.filename.split('.').pop();
             if (this.sdcConfig.csarFileExtension.indexOf(fileExtension.toLowerCase()) !== -1) {
-                this.$state.go('workspace.general', {
+                this.navigationService.navigate('workspace.general', {
                     type: ComponentType.RESOURCE.toLowerCase(),
                     importedFile: file,
                     resourceType: ResourceType.VF
@@ -162,7 +163,7 @@ export class HomeComponent implements OnInit {
             // Check that the file has valid extension.
             const fileExtension: string = file.filename.split('.').pop();
             if (this.sdcConfig.toscaFileExtension.indexOf(fileExtension.toLowerCase()) !== -1) {
-                this.$state.go('workspace.general', {
+                this.navigationService.navigate('workspace.general', {
                     type: ComponentType.RESOURCE.toLowerCase(),
                     importedFile: file,
                     resourceType: ResourceType.VFC
@@ -180,7 +181,7 @@ export class HomeComponent implements OnInit {
             // Check that the file has valid extension.
             const fileExtension: string = file.filename.split(".").pop();
             if (this.sdcConfig.csarFileExtension.indexOf(fileExtension.toLowerCase()) !== -1) {
-                this.$state.go('workspace.general', {
+                this.navigationService.navigate('workspace.general', {
                     type: ComponentType.SERVICE.toLowerCase(),
                     importedFile: file,
                     serviceType: 'Service'
@@ -197,19 +198,19 @@ export class HomeComponent implements OnInit {
         if (importedFile) {
             this.initEntities(true); // Return from import
         } else {
-            this.$state.go('workspace.general', {type: componentType.toLowerCase()});
+            this.navigationService.navigate('workspace.general', {type: componentType.toLowerCase()});
         }
     }
 
     public createPNF(): void {
-        this.$state.go('workspace.general', {
+        this.navigationService.navigate('workspace.general', {
             type: ComponentType.RESOURCE.toLowerCase(),
             resourceType: ResourceType.PNF
         });
     }
 
     public createCR(): void {
-        this.$state.go('workspace.general', {
+        this.navigationService.navigate('workspace.general', {
             type: ComponentType.RESOURCE.toLowerCase(),
             resourceType: ResourceType.CR
         });
@@ -230,7 +231,7 @@ export class HomeComponent implements OnInit {
     }
 
     public updateFilter = () => {
-        this.$state.go('.', this.homeFilter.toUrlParam(), {location: 'replace', notify: false});
+        this.navigationService.navigate('.', this.homeFilter.toUrlParam(), {location: 'replace', notify: false});
         this.filterHomeItems();
     }
 
@@ -258,7 +259,7 @@ export class HomeComponent implements OnInit {
     public goToComponent(component: Component): void {
         const loaderService = this.loaderService;
         loaderService.activate();
-        this.$state.go('workspace.general', {id: component.uniqueId, type: component.componentType.toLowerCase()}).then(() => {
+        this.navigationService.navigate('workspace.general', {id: component.uniqueId, type: component.componentType.toLowerCase()}).then(() => {
             loaderService.deactivate();
         });
     }
@@ -326,7 +327,7 @@ export class HomeComponent implements OnInit {
             this.loaderService.activate();
             this.homeService.getAllComponents(true).subscribe(
                 (components: Component[]) => {
-                    this.cacheService.set('breadcrumbsComponentsState', this.$state.current.name);  // dashboard
+                    this.cacheService.set('breadcrumbsComponentsState', this.navigationService.getCurrentStateName());  // dashboard
                     this.cacheService.set('breadcrumbsComponents', components);
                     this.homeItems = components;
                     this.loaderService.deactivate();
@@ -344,7 +345,7 @@ export class HomeComponent implements OnInit {
     }
 
     private componentShouldReload = (): boolean => {
-        const breadcrumbsValid: boolean = (this.$state.current.name === this.cacheService.get('breadcrumbsComponentsState') && this.cacheService.contains('breadcrumbsComponents'));
+        const breadcrumbsValid: boolean = (this.navigationService.getCurrentStateName() === this.cacheService.get('breadcrumbsComponentsState') && this.cacheService.contains('breadcrumbsComponents'));
         return !breadcrumbsValid || this.isDefaultFilter();
     }
 
@@ -404,7 +405,7 @@ export class HomeComponent implements OnInit {
         this.vfcmtType = ResourceType.VFCMT;
 
         // Checkboxes filter init
-        this.homeFilter = new HomeFilter(this.$state.params);
+        this.homeFilter = new HomeFilter(this.navigationService.getParams());
 
         // bind callbacks that are transferred as inputs
         this.notificationIconCallback = this.notificationIconCallback.bind(this);
@@ -434,7 +435,7 @@ export class HomeComponent implements OnInit {
             // Check that the file has valid extension.
             const fileExtension: string = file.name.split('.').pop();
             if (this.sdcConfig.toscaFileExtension.indexOf(fileExtension.toLowerCase()) !== -1) {
-                this.$state.go(States.TYPE_WORKSPACE, {
+                this.navigationService.navigate(States.TYPE_WORKSPACE, {
                     type: "datatype",
                     subPage: "general",
                     id: "import",

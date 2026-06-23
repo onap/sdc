@@ -16,6 +16,7 @@ import {LoaderService} from "onap-ui-angular/dist/loader/loader.service";
 import {categoriesElements} from "../../../../jest/mocks/categories.mock";
 import {sdcMenu} from "../../../../jest/mocks/sdc-menu.mock";
 import {IEntityFilterObject} from "../../pipes/entity-filter.pipe";
+import {NavigationService} from "../../services/navigation.service";
 
 
 
@@ -118,7 +119,7 @@ describe('catalog component', () => {
                     providers: [
                         {provide: SdcConfigToken, useValue: {}},
                         {provide: SdcMenuToken, useValue: sdcMenu},
-                        {provide: "$state", useValue: stateServiceMock },
+                        {provide: NavigationService, useValue: {navigate: stateServiceMock.go, getParams: () => ({}), getCurrentStateName: () => 'catalog', includes: jest.fn(), updateUrlParams: stateServiceMock.go}},
                         {provide: CacheService, useValue: cacheServiceMock },
                         {provide: CatalogService, useValue: catalogServiceMock },
                         {provide: ResourceNamePipe, useValue: {}},
@@ -376,9 +377,9 @@ describe('catalog component', () => {
     it ('should call on catalog component componentShouldReload return false' , () => {
         const component = TestBed.createComponent(CatalogComponent);
         component.componentInstance.isDefaultFilter = jest.fn().mockImplementation(() => false);
-        cacheServiceMock.get.mockImplementation(()=> "mockConstructor");
+        cacheServiceMock.get.mockImplementation(()=> "catalog");
         let componentShouldReload = component.componentInstance.componentShouldReload();
-        expect(component.componentInstance.cacheService.get()).toEqual(component.componentInstance.$state.current.name);
+        expect(component.componentInstance.cacheService.get()).toEqual('catalog');
         expect(component.componentInstance.cacheService.contains()).toEqual(true);
         expect(component.componentInstance.isDefaultFilter).toHaveBeenCalled();
         expect(componentShouldReload).toEqual(false);
@@ -388,7 +389,7 @@ describe('catalog component', () => {
         const component = TestBed.createComponent(CatalogComponent);
         component.componentInstance.isDefaultFilter = jest.fn();
         let componentShouldReload = component.componentInstance.componentShouldReload();
-        expect(component.componentInstance.cacheService.get()).not.toEqual(component.componentInstance.$state.current.name);
+        expect(component.componentInstance.cacheService.get()).not.toEqual('catalog');
         expect(component.componentInstance.cacheService.contains()).toEqual(true);
         expect(componentShouldReload).toEqual(true);
     });
@@ -401,7 +402,7 @@ describe('catalog component', () => {
         expect(component.componentInstance.loaderService.activate).toHaveBeenCalled();
         expect(component.componentInstance.updateCatalogItems).toHaveBeenCalledWith(resp);
         expect(component.componentInstance.loaderService.deactivate).toHaveBeenCalled();
-        expect(component.componentInstance.cacheService.set).toHaveBeenCalledWith('breadcrumbsComponentsState', "mockConstructor");
+        expect(component.componentInstance.cacheService.set).toHaveBeenCalledWith('breadcrumbsComponentsState', "catalog");
         expect(component.componentInstance.cacheService.set).toHaveBeenCalledWith('breadcrumbsComponents', categoriesElements);
         expect(component.componentInstance.catalogService.getCatalog).toHaveBeenCalled();
     });
@@ -602,11 +603,12 @@ describe('catalog component', () => {
         const component = TestBed.createComponent(CatalogComponent);
         component.componentInstance.applyFilterParamsToView = jest.fn();
         component.componentInstance.filterParams =  { active: true, categories: [], components: [], order:  ["lastUpdateDate", true], statuses: [], term: ""};
-        component.componentInstance.$state.go = jest.fn().mockImplementation(() => Promise.resolve({ json: () => [] }));
+        const navigateMock = jest.fn().mockImplementation(() => Promise.resolve({ json: () => [] }));
+        (component.componentInstance as any).navigationService = {navigate: navigateMock, getParams: () => ({}), getCurrentStateName: () => 'catalog', includes: jest.fn(), updateUrlParams: navigateMock};
         const newParams = {"filter.active": true, "filter.categories": "resourceNewCategory.allotted resource.allotted resource,resourceNewCategory.allotted resource.contrail route,resourceNewCategory.application l4+.application server", "filter.components": "Resource.VF,Resource.VFC", "filter.models": "test", "filter.order": "-lastUpdateDate", "filter.statuses": "inDesign", "filter.term": "Vf"}
         component.componentInstance.changeFilterParams(filterParamsMock);
         expect(component.componentInstance.filterParams).toEqual(filterParamsMock);
-        expect(component.componentInstance.$state.go).toHaveBeenCalledWith('.',newParams, {location: 'replace', notify: false});
+        expect(navigateMock).toHaveBeenCalledWith('.',newParams, {location: 'replace', notify: false});
         expect(component.componentInstance.applyFilterParamsToView).toHaveBeenCalledWith(filterParamsMock);
     });
 
@@ -616,16 +618,15 @@ describe('catalog component', () => {
         component.componentInstance.makeFilterParamsFromCheckboxes = jest.fn();
         component.componentInstance.buildCheckboxLists = jest.fn();
         component.componentInstance.filterParams =  { active: true, categories: [], components: [], order:  ["lastUpdateDate", true], statuses: [], term: ""};
-        component.componentInstance.$state.go = jest.fn().mockImplementation(() => Promise.resolve({ json: () => [] }));
+        const navigateMock = jest.fn().mockImplementation(() => Promise.resolve({ json: () => [] }));
+        (component.componentInstance as any).navigationService = {navigate: navigateMock, getParams: () => ({}), getCurrentStateName: () => 'catalog', includes: jest.fn(), updateUrlParams: navigateMock};
         const newParams = {"filter.active": true, "filter.categories": "resourceNewCategory.allotted resource.allotted resource,resourceNewCategory.allotted resource.contrail route,resourceNewCategory.application l4+.application server", "filter.components": "Resource.VF,Resource.VFC", "filter.models": "test", "filter.order": "-lastUpdateDate", "filter.statuses": "inDesign", "filter.term": "Vf"}
         component.componentInstance.typesChecklistModel = checkListModelMock;
         component.componentInstance.categoriesChecklistModel = checkListModelMock;
         component.componentInstance.statusChecklistModel = checkListModelMock;
         component.componentInstance.changeFilterParams(filterParamsMock, true);
         expect(component.componentInstance.filterParams).toEqual(filterParamsMock);
-        expect(component.componentInstance.$state.go).toHaveBeenCalledWith('.',newParams, {location: 'replace', notify: false});
-        //expect(component.componentInstance.makeFilterParamsFromCheckboxes).toHaveBeenCalledWith(component.componentInstance.typesChecklistModel);
-        //expect(component.componentInstance.buildCheckboxLists).toHaveBeenCalled();
+        expect(navigateMock).toHaveBeenCalledWith('.',newParams, {location: 'replace', notify: false});
         expect(component.componentInstance.applyFilterParamsToView).toHaveBeenCalledWith(filterParamsMock);
     });
 

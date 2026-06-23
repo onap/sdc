@@ -45,6 +45,7 @@ import {NO_ERRORS_SCHEMA} from "@angular/core";
 import {IScope} from "angular";
 import {IWorkspaceViewModelScope} from "../../../view-models/workspace/workspace-view-model";
 import {ModelService} from "../../services/model.service";
+import {NavigationService} from "../../services/navigation.service";
 
 describe('TypeWorkspaceComponent', () => {
   let component: TypeWorkspaceComponent;
@@ -130,8 +131,7 @@ describe('TypeWorkspaceComponent', () => {
         {provide: "Notification", useValue: notificationMock },
         {provide: ModelService, useValue: modelServiceMock},
         {provide: "$scope", useValue: scopeMock_ },
-        {provide: '$state', useValue: stateMock},
-        {provide: '$stateParams', useValue: stateParamsMock},
+        {provide: NavigationService, useValue: {navigate: jest.fn(), getParams: () => stateParamsMock, getCurrentStateName: () => States.TYPE_WORKSPACE, includes: jest.fn(), updateUrlParams: jest.fn()}},
         {provide: '$injector', useValue: injectorMock},
         {provide: SdcMenuToken, useValue: sdcMenuMock},
         {provide: SdcConfigToken, useValue: sdcConfigMock},

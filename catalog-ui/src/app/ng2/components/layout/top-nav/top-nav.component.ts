@@ -25,6 +25,7 @@ import {MenuItem, MenuItemGroup} from "app/utils";
 import {AuthenticationService} from "../../../services/authentication.service";
 import {ISdcConfig, SdcConfigToken} from "../../../config/sdc-config.config";
 import {TranslateService} from "../../../shared/translator/translate.service";
+import {NavigationService} from "../../../services/navigation.service";
 import {Subscription} from "rxjs";
 
 declare const window:any;
@@ -54,7 +55,7 @@ export class TopNavComponent implements OnInit, OnChanges {
     private topNavPlugins: Array<Plugin>;
 
     constructor(private translateService:TranslateService,
-                @Inject('$state') private $state:ng.ui.IStateService,
+                private navigationService: NavigationService,
                 private authService:AuthenticationService,
                 @Inject(SdcConfigToken) private sdcConfig:ISdcConfig) {
         window.nav = this;
@@ -70,9 +71,9 @@ export class TopNavComponent implements OnInit, OnChanges {
 
         //set result to current state
         this.topLvlMenu.menuItems.every((item:MenuItem, index:number)=> {
-            if (item.state === this.$state.current.name) {
-                if (this.$state.current.name === 'plugins') {
-                    const pluginIdx = _.findIndex(this.topNavPlugins, (plugin: Plugin) => plugin.pluginStateUrl === this.$state.params.path);
+            if (item.state === this.navigationService.getCurrentStateName()) {
+                if (this.navigationService.getCurrentStateName() === 'plugins') {
+                    const pluginIdx = _.findIndex(this.topNavPlugins, (plugin: Plugin) => plugin.pluginStateUrl === this.navigationService.getParams().path);
                     if (pluginIdx !== -1) {
                         result = index + pluginIdx;
                         return false;
@@ -88,10 +89,10 @@ export class TopNavComponent implements OnInit, OnChanges {
         //if it's a different state
         if (result === -1) {
             //if in 'workspace' -  checking previous state param
-            if (this.$state.includes('workspace') || this.$state.includes('type-workspace')) {
+            if (this.navigationService.includes('workspace') || this.navigationService.includes('type-workspace')) {
                 // if previous state is 'dashboard' or 'catalog', then select it - otherwise, use 'catalog' as default for 'workspace'
-                const selectedStateName = (['dashboard', 'catalog'].indexOf(this.$state.params['previousState']) !== -1)
-                    ? this.$state.params['previousState']
+                const selectedStateName = (['dashboard', 'catalog'].indexOf(this.navigationService.getParams()['previousState']) !== -1)
+                    ? this.navigationService.getParams()['previousState']
                     : 'catalog';
                 result = this.topLvlMenu.menuItems.findIndex((item:MenuItem) => item.state === selectedStateName);
             }
@@ -156,7 +157,7 @@ export class TopNavComponent implements OnInit, OnChanges {
 
     goToState(state:string, params:any):Promise<boolean> {
         return new Promise((resolve, reject) => {
-            this.$state.go(state, params || undefined);
+            this.navigationService.navigate(state, params || undefined);
             resolve(true);
         });
     }
