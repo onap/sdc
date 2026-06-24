@@ -35,9 +35,16 @@ import {ComponentType} from "../../../utils";
 export class WorkspaceService {
 
     public metadata:ComponentMetadata;
+    public component: TopologyTemplate;
 
     constructor(private cacheService:CacheService) {
 
+    }
+
+    public setComponent = (component: TopologyTemplate) => {
+        console.log('WorkspaceService.setComponent called:', component ? component.name : 'null');
+        this.component = component;
+        this.metadata = component.componentMetadata;
     }
 
     public setComponentMetadata = (metadata: ComponentMetadata) => {

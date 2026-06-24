@@ -101,6 +101,7 @@ import {PropertyMetadataComponent} from '../ng2/pages/properties-assignment/prop
 import {TypeWorkspaceComponent} from "../ng2/pages/type-workspace/type-workspace.component";
 import {TypeWorkspaceGeneralComponent} from "../ng2/pages/type-workspace/type-workspace-general/type-workspace-general.component";
 import {DeclareInputComponent} from "../ng2/pages/properties-assignment/declare-input/declare-input.component";
+import {WorkspaceContainerComponent} from "../ng2/pages/workspace/workspace-container/workspace-container.component";
 
 let moduleName: string = 'Sdc.Directives';
 let directiveModule: ng.IModule = angular.module(moduleName, []);
@@ -355,4 +356,11 @@ directiveModule.directive('declareInput', downgradeComponent({
   component: DeclareInputComponent,
   inputs: ['property'],
   outputs: []
+}) as angular.IDirectiveFactory);
+
+directiveModule.directive('workspaceContainer', downgradeComponent({
+  component: WorkspaceContainerComponent,
+  inputs: ['injectComponent'],
+  outputs: [],
+  propagateDigest: false
 }) as angular.IDirectiveFactory);

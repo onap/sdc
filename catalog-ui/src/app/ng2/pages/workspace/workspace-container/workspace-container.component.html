@@ -1,0 +1,84 @@
+<div class="sdc-workspace-container">
+    <sdc-loader [global]="true" [name]="'general'" [testId]="'loader'" *ngIf="isLoading"></sdc-loader>
+    <div id="main-content" role="main" class="w-sdc-main-container">
+        <div class="w-sdc-left-sidebar" *ngIf="component && !isComposition">
+            <div class="menu-header" [title]="menuComponentTitle">
+                {{menuComponentTitle}}
+            </div>
+            <div class="i-sdc-designer-sidebar-section-content-item"
+                 [class.selected]="isSelected(menuItem)"
+                 *ngFor="let menuItem of leftBarTabs?.menuItems; let i = index">
+                <div class="expand-collapse-menu-box-item-text" [class.disabled]="menuItem.isDisabled">
+                    <button [attr.data-tests-id]="menuItem.text + 'LeftSideMenu'"
+                            type="button"
+                            class="i-sdc-designer-sidebar-section-content-item-service-cat"
+                            (click)="menuItem.callback()"
+                            [disabled]="menuItem.disabledCategory">{{menuItem.text}}</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="w-sdc-main-right-container" *ngIf="component" [class.composition]="isComposition" [class.deployment]="isDeployment">
+            <sdc-loader *ngIf="isCreateProgress" [relative]="false"></sdc-loader>
+            <div class="sdc-workspace-top-bar">
+                <div class="version-container">
+                    <span *ngIf="!isCreateMode() && !component.isLatestVersion()" class="not-latest"></span>
+                    <select *ngIf="!isCreateMode()"
+                            class="version-selector"
+                            data-tests-id="versionHeader"
+                            [(ngModel)]="changeVersion.selectedVersion"
+                            [class.disabled]="unsavedChanges"
+                            (change)="onVersionChanged(changeVersion.selectedVersion.versionId)">
+                        <option *ngFor="let ver of versionsList" [ngValue]="ver">V{{ver.versionNumber}}</option>
+                    </select>
+                </div>
+                <div class="lifecycle-state">
+                    <div *ngIf="showLifecycleIcon()"
+                         class="lifecycle-state-icon"
+                         [ngClass]="isCreateMode() ? 'in-design-status-icon' : sdcMenu?.LifeCycleStatuses[component.lifecycleState]?.icon">
+                    </div>
+                    <span class="lifecycle-state-text" data-tests-id="formlifecyclestate">{{getStatus()}}</span>
+                </div>
+                <div class="archive-state-label" *ngIf="component.isArchived">
+                    <div class="sprite-new archive-label"></div>
+                </div>
+                <div class="progress-container">
+                    <workspace-top-progress class="general-view-top-progress"
+                                            [progressValue]="progressValue"
+                                            [progressMessage]="progressMessage"></workspace-top-progress>
+                </div>
+                <div class="sdc-workspace-top-bar-buttons">
+                    <span *ngIf="!isCreateMode() && !component.isLatestVersion() && !showLatestVersion()" [class.disabled]="unsavedChanges">
+                        Switch to the&nbsp;<a data-tests-id="latest-version" (click)="getLatestVersion()">latest version</a>
+                    </span>
+                    <ng-container *ngIf="changeLifecycleStateButtons">
+                        <button *ngFor="let entry of lifecycleButtonEntries; trackBy: trackByKey; let first = first"
+                                (click)="onMenuItemPressed(entry.key)"
+                                [hidden]="entry.key === 'deleteVersion'"
+                                [disabled]="checkDisableButton(entry.value)"
+                                class="change-lifecycle-state-btn tlv-btn"
+                                [ngClass]="first ? 'outline green' : 'grey'"
+                                [attr.data-tests-id]="entry.value.text">
+                            {{entry.value.text}}
+                        </button>
+                    </ng-container>
+                    <button *ngIf="!isViewMode() && isCreateMode()"
+                            [disabled]="!isValidForm || isDisableMode() || isLoading || unsavedChanges"
+                            class="tlv-btn outline green"
+                            data-tests-id="create/save">Create</button>
+                    <span class="delimiter"></span>
+                    <span class="sprite-new x-btn" (click)="goToBreadcrumbHome()" [class.disabled]="unsavedChanges">Close</span>
+                </div>
+            </div>
+            <div class="w-sdc-main-container-body-content-wrapper">
+                <div class="w-sdc-main-container-body-content-header">
+                    <div class="workspace-tab-title" *ngIf="!isComposition && !isDeployment && !isPlugins">
+                        {{getTabTitle()}}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <top-nav *ngIf="component" [hideSearch]="true" [menuModel]="breadcrumbsModel" [version]="version" [unsavedChanges]="unsavedChanges" [unsavedChangesCallback]="unsavedChangesCallback"></top-nav>
+    </div>
+    <ng-content></ng-content>
+</div>
