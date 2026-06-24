@@ -18,7 +18,8 @@
  * ============LICENSE_END=========================================================
  */
 
-import {Inject, Injectable} from '@angular/core';
+import {Inject, Injectable, Optional} from '@angular/core';
+import {Router, ActivatedRoute} from '@angular/router';
 
 export interface NavigationOptions {
     location?: boolean | 'replace';
@@ -36,13 +37,19 @@ export interface NavigationStartEvent {
 
 export type NavigationStartCallback = (event: NavigationStartEvent) => void;
 
+const ANGULAR_ROUTER_STATES = ['dashboard', 'catalog'];
+
 @Injectable()
 export class NavigationService {
 
-    constructor(@Inject('$state') private $state: ng.ui.IStateService) {
+    constructor(@Inject('$state') private $state: ng.ui.IStateService,
+                @Optional() private router: Router) {
     }
 
-    navigate(state: string, params?: any, options?: NavigationOptions): ng.IPromise<any> {
+    navigate(state: string, params?: any, options?: NavigationOptions): any {
+        if (this.isAngularRouterState(state) && this.router) {
+            return this.navigateWithAngularRouter(state, params, options);
+        }
         return this.$state.go(state, params || undefined, options as any);
     }
 
@@ -64,5 +71,21 @@ export class NavigationService {
 
     updateUrlParams(params: any): ng.IPromise<any> {
         return this.$state.go('.', params, {location: 'replace', notify: false});
+    }
+
+    private isAngularRouterState(state: string): boolean {
+        return ANGULAR_ROUTER_STATES.indexOf(state) !== -1;
+    }
+
+    private navigateWithAngularRouter(state: string, params?: any, options?: NavigationOptions): Promise<boolean> {
+        const queryParams = params ? {...params} : undefined;
+        const extras: any = {};
+        if (queryParams) {
+            extras.queryParams = queryParams;
+        }
+        if (options && options.location === 'replace') {
+            extras.replaceUrl = true;
+        }
+        return this.router.navigate(['/' + state], extras);
     }
 }

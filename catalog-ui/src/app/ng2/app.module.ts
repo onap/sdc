@@ -113,6 +113,8 @@ import {InterfaceDefinitionModule} from "./pages/interface-definition/interface-
 import {TypeWorkspaceModule} from "./pages/type-workspace/type-workspace.module";
 import {DeclareInputModule} from "./pages/properties-assignment/declare-input/declare-input.module";
 import {NavigationService} from "./services/navigation.service";
+import {AppRoutingModule} from "./app.routing.module";
+import {AuthGuard} from "./guards/auth.guard";
 
 declare const __ENV__: string;
 
@@ -184,6 +186,7 @@ export function configServiceFactory(config: ConfigService, authService: Authent
     ModalsModule,
     CatalogModule,
     HomeModule,
+    AppRoutingModule,
     NgxsModule.forRoot([]),
     NgxsLoggerPluginModule.forRoot({logger: console, collapsed: false}),
     NgxsReduxDevtoolsPluginModule.forRoot({
@@ -240,6 +243,7 @@ export function configServiceFactory(config: ConfigService, authService: Authent
     EventBusService,
     FileUtilsService,
     NavigationService,
+    AuthGuard,
     {
       provide: APP_INITIALIZER,
       useFactory: configServiceFactory,

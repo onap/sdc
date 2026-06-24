@@ -23,6 +23,7 @@ import {NavigationService} from './navigation.service';
 describe('NavigationService', () => {
     let service: NavigationService;
     let mockState: any;
+    let mockRouter: any;
 
     beforeEach(() => {
         mockState = {
@@ -31,28 +32,56 @@ describe('NavigationService', () => {
             params: {id: 'abc123', type: 'SERVICE', previousState: 'catalog'},
             includes: jest.fn().mockReturnValue(false)
         };
-        service = new NavigationService(mockState);
+        mockRouter = {
+            navigate: jest.fn().mockReturnValue(Promise.resolve(true))
+        };
+        service = new NavigationService(mockState, mockRouter);
     });
 
     describe('navigate', () => {
-        it('should call $state.go with state and params', () => {
-            service.navigate('workspace.general', {id: '123', type: 'VF'});
-            expect(mockState.go).toHaveBeenCalledWith('workspace.general', {id: '123', type: 'VF'}, undefined);
+        it('should use Angular Router for dashboard state', () => {
+            service.navigate('dashboard');
+            expect(mockRouter.navigate).toHaveBeenCalledWith(['/dashboard'], {});
+            expect(mockState.go).not.toHaveBeenCalled();
         });
 
-        it('should pass undefined params when none provided', () => {
-            service.navigate('dashboard');
+        it('should use Angular Router for catalog state', () => {
+            service.navigate('catalog');
+            expect(mockRouter.navigate).toHaveBeenCalledWith(['/catalog'], {});
+            expect(mockState.go).not.toHaveBeenCalled();
+        });
+
+        it('should use Angular Router with query params', () => {
+            service.navigate('dashboard', {show: 'recent', folder: 'DESIGNER'});
+            expect(mockRouter.navigate).toHaveBeenCalledWith(['/dashboard'], {queryParams: {show: 'recent', folder: 'DESIGNER'}});
+        });
+
+        it('should use Angular Router with replaceUrl option', () => {
+            service.navigate('catalog', {filter: 'active'}, {location: 'replace'});
+            expect(mockRouter.navigate).toHaveBeenCalledWith(['/catalog'], {queryParams: {filter: 'active'}, replaceUrl: true});
+        });
+
+        it('should fall back to $state.go for workspace states', () => {
+            service.navigate('workspace.general', {id: '123', type: 'VF'});
+            expect(mockState.go).toHaveBeenCalledWith('workspace.general', {id: '123', type: 'VF'}, undefined);
+            expect(mockRouter.navigate).not.toHaveBeenCalled();
+        });
+
+        it('should fall back to $state.go for unknown states', () => {
+            service.navigate('adminDashboard');
+            expect(mockState.go).toHaveBeenCalledWith('adminDashboard', undefined, undefined);
+            expect(mockRouter.navigate).not.toHaveBeenCalled();
+        });
+
+        it('should fall back to $state.go when router is not available', () => {
+            const serviceWithoutRouter = new NavigationService(mockState, null);
+            serviceWithoutRouter.navigate('dashboard');
             expect(mockState.go).toHaveBeenCalledWith('dashboard', undefined, undefined);
         });
 
-        it('should pass navigation options', () => {
-            service.navigate('.', {filter: 'active'}, {location: 'replace', notify: false});
-            expect(mockState.go).toHaveBeenCalledWith('.', {filter: 'active'}, {location: 'replace', notify: false});
-        });
-
-        it('should return a thenable', () => {
-            const result = service.navigate('catalog');
-            expect(result.then).toBeDefined();
+        it('should pass navigation options to $state.go for non-router states', () => {
+            service.navigate('workspace.general', {id: '1'}, {reload: true});
+            expect(mockState.go).toHaveBeenCalledWith('workspace.general', {id: '1'}, {reload: true});
         });
     });
 
