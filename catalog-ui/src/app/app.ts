@@ -228,8 +228,42 @@ ng1appModule.config([
             resourceType: null,
             disableButtons: null
           },
-          templateUrl: './view-models/workspace/workspace-view.html',
-          controller: viewModelsModuleName + '.WorkspaceViewModel',
+          template: '<workspace-container inject-component="$resolve.injectComponent"><div ui-view></div></workspace-container>',
+          controller: ['$scope', 'injectComponent', 'sdcMenu', 'Sdc.Services.CacheService', 'ComponentFactory',
+            function($scope, injectComponent: Component, sdcMenu: IAppMenu, cacheService: CacheService, componentFactory: ComponentFactory) {
+              // Shim controller: exposes $scope properties child states expect from the old WorkspaceViewModel.
+              // Will be removed in Phase 3/4 when child tabs are migrated to Angular.
+              $scope.component = injectComponent;
+              $scope.originComponent = componentFactory.createComponent(injectComponent);
+              $scope.componentType = injectComponent ? injectComponent.componentType : '';
+              $scope.sdcMenu = sdcMenu;
+
+              const user = cacheService.get('user');
+              const role = user ? user.role : '';
+              const isCheckout = injectComponent && injectComponent.lifecycleState === 'NOT_CERTIFIED_CHECKOUT';
+              const isOwner = injectComponent && injectComponent.lastUpdaterUserId === (user && user.userId);
+              const isDesigner = role === 'DESIGNER';
+              const hasId = injectComponent && injectComponent.uniqueId;
+              const mode = !hasId ? 'CREATE' : (isCheckout && isOwner && isDesigner) ? 'EDIT' : 'VIEW';
+
+              $scope.isViewMode = () => mode === 'VIEW';
+              $scope.isEditMode = () => mode === 'EDIT';
+              $scope.isCreateMode = () => mode === 'CREATE';
+              $scope.isDesigner = () => isDesigner;
+              $scope.isDisableMode = () => mode === 'VIEW';
+              $scope.isValidForm = true;
+              $scope.setValidState = (isValid) => { $scope.isValidForm = isValid; };
+              $scope.unsavedFile = false;
+              $scope.updateUnsavedFileFlag = (flag) => { $scope.unsavedFile = flag; };
+              $scope.isLoading = false;
+              $scope.setComponent = (component) => { $scope.component = component; };
+              $scope.setOriginComponent = (component) => { $scope.originComponent = component; };
+              $scope.updateMenuComponentName = (name) => { $scope.component.name = name; };
+              $scope.updateBreadcrumbs = (component) => {};
+              $scope.progressService = cacheService.get('Sdc.Services.ProgressService') || {};
+              $scope.save = () => {};
+              $scope.reload = (component) => {};
+          }],
           resolve: {
             injectComponent: ['$stateParams', 'ComponentFactory', 'workspaceService', 'Sdc.Services.CacheService', function($stateParams, ComponentFactory: ComponentFactory, workspaceService: WorkspaceService, cacheService: CacheService) {
               if ($stateParams.id && $stateParams.id.length) { // need to check length in case ID is an empty string
@@ -241,7 +275,7 @@ ng1appModule.config([
                         }
                         component = ComponentFactory.updateComponentFromCsar($stateParams.componentCsar, component as Resource);
                       }
-                      workspaceService.setComponentMetadata(component.componentMetadata);
+                      workspaceService.setComponent(component);
                       return component;
                     });
               } else if ($stateParams.componentCsar && $stateParams.componentCsar.csarUUID) {
