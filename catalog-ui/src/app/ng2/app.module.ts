@@ -28,12 +28,17 @@ import {UpgradeModule} from '@angular/upgrade/static';
 import {SdcUiComponentsModule} from 'onap-ui-angular';
 import {PropertiesAssignmentModule} from './pages/properties-assignment/properties-assignment.module';
 import {
+  ChangeLifecycleStateHandlerProvider,
   ComponentFactoryProvider,
+  ComponentFactoryStringProvider,
   CookieServiceProvider,
   DataTypesServiceProvider,
+  MenuHandlerProvider,
   ModalsHandlerProvider,
   NotificationServiceProvider,
+  ProgressServiceProvider,
   ScopeServiceFactory,
+  SdcMenuServiceProvider,
   StateParamsServiceFactory,
   StateServiceFactory
 } from './utils/ng1-upgraded-provider';
@@ -204,12 +209,17 @@ export function configServiceFactory(config: ConfigService, authService: Authent
     HomeService,
     ArtifactConfigService,
     ComponentFactoryProvider,
+    ComponentFactoryStringProvider,
     CookieServiceProvider,
     StateServiceFactory,
     StateParamsServiceFactory,
     ScopeServiceFactory,
     NotificationServiceProvider,
     ModalsHandlerProvider,
+    SdcMenuServiceProvider,
+    MenuHandlerProvider,
+    ChangeLifecycleStateHandlerProvider,
+    ProgressServiceProvider,
     UserService,
     Cookie2Service,
     ConfigService,

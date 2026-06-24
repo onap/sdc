@@ -126,3 +126,53 @@ export const ModalsHandlerProvider = {
     useFactory: ModalsHandlerFactory,
     deps: ['$injector']
 };
+
+export function sdcMenuServiceFactory(cacheObj: ICacheObject) {
+    return cacheObj.get('sdcMenu');
+}
+
+export function menuHandlerFactory(cacheObj: ICacheObject) {
+    return cacheObj.get('MenuHandler');
+}
+
+export function changeLifecycleStateHandlerFactory(cacheObj: ICacheObject) {
+    return cacheObj.get('ChangeLifecycleStateHandler');
+}
+
+export function progressServiceFactory(cacheObj: ICacheObject) {
+    return cacheObj.get('Sdc.Services.ProgressService');
+}
+
+export function componentFactoryStringFactory(cacheObj: ICacheObject) {
+    return cacheObj.get('Sdc.Services.ComponentFactory');
+}
+
+export const SdcMenuServiceProvider = {
+    provide: 'sdcMenu',
+    useFactory: sdcMenuServiceFactory,
+    deps: ['$injector']
+};
+
+export const MenuHandlerProvider = {
+    provide: 'MenuHandler',
+    useFactory: menuHandlerFactory,
+    deps: ['$injector']
+};
+
+export const ChangeLifecycleStateHandlerProvider = {
+    provide: 'ChangeLifecycleStateHandler',
+    useFactory: changeLifecycleStateHandlerFactory,
+    deps: ['$injector']
+};
+
+export const ProgressServiceProvider = {
+    provide: 'Sdc.Services.ProgressService',
+    useFactory: progressServiceFactory,
+    deps: ['$injector']
+};
+
+export const ComponentFactoryStringProvider = {
+    provide: 'ComponentFactory',
+    useFactory: componentFactoryStringFactory,
+    deps: ['$injector']
+};
