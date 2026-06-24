@@ -12,6 +12,7 @@
     "designer": "npm start -- --env.role designer",
     "admin": "npm start -- --env.role admin",
     "start": "webpack-dev-server",
+    "start:local": "webpack-dev-server",
     "build": "webpack --config webpack.config.js",
     "build:prod": "webpack --config webpack.production.js",
     "lint": "ng lint",

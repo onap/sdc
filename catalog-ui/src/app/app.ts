@@ -228,8 +228,49 @@ ng1appModule.config([
             resourceType: null,
             disableButtons: null
           },
-          templateUrl: './view-models/workspace/workspace-view.html',
-          controller: viewModelsModuleName + '.WorkspaceViewModel',
+          // The workspace shell is an Angular component; the child tab states are still
+          // AngularJS/ui-router. A ui-view cannot be projected through an Angular component's
+          // <ng-content> (ui-router loses its anchor and the page hangs in an infinite digest),
+          // so the child <div ui-view> is a SIBLING of <workspace-container>, positioned into
+          // the content region by the .workspace-child-view CSS. Component data flows to the
+          // shell via WorkspaceService.setComponent() in the resolve below, NOT via @Input
+          // (downgradeComponent with propagateDigest:false does not deliver inputs).
+          template: '<workspace-container></workspace-container><div ui-view class="workspace-child-view"></div>',
+          controller: ['$scope', 'injectComponent', 'sdcMenu', 'Sdc.Services.CacheService', 'ComponentFactory',
+            function($scope, injectComponent: Component, sdcMenu: IAppMenu, cacheService: CacheService, componentFactory: ComponentFactory) {
+              // Shim controller: exposes $scope properties child states expect from the old WorkspaceViewModel.
+              // Will be removed in Phase 3/4 when child tabs are migrated to Angular.
+              $scope.component = injectComponent;
+              $scope.originComponent = componentFactory.createComponent(injectComponent);
+              $scope.componentType = injectComponent ? injectComponent.componentType : '';
+              $scope.sdcMenu = sdcMenu;
+
+              const user = cacheService.get('user');
+              const role = user ? user.role : '';
+              const isCheckout = injectComponent && injectComponent.lifecycleState === 'NOT_CERTIFIED_CHECKOUT';
+              const isOwner = injectComponent && injectComponent.lastUpdaterUserId === (user && user.userId);
+              const isDesigner = role === 'DESIGNER';
+              const hasId = injectComponent && injectComponent.uniqueId;
+              const mode = !hasId ? 'CREATE' : (isCheckout && isOwner && isDesigner) ? 'EDIT' : 'VIEW';
+
+              $scope.isViewMode = () => mode === 'VIEW';
+              $scope.isEditMode = () => mode === 'EDIT';
+              $scope.isCreateMode = () => mode === 'CREATE';
+              $scope.isDesigner = () => isDesigner;
+              $scope.isDisableMode = () => mode === 'VIEW';
+              $scope.isValidForm = true;
+              $scope.setValidState = (isValid) => { $scope.isValidForm = isValid; };
+              $scope.unsavedFile = false;
+              $scope.updateUnsavedFileFlag = (flag) => { $scope.unsavedFile = flag; };
+              $scope.isLoading = false;
+              $scope.setComponent = (component) => { $scope.component = component; };
+              $scope.setOriginComponent = (component) => { $scope.originComponent = component; };
+              $scope.updateMenuComponentName = (name) => { $scope.component.name = name; };
+              $scope.updateBreadcrumbs = (component) => {};
+              $scope.progressService = cacheService.get('Sdc.Services.ProgressService') || {};
+              $scope.save = () => {};
+              $scope.reload = (component) => {};
+          }],
           resolve: {
             injectComponent: ['$stateParams', 'ComponentFactory', 'workspaceService', 'Sdc.Services.CacheService', function($stateParams, ComponentFactory: ComponentFactory, workspaceService: WorkspaceService, cacheService: CacheService) {
               if ($stateParams.id && $stateParams.id.length) { // need to check length in case ID is an empty string
@@ -241,10 +282,11 @@ ng1appModule.config([
                         }
                         component = ComponentFactory.updateComponentFromCsar($stateParams.componentCsar, component as Resource);
                       }
-                      workspaceService.setComponentMetadata(component.componentMetadata);
+                      workspaceService.setComponent(component);
                       return component;
                     });
               } else if ($stateParams.componentCsar && $stateParams.componentCsar.csarUUID) {
+                workspaceService.setComponent($stateParams.componentCsar);
                 return $stateParams.componentCsar;
               } else {
                 const emptyComponent = ComponentFactory.createEmptyComponent($stateParams.type.toUpperCase());
@@ -255,6 +297,7 @@ ng1appModule.config([
                 if ($stateParams.importedFile) {
                   (emptyComponent as Resource).importedFile = $stateParams.importedFile;
                 }
+                workspaceService.setComponent(emptyComponent);
                 return emptyComponent;
               }
             }],

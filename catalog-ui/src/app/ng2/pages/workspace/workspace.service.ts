@@ -35,9 +35,17 @@ import {ComponentType} from "../../../utils";
 export class WorkspaceService {
 
     public metadata:ComponentMetadata;
+    public component: TopologyTemplate;
 
     constructor(private cacheService:CacheService) {
 
+    }
+
+    public setComponent = (component: TopologyTemplate) => {
+        this.component = component;
+        if (component && component.componentMetadata) {
+            this.metadata = component.componentMetadata;
+        }
     }
 
     public setComponentMetadata = (metadata: ComponentMetadata) => {
