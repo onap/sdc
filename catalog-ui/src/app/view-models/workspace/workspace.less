@@ -298,3 +298,39 @@
         }
     }
 }
+
+// --- Workspace child view (Phase 2 migration) ---
+// During the AngularJS→Angular migration the workspace shell is an Angular
+// component (<workspace-container>) while the child tabs are still AngularJS
+// states rendered by ui-router. A ui-view cannot be projected through an
+// Angular component's <ng-content> (ui-router loses its view anchor and hangs),
+// so the <div ui-view> lives as a SIBLING of <workspace-container> and is
+// positioned here into the content region (right of the 242px sidebar, below
+// the 50px top-nav + 53px action bar). Remove once child tabs are Angular.
+.workspace-child-view {
+    position: absolute;
+    top: @top_nav_height + @action_nav_height;
+    left: 242px;
+    right: 0;
+    bottom: 0;
+    overflow: auto;
+    background-color: @main_color_p;
+    z-index: 0;
+
+    // The General tab (and other content tabs) wrap their form in this class.
+    // It carries the horizontal padding the old layout applied via
+    // .w-sdc-main-container-body-content.
+    > .sdc-workspace-general-step,
+    > [include-padding] {
+        padding: 0 100px 20px 100px;
+    }
+}
+
+// Composition and deployment tabs are full-bleed (their own graphs/canvases
+// manage layout), so the child view must not reserve the sidebar gutter.
+.composition, .deployment {
+    .workspace-child-view {
+        left: 0;
+        top: @top_nav_height;
+    }
+}

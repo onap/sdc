@@ -35,9 +35,21 @@ import {ComponentType} from "../../../utils";
 export class WorkspaceService {
 
     public metadata:ComponentMetadata;
+    public component: TopologyTemplate;
+    // Reference to the Angular workspace shell, so the AngularJS shim controller can
+    // delegate the action methods (create / save / changeLifecycleState) that child
+    // tabs invoke via $scope inheritance. Removed in Phase 6b with the shim itself.
+    public containerActions: any;
 
     constructor(private cacheService:CacheService) {
 
+    }
+
+    public setComponent = (component: TopologyTemplate) => {
+        this.component = component;
+        if (component && component.componentMetadata) {
+            this.metadata = component.componentMetadata;
+        }
     }
 
     public setComponentMetadata = (metadata: ComponentMetadata) => {

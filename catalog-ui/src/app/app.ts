@@ -228,8 +228,66 @@ ng1appModule.config([
             resourceType: null,
             disableButtons: null
           },
-          templateUrl: './view-models/workspace/workspace-view.html',
-          controller: viewModelsModuleName + '.WorkspaceViewModel',
+          // The workspace shell is an Angular component; the child tab states are still
+          // AngularJS/ui-router. A ui-view cannot be projected through an Angular component's
+          // <ng-content> (ui-router loses its anchor and the page hangs in an infinite digest),
+          // so the child <div ui-view> is a SIBLING of <workspace-container>, positioned into
+          // the content region by the .workspace-child-view CSS. Component data flows to the
+          // shell via WorkspaceService.setComponent() in the resolve below, NOT via @Input
+          // (downgradeComponent with propagateDigest:false does not deliver inputs).
+          template: '<workspace-container></workspace-container><div ui-view class="workspace-child-view"></div>',
+          controller: ['$scope', 'injectComponent', 'sdcMenu', 'Sdc.Services.CacheService', 'ComponentFactory',
+            'Sdc.Services.ProgressService', 'workspaceService',
+            function($scope, injectComponent: Component, sdcMenu: IAppMenu, cacheService: CacheService,
+                     componentFactory: ComponentFactory, progressService: any, workspaceService: WorkspaceService) {
+              // Shim controller: exposes $scope properties/methods that child tab states (still
+              // AngularJS, e.g. GeneralViewModel) invoke via $scope inheritance. The heavy action
+              // logic (create / changeLifecycleState / progress) lives in the Angular shell
+              // (WorkspaceContainerComponent) and is reached via workspaceService.containerActions.
+              // Removed in Phase 6b when the last AngularJS child tab is migrated.
+              $scope.component = injectComponent;
+              $scope.originComponent = componentFactory.createComponent(injectComponent);
+              $scope.componentType = injectComponent ? injectComponent.componentType : '';
+              $scope.sdcMenu = sdcMenu;
+
+              const user = cacheService.get('user');
+              const role = user ? user.role : '';
+              const isCheckout = injectComponent && injectComponent.lifecycleState === 'NOT_CERTIFIED_CHECKOUT';
+              const isOwner = injectComponent && injectComponent.lastUpdaterUserId === (user && user.userId);
+              const isDesigner = role === 'DESIGNER';
+              const hasId = injectComponent && injectComponent.uniqueId;
+              const mode = !hasId ? 'CREATE' : (isCheckout && isOwner && isDesigner) ? 'EDIT' : 'VIEW';
+
+              // Delegate to the Angular shell (set in WorkspaceContainerComponent.ngOnInit).
+              const actions = () => workspaceService.containerActions;
+
+              $scope.isViewMode = () => mode === 'VIEW';
+              $scope.isEditMode = () => mode === 'EDIT';
+              $scope.isCreateMode = () => mode === 'CREATE';
+              $scope.isGeneralView = () => actions() ? actions().isGeneralView() : false;
+              $scope.isDesigner = () => isDesigner;
+              $scope.isDisableMode = () => mode === 'VIEW';
+              $scope.isValidForm = true;
+              $scope.setValidState = (isValid) => { $scope.isValidForm = isValid; };
+              $scope.unsavedFile = false;
+              $scope.updateUnsavedFileFlag = (flag) => { $scope.unsavedFile = flag; };
+              $scope.isLoading = false;
+              $scope.setComponent = (component) => { $scope.component = component; if (actions()) { actions().component = component; } };
+              $scope.setOriginComponent = (component) => { $scope.originComponent = component; };
+              $scope.updateMenuComponentName = (name) => { $scope.component.name = name; if (actions()) { actions().menuComponentTitle = name; actions().cdr.detectChanges(); } };
+              $scope.updateBreadcrumbs = (component) => {};
+              $scope.progressService = progressService;
+              // Action methods delegated to the Angular shell so the shell's loader reacts.
+              $scope.startProgress = (message) => { if (actions()) { actions().startProgress(message); } };
+              $scope.stopProgress = () => { if (actions()) { actions().stopProgress(); } };
+              $scope.create = () => { if (actions()) { actions().create(); } };
+              $scope.changeLifecycleState = (state) => { if (actions()) { actions().changeLifecycleState(state); } };
+              $scope.handleChangeLifecycleState = (state, newCsarVersion, onError) => { if (actions()) { actions().handleChangeLifecycleState(state, newCsarVersion, onError); } };
+              // save (edit flow) is not yet ported to the Angular shell — return a resolved
+              // promise so child .then() chains don't crash. Edit-save is Phase 3 (General tab).
+              $scope.save = () => (actions() && actions().save ? actions().save() : Promise.resolve());
+              $scope.reload = (component) => { if (actions()) { actions().reload(component); } };
+          }],
           resolve: {
             injectComponent: ['$stateParams', 'ComponentFactory', 'workspaceService', 'Sdc.Services.CacheService', function($stateParams, ComponentFactory: ComponentFactory, workspaceService: WorkspaceService, cacheService: CacheService) {
               if ($stateParams.id && $stateParams.id.length) { // need to check length in case ID is an empty string
@@ -241,10 +299,11 @@ ng1appModule.config([
                         }
                         component = ComponentFactory.updateComponentFromCsar($stateParams.componentCsar, component as Resource);
                       }
-                      workspaceService.setComponentMetadata(component.componentMetadata);
+                      workspaceService.setComponent(component);
                       return component;
                     });
               } else if ($stateParams.componentCsar && $stateParams.componentCsar.csarUUID) {
+                workspaceService.setComponent($stateParams.componentCsar);
                 return $stateParams.componentCsar;
               } else {
                 const emptyComponent = ComponentFactory.createEmptyComponent($stateParams.type.toUpperCase());
@@ -255,6 +314,7 @@ ng1appModule.config([
                 if ($stateParams.importedFile) {
                   (emptyComponent as Resource).importedFile = $stateParams.importedFile;
                 }
+                workspaceService.setComponent(emptyComponent);
                 return emptyComponent;
               }
             }],

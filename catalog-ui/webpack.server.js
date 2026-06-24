@@ -2,10 +2,10 @@ const mockApis = require('./configurations/mock.json').sdcConfig;
 const proxy = require('http-proxy-middleware');
 const devPort = 9000;
 
-const fePort = process.env.SDC_BACKEND_PORT || 443;
-const feHost = process.env.SDC_BACKEND_HOST || "sdc-fe-ui-oom-sm-master.tnaplab.telekom.de";
-const protocol = process.env.SDC_BACKEND_PROTOCOL || "https";
-const isDirectToFE = true;
+const fePort = process.env.SDC_BACKEND_PORT || 8080;
+const feHost = process.env.SDC_BACKEND_HOST || "localhost";
+const protocol = process.env.SDC_BACKEND_PROTOCOL || "http";
+const isDirectToFE = (process.env.SDC_DIRECT_FE || "false") === "true";
 
 const portalCookieValue = "randomValue"; //for dev solely, in production - the webseal would add the cookie by itself.
 
@@ -29,6 +29,38 @@ module.exports = function (env) {
         },
         setup: server => {
             let userType = mockApis.userTypes[env.role];
+
+            server.get('/login', (req, res) => {
+                res.send(`<!DOCTYPE html><html><head><title>Login page</title></head><body>
+<h1>Webseal simulator</h1><h2>Login:</h2>
+<form action="/login" method="post">
+  <div>User id:</div><input type="text" name="userId"><br>
+  <div>Password:</div><input type="password" name="password"><br><br>
+  <input type="submit" value="Login">
+</form></body></html>`);
+            });
+
+            server.post('/login', (req, res) => {
+                let body = '';
+                req.on('data', chunk => { body += chunk; });
+                req.on('end', () => {
+                    const params = new URLSearchParams(body);
+                    const userId = params.get('userId') || userType.userId;
+                    let user = userType;
+                    Object.values(mockApis.userTypes).forEach(u => {
+                        if (u.userId === userId) user = u;
+                    });
+                    res.cookie(mockApis.cookie.userIdSuffix, user.userId);
+                    res.cookie('HTTP_IV_USER', user.userId);
+                    res.cookie(mockApis.cookie.userFirstName, user.firstName);
+                    res.cookie(mockApis.cookie.userLastName, user.lastName);
+                    res.cookie(mockApis.cookie.userEmail, user.email);
+                    res.cookie('HTTP_IV_REMOTE_ADDRESS', '0.0.0.0');
+                    res.cookie('HTTP_CSP_WSTYPE', 'Intranet');
+                    res.cookie(mockApis.cookie.portalCookie, portalCookieValue);
+                    res.redirect('/sdc1');
+                });
+            });
 
             let middlewares = [
                 (req, res, next) => {
