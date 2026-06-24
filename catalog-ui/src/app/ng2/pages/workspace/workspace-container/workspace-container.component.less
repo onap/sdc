@@ -1,0 +1,20 @@
+// Styles are inherited from the existing workspace layout CSS.
+// This file exists for component encapsulation — most styling comes from
+// the global workspace LESS already loaded via webpack.
+// The host renders only the workspace chrome (sidebar, top-bar, breadcrumbs);
+// its inner .w-sdc-main-container is absolutely positioned, so the host itself
+// must NOT consume layout height — otherwise it pushes the sibling ui-view
+// (the child tab content) off-screen.
+:host {
+    display: block;
+}
+
+// Layout-neutral guard wrapper around the chrome content. It exists only so Angular's
+// structural-directive marker class 'ng-star-inserted' lands here instead of on
+// .w-sdc-main-right-container / .sdc-workspace-top-bar (whose class attributes must stay EXACTLY
+// those strings for the Selenium exact-class xpath waits). display:contents makes it render as if
+// it were not there, so the workspace.less '.w-sdc-main-right-container > div:first-child' rules and
+// the absolute layout still apply to the real children (loader/top-bar/...).
+:host ::ng-deep .w-sdc-main-right-container > .w-sdc-main-right-container-content {
+    display: contents;
+}
