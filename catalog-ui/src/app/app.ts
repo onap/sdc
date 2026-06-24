@@ -228,8 +228,7 @@ ng1appModule.config([
             resourceType: null,
             disableButtons: null
           },
-          templateUrl: './view-models/workspace/workspace-view.html',
-          controller: viewModelsModuleName + '.WorkspaceViewModel',
+          template: '<workspace-container inject-component="$resolve.injectComponent"><div ui-view></div></workspace-container>',
           resolve: {
             injectComponent: ['$stateParams', 'ComponentFactory', 'workspaceService', 'Sdc.Services.CacheService', function($stateParams, ComponentFactory: ComponentFactory, workspaceService: WorkspaceService, cacheService: CacheService) {
               if ($stateParams.id && $stateParams.id.length) { // need to check length in case ID is an empty string
