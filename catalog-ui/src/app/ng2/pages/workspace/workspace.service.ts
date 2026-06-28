@@ -40,6 +40,10 @@ export class WorkspaceService {
     // delegate the action methods (create / save / changeLifecycleState) that child
     // tabs invoke via $scope inheritance. Removed in Phase 6b with the shim itself.
     public containerActions: any;
+    // Form validity reported by the active child tab (e.g. GeneralTabComponent's reactive
+    // form). The shell reads this to enable/disable Create and lifecycle buttons. Replaces
+    // the old AngularJS $scope.setValidState / $scope.isValidForm channel.
+    public isValidForm: boolean = true;
 
     constructor(private cacheService:CacheService) {
 
