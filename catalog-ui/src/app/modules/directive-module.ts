@@ -102,6 +102,7 @@ import {TypeWorkspaceComponent} from "../ng2/pages/type-workspace/type-workspace
 import {TypeWorkspaceGeneralComponent} from "../ng2/pages/type-workspace/type-workspace-general/type-workspace-general.component";
 import {DeclareInputComponent} from "../ng2/pages/properties-assignment/declare-input/declare-input.component";
 import {WorkspaceContainerComponent} from "../ng2/pages/workspace/workspace-container/workspace-container.component";
+import {GeneralTabComponent} from "../ng2/pages/workspace/general-tab/general-tab.component";
 
 let moduleName: string = 'Sdc.Directives';
 let directiveModule: ng.IModule = angular.module(moduleName, []);
@@ -360,5 +361,10 @@ directiveModule.directive('declareInput', downgradeComponent({
 
 directiveModule.directive('workspaceContainer', downgradeComponent({
   component: WorkspaceContainerComponent,
+  propagateDigest: false
+}) as angular.IDirectiveFactory);
+
+directiveModule.directive('generalTab', downgradeComponent({
+  component: GeneralTabComponent,
   propagateDigest: false
 }) as angular.IDirectiveFactory);
