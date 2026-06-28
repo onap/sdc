@@ -1,0 +1,187 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * SDC
+ * ================================================================================
+ * Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
+@import '../../../../../assets/styles/variables.less';
+@import '../../../../../assets/styles/variables-old.less';
+@import '../../../../../assets/styles/mixins_old.less';
+.sdc-workspace-general-step {
+    display: flex;
+    flex-direction: column;
+    .w-sdc-main-container-body-content-action-buttons{
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    .w-sdc-form {
+        padding: 0;
+        flex-grow: 10;
+        .i-sdc-form-file-upload{
+            input[type="button"] {
+                cursor: pointer;
+                display: block;
+                filter: alpha(opacity=0);
+                width: 100px;
+                height: 30px;
+                opacity: 0;
+                position: absolute;
+                right: 0;
+                text-align: right;
+                top: 0;
+            }
+
+            .file-upload-browse-btn {
+                .noselect;
+                .bg_n;
+                color:#191919;
+                padding: 4px 6px;
+                cursor: pointer;
+                z-index: 999;
+                width: 100px;
+                height: 28px;
+                text-align: center;
+                border-left: solid 1px #cfcfcf;
+
+                &:hover:not(.disabled) {
+                    background-color: #dbdee2;
+                }
+            }
+        }
+
+        .description{
+            height: 360px;
+        }
+
+        .i-sdc-form-item.description-field{
+            margin-bottom: 0;
+        }
+
+        .w-sdc-form-section-container {
+            text-align: center;
+        }
+
+        .i-sdc-form-item {
+            &.upload {
+                margin-top: 0;
+                width: auto;
+                padding: 10px;
+            }
+            margin-bottom: 15px;
+        }
+
+        .i-sdc-form-label {
+            font-size: 12px;
+        }
+
+        .template-desc {
+            border: 1px dashed @border_color_f;
+            height: 130px;
+            overflow: hidden;
+            padding: 10px 6px 6px 6px;
+            margin-top: 10px;
+        }
+
+        .sdc-tag .tag {
+            max-width: 225px;
+        }
+
+    }
+
+    .w-sdc-form-column {
+        position: relative;
+    }
+
+    .meta-data{
+        padding: 8px 0 2px 20px;
+        text-align: left;
+        background-color: @tlv_color_t;
+        position: relative;
+        width: 100%;
+        .meta-data-item-value{
+            padding-bottom: 6px;
+        }
+    }
+
+    .upper-general-fields{
+        display: flex;
+    }
+
+    .selected-icon-container{
+        flex-grow: 1;
+        display: flex;
+        align-items: center;
+        .selected-icon-inner-container{
+            height: 60px;
+            width: 60px;
+            margin: 0 auto;
+        }
+        .update-component-icon{
+            position: relative;
+            float: right;
+            cursor: pointer;
+            z-index: 1;
+        }
+        .selected-icon{
+            position: relative;
+            top: -20px;
+            &.disable{
+                position: inherit;
+            }
+        }
+        &.show-only-on-over{
+            .update-component-icon{
+                display: none;
+            }
+            .selected-icon{
+                position: inherit;
+            }
+            &:hover{
+                .update-component-icon{
+                    display: inline-block;
+                }
+                .selected-icon{
+                    position: relative;
+                }
+            }
+        }
+    }
+
+    .name-and-category-fields{
+        flex-grow: 5;
+    }
+
+
+    .unsaved-file-warning {
+        border: solid 1px #ffb81c;
+        padding: 5px 8px;
+        display: flex;
+        align-items: center;
+        color: #ffb81c;
+        margin-right: 10px;
+        border-radius: 2px;
+        .sdc-warning {
+            margin-right:4px;
+        }
+    }
+
+    .revert-btn {
+        margin-left: 10px;
+    }
+
+}

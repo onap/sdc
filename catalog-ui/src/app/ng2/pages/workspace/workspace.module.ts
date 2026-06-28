@@ -1,9 +1,12 @@
 import {NgModule, CUSTOM_ELEMENTS_SCHEMA} from "@angular/core";
 import {CommonModule} from "@angular/common";
-import {FormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {CompositionPageModule} from "../composition/composition-page.module";
 import {SdcUiComponentsModule} from "onap-ui-angular";
 import {LayoutModule} from "../../components/layout/layout.module";
+import {GeneralTabComponent} from "./general-tab/general-tab.component";
+import {GeneralFormService} from "./general-tab/general-form.service";
+import {ComponentMetadataService} from "./general-tab/component-metadata.service";
 
 import {NgxsModule} from "@ngxs/store";
 import {TopologyTemplateService} from "../../services/component-services/topology-template.service";
@@ -23,10 +26,11 @@ import {WorkspaceContainerComponent} from './workspace-container/workspace-conta
 import {WorkspaceTopProgressComponent} from './workspace-container/top-progress.component';
 
 @NgModule({
-    declarations: [WorkspaceContainerComponent, WorkspaceTopProgressComponent],
+    declarations: [WorkspaceContainerComponent, WorkspaceTopProgressComponent, GeneralTabComponent],
     imports: [
         CommonModule,
         FormsModule,
+        ReactiveFormsModule,
         SdcUiComponentsModule,
         LayoutModule,
         DeploymentPageModule,
@@ -41,9 +45,9 @@ import {WorkspaceTopProgressComponent} from './workspace-container/top-progress.
         NgxsModule.forFeature([WorkspaceState, ArtifactsState, InstanceArtifactsState])
     ],
 
-    exports: [WorkspaceContainerComponent],
-    entryComponents: [WorkspaceContainerComponent],
-    providers: [TopologyTemplateService, WorkspaceService],
+    exports: [WorkspaceContainerComponent, GeneralTabComponent],
+    entryComponents: [WorkspaceContainerComponent, GeneralTabComponent],
+    providers: [TopologyTemplateService, WorkspaceService, GeneralFormService, ComponentMetadataService],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 
