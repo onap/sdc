@@ -30,7 +30,6 @@ import {AdminDashboardViewModel} from "../view-models/admin-dashboard/admin-dash
 import {UserManagementViewModel} from "../view-models/admin-dashboard/user-management/user-management-view-model";
 import {CategoryManagementViewModel} from "../view-models/admin-dashboard/category-management/category-management-view-model";
 import {DcaeAppViewModel} from "../view-models/dcae-app/dcae-app-view-model";
-import {GeneralViewModel} from "../view-models/workspace/tabs/general/general-view-model";
 import {IconsModalViewModel} from "../view-models/modals/icons-modal/icons-modal-view";
 import {PropertiesViewModel} from "../view-models/workspace/tabs/properties/properties-view-model";
 import {ManagementWorkflowViewModel} from "../view-models/workspace/tabs/management-workflow/management-workflow-view-model";
@@ -61,7 +60,6 @@ viewModelModule
   //
   // //NEW
   .controller(moduleName + '.WorkspaceViewModel', WorkspaceViewModel)
-  .controller(moduleName + '.GeneralViewModel', GeneralViewModel)
   .controller(moduleName + '.PropertiesViewModel', PropertiesViewModel)
   .controller(moduleName + '.ManagementWorkflowViewModel', ManagementWorkflowViewModel)
   .controller(moduleName + '.InterfaceOperationViewModel', InterfaceOperationViewModel)
