@@ -283,9 +283,6 @@ ng1appModule.config([
               $scope.create = () => { if (actions()) { actions().create(); } };
               $scope.changeLifecycleState = (state) => { if (actions()) { actions().changeLifecycleState(state); } };
               $scope.handleChangeLifecycleState = (state, newCsarVersion, onError) => { if (actions()) { actions().handleChangeLifecycleState(state, newCsarVersion, onError); } };
-              // save (edit flow) is not yet ported to the Angular shell — return a resolved
-              // promise so child .then() chains don't crash. Edit-save is Phase 3 (General tab).
-              $scope.save = () => (actions() && actions().save ? actions().save() : Promise.resolve());
               $scope.reload = (component) => { if (actions()) { actions().reload(component); } };
           }],
           resolve: {
@@ -327,8 +324,7 @@ ng1appModule.config([
         States.WORKSPACE_GENERAL, {
           url: 'general',
           parent: 'workspace',
-          controller: viewModelsModuleName + '.GeneralViewModel',
-          templateUrl: './view-models/workspace/tabs/general/general-view.html',
+          template: '<general-tab></general-tab>',
           data: {unsavedChanges: false, bodyClass: 'general'}
         }
     );
