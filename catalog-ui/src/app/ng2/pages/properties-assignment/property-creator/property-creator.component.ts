@@ -6,7 +6,7 @@ import { DataTypeService } from 'app/ng2/services/data-type.service';
 import { PROPERTY_DATA } from 'app/utils';
 import * as _ from 'lodash';
 import { PROPERTY_TYPES } from '../../../../utils';
-import {Validation} from "../../../../view-models/workspace/tabs/general/general-view-model";
+import {Validation} from "../../../../models/validation-config";
 import {WorkspaceService} from "../../workspace/workspace.service";
 
 @Component({

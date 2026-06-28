@@ -1,0 +1,395 @@
+<div class="sdc-workspace-general-step">
+  <div class="w-sdc-main-container-body-content-action-buttons">
+    <div *ngIf="component?.importedFile?.filename && !isCreateMode() && !isViewMode()"
+         data-tests-id="save-warning" class="unsaved-file-warning">
+      <span class="sprite-new sdc-warning"></span> Click save to update to the new VSP
+    </div>
+    <button class="tlv-btn blue"
+            *ngIf="isEditMode()"
+            [disabled]="!form.valid || isViewMode() || isCreateMode()"
+            (click)="save()"
+            data-tests-id="create/save">Save</button>
+    <span *ngIf="isEditMode()"
+          (click)="revert()"
+          class="sprite-new revert-btn"
+          data-tests-id="revert"></span>
+  </div>
+
+  <form [formGroup]="form" novalidate class="w-sdc-form">
+
+    <div class="w-sdc-form-section-container">
+      <div class="w-sdc-form-columns-wrapper">
+
+        <!-- ==================== LEFT COLUMN ==================== -->
+        <div class="w-sdc-form-column">
+          <div class="upper-general-fields">
+            <div class="selected-icon-container">
+              <div class="selected-icon-inner-container">
+                <div class="i-sdc-form-item-suggested-icon large selected-icon {{component?.iconSprite}} {{component?.icon}}"
+                     [class.disable]="isViewMode()">
+                </div>
+              </div>
+            </div>
+
+            <div class="name-and-category-fields">
+              <!-- NAME -->
+              <div class="i-sdc-form-item" [class.error]="form.get('name').invalid && form.get('name').touched">
+                <label class="i-sdc-form-label required">Name</label>
+                <input class="i-sdc-form-input"
+                       [class.view-mode]="isViewMode()"
+                       formControlName="name"
+                       type="text"
+                       maxlength="1024"
+                       [attr.disabled]="isViewMode() ? '' : null"
+                       data-tests-id="name"
+                       autofocus/>
+                <div class="input-error" *ngIf="form.get('name').invalid && form.get('name').touched">
+                  <span *ngIf="form.get('name').errors?.required">Name is required.</span>
+                  <span *ngIf="form.get('name').errors?.pattern">Name contains invalid characters.</span>
+                </div>
+              </div>
+
+              <!-- MODEL -->
+              <div class="i-sdc-form-item">
+                <label class="i-sdc-form-label required">Model</label>
+                <select class="i-sdc-form-select"
+                        [class.view-mode]="isViewMode()"
+                        formControlName="model"
+                        (change)="onModelChange()"
+                        data-tests-id="selectModelName">
+                  <option value="">{{defaultModelOption || ''}}</option>
+                  <option *ngFor="let m of models" [value]="m">{{m}}</option>
+                </select>
+              </div>
+
+              <!-- CATEGORIES -->
+              <div class="i-sdc-form-item" [class.error]="form.get('category').invalid && form.get('category').touched">
+                <label class="i-sdc-form-label required">Category</label>
+                <select class="i-sdc-form-select"
+                        [class.view-mode]="isViewMode()"
+                        formControlName="category"
+                        (change)="onCategoryChange()"
+                        [attr.disabled]="isViewMode() ? '' : null"
+                        data-tests-id="selectGeneralCategory">
+                  <option value="">Select category</option>
+                  <ng-container *ngIf="component?.isResource()">
+                    <optgroup *ngFor="let mainCategory of categories"
+                              [label]="mainCategory.name"
+                              [attr.data-tests-id]="mainCategory.name">
+                      <option *ngFor="let subCategory of mainCategory.subcategories"
+                              [value]="mainCategory.name + '_#_' + subCategory.name"
+                              [attr.data-tests-id]="subCategory.name">{{subCategory.name}}</option>
+                    </optgroup>
+                  </ng-container>
+                  <ng-container *ngIf="component?.isService()">
+                    <option *ngFor="let mainCategory of categories"
+                            [value]="mainCategory.name"
+                            [attr.data-tests-id]="mainCategory.name">{{mainCategory.name}}</option>
+                  </ng-container>
+                </select>
+                <div class="input-error" *ngIf="form.get('category').invalid && form.get('category').touched">
+                  <span *ngIf="form.get('category').errors?.required">Category is required.</span>
+                </div>
+              </div>
+            </div><!-- /name-and-category-fields -->
+          </div><!-- /upper-general-fields -->
+
+          <!-- CATEGORY SPECIFIC METADATA
+               Note: Angular 5 does not have the keyvalue pipe (added in 6.1).
+               We use the categorySpecificMetadataEntries getter instead. -->
+          <ng-container *ngFor="let entry of categorySpecificMetadataEntries">
+            <div *ngIf="entry.value !== null && entry.value !== undefined"
+                 class="i-sdc-form-item">
+              <label class="i-sdc-form-label">{{entry.key}}</label>
+              <input class="i-sdc-form-input" type="text"
+                     [class.view-mode]="isViewMode()"
+                     [value]="entry.value"
+                     (input)="onCategoryMetadataChange(entry.key, $event.target.value)"
+                     [attr.name]="entry.key"
+                     [attr.data-tests-id]="entry.key"
+                     [attr.disabled]="isViewMode() ? '' : null"/>
+            </div>
+          </ng-container>
+
+          <!-- TAGS -->
+          <div class="i-sdc-form-item">
+            <label class="i-sdc-form-label">Tags</label>
+            <div class="tags-box">
+              <input type="text"
+                     class="new-tag-input"
+                     [class.view-mode]="isViewMode()"
+                     [(ngModel)]="newTag"
+                     [ngModelOptions]="{standalone: true}"
+                     maxlength="50"
+                     data-tests-id="i-sdc-tag-input"
+                     [attr.disabled]="isViewMode() ? '' : null"
+                     (keydown.enter)="$event.preventDefault(); addTag()"/>
+              <div data-tests-id="i-sdc-tags-wrapper" class="tags-wrapper">
+                <div class="group-tag" *ngFor="let tag of displayedTags">
+                  <div class="sdc-tag">
+                    <div class="tag" data-tests-id="i-sdc-tag-text">{{tag}}</div>
+                    <div class="delete" *ngIf="!isViewMode()" (click)="deleteTag(tag)" data-tests-id="i-sdc-tag-delete">
+                      <span class="delete-icon"></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- DESCRIPTION -->
+          <div class="i-sdc-form-item description-field"
+               [class.error]="form.get('description').invalid && form.get('description').touched">
+            <label class="i-sdc-form-label required">Description</label>
+            <textarea class="description"
+                      [class.view-mode]="isViewMode()"
+                      formControlName="description"
+                      maxlength="1024"
+                      data-tests-id="description"></textarea>
+            <div class="input-error" *ngIf="form.get('description').invalid && form.get('description').touched">
+              <span *ngIf="form.get('description').errors?.required">Description is required.</span>
+              <span *ngIf="form.get('description').errors?.maxlength">Description is too long (max 1024).</span>
+            </div>
+          </div>
+
+        </div><!-- /left column -->
+
+        <!-- ==================== RIGHT COLUMN ==================== -->
+        <div class="w-sdc-form-column">
+
+          <!-- IMPORT TOSCA FILE VIA BROWSE (non-VSP) -->
+          <div class="i-sdc-form-item" *ngIf="!isVspImport()">
+            <label class="i-sdc-form-label">Browse to select file</label>
+            <input type="file"
+                   class="i-sdc-form-input"
+                   [attr.disabled]="isViewMode() || component?.vspArchived ? '' : null"
+                   (change)="onImportFileChange()"/>
+          </div>
+
+          <!-- IMPORT TOSCA FILE VIA ONBOARDING (VSP) -->
+          <div class="i-sdc-form-item" *ngIf="isVspImport()">
+            <label class="i-sdc-form-label required">VSP</label>
+            <div class="i-sdc-form-file-upload i-sdc-form-input">
+              <span class="i-sdc-form-file-name"
+                    data-tests-id="filename">{{component?.importedFile?.filename || ''}}</span>
+              <input type="button"
+                     [class.disabled]="!isEditMode() && component?.vspArchived"
+                     [attr.disabled]="component?.vspArchived ? '' : null"
+                     name="fileElement"/>
+              <div class="file-upload-browse-btn"
+                   [class.disabled]="!isEditMode() && !component?.vspArchived"
+                   (click)="openOnBoardingModal()"
+                   data-tests-id="browseButton">Browse</div>
+            </div>
+          </div>
+
+          <!-- CONTACT ID -->
+          <div class="i-sdc-form-item" [class.error]="form.get('contactId').invalid && form.get('contactId').touched">
+            <label class="i-sdc-form-label required">Contact ID</label>
+            <input class="i-sdc-form-input" type="text"
+                   [class.view-mode]="isViewMode()"
+                   formControlName="contactId"
+                   maxlength="50"
+                   data-tests-id="contactId"/>
+            <div class="input-error" *ngIf="form.get('contactId').invalid && form.get('contactId').touched">
+              <span *ngIf="form.get('contactId').errors?.required">Contact ID is required.</span>
+              <span *ngIf="form.get('contactId').errors?.maxlength">Contact ID exceeds maximum length (50).</span>
+              <span *ngIf="form.get('contactId').errors?.pattern">Contact ID is not valid.</span>
+            </div>
+          </div>
+
+          <!-- VENDOR NAME (resource only) -->
+          <div class="i-sdc-form-item" *ngIf="component?.isResource()"
+               [class.error]="form.get('vendorName').invalid && form.get('vendorName').touched">
+            <label class="i-sdc-form-label required">Vendor Name</label>
+            <input class="i-sdc-form-input" type="text"
+                   [class.view-mode]="isViewMode()"
+                   formControlName="vendorName"
+                   maxlength="60"
+                   data-tests-id="vendorName"/>
+            <div class="input-error" *ngIf="form.get('vendorName').invalid && form.get('vendorName').touched">
+              <span *ngIf="form.get('vendorName').errors?.required">Vendor Name is required.</span>
+              <span *ngIf="form.get('vendorName').errors?.maxlength">Vendor Name exceeds maximum length (60).</span>
+            </div>
+          </div>
+
+          <!-- VENDOR RELEASE (resource only) -->
+          <div class="i-sdc-form-item" *ngIf="component?.isResource()"
+               [class.error]="form.get('vendorRelease').invalid && form.get('vendorRelease').touched">
+            <label class="i-sdc-form-label required">Vendor Release</label>
+            <input class="i-sdc-form-input" type="text"
+                   [class.view-mode]="isViewMode()"
+                   formControlName="vendorRelease"
+                   maxlength="25"
+                   data-tests-id="vendorRelease"/>
+            <div class="input-error" *ngIf="form.get('vendorRelease').invalid && form.get('vendorRelease').touched">
+              <span *ngIf="form.get('vendorRelease').errors?.required">Vendor Release is required.</span>
+              <span *ngIf="form.get('vendorRelease').errors?.maxlength">Vendor Release exceeds maximum length (25).</span>
+            </div>
+          </div>
+
+          <!-- RESOURCE VENDOR MODEL NUMBER (resource only) -->
+          <div class="i-sdc-form-item" *ngIf="component?.isResource()"
+               [class.error]="form.get('resourceVendorModelNumber').invalid && form.get('resourceVendorModelNumber').touched">
+            <label class="i-sdc-form-label">Vendor Model Number</label>
+            <input class="i-sdc-form-input" type="text"
+                   [class.view-mode]="isViewMode()"
+                   formControlName="resourceVendorModelNumber"
+                   maxlength="65"
+                   data-tests-id="resourceVendorModelNumber"/>
+            <div class="input-error" *ngIf="form.get('resourceVendorModelNumber').invalid && form.get('resourceVendorModelNumber').touched">
+              <span *ngIf="form.get('resourceVendorModelNumber').errors?.maxlength">Vendor Model Number exceeds maximum length (65).</span>
+            </div>
+          </div>
+
+          <!-- ECOMP GENERATED NAMING (service only) -->
+          <div class="i-sdc-form-item" *ngIf="component?.isService()">
+            <label class="i-sdc-form-label">Generated Naming</label>
+            <select class="i-sdc-form-select"
+                    [class.view-mode]="isViewMode()"
+                    formControlName="ecompGeneratedNaming"
+                    data-tests-id="ecompGeneratedNaming">
+              <option [ngValue]="true">true</option>
+              <option [ngValue]="false">false</option>
+            </select>
+          </div>
+
+          <!-- NAMING POLICY (service only) -->
+          <div class="i-sdc-form-item" *ngIf="component?.isService()">
+            <label class="i-sdc-form-label">Naming Policy</label>
+            <input class="i-sdc-form-input" type="text"
+                   [class.view-mode]="isViewMode()"
+                   formControlName="namingPolicy"
+                   maxlength="100"
+                   data-tests-id="namingPolicy"/>
+            <div class="input-error" *ngIf="form.get('namingPolicy').invalid && form.get('namingPolicy').touched">
+              <span *ngIf="form.get('namingPolicy').errors?.maxlength">Naming Policy exceeds maximum length (100).</span>
+            </div>
+          </div>
+
+          <!-- SERVICE TYPE (service only) -->
+          <div class="i-sdc-form-item" *ngIf="component?.isService()">
+            <label class="i-sdc-form-label">Service Type</label>
+            <input class="i-sdc-form-input" type="text"
+                   [class.view-mode]="isViewMode()"
+                   formControlName="serviceType"
+                   maxlength="256"
+                   data-tests-id="serviceType"/>
+            <div class="input-error" *ngIf="form.get('serviceType').invalid && form.get('serviceType').touched">
+              <span *ngIf="form.get('serviceType').errors?.maxlength">Service Type exceeds maximum length (256).</span>
+            </div>
+          </div>
+
+          <!-- SERVICE ROLE (service only) — dropdown with "Others" free-text fallback -->
+          <div class="i-sdc-form-item" *ngIf="component?.isService()">
+            <label class="i-sdc-form-label">Service Role</label>
+            <select class="i-sdc-form-input"
+                    [class.view-mode]="isViewMode()"
+                    name="roleOption"
+                    data-tests-id="roleOption"
+                    [attr.disabled]="isViewMode() ? '' : null"
+                    [value]="form.get('serviceRole').value"
+                    (change)="form.get('serviceRole').setValue($event.target.value)">
+              <option *ngFor="let val of component?.serviceRoleValues" [value]="val">{{val}}</option>
+            </select>
+            <input class="i-sdc-form-input" type="text"
+                   [class.view-mode]="isViewMode()"
+                   formControlName="serviceRole"
+                   maxlength="256"
+                   data-tests-id="serviceRole"/>
+          </div>
+
+          <!-- SERVICE FUNCTION (service only) — dropdown with "Others" free-text fallback -->
+          <div class="i-sdc-form-item" *ngIf="component?.isService()">
+            <label class="i-sdc-form-label">Service Function</label>
+            <select class="i-sdc-form-input"
+                    [class.view-mode]="isViewMode()"
+                    name="functionOption"
+                    data-tests-id="functionOption"
+                    [attr.disabled]="isViewMode() ? '' : null"
+                    [value]="form.get('serviceFunction').value"
+                    (change)="form.get('serviceFunction').setValue($event.target.value)">
+              <option *ngFor="let val of component?.serviceFunctionValues" [value]="val">{{val}}</option>
+            </select>
+            <input class="i-sdc-form-input" type="text"
+                   [class.view-mode]="isViewMode()"
+                   formControlName="serviceFunction"
+                   maxlength="256"
+                   data-tests-id="serviceFunction"/>
+          </div>
+
+          <!-- ENVIRONMENT CONTEXT (service only) -->
+          <div class="i-sdc-form-item" *ngIf="component?.isService()">
+            <label class="i-sdc-form-label">Environment Context</label>
+            <select class="i-sdc-form-select"
+                    [class.view-mode]="isViewMode()"
+                    formControlName="environmentContext"
+                    data-tests-id="environmentContext">
+              <option *ngFor="let environmentContextVal of environmentContextObj?.validValues"
+                      [value]="environmentContextVal"
+                      [attr.data-tests-id]="environmentContextVal">{{environmentContextVal}}</option>
+            </select>
+          </div>
+
+          <!-- INSTANTIATION TYPE (service only) -->
+          <div class="i-sdc-form-item" *ngIf="component?.isService()">
+            <label class="i-sdc-form-label">Instantiation Type</label>
+            <select class="i-sdc-form-select"
+                    [class.view-mode]="isViewMode()"
+                    formControlName="instantiationType"
+                    [attr.disabled]="isViewMode() ? '' : null"
+                    data-tests-id="selectInstantiationType">
+              <option *ngFor="let type of instantiationTypes" [value]="type">{{type}}</option>
+            </select>
+          </div>
+
+          <!-- BASE TYPE (service only) -->
+          <div class="w-sdc-form-columns-wrapper" *ngIf="component?.isService()">
+            <div class="w-sdc-form-column">
+              <div class="i-sdc-form-item">
+                <label class="i-sdc-form-label">Substitution Node Type</label>
+                <select class="i-sdc-form-select"
+                        [class.view-mode]="isViewMode()"
+                        name="baseType"
+                        [attr.disabled]="isViewMode() ? '' : null"
+                        [value]="component?.derivedFromGenericType"
+                        (change)="onBaseTypeChange($event.target.value)"
+                        data-tests-id="selectBaseType">
+                  <option value="">None</option>
+                  <option *ngFor="let type of baseTypes" [value]="type">{{type}}</option>
+                </select>
+              </div>
+            </div>
+            <div class="w-sdc-form-column">
+              <div class="i-sdc-form-item" *ngIf="component?.derivedFromGenericType">
+                <label class="i-sdc-form-label">Substitution Node Type Version</label>
+                <select class="i-sdc-form-select"
+                        [class.view-mode]="isViewMode()"
+                        name="baseTypeVersion"
+                        [attr.disabled]="isViewMode() ? '' : null"
+                        [value]="component?.derivedFromGenericVersion"
+                        (change)="component.derivedFromGenericVersion = $event.target.value"
+                        data-tests-id="selectBaseTypeVersion">
+                  <option *ngFor="let version of baseTypeVersions" [value]="version">{{version}}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- METADATA (created/modified/uuid) -->
+          <div class="meta-data" *ngIf="component?.creationDate">
+            <div><strong>Created:</strong></div>
+            <div class="meta-data-item-value">{{component?.creationDate | date:'MM/dd/yyyy'}}, {{component?.creatorFullName}}</div>
+            <div><strong>Modified:</strong></div>
+            <div class="meta-data-item-value">{{component?.lastUpdateDate | date:'MM/dd/yyyy'}}</div>
+            <div><strong>UUID:</strong></div>
+            <div class="meta-data-item-value">{{component?.uuid}}</div>
+            <div><strong>Invariant UUID:</strong></div>
+            <div class="meta-data-item-value">{{component?.invariantUUID}}</div>
+          </div>
+
+        </div><!-- /right column -->
+      </div><!-- /columns-wrapper -->
+    </div><!-- /section-container -->
+  </form>
+</div>

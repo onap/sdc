@@ -149,36 +149,6 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
         this.$rootScope = this.$injector.get('$rootScope');
     }
 
-    // The General-tab form fields use AngularJS ng-model with `data-ng-model-options="{debounce:500}"`
-    // (name, description, vendor*, etc.). Our Angular Create handler runs OUTSIDE the AngularJS
-    // digest, so a Selenium-speed "fill fields then click Create" leaves the last-entered fields'
-    // debounced writes uncommitted: the component is POSTed without e.g. description -> backend 400
-    // (description required) -> create fails fast -> the loader only flashes for tens of ms and
-    // LoaderHelper.waitForLoader misses it (surfacing as a misleading "loader not visible" timeout).
-    // A plain $digest does NOT flush a pending debounce ($timeout-based); calling $commitViewValue()
-    // on each ng-model control DOES. Find the General form (editForm) via the rendered DOM scope and
-    // commit all controls so this.component is current before create() reads/submits it.
-    private commitPendingFormValues(): void {
-        try {
-            const ng = (window as any).angular;
-            if (!ng) { return; }
-            const formEl = document.querySelector('form[name="editForm"]');
-            const scope = formEl ? ng.element(formEl).scope() : null;
-            const form = scope ? scope['editForm'] : null;
-            if (form) {
-                Object.keys(form).forEach((k) => {
-                    const ctrl = form[k];
-                    if (ctrl && typeof ctrl.$commitViewValue === 'function') {
-                        ctrl.$commitViewValue();
-                    }
-                });
-            }
-            if (this.$rootScope && !this.$rootScope.$$phase) {
-                this.$rootScope.$digest();
-            }
-        } catch (e) { /* best-effort: if no form/digest in flight, the model is already current */ }
-    }
-
     private initWorkspace(): void {
         const raw = this.injectComponent;
         if (!raw) { return; }
@@ -356,7 +326,6 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
     // --- Create (the shell's Create button in CREATE mode) ---
 
     create = (): void => {
-        this.commitPendingFormValues(); // flush debounced ng-model writes before reading this.component
         this.startProgress('Creating Asset...');
         _.first(this.leftBarTabs.menuItems).isDisabled = true; // disable General tab during create (DE246274)
         this.cdr.detectChanges(); // render the create loader before the (async) server call
