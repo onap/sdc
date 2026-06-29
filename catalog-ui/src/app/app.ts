@@ -556,8 +556,13 @@ ng1appModule.config([
         States.WORKSPACE_INTERFACE_OPERATION, {
           url: 'interface_operation',
           parent: 'workspace',
-          controller: viewModelsModuleName + '.InterfaceOperationViewModel',
-          templateUrl: './view-models/workspace/tabs/interface-operation/interface-operation-view.html',
+          // Migrated off AngularJS: the empty InterfaceOperationViewModel shim + wrapper HTML are gone.
+          // The downgraded <interface-operation> reads `component`/`isViewMode`/`isDesigner` from the
+          // inherited workspace shim $scope (the workspace state), exactly as the old wrapper did.
+          // disableMenuItems/enableMenuItems were never delivered (not in the downgrade `inputs`) so
+          // they are dropped. The .workspace-interface-operation wrapper is kept because its styling
+          // (interface-operation.less, imported by app.less) positions the content (top: -26px).
+          template: '<div class="workspace-interface-operation"><interface-operation [component]="component" [readonly]="isViewMode() || !isDesigner()"></interface-operation></div>',
           data: {
             bodyClass: 'interface_operation'
           }
@@ -568,8 +573,10 @@ ng1appModule.config([
         States.WORKSPACE_INTERFACE_DEFINITION, {
           url: 'interfaceDefinition',
           parent: 'workspace',
-          controller: viewModelsModuleName + '.InterfaceDefinitionViewModel',
-          templateUrl: './view-models/workspace/tabs/interface-definition/interface-definition-view.html',
+          // Migrated off AngularJS: see the interface_operation state above. The downgraded
+          // <interface-definition> reads `component`/`isViewMode`/`isDesigner` from the inherited
+          // workspace shim $scope; disableMenuItems/enableMenuItems were never delivered so are dropped.
+          template: '<div class="workspace-interface-definition"><interface-definition [component]="component" [readonly]="isViewMode() || !isDesigner()"></interface-definition></div>',
           data: {
             bodyClass: 'interfaceDefinition'
           }

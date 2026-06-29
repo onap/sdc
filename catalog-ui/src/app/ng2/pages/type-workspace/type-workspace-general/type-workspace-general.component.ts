@@ -23,7 +23,7 @@ import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/c
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {DataTypeModel} from "../../../../models/data-types";
 import {DEFAULT_MODEL_NAME} from "app/utils/constants";
-import {IWorkspaceViewModelScope} from "../../../../view-models/workspace/workspace-view-model";
+import {IWorkspaceViewModelScope} from "../../../../view-models/workspace/workspace-view-model-scope";
 import {ServiceDataTypeReader} from "../../../../utils/service-data-type-reader";
 import {TranslateService} from "../../../shared/translator/translate.service";
 import {SdcUiServices} from "onap-ui-angular/dist";

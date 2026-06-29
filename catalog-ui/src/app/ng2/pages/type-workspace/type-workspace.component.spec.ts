@@ -43,7 +43,7 @@ import {NgxDatatableModule} from "@swimlane/ngx-datatable";
 import {SvgIconModule} from "onap-ui-angular/dist/svg-icon/svg-icon.module";
 import {NO_ERRORS_SCHEMA} from "@angular/core";
 import {IScope} from "angular";
-import {IWorkspaceViewModelScope} from "../../../view-models/workspace/workspace-view-model";
+import {IWorkspaceViewModelScope} from "../../../view-models/workspace/workspace-view-model-scope";
 import {ModelService} from "../../services/model.service";
 import {NavigationService} from "../../services/navigation.service";
 

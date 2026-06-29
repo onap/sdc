@@ -25,7 +25,7 @@ import {CacheService} from "../../../services/cache.service";
 import {IAppMenu} from "../../../../models/app-config";
 import {IUserProperties} from "../../../../models/user";
 import {SdcMenuToken} from "../../../config/sdc-menu.config";
-import {IWorkspaceViewModelScope} from "../../../../view-models/workspace/workspace-view-model";
+import {IWorkspaceViewModelScope} from "../../../../view-models/workspace/workspace-view-model-scope";
 
 @Component({
     selector: 'app-workspace-menu',

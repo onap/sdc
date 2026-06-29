@@ -22,7 +22,7 @@
 import {ArtifactType} from "app/utils";
 import {ArtifactGroupModel} from "app/models";
 import {participant} from "app/view-models/workspace/tabs/network-call-flow/network-call-flow-view-model";
-import {IWorkspaceViewModelScope} from "app/view-models/workspace/workspace-view-model";
+import {IWorkspaceViewModelScope} from "app/view-models/workspace/workspace-view-model-scope";
 import {ComponentGenericResponse} from "../../../../ng2/services/responses/component-generic-response";
 import {ComponentServiceNg2} from "../../../../ng2/services/component-services/component.service";
 declare var PunchOutRegistry;

@@ -30,7 +30,7 @@ import {Observable} from "rxjs/Observable";
 import {DataTypeModel} from "../../../../models/data-types";
 import {DataTypeService} from "../../../services/data-type.service";
 import {ModelService} from "../../../services/model.service";
-import {IWorkspaceViewModelScope} from "../../../../view-models/workspace/workspace-view-model";
+import {IWorkspaceViewModelScope} from "../../../../view-models/workspace/workspace-view-model-scope";
 import {IScope} from "angular";
 import {States} from "../../../../utils/constants";
 import {NavigationService} from "../../../services/navigation.service";

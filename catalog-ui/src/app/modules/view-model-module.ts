@@ -19,7 +19,6 @@
  */
 
 import {AddCategoryModalViewModel} from "../view-models/admin-dashboard/add-category-modal/add-category-modal-view-model";
-import {WorkspaceViewModel} from "../view-models/workspace/workspace-view-model";
 import {PropertyFormBaseView} from "../view-models/forms/property-forms/base-property-form/property-form-base-model";
 import {PropertyFormViewModel} from "../view-models/forms/property-forms/component-property-form/property-form-view-model";
 import {ModulePropertyView} from "../view-models/forms/property-forms/module-property-modal/module-property-model";
@@ -33,9 +32,7 @@ import {DcaeAppViewModel} from "../view-models/dcae-app/dcae-app-view-model";
 import {IconsModalViewModel} from "../view-models/modals/icons-modal/icons-modal-view";
 import {PropertiesViewModel} from "../view-models/workspace/tabs/properties/properties-view-model";
 import {ManagementWorkflowViewModel} from "../view-models/workspace/tabs/management-workflow/management-workflow-view-model";
-import {InterfaceOperationViewModel} from "../view-models/workspace/tabs/interface-operation/interface-operation-view-model";
 import {NetworkCallFlowViewModel} from "../view-models/workspace/tabs/network-call-flow/network-call-flow-view-model";
-import {InterfaceDefinitionViewModel} from "../view-models/workspace/tabs/interface-definition/interface-definition-view-model";
 import {TypeWorkspaceComponent} from "../ng2/pages/type-workspace/type-workspace.component";
 import {downgradeComponent} from "@angular/upgrade/static";
 import {WorkspaceMenuComponent} from "../ng2/pages/type-workspace/workspace-menu/workspace-menu.component";
@@ -57,13 +54,8 @@ viewModelModule
   .controller(moduleName + '.CategoryManagementViewModel', CategoryManagementViewModel)
   .controller(moduleName + '.IconsModalViewModel', IconsModalViewModel)
   .controller(moduleName + '.DcaeAppViewModel', DcaeAppViewModel)
-  //
-  // //NEW
-  .controller(moduleName + '.WorkspaceViewModel', WorkspaceViewModel)
   .controller(moduleName + '.PropertiesViewModel', PropertiesViewModel)
   .controller(moduleName + '.ManagementWorkflowViewModel', ManagementWorkflowViewModel)
-  .controller(moduleName + '.InterfaceOperationViewModel', InterfaceOperationViewModel)
-  .controller(moduleName + '.InterfaceDefinitionViewModel', InterfaceDefinitionViewModel)
   .controller(moduleName + '.NetworkCallFlowViewModel', NetworkCallFlowViewModel)
   .controller(moduleName + '.TypeWorkspaceComponent', downgradeComponent({ component: TypeWorkspaceComponent }))
   .controller(moduleName + '.WorkspaceMenuComponent', downgradeComponent({ component: WorkspaceMenuComponent }))

@@ -32,7 +32,7 @@ import {Component, ViewChild} from "@angular/core";
 import {PropertyBEModel} from "../../../../models/properties-inputs/property-be-model";
 import {ModalService} from "../../../services/modal.service";
 import {IScope} from "../../../../../typings/angularjs/angular";
-import {IWorkspaceViewModelScope} from "../../../../view-models/workspace/workspace-view-model";
+import {IWorkspaceViewModelScope} from "../../../../view-models/workspace/workspace-view-model-scope";
 import {States} from "../../../../utils/constants";
 import {SdcUiServices} from "onap-ui-angular/dist";
 

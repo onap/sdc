@@ -25,7 +25,7 @@
 import * as _ from "lodash";
 import {ComponentFactory} from "app/utils";
 import {AvailableIconsService} from "app/services";
-import {IWorkspaceViewModelScope} from "app/view-models/workspace/workspace-view-model";
+import {IWorkspaceViewModelScope} from "app/view-models/workspace/workspace-view-model-scope";
 import {IMainCategory, ISubCategory} from "app/models";
 import {Component} from "app/models";
 import {ResourceType} from "app/utils/constants";

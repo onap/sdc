@@ -25,7 +25,7 @@ import {MenuItem, MenuItemGroup} from "../../../utils/menu-handler";
 import {CacheService} from "../../services/cache.service";
 import {DataTypeModel} from "../../../models/data-types";
 import {DataTypeService} from "../../services/data-type.service";
-import {IWorkspaceViewModelScope} from "../../../view-models/workspace/workspace-view-model";
+import {IWorkspaceViewModelScope} from "../../../view-models/workspace/workspace-view-model-scope";
 import {TranslateService} from "../../shared/translator/translate.service";
 import {NavigationService} from "../../services/navigation.service";
 import {HttpErrorResponse} from "@angular/common/http";

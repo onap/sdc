@@ -27,7 +27,7 @@ import {States} from "../../../../utils/constants";
 import {IAppMenu} from "../../../../models/app-config";
 import {SdcMenuToken} from "../../../config/sdc-menu.config";
 import {IScope} from "../../../../../typings/angularjs/angular";
-import {IWorkspaceViewModelScope} from "../../../../view-models/workspace/workspace-view-model";
+import {IWorkspaceViewModelScope} from "../../../../view-models/workspace/workspace-view-model-scope";
 
 describe('WorkspaceMenuComponent', () => {
   let component: WorkspaceMenuComponent;

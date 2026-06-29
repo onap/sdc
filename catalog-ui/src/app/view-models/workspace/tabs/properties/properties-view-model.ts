@@ -19,7 +19,7 @@
  */
 
 'use strict';
-import { IWorkspaceViewModelScope } from "app/view-models/workspace/workspace-view-model";
+import { IWorkspaceViewModelScope } from "app/view-models/workspace/workspace-view-model-scope";
 import { PropertyModel } from "app/models";
 import { ModalsHandler } from "app/utils";
 import { ComponentGenericResponse } from "../../../../ng2/services/responses/component-generic-response";

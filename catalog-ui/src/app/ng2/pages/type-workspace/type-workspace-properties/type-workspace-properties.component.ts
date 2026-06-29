@@ -30,7 +30,7 @@ import {ModalModel} from "../../../../models/modal";
 import {ButtonModel} from "../../../../models/button";
 import {TranslateService} from "../../../shared/translator/translate.service";
 import {AddPropertyComponent, PropertyValidationEvent} from "./add-property/add-property.component";
-import {IWorkspaceViewModelScope} from "../../../../view-models/workspace/workspace-view-model";
+import {IWorkspaceViewModelScope} from "../../../../view-models/workspace/workspace-view-model-scope";
 import {SdcUiServices} from "onap-ui-angular/dist";
 import {PropertyModel} from "../../../../models/properties";
 import {SdcUiCommon, SdcUiComponents} from "onap-ui-angular";
