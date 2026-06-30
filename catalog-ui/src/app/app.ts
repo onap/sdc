@@ -433,8 +433,13 @@ ng1appModule.config([
         States.WORKSPACE_MANAGEMENT_WORKFLOW, {
           parent: 'workspace',
           url: 'management_workflow',
-          templateUrl: './view-models/workspace/tabs/management-workflow/management-workflow-view.html',
-          controller: viewModelsModuleName + '.ManagementWorkflowViewModel'
+          // Migrated off AngularJS (Phase 5): the empty ManagementWorkflowViewModel + wrapper HTML are
+          // gone. The downgraded <management-workflow-tab> reads the working component from
+          // WorkspaceService and mounts the internal React "sequence-diagram" punch-out itself.
+          template: '<management-workflow-tab></management-workflow-tab>',
+          data: {
+            bodyClass: 'management_workflow'
+          }
         }
     );
 
@@ -442,8 +447,11 @@ ng1appModule.config([
         States.WORKSPACE_NETWORK_CALL_FLOW, {
           parent: 'workspace',
           url: 'network_call_flow',
-          templateUrl: './view-models/workspace/tabs/network-call-flow/network-call-flow-view.html',
-          controller: viewModelsModuleName + '.NetworkCallFlowViewModel'
+          // Migrated off AngularJS (Phase 5): see WORKSPACE_MANAGEMENT_WORKFLOW above.
+          template: '<network-call-flow-tab></network-call-flow-tab>',
+          data: {
+            bodyClass: 'network_call_flow'
+          }
         }
     );
 
