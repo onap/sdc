@@ -31,8 +31,6 @@ import {CategoryManagementViewModel} from "../view-models/admin-dashboard/catego
 import {DcaeAppViewModel} from "../view-models/dcae-app/dcae-app-view-model";
 import {IconsModalViewModel} from "../view-models/modals/icons-modal/icons-modal-view";
 import {PropertiesViewModel} from "../view-models/workspace/tabs/properties/properties-view-model";
-import {ManagementWorkflowViewModel} from "../view-models/workspace/tabs/management-workflow/management-workflow-view-model";
-import {NetworkCallFlowViewModel} from "../view-models/workspace/tabs/network-call-flow/network-call-flow-view-model";
 import {TypeWorkspaceComponent} from "../ng2/pages/type-workspace/type-workspace.component";
 import {downgradeComponent} from "@angular/upgrade/static";
 import {WorkspaceMenuComponent} from "../ng2/pages/type-workspace/workspace-menu/workspace-menu.component";
@@ -55,8 +53,6 @@ viewModelModule
   .controller(moduleName + '.IconsModalViewModel', IconsModalViewModel)
   .controller(moduleName + '.DcaeAppViewModel', DcaeAppViewModel)
   .controller(moduleName + '.PropertiesViewModel', PropertiesViewModel)
-  .controller(moduleName + '.ManagementWorkflowViewModel', ManagementWorkflowViewModel)
-  .controller(moduleName + '.NetworkCallFlowViewModel', NetworkCallFlowViewModel)
   .controller(moduleName + '.TypeWorkspaceComponent', downgradeComponent({ component: TypeWorkspaceComponent }))
   .controller(moduleName + '.WorkspaceMenuComponent', downgradeComponent({ component: WorkspaceMenuComponent }))
   .controller(moduleName + '.TypeWorkspaceGeneralComponent', downgradeComponent({ component: TypeWorkspaceGeneralComponent }));

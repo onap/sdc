@@ -103,6 +103,8 @@ import {TypeWorkspaceGeneralComponent} from "../ng2/pages/type-workspace/type-wo
 import {DeclareInputComponent} from "../ng2/pages/properties-assignment/declare-input/declare-input.component";
 import {WorkspaceContainerComponent} from "../ng2/pages/workspace/workspace-container/workspace-container.component";
 import {GeneralTabComponent} from "../ng2/pages/workspace/general-tab/general-tab.component";
+import {ManagementWorkflowTabComponent} from "../ng2/pages/workspace/flow-editor/management-workflow-tab.component";
+import {NetworkCallFlowTabComponent} from "../ng2/pages/workspace/flow-editor/network-call-flow-tab.component";
 
 let moduleName: string = 'Sdc.Directives';
 let directiveModule: ng.IModule = angular.module(moduleName, []);
@@ -366,5 +368,15 @@ directiveModule.directive('workspaceContainer', downgradeComponent({
 
 directiveModule.directive('generalTab', downgradeComponent({
   component: GeneralTabComponent,
+  propagateDigest: false
+}) as angular.IDirectiveFactory);
+
+directiveModule.directive('managementWorkflowTab', downgradeComponent({
+  component: ManagementWorkflowTabComponent,
+  propagateDigest: false
+}) as angular.IDirectiveFactory);
+
+directiveModule.directive('networkCallFlowTab', downgradeComponent({
+  component: NetworkCallFlowTabComponent,
   propagateDigest: false
 }) as angular.IDirectiveFactory);
