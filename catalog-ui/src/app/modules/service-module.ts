@@ -52,7 +52,6 @@ import { ToscaTypesServiceNg2 } from '../ng2/services/tosca-types.service';
 import { UserService as UserServiceNg2 } from '../ng2/services/user.service';
 import { AngularJSBridge } from '../services/angular-js-bridge-service';
 import { AvailableIconsService } from '../services/available-icons-service';
-import { CategoryResourceService } from '../services/category-resource-service';
 import { ComponentService } from '../services/components/component-service';
 import { ResourceService } from '../services/components/resource-service';
 import { ServiceService } from '../services/components/service-service';
@@ -98,7 +97,6 @@ serviceModule.service('FileUtils', FileUtils);
 serviceModule.service('ValidationUtils', ValidationUtils);
 serviceModule.service('AngularJSBridge', AngularJSBridge);
 serviceModule.service('LoaderService', LoaderService);
-serviceModule.factory('Sdc.Services.CategoryResourceService', CategoryResourceService.getResource);
 
 // Angular2 upgraded services - This is in order to use the service in angular1 till we finish remove all angular1 code
 serviceModule.service('Sdc.Services.SharingService', downgradeInjectable(SharingService));

@@ -1,0 +1,28 @@
+<form [formGroup]="form" class="w-sdc-form">
+    <div class="w-sdc-form-column">
+        <div class="i-sdc-form-item"
+             [ngClass]="{'error': form.get('name').dirty && form.get('name').invalid}">
+            <label class="i-sdc-form-label required">
+                {{'CREATE_CATEGORY_MODAL_CATEGORY_NAME' | translate:{'modelType': input.modelType} }}
+            </label>
+            <input class="i-sdc-form-input"
+                   formControlName="name"
+                   type="text"
+                   maxlength="25"
+                   data-tests-id="i-sdc-form-input"
+                   autofocus />
+            <div class="input-error"
+                 *ngIf="form.get('name').dirty && form.get('name').invalid">
+                <span *ngIf="form.get('name').errors?.required">
+                    {{'CREATE_CATEGORY_MODAL_REQUIRED' | translate:{'modelType': input.modelType} }}
+                </span>
+                <span *ngIf="form.get('name').errors?.minlength">
+                    {{'CREATE_CATEGORY_MODAL_MINLENGTH' | translate:{'minlength': '3', 'modelType': input.modelType} }}
+                </span>
+                <span *ngIf="form.get('name').errors?.pattern">
+                    {{'CREATE_CATEGORY_MODAL_PATTERN' | translate:{'modelType': input.modelType} }}
+                </span>
+            </div>
+        </div>
+    </div>
+</form>

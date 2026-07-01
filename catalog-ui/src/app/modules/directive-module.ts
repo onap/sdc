@@ -106,6 +106,7 @@ import {GeneralTabComponent} from "../ng2/pages/workspace/general-tab/general-ta
 import {ManagementWorkflowTabComponent} from "../ng2/pages/workspace/flow-editor/management-workflow-tab.component";
 import {NetworkCallFlowTabComponent} from "../ng2/pages/workspace/flow-editor/network-call-flow-tab.component";
 import {WorkspacePropertiesTabComponent} from "../ng2/pages/workspace/properties-tab/properties-tab.component";
+import {AdminDashboardComponent} from "../ng2/pages/admin-dashboard/admin-dashboard.component";
 
 let moduleName: string = 'Sdc.Directives';
 let directiveModule: ng.IModule = angular.module(moduleName, []);
@@ -384,5 +385,10 @@ directiveModule.directive('networkCallFlowTab', downgradeComponent({
 
 directiveModule.directive('workspacePropertiesTab', downgradeComponent({
   component: WorkspacePropertiesTabComponent,
+  propagateDigest: false
+}) as angular.IDirectiveFactory);
+
+directiveModule.directive('adminDashboard', downgradeComponent({
+  component: AdminDashboardComponent,
   propagateDigest: false
 }) as angular.IDirectiveFactory);

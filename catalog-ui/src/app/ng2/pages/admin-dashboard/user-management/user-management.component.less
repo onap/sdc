@@ -1,3 +1,10 @@
+// Component-scoped LESS for UserManagementComponent.
+// The old user-management.less was a global stylesheet (imported by app.less) and relied on
+// variables/mixins being in global scope; a component-scoped .less must import them explicitly.
+@import '../../../../../assets/styles/variables.less';
+@import '../../../../../assets/styles/variables-old.less';
+@import '../../../../../assets/styles/mixins_old.less';
+
 .sdc-user-management-top-bar {
     display: flex;
     width: 100%;
@@ -74,7 +81,6 @@
         .body {
             .scrollbar-container {
                 max-height: 421px;
-                .perfect-scrollbar;
             }
             .b_9;
 
@@ -157,13 +163,4 @@
         flex-grow: 8;
     }
 
-    .sdc-user-management-flex-item:nth-child(7) {
-        flex-grow: 1;
-    }
-
-    .sdc-user-management-flex-item:nth-child(8) {
-        flex-grow: 1;
-    }
-
 }
-

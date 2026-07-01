@@ -23,7 +23,6 @@
  */
 export * from './services/available-icons-service';
 export * from './services/configuration-ui-service';
-export * from './services/category-resource-service';
 export * from './services/components/component-service';
 export * from './services/components/resource-service';
 export * from './services/components/service-service';
@@ -31,7 +30,6 @@ export * from './services/components/resource-service';
 export * from './services/components/utils/composition-left-palette-service';
 export * from './services/components/resource-service';
 export * from './services/components/resource-service';
-export * from './services/category-resource-service';
 export * from './services/cookie-service';
 export * from './services/data-types-service';
 export * from './services/ecomp-service';

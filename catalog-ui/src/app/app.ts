@@ -608,8 +608,7 @@ ng1appModule.config([
     $stateProvider.state(
         'adminDashboard', {
           url: '/adminDashboard',
-          templateUrl: './view-models/admin-dashboard/admin-dashboard-view.html',
-          controller: viewModelsModuleName + '.AdminDashboardViewModel',
+          template: '<admin-dashboard></admin-dashboard>',
           permissions: ['ADMIN']
         }
     );

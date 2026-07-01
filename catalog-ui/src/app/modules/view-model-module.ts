@@ -18,16 +18,12 @@
  * ============LICENSE_END=========================================================
  */
 
-import {AddCategoryModalViewModel} from "../view-models/admin-dashboard/add-category-modal/add-category-modal-view-model";
 import {PropertyFormBaseView} from "../view-models/forms/property-forms/base-property-form/property-form-base-model";
 import {PropertyFormViewModel} from "../view-models/forms/property-forms/component-property-form/property-form-view-model";
 import {ModulePropertyView} from "../view-models/forms/property-forms/module-property-modal/module-property-model";
 import {SelectDataTypeViewModel} from "../view-models/forms/property-forms/select-datatype-modal/select-datatype-modal-view-model";
 import {OnboardVendorViewModel} from "../view-models/onboard-vendor/onboard-vendor-view-model";
 import {ErrorViewModel} from "../view-models/modals/error-modal/error-view-model";
-import {AdminDashboardViewModel} from "../view-models/admin-dashboard/admin-dashboard-view-model";
-import {UserManagementViewModel} from "../view-models/admin-dashboard/user-management/user-management-view-model";
-import {CategoryManagementViewModel} from "../view-models/admin-dashboard/category-management/category-management-view-model";
 import {DcaeAppViewModel} from "../view-models/dcae-app/dcae-app-view-model";
 import {IconsModalViewModel} from "../view-models/modals/icons-modal/icons-modal-view";
 import {TypeWorkspaceComponent} from "../ng2/pages/type-workspace/type-workspace.component";
@@ -45,10 +41,6 @@ viewModelModule
   .controller(moduleName + '.SelectDataTypeViewModel', SelectDataTypeViewModel)
   .controller(moduleName + '.OnboardVendorViewModel', OnboardVendorViewModel)
   .controller(moduleName + '.ErrorViewModel', ErrorViewModel)
-  .controller(moduleName + '.AdminDashboardViewModel', AdminDashboardViewModel)
-  .controller(moduleName + '.AddCategoryModalViewModel', AddCategoryModalViewModel)
-  .controller(moduleName + '.UserManagementViewModel', UserManagementViewModel)
-  .controller(moduleName + '.CategoryManagementViewModel', CategoryManagementViewModel)
   .controller(moduleName + '.IconsModalViewModel', IconsModalViewModel)
   .controller(moduleName + '.DcaeAppViewModel', DcaeAppViewModel)
   .controller(moduleName + '.TypeWorkspaceComponent', downgradeComponent({ component: TypeWorkspaceComponent }))

@@ -1,0 +1,87 @@
+<!--
+  ~ Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+-->
+<!-- Inline loader markup mirrors the old AngularJS <loader> directive (tlv-loader + data-tests-id="loader")
+     so Selenium's LoaderHelper.waitForLoader() catches it. -->
+<div *ngIf="isLoading" data-tests-id="loader" class="sdc-loader-global-wrapper sdc-loader-background">
+    <div class="tlv-loader-back"></div>
+    <div class="tlv-loader large"></div>
+</div>
+
+<div class="sdc-user-management-top-bar">
+    <div class="sdc-user-management-top-bar-search-container">
+        <label class="sdc-user-management-top-bar-search-text">Search User</label>
+        <input type="text"
+               class="sdc-user-management-top-bar-form-input"
+               placeholder="Search user by name, userId, email or role"
+               [(ngModel)]="searchTerm"
+               (ngModelChange)="onSearchChange($event)"
+               data-tests-id="searchbox" />
+        <span class="w-sdc-search-icon"
+              [ngClass]="{'cancel': searchTerm, 'magnification': !searchTerm}"
+              (click)="onSearchChange('')"></span>
+    </div>
+</div>
+
+<div class="sdc-user-management-table-container-flex">
+
+    <div class="sdc-user-management-table">
+        <div class="head sdc-user-management-flex-container">
+            <div class="sdc-user-management-table-header head-row hand sdc-user-management-flex-item"
+                 *ngFor="let header of tableHeadersList"
+                 [attr.data-tests-id]="'th' + header.title"
+                 (click)="sort(header.property)">{{header.title}}
+                <span *ngIf="sortBy === header.property"
+                      class="sdc-user-management-table-header-sort-arrow"
+                      [ngClass]="{'down': reverse, 'up': !reverse}"> </span>
+            </div>
+        </div>
+
+        <div class="body">
+            <!-- perfect-scrollbar replaced with a plain overflow container (AngularJS directive not
+                 available in Angular); scroll behavior preserved, sdc-smart-tooltip dropped (cosmetic
+                 only — tooltip-on-overflow; no Selenium dependency). -->
+            <div class="scrollbar-container" style="overflow-y: auto">
+                <div *ngFor="let user of filteredUsers; let i = index; trackBy: trackByUserId"
+                     [ngClass]="{'sdc-user-management-table-new-user-row': i === 0}"
+                     class="sdc-user-management-flex-container data-row"
+                     [attr.data-tests-id]="'row_' + i">
+
+                    <div class="sdc-user-management-table-col-general sdc-user-management-flex-item"
+                         [attr.data-tests-id]="'firstName_' + i">{{user.firstName || '---'}}</div>
+
+                    <div class="sdc-user-management-table-col-general sdc-user-management-flex-item"
+                         [attr.data-tests-id]="'lastName__' + i">{{user.lastName || '---'}}</div>
+
+                    <div class="sdc-user-management-flex-item"
+                         [attr.data-tests-id]="'userId_' + i">{{user.userId || '---'}}</div>
+
+                    <div class="sdc-user-management-table-col-general sdc-user-management-flex-item"
+                         [attr.data-tests-id]="'email_' + i">{{user.email || '---'}}</div>
+
+                    <div class="sdc-user-management-table-col-general sdc-user-management-flex-item">
+                        <div class="sdc-user-management-table-role-select capitalize sdc-user-management-table-role-label"
+                             [attr.data-tests-id]="'role_' + i">{{getTitle(user.role)}}</div>
+                    </div>
+
+                    <div class="sdc-user-management-table-col-general sdc-user-management-flex-item"
+                         [attr.data-tests-id]="'lastActive_' + i">
+                        {{user.lastLoginTime == '0' || user.lastLoginTime == 0 ? 'Waiting' : (user.lastLoginTime | date:'MM/dd/yyyy')}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

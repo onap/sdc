@@ -1,0 +1,72 @@
+<!--
+  ~ Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+-->
+<div class="category-management">
+
+    <div *ngIf="isLoading" data-tests-id="loader" class="sdc-loader-global-wrapper sdc-loader-background">
+        <div class="tlv-loader-back"></div>
+        <div class="tlv-loader large"></div>
+    </div>
+
+    <div class="row">
+
+        <div class="col-sm-6">
+            <h4>
+                <span class="hand"
+                      (click)="selectType(SERVICE)"
+                      [ngClass]="{'selected': type === SERVICE}"
+                      data-tests-id="servicecategoryheader">{{'SERVICE_CATEGORY_HEADER' | translate}}</span>
+                <span class="hand"
+                      (click)="selectType(RESOURCE)"
+                      [ngClass]="{'selected': type === RESOURCE}"
+                      data-tests-id="resourcecategoryheader">{{'RESOURCE_CATEGORY_HEADER' | translate}}</span>
+            </h4>
+            <span (click)="createCategoryModal(null)"
+                  data-tests-id="newcategory">{{'ADD_CATEGORY' | translate}}</span>
+
+            <div class="scrollbar-container" style="overflow-y:auto">
+                <ul>
+                    <li *ngFor="let category of categoriesToShow"
+                        [ngClass]="{'selected': selectedCategory === category, 'gray': selectedSubCategory}"
+                        (click)="selectCategory(category)"
+                        [attr.data-tests-id]="type === SERVICE ? 'servicecategory' : 'resourcecategory'">
+                        {{category.name}}
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-sm-6">
+            <h4>
+                <span data-tests-id="subcategoryheader">{{'SUBCATEGORY_HEADER' | translate}}</span>
+            </h4>
+            <span *ngIf="type === RESOURCE && selectedCategory"
+                  (click)="createCategoryModal(selectedCategory)"
+                  data-tests-id="newsubcategory">{{'ADD_SUBCATEGORY' | translate}}</span>
+
+            <div class="scrollbar-container" style="overflow-y:auto">
+                <ul>
+                    <li *ngFor="let subcategory of selectedCategory?.subcategories"
+                        [ngClass]="{'selected': selectedSubCategory === subcategory}"
+                        (click)="selectSubCategory(subcategory)"
+                        data-tests-id="subcategory">
+                        {{subcategory.name}}
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+</div>

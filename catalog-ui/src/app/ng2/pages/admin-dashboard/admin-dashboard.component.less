@@ -1,10 +1,14 @@
-.sdc-admin-container{
+@import '../../../../assets/styles/variables.less';
+@import '../../../../assets/styles/variables-old.less';
+@import '../../../../assets/styles/mixins_old.less';
+
+.sdc-admin-container {
     height: 100%;
 
-    .sdc-admin-top-bar-menu{
+    .sdc-admin-top-bar-menu {
         .bg_k;
         height: @top_nav_admin_height;
-        padding-left:260px;
+        padding-left: 260px;
         .box-shadow(-1px 0px 3px 0px rgba(0, 0, 0, 0.33));
         position: absolute;
         top: @header_height;
@@ -12,7 +16,7 @@
         right: 0;
         z-index: 2;
 
-        .sdc-admin-top-bar-menu-tab{
+        .sdc-admin-top-bar-menu-tab {
             .b_17;
             .hand;
             height: 44px;
@@ -22,22 +26,24 @@
             border: none;
             outline: none;
             margin-right: 15px;
+
             &.selected {
                 outline: none;
                 border-bottom: solid 4px @color_t;
             }
         }
-        .sdc-admin-top-bar-menu-monitor-btn{
-                .bg_a;
-                .c_6;
-                float: right;
-                border: none;
-                position: relative;
+
+        .sdc-admin-top-bar-menu-monitor-btn {
+            .bg_a;
+            .c_6;
+            float: right;
+            border: none;
+            position: relative;
             padding: 11px 24px;
         }
     }
 
-    .sdc-admin-body{
+    .sdc-admin-body {
         .bg_n;
         padding: 40px 260px 60px 260px;
         position: absolute;
