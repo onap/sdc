@@ -30,7 +30,6 @@ import {UserManagementViewModel} from "../view-models/admin-dashboard/user-manag
 import {CategoryManagementViewModel} from "../view-models/admin-dashboard/category-management/category-management-view-model";
 import {DcaeAppViewModel} from "../view-models/dcae-app/dcae-app-view-model";
 import {IconsModalViewModel} from "../view-models/modals/icons-modal/icons-modal-view";
-import {PropertiesViewModel} from "../view-models/workspace/tabs/properties/properties-view-model";
 import {TypeWorkspaceComponent} from "../ng2/pages/type-workspace/type-workspace.component";
 import {downgradeComponent} from "@angular/upgrade/static";
 import {WorkspaceMenuComponent} from "../ng2/pages/type-workspace/workspace-menu/workspace-menu.component";
@@ -52,7 +51,6 @@ viewModelModule
   .controller(moduleName + '.CategoryManagementViewModel', CategoryManagementViewModel)
   .controller(moduleName + '.IconsModalViewModel', IconsModalViewModel)
   .controller(moduleName + '.DcaeAppViewModel', DcaeAppViewModel)
-  .controller(moduleName + '.PropertiesViewModel', PropertiesViewModel)
   .controller(moduleName + '.TypeWorkspaceComponent', downgradeComponent({ component: TypeWorkspaceComponent }))
   .controller(moduleName + '.WorkspaceMenuComponent', downgradeComponent({ component: WorkspaceMenuComponent }))
   .controller(moduleName + '.TypeWorkspaceGeneralComponent', downgradeComponent({ component: TypeWorkspaceGeneralComponent }));

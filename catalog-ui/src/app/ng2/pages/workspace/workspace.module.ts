@@ -26,10 +26,11 @@ import {WorkspaceContainerComponent} from './workspace-container/workspace-conta
 import {WorkspaceTopProgressComponent} from './workspace-container/top-progress.component';
 import {ManagementWorkflowTabComponent} from './flow-editor/management-workflow-tab.component';
 import {NetworkCallFlowTabComponent} from './flow-editor/network-call-flow-tab.component';
+import {WorkspacePropertiesTabComponent} from './properties-tab/properties-tab.component';
 
 @NgModule({
     declarations: [WorkspaceContainerComponent, WorkspaceTopProgressComponent, GeneralTabComponent,
-        ManagementWorkflowTabComponent, NetworkCallFlowTabComponent],
+        ManagementWorkflowTabComponent, NetworkCallFlowTabComponent, WorkspacePropertiesTabComponent],
     imports: [
         CommonModule,
         FormsModule,
@@ -50,7 +51,7 @@ import {NetworkCallFlowTabComponent} from './flow-editor/network-call-flow-tab.c
 
     exports: [WorkspaceContainerComponent, GeneralTabComponent],
     entryComponents: [WorkspaceContainerComponent, GeneralTabComponent,
-        ManagementWorkflowTabComponent, NetworkCallFlowTabComponent],
+        ManagementWorkflowTabComponent, NetworkCallFlowTabComponent, WorkspacePropertiesTabComponent],
     providers: [TopologyTemplateService, WorkspaceService, GeneralFormService, ComponentMetadataService],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

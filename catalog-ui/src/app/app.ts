@@ -357,8 +357,7 @@ ng1appModule.config([
         States.WORKSPACE_PROPERTIES, {
           url: 'properties',
           parent: 'workspace',
-          controller: viewModelsModuleName + '.PropertiesViewModel',
-          templateUrl: './view-models/workspace/tabs/properties/properties-view.html',
+          template: '<workspace-properties-tab></workspace-properties-tab>',
           data: {
             bodyClass: 'properties'
           }

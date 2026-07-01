@@ -1,3 +1,30 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * SDC
+ * ================================================================================
+ * Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
+@import '../../../../../assets/styles/variables.less';
+@import '../../../../../assets/styles/variables-old.less';
+@import '../../../../../assets/styles/mixins_old.less';
+// sprite-old.less provides the .sprite mixin + .e-sdc-small-icon-delete used by .delete-col-header.
+// The old properties.less was a global stylesheet (imported by app.less) and relied on these being
+// in the global scope; a component-scoped .less must import them explicitly.
+@import '../../../../../assets/styles/sprite-old.less';
+
 .workspace-properties {
 
     width: 93%;
@@ -63,6 +90,13 @@
         height: 100%;
         min-height: 500px;
         margin-bottom: 0;
+
+        // The old template wrapped the rows in an AngularJS <perfect-scrollbar> directive, which is not
+        // reachable from WorkspaceModule. A native overflow container preserves the scroll behavior and
+        // the data-tests-id="propertyRow" rows the Selenium suite counts.
+        .scrollbar-container {
+            overflow-y: auto;
+        }
     }
 
     .data-row{

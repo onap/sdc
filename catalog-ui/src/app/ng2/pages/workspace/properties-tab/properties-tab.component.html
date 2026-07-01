@@ -1,0 +1,81 @@
+<!--
+  ~ Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+-->
+<!-- Inline loader markup mirrors the old AngularJS <loader> directive (tlv-loader + data-tests-id="loader")
+     so Selenium's LoaderHelper.waitForLoader() catches it, same as WorkspaceContainerComponent. The Angular
+     <loader> element is not declared in WorkspaceModule, so it cannot be used here. -->
+<div *ngIf="isLoading" data-tests-id="loader" class="sdc-loader-global-wrapper sdc-loader-background">
+    <div class="tlv-loader-back"></div>
+    <div class="tlv-loader large"></div>
+</div>
+
+<div class="workspace-properties">
+    <div id="left-top-bar">
+        <span id="properties-count">Total Properties: {{propertiesCount}}</span>
+        <input id="search-by-name" type="search" placeholder="Search" [(ngModel)]="filterTerms" (ngModelChange)="onFilterChange()"/>
+        <span class="sprite magnification-glass search-button"></span>
+    </div>
+    <div class="add-btn" data-tests-id="addGrey" *ngIf="!isViewMode()"
+         [ngClass]="{'disabled': isDisableMode()}" (click)="addOrUpdateProperty()">Add Property</div>
+    <div class="table-container-flex">
+        <div class="table" [ngClass]="{'view-mode': isViewMode()}">
+            <div class="head flex-container">
+                <div class="table-header head-row hand flex-item" *ngFor="let header of tableHeadersList" (click)="sort(header.property)">{{header.title}}
+                    <span *ngIf="sortBy === header.property" class="table-header-sort-arrow" [ngClass]="{'down': reverse, 'up':!reverse}"> </span>
+                </div>
+                <div class="table-no-text-header head-row flex-item" *ngIf="!isViewMode()"><span class="delete-col-header"></span></div>
+            </div>
+
+            <div class="body">
+                <div class="scrollbar-container">
+                    <div *ngIf="propertiesCount === 0" class="no-row-text" [ngClass]="{'disabled': isDisableMode()}">
+                        There are no properties to display <br>
+                        <span *ngIf="!isViewMode()"> click <a (click)="addOrUpdateProperty()">here</a> to add one </span>
+                    </div>
+                    <div *ngFor="let property of filteredProperties; trackBy: trackByUniqueId"
+                         data-tests-id="propertyRow" [ngClass]="{'selected': property.selected}"
+                         class="flex-container data-row">
+
+                        <!-- The old template used the AngularJS `tooltips`/`tooltip-content` directive
+                             to show the full (ellipsis-truncated) text on hover; that directive is pure
+                             AngularJS and a no-op in an Angular template, so the native `title` attribute
+                             preserves the same hover-text behavior. -->
+                        <div class="table-col-general flex-item text" [attr.title]="property.name">
+                            <a [attr.data-tests-id]="'propertyName_' + property.name"
+                               (click)="addOrUpdateProperty(property); $event.stopPropagation();">{{property.name}}</a>
+                        </div>
+
+                        <div class="table-col-general flex-item text" [attr.title]="property.type">
+                            <span [attr.data-tests-id]="'propertyType_' + property.name"> {{stripHeatPrefix(property.type)}}</span>
+                        </div>
+                        <div class="table-col-general flex-item text" [attr.title]="property.schema?.property?.type">
+                            <span [attr.data-tests-id]="'propertySchema_' + property.name"> {{stripHeatPrefix(property.schema?.property?.type)}}</span>
+                        </div>
+                        <div class="table-col-general flex-item text" [attr.title]="property.description">
+                            <span [attr.data-tests-id]="'propertyDescription_' + property.name">{{property.description}}</span>
+                        </div>
+                        <div class="table-btn-col flex-item" *ngIf="!isViewMode()">
+                            <button class="table-delete-btn" [attr.data-tests-id]="'delete_' + property.name"
+                                    *ngIf="!property.ownerId || property.ownerId == component.uniqueId"
+                                    (click)="delete(property); $event.stopPropagation();" [ngClass]="{'disabled': isViewMode()}"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
