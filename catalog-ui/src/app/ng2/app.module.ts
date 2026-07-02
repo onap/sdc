@@ -77,6 +77,7 @@ import {AutomatedUpgradeService} from './pages/automated-upgrade/automated-upgra
 import {AutomatedUpgradeModule} from './pages/automated-upgrade/automated-upgrade.module';
 import {WorkspaceModule} from './pages/workspace/workspace.module';
 import {AdminDashboardModule} from './pages/admin-dashboard/admin-dashboard.module';
+import {StandaloneStatesModule} from './pages/standalone-states.module';
 import {ModalsModule} from './components/modals/modals.module';
 import {CacheService, HomeService, SharingService} from 'app/services-ng2';
 import {ArtifactConfigService} from "./services/artifact-config.service";
@@ -184,6 +185,7 @@ export function configServiceFactory(config: ConfigService, authService: Authent
     ServiceDependenciesEditorModule,
     WorkspaceModule,
     AdminDashboardModule,
+    StandaloneStatesModule,
     TypeWorkspaceModule,
     ModalsModule,
     CatalogModule,

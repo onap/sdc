@@ -2,14 +2,14 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,22 +18,11 @@
  * ============LICENSE_END=========================================================
  */
 
-'use strict';
-import {CookieService} from "app/services";
-
-interface IErrorViewModelScope {
-    mailto:string;
-}
-
-export class ErrorViewModel {
-
-    static ADMIN_EMAIL = 'dl-asdcaccessrequest@att.com';
-    static SUBJECT_PRFIEX = 'SDC Access Request for';
-
-    static '$inject' = ['$scope', 'Sdc.Services.CookieService', '$window'];
-
-    constructor($scope:IErrorViewModelScope, cookieService:CookieService, $window) {
-        let userDetails = cookieService.getFirstName() + ' ' + cookieService.getLastName() + ' (' + cookieService.getUserId() + ')';
-        $scope.mailto = ErrorViewModel.ADMIN_EMAIL + '?subject=' + $window.encodeURIComponent(ErrorViewModel.SUBJECT_PRFIEX + ' ' + userDetails);
-    }
+// The host div must fill its container so the React punch-out occupies the full
+// onboarding workspace. The outer container classes (sdc-catalog-container,
+// w-sdc-main-container) are styled globally in onboard-vendor.less (imported via
+// app.less); only component-specific rules belong here.
+.onboard-vendor-punch-out-host {
+    width: 100%;
+    height: 100%;
 }

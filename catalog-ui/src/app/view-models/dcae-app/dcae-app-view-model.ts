@@ -21,9 +21,22 @@
 'use strict';
 import * as _ from "lodash";
 import {MenuItemGroup, MenuItem} from "app/utils";
-import {BreadcrumbsPath, BreadcrumbsMenu} from "../onboard-vendor/onboard-vendor-view-model";
 import {CacheService} from "app/services-ng2";
 import {IUserProperties} from "app/models";
+
+export class BreadcrumbsMenuItem {
+    key:string;
+    displayText:string;
+}
+
+export class BreadcrumbsMenu {
+    selectedKey:string;
+    menuItems:Array<BreadcrumbsMenuItem>;
+}
+
+export class BreadcrumbsPath {
+    selectedKeys:Array<string>;
+}
 
 export class TestData {
     breadcrumbs:BreadcrumbsPath;

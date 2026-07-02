@@ -107,6 +107,8 @@ import {ManagementWorkflowTabComponent} from "../ng2/pages/workspace/flow-editor
 import {NetworkCallFlowTabComponent} from "../ng2/pages/workspace/flow-editor/network-call-flow-tab.component";
 import {WorkspacePropertiesTabComponent} from "../ng2/pages/workspace/properties-tab/properties-tab.component";
 import {AdminDashboardComponent} from "../ng2/pages/admin-dashboard/admin-dashboard.component";
+import {Error403PageComponent} from "../ng2/pages/error-403/error-403.component";
+import {OnboardVendorPageComponent} from "../ng2/pages/onboard-vendor/onboard-vendor.component";
 
 let moduleName: string = 'Sdc.Directives';
 let directiveModule: ng.IModule = angular.module(moduleName, []);
@@ -390,5 +392,15 @@ directiveModule.directive('workspacePropertiesTab', downgradeComponent({
 
 directiveModule.directive('adminDashboard', downgradeComponent({
   component: AdminDashboardComponent,
+  propagateDigest: false
+}) as angular.IDirectiveFactory);
+
+directiveModule.directive('error403Page', downgradeComponent({
+  component: Error403PageComponent,
+  propagateDigest: false
+}) as angular.IDirectiveFactory);
+
+directiveModule.directive('onboardVendorPage', downgradeComponent({
+  component: OnboardVendorPageComponent,
   propagateDigest: false
 }) as angular.IDirectiveFactory);

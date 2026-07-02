@@ -616,8 +616,7 @@ ng1appModule.config([
     $stateProvider.state(
         'onboardVendor', {
           url: '/onboardVendor',
-          templateUrl: './view-models/onboard-vendor/onboard-vendor-view.html',
-          controller: viewModelsModuleName + '.OnboardVendorViewModel'
+          template: '<onboard-vendor-page></onboard-vendor-page>'
         }
     );
 
@@ -661,8 +660,7 @@ ng1appModule.config([
     $stateProvider.state(
         'error-403', {
           url: '/error-403',
-          templateUrl: './view-models/modals/error-modal/error-403-view.html',
-          controller: viewModelsModuleName + '.ErrorViewModel'
+          template: '<error-403-page></error-403-page>'
         }
     );
 
