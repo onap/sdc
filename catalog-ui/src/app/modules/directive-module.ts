@@ -43,11 +43,6 @@ import {EditNamePopoverDirective} from "../directives/edit-name-popover/edit-nam
 import {DataTypeFieldsStructureDirective} from "../directives/property-types/data-type-fields-structure/data-type-fields-structure";
 import {TypeMapDirective} from "../directives/property-types/type-map/type-map-directive";
 import {TypeListDirective} from "../directives/property-types/type-list/type-list-directive";
-import {
-  SelectDataTypeFieldsStructureDirective
-} from "../directives/select-property-types/select-data-type-fields-structure/select-data-type-fields-structure";
-import {SelectTypeMapDirective} from "../directives/select-property-types/select-type-map/select-type-map-directive";
-import {SelectTypeListDirective} from "../directives/select-property-types/select-type-list/select-type-list-directive";
 import {ValidationOnLoadDirective} from "../directives/utils/validation-on-load/validation-on-load";
 import {InfoTooltipDirective} from "../directives/info-tooltip/info-tooltip";
 import {SdcTabsDirective} from "../directives/sdc-tabs/sdc-tabs-directive";
@@ -138,9 +133,6 @@ directiveModule.directive('editNamePopover', EditNamePopoverDirective.factory);
 directiveModule.directive('fieldsStructure', DataTypeFieldsStructureDirective.factory);
 directiveModule.directive('typeMap', TypeMapDirective.factory);
 directiveModule.directive('typeList', TypeListDirective.factory);
-directiveModule.directive('selectFieldsStructure', SelectDataTypeFieldsStructureDirective.factory);
-directiveModule.directive('selectTypeMap', SelectTypeMapDirective.factory);
-directiveModule.directive('selectTypeList', SelectTypeListDirective.factory);
 directiveModule.directive('infoTooltip', InfoTooltipDirective.factory);
 directiveModule.directive('validationOnLoad', ValidationOnLoadDirective.factory);
 directiveModule.directive('ng1Tabs', SdcTabsDirective.factory);
