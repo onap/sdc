@@ -1,5 +1,5 @@
 import 'rxjs/add/operator/map';
-import {of, throwError} from 'rxjs';
+import {of, throwError, Subject} from 'rxjs';
 import {IUserProperties} from 'app/models/user';
 import {UserManagementComponent} from '../user-management.component';
 
@@ -22,13 +22,16 @@ function createComp() {
     const userService: any = {
         getAllUsers: jest.fn(() => of([makeUser('u1'), makeUser('u2')]))
     };
+    // Emit on demand to simulate the async language JSON resolving after ngOnInit.
+    const languageChanged = new Subject<string>();
     const translateService: any = {
-        translate: jest.fn((key: string) => key)
+        translate: jest.fn((key: string) => key),
+        languageChangedObservable: languageChanged
     };
     const cdr: any = {detectChanges: jest.fn()};
 
     const comp = new UserManagementComponent(userService, translateService, cdr);
-    return {comp, userService, translateService, cdr};
+    return {comp, userService, translateService, languageChanged, cdr};
 }
 
 describe('UserManagementComponent', () => {
@@ -221,5 +224,41 @@ describe('UserManagementComponent', () => {
         expect(comp.filteredUsers.map((u) => u.lastLoginTime)).toEqual([
             '2000000000000', '900000000000', '0'
         ]);
+    });
+
+    // --- cold-start label fix: rebuild the (translated) User ID header when the language loads ---
+
+    it('rebuilds the User ID header title when the language JSON resolves after ngOnInit', () => {
+        const {comp, translateService, languageChanged} = createComp();
+        // Simulate a cold load: the language JSON is not yet loaded, so translate() returns ''.
+        translateService.translate.mockReturnValue('');
+        comp.ngOnInit();
+        expect(comp.tableHeadersList[2].title).toBe(''); // User ID header blank on first render
+
+        // Language JSON resolves → translate() now returns the real label.
+        translateService.translate.mockReturnValue('User ID');
+        languageChanged.next('en_US');
+
+        expect(comp.tableHeadersList[2].title).toBe('User ID');
+        expect(comp.tableHeadersList[2].property).toBe('userId');
+    });
+
+    it('re-runs detectChanges when the language JSON resolves after ngOnInit (cold load)', () => {
+        const {comp, cdr, languageChanged} = createComp();
+        comp.ngOnInit();
+        cdr.detectChanges.mockClear();
+        languageChanged.next('en_US');
+        expect(cdr.detectChanges).toHaveBeenCalled();
+    });
+
+    it('ngOnDestroy unsubscribes from languageChangedObservable (no rebuild after destroy)', () => {
+        const {comp, cdr, translateService, languageChanged} = createComp();
+        comp.ngOnInit();
+        comp.ngOnDestroy();
+        translateService.translate.mockClear();
+        cdr.detectChanges.mockClear();
+        languageChanged.next('en_US');
+        expect(cdr.detectChanges).not.toHaveBeenCalled();
+        expect(translateService.translate).not.toHaveBeenCalled();
     });
 });

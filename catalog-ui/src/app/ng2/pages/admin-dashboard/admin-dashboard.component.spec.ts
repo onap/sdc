@@ -1,3 +1,4 @@
+import {Subject} from 'rxjs/Subject';
 import {AdminDashboardComponent} from './admin-dashboard.component';
 import {SdcConfigToken} from 'app/ng2/config/sdc-config.config';
 
@@ -19,11 +20,18 @@ function createComp() {
         }
     };
 
+    // Emit on demand to simulate the async language JSON resolving after ngOnInit.
+    const languageChanged = new Subject<string>();
+    const translateService: any = {
+        languageChangedObservable: languageChanged,
+        translate: jest.fn((key: string) => key)
+    };
+
     const cdr: any = {detectChanges: jest.fn(), destroyed: false};
 
-    const comp = new AdminDashboardComponent(cacheService, sdcConfig, cdr);
+    const comp = new AdminDashboardComponent(cacheService, sdcConfig, translateService, cdr);
 
-    return {comp, cacheService, sdcConfig, cdr};
+    return {comp, cacheService, sdcConfig, translateService, languageChanged, cdr};
 }
 
 // ---------------------------------------------------------------------------
@@ -108,5 +116,25 @@ describe('AdminDashboardComponent', () => {
         comp.moveToTab('USER_MANAGEMENT');
         expect(comp.currentTab).toBe('USER_MANAGEMENT');
         expect(comp.isSelected('USER_MANAGEMENT')).toBe(true);
+    });
+
+    // --- cold-start label fix: re-run change detection when the language JSON loads ---
+
+    it('re-runs detectChanges when the language JSON resolves after ngOnInit (cold load)', () => {
+        const {comp, cdr, languageChanged} = createComp();
+        comp.ngOnInit();
+        cdr.detectChanges.mockClear();
+        // Simulate the async language file resolving after the first OnPush render.
+        languageChanged.next('en_US');
+        expect(cdr.detectChanges).toHaveBeenCalled();
+    });
+
+    it('ngOnDestroy unsubscribes from languageChangedObservable (no CD after destroy)', () => {
+        const {comp, cdr, languageChanged} = createComp();
+        comp.ngOnInit();
+        comp.ngOnDestroy();
+        cdr.detectChanges.mockClear();
+        languageChanged.next('en_US');
+        expect(cdr.detectChanges).not.toHaveBeenCalled();
     });
 });

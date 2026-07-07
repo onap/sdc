@@ -18,9 +18,11 @@
  * ============LICENSE_END=========================================================
  */
 
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit} from '@angular/core';
+import {Subscription} from 'rxjs/Subscription';
 import {CacheService} from 'app/services-ng2';
 import {SdcConfigToken, ISdcConfig} from 'app/ng2/config/sdc-config.config';
+import {TranslateService} from 'app/ng2/shared/translator/translate.service';
 
 /**
  * Admin Dashboard container component. Replaces the AngularJS AdminDashboardViewModel.
@@ -35,21 +37,39 @@ import {SdcConfigToken, ISdcConfig} from 'app/ng2/config/sdc-config.config';
     styleUrls: ['./admin-dashboard.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AdminDashboardComponent implements OnInit {
+export class AdminDashboardComponent implements OnInit, OnDestroy {
 
     currentTab: string = 'USER_MANAGEMENT';
     version: string;
     monitorUrl: string;
 
+    private languageChangedSubscription: Subscription;
+
     constructor(private cacheService: CacheService,
                 @Inject(SdcConfigToken) private sdcConfig: ISdcConfig,
+                private translateService: TranslateService,
                 private cdr: ChangeDetectorRef) {}
 
     ngOnInit(): void {
         this.version = this.cacheService.get('version');
         this.monitorUrl = this.sdcConfig.api.kibana;
         this.currentTab = 'USER_MANAGEMENT';
+        // The top-bar tab/Monitor labels use the impure `translate` pipe. On a cold page load
+        // (this is the ADMIN landing state) the async language JSON has not resolved yet when
+        // OnPush runs its single ngOnInit detectChanges(), so the pipe caches empty strings and
+        // nothing fires a later CD (propagateDigest:false). Re-run CD when the language loads so
+        // the pipe re-evaluates. languageChangedObservable is publishReplay(1) — it fires
+        // immediately if already loaded, or on load otherwise.
+        this.languageChangedSubscription = this.translateService.languageChangedObservable.subscribe(() => {
+            this.detectChangesSafe();
+        });
         this.detectChangesSafe();
+    }
+
+    ngOnDestroy(): void {
+        if (this.languageChangedSubscription) {
+            this.languageChangedSubscription.unsubscribe();
+        }
     }
 
     isSelected(tab: string): boolean {

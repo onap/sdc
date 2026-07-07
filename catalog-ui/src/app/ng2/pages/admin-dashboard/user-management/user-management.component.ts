@@ -17,8 +17,9 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {DatePipe} from '@angular/common';
+import {Subscription} from 'rxjs/Subscription';
 import {IUserProperties} from 'app/models/user';
 import {UserService} from 'app/ng2/services/user.service';
 import {TranslateService} from 'app/ng2/shared/translator/translate.service';
@@ -45,7 +46,7 @@ interface IUserRow extends IUserProperties {
     styleUrls: ['./user-management.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class UserManagementComponent implements OnInit {
+export class UserManagementComponent implements OnInit, OnDestroy {
 
     isLoading: boolean = false;
 
@@ -59,6 +60,7 @@ export class UserManagementComponent implements OnInit {
     searchTerm: string = '';
 
     private datePipe: DatePipe = new DatePipe('en-US');
+    private languageChangedSubscription: Subscription;
 
     constructor(private userService: UserService,
                 private translateService: TranslateService,
@@ -66,14 +68,16 @@ export class UserManagementComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.tableHeadersList = [
-            {title: 'First Name', property: 'firstName'},
-            {title: 'Last Name', property: 'lastName'},
-            {title: this.translateService.translate('USER_MANAGEMENT_TABLE_HEADER_USER_ID'), property: 'userId'},
-            {title: 'Email', property: 'email'},
-            {title: 'Role', property: 'role'},
-            {title: 'Last Active', property: 'lastLoginTime'}
-        ];
+        this.buildTableHeaders();
+        // The 'User ID' header title is resolved once via translateService.translate(). On a cold
+        // load the async language JSON has not resolved yet, so it comes back empty and (OnPush,
+        // propagateDigest:false) never re-renders. Rebuild the headers + re-run CD when the
+        // language loads. languageChangedObservable is publishReplay(1) — fires immediately if
+        // already loaded, or on load otherwise.
+        this.languageChangedSubscription = this.translateService.languageChangedObservable.subscribe(() => {
+            this.buildTableHeaders();
+            this.detectChangesSafe();
+        });
 
         this.isLoading = true;
 
@@ -102,6 +106,23 @@ export class UserManagementComponent implements OnInit {
         };
 
         this.userService.getAllUsers().subscribe(onSuccess, onError);
+    }
+
+    ngOnDestroy(): void {
+        if (this.languageChangedSubscription) {
+            this.languageChangedSubscription.unsubscribe();
+        }
+    }
+
+    private buildTableHeaders(): void {
+        this.tableHeadersList = [
+            {title: 'First Name', property: 'firstName'},
+            {title: 'Last Name', property: 'lastName'},
+            {title: this.translateService.translate('USER_MANAGEMENT_TABLE_HEADER_USER_ID'), property: 'userId'},
+            {title: 'Email', property: 'email'},
+            {title: 'Role', property: 'role'},
+            {title: 'Last Active', property: 'lastLoginTime'}
+        ];
     }
 
     sort(by: string): void {
