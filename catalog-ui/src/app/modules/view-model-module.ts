@@ -19,7 +19,6 @@
  */
 
 import {PropertyFormBaseView} from "../view-models/forms/property-forms/base-property-form/property-form-base-model";
-import {PropertyFormViewModel} from "../view-models/forms/property-forms/component-property-form/property-form-view-model";
 import {ModulePropertyView} from "../view-models/forms/property-forms/module-property-modal/module-property-model";
 import {DcaeAppViewModel} from "../view-models/dcae-app/dcae-app-view-model";
 import {IconsModalViewModel} from "../view-models/modals/icons-modal/icons-modal-view";
@@ -33,7 +32,6 @@ let viewModelModule:ng.IModule = angular.module(moduleName, []);
 
 viewModelModule
   .controller(moduleName + '.PropertyFormBaseView', PropertyFormBaseView)
-  .controller(moduleName + '.PropertyFormViewModel', PropertyFormViewModel)
   .controller(moduleName + '.ModulePropertyView', ModulePropertyView)
   .controller(moduleName + '.IconsModalViewModel', IconsModalViewModel)
   .controller(moduleName + '.DcaeAppViewModel', DcaeAppViewModel)

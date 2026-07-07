@@ -18,8 +18,10 @@
  * ============LICENSE_END=========================================================
  */
 
-import {  Component, DisplayModule , PropertyModel, InputFEModel } from '../models';
+import {  ButtonModel, Component, DisplayModule , ModalModel, PropertyModel, InputFEModel } from '../models';
 import { ComponentMetadata } from '../models/component-metadata';
+import { ModalService } from 'app/ng2/services/modal.service';
+import { PropertyFormModalComponent } from 'app/ng2/pages/property-form-modal/property-form-modal.component';
 
 export interface IModalsHandler {
 
@@ -31,11 +33,13 @@ export class ModalsHandler implements IModalsHandler {
 
     static '$inject' = [
         '$uibModal',
-        '$q'
+        '$q',
+        'ModalServiceNg2'
     ];
 
     constructor(private $uibModal: ng.ui.bootstrap.IModalService,
-                private $q: ng.IQService) {
+                private $q: ng.IQService,
+                private modalServiceNg2: ModalService) {
     }
 
     openUpdateIconModal = (component: Component): ng.IPromise<any> => {
@@ -70,42 +74,44 @@ export class ModalsHandler implements IModalsHandler {
                              isPropertyValueOwner: boolean, propertyOwnerType: string, propertyOwnerId: string, isViewOnly: boolean = false): ng.IPromise<any> => {
         const deferred = this.$q.defer();
 
-        const modalOptions: ng.ui.bootstrap.IModalSettings = {
-            templateUrl: '../view-models/forms/property-forms/component-property-form/property-form-view.html',
-            controller: 'Sdc.ViewModels.PropertyFormViewModel',
-            size: 'sdc-l',
-            backdrop: 'static',
-            keyboard: false,
-            resolve: {
-                property: (): PropertyModel => {
-                    return property;
-                },
-                component: (): Component => {
-                    return component as Component;
-                },
-                filteredProperties: (): PropertyModel[] => {
-                    return filteredProperties;
-                },
-                isPropertyValueOwner: (): boolean => {
-                    return isPropertyValueOwner;
-                },
-                propertyOwnerType: (): string => {
-                    return propertyOwnerType;
-                },
-                propertyOwnerId: (): string => {
-                    return propertyOwnerId;
-                },
-                isViewOnly: (): boolean => {
-                    return isViewOnly;
-                },
-                inputProperty: (): InputFEModel => {
-                    return null;
-                }
-            }
+        const inputs = {
+            property,
+            component: component as Component,
+            filteredProperties,
+            isPropertyValueOwner,
+            propertyOwnerType,
+            propertyOwnerId,
+            isViewOnly,
+            inputProperty: null as InputFEModel
         };
 
-        const modalInstance: ng.ui.bootstrap.IModalServiceInstance = this.$uibModal.open(modalOptions);
-        deferred.resolve(modalInstance.result);
+        const isNew: boolean = !property.name;
+        let dyn: PropertyFormModalComponent;
+
+        const okBtn = new ButtonModel('Save', 'blue', () => {
+            dyn.save().subscribe((saved) => {
+                // save() returns Observable<PropertyModel | void>; the deferred is untyped ($q.defer<any>).
+                deferred.resolve(saved as any);
+                this.modalServiceNg2.closeCurrentModal();
+            });
+        }, () => !dyn.isValid());
+        const cancelBtn = new ButtonModel('Cancel', 'grey', () => {
+            deferred.resolve();
+            this.modalServiceNg2.closeCurrentModal();
+        });
+
+        const modal = this.modalServiceNg2.createCustomModal(
+            new ModalModel('l', (isNew ? 'Add' : 'Update') + ' Property', null, [okBtn, cancelBtn], 'standard'));
+        this.modalServiceNg2.addDynamicContentToModal(modal, PropertyFormModalComponent, inputs);
+        dyn = modal.instance.dynamicContent.instance as PropertyFormModalComponent;
+        // Resolve the deferred (so the caller's .then(reloadProperties) runs) and close the modal on an
+        // in-modal delete-success. Mirrors the Cancel button; the component invokes this from deleteCurrent().
+        dyn.deleteCallback = () => {
+            deferred.resolve();
+            this.modalServiceNg2.closeCurrentModal();
+        };
+        modal.instance.open();
+
         return deferred.promise;
     }
 
@@ -121,42 +127,44 @@ export class ModalsHandler implements IModalsHandler {
     newOpenEditPropertyModal = (property: PropertyModel, filteredProperties: PropertyModel[], isPropertyValueOwner: boolean, propertyOwnerType: string, propertyOwnerId: string, component: Component, inputProperty: InputFEModel): ng.IPromise<any> => {
         const deferred = this.$q.defer();
 
-        const modalOptions: ng.ui.bootstrap.IModalSettings = {
-            templateUrl: '../view-models/forms/property-forms/component-property-form/property-form-view.html',
-            controller: 'Sdc.ViewModels.PropertyFormViewModel',
-            size: 'sdc-l',
-            backdrop: 'static',
-            keyboard: false,
-            resolve: {
-                property: (): PropertyModel => {
-                    return property;
-                },
-                filteredProperties: (): PropertyModel[] => {
-                    return filteredProperties;
-                },
-                isPropertyValueOwner: (): boolean => {
-                    return isPropertyValueOwner;
-                },
-                propertyOwnerType: (): string => {
-                    return propertyOwnerType;
-                },
-                propertyOwnerId: (): string => {
-                    return propertyOwnerId;
-                },
-                isViewOnly: (): boolean => {
-                    return false;
-                },
-                component: (): Component => {
-                    return component as Component;
-                },
-                inputProperty: (): InputFEModel => {
-                    return inputProperty;
-                }
-            }
+        const inputs = {
+            property,
+            component: component as Component,
+            filteredProperties,
+            isPropertyValueOwner,
+            propertyOwnerType,
+            propertyOwnerId,
+            isViewOnly: false,
+            inputProperty
         };
 
-        const modalInstance: ng.ui.bootstrap.IModalServiceInstance = this.$uibModal.open(modalOptions);
-        deferred.resolve(modalInstance.result);
+        const isNew: boolean = !property.name;
+        let dyn: PropertyFormModalComponent;
+
+        const okBtn = new ButtonModel('Save', 'blue', () => {
+            dyn.save().subscribe((saved) => {
+                // save() returns Observable<PropertyModel | void>; the deferred is untyped ($q.defer<any>).
+                deferred.resolve(saved as any);
+                this.modalServiceNg2.closeCurrentModal();
+            });
+        }, () => !dyn.isValid());
+        const cancelBtn = new ButtonModel('Cancel', 'grey', () => {
+            deferred.resolve();
+            this.modalServiceNg2.closeCurrentModal();
+        });
+
+        const modal = this.modalServiceNg2.createCustomModal(
+            new ModalModel('l', (isNew ? 'Add' : 'Update') + ' Property', null, [okBtn, cancelBtn], 'standard'));
+        this.modalServiceNg2.addDynamicContentToModal(modal, PropertyFormModalComponent, inputs);
+        dyn = modal.instance.dynamicContent.instance as PropertyFormModalComponent;
+        // Resolve the deferred (so the caller's .then(reloadProperties) runs) and close the modal on an
+        // in-modal delete-success. Mirrors the Cancel button; the component invokes this from deleteCurrent().
+        dyn.deleteCallback = () => {
+            deferred.resolve();
+            this.modalServiceNg2.closeCurrentModal();
+        };
+        modal.instance.open();
+
         return deferred.promise;
     }
 

@@ -42,13 +42,12 @@ interface ITableHeader {
  *    downgraded component rendered by a ui-router state with propagateDigest:false never gets inputs);
  *  - OnPush change detection + detectChangesSafe() after every async / cross-framework mutation.
  *
- * The property EDIT modal stays AngularJS for now: it is opened imperatively via the upgraded
- * ModalsHandler ($uibModal + Sdc.ViewModels.PropertyFormViewModel), exactly as the five already-
- * migrated Angular callers (composition properties-tab, capabilities, inputs-table, group/policy,
- * hierarchy) do. It embeds the recursive type-map/type-list/fields-structure directives scheduled for
- * Phase 9, so migrating it here would be root-before-leaf. Phase 6b migrates it after Phase 9.
+ * The property EDIT modal is now pure Angular (PropertyFormModalComponent): it is opened imperatively
+ * via the upgraded ModalsHandler (ModalService.createCustomModal + addDynamicContentToModal), exactly as
+ * the five already-migrated Angular callers (composition properties-tab, capabilities, inputs-table,
+ * group/policy, hierarchy) do. It reuses the recursive <dynamic-property> editor. Migrated in Phase 9 CR 2.
  *
- * IMPORTANT — OnPush + no digest: the AngularJS modal and the delete both mutate component.properties
+ * IMPORTANT — OnPush + no digest: the edit modal and the delete both mutate component.properties
  * OUTSIDE this component's zone-driven change detection. The old tab refreshed its table via the
  * global $digest; an OnPush Angular component gets none. We therefore recompute the displayed list and
  * call detectChanges() explicitly when the modal closes and after a delete — this is what keeps the
@@ -172,7 +171,7 @@ export class WorkspacePropertiesTabComponent implements OnInit {
     }
 
     /**
-     * Open the (still-AngularJS) edit/create property modal, then reload the list on close.
+     * Open the (Angular PropertyFormModalComponent) edit/create property modal, then reload the list on close.
      *
      * Signature mirrors the old PropertiesViewModel.openEditPropertyModal — including passing the
      * DISPLAY-ordered `filteredProperties` so the modal's prev/next navigation walks the list in the

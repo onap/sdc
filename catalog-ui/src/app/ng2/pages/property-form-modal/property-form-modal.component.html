@@ -1,0 +1,222 @@
+<!--
+  ============LICENSE_START=======================================================
+  SDC
+  ================================================================================
+  Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+  Modifications copyright (c) 2026 Deutsche Telekom AG
+  ================================================================================
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  ============LICENSE_END=========================================================
+-->
+<div class="sdc-edit-property-container" data-tests-id="sdc-edit-property-container">
+
+    <!-- Top-bar: delete / previous / next. Shown only for an existing, non-input property
+         (old data-ng-if="!isNew && !editPropertyModel.property.propertyView", property-form-view.html:18-25). -->
+    <div class="sdc-modal-top-bar" *ngIf="showTopBar">
+        <div class="sdc-modal-top-bar-buttons">
+            <span (click)="isDeleteDisabled ? null : deleteCurrent()"
+                  [class.disabled]="isDeleteDisabled"
+                  class="sprite-new delete-btn"
+                  data-tests-id="delete_property">Delete</span>
+            <span class="delimiter"></span>
+            <span (click)="isFirstProperty() ? null : getPrev()"
+                  [class.disabled]="isFirstProperty()"
+                  class="sprite-new left-arrow"
+                  data-tests-id="get-prev">Previous</span>
+            <span (click)="isLastProperty() ? null : getNext()"
+                  [class.disabled]="isLastProperty()"
+                  class="sprite-new right-arrow"
+                  data-tests-id="get-next">Next</span>
+        </div>
+    </div>
+
+    <div class="sdc-edit-property-form-container">
+        <form class="w-sdc-form two-columns" [formGroup]="form" novalidate>
+
+            <div class="w-sdc-form-columns-wrapper">
+
+                <div class="w-sdc-form-column">
+                    <!-- Name -->
+                    <div class="i-sdc-form-item"
+                         [class.error]="form.get('name').dirty && form.get('name').invalid">
+                        <label class="i-sdc-form-label" [class.required]="!componentMetadata.isService">Name</label>
+                        <input class="i-sdc-form-input"
+                               data-tests-id="propertyName"
+                               formControlName="name"
+                               type="text"
+                               name="propertyName"
+                               [maxlength]="nameMaxLength"/>
+                    </div>
+                </div>
+
+                <div class="w-sdc-form-column">
+                    <div class="w-sdc-form-columns-wrapper">
+                        <div class="w-sdc-form-column">
+                            <!-- Type -->
+                            <div class="i-sdc-form-item"
+                                 [class.error]="form.get('type').dirty && form.get('type').invalid">
+                                <label class="i-sdc-form-label" [class.required]="!componentMetadata.isService">Type</label>
+                                <select class="i-sdc-form-select"
+                                        data-tests-id="propertyType"
+                                        name="type"
+                                        formControlName="type"
+                                        (change)="onTypeChange()">
+                                    <option value="">Choose Type</option>
+                                    <option *ngFor="let type of types" [value]="type">{{type}}</option>
+                                    <option *ngFor="let type of nonPrimitiveTypes"
+                                            [value]="type">{{type.replace("org.openecomp.datatypes.heat.","")}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="w-sdc-form-column" *ngIf="showSchema()">
+                            <!-- Entry Schema -->
+                            <div class="i-sdc-form-item"
+                                 [class.error]="form.get('schemaType').dirty && form.get('schemaType').invalid">
+                                <label class="i-sdc-form-label required">{{'PROPERTY_ENTRY_SCHEMA' | translate}}</label>
+                                <select class="i-sdc-form-select"
+                                        data-tests-id="schema-type"
+                                        name="schemaType"
+                                        formControlName="schemaType"
+                                        (change)="onSchemaTypeChange()">
+                                    <option value="">{{'PROPERTY_ENTRY_SCHEMA_CHOOSE_OPTION' | translate}}</option>
+                                    <option *ngFor="let type of types" [value]="type">{{type}}</option>
+                                    <option *ngFor="let type of nonPrimitiveTypes"
+                                            [value]="type">{{type.replace("org.openecomp.datatypes.heat.","")}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Description -->
+            <div class="i-sdc-form-item"
+                 [class.error]="form.get('description').dirty && form.get('description').invalid">
+                <label class="i-sdc-form-label">Description</label>
+                <textarea class="i-sdc-form-textarea"
+                          formControlName="description"
+                          name="description"
+                          [maxlength]="400"
+                          data-tests-id="description"></textarea>
+            </div>
+
+            <!-- Default value -->
+            <div class="default-value-section i-sdc-form-item" *ngIf="!property.propertyView">
+                <label class="i-sdc-form-label">Default Value</label>
+
+                <!-- Value TYPE radio: Value/Entries vs TOSCA Function. Offered only for non-VFC components
+                     (old ng-if="!componentMetadata.isVfc", property-form-view.html:144-164). -->
+                <ng-container *ngIf="showToscaFunctionOption">
+                    <label class="tlv-radio" [attr.data-tests-id]="'propertyRadioButton_value'">
+                        <input type="radio"
+                               name="hasGetFunctionValue"
+                               [value]="false"
+                               [(ngModel)]="hasGetFunctionValue"
+                               [ngModelOptions]="{standalone: true}"
+                               (change)="onValueTypeChange()"/>
+                        <span class="tlv-radio-label">{{(property.type === 'map' || property.type === 'list') ? 'Entries' : 'Value'}}</span>
+                    </label>
+                    <label class="tlv-radio" [attr.data-tests-id]="'propertyRadioButton_toscaFunction'">
+                        <input type="radio"
+                               name="hasGetFunctionValue"
+                               [value]="true"
+                               [(ngModel)]="hasGetFunctionValue"
+                               [ngModelOptions]="{standalone: true}"
+                               (change)="onValueTypeChange()"/>
+                        <span class="tlv-radio-label">{{'TOSCA_FUNCTION_LABEL' | translate}}</span>
+                    </label>
+                    <div *ngIf="hasGetFunctionValue">
+                        <tosca-function [property]="property"
+                                        [componentInstanceMap]="componentInstanceMap"
+                                        [customToscaFunctions]="customToscaFunctions"
+                                        [allowClear]="false"
+                                        (onValidFunction)="onGetFunctionValidFunction($event)"
+                                        (onValidityChange)="onToscaFunctionValidityChange($event)">
+                        </tosca-function>
+                    </div>
+                </ng-container>
+
+                <!-- Value editor (scalar input / boolean select / <dynamic-property>). Hidden when the TOSCA
+                     Function radio is selected — old data-ng-if="!editPropertyModel.hasGetFunctionValue" wrapper
+                     (property-form-view.html:165). -->
+                <ng-container *ngIf="showValueEditor">
+                    <!-- Simple (scalar) types: the text input / boolean select from Task 2 -->
+                    <div class="i-sdc-form-item"
+                         *ngIf="!isComplexType"
+                         [class.error]="form.get('value').dirty && form.get('value').invalid">
+                        <!-- any NOT boolean -->
+                        <input class="i-sdc-form-input"
+                               data-tests-id="defaultvalue"
+                               *ngIf="!isBooleanValue()"
+                               formControlName="value"
+                               type="text"
+                               name="value"
+                               [maxlength]="maxLength"/>
+                        <!-- boolean -->
+                        <select class="i-sdc-form-select"
+                                data-tests-id="booleantype"
+                                *ngIf="isBooleanValue()"
+                                name="value"
+                                formControlName="value">
+                            <option value="true">true</option>
+                            <option value="false">false</option>
+                        </select>
+                        <!-- Client-side value validation (BUG 3): mirrors the old ng-pattern + validateJson /
+                             validateIntRange, surfaced as PROPERTY_EDIT_PATTERN (old property-form-view.html). -->
+                        <div class="input-error"
+                             *ngIf="form.get('value').dirty && form.get('value').invalid">
+                            <span>{{'PROPERTY_EDIT_PATTERN' | translate}}</span>
+                        </div>
+                    </div>
+
+                    <!-- Complex types (map / list / datatype): the reused recursive Angular value editor. Replaces
+                         the old AngularJS ng-switch over fields-structure / type-map / type-list. -->
+                    <div class="i-sdc-form-item complex-value-section" *ngIf="isComplexType">
+                        <dynamic-property
+                                [property]="propertyFEModel"
+                                [rootProperty]="propertyFEModel"
+                                [readonly]="isValueReadonly"
+                                [expandedChildId]="propertyFEModel.expandedChildPropertyId"
+                                (propertyChanged)="onValueChanged()"
+                                (expandChild)="propertyFEModel.updateExpandedChildPropertyId($event)">
+                        </dynamic-property>
+                    </div>
+                </ng-container>
+            </div>
+
+            <!-- Constraints. Shown for an input property, when constraints exist, or when editable and not a
+                 service (old data-ng-if, property-form-view.html:256-265). -->
+            <div class="constraints-section i-sdc-form-item"
+                 *ngIf="property.propertyView || property.constraints || !(input.isViewOnly || componentMetadata.isService)">
+                <label class="i-sdc-form-label">Constraints</label>
+                <app-constraints [propertyConstraints]="property.constraints"
+                                 [isViewOnly]="property.propertyView ? !property.propertyView : (input.isViewOnly || componentMetadata.isService)"
+                                 [propertyType]="property.type"
+                                 (onConstraintChange)="onConstraintChange($event)">
+                </app-constraints>
+            </div>
+
+            <!-- Metadata. Same visibility rule as Constraints (old property-form-view.html:266-274). -->
+            <div class="constraints-section i-sdc-form-item"
+                 *ngIf="property.propertyView || property.metadata || !(input.isViewOnly || componentMetadata.isService)">
+                <label class="i-sdc-form-label">Metadata</label>
+                <app-property-metadata [propertyMetadata]="property.metadata"
+                                       [isViewOnly]="property.propertyView ? !property.propertyView : (input.isViewOnly || componentMetadata.isService)"
+                                       (onPropertyMetadataChange)="onPropertyMetadataChange($event)">
+                </app-property-metadata>
+            </div>
+
+        </form>
+    </div>
+</div>
