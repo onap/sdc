@@ -33,6 +33,7 @@ import {CompositionService} from 'app/ng2/pages/composition/composition.service'
 import {TopologyTemplateService} from 'app/ng2/services/component-services/topology-template.service';
 import {TranslateService} from 'app/ng2/shared/translator/translate.service';
 import {ModalService} from 'app/ng2/services/modal.service';
+import {DataTypesService} from 'app/services/data-types-service';
 import {SdcUiServices} from 'onap-ui-angular';
 import {PropertyFormModalComponent} from './property-form-modal.component';
 import {PropertyFormModalService} from './property-form-modal.service';
@@ -136,6 +137,13 @@ function makeCdr(): any {
     return {detectChanges: jest.fn(), markForCheck: jest.fn(), detach: jest.fn(), reattach: jest.fn(), checkNoChanges: jest.fn()};
 }
 
+// Stand-in for the (AngularJS) DataTypesService used to populate the Type dropdown's non-primitive types.
+// fetchDataTypesByModel returns an IHttpPromise-like resolving to {data: DataTypesMap}; default is the two
+// datatypes below so a spec can assert nonPrimitiveTypes is filtered/sorted, and error paths can override.
+function makeDataTypesService(dataTypes: any = {'tosca.datatypes.Root': {}, 'org.openecomp.datatypes.Foo': {}}): any {
+    return {fetchDataTypesByModel: jest.fn(() => Promise.resolve({data: dataTypes}))};
+}
+
 function createComp(opts: any = {}) {
     const workspaceService = makeWorkspaceService(opts.isService, opts.isVfc);
     const validationUtils = makeValidationUtils();
@@ -145,10 +153,11 @@ function createComp(opts: any = {}) {
     const compositionService = opts.compositionService || makeCompositionService(opts.componentInstances || []);
     const topologyTemplateService = opts.topologyTemplateService || makeTopologyTemplateService(opts.customToscaFunctions || []);
     const translateService = opts.translateService || makeTranslateService();
+    const dataTypesService = opts.dataTypesService || makeDataTypesService(opts.dataTypes);
     const sdcUiModalService = opts.sdcUiModalService || makeSdcUiModalService();
     const ng2ModalService = opts.ng2ModalService || makeNg2ModalService();
     const comp = new PropertyFormModalComponent(workspaceService, validationUtils, modalService, propertiesUtils, cdr,
-        compositionService, topologyTemplateService, translateService, sdcUiModalService, ng2ModalService);
+        compositionService, topologyTemplateService, translateService, dataTypesService, sdcUiModalService, ng2ModalService);
     comp.input = Object.assign({
         property: 'property' in opts ? opts.property : makeProperty(),
         component: {isService: () => opts.isService},
@@ -160,7 +169,7 @@ function createComp(opts: any = {}) {
         inputProperty: null
     }, opts.inputOverrides || {});
     return {comp, workspaceService, validationUtils, modalService, propertiesUtils, cdr,
-        compositionService, topologyTemplateService, translateService, sdcUiModalService, ng2ModalService};
+        compositionService, topologyTemplateService, translateService, dataTypesService, sdcUiModalService, ng2ModalService};
 }
 
 describe('PropertyFormModalComponent', () => {
@@ -189,6 +198,35 @@ describe('PropertyFormModalComponent', () => {
             comp.ngOnInit();
             expect(comp.componentMetadata.isService).toBe(true);
             expect(comp.componentMetadata.isVfc).toBe(false);
+        });
+
+        it('seeds primitive types synchronously in ngOnInit', () => {
+            const {comp} = createComp();
+            comp.ngOnInit();
+            expect(comp.types.length).toBeGreaterThan(0);
+            expect(comp.types).toContain('string');
+        });
+    });
+
+    describe('Type dropdown non-primitive (data) types', () => {
+
+        it('fetches the model data types and keeps only the non-primitive ones, sorted', async () => {
+            const {comp, dataTypesService} = createComp({
+                dataTypes: {'org.openecomp.datatypes.Zeta': {}, 'tosca.datatypes.Alpha': {}, 'string': {}}
+            });
+            comp.ngOnInit();
+            await Promise.resolve(); // let fetchDataTypesByModel's promise resolve
+            expect(dataTypesService.fetchDataTypesByModel).toHaveBeenCalled();
+            // 'string' is a primitive (in comp.types) → filtered out; remaining sorted alphabetically
+            expect(comp.nonPrimitiveTypes).toEqual(['org.openecomp.datatypes.Zeta', 'tosca.datatypes.Alpha'].sort((a, b) => a.localeCompare(b)));
+            expect(comp.nonPrimitiveTypes).not.toContain('string');
+        });
+
+        it('marks for check after the async data types resolve (OnPush repaint)', async () => {
+            const {comp, cdr} = createComp();
+            comp.ngOnInit();
+            await Promise.resolve();
+            expect(cdr.markForCheck).toHaveBeenCalled();
         });
     });
 
@@ -337,6 +375,7 @@ describe('PropertyFormModalComponent', () => {
                         {provide: CompositionService, useValue: makeCompositionService()},
                         {provide: TopologyTemplateService, useValue: makeTopologyTemplateService()},
                         {provide: TranslateService, useValue: makeTranslateService()},
+                        {provide: DataTypesService, useValue: makeDataTypesService()},
                         {provide: SdcUiServices.ModalService, useValue: makeSdcUiModalService()},
                         {provide: ModalService, useValue: makeNg2ModalService()},
                         {provide: TranslateServiceConfigToken, useValue: mockTranslateConfig}

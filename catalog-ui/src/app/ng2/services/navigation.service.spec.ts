@@ -39,26 +39,32 @@ describe('NavigationService', () => {
     });
 
     describe('navigate', () => {
-        it('should use Angular Router for dashboard state', () => {
+        // dashboard and catalog are rendered by ui-router (downgraded <home-page>/<catalog-page>), NOT by
+        // the Angular <router-outlet>, so they must navigate through $state.go — routing them through
+        // router.navigate() left the view unchanged (dead top-nav CATALOG/HOME click). The ANGULAR_ROUTER_STATES
+        // allow-list is therefore empty; these tests lock in that dashboard/catalog use ui-router.
+        it('should use $state.go for dashboard state (ui-router-rendered)', () => {
             service.navigate('dashboard');
-            expect(mockRouter.navigate).toHaveBeenCalledWith(['/dashboard'], {});
-            expect(mockState.go).not.toHaveBeenCalled();
+            expect(mockState.go).toHaveBeenCalledWith('dashboard', undefined, undefined);
+            expect(mockRouter.navigate).not.toHaveBeenCalled();
         });
 
-        it('should use Angular Router for catalog state', () => {
+        it('should use $state.go for catalog state (ui-router-rendered)', () => {
             service.navigate('catalog');
-            expect(mockRouter.navigate).toHaveBeenCalledWith(['/catalog'], {});
-            expect(mockState.go).not.toHaveBeenCalled();
+            expect(mockState.go).toHaveBeenCalledWith('catalog', undefined, undefined);
+            expect(mockRouter.navigate).not.toHaveBeenCalled();
         });
 
-        it('should use Angular Router with query params', () => {
+        it('should use $state.go for dashboard with query params', () => {
             service.navigate('dashboard', {show: 'recent', folder: 'DESIGNER'});
-            expect(mockRouter.navigate).toHaveBeenCalledWith(['/dashboard'], {queryParams: {show: 'recent', folder: 'DESIGNER'}});
+            expect(mockState.go).toHaveBeenCalledWith('dashboard', {show: 'recent', folder: 'DESIGNER'}, undefined);
+            expect(mockRouter.navigate).not.toHaveBeenCalled();
         });
 
-        it('should use Angular Router with replaceUrl option', () => {
+        it('should use $state.go for catalog with navigation options', () => {
             service.navigate('catalog', {filter: 'active'}, {location: 'replace'});
-            expect(mockRouter.navigate).toHaveBeenCalledWith(['/catalog'], {queryParams: {filter: 'active'}, replaceUrl: true});
+            expect(mockState.go).toHaveBeenCalledWith('catalog', {filter: 'active'}, {location: 'replace'});
+            expect(mockRouter.navigate).not.toHaveBeenCalled();
         });
 
         it('should fall back to $state.go for workspace states', () => {

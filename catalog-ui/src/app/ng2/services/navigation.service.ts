@@ -37,7 +37,19 @@ export interface NavigationStartEvent {
 
 export type NavigationStartCallback = (event: NavigationStartEvent) => void;
 
-const ANGULAR_ROUTER_STATES = ['dashboard', 'catalog'];
+// States whose VIEW is actually rendered by the Angular Router (<router-outlet> in app.component.html).
+// Only these may be navigated through router.navigate(); everything else must go through ui-router's
+// $state.go so the visible <div ui-view> (index.html) re-renders.
+//
+// 'dashboard' and 'catalog' were listed here prematurely: their URLs are claimed by SdcUrlHandlingStrategy,
+// but their views are still rendered by ui-router via the DOWNGRADED <home-page>/<catalog-page> components
+// (app.ts state templates), NOT by the Angular routes. Routing them through router.navigate() updated the
+// Angular Router state but left ui-router's <ui-view> untouched, so the top-nav HOME/CATALOG buttons became
+// dead clicks (menu highlighted, view never changed). type-workspace proves the correct pattern: its URL is
+// also claimed by the strategy, yet it is absent here and navigates fine via $state.go. Keep this list empty
+// until a state's view is genuinely served by <router-outlet>; the navigateWithAngularRouter machinery below
+// is retained for that future migration.
+const ANGULAR_ROUTER_STATES: string[] = [];
 
 @Injectable()
 export class NavigationService {

@@ -24,7 +24,8 @@ import {FormControl, FormGroup, ValidatorFn, Validators} from '@angular/forms';
 import * as _ from 'lodash';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
-import {PropertyModel, PropertyFEModel, Component as IComponent, InputFEModel} from 'app/models';
+import {PropertyModel, PropertyFEModel, Component as IComponent, InputFEModel, DataTypesMap} from 'app/models';
+import {DataTypesService} from 'app/services/data-types-service';
 import {InstanceFeDetails} from 'app/models/instance-fe-details';
 import {CustomToscaFunction} from 'app/models/default-custom-functions';
 import {ToscaGetFunction} from 'app/models/tosca-get-function';
@@ -71,7 +72,9 @@ export class PropertyFormModalComponent implements OnInit {
     public nameMaxLength: number = PROPERTY_VALUE_CONSTRAINTS.NAME_MAX_LENGTH;
     public maxLength: number = PROPERTY_VALUE_CONSTRAINTS.MAX_LENGTH;
 
-    // Type option lists (populated in ngOnInit; nonPrimitiveTypes filled by a later task from the datatype cache).
+    // Type option lists (populated in ngOnInit). types = the primitive TOSCA types (PROPERTY_DATA.TYPES);
+    // nonPrimitiveTypes = the model's declared data types (fetched async from the datatype cache, primitives
+    // filtered out), so complex/custom types (e.g. tosca.datatypes.nfv.*) are selectable in the Type dropdown.
     public types: string[] = [];
     public nonPrimitiveTypes: string[] = [];
 
@@ -122,6 +125,7 @@ export class PropertyFormModalComponent implements OnInit {
                 private compositionService: CompositionService,
                 private topologyTemplateService: TopologyTemplateService,
                 private translateService: TranslateService,
+                private dataTypesService: DataTypesService,
                 private modalServiceSdcUI: SdcUiServices.ModalService,
                 private modalServiceNg2: ModalService) {
     }
@@ -136,6 +140,12 @@ export class PropertyFormModalComponent implements OnInit {
         // Primitive type list, sorted (old: editPropertyModel.types.sort). Copy first — never mutate the shared const.
         this.types = PROPERTY_DATA.TYPES.slice().sort((a, b) => a.localeCompare(b));
 
+        // Non-primitive (data) types for the Type/entry-schema dropdowns — the model's declared data types with
+        // the primitives filtered out, sorted. Verbatim from the old VM (property-form-view-model.ts:345-350).
+        // Async fetch; OnPush → markForCheck once it lands so the <option> list repaints. Without this the
+        // dropdown showed primitives only and complex/custom types (tosca.datatypes.nfv.*) were unselectable.
+        this.loadNonPrimitiveTypes();
+
         // Position within filteredProperties for prev/next (old VM currentPropertyIndex, property-form-view-model.ts:309).
         this.currentPropertyIndexValue = this.findCurrentIndex(this.input.property);
 
@@ -147,6 +157,22 @@ export class PropertyFormModalComponent implements OnInit {
         // mirroring the old initComponentInstanceMap / initCustomToscaFunctions (VM:236-254).
         this.initComponentInstanceMap();
         this.initCustomToscaFunctions();
+    }
+
+    /**
+     * Fetches the model's data types and keeps only the non-primitive ones (those not already in {@link #types}),
+     * sorted — mirroring the old VM (property-form-view-model.ts:345-350). OnPush: markForCheck after the async
+     * result so the Type/entry-schema <option> lists repaint. Best-effort: on error the dropdown still offers the
+     * primitives (matching the old behaviour where nonPrimitiveTypes simply stayed empty until the fetch resolved).
+     */
+    private loadNonPrimitiveTypes(): void {
+        this.dataTypesService.fetchDataTypesByModel(this.workspaceService.metadata.model).then((response) => {
+            const dataTypes = response.data as DataTypesMap;
+            this.nonPrimitiveTypes = Object.keys(dataTypes)
+                .filter((type: string) => this.types.indexOf(type) === -1)
+                .sort((a, b) => a.localeCompare(b));
+            this.cdr.markForCheck();
+        });
     }
 
     /**
