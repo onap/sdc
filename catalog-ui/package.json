@@ -27,7 +27,16 @@
     "collectCoverageFrom": [
       "<rootDir>/src/app/ng2/**/*.ts",
       "<rootDir>/src/app/view-models/workspace/**/*.ts",
+      "<rootDir>/src/app/filters/**/*.ts",
       "<rootDir>/src/app/services/event-listener-service.ts",
+      "<rootDir>/src/app/services/angular-js-bridge-service.ts",
+      "<rootDir>/src/app/services/available-icons-service.ts",
+      "<rootDir>/src/app/services/configuration-ui-service.ts",
+      "<rootDir>/src/app/services/cookie-service.ts",
+      "<rootDir>/src/app/services/ecomp-service.ts",
+      "<rootDir>/src/app/services/loader-service.ts",
+      "<rootDir>/src/app/services/progress-service.ts",
+      "<rootDir>/src/app/services/sdc-version-service.ts",
       "<rootDir>/src/app/utils/change-lifecycle-state-handler.ts",
       "<rootDir>/src/app/utils/component-factory.ts",
       "!**/*.module.ts",
@@ -40,10 +49,10 @@
     ],
     "coverageThreshold": {
       "global": {
-        "branches": 34,
-        "functions": 24,
-        "lines": 35,
-        "statements": 36
+        "branches": 35,
+        "functions": 26,
+        "lines": 37,
+        "statements": 38
       }
     },
     "setupTestFrameworkScriptFile": "<rootDir>/src/jest/setup-jest.ts",
