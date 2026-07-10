@@ -20,7 +20,6 @@
 
 import {PropertyFormBaseView} from "../view-models/forms/property-forms/base-property-form/property-form-base-model";
 import {ModulePropertyView} from "../view-models/forms/property-forms/module-property-modal/module-property-model";
-import {DcaeAppViewModel} from "../view-models/dcae-app/dcae-app-view-model";
 import {IconsModalViewModel} from "../view-models/modals/icons-modal/icons-modal-view";
 import {TypeWorkspaceComponent} from "../ng2/pages/type-workspace/type-workspace.component";
 import {downgradeComponent} from "@angular/upgrade/static";
@@ -34,7 +33,6 @@ viewModelModule
   .controller(moduleName + '.PropertyFormBaseView', PropertyFormBaseView)
   .controller(moduleName + '.ModulePropertyView', ModulePropertyView)
   .controller(moduleName + '.IconsModalViewModel', IconsModalViewModel)
-  .controller(moduleName + '.DcaeAppViewModel', DcaeAppViewModel)
   .controller(moduleName + '.TypeWorkspaceComponent', downgradeComponent({ component: TypeWorkspaceComponent }))
   .controller(moduleName + '.WorkspaceMenuComponent', downgradeComponent({ component: WorkspaceMenuComponent }))
   .controller(moduleName + '.TypeWorkspaceGeneralComponent', downgradeComponent({ component: TypeWorkspaceGeneralComponent }));

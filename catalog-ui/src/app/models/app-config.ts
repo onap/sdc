@@ -172,7 +172,6 @@ class ConfigMenuItem {
 export interface IAppConfigurtaion {
     environment: string;
     api: IApi;
-    hostedApplications: IHostedApplication[];
     resourceTypesFilter: IResourceTypesFilter;
     logConfig: ILogConfig;
     cookie: ICookie;
@@ -191,23 +190,6 @@ export interface IAppConfigurtaion {
 // tslint:disable-next-line:interface-name
 export interface IResourceTypesFilter {
     resource: string[];
-}
-
-// tslint:disable-next-line:interface-name
-export interface IHostedApplication {
-    moduleName: string;
-    navTitle: string;
-    defaultState: string;
-    exists?: boolean;
-    state: IHostedApplicationState;
-}
-
-// tslint:disable-next-line:interface-name
-export interface IHostedApplicationState {
-    name: string;
-    url: string;
-    relativeHtmlPath: string;
-    controllerName: string;
 }
 
 // tslint:disable-next-line:interface-name

@@ -25,7 +25,7 @@ import * as _ from 'lodash';
 import 'ng-infinite-scroll';
 import { SdcUiCommon, SdcUiComponents, SdcUiServices } from 'onap-ui-angular';
 import 'reflect-metadata';
-import { IAppConfigurtaion, IAppMenu, IHostedApplication, Resource } from './models';
+import { IAppConfigurtaion, IAppMenu, Resource } from './models';
 import { Component } from './models/components/component';
 import { IUserProperties } from './models/user';
 import './modules/directive-module.ts';
@@ -86,42 +86,6 @@ const dependentModules: string[] = [
   filtersModuleName,
   utilsModuleName
 ];
-
-// ===================== Hosted applications section ====================
-// Define here new hosted apps
-const hostedApplications: IHostedApplication[] = [
-  {
-    moduleName: 'dcaeApp',
-    navTitle: 'DCAE',
-    defaultState: 'dcae.app.home',
-    state: {
-      name: 'dcae',
-      url: '/dcae',
-      relativeHtmlPath: 'dcae-app/dcae-app-view.html',
-      controllerName: '.DcaeAppViewModel'
-    }
-  }
-];
-
-// Check if module exists (in case the javascript was not loaded).
-const isModuleExists = (moduleName: string): boolean => {
-  try {
-    angular.module(moduleName);
-    dependentModules.push(moduleName);
-    return true;
-  } catch (e) {
-    console.log('Module ' + moduleName + ' does not exists');
-    return false;
-  }
-};
-
-// Check which hosted applications exists
-_.each(hostedApplications, (hostedApp) => {
-  if (isModuleExists(hostedApp.moduleName)) {
-    hostedApp.exists = true;
-  }
-});
-// ===================== Hosted applications section ====================
 
 export const ng1appModule: ng.IModule = angular.module(moduleName, dependentModules);
 
@@ -627,19 +591,6 @@ ng1appModule.config([
         }
     );
 
-    // Build the states for all hosted apps dynamically
-    _.each(hostedApplications, (hostedApp) => {
-      if (hostedApp.exists) {
-        $stateProvider.state(
-            hostedApp.state.name, {
-              url: hostedApp.state.url,
-              templateUrl: './view-models/dcae-app/dcae-app-view.html',
-              controller: viewModelsModuleName + hostedApp.state.controllerName
-            }
-        );
-      }
-    });
-
     $stateProvider.state(
         'catalog', {
           url: '/catalog?filter.components&filter.resourceSubTypes&filter.categories&filter.statuses&filter.order&filter.term&filter.active',
@@ -730,9 +681,6 @@ ng1appModule.run([
    ModalServiceSdcUI: SdcUiServices.ModalService): void => {
     $templateCache.put('notification-custom-template.html', require('./view-models/shared/notification-custom-template.html'));
     $templateCache.put('notification-custom-template.html', require('./view-models/shared/notification-custom-template.html'));
-
-    // Add hosted applications to sdcConfig
-    sdcConfig.hostedApplications = hostedApplications;
 
     // handle http config
     $http.defaults.withCredentials = true;

@@ -20,7 +20,7 @@
 
 import * as _ from "lodash";
 import {Component, EventEmitter, Inject, Input, OnChanges, OnInit, Output} from "@angular/core";
-import {IHostedApplication, IUserProperties, Plugin, PluginsConfiguration} from "app/models";
+import {IUserProperties, Plugin, PluginsConfiguration} from "app/models";
 import {MenuItem, MenuItemGroup} from "app/utils";
 import {AuthenticationService} from "../../../services/authentication.service";
 import {ISdcConfig, SdcConfigToken} from "../../../config/sdc-config.config";
@@ -129,11 +129,6 @@ export class TopNavComponent implements OnInit, OnChanges {
             // Only designer can perform onboarding
             if (this.user && this.user.role === 'DESIGNER') {
                 tmpArray.push(new MenuItem(this.translateService.translate("TOP_MENU_ON_BOARD_BUTTON"), null, "onboardVendor", "goToState", null, null));
-                _.each(this.sdcConfig.hostedApplications, (hostedApp: IHostedApplication) => {
-                    if (hostedApp.exists) {
-                        tmpArray.push(new MenuItem(hostedApp.navTitle, null, hostedApp.defaultState, "goToState", null, null));
-                    }
-                });
             }
 
             // Adding plugins to top-nav only if they can be displayed for the current connected user role
