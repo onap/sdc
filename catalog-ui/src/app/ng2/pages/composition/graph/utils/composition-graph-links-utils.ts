@@ -28,7 +28,6 @@ import {
     CompositionCiNodeBase,
     RelationshipModel,
     ConnectRelationModel,
-    LinksFactory,
     Component,
     LinkMenu,
     Point,
@@ -38,6 +37,10 @@ import {
     Relationship,
     ComponentInstance
 } from "app/models";
+// LinksFactory is deep-imported (not via the 'app/models' barrel) to avoid a
+// barrel↔links-factory circular dependency that leaves this @Injectable's
+// constructor param metadata undefined under JIT ("Can't resolve all parameters").
+import { LinksFactory } from "app/models/graph/graph-links/links-factory";
 import {CommonGraphUtils} from "../common/common-graph-utils";
 import {CompositionGraphGeneralUtils} from "./composition-graph-general-utils";
 import {MatchCapabilitiesRequirementsUtils} from "./match-capability-requirement-utils";

@@ -3,13 +3,14 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,45 +19,9 @@
  * ============LICENSE_END=========================================================
  */
 
-/**
- * Created by obarda on 1/8/2017.
- */
-'use strict';
-
-export interface IPropertyRowDirective extends ng.IScope {
-    onNameClicked:Function;
-    isClickable:boolean;
+export class FileUploadModel {
+    filetype: string;
+    filename: string;
+    filesize: number;
+    base64: string;
 }
-
-export class PropertyRowDirective implements ng.IDirective {
-
-    constructor() {
-
-    }
-
-    scope = {
-        property: '=',
-        instanceName: '=',
-        instanceId: '=',
-        instancePropertiesMap: '=',
-        onNameClicked: '&',
-        onCheckboxClicked: '&'
-    };
-
-    restrict = 'E';
-    replace = true;
-    template = ():string => {
-        return require('./property-row-view.html');
-    };
-
-    link = (scope:IPropertyRowDirective, element:any, $attr:any) => {
-        scope.isClickable = $attr.onNameClicked ? true : false;
-    };
-
-    public static factory = ()=> {
-        return new PropertyRowDirective();
-    };
-
-}
-
-PropertyRowDirective.factory.$inject = [];

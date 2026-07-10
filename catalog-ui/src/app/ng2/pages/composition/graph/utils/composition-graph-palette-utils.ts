@@ -28,8 +28,12 @@ import {GRAPH_EVENTS, GraphUIObjects} from "app/utils/constants";
 import {TopologyTemplateService} from "app/ng2/services/component-services/topology-template.service";
 import {DndDropEvent} from "ngx-drag-drop/ngx-drag-drop";
 import {SdcUiServices} from "onap-ui-angular"
-import { Component as TopologyTemplate, NodesFactory, CapabilitiesGroup, RequirementsGroup,
+import { Component as TopologyTemplate, CapabilitiesGroup, RequirementsGroup,
      CompositionCiNodeBase, ComponentInstance, LeftPaletteComponent, Point } from "app/models";
+// NodesFactory is deep-imported (not via the 'app/models' barrel) to avoid a
+// barrel↔nodes-factory circular dependency that leaves this @Injectable's
+// constructor param metadata undefined under JIT ("Can't resolve all parameters").
+import { NodesFactory } from "app/models/graph/nodes/nodes-factory";
 import {CompositionService} from "../../composition.service";
 import {WorkspaceService} from "app/ng2/pages/workspace/workspace.service";
 import { QueueServiceUtils } from "app/ng2/utils/queue-service-utils";
