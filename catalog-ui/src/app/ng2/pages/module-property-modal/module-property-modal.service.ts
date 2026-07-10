@@ -21,6 +21,7 @@
 import {Injectable} from '@angular/core';
 import * as _ from 'lodash';
 import {Observable} from 'rxjs/Observable';
+import 'rxjs/add/operator/do';
 import {Component, DisplayModule, PropertyBEModel, PropertyModel} from 'app/models';
 import {ComponentInstanceServiceNg2} from 'app/ng2/services/component-instance-services/component-instance.service';
 
@@ -39,15 +40,32 @@ export class ModulePropertyModalService {
     }
 
     public save(component: Component, selectedModule: DisplayModule, property: PropertyModel): Observable<Array<PropertyBEModel>> {
-        if (component.isResource()) {
-            return this.componentInstanceService.updateComponentGroupInstanceProperties(
-                component.componentType, component.uniqueId, selectedModule.uniqueId, [property]);
-        }
-        // Service: find the component instance whose groupInstances contain this group instance
-        // (old save() lines 96-101).
+        const beCall: Observable<Array<PropertyBEModel>> = component.isResource()
+            ? this.componentInstanceService.updateComponentGroupInstanceProperties(
+                component.componentType, component.uniqueId, selectedModule.uniqueId, [property])
+            // Service: find the component instance whose groupInstances contain this group instance
+            // (old save() lines 96-101).
+            : this.componentInstanceService.updateGroupInstanceProperties(
+                component.componentType, component.uniqueId, this.resolveServiceInstanceId(component, selectedModule),
+                selectedModule.groupInstanceUniqueId, [property]);
+
+        // Merge the saved property back into the module's in-memory list so the hierarchy panel shows the new value
+        // without a reload. Mirrors the old Resource.updateResourceGroupProperties / Service.updateGroupInstanceProperties
+        // onSuccess (_.extend(_.find(module.properties, {uniqueId}), property)); the modal edits a copy, so without
+        // this the caller keeps rendering the stale value.
+        return beCall.do((updatedProperties) => {
+            _.forEach(updatedProperties, (updated) => {
+                const target = _.find(selectedModule.properties, {uniqueId: updated.uniqueId});
+                if (target) {
+                    _.extend(target, updated);
+                }
+            });
+        });
+    }
+
+    private resolveServiceInstanceId(component: Component, selectedModule: DisplayModule): string {
         const componentInstance: any = _.find(component.componentInstances, (ci: any) =>
             _.find(ci.groupInstances, {uniqueId: selectedModule.groupInstanceUniqueId}) !== undefined);
-        return this.componentInstanceService.updateGroupInstanceProperties(
-            component.componentType, component.uniqueId, componentInstance.uniqueId, selectedModule.groupInstanceUniqueId, [property]);
+        return componentInstance.uniqueId;
     }
 }

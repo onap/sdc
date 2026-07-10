@@ -24,10 +24,17 @@ import {UNIQUE_GROUP_PROPERTIES_NAME} from 'app/utils/constants';
 describe('ModulePropertyModalComponent', () => {
     let comp: ModulePropertyModalComponent;
     let saveServiceMock: any;
+    let validationUtilsMock: any;
 
     const build = (property: any, component: any, moduleProps: any[] = [property]) => {
-        saveServiceMock = {save: jest.fn()};
-        comp = new ModulePropertyModalComponent(saveServiceMock);
+        saveServiceMock = {save: jest.fn(() => ({subscribe: jest.fn()}))};
+        // Integer values must be all digits; JSON must parse. Mirrors the ValidationUtils behaviour the modal relies on.
+        validationUtilsMock = {
+            getValidationPattern: jest.fn((type: string) => type === 'integer' ? /^\d+$/ : null),
+            validateJson: jest.fn((v: string) => { try { JSON.parse(v); return true; } catch (e) { return false; } }),
+            validateIntRange: jest.fn(() => true)
+        };
+        comp = new ModulePropertyModalComponent(saveServiceMock, validationUtilsMock);
         comp.input = {
             property,
             component,
@@ -103,5 +110,48 @@ describe('ModulePropertyModalComponent', () => {
         comp.property.parentValue = '3';
         comp.onValueChange();
         expect(comp.errors['minValidationVfLevel']).toBe(true);
+    });
+
+    it('flags a pattern error for a non-integer value on an integer property and blocks isValid', () => {
+        build({name: 'plain', type: 'integer', value: '1', uniqueId: 'p'}, resource);
+        comp.property.value = 'abc';
+        comp.onValueChange();
+        expect(comp.errors['pattern']).toBe(true);
+        expect(comp.isValid()).toBe(false);
+    });
+
+    it('accepts a valid integer value (no pattern error)', () => {
+        build({name: 'plain', type: 'integer', value: '1', uniqueId: 'p'}, resource);
+        comp.property.value = '42';
+        comp.onValueChange();
+        expect(comp.errors['pattern']).toBeFalsy();
+        expect(comp.isValid()).toBe(true);
+    });
+
+    it('does not run the pattern check for a boolean property (edited via select)', () => {
+        build({name: 'plain', type: 'boolean', value: 'true', uniqueId: 'p'}, resource);
+        comp.property.value = 'true';
+        comp.onValueChange();
+        expect(comp.errors['pattern']).toBeFalsy();
+        expect(validationUtilsMock.getValidationPattern).not.toHaveBeenCalled();
+    });
+
+    it('save() skips the BE call for a read-only property', () => {
+        build({name: N.IS_BASE, type: 'string', value: 'x', uniqueId: 'p'}, resource);   // IS_BASE -> readonly
+        comp.save();
+        expect(saveServiceMock.save).not.toHaveBeenCalled();
+    });
+
+    it('save() skips the BE call when the value is unchanged', () => {
+        build({name: 'plain', type: 'string', value: 'same', uniqueId: 'p'}, resource);
+        comp.save();   // property.value still 'same', equal to input.property.value
+        expect(saveServiceMock.save).not.toHaveBeenCalled();
+    });
+
+    it('save() issues the BE call when an editable value actually changed', () => {
+        build({name: 'plain', type: 'string', value: 'old', uniqueId: 'p'}, resource);
+        comp.property.value = 'new';
+        comp.save();
+        expect(saveServiceMock.save).toHaveBeenCalled();
     });
 });

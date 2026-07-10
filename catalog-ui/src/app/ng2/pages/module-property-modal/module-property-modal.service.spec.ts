@@ -60,4 +60,17 @@ describe('ModulePropertyModalService', () => {
             done();
         });
     });
+
+    it('merges the saved property back into selectedModule.properties so the hierarchy list is not stale', (done) => {
+        ciServiceMock.updateComponentGroupInstanceProperties = jest.fn(() =>
+            Observable.of([{uniqueId: 'p1', value: '7'}]));
+        const component: any = {isResource: () => true, isService: () => false, componentType: 'RESOURCE', uniqueId: 'vf1'};
+        const staleProperty: any = {uniqueId: 'p1', name: 'initial_count', value: '2'};
+        const selectedModule: any = {uniqueId: 'g1', properties: [staleProperty]};
+        const editedCopy: any = {uniqueId: 'p1', name: 'initial_count', value: '7'};
+        service.save(component, selectedModule, editedCopy).subscribe(() => {
+            expect(selectedModule.properties[0].value).toBe('7');
+            done();
+        });
+    });
 });
