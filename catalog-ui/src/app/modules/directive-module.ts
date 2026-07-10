@@ -18,45 +18,8 @@
  * ============LICENSE_END=========================================================
  */
 
-import {ClickedOutsideDirective} from "../directives/clicked-outside/clicked-outside-directive";
-import {LoaderDirective} from "../directives/loader/loader-directive";
-import {UserHeaderDetailsDirective} from "../directives/user-header-details/user-header-details-directive";
-import {FileTypeDirective} from "../directives/file-type/file-type";
-import {DownloadArtifactDirective} from "../directives/download-artifact/download-artifact";
-import {EllipsisDirective} from "../directives/ellipsis/ellipsis-directive";
-import {InvalidCharactersDirective} from "../directives/invalid-characters/invalid-characters";
-import {ExpandCollapseDirective} from "../directives/utils/expand-collapse/expand-collapse";
-import {PerfectScrollerDirective} from "../directives/perfect-scrollbar/angular-perfect-scrollbar";
-import {SdcModalDirective} from "../directives/modal/sdc-modal";
-import {FileOpenerDirective} from "../directives/file-opener/file-opener";
-import {FileUploadDirective} from "../directives/file-upload/file-upload";
-import {StructureTreeDirective} from "../directives/structure-tree/structure-tree-directive";
-import {SmartTooltipDirective} from "../directives/utils/smart-tooltip/smart-tooltip";
-import {TagDirective} from "../directives/tag/tag-directive";
-import {SdcTagsDirective} from "../directives/utils/sdc-tags/sdc-tags";
-import {SdcKeyboardEventsDirective} from "../directives/utils/sdc-keyboard-events/sdc-keyboard-events";
-import {ExpandCollapseMenuBoxDirective} from "../directives/utils/expand-collapse-menu-box/expand-collaps-menu-box";
-import {PunchOutDirective} from "../directives/punch-out/punch-out";
-import {CustomValidationDirective} from "../directives/custom-validation/custom-validation";
-import {EcompHeaderDirective} from "../directives/ecomp-header/ecomp-header";
-import {EditNamePopoverDirective} from "../directives/edit-name-popover/edit-name-popover-directive";
-import {ValidationOnLoadDirective} from "../directives/utils/validation-on-load/validation-on-load";
-import {InfoTooltipDirective} from "../directives/info-tooltip/info-tooltip";
-import {SdcTabsDirective} from "../directives/sdc-tabs/sdc-tabs-directive";
-import {InnerSdcSingleTabDirective, SdcSingleTabDirective} from "../directives/sdc-tabs/sdc-single-tab/sdc-single-tab-directive";
-import {ExpandCollapseListHeaderDirective} from "../directives/utils/expand-collapse-list-header/expand-collapse-list-header";
-import {JsonExportExcelDirective} from "../directives/export-json-to-excel/export-json-to-excel";
-import {TopProgressDirective} from "../directives/layout/top-progress/top-progress";
-import {CheckboxElementDirective} from "../directives/elements/checkbox/checkbox";
-import {RadiobuttonElementDirective} from "../directives/elements/radiobutton/radiobutton";
-import {OnLastRepeatDirective} from "../directives/events/on-last-repeat/on-last-repeat";
-import {InputRowDirective} from "../directives/inputs-and-properties/inputs/input-row-directive";
-import {PropertyRowDirective} from "../directives/inputs-and-properties/properties/property-row-directive";
 import {NodesFactory} from "../models/graph/nodes/nodes-factory";
 import {LinksFactory} from "../models/graph/graph-links/links-factory";
-import {CapabilitiesListDirective} from "../directives/capabilities-and-requirements/capability/capabilities-list-directive";
-import {RequirementsListDirective} from "../directives/capabilities-and-requirements/requirement/requirements-list-directive";
-import {PreventDoubleClickDirective} from "../directives/prevent-double-click/prevent-double-click";
 // *** NG2 Components (downgraded) *** //
 import {downgradeComponent} from "@angular/upgrade/static";
 import {MenuListNg2Component} from "../ng2/components/downgrade-wrappers/menu-list-ng2/menu-list-ng2.component";
@@ -105,63 +68,10 @@ import {OnboardVendorPageComponent} from "../ng2/pages/onboard-vendor/onboard-ve
 let moduleName: string = 'Sdc.Directives';
 let directiveModule: ng.IModule = angular.module(moduleName, []);
 
-directiveModule.directive('clickedOutside', ClickedOutsideDirective.factory);
-directiveModule.directive('loader', LoaderDirective.factory);
-directiveModule.directive('userHeaderDetails', UserHeaderDetailsDirective.factory);
-directiveModule.directive('ellipsis', EllipsisDirective.factory);
-directiveModule.directive('downloadArtifact', DownloadArtifactDirective.factory);
-directiveModule.directive('fileType', FileTypeDirective.factory);
-directiveModule.directive('invalidCharacters', InvalidCharactersDirective.factory);
-directiveModule.directive('perfectScrollbar', PerfectScrollerDirective.factory);
-directiveModule.directive('expandCollapse', ExpandCollapseDirective.factory);
-directiveModule.directive('ng1Modal', SdcModalDirective.factory);
-directiveModule.directive('fileOpener', FileOpenerDirective.factory);
-directiveModule.directive('fileUpload', FileUploadDirective.factory);
-directiveModule.directive('structureTree', StructureTreeDirective.factory);
-directiveModule.directive('sdcSmartTooltip', SmartTooltipDirective.factory);
-directiveModule.directive('sdcTag', TagDirective.factory);
-directiveModule.directive('sdcTags', SdcTagsDirective.factory);
-directiveModule.directive('sdcKeyboardEvents', SdcKeyboardEventsDirective.factory);
-directiveModule.directive('expandCollapseMenuBox', ExpandCollapseMenuBoxDirective.factory);
-directiveModule.directive('punchOut', PunchOutDirective.factory);
-directiveModule.directive('customValidation', CustomValidationDirective.factory);
-directiveModule.directive('ecompHeader', EcompHeaderDirective.factory);
-directiveModule.directive('editNamePopover', EditNamePopoverDirective.factory);
-directiveModule.directive('infoTooltip', InfoTooltipDirective.factory);
-directiveModule.directive('validationOnLoad', ValidationOnLoadDirective.factory);
-directiveModule.directive('ng1Tabs', SdcTabsDirective.factory);
-directiveModule.directive('sdcSingleTab', SdcSingleTabDirective.factory);
-directiveModule.directive('innerSdcSingleTab', InnerSdcSingleTabDirective.factory);
-directiveModule.directive('jsonExportExcel', JsonExportExcelDirective.factory);
-directiveModule.directive('expandCollapseListHeader', ExpandCollapseListHeaderDirective.factory);
-directiveModule.directive('preventDoubleClick', PreventDoubleClickDirective.factory);
-//
-//
-// // Layouts
-directiveModule.directive('topProgress', TopProgressDirective.factory);
-//
-// // Elements
-directiveModule.directive('ng1Checkbox', CheckboxElementDirective.factory);
-directiveModule.directive('sdcRadioButton', RadiobuttonElementDirective.factory);
-//
-// // Events
-directiveModule.directive('onLastRepeat', OnLastRepeatDirective.factory);
-//
-// //Inputs & Properties
-directiveModule.directive('inputRow', InputRowDirective.factory);
-directiveModule.directive('propertyRow', PropertyRowDirective.factory);
-//
-//
-// // ------------------------------------------- Composition & Deployment Graphs------------------------------------------//
-//
-// //Util service for Graph
+// ------------------------------------------- Composition & Deployment Graphs------------------------------------------//
+// Util services for Graph
 directiveModule.service('NodesFactory', NodesFactory);
 directiveModule.service('LinksFactory', LinksFactory);
-
-
-//Compoisiton right tab directives
-directiveModule.directive('capabilitiesList', CapabilitiesListDirective.factory);
-directiveModule.directive('requirementsList', RequirementsListDirective.factory);
 
 
 directiveModule.directive('menuListNg2', downgradeComponent({
