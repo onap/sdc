@@ -14,7 +14,6 @@ import {
     LinkMenu,
     Match,
     ModalModel,
-    NodesFactory,
     Point,
     PolicyInstance,
     PropertyBEModel,
@@ -29,6 +28,10 @@ import {
     Capability
 } from 'app/models';
 import { ForwardingPath } from 'app/models/forwarding-path';
+// NodesFactory is deep-imported (not via the 'app/models' barrel) to avoid a
+// barrel↔nodes-factory circular dependency that leaves this @Injectable's
+// constructor param metadata undefined under JIT ("Can't resolve all parameters").
+import { NodesFactory } from 'app/models/graph/nodes/nodes-factory';
 import { CompositionCiServicePathLink } from 'app/models/graph/graph-links/composition-graph-links/composition-ci-service-path-link';
 import { UIZoneInstanceObject } from 'app/models/ui-models/ui-zone-instance-object';
 import { CompositionService } from 'app/ng2/pages/composition/composition.service';

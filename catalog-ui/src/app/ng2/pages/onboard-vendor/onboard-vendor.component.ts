@@ -32,6 +32,11 @@ import {CacheService} from 'app/services-ng2';
 import {MenuItem, MenuItemGroup} from 'app/utils';
 import {SdcConfigToken} from 'app/ng2/config/sdc-config.config';
 import {IUserProperties} from 'app/models';
+// Side-effect import: defines the global window.PunchOutRegistry used below. The old AngularJS
+// <punch-out> directive carried the only require() of this bundle; it was removed with the
+// directive layer, so this consumer must load it itself (the IIFE self-guards, so importing it
+// from more than one site is idempotent).
+import '../../../../third-party/PunchOutRegistry.js';
 
 declare const window: any;
 

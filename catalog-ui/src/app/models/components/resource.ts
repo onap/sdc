@@ -29,7 +29,7 @@ import {DisplayModule} from "../modules/base-module";
 import {InputModel} from "../inputs";
 import {ResourceType} from "../../utils/constants";
 import {Component} from "./component";
-import {FileUploadModel} from "../../directives/file-upload/file-upload";
+import {FileUploadModel} from "../file-upload-model";
 import {IResourceService} from "../../services/components/resource-service";
 import {ComponentMetadata} from "../component-metadata";
 

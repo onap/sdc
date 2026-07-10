@@ -27,7 +27,7 @@ import {IServiceService} from "../../services/components/service-service";
 import {Component, PropertyModel, DisplayModule, InputsAndProperties, InputModel, InstancesInputsOrPropertiesMapData, InstancesInputsPropertiesMap,
     Distribution, DistributionComponent, ArtifactGroupModel} from "../../models";
 import {ArtifactGroupType} from "../../utils/constants";
-import {FileUploadModel} from "../../directives/file-upload/file-upload";
+import {FileUploadModel} from "../file-upload-model";
 import {ComponentMetadata} from "../component-metadata";
 import {ForwardingPath} from "app/models/forwarding-path";
 

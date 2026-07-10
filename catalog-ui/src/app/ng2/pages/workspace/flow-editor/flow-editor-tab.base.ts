@@ -23,6 +23,11 @@ import {CacheService} from 'app/services-ng2';
 import {ComponentServiceNg2} from 'app/ng2/services/component-services/component.service';
 import {WorkspaceService} from '../workspace.service';
 import {VendorModel} from './vendor-model';
+// Side-effect import: defines the global window.PunchOutRegistry used below. The old AngularJS
+// <punch-out> directive carried the only require() of this bundle; it was removed with the
+// directive layer, so this consumer must load it itself (the IIFE self-guards, so importing it
+// from more than one site is idempotent).
+import '../../../../../third-party/PunchOutRegistry.js';
 
 declare const window: any;
 
