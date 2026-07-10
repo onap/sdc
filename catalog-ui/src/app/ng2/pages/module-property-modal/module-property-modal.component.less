@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications copyright (c) 2026 Deutsche Telekom AG
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,16 +18,23 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+@import '../../../../assets/styles/variables.less';
 
-import {TypeWorkspaceComponent} from "../ng2/pages/type-workspace/type-workspace.component";
-import {downgradeComponent} from "@angular/upgrade/static";
-import {WorkspaceMenuComponent} from "../ng2/pages/type-workspace/workspace-menu/workspace-menu.component";
-import {TypeWorkspaceGeneralComponent} from "../ng2/pages/type-workspace/type-workspace-general/type-workspace-general.component";
+.module-property-modal {
 
-let moduleName:string = 'Sdc.ViewModels';
-let viewModelModule:ng.IModule = angular.module(moduleName, []);
+    .module-property-readonly {
+        font-weight: bold;
+        display: inline-block;
+        margin-left: 8px;
+    }
 
-viewModelModule
-  .controller(moduleName + '.TypeWorkspaceComponent', downgradeComponent({ component: TypeWorkspaceComponent }))
-  .controller(moduleName + '.WorkspaceMenuComponent', downgradeComponent({ component: WorkspaceMenuComponent }))
-  .controller(moduleName + '.TypeWorkspaceGeneralComponent', downgradeComponent({ component: TypeWorkspaceGeneralComponent }));
+    .default-value-section {
+        margin-top: 12px;
+
+        .input-error {
+            color: @func_color_q;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+    }
+}

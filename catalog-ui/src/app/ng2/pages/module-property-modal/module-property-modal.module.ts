@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications copyright (c) 2026 Deutsche Telekom AG
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,16 +18,19 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {FormsModule} from '@angular/forms';
+import {TranslateModule} from 'app/ng2/shared/translator/translate.module';
+import {ModulePropertyModalComponent} from './module-property-modal.component';
+import {ModulePropertyModalService} from './module-property-modal.service';
 
-import {TypeWorkspaceComponent} from "../ng2/pages/type-workspace/type-workspace.component";
-import {downgradeComponent} from "@angular/upgrade/static";
-import {WorkspaceMenuComponent} from "../ng2/pages/type-workspace/workspace-menu/workspace-menu.component";
-import {TypeWorkspaceGeneralComponent} from "../ng2/pages/type-workspace/type-workspace-general/type-workspace-general.component";
-
-let moduleName:string = 'Sdc.ViewModels';
-let viewModelModule:ng.IModule = angular.module(moduleName, []);
-
-viewModelModule
-  .controller(moduleName + '.TypeWorkspaceComponent', downgradeComponent({ component: TypeWorkspaceComponent }))
-  .controller(moduleName + '.WorkspaceMenuComponent', downgradeComponent({ component: WorkspaceMenuComponent }))
-  .controller(moduleName + '.TypeWorkspaceGeneralComponent', downgradeComponent({ component: TypeWorkspaceGeneralComponent }));
+@NgModule({
+    declarations: [ModulePropertyModalComponent],
+    imports: [CommonModule, FormsModule, TranslateModule],
+    entryComponents: [ModulePropertyModalComponent],
+    providers: [ModulePropertyModalService],
+    exports: [ModulePropertyModalComponent]
+})
+export class ModulePropertyModalModule {
+}

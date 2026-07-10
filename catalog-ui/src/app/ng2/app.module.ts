@@ -78,6 +78,8 @@ import {AutomatedUpgradeModule} from './pages/automated-upgrade/automated-upgrad
 import {WorkspaceModule} from './pages/workspace/workspace.module';
 import {AdminDashboardModule} from './pages/admin-dashboard/admin-dashboard.module';
 import {PropertyFormModalModule} from './pages/property-form-modal/property-form-modal.module';
+import {IconsModalModule} from './components/modals/icons-modal/icons-modal.module';
+import {ModulePropertyModalModule} from './pages/module-property-modal/module-property-modal.module';
 import {StandaloneStatesModule} from './pages/standalone-states.module';
 import {ModalsModule} from './components/modals/modals.module';
 import {CacheService, HomeService, SharingService} from 'app/services-ng2';
@@ -187,6 +189,8 @@ export function configServiceFactory(config: ConfigService, authService: Authent
     WorkspaceModule,
     AdminDashboardModule,
     PropertyFormModalModule,
+    IconsModalModule,
+    ModulePropertyModalModule,
     StandaloneStatesModule,
     TypeWorkspaceModule,
     ModalsModule,

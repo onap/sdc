@@ -22,6 +22,8 @@ import {  ButtonModel, Component, DisplayModule , ModalModel, PropertyModel, Inp
 import { ComponentMetadata } from '../models/component-metadata';
 import { ModalService } from 'app/ng2/services/modal.service';
 import { PropertyFormModalComponent } from 'app/ng2/pages/property-form-modal/property-form-modal.component';
+import { IconsModalComponent } from 'app/ng2/components/modals/icons-modal/icons-modal.component';
+import { ModulePropertyModalComponent } from 'app/ng2/pages/module-property-modal/module-property-modal.component';
 
 export interface IModalsHandler {
 
@@ -44,19 +46,27 @@ export class ModalsHandler implements IModalsHandler {
 
     openUpdateIconModal = (component: Component): ng.IPromise<any> => {
         const deferred = this.$q.defer();
-        const modalOptions: ng.ui.bootstrap.IModalSettings = {
-            templateUrl: '../view-models/modals/icons-modal/icons-modal-view.html',
-            controller: 'Sdc.ViewModels.IconsModalViewModel',
-            size: 'sdc-auto',
-            backdrop: 'static',
-            resolve: {
-                component: (): Component => {
-                    return component;
-                }
-            }
-        };
-        const modalInstance: ng.ui.bootstrap.IModalServiceInstance = this.$uibModal.open(modalOptions);
-        deferred.resolve(modalInstance.result);
+        let dyn: IconsModalComponent;
+
+        const okBtn = new ButtonModel('OK', 'blue', () => {
+            const isDirty: boolean = dyn.updateIcon();
+            deferred.resolve(isDirty);
+            this.modalServiceNg2.closeCurrentModal();
+        });
+        const cancelBtn = new ButtonModel('Cancel', 'grey', () => {
+            deferred.resolve();
+            this.modalServiceNg2.closeCurrentModal();
+        });
+
+        const modal = this.modalServiceNg2.createCustomModal(
+            new ModalModel('l', 'Choose Icon', null, [okBtn, cancelBtn], 'standard'));
+        // addDynamicContentToModalAndBindInputs sets instance[key]=value, i.e. instance.component — the field
+        // IconsModalComponent reads. (addDynamicContentToModal would set instance.input instead, leaving
+        // this.component undefined and crashing initIcons.)
+        this.modalServiceNg2.addDynamicContentToModalAndBindInputs(modal, IconsModalComponent, {component});
+        dyn = modal.instance.dynamicContent.instance as IconsModalComponent;
+        modal.instance.open();
+
         return deferred.promise;
     }
 
@@ -170,31 +180,27 @@ export class ModalsHandler implements IModalsHandler {
 
     openEditModulePropertyModal = (property: PropertyModel, component: Component, selectedModule: DisplayModule, filteredProperties: PropertyModel[]): ng.IPromise<any> => {
         const deferred = this.$q.defer();
+        let dyn: ModulePropertyModalComponent;
 
-        const modalOptions: ng.ui.bootstrap.IModalSettings = {
-            templateUrl: '../view-models/forms/property-forms/base-property-form/property-form-base-view.html',
-            controller: 'Sdc.ViewModels.ModulePropertyView',
-            size: 'sdc-l',
-            backdrop: 'static',
-            keyboard: false,
-            resolve: {
-                originalProperty: (): PropertyModel => {
-                    return property;
-                },
-                component: (): Component => {
-                    return component as Component;
-                },
-                selectedModule: (): DisplayModule => {
-                    return selectedModule;
-                },
-                filteredProperties: (): PropertyModel[] => {
-                    return filteredProperties;
-                }
-            }
-        };
+        const okBtn = new ButtonModel('Save', 'blue', () => {
+            dyn.save().subscribe((saved) => {
+                deferred.resolve(saved as any);
+                this.modalServiceNg2.closeCurrentModal();
+            });
+        }, () => !dyn.isValid());
+        const cancelBtn = new ButtonModel('Cancel', 'grey', () => {
+            deferred.resolve();
+            this.modalServiceNg2.closeCurrentModal();
+        });
 
-        const modalInstance: ng.ui.bootstrap.IModalServiceInstance = this.$uibModal.open(modalOptions);
-        deferred.resolve(modalInstance.result);
+        const modal = this.modalServiceNg2.createCustomModal(
+            new ModalModel('l', 'Update Property', null, [okBtn, cancelBtn], 'standard'));
+        this.modalServiceNg2.addDynamicContentToModalAndBindInputs(modal, ModulePropertyModalComponent, {
+            input: {property, component, selectedModule, filteredProperties}
+        });
+        dyn = modal.instance.dynamicContent.instance as ModulePropertyModalComponent;
+        modal.instance.open();
+
         return deferred.promise;
     }
 

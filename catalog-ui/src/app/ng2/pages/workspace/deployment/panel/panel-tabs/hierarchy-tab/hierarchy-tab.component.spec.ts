@@ -23,6 +23,7 @@ describe('HierarchyTabComponent', () => {
     let workspaceService: Partial<WorkspaceService>;
     let popoverServiceMock: Partial<SdcUiServices.PopoverService>;
     let modulesServiceMock: Partial<ModulesService>;
+    let modalsHandlerMock: Partial<ModalsHandler>;
 
     let editModuleNameInstanceMock = {innerPopoverContent:{instance: { clickButtonEvent: Observable.of("new heat name")}},
         closePopover: jest.fn()};
@@ -53,6 +54,9 @@ describe('HierarchyTabComponent', () => {
             modulesServiceMock = {
                 updateModuleMetadata: jest.fn().mockReturnValue(Observable.of({}))
             }
+            modalsHandlerMock = {
+                openEditModulePropertyModal: jest.fn().mockReturnValue(Promise.resolve())
+            } as any;
 
             const configure: ConfigureFn = testBed => {
                 testBed.configureTestingModule({
@@ -66,7 +70,7 @@ describe('HierarchyTabComponent', () => {
                         {provide: WorkspaceService, useValue: workspaceService},
                         {provide: ModulesService, useValue: modulesServiceMock},
                         {provide: TranslateService, useValue: {}},
-                        {provide: ModalsHandler, useValue: {}},
+                        {provide: ModalsHandler, useValue: modalsHandlerMock},
                         {provide: SdcUiServices.PopoverService, useValue: popoverServiceMock}
                     ]
                 });
@@ -130,4 +134,19 @@ describe('HierarchyTabComponent', () => {
         expect(popoverServiceMock.createPopOverWithInnerComponent).toHaveBeenCalled();
         expect(fixture.componentInstance.selectedModule.heatName).toEqual("base_vepdg");
     })
+
+    it('openEditPropertyModal sets component metadata and opens the module-property modal with the right args', () => {
+        const property: any = {name: 'min_vf_module_instances', value: '1', uniqueId: 'p1'};
+        const topologyTemplate: any = {setComponentMetadata: jest.fn()};
+        const selectedModule: any = {uniqueId: 'g1', properties: [property]};
+        const comp = fixture.componentInstance;
+        (comp as any).editPropertyModalTopologyTemplate = topologyTemplate;
+        comp.selectedModule = selectedModule;
+
+        comp.openEditPropertyModal(property);
+
+        expect(topologyTemplate.setComponentMetadata).toHaveBeenCalledWith(workspaceService.metadata);
+        expect(modalsHandlerMock.openEditModulePropertyModal).toHaveBeenCalledWith(
+            property, topologyTemplate, selectedModule, selectedModule.properties);
+    });
 });

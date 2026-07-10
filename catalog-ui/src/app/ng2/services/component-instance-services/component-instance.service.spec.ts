@@ -77,4 +77,16 @@ describe('ComponentInstanceServiceNg2', () => {
     expect(actualCapability.external).toEqual(capabilityToUpdate.external);
   });
 
+  it('updateGroupInstanceProperties PUTs to the resourceInstance/groupInstance URL for a SERVICE', () => {
+    const props: any = [{name: 'min_vf_module_instances', value: '1'}];
+    const componentTypeUrl = 'services/';
+    componentInstanceService.updateGroupInstanceProperties('SERVICE', 'svc1', 'ri1', 'gi1', props).subscribe();
+
+    const request = httpTestingController.expectOne(
+        `${rootApi}${componentApiRoot}${componentTypeUrl}svc1/resourceInstance/ri1/groupInstance/gi1`);
+    expect(request.request.method).toEqual('PUT');
+    expect(request.request.body).toEqual(props);
+    request.flush(props);
+  });
+
 });
