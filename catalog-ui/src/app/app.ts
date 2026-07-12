@@ -34,7 +34,7 @@ import './modules/service-module';
 import './modules/utils.ts';
 import './modules/view-model-module.ts';
 import { WorkspaceService } from './ng2/pages/workspace/workspace.service';
-import { CookieService, DataTypesService, EcompHeaderService, LeftPaletteLoaderService } from './services';
+import { CookieService, DataTypesService, LeftPaletteLoaderService } from './services';
 import { CacheService, CatalogService, HomeService } from './services-ng2';
 import { CHANGE_COMPONENT_CSAR_VERSION_FLAG, PREVIOUS_CSAR_COMPONENT, States } from './utils';
 import { ComponentFactory } from './utils/component-factory';
@@ -659,7 +659,6 @@ ng1appModule.run([
   '$rootScope',
   '$location',
   'sdcMenu',
-  'Sdc.Services.EcompHeaderService',
   'LeftPaletteLoaderService',
   'Sdc.Services.DataTypesService',
   'AngularJSBridge',
@@ -673,7 +672,6 @@ ng1appModule.run([
    $rootScope: ng.IRootScopeService,
    $location: ng.ILocationService,
    sdcMenu: IAppMenu,
-   ecompHeaderService: EcompHeaderService,
    LeftPaletteLoaderService: LeftPaletteLoaderService,
    DataTypesService: DataTypesService,
    AngularJSBridge,

@@ -32,7 +32,6 @@ describe('ng1-upgraded-provider', () => {
                 'Sdc.Services.DataTypesService': 'dataTypesService',
                 'Sdc.Services.SharingService': 'sharingService',
                 'Sdc.Services.ComponentFactory': 'componentFactory',
-                'Sdc.Services.CookieService': 'cookieService',
                 '$state': 'state',
                 '$stateParams': 'stateParams',
                 '$scope': 'scope',
@@ -56,10 +55,6 @@ describe('ng1-upgraded-provider', () => {
 
     it('should return componentFactory', () => {
         expect(Utils.componentServiceFactory(cacheObjMock)).toEqual('componentFactory');
-    });
-
-    it('should return cookieService', () => {
-        expect(Utils.cookieServiceFactory(cacheObjMock)).toEqual('cookieService');
     });
 
     it('should return state', () => {

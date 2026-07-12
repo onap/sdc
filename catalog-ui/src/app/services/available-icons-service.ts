@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,12 +23,14 @@
  * Created by obarda on 2/23/2016.
  */
 'use strict';
+import {Injectable} from "@angular/core";
 import {ComponentType} from "../utils/constants";
 
 interface IAvailableIconsService {
     getIcons(componentType:ComponentType):Array<string>;
 }
 
+@Injectable()
 export class AvailableIconsService implements IAvailableIconsService {
     constructor() {
     }

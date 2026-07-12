@@ -29,7 +29,6 @@ import {SdcUiComponentsModule} from 'onap-ui-angular';
 import {PropertiesAssignmentModule} from './pages/properties-assignment/properties-assignment.module';
 import {
   ComponentFactoryProvider,
-  CookieServiceProvider,
   DataTypesServiceProvider,
   ModalsHandlerProvider,
   NotificationServiceProvider,
@@ -91,6 +90,8 @@ import {NgxsModule} from '@ngxs/store';
 import {NgxsLoggerPluginModule} from '@ngxs/logger-plugin';
 import {NgxsReduxDevtoolsPluginModule} from '@ngxs/devtools-plugin';
 import {EventListenerService} from '../services/event-listener-service';
+import {CookieService} from '../services/cookie-service';
+import {ProgressService} from '../services/progress-service';
 import {HttpClientModule} from '@angular/common/http';
 import {httpInterceptorProviders} from './http-interceptor';
 import {HttpHelperService} from './services/http-hepler.service';
@@ -214,7 +215,8 @@ export function configServiceFactory(config: ConfigService, authService: Authent
     HomeService,
     ArtifactConfigService,
     ComponentFactoryProvider,
-    CookieServiceProvider,
+    CookieService,
+    ProgressService,
     StateServiceFactory,
     StateParamsServiceFactory,
     ScopeServiceFactory,

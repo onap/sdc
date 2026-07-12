@@ -22,7 +22,6 @@
  * Created by rc2122 on 4/6/2017.
  */
 import {DataTypesService} from "../../services/data-types-service";
-import {CookieService} from "../../services/cookie-service";
 import {ComponentFactory} from "../../utils/component-factory"
 import {EventListenerService} from "app/services/event-listener-service";
 import {ModalsHandler} from "app/utils";
@@ -41,10 +40,6 @@ export function sharingServiceFactory(cacheObj: ICacheObject) {
 
 export function componentServiceFactory(cacheObj: ICacheObject) {
     return cacheObj.get('Sdc.Services.ComponentFactory');
-}
-
-export function cookieServiceFactory(cacheObj: ICacheObject) {
-    return cacheObj.get('Sdc.Services.CookieService');
 }
 
 export function stateServiceFactory(cacheObj: ICacheObject) {
@@ -91,11 +86,6 @@ export const SharingServiceProvider = {
 };
 
 
-export const CookieServiceProvider = {
-    provide: CookieService,
-    useFactory: cookieServiceFactory,
-    deps: ['$injector']
-};
 
 export const StateServiceFactory = {
     provide: '$state',
@@ -139,10 +129,6 @@ export function changeLifecycleStateHandlerFactory(cacheObj: ICacheObject) {
     return cacheObj.get('ChangeLifecycleStateHandler');
 }
 
-export function progressServiceFactory(cacheObj: ICacheObject) {
-    return cacheObj.get('Sdc.Services.ProgressService');
-}
-
 export function componentFactoryStringFactory(cacheObj: ICacheObject) {
     return cacheObj.get('Sdc.Services.ComponentFactory');
 }
@@ -162,12 +148,6 @@ export const MenuHandlerProvider = {
 export const ChangeLifecycleStateHandlerProvider = {
     provide: 'ChangeLifecycleStateHandler',
     useFactory: changeLifecycleStateHandlerFactory,
-    deps: ['$injector']
-};
-
-export const ProgressServiceProvider = {
-    provide: 'Sdc.Services.ProgressService',
-    useFactory: progressServiceFactory,
     deps: ['$injector']
 };
 

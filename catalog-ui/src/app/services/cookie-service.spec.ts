@@ -26,8 +26,9 @@
  *     `<prefix><junction>!` and reads the user cookies UNDER that prefix.
  *  2. When the junction cookie is absent, the prefix is empty and user cookies are read by
  *     their bare suffix names.
- * The cookie store is injected as `$document` (an array-like whose [0].cookie is the cookie
- * string), matching AngularJS's `$document`.
+ * The cookie store is injected via Angular's `DOCUMENT` token (a Document whose `.cookie` is the
+ * cookie string). Before Phase 11 this was AngularJS's jqLite `$document` (read as `[0].cookie`);
+ * the migration to @Injectable switched it to the raw DOCUMENT read as `.cookie`.
  */
 import {CookieService} from './cookie-service';
 
@@ -43,8 +44,8 @@ describe('CookieService (characterization)', () => {
 
     const makeService = (cookieString: string) => {
         const sdcConfig = {cookie: cookieConfig} as any;
-        const $document = [{cookie: cookieString}];
-        return new CookieService(sdcConfig, $document);
+        const doc = {cookie: cookieString} as any;
+        return new CookieService(sdcConfig, doc);
     };
 
     it('reads bare-suffix user cookies when no junction cookie is set', () => {

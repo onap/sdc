@@ -24,26 +24,11 @@ import {TranslateModule} from 'app/ng2/shared/translator/translate.module';
 import {AvailableIconsService} from 'app/services';
 import {IconsModalComponent} from './icons-modal.component';
 
-/**
- * AvailableIconsService is a plain AngularJS service (serviceModule.service('Sdc.Services.AvailableIconsService', ...)),
- * not an @Injectable. Bridge it into Angular DI via the '$injector' token so IconsModalComponent can inject it by
- * type — mirroring ng2/utils/ng1-upgraded-provider.ts and PropertyFormModalModule.ValidationUtilsProvider.
- */
-export function availableIconsServiceFactory(injector: any): AvailableIconsService {
-    return injector.get('Sdc.Services.AvailableIconsService');
-}
-
-export const AvailableIconsServiceProvider = {
-    provide: AvailableIconsService,
-    useFactory: availableIconsServiceFactory,
-    deps: ['$injector']
-};
-
 @NgModule({
     declarations: [IconsModalComponent],
     imports: [CommonModule, TranslateModule],
     entryComponents: [IconsModalComponent],
-    providers: [AvailableIconsServiceProvider],
+    providers: [AvailableIconsService],
     exports: [IconsModalComponent]
 })
 export class IconsModalModule {

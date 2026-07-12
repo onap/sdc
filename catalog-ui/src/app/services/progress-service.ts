@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,15 +24,14 @@
  */
 
 'use strict';
-import IIntervalService = angular.IIntervalService;
+import {Injectable, NgZone} from "@angular/core";
 
+@Injectable()
 export class ProgressService {
 
     public progresses:any = {};
 
-    static '$inject' = ['$interval'];
-
-    constructor(protected $interval:any) {
+    constructor(private ngZone:NgZone) {
     }
 
     private totalProgress:number = 90;
@@ -60,7 +60,10 @@ export class ProgressService {
 
 
     private stopCreateComponentInterval = ():void => {
-        this.$interval.cancel(this.createComponentInterval);
+        if (this.createComponentInterval) {
+            clearInterval(this.createComponentInterval);
+            this.createComponentInterval = undefined;
+        }
     };
 
 
@@ -69,21 +72,26 @@ export class ProgressService {
         if (!this.getProgressValue(componentId)) {
             this.stopCreateComponentInterval();
             this.setProgressValue(componentId, this.startProgress);
-            this.createComponentInterval = this.$interval(():void => {
-                //TODO replace getProgressMockData to real data after BE provide the API
-                let progressValue = this.getProgressMockData(componentId);
-                if (progressValue <= this.totalProgress) {
-                    this.setProgressValue(componentId, progressValue);
-                } else {
-                    /**
-                     * Currently the progress is not really checking against the BE.
-                     * So the progress can pass 100. So the workaround for now, in case we pass 90 (totalProgress)
-                     * stop the interval, so the progress will be kept at 90 until the promise will return value and set
-                     * the progress to 100.
-                     */
-                    this.deleteProgressValue(componentId);
-                }
-            }, this.onePercentIntervalSeconds * 1000);
+            // Run the polling timer OUTSIDE the Angular zone so Zone.js does not treat it as a
+            // never-settling macrotask (which would hang Protractor/Selenium waitForAngular — see
+            // ngUpgrade failure-catalog §B). Re-enter the zone only for the progress-value write so
+            // change detection still fires.
+            this.createComponentInterval = this.ngZone.runOutsideAngular(():any =>
+                setInterval(():void => {
+                    //TODO replace getProgressMockData to real data after BE provide the API
+                    let progressValue = this.getProgressMockData(componentId);
+                    if (progressValue <= this.totalProgress) {
+                        this.ngZone.run(():void => this.setProgressValue(componentId, progressValue));
+                    } else {
+                        /**
+                         * Currently the progress is not really checking against the BE.
+                         * So the progress can pass 100. So the workaround for now, in case we pass 90 (totalProgress)
+                         * stop the interval, so the progress will be kept at 90 until the promise will return value and set
+                         * the progress to 100.
+                         */
+                        this.ngZone.run(():void => this.deleteProgressValue(componentId));
+                    }
+                }, this.onePercentIntervalSeconds * 1000));
         }
 
     };

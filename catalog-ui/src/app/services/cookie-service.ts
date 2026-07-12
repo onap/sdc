@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +20,9 @@
  */
 
 'use strict';
+import {Inject, Injectable} from "@angular/core";
+import {DOCUMENT} from "@angular/common";
+import {SdcConfigToken} from "../ng2/config/sdc-config.config";
 import {IAppConfigurtaion, ICookie} from "../models/app-config";
 
 interface ICookieService {
@@ -29,14 +33,14 @@ interface ICookieService {
     getUserIdSuffix():string;
 }
 
+@Injectable()
 export class CookieService implements ICookieService {
 
-    static '$inject' = ['sdcConfig', '$document'];
     private cookie:ICookie;
     private cookiePrefix:string;
 
 
-    constructor(sdcConfig:IAppConfigurtaion, private $document) {
+    constructor(@Inject(SdcConfigToken) sdcConfig:IAppConfigurtaion, @Inject(DOCUMENT) private $document:Document) {
         this.cookie = sdcConfig.cookie;
 
         this.cookiePrefix = '';
@@ -48,7 +52,7 @@ export class CookieService implements ICookieService {
 
     private getCookieByName = (cookieName:string):string => {
         cookieName += '=';
-        let cookies:Array<string> = this.$document[0].cookie.split(';');
+        let cookies:Array<string> = this.$document.cookie.split(';');
         let cookieVal:string = '';
         cookies.forEach((cookie:string) => {
             while (cookie.charAt(0) === ' ') {
