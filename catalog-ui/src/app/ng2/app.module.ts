@@ -92,6 +92,7 @@ import {NgxsReduxDevtoolsPluginModule} from '@ngxs/devtools-plugin';
 import {EventListenerService} from '../services/event-listener-service';
 import {CookieService} from '../services/cookie-service';
 import {ProgressService} from '../services/progress-service';
+import {ValidationUtils} from '../utils/validation-utils';
 import {HttpClientModule} from '@angular/common/http';
 import {httpInterceptorProviders} from './http-interceptor';
 import {HttpHelperService} from './services/http-hepler.service';
@@ -217,6 +218,7 @@ export function configServiceFactory(config: ConfigService, authService: Authent
     ComponentFactoryProvider,
     CookieService,
     ProgressService,
+    ValidationUtils,
     StateServiceFactory,
     StateParamsServiceFactory,
     ScopeServiceFactory,

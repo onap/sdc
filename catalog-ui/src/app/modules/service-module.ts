@@ -79,10 +79,10 @@ serviceModule.service('Sdc.Services.Components.ResourceService', ResourceService
 serviceModule.service('LeftPaletteLoaderService', LeftPaletteLoaderService);
 
 // Utils
-serviceModule.service('ValidationUtils', ValidationUtils);
 serviceModule.service('AngularJSBridge', AngularJSBridge);
 
 // Angular2 upgraded services - This is in order to use the service in angular1 till we finish remove all angular1 code
+serviceModule.service('ValidationUtils', downgradeInjectable(ValidationUtils));
 serviceModule.service('Sdc.Services.CookieService', downgradeInjectable(CookieService));
 serviceModule.service('Sdc.Services.ProgressService', downgradeInjectable(ProgressService));
 serviceModule.service('Sdc.Services.SharingService', downgradeInjectable(SharingService));

@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +19,7 @@
  * ============LICENSE_END=========================================================
  */
 
+import {Injectable} from '@angular/core';
 import * as _ from 'lodash';
 
 class basePattern {
@@ -37,26 +39,25 @@ export interface IMapRegex {
     string: RegExp;
 }
 
+@Injectable()
 export class ValidationUtils {
 
-    static '$inject' = [
-        'IntegerNoLeadingZeroValidationPattern',
-        'FloatValidationPattern',
-        'CommentValidationPattern',
-        'BooleanValidationPattern',
-        'NumberValidationPattern',
-        'LabelValidationPattern',
-    ];
+    // These six patterns were previously injected as AngularJS `.value()` tokens registered once in
+    // app.ts. They are compile-time constants (never overridden by server config - the server-driven
+    // ValidationConfiguration.validation feeds a different, separate set of patterns), so they are
+    // inlined here verbatim from app.ts as the service migrates to a pure Angular @Injectable.
+    private IntegerNoLeadingZeroValidationPattern: RegExp = /^(0|[-+]?[1-9][0-9]*|[-+]?0x[0-9a-fA-F]+|[-+]?0o[0-7]+)$/;
+    private FloatValidationPattern: RegExp = /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?f?$/;
+    private CommentValidationPattern: RegExp = /^[\u0000-\u00BF]*$/;
+    private BooleanValidationPattern: RegExp = /^([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee])$/;
+    private NumberValidationPattern: RegExp = /^((([-+]?\d+)|([-+]?0x[0-9a-fA-F]+))|([-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?))$/;
+    private LabelValidationPattern: RegExp = /^[\sa-zA-Z0-9+-]{1,25}$/;
+
     private trueRegex: string = '[t][r][u][e]|[t]|[o][n]|[y]|[y][e][s]|[1]';
     private falseRegex: string = '[f][a][l][s][e]|[f]|[o][f][f]|[n]|[n][o]|[0]';
     private heatBooleanValidationPattern: RegExp = new RegExp('^(' + this.trueRegex + '|' + this.falseRegex + ')$');
 
-    constructor(private IntegerNoLeadingZeroValidationPattern: RegExp,
-                private FloatValidationPattern: RegExp,
-                private CommentValidationPattern: RegExp,
-                private BooleanValidationPattern: RegExp,
-                private NumberValidationPattern: RegExp,
-                private LabelValidationPattern: RegExp) {
+    constructor() {
     }
 
     public static getPropertyListPatterns(): IMapRegex {

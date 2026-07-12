@@ -35,6 +35,7 @@
       "<rootDir>/src/app/services/progress-service.ts",
       "<rootDir>/src/app/utils/change-lifecycle-state-handler.ts",
       "<rootDir>/src/app/utils/component-factory.ts",
+      "<rootDir>/src/app/utils/validation-utils.ts",
       "!**/*.module.ts",
       "!**/index.ts",
       "!**/*.d.ts"

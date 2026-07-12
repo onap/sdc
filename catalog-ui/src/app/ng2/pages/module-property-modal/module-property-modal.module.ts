@@ -22,31 +22,17 @@ import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {TranslateModule} from 'app/ng2/shared/translator/translate.module';
-import {ValidationUtils} from 'app/utils';
 import {ModulePropertyModalComponent} from './module-property-modal.component';
 import {ModulePropertyModalService} from './module-property-modal.service';
 
-/**
- * ValidationUtils is a plain AngularJS service (serviceModule.service('ValidationUtils', ...)), not an @Injectable.
- * The modal injects it by type for getValidationPattern/validateJson/validateIntRange (instance methods that need
- * constructor-injected regex), so bridge it into Angular DI via the '$injector' token — mirroring
- * PropertyFormModalModule.ValidationUtilsProvider and ng2/utils/ng1-upgraded-provider.ts.
- */
-export function validationUtilsFactory(injector: any): ValidationUtils {
-    return injector.get('ValidationUtils');
-}
-
-export const ValidationUtilsProvider = {
-    provide: ValidationUtils,
-    useFactory: validationUtilsFactory,
-    deps: ['$injector']
-};
+// ValidationUtils is now a pure Angular @Injectable provided at the AppModule root, so the modal
+// resolves it by type from the root injector — the local $injector bridge is no longer needed.
 
 @NgModule({
     declarations: [ModulePropertyModalComponent],
     imports: [CommonModule, FormsModule, TranslateModule],
     entryComponents: [ModulePropertyModalComponent],
-    providers: [ModulePropertyModalService, ValidationUtilsProvider],
+    providers: [ModulePropertyModalService],
     exports: [ModulePropertyModalComponent]
 })
 export class ModulePropertyModalModule {

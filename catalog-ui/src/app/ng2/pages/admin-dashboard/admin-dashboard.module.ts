@@ -24,30 +24,14 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {SdcUiComponentsModule} from 'onap-ui-angular';
 import {TranslateModule} from 'app/ng2/shared/translator/translate.module';
 
-import {ValidationUtils} from 'app/utils';
-
 import {AdminDashboardComponent} from './admin-dashboard.component';
 import {UserManagementComponent} from './user-management/user-management.component';
 import {CategoryManagementComponent} from './category-management/category-management.component';
 import {AddCategoryModalComponent} from './add-category-modal/add-category-modal.component';
 import {CategoryManagementService} from './services/category-management.service';
 
-/**
- * ValidationUtils is a plain AngularJS service (serviceModule.service('ValidationUtils', ...)),
- * not an @Injectable. Upgrade it into Angular DI via the '$injector' token (available app-wide
- * because the app runs on UpgradeModule), mirroring the factories in ng2/utils/ng1-upgraded-provider.ts.
- * CategoryManagementComponent injects ValidationUtils by type for getValidationPattern('category'),
- * which is an instance method (needs the constructor-injected regex patterns), so it cannot be static.
- */
-export function validationUtilsFactory(injector: any): ValidationUtils {
-    return injector.get('ValidationUtils');
-}
-
-export const ValidationUtilsProvider = {
-    provide: ValidationUtils,
-    useFactory: validationUtilsFactory,
-    deps: ['$injector']
-};
+// ValidationUtils is now a pure Angular @Injectable provided at the AppModule root, so
+// CategoryManagementComponent resolves it by type from the root injector — no local $injector bridge needed.
 
 @NgModule({
     declarations: [
@@ -65,7 +49,7 @@ export const ValidationUtilsProvider = {
     ],
     exports: [AdminDashboardComponent],
     entryComponents: [AdminDashboardComponent, AddCategoryModalComponent],
-    providers: [CategoryManagementService, ValidationUtilsProvider],
+    providers: [CategoryManagementService],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AdminDashboardModule {}
