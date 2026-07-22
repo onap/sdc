@@ -70,7 +70,7 @@ const serviceModule: ng.IModule = angular.module(moduleName, []);
 
 serviceModule.service('Sdc.Services.ComponentFactory', ComponentFactory); // Why you need to declare it again, already done in utils.ts
 serviceModule.service('Sdc.Services.HeaderInterceptor', HeaderInterceptor);
-serviceModule.service('Sdc.Services.DataTypesService', DataTypesService);
+serviceModule.service('Sdc.Services.DataTypesService', downgradeInjectable(DataTypesService));
 
 // Components Services
 serviceModule.service('Sdc.Services.Components.ComponentService', ComponentService);

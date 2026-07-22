@@ -24,7 +24,7 @@ import {FormControl, FormGroup, ValidatorFn, Validators} from '@angular/forms';
 import * as _ from 'lodash';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
-import {PropertyModel, PropertyFEModel, Component as IComponent, InputFEModel, DataTypesMap} from 'app/models';
+import {PropertyModel, PropertyFEModel, Component as IComponent, InputFEModel} from 'app/models';
 import {DataTypesService} from 'app/services/data-types-service';
 import {InstanceFeDetails} from 'app/models/instance-fe-details';
 import {CustomToscaFunction} from 'app/models/default-custom-functions';
@@ -166,8 +166,7 @@ export class PropertyFormModalComponent implements OnInit {
      * primitives (matching the old behaviour where nonPrimitiveTypes simply stayed empty until the fetch resolved).
      */
     private loadNonPrimitiveTypes(): void {
-        this.dataTypesService.fetchDataTypesByModel(this.workspaceService.metadata.model).then((response) => {
-            const dataTypes = response.data as DataTypesMap;
+        this.dataTypesService.fetchDataTypesByModel(this.workspaceService.metadata.model).then((dataTypes) => {
             this.nonPrimitiveTypes = Object.keys(dataTypes)
                 .filter((type: string) => this.types.indexOf(type) === -1)
                 .sort((a, b) => a.localeCompare(b));

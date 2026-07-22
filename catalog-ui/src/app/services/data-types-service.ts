@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +20,8 @@
  */
 
 'use strict';
+import {Inject, Injectable} from "@angular/core";
+import {HttpClient, HttpParams} from "@angular/common/http";
 import {DataTypePropertyModel} from "../models/data-type-properties";
 import {
     ComponentInstance,
@@ -29,6 +32,7 @@ import {
     PropertyModel,
     SchemaProperty
 } from "../models";
+import {SdcConfigToken} from "../ng2/config/sdc-config.config";
 import {PROPERTY_DATA} from "../utils/constants";
 import {List} from "lodash";
 import {Observable} from "rxjs/Observable";
@@ -51,20 +55,22 @@ export interface IDataTypesService {
     isDataTypeForDataTypePropertyType(property:DataTypePropertyModel):boolean;
 }
 
+@Injectable()
 export class DataTypesService implements IDataTypesService {
 
-    static '$inject' = [
-        'sdcConfig',
-        '$q',
-        '$http'
-    ];
+    private baseUrl:string;
+    // Non-enumerable so AngularJS `angular.copy()` never traverses it. This service is held (as an
+    // enumerable field) by the still-ng1 Restangular Resource/Service services, which are in turn held
+    // by the Component/Resource model classes whose toJSON()/angular.copy(this) deep-copies the graph.
+    // An Angular HttpClient's reachable object graph contains a Scope (via the ngUpgrade root injector),
+    // and angular.copy throws `ng:cpws` ("Can't copy Scope") on it — which aborts create/import and hangs
+    // the loader. Keeping http off the enumerable surface avoids the copy entirely (failure-catalog §SS).
+    private http:HttpClient;
 
-    constructor(private sdcConfig:IAppConfigurtaion,
-                private $q:ng.IQService,
-                private $http:ng.IHttpService) {
+    constructor(@Inject(SdcConfigToken) sdcConfig:IAppConfigurtaion, http:HttpClient) {
+        this.baseUrl = sdcConfig.api.root + sdcConfig.api.component_api_root;
+        Object.defineProperty(this, 'http', {value: http, enumerable: false, writable: false, configurable: true});
     }
-
-    private baseUrl = this.sdcConfig.api.root + this.sdcConfig.api.component_api_root;
 
     dataTypes:DataTypesMap; //Data type map
     selectedPropertiesName:string;
@@ -74,23 +80,16 @@ export class DataTypesService implements IDataTypesService {
     selectedComponentInputs:Array<InputModel>;
 
     public loadDataTypesCache = async (modelName: string): Promise<void> => {
-        let model;
-        if (modelName) {
-            model = {'model': modelName}
-        }
-        await this.$http.get(this.baseUrl + "dataTypes", {params: model})
-        .then((response: any) => {
-            this.dataTypes = response.data;
-            delete this.dataTypes['tosca.datatypes.Root'];
-        });
+        this.dataTypes = await this.fetchDataTypesByModel(modelName);
+        delete this.dataTypes['tosca.datatypes.Root'];
     };
 
-    public fetchDataTypesByModel = (modelName: string): angular.IHttpPromise<any> => {
-        let model;
+    public fetchDataTypesByModel = (modelName: string): Promise<DataTypesMap> => {
+        let params = new HttpParams();
         if (modelName) {
-            model = {'model': modelName}
+            params = params.set('model', modelName);
         }
-        return this.$http.get(this.baseUrl + "dataTypes", {params: model});
+        return this.http.get<DataTypesMap>(this.baseUrl + "dataTypes", {params}).toPromise();
     };
 
     public getAllDataTypesFromModel = (modelName: string): DataTypesMap => {
@@ -99,18 +98,13 @@ export class DataTypesService implements IDataTypesService {
     }
 
     public getDataTypesFromAllModelExcludePrimitives = (): Observable<Array<DataTypeModel>> => {
-        return new Observable<Array<DataTypeModel>>(subscriber => {
-            this.$http.get<List<DataTypesMap>>(this.baseUrl + "allDataTypes?excludePrimitives=true")
-            .then(promiseValue => {
-                const allDataTypes = this.getDataTypesItems(promiseValue.data);
-                subscriber.next(allDataTypes);
-            });
-        });
+        return this.http.get<List<DataTypesMap>>(this.baseUrl + "allDataTypes?excludePrimitives=true")
+            .map((dataTypesListOfMap: List<DataTypesMap>) => this.getDataTypesItems(dataTypesListOfMap));
     }
 
     private getDataTypesItems(dataTypesListOfMap: List<DataTypesMap>):Array<DataTypeModel> {
         const dataTypes = new Array<DataTypeModel>();
-        angular.forEach(dataTypesListOfMap, (dataTypesMap: DataTypesMap): void => {
+        (dataTypesListOfMap as Array<DataTypesMap>).forEach((dataTypesMap: DataTypesMap): void => {
             for (const dataTypeKey of Object.keys(dataTypesMap)) {
                 dataTypes.push(new DataTypeModel(dataTypesMap[dataTypeKey]))
             }
@@ -120,8 +114,7 @@ export class DataTypesService implements IDataTypesService {
 
     public findAllDataTypesByModel = (modelName: string): Promise<Map<string, DataTypeModel>> => {
         return new Promise<Map<string, DataTypeModel>>((resolve, reject) => {
-            this.fetchDataTypesByModel(modelName).then(response => {
-                const dataTypes = response.data;
+            this.fetchDataTypesByModel(modelName).then(dataTypes => {
                 delete dataTypes[PROPERTY_DATA.ROOT_DATA_TYPE];
                 const dataTypeMap = new Map<string, DataTypeModel>();
                 for(const dataTypeKey of Object.keys(dataTypes)) {
@@ -136,8 +129,7 @@ export class DataTypesService implements IDataTypesService {
 
     public findAllDataTypesByModelIncludingRoot = (modelName: string): Promise<Map<string, DataTypeModel>> => {
         return new Promise<Map<string, DataTypeModel>>((resolve, reject) => {
-            this.fetchDataTypesByModel(modelName).then(response => {
-                const dataTypes = response.data;
+            this.fetchDataTypesByModel(modelName).then(dataTypes => {
                 const dataTypeMap = new Map<string, DataTypeModel>();
                 for(const dataTypeKey of Object.keys(dataTypes)) {
                     dataTypeMap.set(dataTypeKey, new DataTypeModel(dataTypes[dataTypeKey]))
@@ -222,8 +214,7 @@ export class DataTypesService implements IDataTypesService {
         return true;
     };
 
-    public downloadDataType = (dataTypeId: string): angular.IHttpPromise<IFileDownload> => {
-        console.log("dataTypeId", dataTypeId);
-        return this.$http.get<IFileDownload>(this.baseUrl + "downloadDataType" + ((dataTypeId) ? '?dataTypeId=' + dataTypeId : ''))
+    public downloadDataType = (dataTypeId: string): Promise<IFileDownload> => {
+        return this.http.get<IFileDownload>(this.baseUrl + "downloadDataType" + ((dataTypeId) ? '?dataTypeId=' + dataTypeId : '')).toPromise();
     }
 }

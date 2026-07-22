@@ -137,11 +137,12 @@ function makeCdr(): any {
     return {detectChanges: jest.fn(), markForCheck: jest.fn(), detach: jest.fn(), reattach: jest.fn(), checkNoChanges: jest.fn()};
 }
 
-// Stand-in for the (AngularJS) DataTypesService used to populate the Type dropdown's non-primitive types.
-// fetchDataTypesByModel returns an IHttpPromise-like resolving to {data: DataTypesMap}; default is the two
-// datatypes below so a spec can assert nonPrimitiveTypes is filtered/sorted, and error paths can override.
+// Stand-in for the DataTypesService used to populate the Type dropdown's non-primitive types.
+// Since the Phase-11 HttpClient migration, fetchDataTypesByModel resolves the DataTypesMap body
+// directly (previously an IHttpPromise-like {data: DataTypesMap}); default is the two datatypes
+// below so a spec can assert nonPrimitiveTypes is filtered/sorted, and error paths can override.
 function makeDataTypesService(dataTypes: any = {'tosca.datatypes.Root': {}, 'org.openecomp.datatypes.Foo': {}}): any {
-    return {fetchDataTypesByModel: jest.fn(() => Promise.resolve({data: dataTypes}))};
+    return {fetchDataTypesByModel: jest.fn(() => Promise.resolve(dataTypes))};
 }
 
 function createComp(opts: any = {}) {
