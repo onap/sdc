@@ -32,6 +32,7 @@
       "<rootDir>/src/app/services/angular-js-bridge-service.ts",
       "<rootDir>/src/app/services/available-icons-service.ts",
       "<rootDir>/src/app/services/cookie-service.ts",
+      "<rootDir>/src/app/services/data-types-service.ts",
       "<rootDir>/src/app/services/progress-service.ts",
       "<rootDir>/src/app/utils/change-lifecycle-state-handler.ts",
       "<rootDir>/src/app/utils/component-factory.ts",

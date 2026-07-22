@@ -55,10 +55,9 @@ export class TypeWorkspaceToscaArtifactPageComponent implements OnInit {
         event.stopPropagation();
         this.dataTypesService.downloadDataType(this.componentId).then(
             (file) => {
-                console.log("file", file.data);
-                if (file.data) {
-                    let blob = this.base64toBlob(file.data.base64Contents, '');
-                    let fileName = file.data.artifactName;
+                if (file) {
+                    let blob = this.base64toBlob(file.base64Contents, '');
+                    let fileName = file.artifactName;
                     this.triggerFileDownload(blob, fileName);
                 }
             }

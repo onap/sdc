@@ -29,7 +29,6 @@ describe('ng1-upgraded-provider', () => {
     beforeEach(
         async(() => {
             const responseData = {
-                'Sdc.Services.DataTypesService': 'dataTypesService',
                 'Sdc.Services.SharingService': 'sharingService',
                 'Sdc.Services.ComponentFactory': 'componentFactory',
                 '$state': 'state',
@@ -44,10 +43,6 @@ describe('ng1-upgraded-provider', () => {
             };
         })
     );
-
-    it('should return dataTypesService', () => {
-        expect(Utils.dataTypesServiceFactory(cacheObjMock)).toEqual('dataTypesService');
-    });
 
     it('should return sharingService', () => {
         expect(Utils.sharingServiceFactory(cacheObjMock)).toEqual('sharingService');
