@@ -161,8 +161,14 @@
 
 }
 //temporary fix. should be removed after converting all the modals to onap-ui modals
+//
+// The onap-ui <sdc-modal> is the *confirmation* layer: migrated Angular modals (`.custom-modal`,
+// z-index 15007 - see ng2/components/ui/modal/modal.component.less) open an sdc-ui confirm/info
+// dialog on top of themselves (e.g. the property-form modal's Delete button). Both roots mount as
+// body-level siblings, so this value must stay ABOVE the .custom-modal stack or the confirmation
+// renders behind the modal that opened it and its buttons become unclickable.
 sdc-modal{
     .sdc-modal, .modal-background{
-        z-index: 1050;
+        z-index: 15010;
     }
 }
