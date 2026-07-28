@@ -3,13 +3,14 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,28 +21,32 @@
 
 'use strict';
 import * as _ from "lodash";
+import {Inject, Injectable} from "@angular/core";
 import {DEFAULT_ICON, ResourceType, ComponentType} from "./constants";
+// Keep barrel imports for ServiceService/ResourceService. component-factory.ts lives in the
+// "app/utils" barrel, which is loaded transitively by many modules (e.g. artifacts.ts). Using
+// the "app/services" barrel for these two preserves the loading order that prevents the pre-existing
+// resource-service ↔ app/models circular dep from crashing (failure-catalog §TT).
+// component-factory.spec.ts mocks "app/services" to break the dep there.
+//
+// CacheService uses a DIRECT DEEP PATH (not "app/services-ng2") to avoid a separate circular dep:
+// "app/services-ng2" → catalog.service.ts → data-type-catalog-component.ts → "app/models",
+// but "app/models" is already loading when component-factory.ts is triggered (via app/utils →
+// artifacts.ts), causing "service.ts extends Component (undefined)" to crash.
 import {ServiceService, ResourceService} from "app/services";
-import {CacheService} from "app/services-ng2";
+import {CacheService} from "../ng2/services/cache.service";
 import {IMainCategory, ISubCategory, ICsarComponent, Component, Resource, Service} from "app/models";
 import {ComponentServiceNg2} from "../ng2/services/component-services/component.service";
 import {ComponentGenericResponse} from "../ng2/services/responses/component-generic-response";
 
 
+@Injectable()
 export class ComponentFactory {
 
-    static '$inject' = [
-        'Sdc.Services.Components.ResourceService',
-        'Sdc.Services.Components.ServiceService',
-        'Sdc.Services.CacheService',
-        '$q',
-        'ComponentServiceNg2'
-    ];
-
-    constructor(private ResourceService:ResourceService,
-                private ServiceService:ServiceService,
-                private cacheService:CacheService,
-                private $q:ng.IQService,
+    constructor(private ResourceService: ResourceService,
+                private ServiceService: ServiceService,
+                private cacheService: CacheService,
+                @Inject('$q') private $q: ng.IQService,
                 private ComponentServiceNg2: ComponentServiceNg2) {
     }
 
@@ -190,7 +195,7 @@ export class ComponentFactory {
         return component.importComponentOnServer();
 
     };
-    
+
     public getComponentWithMetadataFromServer = (componentType:string, componentId:string):ng.IPromise<Component> => {
         let deferred = this.$q.defer<Component>();
         let component = this.createEmptyComponent(componentType);

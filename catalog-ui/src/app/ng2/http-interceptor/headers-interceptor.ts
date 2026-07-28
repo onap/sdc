@@ -1,7 +1,9 @@
 import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
-import { Injectable, Injector } from '@angular/core';
+import { Injectable, Injector, Testability } from '@angular/core';
 import { SdcUiComponents, SdcUiServices } from 'onap-ui-angular';
 import { ButtonType } from 'onap-ui-angular/dist/common';
+import 'rxjs/add/observable/defer';
+import 'rxjs/add/operator/finally';
 import { Observable } from 'rxjs/Observable';
 import { ServerErrorResponse } from '../../models/server-error-response';
 import { Cookie2Service } from '../services/cookie.service';
@@ -14,6 +16,29 @@ export class HeadersInterceptor implements HttpInterceptor {
     constructor(private injector: Injector, private cookieService: Cookie2Service, private httpHelperService: HttpHelperService) {}
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+        // Report every request to Angular's Testability so external test tooling can tell
+        // whether the app is still talking to the backend. The AngularJS half of the hybrid
+        // exposes $http.pendingRequests for this; requests issued through HttpClient are
+        // invisible there, so as services migrate off Restangular/$http the e2e harness
+        // would otherwise consider the page idle mid-request and act on a half-rendered
+        // screen. Counting here (rather than relying on NgZone stability) is deliberate:
+        // the hybrid runtime keeps a macrotask pending for as long as AngularJS is loaded,
+        // so Testability.isStable()/whenStable() never resolve in this app.
+        return Observable.defer(() => {
+            const testability: Testability | null = this.injector.get(Testability, null);
+            if (testability) {
+                testability.increasePendingRequestCount();
+            }
+            return this.addHeadersAndHandle(req, next)
+                .finally(() => {
+                    if (testability) {
+                        testability.decreasePendingRequestCount();
+                    }
+                });
+        });
+    }
+
+    private addHeadersAndHandle(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         let authReq: HttpRequest<any>;
         if (req.body instanceof FormData) {
             authReq = req.clone({ headers: req.headers.set(this.cookieService.getUserIdSuffix(), this.cookieService.getUserId())

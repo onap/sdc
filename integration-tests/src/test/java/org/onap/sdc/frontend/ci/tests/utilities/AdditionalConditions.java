@@ -92,6 +92,20 @@ public class AdditionalConditions {
                                 + "      return false;\r\n"
                                 + "    }\r\n"
                                 + "  }\r\n"
+                                // The catalog-ui is a hybrid AngularJS/Angular app being migrated to pure
+                                // Angular. $http.pendingRequests above only covers the AngularJS half;
+                                // requests issued through Angular's HttpClient are reported to Testability
+                                // by HeadersInterceptor instead. Angular's own isStable()/whenStable() are
+                                // unusable here because the hybrid runtime always has a macrotask pending.
+                                + "  if (window.getAllAngularTestabilities) {\r\n"
+                                + "    var testabilities = window.getAllAngularTestabilities();\r\n"
+                                + "    for (var i = 0; i < testabilities.length; i++) {\r\n"
+                                + "      if (testabilities[i].getPendingRequestCount\r\n"
+                                + "          && testabilities[i].getPendingRequestCount() !== 0) {\r\n"
+                                + "        return false; // Angular HttpClient request still in flight\r\n"
+                                + "      }\r\n"
+                                + "    }\r\n"
+                                + "  }\r\n"
                                 + "  return true;\r\n"
                                 + "} catch (ex) {\r\n"
                                 + "  return false;\r\n"

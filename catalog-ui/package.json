@@ -37,6 +37,10 @@
       "<rootDir>/src/app/utils/change-lifecycle-state-handler.ts",
       "<rootDir>/src/app/utils/component-factory.ts",
       "<rootDir>/src/app/utils/validation-utils.ts",
+      "<rootDir>/src/app/services/components/component-service.ts",
+      "<rootDir>/src/app/services/components/resource-service.ts",
+      "<rootDir>/src/app/services/components/service-service.ts",
+      "<rootDir>/src/app/services/components/utils/composition-left-palette-service.ts",
       "!**/*.module.ts",
       "!**/index.ts",
       "!**/*.d.ts"

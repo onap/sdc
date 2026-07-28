@@ -68,15 +68,15 @@ import { PropertiesUtils } from 'app/ng2/pages/properties-assignment/services/pr
 const moduleName: string = 'Sdc.Services';
 const serviceModule: ng.IModule = angular.module(moduleName, []);
 
-serviceModule.service('Sdc.Services.ComponentFactory', ComponentFactory); // Why you need to declare it again, already done in utils.ts
+serviceModule.factory('Sdc.Services.ComponentFactory', downgradeInjectable(ComponentFactory)); // Why you need to declare it again, already done in utils.ts
 serviceModule.service('Sdc.Services.HeaderInterceptor', HeaderInterceptor);
 serviceModule.service('Sdc.Services.DataTypesService', downgradeInjectable(DataTypesService));
 
 // Components Services
-serviceModule.service('Sdc.Services.Components.ComponentService', ComponentService);
-serviceModule.service('Sdc.Services.Components.ServiceService', ServiceService);
-serviceModule.service('Sdc.Services.Components.ResourceService', ResourceService);
-serviceModule.service('LeftPaletteLoaderService', LeftPaletteLoaderService);
+serviceModule.factory('Sdc.Services.Components.ComponentService', downgradeInjectable(ComponentService));
+serviceModule.factory('Sdc.Services.Components.ServiceService', downgradeInjectable(ServiceService));
+serviceModule.factory('Sdc.Services.Components.ResourceService', downgradeInjectable(ResourceService));
+serviceModule.factory('LeftPaletteLoaderService', downgradeInjectable(LeftPaletteLoaderService));
 
 // Utils
 serviceModule.service('AngularJSBridge', AngularJSBridge);
