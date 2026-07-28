@@ -27,7 +27,6 @@
     "collectCoverageFrom": [
       "<rootDir>/src/app/ng2/**/*.ts",
       "<rootDir>/src/app/view-models/workspace/**/*.ts",
-      "<rootDir>/src/app/filters/**/*.ts",
       "<rootDir>/src/app/services/event-listener-service.ts",
       "<rootDir>/src/app/services/angular-js-bridge-service.ts",
       "<rootDir>/src/app/services/available-icons-service.ts",

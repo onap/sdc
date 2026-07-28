@@ -36,11 +36,3 @@ export function createMockQ(): any {
         reject: jest.fn((val) => Promise.reject(val))
     };
 }
-
-export function createMockFilter(): any {
-    return jest.fn((filterName: string) => {
-        if (filterName === 'translate') return (key: string) => key;
-        if (filterName === 'resourceName') return (name: string) => name;
-        return (val: any) => val;
-    });
-}

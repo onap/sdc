@@ -16,28 +16,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG.
  */
 
 'use strict';
 import {IAppConfigurtaion} from "../models/app-config";
 
 export class AngularJSBridge {
-    private static _$filter:ng.IFilterService;
     private static _sdcConfig:IAppConfigurtaion;
-
-    public static getFilter(filterName:string) {
-        return AngularJSBridge._$filter(filterName);
-    }
 
     public static getAngularConfig() {
         return AngularJSBridge._sdcConfig;
     }
 
 
-    constructor($filter:ng.IFilterService, sdcConfig:IAppConfigurtaion) {
-        AngularJSBridge._$filter = $filter;
+    constructor(sdcConfig:IAppConfigurtaion) {
         AngularJSBridge._sdcConfig = sdcConfig;
     }
 }
 
-AngularJSBridge.$inject = ['$filter', 'sdcConfig']
+AngularJSBridge.$inject = ['sdcConfig']

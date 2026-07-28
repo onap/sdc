@@ -16,20 +16,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG.
  */
 
 
 import { Pipe, PipeTransform } from '@angular/core';
 import * as _ from 'lodash';
 
+/**
+ * Namespace prefixes stripped from a TOSCA type/resource name to build its short display name.
+ * The name is split on each token in turn, keeping the LAST segment every time, so a name
+ * matching several tokens is reduced by the last-matching token in this ordered chain.
+ *
+ * Ported verbatim from the AngularJS `resourceName` filter (SDC-4829 Phase 12).
+ */
+const STRIPPED_PREFIXES: string[] = [
+    'tosca.nodes.',
+    'network.',
+    'relationships.',
+    'org.openecomp.',
+    'resource.nfv.',
+    'nodes.module.',
+    'cp.',
+    'vl.'
+];
+
 @Pipe({name: 'resourceName'})
 export class ResourceNamePipe implements PipeTransform {
-    
+
     public static getDisplayName (value:string): string {
-        let nameFirstCapital: string = value.charAt(0).toUpperCase() + value.slice(1);
-        const newName:string =
-            _.last(nameFirstCapital.split(/tosca\.nodes\..*network\..*relationships\..*org\.openecomp\..*resource\.nfv\..*nodes\.module\..*cp\..*vl\./));
-        return (newName) ? newName : value;
+        const stripped: string = STRIPPED_PREFIXES.reduce(
+            (name: string, prefix: string) => _.last(name.split(prefix)), value);
+        const shortName: string = (stripped) ? stripped : value;
+        return shortName.charAt(0).toUpperCase() + shortName.slice(1);
     }
 
     transform(value) : any {

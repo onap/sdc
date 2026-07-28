@@ -16,6 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG.
  */
 
 'use strict';
@@ -24,6 +25,7 @@ import {WorkspaceMode, ComponentState} from "./constants";
 import {IAppConfigurtaion, IAppMenu, Component} from "../models";
 import {ComponentFactory} from "./component-factory";
 import {ModalsHandler} from "./modals-handler";
+import {ResourceNamePipe} from "../ng2/pipes/resource-name.pipe";
 
 export class MenuItem {
     text:string;
@@ -80,7 +82,6 @@ export class MenuHandler {
         'sdcConfig',
         'sdcMenu',
         'ComponentFactory',
-        '$filter',
         'ModalsHandler',
         '$state',
         '$q'
@@ -89,7 +90,6 @@ export class MenuHandler {
     constructor(private sdcConfig:IAppConfigurtaion,
                 private sdcMenu:IAppMenu,
                 private ComponentFactory:ComponentFactory,
-                private $filter:ng.IFilterService,
                 private ModalsHandler:ModalsHandler,
                 private $state:ng.ui.IStateService,
                 private $q:ng.IQService) {
@@ -139,7 +139,7 @@ export class MenuHandler {
             components.forEach((component:Component) => {
                 let menuItem = new MenuItem(
                     //  component.name,
-                    component.getComponentSubType() + ': ' + this.$filter('resourceName')(component.name),
+                    component.getComponentSubType() + ': ' + ResourceNamePipe.getDisplayName(component.name),
                     clickItemCallback,
                     null,
                     null,
@@ -155,7 +155,7 @@ export class MenuHandler {
             if (result.selectedIndex === -1) {
                 let menuItem = new MenuItem(
                     //  component.name,
-                    selected.getComponentSubType() + ': ' + this.$filter('resourceName')(selected.name),
+                    selected.getComponentSubType() + ': ' + ResourceNamePipe.getDisplayName(selected.name),
                     clickItemCallback,
                     null,
                     null,

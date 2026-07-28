@@ -21,31 +21,23 @@
 /**
  * Characterization test for `AngularJSBridge` (SDC-4829 Phase 10-12 safety net).
  *
- * A static bridge that stashes AngularJS `$filter` and the app config so pure-Angular code can
- * reach them without DI. Constructing it populates the statics; the static getters read them
- * back. This is a bridge that Phase 13 removes, so pinning its exact contract guards against a
- * premature/incorrect teardown.
+ * A static bridge that stashes the AngularJS-side app config so pure-Angular code can reach it
+ * without DI. Constructing it populates the static; the static getter reads it back. This is a
+ * bridge that Phase 13 removes, so pinning its exact contract guards against a premature or
+ * incorrect teardown.
+ *
+ * Phase 12 removed the bridge's `$filter` half along with the AngularJS filter layer it served
+ * (`getFilter` had no callers left once `Sdc.Filters` was deleted); `sdcConfig` is all that
+ * remains, still read by 8 call sites for `imagesPath`.
  */
 import {AngularJSBridge} from './angular-js-bridge-service';
 
 describe('AngularJSBridge (characterization)', () => {
-    it('getFilter delegates to the $filter captured at construction', () => {
-        const upperFilter = (s: string) => s.toUpperCase();
-        const $filter = jest.fn().mockReturnValue(upperFilter);
-        // Constructing the bridge captures $filter + config into the statics.
-        // tslint:disable-next-line:no-unused-expression
-        new AngularJSBridge($filter as any, {api: {}} as any);
-
-        const resolved = AngularJSBridge.getFilter('uppercase');
-
-        expect($filter).toHaveBeenCalledWith('uppercase');
-        expect(resolved).toBe(upperFilter);
-    });
-
     it('getAngularConfig returns the sdcConfig captured at construction', () => {
         const config = {api: {root: 'http://be/'}} as any;
+        // Constructing the bridge captures the config into the static.
         // tslint:disable-next-line:no-unused-expression
-        new AngularJSBridge(jest.fn() as any, config);
+        new AngularJSBridge(config);
 
         expect(AngularJSBridge.getAngularConfig()).toBe(config);
     });

@@ -29,7 +29,6 @@ import { IAppConfigurtaion, IAppMenu, Resource } from './models';
 import { Component } from './models/components/component';
 import { IUserProperties } from './models/user';
 import './modules/directive-module.ts';
-import './modules/filters.ts';
 import './modules/service-module';
 import './modules/utils.ts';
 import './modules/view-model-module.ts';
@@ -43,7 +42,6 @@ const moduleName: string = 'sdcApp';
 const viewModelsModuleName: string = 'Sdc.ViewModels';
 const directivesModuleName: string = 'Sdc.Directives';
 const servicesModuleName: string = 'Sdc.Services';
-const filtersModuleName: string = 'Sdc.Filters';
 const utilsModuleName: string = 'Sdc.Utils';
 
 // Load configuration according to environment.
@@ -83,7 +81,6 @@ const dependentModules: string[] = [
   viewModelsModuleName,
   directivesModuleName,
   servicesModuleName,
-  filtersModuleName,
   utilsModuleName
 ];
 
