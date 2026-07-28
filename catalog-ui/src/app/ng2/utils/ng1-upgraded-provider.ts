@@ -21,7 +21,6 @@
 /**
  * Created by rc2122 on 4/6/2017.
  */
-import {ComponentFactory} from "../../utils/component-factory"
 import {EventListenerService} from "app/services/event-listener-service";
 import {ModalsHandler} from "app/utils";
 import {SharingService} from "../services/sharing.service";
@@ -31,10 +30,6 @@ import ICacheObject = angular.ICacheObject;
 
 export function sharingServiceFactory(cacheObj: ICacheObject) {
     return cacheObj.get('Sdc.Services.SharingService');
-}
-
-export function componentServiceFactory(cacheObj: ICacheObject) {
-    return cacheObj.get('Sdc.Services.ComponentFactory');
 }
 
 export function stateServiceFactory(cacheObj: ICacheObject) {
@@ -61,12 +56,6 @@ export function ModalsHandlerFactory(cacheObj: ICacheObject) {
     return cacheObj.get('ModalsHandler');
 }
 
-
-export const ComponentFactoryProvider = {
-    provide: ComponentFactory,
-    useFactory: componentServiceFactory,
-    deps: ['$injector']
-};
 
 export const SharingServiceProvider = {
     provide: SharingService,
@@ -118,9 +107,15 @@ export function changeLifecycleStateHandlerFactory(cacheObj: ICacheObject) {
     return cacheObj.get('ChangeLifecycleStateHandler');
 }
 
-export function componentFactoryStringFactory(cacheObj: ICacheObject) {
-    return cacheObj.get('Sdc.Services.ComponentFactory');
+export function qServiceFactory(cacheObj: ICacheObject) {
+    return cacheObj.get('$q');
 }
+
+export const QServiceProvider = {
+    provide: '$q',
+    useFactory: qServiceFactory,
+    deps: ['$injector']
+};
 
 export const SdcMenuServiceProvider = {
     provide: 'sdcMenu',
@@ -140,8 +135,3 @@ export const ChangeLifecycleStateHandlerProvider = {
     deps: ['$injector']
 };
 
-export const ComponentFactoryStringProvider = {
-    provide: 'ComponentFactory',
-    useFactory: componentFactoryStringFactory,
-    deps: ['$injector']
-};

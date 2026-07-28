@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,9 +23,14 @@
  */
 'use strict';
 import * as _ from "lodash";
+import {forwardRef, Inject, Injectable} from "@angular/core";
+import {HttpClient, HttpParams} from "@angular/common/http";
 import {LeftPaletteComponent, LeftPaletteMetadataTypes} from "app/models/components/displayComponent";
 import {Component} from "app/models/components/component";
 import {EventListenerService} from "../../event-listener-service";
+// ComponentFactory imports the "app/services" barrel, which re-exports THIS file, so at module-eval
+// time the ComponentFactory binding here is still undefined (JIT circular dep, failure-catalog §OO).
+// The forwardRef on the constructor param below defers resolving the class value to injection time.
 import {ComponentFactory} from "../../../utils/component-factory";
 import {IAppConfigurtaion} from "app/models/app-config";
 import {ResourceType, ComponentType, EVENTS} from "../../../utils/constants";
@@ -32,50 +38,46 @@ import {ComponentMetadata} from "app/models/component-metadata";
 import {GroupMetadata, GroupTpes} from "app/models/group-metadata";
 import {PolicyMetadata, PolicyTpes} from "app/models/policy-metadata";
 import {Resource} from "app/models/components/resource";
-import IHttpPromiseCallbackArg = angular.IHttpPromiseCallbackArg;
+import {SdcConfigToken} from "../../../ng2/config/sdc-config.config";
 
+@Injectable()
 export class LeftPaletteLoaderService {
 
-    static '$inject' = [
-        'Restangular',
-        '$http',
-        'sdcConfig',
-        '$q',
-        'ComponentFactory',
-        'EventListenerService'
+    private baseUrl: string;
+    // Non-enumerable for consistency with other migrated services (§SS pattern).
+    private http: HttpClient;
 
-    ];
+    leftPanelComponents: Array<LeftPaletteComponent>;
 
-    constructor(protected restangular:restangular.IElement,
-                protected $http:ng.IHttpService,
-                protected sdcConfig:IAppConfigurtaion,
-                protected $q:ng.IQService,
-                protected ComponentFactory:ComponentFactory,
-                protected EventListenerService:EventListenerService) {
-
-        this.restangular.setBaseUrl(sdcConfig.api.root + sdcConfig.api.component_api_root);
-
+    constructor(@Inject(SdcConfigToken) private sdcConfig: IAppConfigurtaion,
+                http: HttpClient,
+                @Inject(forwardRef(() => ComponentFactory)) private ComponentFactory: ComponentFactory,
+                private EventListenerService: EventListenerService) {
+        this.baseUrl = sdcConfig.api.root + sdcConfig.api.component_api_root;
+        Object.defineProperty(this, 'http', {value: http, enumerable: false, writable: false, configurable: true});
     }
 
-    leftPanelComponents:Array<LeftPaletteComponent>;
-
-    public loadLeftPanel = (component:Component):void => {
+    public loadLeftPanel = (component: Component): void => {
         this.leftPanelComponents = [];
         this.updateLeftPaletteForTopologyTemplate(component);
     }
 
-    private updateLeftPalette = (componentInternalType:string):void => {
+    private updateLeftPalette = (componentInternalType: string): void => {
 
         /* add components */
-        const leftPaletteUrl = this.sdcConfig.api.uicache_root + this.sdcConfig.api.GET_uicache_left_palette;
-        this.$http.get(leftPaletteUrl, {params: {'internalComponentType': componentInternalType}}).then((res) => res.data).then((leftPaletteComponentMetadata:Array<ComponentMetadata>) => {
-        // this.restangular.one("resources").one('/latestversion/notabstract/metadata').get({'internalComponentType': componentInternalType}).then((leftPaletteComponentMetadata:Array<ComponentMetadata>) => {
-            _.forEach(leftPaletteComponentMetadata, (componentMetadata:ComponentMetadata) => {
+        this.http.get<Array<ComponentMetadata>>(
+            this.sdcConfig.api.uicache_root + this.sdcConfig.api.GET_uicache_left_palette,
+            {params: new HttpParams().set('internalComponentType', componentInternalType)}
+        ).subscribe((leftPaletteComponentMetadata: Array<ComponentMetadata>) => {
+            _.forEach(leftPaletteComponentMetadata, (componentMetadata: ComponentMetadata) => {
                 this.leftPanelComponents.push(new LeftPaletteComponent(LeftPaletteMetadataTypes.Component, componentMetadata));
             });
 
             /* add groups */
-            this.restangular.one('/groupTypes').get({'internalComponentType': componentInternalType}).then((leftPaletteGroupTypes:GroupTpes) => {
+            this.http.get<GroupTpes>(
+                this.baseUrl + 'groupTypes',
+                {params: new HttpParams().set('internalComponentType', componentInternalType)}
+            ).subscribe((leftPaletteGroupTypes: GroupTpes) => {
                 _.forEach(leftPaletteGroupTypes, (groupMetadata: GroupMetadata) => {
                     this.leftPanelComponents.push(new LeftPaletteComponent(LeftPaletteMetadataTypes.Group, groupMetadata));
                 });
@@ -83,25 +85,26 @@ export class LeftPaletteLoaderService {
             });
 
             /* add policies */
-            this.restangular.one('/policyTypes').get({'internalComponentType': componentInternalType}).then((leftPalettePolicyTypes:PolicyTpes) => {
+            this.http.get<PolicyTpes>(
+                this.baseUrl + 'policyTypes',
+                {params: new HttpParams().set('internalComponentType', componentInternalType)}
+            ).subscribe((leftPalettePolicyTypes: PolicyTpes) => {
                 _.forEach(leftPalettePolicyTypes, (policyMetadata: PolicyMetadata) => {
                     this.leftPanelComponents.push(new LeftPaletteComponent(LeftPaletteMetadataTypes.Policy, policyMetadata));
                 });
                 this.EventListenerService.notifyObservers(EVENTS.LEFT_PALETTE_UPDATE_EVENT);
             });
         });
-
-
     }
 
-    public getLeftPanelComponentsForDisplay = (component:Component):Array<LeftPaletteComponent> => {
+    public getLeftPanelComponentsForDisplay = (component: Component): Array<LeftPaletteComponent> => {
         return this.leftPanelComponents;
     };
 
     /**
-     * Update left palete items according to current topology templates we are in.
+     * Update left palette items according to current topology templates we are in.
      */
-    public updateLeftPaletteForTopologyTemplate = (component:Component):void => {
+    public updateLeftPaletteForTopologyTemplate = (component: Component): void => {
         switch (component.componentType) {
             case ComponentType.SERVICE:
                 this.updateLeftPalette(ComponentType.SERVICE);
@@ -110,7 +113,7 @@ export class LeftPaletteLoaderService {
                 this.updateLeftPalette((<Resource>component).resourceType);
                 break;
             default:
-                console.log('ERROR: Component type '+ component.componentType + ' is not exists');
+                console.log('ERROR: Component type ' + component.componentType + ' is not exists');
         }
     };
 }

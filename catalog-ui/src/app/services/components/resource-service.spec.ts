@@ -1,0 +1,93 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * SDC
+ * ================================================================================
+ * Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
+// Break the circular dep: resource-service.spec.ts → app/services barrel → resource-service.ts
+// → extends ComponentService. We stub out only what's needed to unblock the import.
+jest.mock('app/services', () => ({
+    AvailableIconsService: class {},
+    AngularJSBridge: {setup: () => {}},
+    ResourceService: class {},
+    ServiceService: class {},
+    DataTypesService: class {},
+}));
+
+import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
+import {TestBed} from '@angular/core/testing';
+import {ResourceService} from './resource-service';
+import {ComponentService} from './component-service';
+import {SdcConfigToken} from '../../ng2/config/sdc-config.config';
+import {SharingService} from '../../ng2/services/sharing.service';
+import {DataTypesService} from '../data-types-service';
+
+const sdcConfig = {api: {root: 'http://localhost/', component_api_root: 'v1/catalog/'}} as any;
+
+describe('ResourceService', () => {
+    let service: ResourceService;
+    let httpMock: HttpTestingController;
+
+    beforeEach(() => {
+        TestBed.configureTestingModule({
+            imports: [HttpClientTestingModule],
+            providers: [
+                ResourceService,
+                ComponentService,
+                {provide: SdcConfigToken, useValue: sdcConfig},
+                {provide: SharingService, useValue: {addUuidValue: () => {}}},
+                {provide: DataTypesService, useValue: {loadDataTypesCache: () => {}}},
+                {provide: '$q', useValue: {defer: () => ({promise: null, resolve: () => {}, reject: () => {}})}},
+            ],
+        });
+        service = TestBed.get(ResourceService);
+        httpMock = TestBed.get(HttpTestingController);
+    });
+    afterEach(() => httpMock.verify());
+
+    // Regression guard for the ng:cpws hang (failure-catalog §SS): ResourceService is held as an
+    // enumerable field by Resource model instances, whose toJSON() does angular.copy(this). If any
+    // injected Angular dep were an ENUMERABLE own property, angular.copy would deep-traverse it,
+    // reach a Scope (via the ngUpgrade root injector) and throw ng:cpws — aborting create/import
+    // and hanging the loader. All four injected deps MUST be non-enumerable.
+    it('§SS: all injected Angular deps are non-enumerable own properties (angular.copy must not traverse them)', () => {
+        for (const field of ['http', 'sharingService', 'dataTypeService', '$q']) {
+            const desc = Object.getOwnPropertyDescriptor(service, field);
+            expect(desc).toBeDefined();
+            expect(desc.enumerable).toBe(false);
+            expect(Object.keys(service)).not.toContain(field);
+        }
+    });
+
+    it('updateResourceGroupProperties PUTs to resources/{id}/groups/{gid}/properties', () => {
+        service.updateResourceGroupProperties('id1', 'g1', []);
+        const req = httpMock.expectOne('http://localhost/v1/catalog/resources/id1/groups/g1/properties');
+        expect(req.request.method).toBe('PUT');
+        req.flush([]);
+    });
+
+    it('getComponent (inherited) targets the resources/ segment', () => {
+        service.getComponent('r1');
+        httpMock.expectOne('http://localhost/v1/catalog/resources/r1').flush({uniqueId: 'r1'});
+    });
+
+    it('createComponentObject is defined as an overriding method on ResourceService', () => {
+        // Resource constructor calls angular.copy internally — that global is absent in Jest.
+        // We verify the method override is present; full end-to-end coverage comes from Selenium.
+        expect(service.createComponentObject).toBeDefined();
+        expect(Object.prototype.hasOwnProperty.call(service, 'createComponentObject')).toBe(true);
+    });
+});

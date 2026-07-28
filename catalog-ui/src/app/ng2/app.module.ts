@@ -28,9 +28,9 @@ import {UpgradeModule} from '@angular/upgrade/static';
 import {SdcUiComponentsModule} from 'onap-ui-angular';
 import {PropertiesAssignmentModule} from './pages/properties-assignment/properties-assignment.module';
 import {
-  ComponentFactoryProvider,
   ModalsHandlerProvider,
   NotificationServiceProvider,
+  QServiceProvider,
   ScopeServiceFactory,
   StateParamsServiceFactory,
   StateServiceFactory
@@ -93,6 +93,11 @@ import {CookieService} from '../services/cookie-service';
 import {DataTypesService} from '../services/data-types-service';
 import {ProgressService} from '../services/progress-service';
 import {ValidationUtils} from '../utils/validation-utils';
+import {ComponentFactory} from '../utils/component-factory';
+import {ComponentService} from '../services/components/component-service';
+import {ResourceService} from '../services/components/resource-service';
+import {ServiceService} from '../services/components/service-service';
+import {LeftPaletteLoaderService} from '../services/components/utils/composition-left-palette-service';
 import {HttpClientModule} from '@angular/common/http';
 import {httpInterceptorProviders} from './http-interceptor';
 import {HttpHelperService} from './services/http-hepler.service';
@@ -215,7 +220,12 @@ export function configServiceFactory(config: ConfigService, authService: Authent
     CacheService,
     HomeService,
     ArtifactConfigService,
-    ComponentFactoryProvider,
+    ComponentService,
+    ResourceService,
+    ServiceService,
+    ComponentFactory,
+    LeftPaletteLoaderService,
+    QServiceProvider,
     CookieService,
     ProgressService,
     ValidationUtils,

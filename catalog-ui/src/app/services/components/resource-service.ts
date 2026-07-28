@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,54 +24,38 @@
  */
 'use strict';
 import * as _ from "lodash";
+import {Inject, Injectable} from "@angular/core";
+import {HttpClient} from "@angular/common/http";
 import {IComponentService, ComponentService} from "./component-service";
 import {PropertyModel, IAppConfigurtaion, Resource, Component} from "../../models";
-import {SharingService} from "app/services-ng2";
-import { DataTypesService } from "app/services";
+// Direct imports to avoid loading the services-ng2 barrel which causes a circular dep
+// at module-load time once @Injectable emits type metadata (emitDecoratorMetadata).
+import {SharingService} from "../../ng2/services/sharing.service";
+import {DataTypesService} from "../data-types-service";
+import {SdcConfigToken} from "../../ng2/config/sdc-config.config";
 
 export interface IResourceService extends IComponentService {
     updateResourceGroupProperties(uniqueId:string, groupId:string, properties:Array<PropertyModel>):ng.IPromise<Array<PropertyModel>>
 }
 
+@Injectable()
 export class ResourceService extends ComponentService implements IResourceService {
 
-    static '$inject' = [
-        'Restangular',
-        'sdcConfig',
-        'Sdc.Services.SharingService',
-        'Sdc.Services.DataTypesService',
-        '$q',
-        '$base64'
-    ];
-
-    constructor(protected restangular:restangular.IElement,
-                protected sdcConfig:IAppConfigurtaion,
-                protected sharingService:SharingService,
-                protected dataTypeService:DataTypesService,
-                protected $q:ng.IQService,
-                protected $base64:any
-                ) {
-        super(restangular, sdcConfig, sharingService, dataTypeService, $q, $base64);
-
-        this.restangular = restangular.one("resources");
+    constructor(@Inject(SdcConfigToken) sdcConfig: IAppConfigurtaion,
+                http: HttpClient,
+                sharingService: SharingService,
+                dataTypeService: DataTypesService,
+                @Inject('$q') $q: ng.IQService) {
+        super(sdcConfig, http, sharingService, dataTypeService, $q);
+        this.typeName = 'resources';
     }
 
-    createComponentObject = (component:Component):Component => {
+    createComponentObject = (component: Component): Component => {
         return new Resource(this, this.$q, <Resource>component);
     };
 
-
-    updateResourceGroupProperties = (uniqueId:string, groupId:string, properties:Array<PropertyModel>):ng.IPromise<Array<PropertyModel>> => {
-        let defer = this.$q.defer<Array<PropertyModel>>();
-        this.restangular.one(uniqueId).one("groups").one(groupId).one('properties').customPUT(JSON.stringify(properties)).then((updatesProperties:any) => {
-            let propertiesArray:Array<PropertyModel> = new Array<PropertyModel>();
-            _.forEach(updatesProperties, (propertyObj:PropertyModel) => {
-                propertiesArray.push(new PropertyModel(propertyObj));
-            });
-            defer.resolve(propertiesArray);
-        }, (err)=> {
-            defer.reject(err);
-        });
-        return defer.promise;
+    updateResourceGroupProperties = (uniqueId: string, groupId: string, properties: Array<PropertyModel>): ng.IPromise<Array<PropertyModel>> => {
+        return this.http.put(this.url(uniqueId, 'groups', groupId, 'properties'), JSON.stringify(properties)).toPromise()
+            .then((updated: any) => _.map(updated, (p: PropertyModel) => new PropertyModel(p))) as any;
     };
 }
