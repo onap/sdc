@@ -23,9 +23,12 @@ import {Subject} from 'rxjs/Subject';
 import 'rxjs/add/operator/takeUntil';
 import * as _ from 'lodash';
 
+import {SdcUiServices} from 'onap-ui-angular';
 import {CacheService} from 'app/services-ng2';
 import {EventListenerService} from 'app/services';
 import {EVENTS, WorkspaceMode, ComponentState, ComponentType, Role, PREVIOUS_CSAR_COMPONENT, instantiationType, DEFAULT_MODEL_NAME, DEFAULT_ICON, CATEGORY_SERVICE_METADATA_KEYS} from 'app/utils/constants';
+import {ServiceCsarReader} from 'app/utils/service-csar-reader';
+import {FileUtilsService} from '../../../services/file-utils.service';
 import {WorkspaceService} from '../workspace.service';
 import {GeneralFormService, ValidationPatterns} from './general-form.service';
 import {ComponentMetadataService} from './component-metadata.service';
@@ -67,6 +70,10 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
     othersRoleFlag: boolean = false;
     othersFlag: boolean = false;
 
+    // Resolves once the uploaded service CSAR has been unzipped and the form prefilled (an already-
+    // resolved promise when there is no imported file). Exposed only so tests can await the unzip.
+    csarPrefill: Promise<void> = Promise.resolve();
+
     // AngularJS services resolved lazily in ngOnInit
     private $state: any;
     private $stateParams: any;
@@ -86,6 +93,8 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
         private workspaceService: WorkspaceService,
         private cacheService: CacheService,
         private eventListenerService: EventListenerService,
+        private fileUtils: FileUtilsService,
+        private modalServiceSdcUI: SdcUiServices.ModalService,
         private cdr: ChangeDetectorRef,
         @Inject('$injector') private $injector: any
     ) {}
@@ -157,6 +166,10 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
             if (this.$state.current.data) { this.$state.current.data.unsavedChanges = true; }
             this.save();
         }
+        // Prefill the form from an uploaded service CSAR ("Import Service" on the dashboard). MUST run
+        // after initCategories/initModel/initBaseTypes above — it drives onModelChange/onCategoryChange/
+        // onBaseTypeChange, which read those lists. Kept as a field so tests can await the unzip.
+        this.csarPrefill = this.prefillFromImportedServiceCsar() || Promise.resolve();
         this.detectChangesSafe();
     }
 
@@ -1056,6 +1069,60 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
 
     onImportFileChange(): void {
         if (this.$state.current.data) { this.$state.current.data.unsavedChanges = true; }
+    }
+
+    /**
+     * Read the CSAR the user uploaded via "Import Service" on the dashboard and prefill the create
+     * form from its TOSCA metadata (ported from GeneralViewModel.initScope, general-view-model.ts:
+     * 455-500). Dashboard → onImportService() navigates to workspace.general with $stateParams
+     * .importedFile; nothing else in the app reads that payload, so without this the imported
+     * service's name/description/category/model/base-type all arrive blank and the user has to
+     * retype what the CSAR already declares.
+     *
+     * Services only: a VF/VFC import is handled by the backend (payloadData on the create POST).
+     */
+    private prefillFromImportedServiceCsar(): Promise<void> | void {
+        if (!this.component.isService || !this.component.isService()) { return; }
+        const importedFile = this.component.importedFile;
+        if (!importedFile || !importedFile.base64) { return; }
+        this.component.ecompGeneratedNaming = true;
+        this.patchControl('ecompGeneratedNaming', true);
+        const blob = this.fileUtils.base64toBlob(importedFile.base64, 'zip');
+        return new ServiceCsarReader().read(blob).then(
+            (serviceCsar) => {
+                const user = this.cacheService.get('user');
+                serviceCsar.serviceMetadata.contactId = user ? user.userId : undefined;
+                this.component.setComponentMetadata(serviceCsar.serviceMetadata);
+                // The change handlers below read the FORM, not the model, so patch first.
+                this.patchFormFromComponent();
+                this.patchControl('model', serviceCsar.serviceMetadata.model || '');
+                this.onModelChange();
+                this.patchControl('category', serviceCsar.serviceMetadata.selectedCategory || '');
+                this.onCategoryChange();
+                if (!this.component.categorySpecificMetadata) { this.component.categorySpecificMetadata = {}; }
+                serviceCsar.extraServiceMetadata.forEach((value: string, key: string) => {
+                    if (this.getMetadataKey(key)) {
+                        this.component.categorySpecificMetadata[key] = value;
+                    }
+                });
+                this.onBaseTypeChange(serviceCsar.substitutionNodeType);
+                this.setFunctionRole();
+                this.workspaceService.isValidForm = this.form.valid;
+                this.detectChangesSafe();
+            },
+            (error) => {
+                const errorMsg = this.$filter('translate')('IMPORT_FAILURE_MESSAGE_TEXT');
+                console.error(errorMsg, error);
+                this.modalServiceSdcUI.openErrorDetailModal('Error', errorMsg, 'error-modal', {
+                    Error: this.capitalize(error.reason),
+                    Details: this.capitalize(error.message)
+                });
+                this.$state.go('dashboard');
+            });
+    }
+
+    private capitalize(s: any): string {
+        return s && typeof s === 'string' ? s[0].toUpperCase() + s.slice(1) : s;
     }
 
     revert(): void {

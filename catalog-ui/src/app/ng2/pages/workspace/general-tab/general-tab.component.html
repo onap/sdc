@@ -422,7 +422,12 @@
                         (change)="onBaseTypeChange($event.target.value)"
                         data-tests-id="selectBaseType">
                   <option value="">None</option>
-                  <option *ngFor="let type of baseTypes" [value]="type">{{type}}</option>
+                  <!-- [selected] is required as well as the [value] above: baseTypes arrives from an
+                       async getCategoryBaseTypes call, so when Angular writes the select's value the
+                       matching <option> does not exist yet and the browser falls back to index 0
+                       ("None"). Marking the option itself keeps the display in sync once it appears. -->
+                  <option *ngFor="let type of baseTypes" [value]="type"
+                          [selected]="type === component?.derivedFromGenericType">{{type}}</option>
                 </select>
               </div>
             </div>
@@ -436,7 +441,9 @@
                         [value]="component?.derivedFromGenericVersion"
                         (change)="component.derivedFromGenericVersion = $event.target.value"
                         data-tests-id="selectBaseTypeVersion">
-                  <option *ngFor="let version of baseTypeVersions" [value]="version">{{version}}</option>
+                  <!-- Same async-options caveat as the Substitution Node Type select above. -->
+                  <option *ngFor="let version of baseTypeVersions" [value]="version"
+                          [selected]="version === component?.derivedFromGenericVersion">{{version}}</option>
                 </select>
               </div>
             </div>

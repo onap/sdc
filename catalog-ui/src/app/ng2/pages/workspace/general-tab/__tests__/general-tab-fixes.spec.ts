@@ -114,12 +114,14 @@ function createComp(opts: any = {}) {
     }), set: jest.fn(), remove: jest.fn(), contains: jest.fn(() => false)};
     const eventListener: any = {registerObserverCallback: jest.fn(), unRegisterObserver: jest.fn(), notifyObservers: jest.fn()};
     const cdr: any = {detectChanges: jest.fn()};
+    const fileUtils: any = opts.fileUtils || {base64toBlob: jest.fn(() => new Blob([]))};
+    const sdcUiModalService: any = opts.sdcUiModalService || {openErrorDetailModal: jest.fn()};
     const comp = new GeneralTabComponent(
         new GeneralFormService(), new ComponentMetadataService(),
-        workspaceService, cacheService, eventListener, cdr,
+        workspaceService, cacheService, eventListener, fileUtils, sdcUiModalService, cdr,
         opts.injector || makeInjector(opts)
     );
-    return {comp, workspaceService, cacheService, eventListener, cdr};
+    return {comp, workspaceService, cacheService, eventListener, cdr, fileUtils, sdcUiModalService};
 }
 
 // ─── #1 Service Role / Function dropdowns ─────────────────────────────────────
@@ -471,5 +473,121 @@ describe('GeneralTabComponent fixes - #9 onEcompGeneratedNamingChange', () => {
         comp.form.get('ecompGeneratedNaming').setValue(true);
         comp.onEcompGeneratedNamingChange();
         expect(comp.component.namingPolicy).toBe('keep-me');
+    });
+});
+
+// ─── #10 Import Service from CSAR prefills the form ───────────────────────────
+// Regression guard: the AngularJS GeneralViewModel read the uploaded CSAR (ServiceCsarReader) and
+// prefilled name/description/category/model/base-type from its TOSCA metadata
+// (general-view-model.ts:455-500). The Phase-3 migration dropped that call, so "Import Service"
+// landed the user on a blank create form. Nothing else in the app reads $stateParams.importedFile,
+// so no other test covered it.
+describe('GeneralTabComponent fixes - #10 import service from CSAR', () => {
+    const TOSCA_META = 'TOSCA-Meta-File-Version: 1.0\nEntry-Definitions: Definitions/main.yaml\n';
+    const MAIN_YAML = [
+        'tosca_definitions_version: tosca_simple_yaml_1_1',
+        'metadata:',
+        '  name: ImportedSvc',
+        '  description: from csar',
+        '  category: Network Service',
+        '  model: ETSI-SOL001-331',
+        '  serviceRole: R1',
+        '  instantiationType: A-la-carte',
+        '  ETSI Version: "2.7.1"',
+        'topology_template:',
+        '  substitution_mappings:',
+        '    node_type: org.openecomp.service.Base',
+        ''
+    ].join('\n');
+
+    // The CSAR declares model ETSI-SOL001-331, so the category must list that model or
+    // filterCategoriesByModel drops it and component.categories[0] (the metadata-key source) stays empty.
+    const IMPORT_CATEGORY = () => ({
+        name: 'Network Service', subcategories: [], models: ['ETSI-SOL001-331'],
+        metadataKeys: [{name: 'ETSI Version'}]
+    });
+
+    async function makeCsarBlob(): Promise<Blob> {
+        const JSZip = require('jszip');
+        const zip = new JSZip();
+        zip.file('TOSCA-Metadata/TOSCA.meta', TOSCA_META);
+        zip.file('Definitions/main.yaml', MAIN_YAML);
+        return zip.generateAsync({type: 'nodebuffer'});
+    }
+
+    function importedServiceComponent() {
+        const svc = makeService({
+            name: '', description: '', selectedCategory: '', model: undefined,
+            categories: undefined,
+            importedFile: {filename: 'svc.csar', base64: 'ZmFrZQ=='},
+            setComponentMetadata(metadata: any) {
+                Object.assign(this, metadata);
+                this.selectedCategory = this.selectedCategory || '';
+            }
+        });
+        return svc;
+    }
+
+    it('reads the uploaded CSAR and prefills name/description/model/base type', async () => {
+        const blob = await makeCsarBlob();
+        const svc = importedServiceComponent();
+        const {comp} = createComp({
+            component: svc,
+            fileUtils: {base64toBlob: jest.fn(() => blob)},
+            cache: {serviceCategories: [IMPORT_CATEGORY()]}
+        });
+        comp.ngOnInit();
+        await comp.csarPrefill;
+
+        expect(comp.component.name).toBe('ImportedSvc');
+        expect(comp.component.description).toBe('from csar');
+        expect(comp.component.model).toBe('ETSI-SOL001-331');
+        expect(comp.component.derivedFromGenericType).toBe('org.openecomp.service.Base');
+        expect(comp.form.get('name').value).toBe('ImportedSvc');
+        expect(comp.form.get('description').value).toBe('from csar');
+    });
+
+    it('copies extra CSAR metadata into categorySpecificMetadata when the category declares the key', async () => {
+        const blob = await makeCsarBlob();
+        const svc = importedServiceComponent();
+        const {comp} = createComp({
+            component: svc,
+            fileUtils: {base64toBlob: jest.fn(() => blob)},
+            cache: {serviceCategories: [IMPORT_CATEGORY()]}
+        });
+        comp.ngOnInit();
+        await comp.csarPrefill;
+
+        expect(comp.component.categorySpecificMetadata['ETSI Version']).toBe('2.7.1');
+    });
+
+    it('does nothing for a component with no imported file (normal create/edit)', () => {
+        const svc = makeService();
+        const {comp, fileUtils} = createComp({component: svc});
+        comp.ngOnInit();
+        expect(fileUtils.base64toBlob).not.toHaveBeenCalled();
+        expect(comp.component.name).toBe('MySvc');
+    });
+
+    it('does nothing for an imported RESOURCE (VF/VFC csar is handled by the backend)', () => {
+        const res = makeComponent({importedFile: {filename: 'vf.csar', base64: 'ZmFrZQ=='}});
+        const {comp, fileUtils} = createComp({component: res, stateParams: {}});
+        comp.ngOnInit();
+        expect(fileUtils.base64toBlob).not.toHaveBeenCalled();
+    });
+
+    it('shows an error modal and returns to the dashboard when the CSAR is unreadable', async () => {
+        const svc = importedServiceComponent();
+        const injector = makeInjector({});
+        const sdcUiModalService = {openErrorDetailModal: jest.fn()};
+        const {comp} = createComp({
+            component: svc, injector, sdcUiModalService,
+            fileUtils: {base64toBlob: jest.fn(() => new Blob(['not-a-zip']))}
+        });
+        comp.ngOnInit();
+        await comp.csarPrefill;
+
+        expect(sdcUiModalService.openErrorDetailModal).toHaveBeenCalled();
+        expect(injector.get('$state').go).toHaveBeenCalledWith('dashboard');
     });
 });

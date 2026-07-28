@@ -45,7 +45,10 @@ export class ServiceCsarReader {
                 } catch (error) {
                     reject(error);
                 }
-            });
+            // A corrupt/non-zip upload rejects loadAsync itself. Without this the returned promise
+            // never settles, so the caller's error handling (the import-failure modal) never runs and
+            // the user is left on a blank form with no feedback.
+            }, reject);
         });
     }
 

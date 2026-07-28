@@ -56,12 +56,14 @@ function createComp(opts: any = {}) {
     const cacheService: any = {get: jest.fn((k: string) => k === 'user' ? {userId: 'cs0008', role: 'DESIGNER'} : null), set: jest.fn(), remove: jest.fn(), contains: jest.fn(() => false)};
     const eventListener: any = {registerObserverCallback: jest.fn(), unRegisterObserver: jest.fn(), notifyObservers: jest.fn()};
     const cdr: any = {detectChanges: jest.fn()};
+    const fileUtils: any = opts.fileUtils || {base64toBlob: jest.fn(() => new Blob([]))};
+    const sdcUiModalService: any = opts.sdcUiModalService || {openErrorDetailModal: jest.fn()};
     const comp = new GeneralTabComponent(
         new GeneralFormService(), new ComponentMetadataService(),
-        workspaceService, cacheService, eventListener, cdr,
+        workspaceService, cacheService, eventListener, fileUtils, sdcUiModalService, cdr,
         opts.injector || makeInjector(opts.stateParams)
     );
-    return {comp, workspaceService, cacheService, eventListener, cdr};
+    return {comp, workspaceService, cacheService, eventListener, cdr, fileUtils, sdcUiModalService};
 }
 
 describe('GeneralTabComponent - init', () => {
