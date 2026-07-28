@@ -20,17 +20,17 @@
         <div>
             <div class="table-row" *ngFor="let policy of policies">
                 <div class="table-cell col1">
-                    <div class="inner-cell-div" tooltips tooltip="{{policy.name}}">
+                    <div class="inner-cell-div" tooltip="{{policy.name}}">
                         <span class="property-name">{{policy.name}}</span>
                     </div>
                 </div>
                 <div class="table-cell col3">
-                    <div class="inner-cell-div" tooltips tooltip="{{instanceNamesMap[policy.instanceUniqueId]?.name}}">
+                    <div class="inner-cell-div" tooltip="{{instanceNamesMap[policy.instanceUniqueId]?.name}}">
                         <span>{{instanceNamesMap[policy.instanceUniqueId]?.name}}</span>
                     </div>
                 </div>
                 <div class="table-cell col2">
-                    <div class="inner-cell-div" tooltips tooltip="{{policy.type | contentAfterLastDot}}">
+                    <div class="inner-cell-div" tooltip="{{policy.type | contentAfterLastDot}}">
                         <span>{{policy.type | contentAfterLastDot}}</span>
                     </div>
                 </div>

@@ -20,20 +20,18 @@
 
 import { downgradeInjectable } from '@angular/upgrade/static';
 import {ComponentFactory} from "../utils/component-factory";
-import {ComponentInstanceFactory} from "../utils/component-instance-factory";
 import {ChangeLifecycleStateHandler} from "../utils/change-lifecycle-state-handler";
 import {ModalsHandler} from "../utils/modals-handler";
 import {MenuHandler} from "../utils/menu-handler";
-import {ServiceCsarReader} from "../utils/service-csar-reader";
 
 let moduleName:string = 'Sdc.Utils';
 let serviceModule:ng.IModule = angular.module(moduleName, []);
 
-//Utils
+// Utils. ComponentInstanceFactory and ServiceCsarReader are intentionally NOT registered here:
+// the former is only ever used through its static factory methods, the latter is instantiated
+// directly by GeneralTabComponent — neither is resolved by AngularJS DI name anywhere.
 serviceModule.factory('ComponentFactory', downgradeInjectable(ComponentFactory));
-serviceModule.service('ComponentInstanceFactory', ComponentInstanceFactory);
 serviceModule.service('ChangeLifecycleStateHandler', ChangeLifecycleStateHandler);
 serviceModule.service('ModalsHandler', ModalsHandler);
 serviceModule.service('MenuHandler', MenuHandler);
-serviceModule.service('ServiceCsarReader', ServiceCsarReader);
 

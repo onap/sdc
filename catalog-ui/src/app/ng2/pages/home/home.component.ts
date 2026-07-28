@@ -95,7 +95,7 @@ export class HomeComponent implements OnInit {
                 if (selectedFolder) {
                     this.setSelectedFolder(selectedFolder);
                 }
-                // Show the tutorial if needed when the dashboard page is opened.<script src="bower_components/angular-filter/dist/angular-filter.min.js"></script>
+                // Show the tutorial if needed when the dashboard page is opened.
                 // This is called from the welcome page.
             } else if (this.navigationService.getParams().show === 'tutorial') {
                 this.showTutorial = true;
