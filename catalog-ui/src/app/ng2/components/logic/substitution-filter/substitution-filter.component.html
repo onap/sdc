@@ -29,7 +29,6 @@
              *ngFor="let property of constraintProperties; let i = index">
           <div class="rule-details" [ngClass]="{'readonly': readonly}">
             <div class="rule-desc" (click)="!readonly && onSelectSubstitutionFilter(PROPERTIES, i)"
-                 tooltips
                  tooltip="{{constraintPropertyLabels[i]}}">
               {{constraintPropertyLabels[i]}}
             </div>

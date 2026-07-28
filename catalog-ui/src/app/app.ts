@@ -22,7 +22,6 @@
 
 import { AuthenticationService } from 'app/ng2/services/authentication.service';
 import * as _ from 'lodash';
-import 'ng-infinite-scroll';
 import { SdcUiCommon, SdcUiComponents, SdcUiServices } from 'onap-ui-angular';
 import 'reflect-metadata';
 import { IAppConfigurtaion, IAppMenu, Resource } from './models';
@@ -61,23 +60,10 @@ sdcMenu = require('./../../configurations/menu.js');
 
 const dependentModules: string[] = [
   'ui.router',
-  'ui.bootstrap',
-  'ui.bootstrap.tpls',
-  'ngDragDrop',
   'ui-notification',
-  'ngResource',
   'ngSanitize',
-  'naif.base64',
-  'base64',
   'uuid4',
-  'checklist-model',
-  'angular.filter',
   'pascalprecht.translate',
-  '720kb.tooltips',
-  'restangular',
-  'angular-clipboard',
-  'angularResizable',
-  'infinite-scroll',
   viewModelsModuleName,
   directivesModuleName,
   servicesModuleName,
@@ -91,13 +77,11 @@ ng1appModule.config([
   '$translateProvider',
   '$urlRouterProvider',
   '$httpProvider',
-  'tooltipsConfigProvider',
   'NotificationProvider',
   ($stateProvider: any,
    $translateProvider: any,
    $urlRouterProvider: ng.ui.IUrlRouterProvider,
    $httpProvider: ng.IHttpProvider,
-   tooltipsConfigProvider: any,
    NotificationProvider: any): void => {
 
     NotificationProvider.setOptions({
@@ -611,14 +595,6 @@ ng1appModule.config([
           template: '<error-403-page></error-403-page>'
         }
     );
-
-    tooltipsConfigProvider.options({
-      side: 'bottom',
-      delay: '600',
-      class: 'tooltip-custom',
-      lazy: 0,
-      try: 0
-    });
 
   }
 ]);

@@ -105,8 +105,6 @@
                         [ngClass]="{'disabled': readonly}">
                         <input
                             type="file"
-                            base-sixty-four-input
-                            maxsize="10240"
                             data-tests-id="artifactUpload"
                             (change)="onChangeArtifactFile($event)"
                             (click)="$event.target.value = ''"

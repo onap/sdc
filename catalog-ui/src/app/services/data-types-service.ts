@@ -60,7 +60,7 @@ export class DataTypesService implements IDataTypesService {
 
     private baseUrl:string;
     // Non-enumerable so AngularJS `angular.copy()` never traverses it. This service is held (as an
-    // enumerable field) by the still-ng1 Restangular Resource/Service services, which are in turn held
+    // enumerable field) by the Resource/Service component services, which are in turn held
     // by the Component/Resource model classes whose toJSON()/angular.copy(this) deep-copies the graph.
     // An Angular HttpClient's reachable object graph contains a Scope (via the ngUpgrade root injector),
     // and angular.copy throws `ng:cpws` ("Can't copy Scope") on it — which aborts create/import and hangs

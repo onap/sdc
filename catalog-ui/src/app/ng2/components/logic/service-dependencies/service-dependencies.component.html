@@ -22,7 +22,6 @@
                *ngFor="let capability of constraintCapabilities; let i = index">
             <div class="filter-details" [ngClass]="{'readonly': readonly}">
               <div class="filter-desc" (click)="!readonly && onSelectNodeFilterCapability(capabilities, i)"
-                   tooltips
                    tooltip="{{constraintCapabilityLabels[i]}}">
                    {{constraintCapabilityLabels[i]}}
               </div>
@@ -52,7 +51,6 @@
                *ngFor="let property of constraintProperties; let i = index">
             <div class="filter-details" [ngClass]="{'readonly': readonly}">
               <div class="filter-desc" (click)="!readonly && onSelectNodeFilter(properties, i)"
-                   tooltips
                    tooltip="{{constraintPropertyLabels[i]}}">
                    {{constraintPropertyLabels[i]}}
               </div>

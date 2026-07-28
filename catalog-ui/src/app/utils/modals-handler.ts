@@ -34,13 +34,11 @@ export interface IModalsHandler {
 export class ModalsHandler implements IModalsHandler {
 
     static '$inject' = [
-        '$uibModal',
         '$q',
         'ModalServiceNg2'
     ];
 
-    constructor(private $uibModal: ng.ui.bootstrap.IModalService,
-                private $q: ng.IQService,
+    constructor(private $q: ng.IQService,
                 private modalServiceNg2: ModalService) {
     }
 
