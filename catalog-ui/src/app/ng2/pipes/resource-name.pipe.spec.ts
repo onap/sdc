@@ -86,6 +86,15 @@ describe('ResourceNamePipe', () => {
             // 'resource.vf.' is NOT in the prefix chain, so only 'org.openecomp.' applies.
             expect(ResourceNamePipe.getDisplayName('org.openecomp.resource.vf.Vfw')).toBe('Resource.vf.Vfw');
         });
+
+        // The static helper is called directly (MenuHandler labels a breadcrumb for a component
+        // that has no name yet in create mode), so it must guard falsy input itself rather than
+        // relying on `transform`. Without the guard it threw on `undefined.split(...)`.
+        it('returns a falsy value unchanged instead of throwing', () => {
+            expect(ResourceNamePipe.getDisplayName(undefined)).toBeUndefined();
+            expect(ResourceNamePipe.getDisplayName(null)).toBeNull();
+            expect(ResourceNamePipe.getDisplayName('')).toBe('');
+        });
     });
 
     describe('transform', () => {
