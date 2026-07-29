@@ -44,7 +44,15 @@ const STRIPPED_PREFIXES: string[] = [
 @Pipe({name: 'resourceName'})
 export class ResourceNamePipe implements PipeTransform {
 
+    /**
+     * Falsy input is returned unchanged, as the AngularJS `resourceName` filter did. Callers reach
+     * this helper directly (MenuHandler builds a breadcrumb label for a component that has no name
+     * yet in create mode), so the guard cannot live in `transform` alone.
+     */
     public static getDisplayName (value:string): string {
+        if (!value) {
+            return value;
+        }
         const stripped: string = STRIPPED_PREFIXES.reduce(
             (name: string, prefix: string) => _.last(name.split(prefix)), value);
         const shortName: string = (stripped) ? stripped : value;
