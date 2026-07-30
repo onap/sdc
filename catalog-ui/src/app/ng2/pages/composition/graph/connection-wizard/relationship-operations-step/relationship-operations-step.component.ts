@@ -17,13 +17,14 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {IStepComponent} from "../../../../../../models/wizard-step";
 import {ConnectionWizardService} from "../connection-wizard.service";
 import {Component as IComponent} from "../../../../../../models/components/component";
 import {ComponentServiceNg2} from "../../../../../services/component-services/component.service";
 import {Observable} from "rxjs";
 import {Operation} from "../create-interface-operation/model/operation";
+import {NavigationService} from "../../../../../services/navigation.service";
 
 @Component({
   selector: 'app-relationship-operations-step',
@@ -40,10 +41,10 @@ export class RelationshipOperationsStepComponent implements OnInit, IStepCompone
   operationList$: Observable<Array<Operation>>;
   enableAddOperation: boolean;
 
-  constructor(@Inject('$stateParams') private stateParams,
+  constructor(private navigationService: NavigationService,
               connectionWizardService: ConnectionWizardService,
               componentService: ComponentServiceNg2) {
-    this.component = stateParams.component;
+    this.component = navigationService.getParam('component');
     this.componentService = componentService;
     this.connectionWizardService = connectionWizardService;
     this.interfaceTypeMap = new Map<string, Array<string>>();

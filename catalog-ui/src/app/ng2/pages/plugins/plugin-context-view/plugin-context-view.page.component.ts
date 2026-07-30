@@ -1,6 +1,7 @@
-import {Component, Inject} from "@angular/core";
+import {Component} from "@angular/core";
 import {Component as ComponentData, IUserProperties, Plugin} from "app/models";
 import {CacheService, PluginsService} from "app/services-ng2";
+import {NavigationService} from "../../../services/navigation.service";
 
 
 @Component({
@@ -17,13 +18,13 @@ export class PluginContextViewPageComponent {
     show: boolean;
     component: ComponentData;
 
-    constructor(@Inject("$stateParams") private _stateParams,
+    constructor(private navigationService: NavigationService,
                 private cacheService: CacheService,
                 private pluginsService: PluginsService) {
 
         this.show = false;
-        this.component = this._stateParams.component;
-        this.plugin = this.pluginsService.getPluginByStateUrl(_stateParams.path);
+        this.component = this.navigationService.getParam('component');
+        this.plugin = this.pluginsService.getPluginByStateUrl(this.navigationService.getParam('path'));
         this.user = this.cacheService.get('user');
     }
 
@@ -44,8 +45,9 @@ export class PluginContextViewPageComponent {
             eventsClientId: this.plugin.pluginId
         };
 
-        if (this._stateParams.queryParams) {
-            _.assign(this.queryParams, this._stateParams.queryParams);
+        const stateQueryParams = this.navigationService.getParam('queryParams');
+        if (stateQueryParams) {
+            _.assign(this.queryParams, stateQueryParams);
         }
     }
 

@@ -58,7 +58,7 @@ public class HomePage {
     }
 
     public static void showVspRepository() {
-        GeneralUIUtils.waitForElementInVisibilityBy(By.className("ui-notification"), WAIT_FOR_ELEMENT_TIME_OUT);
+        GeneralUIUtils.waitForElementInVisibilityBy(By.className("sdc-notification"), WAIT_FOR_ELEMENT_TIME_OUT);
         GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.MainMenuButtons.REPOSITORY_ICON.getValue());
     }
 

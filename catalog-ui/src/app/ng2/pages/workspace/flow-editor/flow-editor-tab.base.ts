@@ -18,6 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 import {AfterViewInit, ChangeDetectorRef, ElementRef, OnDestroy, OnInit} from '@angular/core';
+import {UUID} from 'angular2-uuid';
 import {WorkspaceMode} from 'app/utils/constants';
 import {CacheService} from 'app/services-ng2';
 import {ComponentServiceNg2} from 'app/ng2/services/component-services/component.service';
@@ -72,7 +73,6 @@ export abstract class FlowEditorTabBase implements OnInit, AfterViewInit, OnDest
                 protected componentService: ComponentServiceNg2,
                 protected cdr: ChangeDetectorRef,
                 protected el: ElementRef,
-                protected $injector: any,
                 protected sdcConfig: any) {
     }
 
@@ -176,8 +176,11 @@ export abstract class FlowEditorTabBase implements OnInit, AfterViewInit, OnDest
         return user.userId;
     }
 
+    /** The request id the punch-out sends as X-ECOMP-RequestID. Was the AngularJS `uuid4` service
+     *  (resolved through $injector); angular2-uuid is the Angular equivalent already used by
+     *  models/properties-inputs/derived-fe-property.ts and models/attributes-outputs/derived-fe-attribute.ts. */
     protected generateRequestId(): string {
-        return this.$injector.get('uuid4').generate();
+        return UUID.UUID();
     }
 
     protected detectChangesSafe(): void {

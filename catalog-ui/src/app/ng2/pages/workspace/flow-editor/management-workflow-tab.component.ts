@@ -59,9 +59,8 @@ export class ManagementWorkflowTabComponent extends FlowEditorTabBase {
                 componentService: ComponentServiceNg2,
                 cdr: ChangeDetectorRef,
                 el: ElementRef,
-                @Inject('$injector') $injector: any,
                 @Inject(SdcConfigToken) sdcConfig: any) {
-        super(workspaceService, cacheService, componentService, cdr, el, $injector, sdcConfig);
+        super(workspaceService, cacheService, componentService, cdr, el, sdcConfig);
     }
 
     protected loadAndMount(): void {

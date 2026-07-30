@@ -41,6 +41,7 @@ import {TypeWorkspacePropertiesComponent} from "./type-workspace-properties/type
 import {TypeWorkspaceToscaArtifactPageComponent} from "./type-workspace-tosca-artifacts/type-workspace-tosca-artifact-page.component";
 import {NgxDatatableModule} from "@swimlane/ngx-datatable";
 import {SvgIconModule} from "onap-ui-angular/dist/svg-icon/svg-icon.module";
+import {SdcUiServices} from "onap-ui-angular/dist";
 import {NO_ERRORS_SCHEMA} from "@angular/core";
 import {IScope} from "angular";
 import {IWorkspaceViewModelScope} from "../../../view-models/workspace/workspace-view-model-scope";
@@ -55,7 +56,6 @@ describe('TypeWorkspaceComponent', () => {
     'translate': jest.fn()
   };
   let dataTypeServiceMock: Partial<DataTypeService>;
-  let notificationMock: Partial<any>;
   let cacheService: Partial<CacheService> = {
     'get': jest.fn(param => {
       if (param === 'version') {
@@ -128,7 +128,7 @@ describe('TypeWorkspaceComponent', () => {
         {provide: DataTypeService, useValue: dataTypeServiceMock},
         {provide: TranslateService, useValue: translateServiceMock},
         {provide: CacheService, useValue: cacheService},
-        {provide: "Notification", useValue: notificationMock },
+        {provide: SdcUiServices.NotificationsService, useValue: {push: jest.fn()}},
         {provide: ModelService, useValue: modelServiceMock},
         {provide: "$scope", useValue: scopeMock_ },
         {provide: NavigationService, useValue: {navigate: jest.fn(), getParams: () => stateParamsMock, getCurrentStateName: () => States.TYPE_WORKSPACE, includes: jest.fn(), updateUrlParams: jest.fn()}},

@@ -17,11 +17,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Component as TopologyTemplate } from 'app/models';
 import * as Constants from 'constants';
 import { EventListenerService } from '../../../services/event-listener-service';
 import { EVENTS } from '../../../utils';
+import { NavigationService } from '../../services/navigation.service';
 
 @Component({
     templateUrl: './composition-page.component.html',
@@ -31,8 +32,8 @@ export class CompositionPageComponent implements OnInit, OnDestroy {
 
     private topologyTemplate: TopologyTemplate;
 
-    constructor(@Inject('$stateParams') private stateParams, private eventListenerService: EventListenerService) {
-        this.topologyTemplate = stateParams.component;
+    constructor(private navigationService: NavigationService, private eventListenerService: EventListenerService) {
+        this.topologyTemplate = navigationService.getParam('component');
     }
 
     ngOnInit(): void {

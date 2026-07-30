@@ -27,6 +27,7 @@ import {
   ToscaPresentationData
 } from 'app/models';
 import {SdcUiCommon, SdcUiServices} from 'onap-ui-angular';
+import {NotificationSettings} from 'onap-ui-angular/dist/notifications/utilities/notification.config';
 import {TopologyTemplateService} from "../../services/component-services/topology-template.service";
 import {Tab, Tabs} from "../../components/ui/tabs/tabs.component";
 import * as _ from 'lodash';
@@ -61,6 +62,7 @@ import {AttributeBEModel} from "../../../models/attributes-outputs/attribute-be-
 import {AttributeCreatorComponent} from "app/ng2/pages/attributes-outputs/attribute-creator/attribute-creator.component";
 import {AttributeRowSelectedEvent} from "app/ng2/components/logic/attributes-table/attributes-table.component";
 import { DeclareInputComponent } from '../properties-assignment/declare-input/declare-input.component';
+import {NavigationService} from "../../services/navigation.service";
 
 const SERVICE_SELF_TITLE = "SELF";
 
@@ -120,10 +122,9 @@ export class AttributesOutputsComponent {
     private outputsUtils: OutputsUtils,
     private componentServiceNg2: ComponentServiceNg2,
     private componentInstanceServiceNg2: ComponentInstanceServiceNg2,
-    @Inject("$stateParams") _stateParams,
     @Inject("$scope") private $scope: ng.IScope,
-    @Inject("$state") private $state: ng.ui.IStateService,
-    @Inject("Notification") private Notification: any,
+    private navigationService: NavigationService,
+    private notificationsService: SdcUiServices.NotificationsService,
     private componentModeService: ComponentModeService,
     private EventListenerService: EventListenerService,
     private ModalServiceSdcUI: SdcUiServices.ModalService,
@@ -135,7 +136,7 @@ export class AttributesOutputsComponent {
     this.instanceFeAttributesMap = new InstanceFeAttributesMap();
     /* This is the way you can access the component data, please do not use any data except metadata, all other data should be received from the new api calls on the first time
     than if the data is already exist, no need to call the api again - Ask orit if you have any questions*/
-    this.component = _stateParams.component;
+    this.component = this.navigationService.getParam('component');
     this.EventListenerService.registerObserverCallback(EVENTS.ON_LIFECYCLE_CHANGE, this.onCheckout);
     this.updateViewMode();
 
@@ -159,10 +160,11 @@ export class AttributesOutputsComponent {
         });
       }
     }, error => {
-      this.Notification.error({
-        message: 'Failed to Initialize:' + error,
-        title: 'Failure'
-      });
+      this.notificationsService.push(new NotificationSettings(
+          'error',
+          'Failed to Initialize:' + error,
+          'Failure',
+          5000));
     }, () => {
       this.loadingOutputs = false;
     });
@@ -189,21 +191,22 @@ export class AttributesOutputsComponent {
       }
       this.selectFirstInstanceByDefault();
     }, (error) => {
-      this.Notification.error({
-        message: 'Failed to Initialize:' + error,
-        title: 'Failure'
-      });
+      this.notificationsService.push(new NotificationSettings(
+          'error',
+          'Failed to Initialize:' + error,
+          'Failure',
+          5000));
     }, () => {
       this.loadingInstances = false;
       this.loadingAttributes = false;
     });
 
-    this.stateChangeStartUnregister = this.$scope.$on('$stateChangeStart', (event, toState, toParams) => {
+    this.stateChangeStartUnregister = this.navigationService.onNavigationStart((event) => {
       // stop if has changed attributes
       if (this.hasChangedData) {
         event.preventDefault();
         this.showUnsavedChangesAlert().then(() => {
-          this.$state.go(toState, toParams);
+          this.navigationService.navigate(event.toState, event.toParams);
         });
       }
     });
@@ -242,10 +245,11 @@ export class AttributesOutputsComponent {
       this.serviceBeAttributesMap[this.component.uniqueId] = response;
       this.processInstanceAttributesResponse(this.serviceBeAttributesMap, false, null);
     }, (error) => {
-      this.Notification.error({
-        message: 'Failed to get Service Attribute:' + error,
-        title: 'Failure'
-      });
+      this.notificationsService.push(new NotificationSettings(
+          'error',
+          'Failed to get Service Attribute:' + error,
+          'Failure',
+          5000));
     }, () => {
       this.loadingAttributes = false;
     });
@@ -275,10 +279,11 @@ export class AttributesOutputsComponent {
           instanceBeAttributesMap[instance.uniqueId] = response;
           this.processInstanceAttributesResponse(instanceBeAttributesMap, true, instance.uniqueId);
         }, error => {
-          this.Notification.error({
-            message: 'Failed to change Selected Instance:' + error,
-            title: 'Failure'
-          });
+          this.notificationsService.push(new NotificationSettings(
+              'error',
+              'Failed to change Selected Instance:' + error,
+              'Failure',
+              5000));
         }, () => {
           this.loadingAttributes = false;
         });
@@ -292,10 +297,11 @@ export class AttributesOutputsComponent {
           instanceBeAttributesMap[instance.uniqueId] = response;
           this.processInstanceAttributesResponse(instanceBeAttributesMap, false, instance.uniqueId);
         }, error => {
-          this.Notification.error({
-            message: 'Failed to change Selected Instance:' + error,
-            title: 'Failure'
-          });
+          this.notificationsService.push(new NotificationSettings(
+              'error',
+              'Failed to change Selected Instance:' + error,
+              'Failure',
+              5000));
         }, () => {
           this.loadingAttributes = false;
         });
@@ -306,10 +312,11 @@ export class AttributesOutputsComponent {
           instanceBeAttributesMap[instance.uniqueId] = response;
           this.processInstanceAttributesResponse(instanceBeAttributesMap, false, instance.uniqueId);
         }, error => {
-          this.Notification.error({
-            message: 'Failed to change Selected Instance:' + error,
-            title: 'Failure'
-          });
+          this.notificationsService.push(new NotificationSettings(
+              'error',
+              'Failed to change Selected Instance:' + error,
+              'Failure',
+              5000));
         }, () => {
           this.loadingAttributes = false;
         });
@@ -457,10 +464,11 @@ export class AttributesOutputsComponent {
             if (outputName) {
                 this.declareAttributes(outputName);
             } else {
-                this.Notification.warning({
-                    message: 'Failed to set input name',
-                    title: 'Warning'
-                });
+                this.notificationsService.push(new NotificationSettings(
+                    'warning',
+                    'Failed to set input name',
+                    'Warning',
+                    5000));
             }
             this.ModalService.closeCurrentModal();
         }
@@ -647,10 +655,11 @@ export class AttributesOutputsComponent {
   doSaveChangedData = (onSuccessFunction?: Function, onError?: Function): void => {
     this.saveChangedData().then(
         () => {
-          this.Notification.success({
-            message: 'Successfully saved changes',
-            title: 'Saved'
-          });
+          this.notificationsService.push(new NotificationSettings(
+              'success',
+              'Successfully saved changes',
+              'Saved',
+              5000));
           if (onSuccessFunction) onSuccessFunction();
           if (this.isAttributesTabSelected) {
             this.checkedAttributesCount = 0;
@@ -660,10 +669,11 @@ export class AttributesOutputsComponent {
           this.isValidChangedData = false;
         },
         () => {
-          this.Notification.error({
-            message: 'Failed to save changes!',
-            title: 'Failure'
-          });
+          this.notificationsService.push(new NotificationSettings(
+              'error',
+              'Failed to save changes!',
+              'Failure',
+              5000));
           if (onError) onError();
         }
     );
@@ -755,10 +765,11 @@ export class AttributesOutputsComponent {
       //Reload the whole instance for now - TODO: CHANGE THIS after the BE starts returning attributes within the response, use commented code below instead!
       this.changeSelectedInstance(this.selectedInstanceData);
     }, error => {
-      this.Notification.error({
-        message: 'Failed to delete Output:' + error,
-        title: 'Failure'
-      });
+      this.notificationsService.push(new NotificationSettings(
+          'error',
+          'Failed to delete Output:' + error,
+          'Failure',
+          5000));
     });
   };
 
@@ -772,10 +783,11 @@ export class AttributesOutputsComponent {
       const attribs = feMap[this.component.uniqueId];
       attribs.splice(attribs.findIndex(p => p.uniqueId === response), 1);
     }, (error) => {
-      this.Notification.error({
-        message: 'Failed to delete Attribute:' + error,
-        title: 'Failure'
-      });
+      this.notificationsService.push(new NotificationSettings(
+          'error',
+          'Failed to delete Attribute:' + error,
+          'Failure',
+          5000));
     }, () => {
       this.loadingAttributes = false;
     });
@@ -799,10 +811,11 @@ export class AttributesOutputsComponent {
               modal.instance.close();
             }, (error) => {
               modal.instance.dynamicContent.instance.isLoading = false;
-              this.Notification.error({
-                message: 'Failed to add Attribute:' + error,
-                title: 'Failure'
-              });
+              this.notificationsService.push(new NotificationSettings(
+                  'error',
+                  'Failed to add Attribute:' + error,
+                  'Failure',
+                  5000));
             });
           }, () => !modal.instance.dynamicContent.instance.checkFormValidForSubmit()),
           new ButtonModel('Cancel', 'outline grey', () => {

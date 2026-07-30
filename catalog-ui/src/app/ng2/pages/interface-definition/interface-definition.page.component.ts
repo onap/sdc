@@ -25,6 +25,7 @@ import {HierarchyDisplayOptions} from "../../components/logic/hierarchy-navigtio
 import {ISdcConfig, SdcConfigToken} from "app/ng2/config/sdc-config.config";
 import {TranslateService} from "app/ng2/shared/translator/translate.service";
 import {IModalButtonComponent, SdcUiServices} from 'onap-ui-angular';
+import {NotificationSettings} from 'onap-ui-angular/dist/notifications/utilities/notification.config';
 import {ModalComponent} from 'app/ng2/components/ui/modal/modal.component';
 import {ResourceType, ComponentType} from "app/utils";
 import {ModalService} from 'app/ng2/services/modal.service';
@@ -50,6 +51,7 @@ import {ToscaArtifactService} from "../../services/tosca-artifact.service";
 import {InterfaceOperationComponent} from "../interface-operation/interface-operation.page.component";
 import {Observable} from "rxjs/Observable";
 import {PluginsService} from 'app/ng2/services/plugins.service';
+import {NavigationService} from 'app/ng2/services/navigation.service';
 import { InstanceFeDetails } from 'app/models/instance-fe-details';
 
 export class UIOperationModel extends OperationModel {
@@ -168,8 +170,8 @@ export class InterfaceDefinitionComponent {
 
     constructor(
         @Inject(SdcConfigToken) private sdcConfig: ISdcConfig,
-        @Inject("$state") private $state: ng.ui.IStateService,
-        @Inject("Notification") private notification: any,
+        private navigationService: NavigationService,
+        private notificationsService: SdcUiServices.NotificationsService,
         private translateService: TranslateService,
         private componentServiceNg2: ComponentServiceNg2,
         private modalServiceNg2: ModalService,
@@ -522,10 +524,11 @@ export class InterfaceDefinitionComponent {
                 toscaArtifactsFound.forEach(value => this.toscaArtifactTypes.push(new DropdownValue(value, value.type)));
             }
         }, error => {
-            this.notification.error({
-                message: 'Failed to Load Tosca Artifacts:' + error,
-                title: 'Failure'
-            });
+            this.notificationsService.push(new NotificationSettings(
+                'error',
+                'Failed to Load Tosca Artifacts:' + error,
+                'Failure',
+                5000));
         });
     }
 
@@ -539,10 +542,11 @@ export class InterfaceDefinitionComponent {
                 }
             }
         }, error => {
-            this.notification.error({
-                message: 'Failed to Load Interface Types:' + error,
-                title: 'Failure'
-            });
+            this.notificationsService.push(new NotificationSettings(
+                'error',
+                'Failed to Load Interface Types:' + error,
+                'Failure',
+                5000));
         });
     }
 
@@ -637,7 +641,7 @@ export class InterfaceDefinitionComponent {
             } else if (response.workflowId && operation.workflowAssociationType === WORKFLOW_ASSOCIATION_OPTIONS.EXISTING) {
                 this.WorkflowServiceNg2.associateWorkflowArtifact(this.component, response).subscribe();
             } else if (operation.workflowAssociationType === WORKFLOW_ASSOCIATION_OPTIONS.NEW) {
-                this.$state.go('workspace.plugins', {path: 'workflowDesigner'});
+                this.navigationService.navigate('workspace.plugins', {path: 'workflowDesigner'});
             }
         });
     }

@@ -58,7 +58,6 @@ export interface IWorkspaceViewModelScope extends ng.IScope {
     isComposition: boolean;
     isDeployment: boolean;
     isPlugins: boolean;
-    $state: ng.ui.IStateService;
     user: IUserProperties;
     thirdParty: boolean;
     disabledButtons: boolean;

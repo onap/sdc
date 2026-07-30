@@ -1,6 +1,7 @@
-import {Component, Inject} from "@angular/core";
+import {Component} from "@angular/core";
 import {IUserProperties, Plugin} from "app/models";
 import {CacheService, PluginsService} from "app/services-ng2";
+import {NavigationService} from "../../../services/navigation.service";
 
 @Component({
     selector: 'plugin-tab-view',
@@ -15,11 +16,11 @@ export class PluginTabViewPageComponent {
     queryParams: Object;
     isLoading: boolean;
 
-    constructor(@Inject("$stateParams") private _stateParams,
+    constructor(private navigationService: NavigationService,
                 private cacheService: CacheService,
                 private pluginsService: PluginsService) {
 
-        this.plugin = this.pluginsService.getPluginByStateUrl(_stateParams.path);
+        this.plugin = this.pluginsService.getPluginByStateUrl(this.navigationService.getParam('path'));
         this.version = this.cacheService.get('version');
         this.user = this.cacheService.get('user');
     }

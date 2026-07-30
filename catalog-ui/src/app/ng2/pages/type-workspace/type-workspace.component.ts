@@ -32,6 +32,7 @@ import {HttpErrorResponse} from "@angular/common/http";
 import {ServerErrorResponse} from "../../../models/server-error-response";
 import {Observable} from "rxjs/Observable";
 import {SdcUiCommon, SdcUiComponents, SdcUiServices} from "onap-ui-angular/dist";
+import {NotificationSettings} from "onap-ui-angular/dist/notifications/utilities/notification.config";
 
 @Component({
   selector: 'app-type-workspace',
@@ -52,7 +53,7 @@ export class TypeWorkspaceComponent implements OnInit {
 
   constructor(@Inject('$scope') private $scope: IWorkspaceViewModelScope,
               private dataTypeService: DataTypeService, private cacheService: CacheService,
-              @Inject('Notification') private Notification: any,
+              private notificationsService: SdcUiServices.NotificationsService,
               private translateService: TranslateService,
               private navigationService: NavigationService,
               private injector: Injector,
@@ -92,10 +93,11 @@ export class TypeWorkspaceComponent implements OnInit {
           this.dataTypeService.createImportedType(this.$scope.dataType.model.name, this.$scope.importFile)
               .subscribe(response => {
               this.importedDataType = new DataTypeModel(response);
-              this.Notification.success({
-                  message: this.$scope.dataType.name + ' ' + this.translateService.translate('IMPORT_DATA_TYPE_SUCCESS_MESSAGE_TEXT'),
-                  title: this.translateService.translate('IMPORT_DATA_TYPE_TITLE_TEXT')
-              });
+              this.notificationsService.push(new NotificationSettings(
+                  'success',
+                  this.$scope.dataType.name + ' ' + this.translateService.translate('IMPORT_DATA_TYPE_SUCCESS_MESSAGE_TEXT'),
+                  this.translateService.translate('IMPORT_DATA_TYPE_TITLE_TEXT'),
+                  5000));
               this.navigationService.navigate(this.navigationService.getCurrentStateName(), {importedFile: null, id: this.$scope.dataType.uniqueId, isViewOnly: true}, {reload: true});
           }, error => {//because overriding http interceptor
                   if (error instanceof HttpErrorResponse) {
@@ -111,10 +113,11 @@ export class TypeWorkspaceComponent implements OnInit {
               });
       }
       else {
-          this.Notification.error({
-              message: this.$scope.dataType.name + ' ' + "Derived from is invalid in file",
-              title: this.translateService.translate('IMPORT_DATA_TYPE_TITLE_TEXT')
-          });
+          this.notificationsService.push(new NotificationSettings(
+              'error',
+              this.$scope.dataType.name + ' ' + "Derived from is invalid in file",
+              this.translateService.translate('IMPORT_DATA_TYPE_TITLE_TEXT'),
+              5000));
       }
   }
 
@@ -135,10 +138,11 @@ export class TypeWorkspaceComponent implements OnInit {
     return () => {
       this.isLoading = true;
       this.dataTypeService.deleteDataType(this.dataType.uniqueId).subscribe(()=> {
-        this.Notification.success({
-            message: this.dataType.model + ' ' + this.dataType.name + ' ' + this.translateService.translate('DELETE_SUCCESS_MESSAGE_TEXT'),
-            title: this.translateService.translate("DELETE_SUCCESS_MESSAGE_TITLE")
-        });
+        this.notificationsService.push(new NotificationSettings(
+            'success',
+            this.dataType.model + ' ' + this.dataType.name + ' ' + this.translateService.translate('DELETE_SUCCESS_MESSAGE_TEXT'),
+            this.translateService.translate("DELETE_SUCCESS_MESSAGE_TITLE"),
+            5000));
         if (this.navigationService.getParams().previousState) {
             switch (this.navigationService.getParams().previousState) {
                 case 'catalog':
@@ -152,10 +156,11 @@ export class TypeWorkspaceComponent implements OnInit {
         }
     }, (error) => {
         this.isLoading = false;
-        this.Notification.error({
-            message: this.dataType.model + ' ' + this.dataType.name + ' ' + this.translateService.translate('DELETE_FAILURE_MESSAGE_TEXT'),
-            title: this.translateService.translate('DELETE_FAILURE_MESSAGE_TITLE')
-        });
+        this.notificationsService.push(new NotificationSettings(
+            'error',
+            this.dataType.model + ' ' + this.dataType.name + ' ' + this.translateService.translate('DELETE_FAILURE_MESSAGE_TEXT'),
+            this.translateService.translate('DELETE_FAILURE_MESSAGE_TITLE'),
+            5000));
         if (error instanceof HttpErrorResponse) {
             const errorResponse: ServerErrorResponse = new ServerErrorResponse(error);
             const modalService = this.injector.get(SdcUiServices.ModalService);

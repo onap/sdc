@@ -24,11 +24,15 @@ import 'rxjs/add/operator/takeUntil';
 import * as _ from 'lodash';
 
 import {SdcUiServices} from 'onap-ui-angular';
+import {NotificationSettings} from 'onap-ui-angular/dist/notifications/utilities/notification.config';
 import {CacheService} from 'app/services-ng2';
 import {EventListenerService} from 'app/services';
+import {ValidationConfiguration} from 'app/models/validation-config';
 import {EVENTS, WorkspaceMode, ComponentState, ComponentType, Role, PREVIOUS_CSAR_COMPONENT, instantiationType, DEFAULT_MODEL_NAME, DEFAULT_ICON, CATEGORY_SERVICE_METADATA_KEYS} from 'app/utils/constants';
 import {ServiceCsarReader} from 'app/utils/service-csar-reader';
 import {FileUtilsService} from '../../../services/file-utils.service';
+import {NavigationService} from '../../../services/navigation.service';
+import {TranslateService} from '../../../shared/translator/translate.service';
 import {WorkspaceService} from '../workspace.service';
 import {GeneralFormService, ValidationPatterns} from './general-form.service';
 import {ComponentMetadataService} from './component-metadata.service';
@@ -75,11 +79,7 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
     csarPrefill: Promise<void> = Promise.resolve();
 
     // AngularJS services resolved lazily in ngOnInit
-    private $state: any;
-    private $stateParams: any;
-    private $filter: any;
     private componentFactory: any;
-    private notification: any;
     private importVSPService: any;
     private onBoardingService: any;
     private modelService: any;
@@ -95,7 +95,10 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
         private eventListenerService: EventListenerService,
         private fileUtils: FileUtilsService,
         private modalServiceSdcUI: SdcUiServices.ModalService,
+        private translateService: TranslateService,
+        private notificationsService: SdcUiServices.NotificationsService,
         private cdr: ChangeDetectorRef,
+        private navigationService: NavigationService,
         @Inject('$injector') private $injector: any
     ) {}
 
@@ -162,8 +165,8 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
         // Old GeneralViewModel.initScope auto-saved when navigated with a new VSP version
         // (componentCsar) outside CREATE mode (general-view-model.ts:340-343): the checkout picked up
         // a new onboarding package and persisted it immediately.
-        if (this.$stateParams.componentCsar && !this.isCreateMode()) {
-            if (this.$state.current.data) { this.$state.current.data.unsavedChanges = true; }
+        if (this.navigationService.getParam('componentCsar') && !this.isCreateMode()) {
+            this.navigationService.setUnsavedChanges(true);
             this.save();
         }
         // Prefill the form from an uploaded service CSAR ("Import Service" on the dashboard). MUST run
@@ -181,11 +184,7 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
     }
 
     private resolveNg1Services(): void {
-        this.$state = this.$injector.get('$state');
-        this.$stateParams = this.$injector.get('$stateParams');
-        this.$filter = this.$injector.get('$filter');
         this.componentFactory = this.$injector.get('ComponentFactory');
-        this.notification = this.$injector.get('Notification');
         this.importVSPService = this.$injector.get('ImportVSPService');
         this.onBoardingService = this.$injector.get('OnboardingService');
         this.modelService = this.$injector.get('ModelService');
@@ -405,20 +404,37 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
         );
     }
 
+    /**
+     * The seven patterns this form needs are byte-identical to the ones in configurations/validation.json,
+     * which ConfigService loads into ValidationConfiguration.validation via the APP_INITIALIZER. They used
+     * to be duplicated as AngularJS `.value()` tokens in app.ts and read back through $injector; reading the
+     * config directly removes the duplication (and the ng1 dependency) with no behaviour change.
+     * Note validation.json holds STRINGS — models/validation-config.ts mistypes them as RegExp — so each
+     * one is compiled here.
+     * The fallbacks are load-bearing, not decoration: ConfigService.loadValidationConfiguration()'s .catch
+     * writes its fallback only into CacheService and never assigns ValidationConfiguration.validation (and
+     * that fallback holds just 4 of the patterns). If validation.json fails to load, `p` is {} — without
+     * fallbacks every pattern would be new RegExp(undefined) = /undefined/, which rejects every valid name
+     * while accepting the literal text "undefined", and an unguarded read would throw here and silently
+     * blank the whole General tab.
+     */
     private readPatterns(): ValidationPatterns {
+        const p: any = (ValidationConfiguration.validation && ValidationConfiguration.validation.validationPatterns) || {};
+        const compile = (pattern: any, fallback: RegExp): RegExp =>
+            typeof pattern === 'string' ? new RegExp(pattern) : (pattern instanceof RegExp ? pattern : fallback);
         return {
-            name: this.$injector.get('ComponentNameValidationPattern'),
-            contactId: this.$injector.get('ContactIdValidationPattern'),
-            tag: this.$injector.get('TagValidationPattern'),
-            vendorName: this.$injector.get('VendorNameValidationPattern'),
-            vendorRelease: this.$injector.get('VendorReleaseValidationPattern'),
-            vendorModelNumber: this.$injector.get('VendorModelNumberValidationPattern'),
-            comment: this.$injector.get('CommentValidationPattern')
+            name: compile(p.componentName, /^(?=.*[^. ])[\s\w\&_.:-]{1,1024}$/),
+            contactId: compile(p.contactId, /^[\s\w-]{1,50}$/),
+            tag: compile(p.tag, /^[\s\w_.-]{1,50}$/),
+            vendorName: compile(p.vendorName, /^[\x20-\x21\x23-\x29\x2B-\x2E\x30-\x39\x3B\x3D\x40-\x5B\x5D-\x7B\x7D-\xFF]{1,60}$/),
+            vendorRelease: compile(p.vendorRelease, /^[\x20-\x21\x23-\x29\x2B-\x2E\x30-\x39\x3B\x3D\x40-\x5B\x5D-\x7B\x7D-\xFF]{1,25}$/),
+            vendorModelNumber: compile(p.vendorModelNumber, /^[\x20-\x21\x23-\x29\x2B-\x2E\x30-\x39\x3B\x3D\x40-\x5B\x5D-\x7B\x7D-\xFF]{1,65}$/),
+            comment: compile(p.comment, /^[\u0000-\u00BF]*$/)
         };
     }
 
     private initMode(user: any): WorkspaceMode {
-        if (!this.$stateParams.id) { return WorkspaceMode.CREATE; }
+        if (!this.navigationService.getParam('id')) { return WorkspaceMode.CREATE; }
         if (this.component.lifecycleState === ComponentState.NOT_CERTIFIED_CHECKOUT &&
             this.component.lastUpdaterUserId === (user && user.userId) &&
             (this.component.isService() || this.component.isResource()) && this.role === Role.DESIGNER) {
@@ -826,7 +842,7 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
     updateIcon(): Promise<void> {
         return Promise.resolve(this.modalsHandler.openUpdateIconModal(this.component)).then((isDirty: boolean) => {
             if (isDirty && !this.isCreateMode()) {
-                if (this.$state.current.data) { this.$state.current.data.unsavedChanges = true; }
+                this.navigationService.setUnsavedChanges(true);
             }
             this.detectChangesSafe();
         }, () => { /* modal dismissed */ });
@@ -916,7 +932,7 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
             this.form.get('tags').setValue(tags);
             this.form.get('tags').markAsDirty();
             this.newTag = '';
-            if (this.$state.current.data) { this.$state.current.data.unsavedChanges = !this.isCreateMode(); }
+            this.navigationService.setUnsavedChanges(!this.isCreateMode());
             this.detectChangesSafe();
         }
     }
@@ -1038,7 +1054,7 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
             // Mirror the AngularJS $watch('editForm.$dirty') → setUnsavedChanges(true) logic.
             // Only track dirty in EDIT mode — in CREATE mode there is nothing to lose.
             if (this.form.dirty && !this.isCreateMode()) {
-                if (this.$state.current.data) { this.$state.current.data.unsavedChanges = true; }
+                this.navigationService.setUnsavedChanges(true);
             }
         });
     }
@@ -1068,14 +1084,14 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
     }
 
     onImportFileChange(): void {
-        if (this.$state.current.data) { this.$state.current.data.unsavedChanges = true; }
+        this.navigationService.setUnsavedChanges(true);
     }
 
     /**
      * Read the CSAR the user uploaded via "Import Service" on the dashboard and prefill the create
      * form from its TOSCA metadata (ported from GeneralViewModel.initScope, general-view-model.ts:
-     * 455-500). Dashboard → onImportService() navigates to workspace.general with $stateParams
-     * .importedFile; nothing else in the app reads that payload, so without this the imported
+     * 455-500). Dashboard → onImportService() navigates to workspace.general with an importedFile
+     * route param; nothing else in the app reads that payload, so without this the imported
      * service's name/description/category/model/base-type all arrive blank and the user has to
      * retype what the CSAR already declares.
      *
@@ -1111,13 +1127,13 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
                 this.detectChangesSafe();
             },
             (error) => {
-                const errorMsg = this.$filter('translate')('IMPORT_FAILURE_MESSAGE_TEXT');
+                const errorMsg = this.translateService.translate('IMPORT_FAILURE_MESSAGE_TEXT');
                 console.error(errorMsg, error);
                 this.modalServiceSdcUI.openErrorDetailModal('Error', errorMsg, 'error-modal', {
                     Error: this.capitalize(error.reason),
                     Details: this.capitalize(error.message)
                 });
-                this.$state.go('dashboard');
+                this.navigationService.navigate('dashboard');
             });
     }
 
@@ -1148,7 +1164,7 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
             serviceRole: restored.serviceRole || ''
         });
         this.form.markAsPristine();
-        if (this.$state.current.data) { this.$state.current.data.unsavedChanges = false; }
+        this.navigationService.setUnsavedChanges(false);
         this.workspaceService.isValidForm = this.form.valid;
         this.detectChangesSafe();
     }
@@ -1171,11 +1187,12 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
                     this.workspaceService.setComponent(updated);
                     this.component = updated;
                     this.originComponent = this.componentFactory.createComponent(updated);
-                    if (this.$state.current.data) { this.$state.current.data.unsavedChanges = false; }
-                    this.notification.success({
-                        message: this.$filter('translate')('IMPORT_VF_MESSAGE_CREATE_FINISHED_DESCRIPTION'),
-                        title: this.$filter('translate')('IMPORT_VF_MESSAGE_CREATE_FINISHED_TITLE')
-                    });
+                    this.navigationService.setUnsavedChanges(false);
+                    this.notificationsService.push(new NotificationSettings(
+                        'success',
+                        this.translateService.translate('IMPORT_VF_MESSAGE_CREATE_FINISHED_DESCRIPTION'),
+                        this.translateService.translate('IMPORT_VF_MESSAGE_CREATE_FINISHED_TITLE'),
+                        5000));
                     this.detectChangesSafe();
                     resolve();
                 },
@@ -1192,7 +1209,7 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
     private registerLifecycleSaveHandler(): void {
         this.eventListenerService.registerObserverCallback(EVENTS.ON_LIFECYCLE_CHANGE_WITH_SAVE, (nextState: string) => {
             const actions = this.workspaceService.containerActions;
-            const dirty = this.$state.current.data && this.$state.current.data.unsavedChanges;
+            const dirty = this.navigationService.getUnsavedChanges();
             if (dirty && this.form.valid) {
                 return this.save().then(
                     () => { if (actions) { actions.handleChangeLifecycleState(nextState); } },

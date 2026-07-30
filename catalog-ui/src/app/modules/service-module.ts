@@ -42,6 +42,7 @@ import { EventBusService } from '../ng2/services/event-bus.service';
 import { GroupsService as GroupsServiceNg2 } from '../ng2/services/groups.service';
 import { HomeService } from '../ng2/services/home.service';
 import { ModalService } from '../ng2/services/modal.service';
+import { NavigationService } from '../ng2/services/navigation.service';
 import { OnboardingService } from '../ng2/services/onboarding.service';
 import { ElementService } from '../ng2/services/element.service';
 import { ModelService } from '../ng2/services/model.service';
@@ -50,6 +51,7 @@ import { PoliciesService as PoliciesServiceNg2 } from '../ng2/services/policies.
 import { SharingService } from '../ng2/services/sharing.service';
 import { ToscaTypesServiceNg2 } from '../ng2/services/tosca-types.service';
 import { UserService as UserServiceNg2 } from '../ng2/services/user.service';
+import { TranslateService } from '../ng2/shared/translator/translate.service';
 import { AngularJSBridge } from '../services/angular-js-bridge-service';
 import { ComponentService } from '../services/components/component-service';
 import { ResourceService } from '../services/components/resource-service';
@@ -58,7 +60,6 @@ import { LeftPaletteLoaderService } from '../services/components/utils/compositi
 import { CookieService } from '../services/cookie-service';
 import { DataTypesService } from '../services/data-types-service';
 import { EventListenerService } from '../services/event-listener-service';
-import { HeaderInterceptor } from '../services/header-interceptor';
 import { ProgressService } from '../services/progress-service';
 import { ValidationUtils } from '../utils/validation-utils';
 import {ReqAndCapabilitiesService} from "../ng2/pages/workspace/req-and-capabilities/req-and-capabilities.service";
@@ -69,7 +70,6 @@ const moduleName: string = 'Sdc.Services';
 const serviceModule: ng.IModule = angular.module(moduleName, []);
 
 serviceModule.factory('Sdc.Services.ComponentFactory', downgradeInjectable(ComponentFactory)); // Why you need to declare it again, already done in utils.ts
-serviceModule.service('Sdc.Services.HeaderInterceptor', HeaderInterceptor);
 serviceModule.service('Sdc.Services.DataTypesService', downgradeInjectable(DataTypesService));
 
 // Components Services
@@ -109,6 +109,12 @@ serviceModule.factory('CatalogService', downgradeInjectable(CatalogService));
 serviceModule.factory('GabServiceNg2', downgradeInjectable(GabServiceNg2));
 serviceModule.factory('AutomatedUpgradeService', downgradeInjectable(AutomatedUpgradeService));
 serviceModule.factory('ToscaTypesServiceNg2', downgradeInjectable(ToscaTypesServiceNg2));
+// Downgraded so the remaining AngularJS-DI'd classes (MenuHandler) navigate through the same
+// ui-router facade the Angular side uses, instead of injecting the router service directly.
+serviceModule.factory('NavigationService', downgradeInjectable(NavigationService));
+// Downgraded so the remaining AngularJS-DI'd classes (ChangeLifecycleStateHandler) can resolve it
+// after the angular-translate $filter('translate') bridge was removed.
+serviceModule.factory('TranslateService', downgradeInjectable(TranslateService));
 serviceModule.factory('EventListenerService', downgradeInjectable(EventListenerService));
 serviceModule.factory('CompositionService', downgradeInjectable(CompositionService));
 serviceModule.factory('ReqAndCapabilitiesService', downgradeInjectable(ReqAndCapabilitiesService));
