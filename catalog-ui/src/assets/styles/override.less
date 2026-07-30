@@ -37,3 +37,16 @@ sdc-modal {
 .sdc-menu-list {
     z-index: 9999999;
 }
+
+// The onap-ui-angular notification container is `position: absolute` with no stacking
+// context of its own, so toasts are painted underneath the fixed top-nav (z-index 10)
+// and the page content. Restore the behaviour of the removed angular-ui-notification
+// stylesheet, which used `position: fixed; z-index: 9999`.
+.sdc-notification-container {
+    position: fixed;
+    z-index: 9999;
+
+    .sdc-notification {
+        cursor: pointer;
+    }
+}

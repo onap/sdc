@@ -29,8 +29,8 @@ import {SdcUiComponentsModule} from 'onap-ui-angular';
 import {PropertiesAssignmentModule} from './pages/properties-assignment/properties-assignment.module';
 import {
   ModalsHandlerProvider,
-  NotificationServiceProvider,
   QServiceProvider,
+  RootScopeServiceFactory,
   ScopeServiceFactory,
   StateParamsServiceFactory,
   StateServiceFactory
@@ -232,7 +232,7 @@ export function configServiceFactory(config: ConfigService, authService: Authent
     StateServiceFactory,
     StateParamsServiceFactory,
     ScopeServiceFactory,
-    NotificationServiceProvider,
+    RootScopeServiceFactory,
     ModalsHandlerProvider,
     UserService,
     Cookie2Service,

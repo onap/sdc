@@ -32,7 +32,7 @@ import './modules/service-module';
 import './modules/utils.ts';
 import './modules/view-model-module.ts';
 import { WorkspaceService } from './ng2/pages/workspace/workspace.service';
-import { CookieService, DataTypesService, LeftPaletteLoaderService } from './services';
+import { DataTypesService, LeftPaletteLoaderService } from './services';
 import { CacheService, CatalogService, HomeService } from './services-ng2';
 import { CHANGE_COMPONENT_CSAR_VERSION_FLAG, PREVIOUS_CSAR_COMPONENT, States } from './utils';
 import { ComponentFactory } from './utils/component-factory';
@@ -47,12 +47,10 @@ const utilsModuleName: string = 'Sdc.Utils';
 declare var __ENV__: string;
 let sdcConfig: IAppConfigurtaion;
 let sdcMenu: IAppMenu;
-let pathPrefix: string = '';
 if (__ENV__ === 'dev') {
   sdcConfig = require('./../../configurations/dev.js');
 } else if (__ENV__ === 'prod') {
   sdcConfig = require('./../../configurations/prod.js');
-  pathPrefix = 'sdc1/';
 } else {
   console.log('ERROR: Environment configuration not found!');
 }
@@ -60,10 +58,6 @@ sdcMenu = require('./../../configurations/menu.js');
 
 const dependentModules: string[] = [
   'ui.router',
-  'ui-notification',
-  'ngSanitize',
-  'uuid4',
-  'pascalprecht.translate',
   viewModelsModuleName,
   directivesModuleName,
   servicesModuleName,
@@ -74,37 +68,10 @@ export const ng1appModule: ng.IModule = angular.module(moduleName, dependentModu
 
 ng1appModule.config([
   '$stateProvider',
-  '$translateProvider',
   '$urlRouterProvider',
-  '$httpProvider',
-  'NotificationProvider',
   ($stateProvider: any,
-   $translateProvider: any,
-   $urlRouterProvider: ng.ui.IUrlRouterProvider,
-   $httpProvider: ng.IHttpProvider,
-   NotificationProvider: any): void => {
+   $urlRouterProvider: ng.ui.IUrlRouterProvider): void => {
 
-    NotificationProvider.setOptions({
-      delay: 5000,
-      startTop: 10,
-      startRight: 10,
-      closeOnClick: true,
-      verticalSpacing: 20,
-      horizontalSpacing: 20,
-      positionX: 'right',
-      positionY: 'top'
-    });
-    NotificationProvider.options.templateUrl = 'notification-custom-template.html';
-
-    $translateProvider.useStaticFilesLoader({
-      prefix: pathPrefix + 'assets/languages/',
-      langKey: '',
-      suffix: '.json?d=' + (new Date()).getTime()
-    });
-    $translateProvider.useSanitizeValueStrategy('escaped');
-    $translateProvider.preferredLanguage('en_US');
-
-    $httpProvider.interceptors.push('Sdc.Services.HeaderInterceptor');
     $urlRouterProvider.otherwise('dashboard');
 
     $stateProvider.state(
@@ -599,29 +566,11 @@ ng1appModule.config([
   }
 ]);
 
-ng1appModule.value('ValidationPattern', /^[\s\w\&_.:-]{1,1024}$/);
-ng1appModule.value('ComponentNameValidationPattern', /^(?=.*[^. ])[\s\w\&_.:-]{1,1024}$/); // DE250513 - same as ValidationPattern above, plus requirement that name not consist of dots and/or spaces alone.
-ng1appModule.value('PropertyNameValidationPattern', /^[a-zA-Z0-9._:\-@]{1,100}$/); // DE210977
-ng1appModule.value('TagValidationPattern', /^[\s\w_.-]{1,50}$/);
-ng1appModule.value('VendorReleaseValidationPattern', /^[\x20-\x21\x23-\x29\x2B-\x2E\x30-\x39\x3B\x3D\x40-\x5B\x5D-\x7B\x7D-\xFF]{1,25}$/);
-ng1appModule.value('VendorNameValidationPattern', /^[\x20-\x21\x23-\x29\x2B-\x2E\x30-\x39\x3B\x3D\x40-\x5B\x5D-\x7B\x7D-\xFF]{1,60}$/);
-ng1appModule.value('VendorModelNumberValidationPattern', /^[\x20-\x21\x23-\x29\x2B-\x2E\x30-\x39\x3B\x3D\x40-\x5B\x5D-\x7B\x7D-\xFF]{1,65}$/);
-ng1appModule.value('ServiceTypeAndRoleValidationPattern', /^[\x20-\x21\x23-\x29\x2B-\x2E\x30-\x39\x3B\x3D\x40-\x5B\x5D-\x7B\x7D-\xFF]{1,256}$/);
-ng1appModule.value('ContactIdValidationPattern', /^[\s\w-]{1,50}$/);
-ng1appModule.value('UserIdValidationPattern', /^[\s\w-]{1,50}$/);
-ng1appModule.value('UrlValidationPattern', /^(https?|ftp):\/\/(((([A-Za-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([A-Za-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([A-Za-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([A-Za-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([A-Za-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([A-Za-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([A-Za-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([A-Za-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([A-Za-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([A-Za-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([A-Za-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([A-Za-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/);
-ng1appModule.value('IntegerValidationPattern', /^(([-+]?\d+)|([-+]?0x[0-9a-fA-F]+))$/);
-ng1appModule.value('KeyValidationPattern', /^[\s\w-]{1,50}$/);
-ng1appModule.value('CommentValidationPattern', /^[\u0000-\u00BF]*$/);
-ng1appModule.value('MapKeyValidationPattern', /^[\w]{1,50}$/);
-
 ng1appModule.constant('sdcConfig', sdcConfig);
 ng1appModule.constant('sdcMenu', sdcMenu);
 
 ng1appModule.run([
-  '$http',
   'Sdc.Services.CacheService',
-  'Sdc.Services.CookieService',
   'AuthenticationServiceNg2',
   '$state',
   '$rootScope',
@@ -630,11 +579,8 @@ ng1appModule.run([
   'LeftPaletteLoaderService',
   'Sdc.Services.DataTypesService',
   'AngularJSBridge',
-  '$templateCache',
   'ModalServiceSdcUI',
-  ($http: ng.IHttpService,
-   cacheService: CacheService,
-   cookieService: CookieService,
+  (cacheService: CacheService,
    authService: AuthenticationService,
    $state: ng.ui.IStateService,
    $rootScope: ng.IRootScopeService,
@@ -643,15 +589,7 @@ ng1appModule.run([
    LeftPaletteLoaderService: LeftPaletteLoaderService,
    DataTypesService: DataTypesService,
    AngularJSBridge,
-   $templateCache: ng.ITemplateCacheService,
    ModalServiceSdcUI: SdcUiServices.ModalService): void => {
-    $templateCache.put('notification-custom-template.html', require('./view-models/shared/notification-custom-template.html'));
-    $templateCache.put('notification-custom-template.html', require('./view-models/shared/notification-custom-template.html'));
-
-    // handle http config
-    $http.defaults.withCredentials = true;
-    $http.defaults.headers.common[cookieService.getUserIdSuffix()] = cookieService.getUserId();
-
     DataTypesService.loadDataTypesCache(null);
 
     // handle stateChangeStart

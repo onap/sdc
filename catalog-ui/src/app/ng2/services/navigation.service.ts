@@ -55,7 +55,8 @@ const ANGULAR_ROUTER_STATES: string[] = [];
 export class NavigationService {
 
     constructor(@Inject('$state') private $state: ng.ui.IStateService,
-                @Optional() private router: Router) {
+                @Optional() private router: Router,
+                @Inject('$rootScope') private $rootScope: ng.IRootScopeService) {
     }
 
     navigate(state: string, params?: any, options?: NavigationOptions): any {
@@ -67,6 +68,40 @@ export class NavigationService {
 
     getCurrentStateName(): string {
         return this.$state.current.name || '';
+    }
+
+    getCurrentStateData(): any {
+        return this.$state.current.data || {};
+    }
+
+    getUnsavedChanges(): boolean {
+        return !!(this.$state.current.data && this.$state.current.data.unsavedChanges);
+    }
+
+    setUnsavedChanges(value: boolean): void {
+        if (this.$state.current.data) {
+            this.$state.current.data.unsavedChanges = value;
+        }
+    }
+
+    reload(params?: any): any {
+        return this.$state.go(this.$state.current.name, params, {reload: true} as any);
+    }
+
+    // $rootScope.$on returns its own deregistration function, which is what callers must invoke on
+    // destroy. The AngularJS typings declare it as the bare `Function` type, hence the cast.
+    onNavigationStart(cb: NavigationStartCallback): () => void {
+        return this.$rootScope.$on('$stateChangeStart',
+            (event: any, toState: any, toParams: any, fromState: any, fromParams: any) => {
+                cb(this.toNavigationStartEvent(event, toState, toParams, fromState, fromParams));
+            }) as () => void;
+    }
+
+    onNavigationSuccess(cb: (event: NavigationStartEvent) => void): () => void {
+        return this.$rootScope.$on('$stateChangeSuccess',
+            (event: any, toState: any, toParams: any, fromState: any, fromParams: any) => {
+                cb(this.toNavigationStartEvent(event, toState, toParams, fromState, fromParams));
+            }) as () => void;
     }
 
     getParams(): any {
@@ -83,6 +118,17 @@ export class NavigationService {
 
     updateUrlParams(params: any): ng.IPromise<any> {
         return this.$state.go('.', params, {location: 'replace', notify: false});
+    }
+
+    private toNavigationStartEvent(event: any, toState: any, toParams: any,
+                                   fromState: any, fromParams: any): NavigationStartEvent {
+        return {
+            toState: toState && toState.name,
+            toParams,
+            fromState: fromState && fromState.name,
+            fromParams,
+            preventDefault: () => event.preventDefault()
+        };
     }
 
     private isAngularRouterState(state: string): boolean {

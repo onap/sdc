@@ -46,20 +46,12 @@ import {SdcUiServices} from 'onap-ui-angular';
 import {Subject} from 'rxjs/Subject';
 import {ConfigureFn, configureTests} from '../../../../../../jest/test-config.helper';
 import {FileUtilsService} from '../../../../services/file-utils.service';
+import {NavigationService} from '../../../../services/navigation.service';
+import {TranslateService} from '../../../../shared/translator/translate.service';
 import {WorkspaceService} from '../../workspace.service';
 import {ComponentMetadataService} from '../component-metadata.service';
 import {GeneralFormService} from '../general-form.service';
 import {GeneralTabComponent} from '../general-tab.component';
-
-const PATTERNS: any = {
-    ComponentNameValidationPattern: /^(?=.*[^. ])[\s\w\&_.:-]{1,1024}$/,
-    ContactIdValidationPattern: /^[\s\w-]{1,50}$/,
-    TagValidationPattern: /^[\s\w_.-]{1,50}$/,
-    VendorNameValidationPattern: /^.{1,60}$/,
-    VendorReleaseValidationPattern: /^.{1,25}$/,
-    VendorModelNumberValidationPattern: /^.{1,65}$/,
-    CommentValidationPattern: /^[ -¿]*$/
-};
 
 const NS = 'tosca.nodes.nfv.NS';
 const CATEGORY = 'ETSI NFV Network Service';
@@ -85,13 +77,18 @@ describe('GeneralTabComponent - base type select rendering', () => {
 
     async function render(component: any) {
         baseTypes$ = new Subject<any>();
+        // A REAL NavigationService over a mocked ui-router $state, so the route-data facade the
+        // component depends on (getParam / setUnsavedChanges / navigate) behaves as it does at runtime.
+        const mockState: any = {
+            current: {name: 'workspace.general', data: {unsavedChanges: false}},
+            params: {id: 'id-1'},
+            go: jest.fn(),
+            includes: jest.fn(() => false)
+        };
+        const navigationService = new NavigationService(mockState, null, {$on: jest.fn(() => jest.fn())} as any);
         const ng1: any = {
-            $state: {current: {name: 'workspace.general', data: {unsavedChanges: false}}, go: jest.fn()},
-            $stateParams: {id: 'id-1'},
-            $filter: () => (k: string) => k,
             ComponentFactory: {createComponent: (c: any) => Object.assign({}, c)},
             ImportVSPService: {}, OnboardingService: {},
-            Notification: {success: jest.fn(), error: jest.fn()},
             ModelService: {getModels: () => baseTypes$.asObservable().filter(() => false),
                            getModelsOfType: () => baseTypes$.asObservable().filter(() => false)},
             // Deferred on purpose — this is what makes the options arrive after the first CD pass.
@@ -99,7 +96,6 @@ describe('GeneralTabComponent - base type select rendering', () => {
             ModalsHandler: {}, sdcMenu: {component_workspace_menu_option: {SERVICE: [{hiddenCategories: []}]}},
             sdcConfig: {csarFileExtension: ['csar'], toscaFileExtension: ['yaml', 'yml']}
         };
-        Object.assign(ng1, PATTERNS);
 
         const configure: ConfigureFn = (testBed) => {
             testBed.configureTestingModule({
@@ -125,6 +121,9 @@ describe('GeneralTabComponent - base type select rendering', () => {
                                                                notifyObservers: jest.fn()}},
                     {provide: FileUtilsService, useValue: {base64toBlob: jest.fn()}},
                     {provide: SdcUiServices.ModalService, useValue: {openErrorDetailModal: jest.fn()}},
+                    {provide: TranslateService, useValue: {translate: (k: string) => k}},
+                    {provide: SdcUiServices.NotificationsService, useValue: {push: jest.fn()}},
+                    {provide: NavigationService, useValue: navigationService},
                     {provide: '$injector', useValue: {get: (n: string) => ng1[n]}}
                 ]
             });

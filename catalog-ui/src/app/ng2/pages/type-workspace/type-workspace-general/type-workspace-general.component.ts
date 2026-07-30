@@ -137,6 +137,11 @@ export class TypeWorkspaceGeneralComponent implements OnInit {
   }
 
   private getImportedFile(): void {
+      // TODO(CR2): the only remaining direct $stateParams read in the app. It cannot go through
+      // NavigationService.getParam() yet because it does not read the live params object at all — it
+      // reaches the RESOLVED params snapshot published on the parent workspace $scope by ui-router's
+      // resolver ($scope.$parent.$resolve). Removing it therefore depends on both the $scope bus and
+      // the ui-router resolver being replaced, which is CR 2's work, not CR 1's.
       let importedFile = this.$scope["$parent"]["$resolve"]["$stateParams"]["importedFile"];
       this.importedFile = <File>importedFile;
       this.$scope.importFile = this.importedFile;

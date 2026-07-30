@@ -33,6 +33,7 @@ import {RouterModule} from "@angular/router";
 import {APP_BASE_HREF} from "@angular/common";
 import {ConnectionWizardService} from "../connection-wizard.service";
 import {ComponentServiceNg2} from "../../../../../services/component-services/component.service";
+import {NavigationService} from "../../../../../services/navigation.service";
 
 describe('RelationshipOperationsStepComponent', () => {
   let component: RelationshipOperationsStepComponent;
@@ -44,7 +45,12 @@ describe('RelationshipOperationsStepComponent', () => {
           CreateInputRowComponent, InterfaceOperationListComponent, TranslatePipe ],
       providers: [
         {provide: TranslateService, useValue: {}},
-        {provide: '$stateParams', useValue: {}},
+        // A REAL NavigationService over a mocked ui-router $state — the component reads the
+        // `component` route param through the facade instead of injecting $stateParams.
+        {provide: NavigationService, useValue: new NavigationService(
+            {current: {name: 'workspace.composition'}, params: {}, go: jest.fn(),
+             includes: jest.fn(() => false)} as any,
+            null, {$on: jest.fn(() => jest.fn())} as any)},
         {provide: ConnectionWizardService, useValue: {}},
         {provide: ComponentServiceNg2, useValue: {}},
       ],

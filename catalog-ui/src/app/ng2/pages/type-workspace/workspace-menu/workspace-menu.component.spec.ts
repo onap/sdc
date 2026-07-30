@@ -28,6 +28,7 @@ import {IAppMenu} from "../../../../models/app-config";
 import {SdcMenuToken} from "../../../config/sdc-menu.config";
 import {IScope} from "../../../../../typings/angularjs/angular";
 import {IWorkspaceViewModelScope} from "../../../../view-models/workspace/workspace-view-model-scope";
+import {NavigationService} from "../../../services/navigation.service";
 
 describe('WorkspaceMenuComponent', () => {
   let component: WorkspaceMenuComponent;
@@ -55,12 +56,13 @@ describe('WorkspaceMenuComponent', () => {
     }
   };
   let injectorMock: Partial<ng.auto.IInjectorService> = {
-    'get': jest.fn(param => {
-      if (param === '$state') {
-        return stateMock;
-      }
-    })
+    'get': jest.fn(() => undefined)
   };
+  // A REAL NavigationService over the mocked ui-router $state — the component reads the current
+  // state name through the facade now instead of injecting $state itself.
+  let navigationServiceMock = new NavigationService(
+      Object.assign({go: jest.fn(), params: {}, includes: jest.fn(() => false)}, stateMock) as any,
+      null, {$on: jest.fn(() => jest.fn())} as any);
   let importedFileMock: File = null;
   let stateParamsMock: Partial<ng.ui.IStateParamsService> = {
       'importedFile': importedFileMock
@@ -82,6 +84,7 @@ describe('WorkspaceMenuComponent', () => {
       providers: [
         {provide: CacheService, useValue: cacheService},
         {provide: '$injector', useValue: injectorMock},
+        {provide: NavigationService, useValue: navigationServiceMock},
         {provide: "$scope", useValue: scopeMock_ },
         {provide: SdcMenuToken, useValue: sdcMenuMock}
       ]

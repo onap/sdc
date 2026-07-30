@@ -10,6 +10,8 @@ import { ArtifactsState } from "../../../store/states/artifacts.state";
 import { map } from "rxjs/operators";
 import { ArtifactType, ComponentState, ComponentType } from "app/utils/constants"
 import { TopologyTemplateService } from "app/ng2/services/component-services/topology-template.service";
+import { SdcUiServices } from "onap-ui-angular";
+import { NotificationSettings } from "onap-ui-angular/dist/notifications/utilities/notification.config";
 
 @Component({
     selector: 'tosca-artifact-page',
@@ -29,7 +31,7 @@ export class ToscaArtifactPageComponent implements OnInit {
     constructor(
         private workspaceService: WorkspaceService,
         private store: Store,
-        @Inject("Notification") private Notification: any,
+        private notificationsService: SdcUiServices.NotificationsService,
         private componentService: TopologyTemplateService) {
     }
 
@@ -71,10 +73,11 @@ export class ToscaArtifactPageComponent implements OnInit {
             switch (artifactType) {
                 case (ArtifactType.TOSCA.TOSCA_CSAR):
                     this.componentService.putServiceToscaModel(this.componentId, this.componentType, file).subscribe((response)=> {
-                        this.Notification.success({
-                            message: "Service " + response.name + " has been updated",
-                            title: "Success"
-                        });
+                        this.notificationsService.push(new NotificationSettings(
+                            'success',
+                            "Service " + response.name + " has been updated",
+                            "Success",
+                            5000));
                         this.isLoading = false;
                     }, () => {
                         this.isLoading = false;
@@ -82,10 +85,11 @@ export class ToscaArtifactPageComponent implements OnInit {
                     break;
                 case (ArtifactType.TOSCA.TOSCA_TEMPLATE):
                     this.componentService.putServiceToscaTemplate(this.componentId, this.componentType, file).subscribe((response)=> {
-                        this.Notification.success({
-                            message: "Service " + response.name + " has been updated",
-                            title: "Success"
-                        });
+                        this.notificationsService.push(new NotificationSettings(
+                            'success',
+                            "Service " + response.name + " has been updated",
+                            "Success",
+                            5000));
                         this.isLoading = false;
                     }, () => {
                         this.isLoading = false;

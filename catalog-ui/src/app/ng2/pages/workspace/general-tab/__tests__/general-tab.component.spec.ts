@@ -1,17 +1,9 @@
 import {GeneralTabComponent} from '../general-tab.component';
 import {GeneralFormService} from '../general-form.service';
 import {ComponentMetadataService} from '../component-metadata.service';
+import {NavigationService} from '../../../../services/navigation.service';
+import {ValidationConfiguration} from 'app/models/validation-config';
 import {of} from 'rxjs';
-
-const PATTERNS = {
-    ComponentNameValidationPattern: /^(?=.*[^. ])[\s\w\&_.:-]{1,1024}$/,
-    ContactIdValidationPattern: /^[\s\w-]{1,50}$/,
-    TagValidationPattern: /^[\s\w_.-]{1,50}$/,
-    VendorNameValidationPattern: /^.{1,60}$/,
-    VendorReleaseValidationPattern: /^.{1,25}$/,
-    VendorModelNumberValidationPattern: /^.{1,65}$/,
-    CommentValidationPattern: /^[ -¿]*$/
-};
 
 function makeComponent(overrides: any = {}) {
     return Object.assign({
@@ -26,25 +18,31 @@ function makeComponent(overrides: any = {}) {
     }, overrides);
 }
 
+/**
+ * A REAL NavigationService over a mocked ui-router $state, so the route-data facade the component
+ * now depends on (getParam / setUnsavedChanges / navigate) behaves exactly as it does at runtime.
+ * `mockState` is exposed on the instance so tests can assert the underlying $state.go calls.
+ */
+function makeNavigationService(stateParams: any = {id: 'id-1'}) {
+    const mockState: any = {
+        current: {name: 'workspace.general', data: {unsavedChanges: false}},
+        params: stateParams,
+        go: jest.fn(),
+        includes: jest.fn(() => false)
+    };
+    const nav: any = new NavigationService(mockState, null, {$on: jest.fn(() => jest.fn())} as any);
+    nav.mockState = mockState;
+    return nav;
+}
+
 function makeInjector(stateParams: any = {id: 'id-1'}) {
     const services: any = {
-        '$state': {current: {name: 'workspace.general', data: {unsavedChanges: false}}, go: jest.fn()},
-        '$stateParams': stateParams,
-        '$filter': () => (k: string) => k,
         'ComponentFactory': {createComponent: (c: any) => Object.assign({}, c)},
         'ImportVSPService': {},
         'OnboardingService': {},
-        'Notification': {success: jest.fn(), error: jest.fn()},
         'ModelService': {getModels: jest.fn(() => of([])), getModelsOfType: jest.fn(() => of([]))},
         'ElementService': {getCategoryBaseTypes: jest.fn(() => of({required: false, baseTypes: []}))},
-        'sdcConfig': {csarFileExtension: ['csar'], toscaFileExtension: ['yaml', 'yml']},
-        'ComponentNameValidationPattern': PATTERNS.ComponentNameValidationPattern,
-        'ContactIdValidationPattern': PATTERNS.ContactIdValidationPattern,
-        'TagValidationPattern': PATTERNS.TagValidationPattern,
-        'VendorNameValidationPattern': PATTERNS.VendorNameValidationPattern,
-        'VendorReleaseValidationPattern': PATTERNS.VendorReleaseValidationPattern,
-        'VendorModelNumberValidationPattern': PATTERNS.VendorModelNumberValidationPattern,
-        'CommentValidationPattern': PATTERNS.CommentValidationPattern
+        'sdcConfig': {csarFileExtension: ['csar'], toscaFileExtension: ['yaml', 'yml']}
     };
     return {get: (name: string) => services[name]};
 }
@@ -58,12 +56,16 @@ function createComp(opts: any = {}) {
     const cdr: any = {detectChanges: jest.fn()};
     const fileUtils: any = opts.fileUtils || {base64toBlob: jest.fn(() => new Blob([]))};
     const sdcUiModalService: any = opts.sdcUiModalService || {openErrorDetailModal: jest.fn()};
+    const translateService: any = opts.translateService || {translate: (k: string) => k};
+    const notificationsService: any = opts.notificationsService || {push: jest.fn()};
+    const navigationService = opts.navigationService || makeNavigationService(opts.stateParams);
     const comp = new GeneralTabComponent(
         new GeneralFormService(), new ComponentMetadataService(),
-        workspaceService, cacheService, eventListener, fileUtils, sdcUiModalService, cdr,
+        workspaceService, cacheService, eventListener, fileUtils, sdcUiModalService,
+        translateService, notificationsService, cdr, navigationService,
         opts.injector || makeInjector(opts.stateParams)
     );
-    return {comp, workspaceService, cacheService, eventListener, cdr, fileUtils, sdcUiModalService};
+    return {comp, workspaceService, cacheService, eventListener, cdr, fileUtils, sdcUiModalService, translateService, notificationsService, navigationService};
 }
 
 describe('GeneralTabComponent - init', () => {
@@ -91,6 +93,17 @@ describe('GeneralTabComponent - init', () => {
         const {comp} = createComp({stateParams: {}});
         comp.ngOnInit();
         expect(comp.isCreateMode()).toBe(true);
+    });
+
+    it('uses TranslateService (not $filter) for the import-finished notification', async () => {
+        const translateService: any = {translate: jest.fn((k: string) => 'T:' + k)};
+        const {comp} = createComp({translateService});
+        comp.ngOnInit();
+        // The ng1 $filter bridge is gone: it must be neither resolved from the injector nor used.
+        expect((comp as any).$filter).toBeUndefined();
+        await comp.save();
+        expect(translateService.translate).toHaveBeenCalledWith('IMPORT_VF_MESSAGE_CREATE_FINISHED_DESCRIPTION');
+        expect(translateService.translate).toHaveBeenCalledWith('IMPORT_VF_MESSAGE_CREATE_FINISHED_TITLE');
     });
 
     it('completes destroy$ on ngOnDestroy', () => {
@@ -130,7 +143,7 @@ describe('GeneralTabComponent - save (data-loss fix)', () => {
         const handleChangeLifecycleState = jest.fn();
         const startProgress = jest.fn();
         const stopProgress = jest.fn();
-        const {comp, eventListener} = createComp({
+        const {comp, eventListener, navigationService} = createComp({
             containerActions: {handleChangeLifecycleState, startProgress, stopProgress}
         });
         comp.ngOnInit();
@@ -138,7 +151,7 @@ describe('GeneralTabComponent - save (data-loss fix)', () => {
         const call = eventListener.registerObserverCallback.mock.calls
             .find((c: any[]) => c[0] === 'onLifecycleChangeWithSave');
         expect(call).toBeDefined();
-        (comp as any).$state.current.data.unsavedChanges = true;
+        navigationService.setUnsavedChanges(true);
         comp.form.get('description').setValue('x'); // make form valid+dirty
         await call[1]('certify');
         expect(handleChangeLifecycleState).toHaveBeenCalledWith('certify');
@@ -175,23 +188,23 @@ describe('GeneralTabComponent - VSP import', () => {
 
 describe('GeneralTabComponent - dirty tracking', () => {
     it('sets unsavedChanges=true in EDIT mode when form becomes dirty', () => {
-        const {comp} = createComp(); // EDIT mode: has id + checked-out owned by cs0008
+        const {comp, navigationService} = createComp(); // EDIT mode: has id + checked-out owned by cs0008
         comp.ngOnInit();
         // Simulate user editing — setValue marks form dirty and emits valueChanges
         comp.form.get('description').setValue('new value');
         comp.form.markAsDirty();
         // Trigger a valueChanges emission to fire the subscription
         comp.form.get('description').setValue('new value 2');
-        expect((comp as any).$state.current.data.unsavedChanges).toBe(true);
+        expect(navigationService.getUnsavedChanges()).toBe(true);
     });
 
     it('does NOT set unsavedChanges=true in CREATE mode when form becomes dirty', () => {
-        const {comp} = createComp({stateParams: {}}); // CREATE mode: no id
+        const {comp, navigationService} = createComp({stateParams: {}}); // CREATE mode: no id
         comp.ngOnInit();
         comp.form.get('description').setValue('new value');
         comp.form.markAsDirty();
         comp.form.get('description').setValue('new value 2');
-        expect((comp as any).$state.current.data.unsavedChanges).toBe(false);
+        expect(navigationService.getUnsavedChanges()).toBe(false);
     });
 
     it('save fires before lifecycle change when form is dirty+valid in EDIT mode (regression guard)', async () => {
@@ -199,7 +212,7 @@ describe('GeneralTabComponent - dirty tracking', () => {
         const startProgress = jest.fn();
         const stopProgress = jest.fn();
         const component = makeComponent();
-        const {comp, eventListener} = createComp({
+        const {comp, eventListener, navigationService} = createComp({
             component,
             containerActions: {handleChangeLifecycleState, startProgress, stopProgress}
         });
@@ -211,7 +224,7 @@ describe('GeneralTabComponent - dirty tracking', () => {
         comp.form.get('description').setValue('edited before certify 2');
 
         // Verify unsavedChanges was set by dirty tracking
-        expect((comp as any).$state.current.data.unsavedChanges).toBe(true);
+        expect(navigationService.getUnsavedChanges()).toBe(true);
 
         // Fire the lifecycle callback — should save first, then delegate
         const call = eventListener.registerObserverCallback.mock.calls
@@ -240,22 +253,13 @@ function makeInjectorWithCategories(stateParams: any = {id: 'id-1'}, sdcMenuOver
     const services: any = {
         '$state': {current: {name: 'workspace.general', data: {unsavedChanges: false}}, go: jest.fn()},
         '$stateParams': stateParams,
-        '$filter': () => (k: string) => k,
         'ComponentFactory': {createComponent: (c: any) => Object.assign({}, c)},
         'ImportVSPService': {},
         'OnboardingService': {},
-        'Notification': {success: jest.fn(), error: jest.fn()},
         'ModelService': {getModels: jest.fn(() => of([])), getModelsOfType: jest.fn(() => of([]))},
         'ElementService': {getCategoryBaseTypes: jest.fn(() => of({required: false, baseTypes: []}))},
         'sdcMenu': sdcMenu,
-        'sdcConfig': {csarFileExtension: ['csar'], toscaFileExtension: ['yaml', 'yml']},
-        'ComponentNameValidationPattern': PATTERNS.ComponentNameValidationPattern,
-        'ContactIdValidationPattern': PATTERNS.ContactIdValidationPattern,
-        'TagValidationPattern': PATTERNS.TagValidationPattern,
-        'VendorNameValidationPattern': PATTERNS.VendorNameValidationPattern,
-        'VendorReleaseValidationPattern': PATTERNS.VendorReleaseValidationPattern,
-        'VendorModelNumberValidationPattern': PATTERNS.VendorModelNumberValidationPattern,
-        'CommentValidationPattern': PATTERNS.CommentValidationPattern
+        'sdcConfig': {csarFileExtension: ['csar'], toscaFileExtension: ['yaml', 'yml']}
     };
     return {get: (name: string) => services[name]};
 }
@@ -364,21 +368,12 @@ function makeInjectorWithModels(stateParams: any = {id: 'id-1'}, modelServiceOve
     const services: any = {
         '$state': {current: {name: 'workspace.general', data: {unsavedChanges: false}}, go: jest.fn()},
         '$stateParams': stateParams,
-        '$filter': () => (k: string) => k,
         'ComponentFactory': {createComponent: (c: any) => Object.assign({}, c)},
         'ImportVSPService': {},
         'OnboardingService': {},
-        'Notification': {success: jest.fn(), error: jest.fn()},
         'ModelService': modelService,
         'ElementService': elementService,
-        'sdcConfig': {csarFileExtension: ['csar'], toscaFileExtension: ['yaml', 'yml']},
-        'ComponentNameValidationPattern': PATTERNS.ComponentNameValidationPattern,
-        'ContactIdValidationPattern': PATTERNS.ContactIdValidationPattern,
-        'TagValidationPattern': PATTERNS.TagValidationPattern,
-        'VendorNameValidationPattern': PATTERNS.VendorNameValidationPattern,
-        'VendorReleaseValidationPattern': PATTERNS.VendorReleaseValidationPattern,
-        'VendorModelNumberValidationPattern': PATTERNS.VendorModelNumberValidationPattern,
-        'CommentValidationPattern': PATTERNS.CommentValidationPattern
+        'sdcConfig': {csarFileExtension: ['csar'], toscaFileExtension: ['yaml', 'yml']}
     };
     return {get: (name: string) => services[name]};
 }
@@ -901,7 +896,7 @@ describe('GeneralTabComponent - C7 vendor fields required for resources only', (
         const startProgress = jest.fn();
         const stopProgress = jest.fn();
         const svc = makeServiceNoVendor();
-        const {comp, eventListener} = createComp({
+        const {comp, eventListener, navigationService} = createComp({
             component: svc,
             containerActions: {handleChangeLifecycleState, startProgress, stopProgress}
         });
@@ -909,7 +904,7 @@ describe('GeneralTabComponent - C7 vendor fields required for resources only', (
         // Make the form dirty+valid (vendor fields are not required for a Service)
         comp.form.get('description').setValue('edited before certify');
         comp.form.markAsDirty();
-        (comp as any).$state.current.data.unsavedChanges = true;
+        navigationService.setUnsavedChanges(true);
         const call = eventListener.registerObserverCallback.mock.calls
             .find((c: any[]) => c[0] === 'onLifecycleChangeWithSave');
         expect(call).toBeDefined();
@@ -1085,5 +1080,92 @@ describe('GeneralTabComponent - C10 category-specific metadata', () => {
         comp.onCategoryChange();
         // existing value preserved, not reset to the default
         expect(comp.component.categorySpecificMetadata['ETSI Version']).toBe('2.7.1');
+    });
+});
+
+// ─── Validation patterns come from ValidationConfiguration, not the ng1 injector ──────────────
+// The seven patterns the General tab needs used to be duplicated as AngularJS
+// `ng1appModule.value('…ValidationPattern', /re/)` constants in app.ts and read back through
+// $injector. They are byte-identical to configurations/validation.json, which ConfigService loads
+// into ValidationConfiguration.validation via the APP_INITIALIZER, so the ng1 copies are gone.
+describe('GeneralTabComponent - validation patterns source', () => {
+    let savedValidation: any;
+
+    beforeEach(() => {
+        savedValidation = ValidationConfiguration.validation;
+    });
+
+    afterEach(() => {
+        ValidationConfiguration.validation = savedValidation;
+    });
+
+    it('reads validation patterns from ValidationConfiguration, not the ng1 injector', () => {
+        // validation.json holds STRINGS (models/validation-config.ts mistypes them as RegExp).
+        ValidationConfiguration.validation = {
+            propertyValue: {min: 0, max: 2500},
+            validationPatterns: {
+                componentName: '^X{1,4}$', contactId: '^c$', tag: '^t$', vendorName: '^vn$',
+                vendorRelease: '^vr$', vendorModelNumber: '^vm$', comment: '^cm$'
+            }
+        } as any;
+        const inner = makeInjector();
+        const injector = {get: jest.fn((n: string) => inner.get(n))};
+        const {comp} = createComp({injector});
+        comp.ngOnInit();
+        expect((comp as any).tagPattern.source).toBe('^t$');
+        const asked = injector.get.mock.calls.map((c: any[]) => c[0]);
+        expect(asked.filter((n: string) => /ValidationPattern$/.test(n))).toEqual([]);
+    });
+
+    it('compiles every configured pattern string into the form validators', () => {
+        ValidationConfiguration.validation = {
+            propertyValue: {min: 0, max: 2500},
+            validationPatterns: {
+                componentName: '^X{1,4}$', contactId: '^c$', tag: '^t$', vendorName: '^vn$',
+                vendorRelease: '^vr$', vendorModelNumber: '^vm$', comment: '^cm$'
+            }
+        } as any;
+        const {comp} = createComp();
+        comp.ngOnInit();
+        comp.form.get('name').setValue('XXX');
+        expect(comp.form.get('name').valid).toBe(true);
+        comp.form.get('name').setValue('YYY');
+        expect(comp.form.get('name').hasError('pattern')).toBe(true);
+        comp.form.get('contactId').setValue('nope');
+        expect(comp.form.get('contactId').hasError('pattern')).toBe(true);
+        comp.form.get('vendorName').setValue('vn');
+        expect(comp.form.get('vendorName').valid).toBe(true);
+    });
+
+    // §DDD guard: ConfigService.loadValidationConfiguration()'s .catch never assigns
+    // ValidationConfiguration.validation (its fallback goes only into CacheService, and carries
+    // only 4 of the patterns). So on a failed validation.json load the static is undefined — an
+    // unguarded read would throw inside ngOnInit and silently blank the whole General tab.
+    it('falls back to the built-in patterns when ValidationConfiguration is unpopulated', () => {
+        ValidationConfiguration.validation = undefined;
+        const {comp} = createComp();
+        expect(() => comp.ngOnInit()).not.toThrow();
+        expect(comp.form).toBeTruthy();
+        // The real componentName pattern: rejects a name made only of dots/spaces, accepts a real one.
+        comp.form.get('name').setValue('MyVF');
+        expect(comp.form.get('name').valid).toBe(true);
+        comp.form.get('name').setValue('. .');
+        expect(comp.form.get('name').hasError('pattern')).toBe(true);
+        // Not /undefined/ — that would accept the literal text "undefined" and reject valid names.
+        expect((comp as any).tagPattern.source).not.toBe('undefined');
+    });
+
+    it('falls back per field when validation.json supplies only some patterns', () => {
+        ValidationConfiguration.validation = {
+            propertyValue: {min: 0, max: 2500},
+            validationPatterns: {tag: '^t$'}
+        } as any;
+        const {comp} = createComp();
+        comp.ngOnInit();
+        expect((comp as any).tagPattern.source).toBe('^t$');
+        comp.form.get('contactId').setValue('cs0008');
+        expect(comp.form.get('contactId').valid).toBe(true);
+        comp.form.get('contactId').setValue('x'.repeat(51));
+        expect(comp.form.get('contactId').hasError('pattern')).toBe(true);
     });
 });

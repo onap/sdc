@@ -60,7 +60,7 @@ public class ServiceUIUtils {
         ServiceGeneralPage.defineNamingPolicy(service.getNamingPolicy());
         defineTagsList2(service.getTags());
         ServiceGeneralPage.defineContactId(service.getContactId());
-        GeneralUIUtils.waitForElementInVisibilityBy(By.className("notification-container"), 10000);
+        GeneralUIUtils.waitForElementInVisibilityBy(By.className("sdc-notification"), 10000);
         GeneralUIUtils.clickSomewhereOnPage();
     }
 

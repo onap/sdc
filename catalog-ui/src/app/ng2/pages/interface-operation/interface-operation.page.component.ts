@@ -41,6 +41,7 @@ import {
 import {ComponentServiceNg2} from 'app/ng2/services/component-services/component.service';
 import {PluginsService} from 'app/ng2/services/plugins.service';
 import {WorkflowServiceNg2} from 'app/ng2/services/workflow.service';
+import {NavigationService} from 'app/ng2/services/navigation.service';
 
 import {
     OperationCreatorComponent,
@@ -152,7 +153,7 @@ export class InterfaceOperationComponent {
 
     constructor(
         @Inject(SdcConfigToken) private sdcConfig: ISdcConfig,
-        @Inject("$state") private $state: ng.ui.IStateService,
+        private navigationService: NavigationService,
         private TranslateService: TranslateService,
         private PluginsService: PluginsService,
         private ComponentServiceNg2: ComponentServiceNg2,
@@ -387,7 +388,7 @@ export class InterfaceOperationComponent {
             } else if (response.workflowId && operation.workflowAssociationType === WORKFLOW_ASSOCIATION_OPTIONS.EXISTING) {
                 this.WorkflowServiceNg2.associateWorkflowArtifact(this.component, response).subscribe();
             } else if (operation.workflowAssociationType === WORKFLOW_ASSOCIATION_OPTIONS.NEW) {
-                this.$state.go('workspace.plugins', {path: 'workflowDesigner'});
+                this.navigationService.navigate('workspace.plugins', {path: 'workflowDesigner'});
             }
         });
     }
