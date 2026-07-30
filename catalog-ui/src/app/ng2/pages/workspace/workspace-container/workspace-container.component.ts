@@ -40,6 +40,7 @@ import {
 import {EventListenerService, ProgressService} from 'app/services';
 import {CacheService} from 'app/services-ng2';
 import {SdcUiCommon, SdcUiComponents, SdcUiServices} from 'onap-ui-angular';
+import {NotificationSettings} from 'onap-ui-angular/dist/notifications/utilities/notification.config';
 import {AutomatedUpgradeService} from '../../automated-upgrade/automated-upgrade.service';
 import {CatalogService} from '../../../services/catalog.service';
 import {ComponentServiceNg2} from '../../../services/component-services/component.service';
@@ -97,11 +98,6 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
     private menuHandler: any;
     private changeLifecycleStateHandler: any;
     private progressService: any;
-    private $state: any;
-    private $stateParams: any;
-    private notification: any;
-    private $filter: any;
-    private $rootScope: any;
     private deregisterStateChange: Function;
 
     constructor(
@@ -118,6 +114,7 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
         private workspaceService: WorkspaceService,
         private translateService: TranslateService,
         private navigationService: NavigationService,
+        private notificationsService: SdcUiServices.NotificationsService,
         private cdr: ChangeDetectorRef,
         @Inject('$injector') private $injector: any
     ) {
@@ -137,16 +134,11 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
     }
 
     private resolveNg1Services(): void {
-        this.$state = this.$injector.get('$state');
-        this.$stateParams = this.$injector.get('$stateParams');
         this.sdcMenu = this.$injector.get('sdcMenu');
         this.componentFactory = this.$injector.get('ComponentFactory');
         this.menuHandler = this.$injector.get('MenuHandler');
         this.changeLifecycleStateHandler = this.$injector.get('ChangeLifecycleStateHandler');
         this.progressService = this.$injector.get('Sdc.Services.ProgressService');
-        this.notification = this.$injector.get('Notification');
-        this.$filter = this.$injector.get('$filter');
-        this.$rootScope = this.$injector.get('$rootScope');
     }
 
     private initWorkspace(): void {
@@ -164,21 +156,21 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
         this.mode = this.initViewMode();
         this.initChangeLifecycleStateButtons();
         this.initVersionObject();
-        this.isComposition = (this.$state.current.name.indexOf(States.WORKSPACE_COMPOSITION) > -1);
-        this.isDeployment = this.$state.current.name === States.WORKSPACE_DEPLOYMENT;
+        this.isComposition = (this.navigationService.getCurrentStateName().indexOf(States.WORKSPACE_COMPOSITION) > -1);
+        this.isDeployment = this.navigationService.getCurrentStateName() === States.WORKSPACE_DEPLOYMENT;
         this.initMenuItems();
         this.verifyIfDependenciesExist();
-        this.updateSelectedMenuItem(this.$state.current.name);
+        this.updateSelectedMenuItem(this.navigationService.getCurrentStateName());
         this.eventListenerService.registerObserverCallback(EVENTS.ON_WORKSPACE_UNSAVED_CHANGES, this.setWorkspaceButtonState);
         // Keep the highlighted sidebar item + tab title in sync as the user moves between child
         // tab states (General, TOSCA Artifacts, ...). The old WorkspaceViewModel did this via
         // $scope.$on('$stateChangeSuccess'); the shell re-mounts only on full reloads, so without
         // this the title/selection stay stuck on the initial tab (e.g. Selenium waiting for the
         // 'TOSCA Artifacts' tab-title after navigating there would time out).
-        this.deregisterStateChange = this.$rootScope.$on('$stateChangeSuccess', () => {
-            this.isComposition = (this.$state.current.name.indexOf(States.WORKSPACE_COMPOSITION) > -1);
-            this.isDeployment = this.$state.current.name === States.WORKSPACE_DEPLOYMENT;
-            this.updateSelectedMenuItem(this.$state.current.name);
+        this.deregisterStateChange = this.navigationService.onNavigationSuccess(() => {
+            this.isComposition = (this.navigationService.getCurrentStateName().indexOf(States.WORKSPACE_COMPOSITION) > -1);
+            this.isDeployment = this.navigationService.getCurrentStateName() === States.WORKSPACE_DEPLOYMENT;
+            this.updateSelectedMenuItem(this.navigationService.getCurrentStateName());
             this.cdr.detectChanges();
         });
     }
@@ -195,7 +187,7 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
 
     private initViewMode(): WorkspaceMode {
         let mode = WorkspaceMode.VIEW;
-        if (!this.$stateParams.id) {
+        if (!this.navigationService.getParam('id')) {
             mode = WorkspaceMode.CREATE;
         } else {
             if (this.component.lifecycleState === ComponentState.NOT_CERTIFIED_CHECKOUT &&
@@ -313,14 +305,15 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
     }
 
     private showSuccessNotificationMessage(): void {
-        this.notification.success({
-            message: this.$filter('translate')('IMPORT_VF_MESSAGE_CREATE_FINISHED_DESCRIPTION'),
-            title: this.$filter('translate')('IMPORT_VF_MESSAGE_CREATE_FINISHED_TITLE')
-        });
+        this.notificationsService.push(new NotificationSettings(
+            'success',
+            this.translateService.translate('IMPORT_VF_MESSAGE_CREATE_FINISHED_DESCRIPTION'),
+            this.translateService.translate('IMPORT_VF_MESSAGE_CREATE_FINISHED_TITLE'),
+            5000));
     }
 
     isGeneralView(): boolean {
-        return this.$state.current.name === States.WORKSPACE_GENERAL;
+        return this.navigationService.getCurrentStateName() === States.WORKSPACE_GENERAL;
     }
 
     // --- Create (the shell's Create button in CREATE mode) ---
@@ -331,10 +324,11 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges(); // render the create loader before the (async) server call
 
         if (this.component.isResource() && (this.component as Resource).csarUUID) {
-            this.notification.info({
-                message: this.$filter('translate')('IMPORT_VF_MESSAGE_CREATE_TAKES_LONG_TIME_DESCRIPTION'),
-                title: this.$filter('translate')('IMPORT_VF_MESSAGE_CREATE_TAKES_LONG_TIME_TITLE')
-            });
+            this.notificationsService.push(new NotificationSettings(
+                'info',
+                this.translateService.translate('IMPORT_VF_MESSAGE_CREATE_TAKES_LONG_TIME_DESCRIPTION'),
+                this.translateService.translate('IMPORT_VF_MESSAGE_CREATE_TAKES_LONG_TIME_TITLE'),
+                5000));
         }
 
         const onFailed = () => {
@@ -360,11 +354,11 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
             // would abort navigation and leave the loader stuck.
             this.components = this.components || [];
             this.components.unshift(component);
-            this.$state.go(States.WORKSPACE_GENERAL, {
+            this.navigationService.navigate(States.WORKSPACE_GENERAL, {
                 id: component.uniqueId,
                 type: component.componentType.toLowerCase(),
                 components: this.components
-            }, {inherit: false});
+            }, {inherit: false} as any);
         };
 
         if ((this.component as Service).serviceType === 'Service') {
@@ -387,20 +381,20 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
 
     handleChangeLifecycleState = (state: string, newCsarVersion?: string, onError?: Function): void => {
         if ('monitor' === state) {
-            this.$state.go('workspace.distribution');
+            this.navigationService.navigate('workspace.distribution');
             return;
         }
 
         let data = this.changeLifecycleStateButtons[state];
-        if (!data && this.$stateParams.componentCsar && !this.isCreateMode()) {
+        if (!data && this.navigationService.getParam('componentCsar') && !this.isCreateMode()) {
             data = {text: 'Check Out', url: 'lifecycleState/CHECKOUT'};
         }
 
         const defaultActionAfterChangeLifecycleState = (): void => {
-            if (this.$state.current.data && this.$state.current.data.unsavedChanges) {
-                this.$state.current.data.unsavedChanges = false;
+            if (this.navigationService.getUnsavedChanges()) {
+                this.navigationService.setUnsavedChanges(false);
             }
-            this.$state.go('dashboard');
+            this.navigationService.navigate('dashboard');
         };
 
         const onSuccess = (component: Component, url: string): void => {
@@ -428,32 +422,35 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
                         this.isLoading = false;
                         this.eventListenerService.notifyObservers(EVENTS.ON_CHECKOUT, component);
                         this.workspaceService.setComponentMetadata(component.componentMetadata);
-                        this.notification.success({
-                            message: this.$filter('translate')('CHECKOUT_SUCCESS_MESSAGE_TEXT'),
-                            title: this.$filter('translate')('CHECKOUT_SUCCESS_MESSAGE_TITLE')
-                        });
+                        this.notificationsService.push(new NotificationSettings(
+                            'success',
+                            this.translateService.translate('CHECKOUT_SUCCESS_MESSAGE_TEXT'),
+                            this.translateService.translate('CHECKOUT_SUCCESS_MESSAGE_TITLE'),
+                            5000));
                         this.cdr.detectChanges();
                     });
                     break;
                 case 'lifecycleState/CHECKIN':
                     this.workspaceNg1BridgeService.updateIsViewOnly(true);
                     defaultActionAfterChangeLifecycleState();
-                    this.notification.success({
-                        message: this.$filter('translate')('CHECKIN_SUCCESS_MESSAGE_TEXT'),
-                        title: this.$filter('translate')('CHECKIN_SUCCESS_MESSAGE_TITLE')
-                    });
+                    this.notificationsService.push(new NotificationSettings(
+                        'success',
+                        this.translateService.translate('CHECKIN_SUCCESS_MESSAGE_TEXT'),
+                        this.translateService.translate('CHECKIN_SUCCESS_MESSAGE_TITLE'),
+                        5000));
                     break;
                 case 'lifecycleState/UNDOCHECKOUT':
                     this.eventBusService.notify('UNDO_CHECK_OUT', eventData, false).subscribe(() => {
                         defaultActionAfterChangeLifecycleState();
-                        this.notification.success({
-                            message: this.$filter('translate')('DELETE_SUCCESS_MESSAGE_TEXT'),
-                            title: this.$filter('translate')('DELETE_SUCCESS_MESSAGE_TITLE')
-                        });
+                        this.notificationsService.push(new NotificationSettings(
+                            'success',
+                            this.translateService.translate('DELETE_SUCCESS_MESSAGE_TEXT'),
+                            this.translateService.translate('DELETE_SUCCESS_MESSAGE_TITLE'),
+                            5000));
                     });
                     break;
                 case 'lifecycleState/certify':
-                    // Refresh in place rather than $state.go(reload:true). A parent-state reload
+                    // Refresh in place rather than a reload transition. A parent-state reload
                     // tears down and asynchronously re-mounts this downgraded OnPush shell, leaving
                     // a window where .w-sdc-main-right-container is absent from the DOM; Selenium's
                     // post-certify ComponentPage.isLoaded() (5s) hits that gap and fails. The certify
@@ -466,10 +463,11 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
                     this.cdr.detectChanges();
                     break;
                 case 'distribution/PROD/activate':
-                    this.notification.success({
-                        message: this.$filter('translate')('DISTRIBUTE_SUCCESS_MESSAGE_TEXT'),
-                        title: this.$filter('translate')('DISTRIBUTE_SUCCESS_MESSAGE_TITLE')
-                    });
+                    this.notificationsService.push(new NotificationSettings(
+                        'success',
+                        this.translateService.translate('DISTRIBUTE_SUCCESS_MESSAGE_TEXT'),
+                        this.translateService.translate('DISTRIBUTE_SUCCESS_MESSAGE_TITLE'),
+                        5000));
                     this.initChangeLifecycleStateButtons();
                     break;
                 default:
@@ -505,10 +503,11 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
 
     private onSuccessWithoutUpgradeNeeded(): void {
         this.isLoading = false;
-        this.notification.success({
-            message: this.$filter('translate')('SERVICE_CERTIFICATION_STATUS_TEXT'),
-            title: this.$filter('translate')('SERVICE_CERTIFICATION_STATUS_TITLE')
-        });
+        this.notificationsService.push(new NotificationSettings(
+            'success',
+            this.translateService.translate('SERVICE_CERTIFICATION_STATUS_TEXT'),
+            this.translateService.translate('SERVICE_CERTIFICATION_STATUS_TITLE'),
+            5000));
         this.initVersionObject();
         this.initChangeLifecycleStateButtons();
         this.cdr.detectChanges();
@@ -523,11 +522,11 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
     }
 
     private reload(component: Component): void {
-        const isGeneralTab = this.$state.current.name === States.WORKSPACE_GENERAL;
+        const isGeneralTab = this.navigationService.getCurrentStateName() === States.WORKSPACE_GENERAL;
         if (isGeneralTab) {
-            this.$state.go(this.$state.current.name, {id: component.uniqueId, componentCsar: null}, {reload: true});
+            this.navigationService.reload({id: component.uniqueId, componentCsar: null});
         } else {
-            this.$state.go(this.$state.current.name, {id: component.uniqueId}, {reload: true});
+            this.navigationService.reload({id: component.uniqueId});
         }
     }
 
@@ -548,7 +547,9 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
             version: versionId
         };
         this.eventBusService.notify('VERSION_CHANGED', eventData).subscribe(() => {
-            this.$state.go(this.$state.current.name, {
+            // NOTE: deliberately navigate() and not reload() — the original transition passed no
+            // {reload: true}, and adding one would tear down/re-resolve the whole workspace state.
+            this.navigationService.navigate(this.navigationService.getCurrentStateName(), {
                 id: versionId,
                 type: this.component.componentType.toLowerCase(),
                 components: this.components
@@ -559,7 +560,8 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
     getLatestVersion(): void {
         if (this.component.isLatestVersion()) { return; }
         const latestVersionId = _.last(_.keys(this.component.allVersions));
-        this.$state.go(this.$state.current.name, {
+        // NOTE: navigate(), not reload() — the original transition passed no {reload: true}.
+        this.navigationService.navigate(this.navigationService.getCurrentStateName(), {
             id: latestVersionId,
             type: this.component.componentType.toLowerCase()
         });
@@ -594,7 +596,7 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
     }
 
     onMenuItemPressed(state: string, params?: any): void {
-        this.$state.go(state, params || {});
+        this.navigationService.navigate(state, params || {});
     }
 
     // --- Menu Items ---
@@ -691,14 +693,14 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
         if (this.component.isResource() && (this.component as Resource).isCsarComponent()) {
             text = this.component.getComponentSubType() + ': ' + this.component.name;
         } else {
-            text = 'Create new ' + this.$stateParams.type;
+            text = 'Create new ' + this.navigationService.getParam('type');
         }
-        return new MenuItem(text, null, States.WORKSPACE_GENERAL, 'goToState', [this.$stateParams]);
+        return new MenuItem(text, null, States.WORKSPACE_GENERAL, 'goToState', [this.navigationService.getParams()]);
     }
 
     private initBreadcrumbsComponents(): void {
         let breadcrumbsComponentsObservable;
-        const previousState = this.$stateParams.previousState;
+        const previousState = this.navigationService.getParam('previousState');
 
         if (previousState === 'dashboard') {
             breadcrumbsComponentsObservable = this.homeService.getAllComponents(true);

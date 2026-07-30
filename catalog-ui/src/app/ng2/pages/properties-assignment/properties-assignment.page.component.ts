@@ -59,6 +59,7 @@ import {Tab, Tabs} from "../../components/ui/tabs/tabs.component";
 import {InputsUtils} from "./services/inputs.utils";
 import {InstanceFeDetails} from "../../../models/instance-fe-details";
 import {SdcUiCommon, SdcUiServices} from "onap-ui-angular";
+import {NotificationSettings} from "onap-ui-angular/dist/notifications/utilities/notification.config";
 import {UnsavedChangesComponent} from "app/ng2/components/ui/forms/unsaved-changes/unsaved-changes.component";
 import {PropertyCreatorComponent} from "./property-creator/property-creator.component";
 import {ModalService} from "../../services/modal.service";
@@ -74,6 +75,7 @@ import {DeclareInputComponent} from "./declare-input/declare-input.component";
 import {ElementService} from "../../services/element.service";
 import {CustomToscaFunction} from "../../../models/default-custom-functions";
 import {ToscaFunctionType} from "../../../models/tosca-function-type.enum";
+import {NavigationService} from "../../services/navigation.service";
 
 const SERVICE_SELF_TITLE = "SELF";
 @Component({
@@ -142,10 +144,9 @@ export class PropertiesAssignmentComponent {
                 private componentServiceNg2: ComponentServiceNg2,
                 private componentInstanceServiceNg2: ComponentInstanceServiceNg2,
                 private propertyCreatorComponent: PropertyCreatorComponent,
-                @Inject("$stateParams") _stateParams,
                 @Inject("$scope") private $scope: ng.IScope,
-                @Inject("$state") private $state: ng.ui.IStateService,
-                @Inject("Notification") private notification: any,
+                private navigationService: NavigationService,
+                private notificationsService: SdcUiServices.NotificationsService,
                 private componentModeService: ComponentModeService,
                 private eventListenerService: EventListenerService,
                 private ModalServiceSdcUI: SdcUiServices.ModalService,
@@ -158,7 +159,7 @@ export class PropertiesAssignmentComponent {
         this.instanceFePropertiesMap = new InstanceFePropertiesMap();
         /* This is the way you can access the component data, please do not use any data except metadata, all other data should be received from the new api calls on the first time
         than if the data is already exist, no need to call the api again - Ask orit if you have any questions*/
-        this.component = _stateParams.component;
+        this.component = this.navigationService.getParam('component');
         this.eventListenerService.registerObserverCallback(EVENTS.ON_LIFECYCLE_CHANGE, this.onCheckout);
         this.updateViewMode();
         this.changedData = [];
@@ -252,12 +253,12 @@ export class PropertiesAssignmentComponent {
                 this.loadingProperties = false;
             });
         }
-        this.stateChangeStartUnregister = this.$scope.$on('$stateChangeStart', (event, toState, toParams) => {
+        this.stateChangeStartUnregister = this.navigationService.onNavigationStart((event) => {
             // stop if has changed properties
             if (this.hasChangedData) {
                 event.preventDefault();
                 this.showUnsavedChangesAlert().then(() => {
-                    this.$state.go(toState, toParams);
+                    this.navigationService.navigate(event.toState, event.toParams);
                 }, () => {
                 });
             }
@@ -909,10 +910,11 @@ export class PropertiesAssignmentComponent {
                 if (inputName) {
                     this.declareInputFromProperties(inputName);
                 } else {
-                    this.notification.warning({
-                        message: 'Failed to set input name',
-                        title: 'Warning'
-                    });
+                    this.notificationsService.push(new NotificationSettings(
+                        'warning',
+                        'Failed to set input name',
+                        'Warning',
+                        5000));
                 }
                 this.modalService.closeCurrentModal();
             }
@@ -1264,17 +1266,19 @@ export class PropertiesAssignmentComponent {
     doSaveChangedData = (onSuccessFunction?:Function, onError?:Function):void => {
         this.saveChangedData().then(
             () => {
-                this.notification.success({
-                    message: 'Successfully saved changes',
-                    title: 'Saved'
-                });
+                this.notificationsService.push(new NotificationSettings(
+                    'success',
+                    'Successfully saved changes',
+                    'Saved',
+                    5000));
                 if(onSuccessFunction) onSuccessFunction();
             },
             () => {
-                this.notification.error({
-                    message: 'Failed to save changes!',
-                    title: 'Failure'
-                });
+                this.notificationsService.push(new NotificationSettings(
+                    'error',
+                    'Failed to save changes!',
+                    'Failure',
+                    5000));
                 if(onError) onError();
             }
         );
@@ -1433,10 +1437,11 @@ export class PropertiesAssignmentComponent {
                             modal.instance.close();
                         }, (error) => {
                             modal.instance.dynamicContent.instance.isLoading = false;
-                            this.notification.error({
-                                message: 'Failed to add property:' + error,
-                                title: 'Failure'
-                            });
+                            this.notificationsService.push(new NotificationSettings(
+                                'error',
+                                'Failed to add property:' + error,
+                                'Failure',
+                                5000));
                         });
                 }, () => !modal.instance.dynamicContent.instance.checkFormValidForSubmit()),
                 new ButtonModel('Cancel', 'outline grey', () => {
@@ -1468,10 +1473,11 @@ export class PropertiesAssignmentComponent {
                             modal.instance.close();
                         }, (error) => {
                             modal.instance.dynamicContent.instance.isLoading = false;
-                            this.notification.error({
-                                message: 'Failed to add input:' + error,
-                                title: 'Failure'
-                            });
+                            this.notificationsService.push(new NotificationSettings(
+                                'error',
+                                'Failed to add input:' + error,
+                                'Failure',
+                                5000));
                         });
                 }, () => !modal.instance.dynamicContent.instance.checkFormValidForSubmit()),
                 new ButtonModel('Cancel', 'outline grey', () => {

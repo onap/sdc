@@ -149,7 +149,7 @@ public class GeneralPageElements {
                     .sendKeys("resource " + componentName + " certified successfully");
             clickOKButton();
             GeneralUIUtils.ultimateWait();
-            GeneralUIUtils.waitForElementInVisibilityBy(By.className("notification-container"), 10000);
+            GeneralUIUtils.waitForElementInVisibilityBy(By.className("sdc-notification"), 10000);
             HomePage.navigateToHomePage();
             GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.MainMenuButtons.SEARCH_BOX.getValue(), GeneralUIUtils.getTimeOut() / WAIT_FOR_ELEMENT_TIME_OUT_DIVIDER);
             GeneralUIUtils.ultimateWait();

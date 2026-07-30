@@ -60,11 +60,10 @@ function createComp(opts: any = {}) {
     };
     const cdr: any = {detectChanges: jest.fn()};
     const el: any = {nativeElement: {querySelector: jest.fn(() => hostEl)}};
-    const $injector: any = {get: jest.fn(() => ({generate: () => 'req-uuid'}))};
     const sdcConfig: any = {api: {root: '/sdc2/rest/v1/'}, cookie: {userIdSuffix: 'USER_ID', userFirstName: 'FN', userLastName: 'LN', userEmail: 'EM'}};
 
     const comp = new NetworkCallFlowTabComponent(
-        workspaceService, cacheService, componentService, cdr, el, $injector, sdcConfig);
+        workspaceService, cacheService, componentService, cdr, el, sdcConfig);
     return {comp, workspaceService, cacheService, componentService, cdr, el, hostEl};
 }
 
@@ -150,5 +149,13 @@ describe('NetworkCallFlowTabComponent', () => {
         comp.ngAfterViewInit();
         expect(componentService.getComponentInformationalArtifactsAndInstances).not.toHaveBeenCalled();
         expect(registry.render).not.toHaveBeenCalled();
+    });
+
+    it('passes a request id generated without the AngularJS uuid4 service to the punch-out', () => {
+        const {comp} = createComp();
+        comp.ngOnInit();
+        comp.ngAfterViewInit();
+        expect(registry.render.mock.calls[0][0].options.data.requestID)
+            .toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i);
     });
 });

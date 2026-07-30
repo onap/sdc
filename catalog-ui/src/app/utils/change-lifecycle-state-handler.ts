@@ -19,6 +19,7 @@
  */
 import { ServiceServiceNg2 } from 'app/ng2/services/component-services/service.service';
 import { EventBusService } from 'app/ng2/services/event-bus.service';
+import { TranslateService } from 'app/ng2/shared/translator/translate.service';
 import { EVENTS, ValidationUtils } from 'app/utils';
 import { SdcUiCommon, SdcUiComponents, SdcUiServices } from 'onap-ui-angular';
 import { Component, IAppConfigurtaion, IAppMenu, Service } from '../models';
@@ -34,7 +35,7 @@ export class ChangeLifecycleStateHandler {
         'sdcConfig',
         'sdcMenu',
         'ComponentFactory',
-        '$filter',
+        'TranslateService',
         'ModalsHandler',
         'ServiceServiceNg2',
         'EventBusService',
@@ -46,7 +47,7 @@ export class ChangeLifecycleStateHandler {
     constructor(private sdcConfig: IAppConfigurtaion,
                 private sdcMenu: IAppMenu,
                 private componentFactory: ComponentFactory,
-                private $filter: ng.IFilterService,
+                private translateService: TranslateService,
                 private modalsHandler: ModalsHandler,
                 private serviceServiceNg2: ServiceServiceNg2,
                 private eventBusService: EventBusService,
@@ -159,8 +160,11 @@ export class ChangeLifecycleStateHandler {
                 };
                 const continueButton = {testId: 'Continue', text: 'Continue', type: SdcUiCommon.ButtonType.primary, callback: onContinue, closeModal: true} as SdcUiComponents.ModalButtonComponent;
                 const rejectButton = {testId: 'Reject', text: 'Reject', type: SdcUiCommon.ButtonType.secondary, callback: reject, closeModal: true} as SdcUiComponents.ModalButtonComponent;
-                this.modalService.openInfoModal(this.$filter('translate')('CONFORMANCE_LEVEL_MODAL_TITLE'),
-                    this.$filter('translate')('CONFORMANCE_LEVEL_MODAL_TEXT'), 'conformance-modal', [continueButton, rejectButton]);
+                this.modalService.openInfoModal(
+                    this.translateService.translate('CONFORMANCE_LEVEL_MODAL_TITLE'),
+                    this.translateService.translate('CONFORMANCE_LEVEL_MODAL_TEXT'),
+                    'conformance-modal',
+                    [continueButton, rejectButton]);
             }
         });
     }

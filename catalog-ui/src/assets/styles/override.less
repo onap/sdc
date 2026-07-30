@@ -37,3 +37,39 @@ sdc-modal {
 .sdc-menu-list {
     z-index: 9999999;
 }
+
+// The onap-ui-angular notification container is `position: absolute` with no stacking
+// context of its own, so toasts are painted underneath the fixed top-nav (z-index 10)
+// and the page content. Restore the behaviour of the removed angular-ui-notification
+// stylesheet, which used `position: fixed; z-index: 9999`.
+//
+// The container is also moved clear of the workspace action buttons. angular-ui-notification
+// gave each toast its own fixed element and re-ran a reposition pass on every push, which
+// kept the newest toast at the top and pushed older ones down. The onap-ui-angular container
+// renders one static wrapper and iterates a plain array, so DOM order is push order and the
+// OLDEST toast holds the top slot for as long as it lives. At the library's `top: 10px` that
+// parks a long-lived toast (e.g. the 5s "Create VF" info toast) directly over the certify /
+// create buttons, which sit within the 50px top-nav plus the 53px action bar, and swallows
+// clicks aimed at them.
+// 113px = @top_nav_height (50px) + @action_nav_height (53px) + the library's own 10px inset.
+// The values are inlined rather than referenced because this file is self-contained (it declares
+// its own variables above) and is pulled in by component stylesheets that never import
+// variables.less, directly or transitively.
+//
+// The `body` prefix is load-bearing, not cosmetic. onboarding/openecomp-ui ALSO imports
+// onap-ui-common/lib/style.css (punch-outs.js), and PunchOutRegistry.loadOnBoarding() pulls that
+// bundle into the SAME document with $.getScript('/onboarding/punch-outs_en.js'). Both projects
+// build CSS through style-loader, so the punch-out injects a SECOND copy of the library's
+// `.sdc-notification-container { position: absolute; top: 10px }` into <head> at runtime, after
+// every catalog-ui sheet. A bare `.sdc-notification-container` here ties that duplicate on
+// specificity (0,1,0) and loses on order the moment onboarding has been visited -- which is
+// exactly the ETSI onboarding flow. Qualifying with `body` (0,1,1) wins regardless of order.
+body .sdc-notification-container {
+    position: fixed;
+    top: 113px;
+    z-index: 9999;
+
+    .sdc-notification {
+        cursor: pointer;
+    }
+}

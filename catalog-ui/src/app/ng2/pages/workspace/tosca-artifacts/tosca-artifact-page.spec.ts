@@ -20,7 +20,6 @@ describe('tosca artifacts page', () => {
     let topologyTemplateServiceMock: Partial<TopologyTemplateService>;
     let workspaceServiceMock: Partial<WorkspaceService>;
     let store: Store;
-    let notificationMock: Partial<any>;
 
 
     beforeEach(
@@ -40,7 +39,7 @@ describe('tosca artifacts page', () => {
                         {provide: WorkspaceService, useValue: workspaceServiceMock},
                         {provide: TopologyTemplateService, useValue: topologyTemplateServiceMock},
                         {provide: ComponentServiceNg2, useValue: {}},
-                        {provide: "Notification", useValue: notificationMock }
+                        {provide: SdcUiServices.NotificationsService, useValue: {push: jest.fn()}}
                     ],
                 });
             };

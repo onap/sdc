@@ -28,7 +28,7 @@ import {ResourceType} from 'app/utils/constants';
  * Angular replacement for the AngularJS IconsModalViewModel (view-models/modals/icons-modal/icons-modal-view.ts).
  * The component is mounted as dynamic content by ModalsHandler.openUpdateIconModal via the ng2 ModalService,
  * which supplies the OK/Cancel buttons; OK reads {@link #updateIcon} (isDirty) and resolves the caller's deferred.
- * The old controller's $state / ComponentFactory dependencies are dropped — the caller (general-tab) owns the
+ * The old controller's router / ComponentFactory dependencies are dropped — the caller (general-tab) owns the
  * dirty -> unsavedChanges reaction.
  */
 @NgComponent({

@@ -32,6 +32,5 @@ export * from './services/components/resource-service';
 export * from './services/cookie-service';
 export * from './services/data-types-service';
 export * from './services/event-listener-service';
-export * from './services/header-interceptor';
 export * from './services/progress-service';
 export * from './services/angular-js-bridge-service';

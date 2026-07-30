@@ -18,16 +18,11 @@ const bundledScripts = [
     "script-loader!./node_modules/angular/angular.min.js",
     "script-loader!./node_modules/jqueryui/jquery-ui.min.js",
     "script-loader!./node_modules/angular-ui-router/release/angular-ui-router.min.js",
-    "script-loader!./node_modules/angular-uuid4/angular-uuid4.min.js",
-    "script-loader!./node_modules/angular-translate/dist/angular-translate.min.js",
-    "script-loader!./node_modules/angular-translate-loader-static-files/angular-translate-loader-static-files.min.js",
-    "script-loader!./node_modules/angular-ui-notification/dist/angular-ui-notification.min.js",
     "script-loader!./node_modules/cytoscape/dist/cytoscape.min.js",
     "script-loader!./node_modules/perfect-scrollbar/dist/js/perfect-scrollbar.jquery.min.js",
     "script-loader!./node_modules/qtip2/dist/jquery.qtip.min.js",
     "script-loader!./node_modules/@bardit/cytoscape-qtip/cytoscape-qtip.js",
-    "script-loader!./node_modules/js-md5/build/md5.min.js",
-    "script-loader!./node_modules/angular-sanitize/angular-sanitize.min.js"
+    "script-loader!./node_modules/js-md5/build/md5.min.js"
 ];
 const baseHref = undefined;
 const deployUrl = undefined;

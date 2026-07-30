@@ -24,6 +24,7 @@ describe('NavigationService', () => {
     let service: NavigationService;
     let mockState: any;
     let mockRouter: any;
+    let mockRootScope: any;
 
     beforeEach(() => {
         mockState = {
@@ -35,7 +36,8 @@ describe('NavigationService', () => {
         mockRouter = {
             navigate: jest.fn().mockReturnValue(Promise.resolve(true))
         };
-        service = new NavigationService(mockState, mockRouter);
+        mockRootScope = {$on: jest.fn(() => jest.fn())};
+        service = new NavigationService(mockState, mockRouter, mockRootScope);
     });
 
     describe('navigate', () => {
@@ -80,7 +82,7 @@ describe('NavigationService', () => {
         });
 
         it('should fall back to $state.go when router is not available', () => {
-            const serviceWithoutRouter = new NavigationService(mockState, null);
+            const serviceWithoutRouter = new NavigationService(mockState, null, mockRootScope);
             serviceWithoutRouter.navigate('dashboard');
             expect(mockState.go).toHaveBeenCalledWith('dashboard', undefined, undefined);
         });
@@ -136,5 +138,76 @@ describe('NavigationService', () => {
             service.updateUrlParams({filter: 'resources'});
             expect(mockState.go).toHaveBeenCalledWith('.', {filter: 'resources'}, {location: 'replace', notify: false});
         });
+    });
+});
+
+describe('route-data and lifecycle facade', () => {
+    let $state: any;
+    let $rootScope: any;
+    let service: NavigationService;
+
+    beforeEach(() => {
+        $state = {
+            current: {name: 'workspace.general', data: {unsavedChanges: false}},
+            params: {}, go: jest.fn(), includes: jest.fn()
+        };
+        $rootScope = {$on: jest.fn(() => jest.fn())};
+        service = new NavigationService($state, null, $rootScope);
+    });
+
+    it('reads and writes unsavedChanges through route data', () => {
+        expect(service.getUnsavedChanges()).toBe(false);
+        service.setUnsavedChanges(true);
+        expect($state.current.data.unsavedChanges).toBe(true);
+        expect(service.getUnsavedChanges()).toBe(true);
+    });
+
+    it('tolerates a state with no data object', () => {
+        $state.current = {name: 'dashboard'};
+        expect(service.getUnsavedChanges()).toBe(false);
+        expect(() => service.setUnsavedChanges(true)).not.toThrow();
+    });
+
+    it('exposes the current state data object', () => {
+        expect(service.getCurrentStateData()).toEqual({unsavedChanges: false});
+        $state.current = {name: 'dashboard'};
+        expect(service.getCurrentStateData()).toEqual({});
+    });
+
+    it('reloads the current state', () => {
+        service.reload({id: 'abc'});
+        expect($state.go).toHaveBeenCalledWith('workspace.general', {id: 'abc'}, {reload: true});
+    });
+
+    it('registers a navigation-start listener and returns its unregister fn', () => {
+        const cb = jest.fn();
+        const off = service.onNavigationStart(cb);
+        expect($rootScope.$on).toHaveBeenCalledWith('$stateChangeStart', expect.any(Function));
+        expect(typeof off).toBe('function');
+    });
+
+    it('adapts the ui-router $stateChangeStart signature to NavigationStartEvent', () => {
+        const cb = jest.fn();
+        service.onNavigationStart(cb);
+        const handler = $rootScope.$on.mock.calls[0][1];
+        const ngEvent = {preventDefault: jest.fn()};
+        handler(ngEvent, {name: 'catalog'}, {a: 1}, {name: 'dashboard'}, {b: 2});
+        expect(cb).toHaveBeenCalledWith(expect.objectContaining({
+            toState: 'catalog', toParams: {a: 1}, fromState: 'dashboard', fromParams: {b: 2}
+        }));
+        cb.mock.calls[0][0].preventDefault();
+        expect(ngEvent.preventDefault).toHaveBeenCalled();
+    });
+
+    it('registers a navigation-success listener and adapts its signature', () => {
+        const cb = jest.fn();
+        const off = service.onNavigationSuccess(cb);
+        expect($rootScope.$on).toHaveBeenCalledWith('$stateChangeSuccess', expect.any(Function));
+        expect(typeof off).toBe('function');
+        const handler = $rootScope.$on.mock.calls[0][1];
+        handler({preventDefault: jest.fn()}, {name: 'catalog'}, {a: 1}, {name: 'dashboard'}, {b: 2});
+        expect(cb).toHaveBeenCalledWith(expect.objectContaining({
+            toState: 'catalog', toParams: {a: 1}, fromState: 'dashboard', fromParams: {b: 2}
+        }));
     });
 });

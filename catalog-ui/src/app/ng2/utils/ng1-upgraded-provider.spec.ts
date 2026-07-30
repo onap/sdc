@@ -35,7 +35,6 @@ describe('ng1-upgraded-provider', () => {
                 '$scope': 'scope',
                 '$q': 'qService',
                 'EventListenerService': 'eventListenerService',
-                'Notification': 'notification',
                 'ModalsHandler': 'modalsHandler'
             };
             cacheObjMock = {
@@ -66,10 +65,6 @@ describe('ng1-upgraded-provider', () => {
 
     it('should return eventListenerService', () => {
         expect(Utils.eventListenerServiceServiceFactory(cacheObjMock)).toEqual('eventListenerService');
-    });
-
-    it('should return notification service', () => {
-        expect(Utils.notificationServiceFactory(cacheObjMock)).toEqual('notification');
     });
 
     it('should return modalsHandler', () => {

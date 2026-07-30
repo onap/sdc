@@ -1,7 +1,8 @@
-import {Component, EventEmitter, Inject, Input, OnInit, Output} from "@angular/core";
+import {Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output} from "@angular/core";
 import {URLSearchParams} from '@angular/http';
 import {Plugin} from "app/models";
 import {EventBusService} from "../../../services/event-bus.service";
+import {NavigationService} from "../../../services/navigation.service";
 import {PluginsService} from "../../../services/plugins.service";
 
 @Component({
@@ -10,7 +11,7 @@ import {PluginsService} from "../../../services/plugins.service";
     styleUrls: ['plugin-frame.component.less']
 })
 
-export class PluginFrameComponent implements OnInit {
+export class PluginFrameComponent implements OnInit, OnDestroy {
 
     @Input() plugin: Plugin;
     @Input() queryParams: Object;
@@ -20,13 +21,24 @@ export class PluginFrameComponent implements OnInit {
     private isClosed: boolean;
     private isReady: boolean;
     private isPluginCheckDone: boolean;
+    private stateChangeStartUnregister: Function;
 
     constructor(private eventBusService: EventBusService,
                 private pluginsService: PluginsService,
                 @Inject('$scope') private $scope: ng.IScope,
-                @Inject('$state') private $state: ng.ui.IStateService) {
+                private navigationService: NavigationService) {
         this.urlSearchParams = new URLSearchParams();
         this.isPluginCheckDone = false;
+    }
+
+    ngOnDestroy(): void {
+        // The navigation listener now lives on the root scope (NavigationService), not on this
+        // component's own $scope, so it no longer dies with the component — deregister it here or
+        // a stale handler keeps hijacking every later transition.
+        if (this.stateChangeStartUnregister) {
+            this.stateChangeStartUnregister();
+            this.stateChangeStartUnregister = undefined;
+        }
     }
 
     ngOnInit(): void {
@@ -70,8 +82,9 @@ export class PluginFrameComponent implements OnInit {
 
         // Listening to the stateChangeStart event in order to notify the plugin about it being closed
         // before moving to a new state
-        this.$scope.$on('$stateChangeStart', (event, toState, toParams, fromState, fromParams) => {
-            if ((fromState.name !== toState.name) || (fromState.name === toState.name) && (toParams.path !== fromParams.path)) {
+        if (this.stateChangeStartUnregister) { this.stateChangeStartUnregister(); }
+        this.stateChangeStartUnregister = this.navigationService.onNavigationStart((event) => {
+            if ((event.fromState !== event.toState) || (event.fromState === event.toState) && (event.toParams.path !== event.fromParams.path)) {
                 if (!this.isReady) {
                     this.onLoadingDone.emit();
                     this.eventBusService.off(readyEvent)
@@ -83,7 +96,7 @@ export class PluginFrameComponent implements OnInit {
                             this.isClosed = true;
                             this.eventBusService.unregister(this.plugin.pluginId);
 
-                            this.$state.go(toState.name, toParams);
+                            this.navigationService.navigate(event.toState, event.toParams);
                         });
                     }
                 } else {

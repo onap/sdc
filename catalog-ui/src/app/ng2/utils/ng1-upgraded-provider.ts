@@ -44,12 +44,12 @@ export function scopeServiceFactory(cacheObj: ICacheObject) {
     return cacheObj.get('$scope');
 }
 
-export function eventListenerServiceServiceFactory(cacheObj: ICacheObject) {
-    return cacheObj.get('EventListenerService');
+export function rootScopeServiceFactory(cacheObj: ICacheObject) {
+    return cacheObj.get('$rootScope');
 }
 
-export function notificationServiceFactory(cacheObj: ICacheObject) {
-    return cacheObj.get('Notification');
+export function eventListenerServiceServiceFactory(cacheObj: ICacheObject) {
+    return cacheObj.get('EventListenerService');
 }
 
 export function ModalsHandlerFactory(cacheObj: ICacheObject) {
@@ -77,15 +77,15 @@ export const ScopeServiceFactory = {
     deps: ['$injector']
 };
 
-export const StateParamsServiceFactory = {
-    provide: '$stateParams',
-    useFactory: stateParamsServiceFactory,
+export const RootScopeServiceFactory = {
+    provide: '$rootScope',
+    useFactory: rootScopeServiceFactory,
     deps: ['$injector']
 };
 
-export const NotificationServiceProvider = {
-    provide: 'Notification',
-    useFactory: notificationServiceFactory,
+export const StateParamsServiceFactory = {
+    provide: '$stateParams',
+    useFactory: stateParamsServiceFactory,
     deps: ['$injector']
 };
 

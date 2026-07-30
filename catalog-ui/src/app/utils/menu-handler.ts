@@ -26,6 +26,7 @@ import {IAppConfigurtaion, IAppMenu, Component} from "../models";
 import {ComponentFactory} from "./component-factory";
 import {ModalsHandler} from "./modals-handler";
 import {ResourceNamePipe} from "../ng2/pipes/resource-name.pipe";
+import {NavigationService} from "../ng2/services/navigation.service";
 
 export class MenuItem {
     text:string;
@@ -83,7 +84,7 @@ export class MenuHandler {
         'sdcMenu',
         'ComponentFactory',
         'ModalsHandler',
-        '$state',
+        'NavigationService',
         '$q'
     ];
 
@@ -91,7 +92,7 @@ export class MenuHandler {
                 private sdcMenu:IAppMenu,
                 private ComponentFactory:ComponentFactory,
                 private ModalsHandler:ModalsHandler,
-                private $state:ng.ui.IStateService,
+                private navigationService:NavigationService,
                 private $q:ng.IQService) {
 
     }
@@ -128,7 +129,7 @@ export class MenuHandler {
         if (components) {
             result.selectedIndex = this.findBreadcrumbComponentIndex(components, selected);
             let clickItemCallback = (component:Component):ng.IPromise<boolean> => {
-                this.$state.go('workspace.general', {
+                this.navigationService.navigate('workspace.general', {
                     id: component.uniqueId,
                     type: component.componentType.toLowerCase(),
                     mode: WorkspaceMode.VIEW

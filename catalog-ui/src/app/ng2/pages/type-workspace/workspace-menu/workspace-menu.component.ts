@@ -26,6 +26,7 @@ import {IAppMenu} from "../../../../models/app-config";
 import {IUserProperties} from "../../../../models/user";
 import {SdcMenuToken} from "../../../config/sdc-menu.config";
 import {IWorkspaceViewModelScope} from "../../../../view-models/workspace/workspace-view-model-scope";
+import {NavigationService} from "../../../services/navigation.service";
 
 @Component({
     selector: 'app-workspace-menu',
@@ -40,7 +41,6 @@ export class WorkspaceMenuComponent implements OnInit {
 
     private role: string;
     private user: IUserProperties;
-    private $state: ng.ui.IStateService;
     private $q: ng.IQService;
 
     leftBarTabs: MenuItemGroup = new MenuItemGroup();
@@ -48,8 +48,8 @@ export class WorkspaceMenuComponent implements OnInit {
     constructor(private cacheService: CacheService,
                 @Inject('$scope') private $scope: IWorkspaceViewModelScope,
                 @Inject(SdcMenuToken) private sdcMenu: IAppMenu,
+                private navigationService: NavigationService,
                 @Inject('$injector') $injector) {
-        this.$state = $injector.get('$state');
         this.$q = $injector.get('$q');
     }
 
@@ -101,7 +101,7 @@ export class WorkspaceMenuComponent implements OnInit {
     }
 
     private updateSelectedMenuItem(): void {
-        const stateArray: Array<string> = this.$state.current.name.split('.', 2);
+        const stateArray: Array<string> = this.navigationService.getCurrentStateName().split('.', 2);
         const stateWithoutInternalNavigate: string = stateArray[0] + '.' + stateArray[1];
         const selectedItem: MenuItem = this.leftBarTabs.menuItems.find((item: MenuItem) => {
             let itemStateArray: Array<string> = item.state.split('.', 2);

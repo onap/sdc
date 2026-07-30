@@ -86,10 +86,13 @@ public class NotificationComponent extends AbstractPageObject {
 
     @AllArgsConstructor
     private enum XpathSelector {
-        MAIN_CONTAINER_DIV("notification-container", "//div[@class='%s']"),
-        MESSAGE_CONTENT_DIV("msg-content", "//div[@class='%s']"),
-        MESSAGE_SUCCESS_DIV("message", "//div[contains(@class, 'message') and (contains(text(),'successfully') or contains(text(), 'Successfully'))]"),
-        MESSAGE_CREATE_UPDATE_DIV("message", "//div[contains(@class, '%s') and (contains(text(), 'Create/Update') or contains(text(), 'created'))]");
+        MAIN_CONTAINER_DIV("sdc-notification-container", "//div[contains(@class, '%s')]"),
+        MESSAGE_CONTENT_DIV("sdc-notification__message", "//div[contains(@class, '%s')]"),
+        MESSAGE_SUCCESS_DIV("sdc-notification__text",
+            "//div[contains(@class, '%s') and (contains(., 'successfully') or contains(., 'Successfully'))]"),
+        MESSAGE_CREATE_UPDATE_DIV("sdc-notification__title",
+            "//div[(contains(@class, 'sdc-notification__title') and contains(., 'Create/Update'))"
+                + " or (contains(@class, 'sdc-notification__text') and contains(., 'created'))]");
 
         @Getter
         private final String id;

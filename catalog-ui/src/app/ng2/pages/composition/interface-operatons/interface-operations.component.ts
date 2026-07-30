@@ -55,6 +55,8 @@ import {
 } from "../../../components/ui/form-components/dropdown/ui-element-dropdown.component";
 import {ToscaArtifactService} from "../../../services/tosca-artifact.service";
 import {ToscaArtifactModel} from "../../../../models/toscaArtifact";
+import {SdcUiServices} from "onap-ui-angular";
+import {NotificationSettings} from "onap-ui-angular/dist/notifications/utilities/notification.config";
 
 export class UIInterfaceOperationModel extends InterfaceOperationModel {
     isCollapsed: boolean = true;
@@ -160,7 +162,7 @@ export class InterfaceOperationsComponent {
         private modalServiceNg2: ModalService,
         private compositionService: CompositionService,
         private workspaceService: WorkspaceService,
-        @Inject("Notification") private Notification: any,
+        private notificationsService: SdcUiServices.NotificationsService,
     ) {
         this.modalTranslation = new ModalTranslation(translateService);
     }
@@ -338,10 +340,11 @@ export class InterfaceOperationsComponent {
                 });
             }
         }, error => {
-            this.Notification.error({
-                message: 'Failed to Load the Deployed Artifacts:' + error,
-                title: 'Failure'
-            });
+            this.notificationsService.push(new NotificationSettings(
+                'error',
+                'Failed to Load the Deployed Artifacts:' + error,
+                'Failure',
+                5000));
         });
     }
 
@@ -352,10 +355,11 @@ export class InterfaceOperationsComponent {
                 toscaArtifactsFound.forEach(value => this.toscaArtifactTypes.push(new DropdownValue(value, value.type)));
             }
         }, error => {
-            this.Notification.error({
-                message: 'Failed to Load Tosca Artifacts:' + error,
-                title: 'Failure'
-            });
+            this.notificationsService.push(new NotificationSettings(
+                'error',
+                'Failed to Load Tosca Artifacts:' + error,
+                'Failure',
+                5000));
         });
     }
 
