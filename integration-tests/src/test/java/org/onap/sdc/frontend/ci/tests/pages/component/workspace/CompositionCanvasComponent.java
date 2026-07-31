@@ -15,6 +15,8 @@
  *
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
+ *  Modifications copyright (c) 2026 Deutsche Telekom.
+ *  ================================================================================
  */
 
 package org.onap.sdc.frontend.ci.tests.pages.component.workspace;
@@ -45,6 +47,7 @@ import org.openecomp.sdc.be.model.Service;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Point;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -54,6 +57,14 @@ import org.slf4j.LoggerFactory;
 public class CompositionCanvasComponent extends AbstractPageObject {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CompositionCanvasComponent.class);
+
+    /**
+     * Must match {@code CytoscapeEdgeEditation.HANDLE_SIZE} and {@code GraphUIObjects.HANDLE_SIZE} in catalog-ui.
+     */
+    private static final int HANDLE_SIZE = 18;
+    private static final int CREATE_LINK_MAX_ATTEMPTS = 3;
+    private static final int HANDLE_ARM_TIMEOUT_IN_SECONDS = 5;
+    private static final int WIZARD_RETRY_TIMEOUT_IN_SECONDS = 5;
     private static final String nodePositionJs = "var cy = window.jQuery('.sdc-composition-graph-wrapper').cytoscape('get');%n"
         + "var n = cy.nodes('[name=\"%s\"]');%n"
         + "var nPos = n.renderedPosition();%n"
@@ -66,6 +77,27 @@ public class CompositionCanvasComponent extends AbstractPageObject {
         + "var nodes = [];"
         + "cy.nodes().forEach((node) => {nodes.push(JSON.stringify({name: node.data('name'), position: node.renderedPosition()}))});\n"
         + "return nodes;";
+
+    /**
+     * Reproduces {@code CytoscapeEdgeEditation._getHandlePosition()}, the reference point the extension measures the mouse distance against in
+     * {@code _hitTestHandles()}. It must use the rendered dimensions rather than the {@code imgWidth} data attribute, because the node styles do
+     * not derive width and height from {@code imgWidth} alone and do not necessarily make them equal.
+     */
+    private static final String handlePositionJs = "var cy = window.jQuery('.sdc-composition-graph-wrapper').cytoscape('get');%n"
+        + "var n = cy.nodes('[name=\"%s\"]');%n"
+        + "var nPos = n.renderedPosition();%n"
+        + "var handleSize = " + HANDLE_SIZE + " * cy.zoom();%n"
+        + "return JSON.stringify({%n"
+        + "    x: nPos.x + n.renderedWidth() / 2 - handleSize,%n"
+        + "    y: nPos.y - n.renderedHeight() / 2%n"
+        + "})";
+
+    /**
+     * The edge-editation extension switches the body cursor to {@code pointer} from {@code _mouseMove()} the moment its handle hit test succeeds,
+     * and nothing else in catalog-ui writes that property. It is therefore the only externally observable proof that the handle is armed.
+     */
+    private static final String bodyCursorJs = "return window.jQuery('body').css('cursor');";
+    private static final String clearBodyCursorJs = "window.jQuery('body').css('cursor', 'inherit');";
 
     private final CompositionElementsComponent compositionElementsComponent;
     private final CompositionDetailSideBarComponent compositionDetailSideBarComponent;
@@ -215,7 +247,7 @@ public class CompositionCanvasComponent extends AbstractPageObject {
             final Point randomPositionInCanvas = getRandomPositionInCanvas();
             isPositionFree = canvasElementList.stream()
                 .noneMatch(canvasNodeElement -> Math.abs(canvasNodeElement.getPositionX() - randomPositionInCanvas.getX()) < minSpace
-                    && Math.abs(canvasNodeElement.getPositionX() - randomPositionInCanvas.getY()) < minSpace);
+                    && Math.abs(canvasNodeElement.getPositionY() - randomPositionInCanvas.getY()) < minSpace);
             if (isPositionFree) {
                 return randomPositionInCanvas;
             }
@@ -281,34 +313,84 @@ public class CompositionCanvasComponent extends AbstractPageObject {
             .filter(canvasNodeElement -> canvasNodeElement.getName().equals(toNodeName)).findFirst()
             .orElseThrow(() -> new UiTestFlowRuntimeException(String.format("Could not find node '%s'", toNodeName)));
 
-        final Point greenPlusPosition = getElementGreenPlusPosition(fromCanvasElement.getName());
-        final Point greenPlusPositionFromCenter = calculateOffsetFromCenter(greenPlusPosition);
         final Point toElementPositionFromCenter = calculateOffsetFromCenter(toCanvasElement.getPositionX(), toCanvasElement.getPositionY());
-        new Actions(webDriver)
-            .moveToElement(canvasWebElement, greenPlusPositionFromCenter.getX(), greenPlusPositionFromCenter.getY())
-            .moveByOffset(3, 3).moveByOffset(-3, -3)
-            .pause(Duration.ofMillis(500))
-            .clickAndHold()
-            .pause(Duration.ofMillis(500))
-            .moveToElement(canvasWebElement, toElementPositionFromCenter.getX(), toElementPositionFromCenter.getY())
-            .pause(Duration.ofMillis(500))
-            .release()
-            .perform();
-        return new RelationshipWizardComponent(webDriver);
+
+        for (int attempt = 1; attempt <= CREATE_LINK_MAX_ATTEMPTS; attempt++) {
+            if (!hoverOverGreenPlus(fromCanvasElement.getName(), attempt)) {
+                LOGGER.warn("Attempt {}/{} to hover the green plus of node '{}' did not arm the link handle", attempt, CREATE_LINK_MAX_ATTEMPTS,
+                    fromNodeName);
+                continue;
+            }
+            new Actions(webDriver)
+                .clickAndHold()
+                .pause(Duration.ofMillis(500))
+                .moveToElement(canvasWebElement, toElementPositionFromCenter.getX(), toElementPositionFromCenter.getY())
+                .pause(Duration.ofMillis(500))
+                .release()
+                .perform();
+
+            // Probed with its own instance, so that the component handed back to the caller always carries the default timeout for its remaining
+            // interactions. Only the last attempt waits the full timeout; the earlier ones fail over quickly.
+            final RelationshipWizardComponent wizardProbe = new RelationshipWizardComponent(webDriver);
+            if (attempt < CREATE_LINK_MAX_ATTEMPTS) {
+                wizardProbe.setTimeout(WIZARD_RETRY_TIMEOUT_IN_SECONDS);
+            }
+            try {
+                wizardProbe.isLoaded();
+                return new RelationshipWizardComponent(webDriver);
+            } catch (final TimeoutException e) {
+                LOGGER.warn("Attempt {}/{} dragged a link from '{}' to '{}' but the relationship wizard did not open", attempt,
+                    CREATE_LINK_MAX_ATTEMPTS, fromNodeName, toNodeName);
+            }
+        }
+        throw new CompositionCanvasRuntimeException(
+            String.format("Could not create a link from '%s' to '%s' in %s attempts", fromNodeName, toNodeName, CREATE_LINK_MAX_ATTEMPTS));
     }
 
+    /**
+     * Moves the mouse over the "add edge" (green plus) handle of the given node and waits for the edge-editation extension to arm it.
+     *
+     * <p>The handle must be armed before the mouse goes down: {@code CytoscapeEdgeEditation._mouseDown()} has its own hit test commented out and
+     * only starts a drag when {@code _hit} is already set, which happens exclusively in {@code _mouseMove()} and only while a node is hovered. A
+     * mouse down on a handle that was never hit-tested is silently a no-op, so no amount of waiting afterwards can recover it.
+     *
+     * <p>One move is not enough either, because {@code _hover} is set from the same event that the hit test runs on, leaving the first move into a
+     * node hit-testing with nothing hovered. Hence the two-step move: the first brings the node under the cursor, the second hit-tests the handle.
+     *
+     * @param elementName the name of the node to hover
+     * @param attempt     the current attempt number, used to vary the approach point
+     * @return true if the handle was armed before the timeout
+     */
+    private boolean hoverOverGreenPlus(final String elementName, final int attempt) {
+        final Point greenPlusPosition = calculateOffsetFromCenter(getElementGreenPlusPosition(elementName));
+        // The node's top edge runs through the handle's drawing origin, so aim slightly inside the node: on the edge itself, rounding can put the
+        // pointer outside the node, where no handle is hovered at all. This stays far inside the HANDLE_SIZE * zoom hit radius.
+        final int inset = HANDLE_SIZE / 4;
+        final int aimX = greenPlusPosition.getX() + inset;
+        final int aimY = greenPlusPosition.getY() + inset;
+        // A "pointer" read below must be attributable to this hover, not left over from a previous attempt.
+        ((JavascriptExecutor) webDriver).executeScript(clearBodyCursorJs);
+        new Actions(webDriver)
+            .moveToElement(canvasWebElement, aimX + attempt, aimY + attempt)
+            .moveToElement(canvasWebElement, aimX, aimY)
+            .perform();
+        try {
+            getWait(HANDLE_ARM_TIMEOUT_IN_SECONDS)
+                .until(driver -> "pointer".equals(((JavascriptExecutor) driver).executeScript(bodyCursorJs)));
+            return true;
+        } catch (final TimeoutException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Returns the position of the "add edge" (green plus) handle of a node, relative to the canvas element.
+     *
+     * @param elementName the name of the node whose handle position is wanted
+     * @return the handle position
+     */
     public Point getElementGreenPlusPosition(final String elementName) {
-        String scriptJS = "var cy = window.jQuery('.sdc-composition-graph-wrapper').cytoscape('get');\n"
-            + "var cyZoom = cy.zoom();\n"
-            + "var n = cy.nodes('[name=\"" + elementName + "\"]');\n"
-            + "var nPos = n.renderedPosition();\n"
-            + "var nData = n.data();\n"
-            + "var nImgSize = nData.imgWidth;\n"
-            + "var shiftSize = (nImgSize-18)*cyZoom/2;\n"
-            + "return JSON.stringify({\n"
-            + "\tx: nPos.x + shiftSize,\n"
-            + "\ty: nPos.y - shiftSize\n"
-            + "});";
+        final String scriptJS = String.format(handlePositionJs, elementName);
         final String o = (String) ((JavascriptExecutor) webDriver).executeScript(scriptJS);
         final JsonObject node = new JsonParser().parse(o).getAsJsonObject();
         final int x = node.get("x").getAsInt();
