@@ -43,18 +43,23 @@ sdc-modal {
 // and the page content. Restore the behaviour of the removed angular-ui-notification
 // stylesheet, which used `position: fixed; z-index: 9999`.
 //
-// The container is also moved clear of the workspace action buttons. angular-ui-notification
-// gave each toast its own fixed element and re-ran a reposition pass on every push, which
-// kept the newest toast at the top and pushed older ones down. The onap-ui-angular container
-// renders one static wrapper and iterates a plain array, so DOM order is push order and the
-// OLDEST toast holds the top slot for as long as it lives. At the library's `top: 10px` that
-// parks a long-lived toast (e.g. the 5s "Create VF" info toast) directly over the certify /
-// create buttons, which sit within the 50px top-nav plus the 53px action bar, and swallows
-// clicks aimed at them.
-// 113px = @top_nav_height (50px) + @action_nav_height (53px) + the library's own 10px inset.
+// The container is also moved out of the top-right corner. angular-ui-notification gave each
+// toast its own fixed element and re-ran a reposition pass on every push, which kept the newest
+// toast at the top and pushed older ones down. The onap-ui-angular container renders one static
+// wrapper and iterates a plain array, so DOM order is push order and the OLDEST toast holds the
+// top slot for as long as it lives. Anywhere in the top-right the resulting 300px column lands on
+// controls: at the library's `top: 10px` on certify / check in (y=62), and one action-bar height
+// lower on the General tab's Save button (y=103), the TOSCA Artifacts upload/download icons
+// (y=153), "Add Property" (y=113) and the composition sidebar's detail tabs (y=223). Offsetting
+// down the same column only moves which control is swallowed, so the column moves to the
+// bottom-right instead, where no action control is anchored on any workspace tab, the catalog,
+// the dashboard or the type workspace.
 // The values are inlined rather than referenced because this file is self-contained (it declares
 // its own variables above) and is pulled in by component stylesheets that never import
 // variables.less, directly or transitively.
+//
+// `top: auto` is required, not redundant: the library sets `top: 10px`, and without resetting it
+// an element with both `top` and `bottom` resolves against `top` and stays in the corner.
 //
 // The `body` prefix is load-bearing, not cosmetic. onboarding/openecomp-ui ALSO imports
 // onap-ui-common/lib/style.css (punch-outs.js), and PunchOutRegistry.loadOnBoarding() pulls that
@@ -66,9 +71,12 @@ sdc-modal {
 // exactly the ETSI onboarding flow. Qualifying with `body` (0,1,1) wins regardless of order.
 body .sdc-notification-container {
     position: fixed;
-    top: 113px;
+    top: auto;
+    bottom: 20px;
     z-index: 9999;
 
+    // The toast dismisses itself on click (NotificationComponent's template binds
+    // (click)="fadeOut()"), which is the only way to clear a 10s default-duration toast early.
     .sdc-notification {
         cursor: pointer;
     }
