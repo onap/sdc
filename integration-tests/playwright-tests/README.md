@@ -1,89 +1,111 @@
 # SDC Playwright E2E Tests
 
-Playwright-based end-to-end tests for the SDC frontend. These tests run against the same
-Docker stack used by the existing Selenium/TestNG integration tests (Cassandra, backend,
-frontend, webseal-simulator, etc.) but use [Playwright](https://playwright.dev/) instead
-of Selenium for browser automation.
+Playwright end-to-end tests for the SDC frontend, running against the same integration-test
+Docker stack as the Selenium/TestNG suite (Cassandra, backend, onboarding backend, frontend,
+webseal-simulator).
+
+**Why this suite exists.** `catalog-ui` is mid-migration from AngularJS 1.6 to Angular
+(epic SDC-4829). Every regression it has shipped so far was **green in Jest, green in AOT and
+green in Selenium**: a `$scope.save()` left as a no-op shim, dropdowns bound to a property that
+exists nowhere, top-nav buttons that updated the URL but not the view, CSS lost to a deleted
+`@import`. Those all need a real browser plus an assertion on the *effect* (the PUT body, the
+swapped view element) rather than on the UI's appearance. That is the gap these specs fill.
+
+---
+
+## TL;DR — the commands that work
+
+Assuming images are built and the stack is up (see [Starting the stack](#starting-the-stack)):
+
+```bash
+cd integration-tests/playwright-tests
+npm install && npx playwright install chromium      # first time only
+SDC_BASE_URL=http://localhost:8285 npx playwright test --reporter=list
+```
+
+Expected: **24 passed**, ~2.5 minutes, zero retries. Anything less is a real finding — read
+[Triage](#triage-when-tests-fail) before touching a spec, because most red runs here have been
+environmental, not test bugs.
+
+`SDC_BASE_URL` is **not** optional in practice. It defaults to `http://localhost:8285` in
+`playwright.config.ts`, which happens to be right for the Docker stack, but stating it makes the
+target explicit and is required for the dev-server path.
+
+---
 
 ## Prerequisites
 
 - Node.js 18+ (Playwright ≥ 1.42 requires it)
-- Docker
-- Ports 8080, 8285, 8443, 9042, 9443 free on the host
+- Docker with Compose v2
+- ~6 GB RAM for the containers
+- Free host ports (the full set the fabric8 stack binds): 4000, 4001, 4444, 5000, 5900, 6000,
+  8080, 8081, 8085, 8181, 8285, 8286, 8443, 8445, 9042, 9443
+- ONAP `settings.xml` at `~/.m2/settings.xml` (only for the Maven build steps)
 
-## Running locally
+## Starting the stack
 
-The tests need the integration-test Docker stack (Cassandra, backend, frontend,
-simulator). If the stack is already running, skip straight to "Run the tests".
-
-### 1. Build Docker images (one-time)
-
-The Docker images (`onap/sdc-backend-all-plugins`, `onap/sdc-frontend`, etc.)
-must exist locally. Build them from the repository root with **both** the
-`all` and `docker` profiles (`-P all` keeps the default module list active
-when other profiles are specified):
+### 1. Build the Docker images (one-time, ~15 min)
 
 ```bash
+# from the repo root
 mvn clean install -P all,docker -DskipTests
 ```
 
-> **Note:** `clean` is required so that the `build-helper-maven-plugin`
-> `parse-version` goal (bound to `pre-clean`) runs and resolves
-> `${parsedVersion.*}` variables used in Docker image tags.
+`-P all` keeps the default module list active when another profile is named. `clean` is
+required: the `build-helper-maven-plugin` `parse-version` goal is bound to `pre-clean`, and
+without it the `${parsedVersion.*}` variables in the Docker image tags do not resolve.
 
-### 2. Start the Docker stack
+### 2. Start the containers
 
 ```bash
-mvn pre-integration-test -P run-integration-tests-playwright \
-    -f integration-tests/pom.xml
+mvn pre-integration-test -P run-integration-tests-playwright -f integration-tests/pom.xml
 ```
 
-`pre-integration-test` starts the containers (Cassandra, backend, frontend,
-simulator, etc.) but does **not** run the tests or tear them down, so the
-stack stays up for iterating locally.
+`pre-integration-test` starts the containers but neither runs the tests nor tears them down, so
+the stack stays up for iterating. This is the `io.fabric8:docker-maven-plugin` stack, so
+containers are named with a **`-1` suffix** (`sdc-frontend-1`, `sdc-backend-all-plugins-1`, …),
+they carry **no Compose labels**, and they join the `sdc-network` bridge.
 
-Once healthy, the webseal-simulator is reachable at `http://localhost:8285`.
+> There is also a Compose file at `.claude/skills/sdc-local-dev/docker-compose.yml` which starts
+> an equivalent stack with **unsuffixed** names (`sdc-FE`, `sdc-BE`, `sdc-sim`). Pick one and stay
+> with it; the two cannot coexist, as both bind the same host ports and the same network aliases.
 
-Stop the containers later with:
+### 3. Wait for the readiness gate
+
+First start takes **4–6 minutes** — the bulk of it is importing ~97 normative types. The gate that
+actually matters is `sdc-BE-init` reaching `Done` (fabric8 waits up to 660 s on that log line). A
+backend that is up but has not finished importing normatives will fail asset creation with
+confusing category errors, so do not start testing early.
+
+```bash
+curl -s http://localhost:8080/sdc2/rest/healthCheck | python3 -m json.tool
+```
+
+`BE`, `JANUSGRAPH` and `CASSANDRA` must all be `UP`. **DMAAP and DE will be DOWN — that is
+expected** on a local stack and does not affect any of these tests.
+
+Then confirm the simulator, which is what `SDC_BASE_URL` points at:
+
+```bash
+curl -s -o /dev/null -w '%{http_code}\n' http://localhost:8285/login   # expect 200
+```
+
+### Stopping
 
 ```bash
 mvn docker:stop -f integration-tests/pom.xml
 ```
 
-### 3. Run the tests
-
-```bash
-cd integration-tests/playwright-tests
-npm install
-npx playwright install chromium
-SDC_BASE_URL=http://localhost:8285 npx playwright test
-```
-
-### Headed mode (see the browser)
-
-```bash
-SDC_BASE_URL=http://localhost:8285 npm run test:headed
-```
-
-### View the HTML report
-
-```bash
-npm run test:report
-```
-
 ## Running via Maven (full lifecycle)
 
-A single Maven command handles the entire lifecycle — spin up Docker, install
-Node/npm, install Playwright browsers, run the tests, tear down Docker:
+One command to start Docker, install Node/npm, install the browser, run the tests and tear
+Docker down again:
 
 ```bash
-mvn verify -P run-integration-tests-playwright \
-    -f integration-tests/pom.xml
+mvn verify -P run-integration-tests-playwright -f integration-tests/pom.xml
 ```
 
-> This assumes the Docker images already exist locally (see step 1 above).
-
-Reports are written to:
+Assumes the images already exist locally (step 1). Reports:
 
 | Artifact             | Path                                                      |
 | -------------------- | --------------------------------------------------------- |
@@ -91,135 +113,382 @@ Reports are written to:
 | JUnit XML            | `integration-tests/target/playwright-reports/results.xml` |
 | Screenshots & traces | `integration-tests/target/playwright-results/`            |
 
-## Fast iteration with webpack-dev-server (recommended for UI work)
+`trace: 'on'` is set unconditionally in `playwright.config.ts`, so every run leaves a trace.
+`npx playwright show-trace <zip>` is by far the fastest way to diagnose a failure.
 
-Instead of rebuilding Docker images on every code change (~3 min per iteration),
-you can run the catalog-ui webpack-dev-server with HMR and point Playwright at it
-directly (~2-5 seconds per iteration).
+---
 
-### Prerequisites
+## Triage: when tests fail
 
-- The Docker backend must be running (Cassandra + sdc-backend exposing port 8080)
-- Node.js installed in `catalog-ui/`
+Work down this list **before** editing a spec. Every entry below is a failure actually hit while
+building this suite, in descending order of how much time it costs to misdiagnose.
 
-#### Getting the Docker backend up
+### 1. Is the deployed image actually built from your HEAD?
 
-The dev server only needs the **backend** containers (Cassandra + sdc-backend),
-not the frontend or simulator. Start the full integration stack once (it brings
-up everything; the dev server then bypasses the Dockerised frontend):
+**This produced 9 simultaneous failures once, all phantoms.** The stack was serving an FE image
+built weeks earlier; the tests were faithfully reproducing regressions that had *already been
+fixed* in the working tree. Symptoms look exactly like real regressions, so check this first
+whenever more than two unrelated tests fail together.
 
 ```bash
-# from the repo root — build images once (see step 1 of "Running locally")
-mvn clean install -P all,docker -DskipTests
-
-# start the stack (backend, Cassandra, onboarding, FE, simulator)
-mvn pre-integration-test -P run-integration-tests-playwright -f integration-tests/pom.xml
+docker images --format '{{.Repository}}:{{.Tag}}\t{{.CreatedAt}}' | grep sdc-frontend | head -3
+git log -1 --format='HEAD %h %cd'
 ```
 
-Verify the backend is reachable on **8080** (the dev server proxies
-`/sdc1/feProxy/rest` → `localhost:8080/sdc2/rest`):
+If the image predates the commits you expect to be testing, rebuild the frontend (below). Then
+verify the **served** bundle rather than the image — a stale container can serve old code under a
+fresh tag:
 
 ```bash
-curl -s http://localhost:8080/sdc2/rest/v1/screen?excludeTypes=VFCMT -H "USER_ID: cs0008" | head -c 80
-# expect: {"resources":[...
+curl -s http://localhost:8181/ | grep -o 'main\.[0-9]*\.bundle\.js'
+curl -s "http://localhost:8181/scripts/main.<stamp>.bundle.js" | gunzip 2>/dev/null | grep -c '<symbol you expect>'
 ```
 
-The containers are named `sdc-backend-all-plugins-1`, `sdc-cassandra-1`,
-`sdc-onboard-backend-1`, `sdc-simulator-1`, `sdc-frontend-1` and join the
-`sdc-network` Docker bridge network. List them with `docker ps`.
+### 2. Rebuilding just the frontend
 
-> **Backend on a non-default port?** Point the dev server at it with
-> `SDC_BACKEND_HOST` / `SDC_BACKEND_PORT` (see "Pointing at a remote backend").
-
-#### (Optional) Rebuilding only the Dockerised frontend
-
-If you instead want to test a **production** frontend build inside Docker (what
-CI runs) rather than the dev server, rebuild just `sdc-frontend` and restart its
-container. The container **must** join `sdc-network` with the network alias
-`sdc-FE` — the webseal-simulator proxies to the host `sdc-FE:8181`, so without
-the alias every `/sdc1/feProxy/...` call through the simulator (port 8285)
-returns `500 UnknownHostException: sdc-FE`:
+The FE container **must** join `sdc-network` with the network alias `sdc-FE`. The simulator
+proxies to the host name `sdc-FE:8181`, so without the alias every `/sdc1/feProxy/...` call
+through port 8285 returns `500 UnknownHostException: sdc-FE` — and the whole suite goes red at
+login.
 
 ```bash
-# from repo root, after editing catalog-ui/
-cd catalog-ui && npx webpack --config webpack.production.js && cd ..
-rm -rf catalog-fe/src/main/webapp/scripts && cp -r catalog-ui/dist/* catalog-fe/src/main/webapp/
+# from the repo root, after editing catalog-ui/
+(cd catalog-ui && npx webpack --config webpack.production.js)
+cp -r catalog-ui/dist/. catalog-fe/src/main/webapp/
 mvn package -pl catalog-fe -DskipTests -Dcheckstyle.skip -Djacoco.skip=true -DskipPMD -q
 cp catalog-fe/target/catalog-fe-*-SNAPSHOT.war catalog-fe/sdc-frontend/
 mvn process-resources docker:build -pl catalog-fe -P docker -DskipTests -Ddocker.noCache=true -q
-docker rm -f sdc-frontend-1
+
+docker rm -f sdc-frontend-1                     # the name is NOT reused automatically
 docker run -d --name sdc-frontend-1 --network sdc-network --network-alias sdc-FE \
   -e ENVNAME=AUTO -e FE_HOSTNAME=sdc-frontend-1 \
   -e BE_HOSTNAME=sdc-backend-all-plugins-1 -e BE_PORT=8443 \
   -e ONBOARDING_BE_HOSTNAME=sdc-onboard-backend-1 -e ONBOARDING_BE_PORT=8445 \
   onap/sdc-frontend:latest
-# then run Playwright against the simulator: SDC_BASE_URL=http://localhost:8285
 ```
 
-This production-via-simulator path is the closest local reproduction of the CI
-Selenium environment; the dev server (below) is faster but not byte-identical.
+The `docker rm -f` is not optional: `docker run` fails on the existing name, and it is easy to
+read that error as a build failure.
 
-### Start the dev server
+Everything written into `catalog-fe/src/main/webapp/` and `catalog-fe/sdc-frontend/*.war` is a
+build byproduct and is already covered by `.gitignore` (`catalog-fe/src/main/webapp/*`, `*.war`).
+Never stage it.
+
+### 3. Known-benign console noise
+
+These appear on a healthy local stack. Do not chase them: the ADMIN-tab `RangeError`, "AngularJS
+injector before it being set", `NsProfile` ui-model warnings, and `404 /wf/workflows` (sdc-wfd is
+not part of this stack).
+
+### 4. Empty catalog / empty dashboard
+
+Not necessarily a regression — the local stack starts with no user-owned assets. Every spec that
+needs data creates it through the REST API (`api.createVf()` / `api.createService()`), so an
+empty *list* only matters if a spec depended on it. Check `/rest/v1/followed` before concluding
+anything.
+
+---
+
+## Fast iteration with webpack-dev-server
+
+Rebuilding the FE image per change costs ~3 minutes; the dev server costs ~2 seconds. The same
+specs run against both targets; the fixture detects which one via `IS_DEV_SERVER` and compensates
+for the two dev-server gaps below. One test — the simulator's user-table check — `test.skip`s on
+the dev server, which serves its own minimal `/login` with no such table. So expect
+**23 passed / 1 skipped** here versus **24 passed** against Docker.
+
+Restarting is required after editing `webpack.server.js`: HMR reloads application code, not the
+dev-server config.
 
 ```bash
 cd catalog-ui
-npm install   # first time only
-npm run start:local
+npm install     # first time only
+SDC_BACKEND_HOST=localhost SDC_BACKEND_PORT=8080 SDC_BACKEND_PROTOCOL=http npm start
 ```
-
-This starts webpack-dev-server on **port 9000** with:
-- Hot Module Replacement (code changes reload in ~2s)
-- A built-in `/login` page (no webseal-simulator needed)
-- API proxy to the local backend (`localhost:8080/sdc2/rest/...`)
-
-### Run tests against the dev server
 
 ```bash
 cd integration-tests/playwright-tests
 SDC_BASE_URL=http://localhost:9000 npx playwright test
 ```
 
-### Workflow
+### Pair the port with `SDC_DIRECT_FE` correctly, or every API call 404s
 
-1. Edit code in `catalog-ui/src/`
-2. Webpack recompiles automatically (~2s)
-3. Re-run the Playwright test
-4. Repeat
+`webpack.server.js:83` rewrites `^/sdc1/feProxy/rest` → `/sdc2/rest` **only when
+`SDC_DIRECT_FE` is not `true`**. So there are two valid configurations and two broken ones:
+
+| `SDC_BACKEND_PORT` | `SDC_DIRECT_FE` | Rewrite | Result |
+| --- | --- | --- | --- |
+| 8080 (BE) | unset/false | on → `/sdc2/rest` | ✅ 200 |
+| 8181 (FE) | `true` | off → `/sdc1/feProxy/rest` | ✅ 200 |
+| **8181 (FE)** | **unset/false** | on → `/sdc2/rest` | ❌ **404 — the FE has no `/sdc2/rest`** |
+| 8080 (BE) | `true` | off | ❌ 404 — the BE has no `/sdc1/feProxy` |
+
+Verified against this stack; the two ✅ rows return 200 and the two ❌ rows return 404. The
+default (`SDC_BACKEND_PORT=8080`, `SDC_DIRECT_FE` unset) is the one shown above.
+
+The failure symptom is thoroughly misleading: the app loads, then immediately lands on
+`#!/error-403` with `AUTH FAILED! from app module` in the console. It looks like a broken cookie
+or auth service. It is not — a bad `USER_ID` returns 403, not 404, and several unrelated
+endpoints 404 together. Verify the proxy through the dev server before browser-testing:
+
+```bash
+curl -s -o /dev/null -w '%{http_code}\n' -H 'USER_ID: cs0008' \
+  http://localhost:9000/sdc1/feProxy/rest/v1/user/authorize     # must be 200
+```
+
+### The dev server's "Not Found" modal blocks clicks
+
+Any 404 raises an SDC error modal, and its `.modal-background` backdrop then intercepts **every
+subsequent click**. The failure is maximally misleading: an opaque click timeout on a locator
+Playwright cheerfully reports as *"visible, enabled and stable"*, with the real cause a request
+that failed seconds earlier and several DOM layers away. Two dev-server-only 404s cause it:
+
+| Failing call | Why | Fix |
+| --- | --- | --- |
+| `/sdc1/feProxy/uicache/v1/catalog` | `uicache` is a **catalog-fe** concept. `FeProxyServlet` rewrites it to the BE's `rest/v1/screen`; nothing did that when the dev server targets the BE directly, so the CATALOG page 404'd. | Fixed at source in `catalog-ui/webpack.server.js` — the proxy now mirrors the servlet's mapping. Verified: BE `/sdc2/rest/v1/screen` returns the identical payload (same keys, 178 resources / 31 services). |
+| `/sdc1/feProxy/uicache/v1/catalog/resources/latestversion/notabstract/metadata` | The composition **left palette**. `FeProxyServlet:242-246` maps this one path to `rest/v1/**catalog**`, not `rest/v1/screen` — the same facade prefix, a different target. | Same fix, but as a **rule that must be listed first**: see the ordering note below. |
+| `/sdc1/rest/config/ui/plugins` | catalog-fe serves this from its own `plugins-configuration.yaml`; **the BE does not serve it at all** — every `/sdc2/rest/**/plugins` spelling returns 500, so a rewrite would turn a 404 into a 500. | Stubbed in the fixture (`stubPluginsConfig`, empty array), dev-server only. |
+
+**`pathRewrite` applies the FIRST matching rule only** — `http-proxy-middleware`'s
+`path-rewriter.js` returns `false` from its `forEach` on the first hit. The palette URL *starts
+with* `/uicache/v1/catalog`, so with the rules in the other order it is rewritten to
+`/v1/screen/resources/latestversion/notabstract/metadata`, which the BE answers **500**, and the
+error modal's backdrop then blocks every click on the composition page. Verify all three after any
+change to that block:
+
+```bash
+for p in \
+  '/sdc1/feProxy/uicache/v1/catalog/resources/latestversion/notabstract/metadata?internalComponentType=VF' \
+  '/sdc1/feProxy/uicache/v1/catalog' \
+  '/sdc1/feProxy/uicache/v1/followed' ; do
+  curl -s -o /dev/null -w "%{http_code} $p\n" -H 'USER_ID: cs0008' "http://localhost:9000$p"
+done   # all three must be 200
+```
+
+`stubPluginsConfig` is registered by the `sdcPage` fixture **before** `login()`, because the
+request fires during bootstrap — a route added afterwards misses it. Note that dismissing the
+modal after login is *not* sufficient for the uicache case: that request fires lazily on first
+CATALOG navigation, so the modal reappears mid-spec. Prefer removing the 404 to racing its modal.
+
+`dismissTransientModal(page)` remains available for specs that legitimately open a modal mid-flow.
+
+### `npm start` reaped with exit 144
+
+In some agent/harness sessions, launching webpack-dev-server as a backgrounded shell job (`&`,
+`nohup`, even `setsid`) gets its whole process group killed when the launching call returns. Use
+the harness's own background-run mechanism, then leave it strictly alone: poll readiness with
+read-only `curl http://localhost:9000` in *separate* commands, and never `pkill`/restart it
+mid-wait — issuing a process-touching command is what triggers the reap. The JIT dev bundle takes
+60–120 s to compile; wait before the first probe.
+
+`npm start` and `npm run start:local` are **the same command** (`webpack-dev-server`); the
+distinction in older docs was never real.
 
 ### Pointing at a remote backend
 
-To proxy API calls to a remote SDC instance (e.g. tnaplab) instead of the local
-Docker backend:
-
 ```bash
 cd catalog-ui
-SDC_BACKEND_HOST=sdc-fe-ui-oom-sm-master.tnaplab.telekom.de \
-SDC_BACKEND_PORT=443 \
-SDC_BACKEND_PROTOCOL=https \
-SDC_DIRECT_FE=true \
-npm start
+SDC_BACKEND_HOST=<host> SDC_BACKEND_PORT=443 SDC_BACKEND_PROTOCOL=https SDC_DIRECT_FE=true npm start
 ```
 
-## CI (Jenkins)
+---
 
-The JJB definition in `ci-management` registers the job
-`sdc-integration-tests-{stream}-playwright-verify-java`, which triggers on every
-Gerrit patch set and archives the report artifacts listed above.
+## Suite layout
+
+Import `test` from the fixtures module, **never** from `@playwright/test` directly — the local
+`test` is extended with the fixtures below.
+
+```ts
+import { test, expect, SEL, settles, gotoWorkspaceTab } from './fixtures/sdc';
+
+test('...', async ({ sdcPage, api }) => { ... });
+```
+
+| File | Guards |
+| --- | --- |
+| `tests/fixtures/sdc.ts` | fixtures, selectors, settle detection, navigation, REST asset creation |
+| `tests/sdc-sanity.spec.ts` | simulator login, `#!` hash prefix on the landing URL |
+| `tests/workspace-shell.spec.ts` | shell chrome, CREATE vs VIEW/EDIT mode, EXACT-class Selenium xpath contracts |
+| `tests/workspace-navigation.spec.ts` | top-nav view swap, deep-link, reload, BACK/FORWARD, unknown-route fallback, sidebar |
+| `tests/general-tab-save.spec.ts` | the silent-data-loss PUT, Service Role / Service Function controls |
+| `tests/interface-tabs.spec.ts` | downgraded interface components receive their `component` input |
+| `tests/unsaved-changes.spec.ts` | the dirty-form navigation guard: warns, blocks, then releases on OK |
+| `tests/composition-geometry.spec.ts` | composition's `bodyClass`-driven full-bleed layout |
+
+### Fixtures
+
+- **`sdcPage`** — a page already logged in as `cs0008` (DESIGNER) with the shell rendered, and
+  the dev-server modal dismissed if applicable.
+- **`api`** — an `SdcApi` over Playwright's `APIRequestContext` for creating assets out of band.
+  Deliberately *not* the page's `$http`: an in-page POST adds a pending request that the settle
+  predicate then blocks on, which is what made the earlier specs racy. It also survives CR 3,
+  since there is no AngularJS injector left to reach.
+
+### Selectors are contracts, not conveniences
+
+`SEL` in `fixtures/sdc.ts` is the single source of truth. Most entries are **also** depended on
+by Selenium page objects and/or Cypress specs, so changing one breaks three suites. Two in
+particular:
+
+- `mainRightContainer` / `topBar` are matched by **exact-class** xpath
+  (`//div[@class='%s']`, no `contains()`) in 8 Selenium page objects — 7 for
+  `w-sdc-main-right-container`, plus `ResourceWorkspaceTopBarComponent` for
+  `sdc-workspace-top-bar` and `sdc-workspace-top-bar-buttons`. Adding *any* class to those
+  elements breaks every one of them. `workspace-shell.spec.ts` asserts this.
+- `chromeCreateButton` vs `formSaveButton`: both carry `data-tests-id="create/save"`, so an
+  unscoped selector is ambiguous. Always scope by the wrapper class.
+
+### Settle detection
+
+`settles(page)` mirrors `AdditionalConditions.pageLoadWait()` from the Selenium suite — the
+predicate CI actually gates on (readyState, `jQuery.active`, `$rootScope.$$phase`,
+`$http.pendingRequests`, one `$timeout` flush). Prefer it over `waitForTimeout`.
+
+It returns **`false` rather than throwing** when the page is frozen: a `page.evaluate()` that
+never resolves means the Angular zone is blocked, which is the classic ngUpgrade hang signature,
+and it must fail loudly instead of timing out opaquely.
+
+The `window.angular` branch self-disables once CR 3 removes AngularJS. That is intentional, not a
+silent weakening — with no digest cycle there is nothing else to wait for.
+
+---
+
+## Navigation contract
+
+**Navigate by URL. Never through `$state`.** Phase 13 of the AngularJS removal deletes
+`angular-ui-router` (CR 2) and then the `angular` package itself (CR 3). Any spec reaching
+`window.angular.…injector().get('$state').go(...)` breaks at CR 2 and cannot even be *repaired*
+at CR 3. The URL shape, by contrast, is pinned by `PathUtilities.java:256` ("the component id is
+the segment immediately after `workspace`") and by ~70 Cypress URL lines, so it survives both.
+Navigating this way also exercises deep-linking, which `$state.go()` never did.
+
+Use `gotoWorkspaceTab(page, {id, type, tab})` and `gotoTopLevel(page, '/catalog')`.
+
+### CREATE mode has a DOUBLE slash
+
+```
+VIEW/EDIT: #!/dashboard/workspace/<id>/service/general
+CREATE:    #!/dashboard/workspace//service/general      ← empty id segment
+```
+
+That is what `$state.href('workspace.general', {type})` actually mints — the `:id` parameter is
+simply absent from the interpolation. The single-slash form found in
+`cypress/integration/service-distribution.spec.js` is **wrong**: ui-router binds `service` to
+`:id` and the tab segment to `:type`, so the workspace never renders. Verified against a live
+stack; do not "tidy" the double slash away.
+
+### Assert views with `toBeAttached()`, not `toBeVisible()`
+
+`<home-page>` and `<catalog-page>` are bare custom elements with no CSS rule of their own, so
+they compute to `display: inline` and measure 0×0 **even when their content fills the viewport**
+(the child `.sdc-catalog-container` is 1920 px wide but also 0-height, its children being
+floated). `toBeVisible()` therefore reports "hidden" on a perfectly rendered page.
+
+The pattern that works, and which each part of earns its place:
+
+```ts
+await expect(page.locator(SEL.catalogView)).toBeAttached();      // ui-router swapped the template
+await expect(page.locator(SEL.homeView)).toHaveCount(0);         // ...and removed the old one
+await expect(page.locator(SEL.catalogViewMarker).first()).toBeVisible();  // pixels were painted
+```
+
+The middle assertion is the one that catches the 2026-07-09 dead-click regression, where the URL
+and the menu highlight both updated correctly while the view never changed — a URL-only
+assertion passes and proves nothing.
+
+### Cold deep-links are broken product-side (known defect)
+
+A plain `page.goto('/sdc1#!/catalog')` silently lands on `#!/dashboard`. This is a **product
+defect**, not a test problem, and it has been there since `dd810f196` (2026-06-24). Angular's
+`HashLocationStrategy.prepareExternalUrl()` is `'#' + joinWithSlash(baseHref, internal)`, and
+`internal` is `/!/catalog` because `path()` strips only the leading `#`. The `!` is treated as a
+path segment, the URL becomes `#/!/catalog`, ui-router's `#!` prefix is destroyed, and ui-router
+falls through to `otherwise('dashboard')`. Observed hashchange sequence: `/!/catalog` → `!` →
+`!/dashboard`. Every route except `/dashboard` is affected, including F5 on a workspace URL.
+
+`gotoCold()` works around it (load at the dashboard entry point, then assign the hash) and is
+documented in place. `SdcHashLocationStrategy` in phase 13 CR 2 is the fix.
+
+One test — *"page reload is lost to the #!-prefix defect"* — deliberately asserts the **current,
+broken** behaviour, with the correct assertions written out beside it. **When CR 2 fixes this,
+that test will fail, and that failure is the signal to invert it.** It is written that way on
+purpose: a skipped test would let CR 2 ship a still-broken deep link unnoticed.
+
+### Some tab URLs need a TRAILING SLASH
+
+`composition/`, `deployment/` and `activity_log/` are declared with a trailing slash in their
+`url:` (`app.ts:371`, `:405`, `:389`). Omit it and ui-router fails to match, then silently lands on
+`/dashboard` — so a spec that forgets it measures the dashboard while believing it is on the
+canvas. `gotoWorkspaceTab(page, {tab: 'composition/'})` passes the segment through verbatim; keep
+the slash.
+
+---
+
+## Two different unsaved-changes modals
+
+There are **two** dialogs spelled `navigate-modal`, with incompatible markup. Reaching for the
+wrong one produces "no modal found" on a page that plainly has one — which reads as a broken guard
+and is not.
+
+| | Properties Assignment / Attributes-Outputs | General tab (and any tab with no modal of its own) |
+| --- | --- | --- |
+| Opened by | `ModalServiceSdcUI.openCustomModal` | `openWarningModal` in `app.ts:619-638`'s `onNavigateOut` |
+| Dialog selector | `[data-tests-id="navigate-modal"]` | `div.sdc-modal` — **carries no `data-tests-id` at all** |
+| Confirm button | `[data-tests-id="discardButton"]` | `[data-tests-id="navigate-modal-button-ok"]` |
+
+The second row's button id is the trap: `openWarningModal`'s third argument (`'navigate-modal'`)
+becomes the button-id **prefix**, *not* a testId on the dialog. So despite `app.ts:626` reading
+`testId: 'OK'`, no element ever carries `data-tests-id="OK"` here — measured live. Both are in
+`SEL` (`navigateModal`/`discardButton` and `warningModal`/`warningModalOkButton`).
+
+## Composition's layout comes from a class on `<body>`
+
+`bodyClass: 'composition'` travels from the state's `data` (`app.ts:381`) through
+`$rootScope.bodyClass` (`app.ts:726-729`) to `index.html:29`'s `<body data-ng-class="bodyClass">`,
+and `workspace.less:331-336` keys the full-bleed geometry off it. Nothing in Jest, AOT or Selenium
+models that chain. Measured on master at 1920×1080:
+
+| | `<body>` class | `.workspace-child-view` | shell sidebar |
+| --- | --- | --- | --- |
+| General | `ng-scope general` | `242,103` 1678×977 | present, 242 px |
+| Composition | `ng-scope composition` | `0,50` 1920×1030 | **absent** (`*ngIf="!isComposition"`) |
+
+`composition-geometry.spec.ts` measures **both** tabs in one test on purpose: the absolute numbers
+are viewport-dependent, so what pins the behaviour is the *difference*. It also hit-tests
+`elementFromPoint(300, 400)` for `CANVAS`, because geometry alone passes on a canvas covered by a
+click-swallowing overlay.
+
+---
 
 ## Writing new tests
 
-Add `.spec.ts` files under `tests/`. The Playwright config (`playwright.config.ts`)
-sets `baseURL` from the `SDC_BASE_URL` environment variable (default
-`http://localhost:8285`), so you can use relative URLs in `page.goto()`.
+1. Import from `./fixtures/sdc`, take `{ sdcPage, api }`.
+2. Create data through `api`, not the UI, unless creating it *is* the thing under test.
+3. Navigate with `gotoWorkspaceTab` / `gotoTopLevel`.
+4. `await settles(sdcPage)` after each navigation; never `waitForTimeout`.
+5. Add selectors to `SEL` rather than inlining them.
+6. **Assert on the effect, not the appearance.** The data-loss bug left the field showing the
+   typed text while sending nothing, so `general-tab-save.spec.ts` asserts on the PUT *body*.
+   `page.waitForRequest` and `page.route` are the tools that make a spec worth having.
+7. **Watch your new spec fail.** Break the thing it guards, confirm red, restore. A spec never
+   seen red is not known to pin anything — the top-nav guard here was validated by reintroducing
+   the real regression in `navigation.service.ts` and watching it go red.
 
-The webseal-simulator login flow is straightforward:
+Note the trap in `api.deleteAsset()`: deleting a **wrong** id also returns 204, so a 204 is not
+evidence the intended asset is gone.
 
-```ts
-await page.goto("/login");
-await page.locator('input[name="userId"]').fill("<userId>");
-await page.locator('input[name="password"]').fill("123123a");
-await page.locator('input[value="Login"]').click();
-await page.waitForURL("**/sdc1**");
-```
+---
 
-See `tests/sdc-sanity.spec.ts` for a working example.
+## CI
+
+**These tests do not run in CI.** `ci-management/jjb/sdc/sdc-csit.yaml` defines only two
+integration jobs, both `sdc-integration-tests-{stream}-{subproject}-verify-java`:
+
+| subproject | Maven profile | What runs |
+| --- | --- | --- |
+| `ui` | `docker,run-integration-tests-ui` | TestNG + Selenium (`onapUiSanity.xml`, `helmValidatorTests.xml`) |
+| `api` | `docker,run-integration-tests-api` | TestNG backend API suite |
+
+There is no `playwright` reference anywhere in `ci-management`. The
+`run-integration-tests-playwright` Maven profile exists and works, but nothing triggers it —
+so **run this suite locally before pushing**; a green Gerrit does not mean it passed.

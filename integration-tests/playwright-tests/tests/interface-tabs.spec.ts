@@ -1,64 +1,70 @@
-import { test, expect } from '@playwright/test';
+/*-
+ * ============LICENSE_START=======================================================
+ * SDC
+ * ================================================================================
+ * Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
 
-// Phase 4 verification: the interface_operation and interface-definition workspace
-// child states now render the downgraded Angular components directly (the AngularJS
-// view-model shim + wrapper HTML were removed). This confirms each tab still renders.
+/**
+ * Interface Operation / Interface Definition tab guards.
+ *
+ * WHAT THIS GUARDS: both tabs render their migrated Angular components AND receive their
+ * `component` input. Phase 13 CR 2 deletes the AngularJS shim controller that supplied
+ * `component` and `readonly` to these two routes, and BOTH page components dereference
+ * `this.component` synchronously inside ngOnInit's forkJoin — so a missing feed throws during
+ * activation and the tab renders empty. The `.workspace-interface-*` wrapper assertions catch
+ * that: the element attaches even when the component throws, but the wrapper div (recreated by
+ * CR 2 task 8, whose .less import is currently orphaned) does not.
+ *
+ * NOTE ON URL SHAPES: the two tabs use inconsistent URL segments — 'interface_operation'
+ * (snake_case) but 'interfaceDefinition' (camelCase) — because the underlying ui-router states
+ * are named 'workspace.interface_operation' and 'workspace.interface-definition'. Both shapes
+ * must be preserved verbatim by the CR 2 route config; that inconsistency is a contract, not a
+ * bug to tidy up here.
+ *
+ * HOW TO RUN: see README.md — `npx playwright test interface-tabs`.
+ */
 
-const SIM_PASSWORD = '123123a';
-const USER_ID = 'cs0008';
+import { test, expect, SEL, settles, currentRoute, gotoWorkspaceTab } from './fixtures/sdc';
 
-test.describe('Interface tabs render after AngularJS wrapper removal', () => {
+const TABS = [
+    { urlSegment: 'interface_operation', element: 'interface-operation', wrapper: '.workspace-interface-operation' },
+    { urlSegment: 'interfaceDefinition', element: 'interface-definition', wrapper: '.workspace-interface-definition' },
+] as const;
 
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/login');
-    await page.locator('input[name="userId"]').fill(USER_ID);
-    await page.locator('input[name="password"]').fill(SIM_PASSWORD);
-    await page.locator('input[value="Login"]').click();
-    await page.waitForURL('**/sdc1**', { timeout: 30_000 });
-    await expect(page.locator('[data-tests-id="main-menu-button-home"]')).toBeVisible({ timeout: 30_000 });
-  });
+test.describe('Interface tabs', () => {
 
-  test('interface_operation + interface-definition states render their Angular components', async ({ page }) => {
-    // pick any catalog component to open a workspace
-    const found = await page.evaluate(async () => {
-      const resp = await fetch('/sdc1/feProxy/rest/v1/screen?excludeTypes=VFCMT&excludeTypes=Configuration',
-        { headers: { 'USER_ID': 'cs0008' } });
-      const data = await resp.json();
-      const services = data.services || [];
-      const resources = data.resources || [];
-      const pick = services[0] || resources[0];
-      return pick ? { id: pick.uniqueId, type: pick.componentType.toLowerCase() } : null;
-    });
-    test.skip(!found, 'No component in catalog to open');
+    for (const tab of TABS) {
+        test(`${tab.urlSegment} renders its Angular component with the component input fed`, async ({ sdcPage, api }) => {
+            const svc = await api.createService('PwIface');
 
-    // navigate into the workspace shell first
-    await page.evaluate(({ id, type }) => {
-      const inj = (window as any).angular.element('body').injector();
-      inj.get('$state').go('workspace.general', { id, type });
-    }, found);
-    await expect(page.locator('[data-tests-id="GeneralLeftSideMenu"]')).toBeVisible({ timeout: 30_000 });
+            // Enter through the General tab first, as a user does, then switch: this exercises the
+            // in-app child-route transition rather than only a cold load.
+            await gotoWorkspaceTab(sdcPage, { id: svc.id, type: 'service', tab: 'general' });
+            await expect(sdcPage.locator(SEL.generalSideMenu)).toBeVisible({ timeout: 30_000 });
 
-    // ---- Interface Operation tab ----
-    await page.evaluate(({ id, type }) => {
-      const inj = (window as any).angular.element('body').injector();
-      inj.get('$state').go('workspace.interface_operation', { id, type });
-    }, found);
-    // the downgraded <interface-operation> element should be attached and rendered
-    await expect(page.locator('interface-operation')).toBeAttached({ timeout: 20_000 });
-    await expect(page.locator('.workspace-interface-operation')).toBeAttached({ timeout: 5_000 });
-    const opLanded = await page.evaluate(() =>
-      (window as any).angular.element('body').injector().get('$state').current.name);
-    expect(opLanded).toBe('workspace.interface_operation');
+            await gotoWorkspaceTab(sdcPage, { id: svc.id, type: 'service', tab: tab.urlSegment });
+            expect(await settles(sdcPage), 'page did not settle on the interface tab').toBe(true);
 
-    // ---- Interface Definition tab ----
-    await page.evaluate(({ id, type }) => {
-      const inj = (window as any).angular.element('body').injector();
-      inj.get('$state').go('workspace.interface-definition', { id, type });
-    }, found);
-    await expect(page.locator('interface-definition')).toBeAttached({ timeout: 20_000 });
-    await expect(page.locator('.workspace-interface-definition')).toBeAttached({ timeout: 5_000 });
-    const defLanded = await page.evaluate(() =>
-      (window as any).angular.element('body').injector().get('$state').current.name);
-    expect(defLanded).toBe('workspace.interface-definition');
-  });
+            await expect(sdcPage.locator(tab.element)).toBeAttached({ timeout: 20_000 });
+            // The wrapper is the discriminator: it is absent when the component throws during
+            // activation because its `component` input was never supplied.
+            await expect(sdcPage.locator(tab.wrapper)).toBeAttached({ timeout: 10_000 });
+
+            expect(await currentRoute(sdcPage)).toContain(tab.urlSegment);
+        });
+    }
 });

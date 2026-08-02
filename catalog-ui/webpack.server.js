@@ -89,14 +89,42 @@ module.exports = function (env) {
                 proxy(['/sdc1/feProxy/rest'], feProxyOptions));
 
             // Redirect all '/sdc1/feProxy/uicache' to feHost
-            middlewares.push(
-              proxy(['/sdc1/feProxy/uicache'], {
+            let uiCacheOptions = {
                 target: protocol + '://' + feHost + ':' + fePort,
                 changeOrigin: true,
                 secure: false
-              }));
+            }
+            // 'uicache' is a catalog-fe concept, not a backend one: FeProxyServlet maps it onto two
+            // DIFFERENT backend paths. When this dev server targets the BE directly (the default),
+            // nothing performs that mapping, so the affected page raises an error modal whose
+            // backdrop then blocks every click. Mirror the servlet here; not applied with
+            // SDC_DIRECT_FE, where the FE itself does it.
+            //
+            // Rule ORDER MATTERS — http-proxy-middleware applies the FIRST matching rule only
+            // (path-rewriter.js returns false from its forEach). The left-palette rule must
+            // therefore come before the catalog one, because the palette URL *starts with*
+            // '/uicache/v1/catalog' and would otherwise be rewritten to '/v1/screen/resources/...',
+            // which the BE answers with 500.
+            if (!isDirectToFE) {
+              uiCacheOptions.pathRewrite = {
+                // FeProxyServlet:242-246 — the composition left palette keeps 'v1/catalog'
+                // and only drops the facade segment.
+                '^/sdc1/feProxy/uicache/v1/catalog/resources/latestversion/notabstract/metadata'
+                    : '/sdc2/rest/v1/catalog/resources/latestversion/notabstract/metadata',
+                // FeProxyServlet:224-226 — the CATALOG page's facade path becomes 'rest/v1/screen'.
+                '^/sdc1/feProxy/uicache/v1/catalog' : '/sdc2/rest/v1/screen',
+                '^/sdc1/feProxy/uicache' : '/sdc2/rest'
+              }
+            }
+            middlewares.push(
+              proxy(['/sdc1/feProxy/uicache'], uiCacheOptions));
 
             // Redirect all '/sdc1/rest' to feHost
+            // NOT rewritten to '/sdc2/rest': the only caller is '/sdc1/rest/config/ui/plugins',
+            // which catalog-fe serves from its own plugins-configuration.yaml and the BE does not
+            // serve at all (every '/sdc2/rest/**/plugins' spelling returns 500). A rewrite would
+            // turn a 404 into a 500, so the dev server leaves this 404 and the Playwright fixture
+            // stubs the response instead — see stubPluginsConfig() in the playwright suite.
             middlewares.push(
                 proxy(['/sdc1/rest'],{
                     target: protocol + '://' + feHost + ':' + fePort,

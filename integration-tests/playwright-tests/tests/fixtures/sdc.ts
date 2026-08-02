@@ -1,0 +1,488 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * SDC
+ * ================================================================================
+ * Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
+
+/**
+ * Shared fixtures and helpers for the SDC Playwright suite.
+ *
+ * Import `test` from HERE, not from '@playwright/test' — this module re-exports a `test`
+ * extended with an auto-login `sdcPage` fixture and an `api` fixture for asset creation.
+ *
+ *     import { test, expect, SEL } from './fixtures/sdc';
+ *     test('...', async ({ sdcPage, api }) => { ... });
+ *
+ * DESIGN CONSTRAINT — why navigation goes through the URL, not through $state:
+ *   Phase 13 of the AngularJS removal deletes `angular-ui-router` (CR 2) and then the
+ *   `angular` package itself (CR 3). Any spec that reaches `window.angular.…injector()
+ *   .get('$state').go(...)` therefore stops working at CR 2 and cannot even be repaired
+ *   at CR 3, because there is no AngularJS injector left to reach.
+ *
+ *   `gotoWorkspaceTab()` below navigates by writing the hash URL instead. That URL shape
+ *   is a hard contract that survives BOTH CRs: the '#!' prefix is preserved by
+ *   SdcHashLocationStrategy and the '/<previousState>/workspace/<id>/<type>/<tab>' shape
+ *   is pinned by Selenium (PathUtilities.java) and 70 Cypress URL lines. Navigating by URL
+ *   is thus the only framework-agnostic option, AND it additionally exercises deep-linking,
+ *   which $state.go() never did.
+ *
+ * See README.md "Navigation contract" for the full rationale.
+ */
+
+import { test as base, expect, Page, APIRequestContext } from '@playwright/test';
+
+// ---------------------------------------------------------------------------
+// Environment
+// ---------------------------------------------------------------------------
+
+/** webseal-simulator password for every preconfigured user (openecomp-be/tools/webseal-simulator). */
+export const SIM_PASSWORD = '123123a';
+
+/** cs0008 = Carlos Santana, role DESIGNER. The role every workspace test needs. */
+export const DESIGNER_USER = 'cs0008';
+
+/**
+ * True when SDC_BASE_URL points at the webpack dev server (:9000) rather than the
+ * webseal-simulator (:8285). The dev server injects its own auth cookies and serves a
+ * built-in /login page, but it has no plugins-config endpoint, so it raises a transient
+ * "Not Found" modal that must be dismissed before clicks land.
+ */
+export const IS_DEV_SERVER = (process.env.SDC_BASE_URL || '').includes(':9000');
+
+// ---------------------------------------------------------------------------
+// Selectors — single source of truth
+//
+// Every selector here is ALSO depended on by Selenium page objects and/or Cypress specs,
+// so they are contracts, not conveniences. Changing one breaks three test suites.
+// ---------------------------------------------------------------------------
+
+export const SEL = {
+    /** Top-nav HOME button. `top-nav.component.html:30` builds it from the menu item text. */
+    homeButton: '[data-tests-id="main-menu-button-home"]',
+    catalogButton: '[data-tests-id="main-menu-button-catalog"]',
+
+    /**
+     * The rendered VIEW for each top-level route: the element ui-router puts inside <div ui-view>.
+     * These are the discriminators for the 2026-07-09 dead-click regression, where the URL and the
+     * menu highlight both updated correctly while the view never changed — so a URL-only assertion
+     * passes and proves nothing. ui-router swaps the two, so exactly one is ever attached.
+     *
+     * ASSERT WITH toBeAttached(), NOT toBeVisible(). Both <home-page> and <catalog-page> are bare
+     * custom elements with no CSS rule of their own, so they compute to `display: inline` and
+     * measure 0x0 even when their content fills the viewport (their child .sdc-catalog-container
+     * is 1920px wide but also 0-height, as its own children are floated). toBeVisible() therefore
+     * reports "hidden" on a perfectly rendered page. Use the *Marker selectors below when a test
+     * needs to prove pixels were actually painted.
+     */
+    homeView: 'home-page',
+    catalogView: 'catalog-page',
+
+    /**
+     * Genuinely-painted content inside each view — verified live at >40x10 px. Pair these with the
+     * *View selectors: the view element proves ui-router swapped the template, the marker proves
+     * the template actually rendered rather than erroring out to an empty shell.
+     */
+    homeViewMarker: '[data-tests-id="dashboard-Elements"]',
+    catalogViewMarker: '[data-tests-id="statusFilterTitle"]',
+
+    /**
+     * The top-nav's HOME entry exists ONLY outside the workspace. Inside a workspace the same slot
+     * is re-rendered as a breadcrumb trail (top-nav.component.html:39), so HOME becomes
+     * breadcrumbs-button-0 and `main-menu-button-home` is absent from the DOM entirely. Using the
+     * wrong one inside the workspace produces a 60 s click timeout, not a helpful failure.
+     */
+    homeBreadcrumb: '[data-tests-id="breadcrumbs-button-0"]',
+
+    /** Workspace left sidebar — General tab entry. `workspace-container.component.html:18`. */
+    generalSideMenu: '[data-tests-id="GeneralLeftSideMenu"]',
+    /** Any sidebar tab button, by its visible label. */
+    sideMenu: (label: string) => `[data-tests-id="${label}LeftSideMenu"]`,
+    /** All sidebar items — used to assert the sidebar is populated at all. */
+    sideMenuItems: '.i-sdc-designer-sidebar-section-content-item',
+
+    /**
+     * The loader Selenium's LoaderHelper.waitForLoader() waits on. THREE elements can carry
+     * data-tests-id="loader": <sdc-loader testId="loader"> (app.component.html:17) and the two
+     * inline divs in workspace-container.component.html (:5 and :46). All three must keep it.
+     */
+    loader: '[data-tests-id="loader"], .tlv-loader, .sdc-loader-global-wrapper.sdc-loader-background',
+
+    /** General-tab form fields. */
+    name: '[data-tests-id="name"]',
+    description: '[data-tests-id="description"]',
+    category: '[data-tests-id="selectGeneralCategory"]',
+    vendorName: '[data-tests-id="vendorName"]',
+    vendorRelease: '[data-tests-id="vendorRelease"]',
+    versionHeader: '[data-tests-id="versionHeader"]',
+
+    /**
+     * The CREATE button lives in the workspace CHROME (top bar); the General tab's SAVE button
+     * lives in the form's action-buttons row. Both carry data-tests-id="create/save", so an
+     * unscoped selector is ambiguous — always scope by the wrapper class.
+     */
+    chromeCreateButton: '.sdc-workspace-top-bar-buttons [data-tests-id="create/save"]',
+    formSaveButton: '.w-sdc-main-container-body-content-action-buttons [data-tests-id="create/save"]',
+
+    /**
+     * EXACT-class xpath contract: 8 Selenium page objects build their locator as
+     * "//div[@class='%s']" with NO contains() — 7 for 'w-sdc-main-right-container' (e.g.
+     * pages/AttributesPage.java, pages/home/HomePage.java) and ResourceWorkspaceTopBarComponent
+     * for 'sdc-workspace-top-bar'. Adding ANY class to either element breaks every one of them.
+     * Asserted by workspace-shell.spec.ts.
+     */
+    mainRightContainer: 'div.w-sdc-main-right-container',
+    topBar: 'div.sdc-workspace-top-bar',
+
+    /**
+     * The PA/AO unsaved-changes modal, opened via ModalServiceSdcUI.openCustomModal with
+     * testId: "navigate-modal" (properties-assignment.page.component.ts:1301,
+     * attributes-outputs.page.component.ts:696). Its three buttons are a Cypress contract.
+     */
+    navigateModal: '[data-tests-id="navigate-modal"]',
+    discardButton: '[data-tests-id="discardButton"]',
+
+    /**
+     * The SECOND, different unsaved-changes modal: app.ts:619-638's `onNavigateOut`, opened with
+     * openWarningModal(). It guards the General tab, which has no modal of its own.
+     *
+     * Its markup does NOT match the custom-modal one, which is why a `.custom-modal` or
+     * `[data-tests-id="navigate-modal"]` selector finds nothing here — measured live:
+     *   - the dialog is `div.sdc-modal` (legacy onap-ui-angular markup) and carries NO
+     *     data-tests-id at all, so it can only be reached by class;
+     *   - openWarningModal's third argument ('navigate-modal') is NOT emitted as a testId on the
+     *     dialog. It becomes the button-id PREFIX, so the OK button's real attribute is
+     *     data-tests-id="navigate-modal-button-ok" — NOT the bare 'OK' that app.ts:626's
+     *     `testId: 'OK'` suggests and that the phase 13 CR 2 plan records.
+     */
+    warningModal: 'div.sdc-modal',
+    warningModalOkButton: '[data-tests-id="navigate-modal-button-ok"]',
+    okButton: "[data-tests-id='OK']",
+} as const;
+
+// ---------------------------------------------------------------------------
+// Settle detection
+// ---------------------------------------------------------------------------
+
+/**
+ * Mirrors AdditionalConditions.pageLoadWait() from the Selenium suite, which is what CI
+ * actually gates on. The `window.angular` branch is skipped automatically once CR 3 removes
+ * AngularJS, at which point only readyState + jQuery.active remain — that is intentional and
+ * correct, not a silent weakening: with no digest cycle there is nothing else to wait for.
+ */
+const PAGE_LOAD_WAIT = `
+  try {
+    if (document.readyState !== 'complete') return false;
+    if (window.jQuery && window.jQuery.active) return false;
+    if (window.angular) {
+      if (!window.qa) { window.qa = { doneRendering: false }; }
+      var injector = window.angular.element('body').injector();
+      if (!injector) return false;
+      var $rootScope = injector.get('$rootScope');
+      var $http = injector.get('$http');
+      var $timeout = injector.get('$timeout');
+      if ($rootScope.$$phase === '$apply' || $rootScope.$$phase === '$digest' || $http.pendingRequests.length !== 0) {
+        window.qa.doneRendering = false; return false;
+      }
+      if (!window.qa.doneRendering) { $timeout(function() { window.qa.doneRendering = true; }, 0); return false; }
+    }
+    return true;
+  } catch (ex) { return false; }
+`;
+
+/**
+ * Waits until the page settles by the Selenium definition. Returns false on timeout AND on a
+ * frozen page — a page.evaluate() that never resolves means the Angular zone is blocked, which
+ * is the classic ngUpgrade hang signature and must fail loudly rather than time out silently.
+ */
+export async function settles(page: Page, timeoutMs = 30_000): Promise<boolean> {
+    const start = Date.now();
+    while (Date.now() - start < timeoutMs) {
+        const r = await page.evaluate(new Function(PAGE_LOAD_WAIT) as any).catch(() => 'FROZEN');
+        if (r === 'FROZEN') return false;
+        if (r === true) return true;
+        await page.waitForTimeout(500);
+    }
+    return false;
+}
+
+/**
+ * Dismisses the transient "Not Found" error modal if one is open. Kept for specs that trigger a
+ * modal mid-flow; the dev-server plugins-config case is prevented at source by stubPluginsConfig().
+ */
+export async function dismissTransientModal(page: Page): Promise<void> {
+    const okBtn = page.locator(`${SEL.okButton}, button:has-text('OK')`);
+    if (await okBtn.count()) {
+        await okBtn.first().click({ timeout: 3_000 }).catch(() => { /* modal closed itself */ });
+        await page.waitForTimeout(500);
+    }
+}
+
+/**
+ * The dev server proxies '/sdc1/feProxy/rest/*' but NOT '/sdc1/rest/config/ui/plugins', which the
+ * catalog-fe servlet serves in the Docker stack. The resulting 404 raises an error modal whose
+ * `.modal-background` backdrop then intercepts every click, and — because the request is fired
+ * lazily, after login — dismissing the modal once at login is too early: it reappears mid-spec.
+ *
+ * So stub the endpoint instead of racing its modal. An empty plugin list is the honest stub: none
+ * of the plugins the FE returns (POLICY, WORKFLOW, …) is reachable from a dev server anyway.
+ *
+ * DEV SERVER ONLY, deliberately. Plugin entries become workspace sidebar tabs, so stubbing this
+ * against the Docker stack would change what the sidebar specs see — and that stack is the
+ * CI-faithful path, which must stay byte-identical to what Selenium exercises. The divergence is
+ * therefore in the direction of the *less* authoritative target, and it is bounded to plugin tabs,
+ * which no spec here asserts on.
+ */
+export async function stubPluginsConfig(page: Page): Promise<void> {
+    await page.route('**/sdc1/rest/config/ui/plugins', (route) =>
+        route.fulfill({ status: 200, contentType: 'application/json', body: '[]' }));
+}
+
+// ---------------------------------------------------------------------------
+// Login
+// ---------------------------------------------------------------------------
+
+/**
+ * Logs in through the webseal-simulator (or the dev server's equivalent /login page) and
+ * waits for the SDC shell to render. Asserting on the HOME button rather than a fixed sleep
+ * is what makes this reliable; the previous per-spec helpers used waitForTimeout(5000).
+ */
+export async function login(page: Page, userId: string = DESIGNER_USER): Promise<void> {
+    await page.goto('/login');
+    await page.locator('input[name="userId"]').fill(userId);
+    await page.locator('input[name="password"]').fill(SIM_PASSWORD);
+    await page.locator('input[value="Login"]').click();
+    await page.waitForURL('**/sdc1**', { timeout: 30_000 });
+    await expect(page.locator(SEL.homeButton)).toBeVisible({ timeout: 30_000 });
+}
+
+// ---------------------------------------------------------------------------
+// URL-based navigation — the CR2/CR3-proof path
+// ---------------------------------------------------------------------------
+
+/**
+ * KNOWN PRODUCT DEFECT — cold deep-linking is broken on master for EVERY route except
+ * '/dashboard', and has been since dd810f196 (2026-06-24, "Activate Angular Router alongside
+ * ui-router for leaf routes").
+ *
+ * Mechanism, traced with a hashchange listener installed via addInitScript before bootstrap:
+ *   1. The document loads at '#!/catalog'.
+ *   2. The Angular Router (RouterModule.forRoot(routes, {useHash: true}),
+ *      app.routing.module.ts:62) performs its initial navigation. Angular's
+ *      HashLocationStrategy.prepareExternalUrl() is `'#' + joinWithSlash(baseHref, internal)`
+ *      (@angular/common 5.2.11), and `internal` here is '/!/catalog' because path() strips only
+ *      the leading '#'. The '!' is therefore treated as a path segment, and the URL is rewritten
+ *      to '#/!/catalog' — ui-router's '#!' prefix is destroyed.
+ *   3. ui-router no longer recognises the URL and falls through to
+ *      $urlRouterProvider.otherwise('dashboard') (app.ts:75), landing on '#!/dashboard'.
+ * Observed hashchange sequence: '/!/catalog' → '!' → '!/dashboard'.
+ *
+ * This is exactly what SdcHashLocationStrategy (phase 13 CR 2, task 3) exists to fix. Until then
+ * `gotoCold()` reproduces a cold load in the only way that WORKS today: load the app at its
+ * dashboard entry point, then assign the hash. That still exercises the resolver/guard ordering
+ * and the full route recognition path, but NOT the pre-bootstrap URL parse.
+ *
+ * WHEN CR 2 LANDS: delete the two-step fallback below and make it a single page.goto(). If a
+ * plain goto() to a deep hash route then works, the defect is fixed and the workaround is dead
+ * weight; if it does not, SdcHashLocationStrategy is wrong and must not merge.
+ */
+export async function gotoCold(page: Page, path: string): Promise<void> {
+    await page.goto('/sdc1#!/dashboard');
+    await settles(page);
+    await page.evaluate((p) => { window.location.hash = `#!${p}`; }, path);
+    await settles(page);
+}
+
+/**
+ * Navigates to a workspace child tab by URL.
+ *
+ * The '#!' hash prefix and the '/<previousState>/workspace/<id>/<type>/<tab>' segment order
+ * are contracts pinned by Selenium's PathUtilities.java:256 ("the component id is the URL
+ * segment immediately after 'workspace'") and by 70 Cypress URL lines. They therefore survive
+ * the ui-router removal, which is exactly why navigating this way is durable.
+ *
+ * Uses a HASH ASSIGNMENT rather than page.goto() when already inside the app: a cold goto() to
+ * a deep hash route silently lands on #!/dashboard (both ui-router's and the Angular Router's
+ * initial-navigation races lose to the app bootstrap). Pass `cold: true` to deliberately test
+ * the deep-link/reload path — that is a distinct behaviour worth its own assertions.
+ */
+export async function gotoWorkspaceTab(
+    page: Page,
+    opts: { id?: string; type: 'resource' | 'service'; tab?: string; previousState?: string; cold?: boolean },
+): Promise<void> {
+    const { id, type, tab = 'general', previousState = 'dashboard', cold = false } = opts;
+    // CREATE mode has an EMPTY id segment, i.e. a DOUBLE slash:
+    // '#!/dashboard/workspace//service/general'. That is what $state.href('workspace.general',
+    // {type}) actually mints, because the ':id' parameter is simply absent from the interpolation.
+    // The single-slash form '#!/dashboard/workspace/service/general' used by
+    // cypress/integration/service-distribution.spec.js is WRONG — ui-router binds 'service' to
+    // :id and the tab segment to :type, so the workspace never renders. Verified against a live
+    // stack; do not "tidy" the double slash away.
+    const path = id
+        ? `/${previousState}/workspace/${id}/${type}/${tab}`
+        : `/${previousState}/workspace//${type}/${tab}`;
+
+    if (cold) {
+        await gotoCold(page, path);
+    } else {
+        await page.evaluate((p) => { window.location.hash = `#!${p}`; }, path);
+    }
+    await settles(page);
+}
+
+/** Navigates to a top-level route (dashboard, catalog, onboardVendor, adminDashboard, …). */
+export async function gotoTopLevel(page: Page, path: string): Promise<void> {
+    await page.evaluate((p) => { window.location.hash = `#!${p}`; }, path);
+    await settles(page);
+}
+
+/** Reads the current logical route from the hash — framework-agnostic, works before and after CR 2. */
+export async function currentRoute(page: Page): Promise<string> {
+    return page.evaluate(() => window.location.hash.replace(/^#!?/, ''));
+}
+
+// ---------------------------------------------------------------------------
+// Asset creation via the REST API
+// ---------------------------------------------------------------------------
+
+export interface CreatedAsset {
+    id: string;
+    name: string;
+    type: 'resource' | 'service';
+}
+
+/**
+ * Creates assets through Playwright's APIRequestContext rather than through the page's
+ * $http service. Two reasons this matters beyond avoiding `window.angular`:
+ *   1. It survives CR 3 (no AngularJS injector to reach).
+ *   2. It does not perturb the page under test — an in-page $http.post adds a pending request
+ *      that pageLoadWait() then blocks on, which made the old specs racy.
+ *
+ * The USER_ID header is what the backend authorises on; the simulator's cookies are only
+ * needed by the browser, not by direct API calls.
+ */
+export class SdcApi {
+    constructor(private request: APIRequestContext, private baseUrl: string) {}
+
+    private get headers() {
+        return { 'USER_ID': DESIGNER_USER, 'Content-Type': 'application/json' };
+    }
+
+    private url(path: string): string {
+        return `${this.baseUrl}/sdc1/feProxy/rest/v1${path}`;
+    }
+
+    /** Creates a VF resource in NOT_CERTIFIED_CHECKOUT state (i.e. immediately editable). */
+    async createVf(namePrefix = 'PwVF'): Promise<CreatedAsset> {
+        const name = namePrefix + Date.now();
+        const resp = await this.request.post(this.url('/catalog/resources'), {
+            headers: this.headers,
+            data: {
+                name,
+                description: 'created by the Playwright suite',
+                componentType: 'RESOURCE',
+                resourceType: 'VF',
+                categories: [{
+                    name: 'Generic',
+                    normalizedName: 'generic',
+                    uniqueId: 'resourceNewCategory.generic',
+                    subcategories: [{
+                        name: 'Abstract',
+                        normalizedName: 'abstract',
+                        uniqueId: 'resourceNewCategory.generic.abstract',
+                    }],
+                }],
+                vendorName: 'pwVendor',
+                vendorRelease: '1.0',
+                contactId: DESIGNER_USER,
+                icon: 'defaulticon',
+                tags: [name],
+            },
+        });
+        const body = await resp.json().catch(() => ({}));
+        expect(resp.status(), `VF creation failed: ${JSON.stringify(body)}`).toBe(201);
+        return { id: body.uniqueId, name, type: 'resource' };
+    }
+
+    /**
+     * Creates a Service. Needed for the service-only General-tab fields (Service Role /
+     * Service Function), which a VF never renders.
+     */
+    async createService(namePrefix = 'PwSvc'): Promise<CreatedAsset> {
+        const name = namePrefix + Date.now();
+        const resp = await this.request.post(this.url('/catalog/services'), {
+            headers: this.headers,
+            data: {
+                name,
+                description: 'created by the Playwright suite',
+                componentType: 'SERVICE',
+                categories: [{
+                    name: 'Network Service',
+                    normalizedName: 'network service',
+                    uniqueId: 'serviceNewCategory.network service',
+                }],
+                contactId: DESIGNER_USER,
+                icon: 'defaulticon',
+                tags: [name],
+            },
+        });
+        const body = await resp.json().catch(() => ({}));
+        expect(resp.status(), `Service creation failed: ${JSON.stringify(body)}`).toBe(201);
+        return { id: body.uniqueId, name, type: 'service' };
+    }
+
+    /**
+     * Deletes an asset. Note the trap recorded in the regression-test skill: the wrong id ALSO
+     * returns 204, so a 204 is not evidence the intended asset is gone.
+     */
+    async deleteAsset(asset: CreatedAsset): Promise<void> {
+        const collection = asset.type === 'resource' ? 'resources' : 'services';
+        await this.request
+            .delete(this.url(`/catalog/${collection}/${asset.id}`), { headers: this.headers })
+            .catch(() => { /* best-effort cleanup; a leaked test asset must not fail the suite */ });
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Fixtures
+// ---------------------------------------------------------------------------
+
+interface SdcFixtures {
+    /** A page already logged in as cs0008 (DESIGNER) with the SDC shell rendered. */
+    sdcPage: Page;
+    /** REST client for creating/deleting assets out-of-band. */
+    api: SdcApi;
+}
+
+export const test = base.extend<SdcFixtures>({
+    sdcPage: async ({ page }, use) => {
+        // Must be registered BEFORE login: the request fires during app bootstrap, and a route
+        // added afterwards would miss it. See stubPluginsConfig() for why this is dev-server only.
+        if (IS_DEV_SERVER) {
+            await stubPluginsConfig(page);
+        }
+        await login(page);
+        await use(page);
+    },
+
+    api: async ({ playwright, baseURL }, use) => {
+        const ctx = await playwright.request.newContext({ ignoreHTTPSErrors: true });
+        await use(new SdcApi(ctx, baseURL || 'http://localhost:8285'));
+        await ctx.dispose();
+    },
+});
+
+export { expect };
