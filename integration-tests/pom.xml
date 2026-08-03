@@ -56,6 +56,9 @@ limitations under the License.
         <it.docker.version>latest</it.docker.version>
         <it.ui.firefox.version>86.0</it.ui.firefox.version>
         <it.helm-validator.disabled>true</it.helm-validator.disabled>
+        <!-- The Selenium grid is only needed by the TestNG UI suite; the Playwright suite drives
+             its own bundled browser. Defaults to enabled so the Jenkins CSIT jobs are unaffected. -->
+        <it.selenium.disabled>false</it.selenium.disabled>
         <it.test-model.disabled>true</it.test-model.disabled>
         <it.helm-validator.version>1.3.1</it.helm-validator.version>
 
@@ -1214,6 +1217,7 @@ limitations under the License.
                             <name>selenium/standalone-firefox:${it.ui.firefox.version}</name>
                             <alias>firefox-standalone</alias>
                             <run>
+                                <skip>${it.selenium.disabled}</skip>
                                 <hostname>firefox-standalone</hostname>
                                 <wait>
                                     <time>30000</time>
@@ -1504,6 +1508,9 @@ limitations under the License.
                 <checkstyle.skip>true</checkstyle.skip>
                 <surefire.skip.tests>true</surefire.skip.tests>
                 <skipTest>false</skipTest>
+                <!-- Playwright ships its own Chromium, so the 1.45 GB Selenium grid image is dead
+                     weight here — skipping it matters on a disk-constrained GitHub-hosted runner. -->
+                <it.selenium.disabled>true</it.selenium.disabled>
                 <it.playwright.baseUrl>http://localhost:8285</it.playwright.baseUrl>
                 <it.playwright.nodeVersion>v18.20.8</it.playwright.nodeVersion>
                 <it.playwright.npmVersion>10.8.2</it.playwright.npmVersion>

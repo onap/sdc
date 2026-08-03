@@ -481,14 +481,62 @@ evidence the intended asset is gone.
 
 ## CI
 
-**These tests do not run in CI.** `ci-management/jjb/sdc/sdc-csit.yaml` defines only two
-integration jobs, both `sdc-integration-tests-{stream}-{subproject}-verify-java`:
+This suite runs in **GitHub Actions**, not Jenkins: `.github/workflows/gerrit-verify-playwright.yaml`.
+ONAP is migrating CI off Jenkins/`ci-management` onto GHA, so new jobs are added there.
+
+**It is currently NON-VOTING.** The `vote` job passes `comment-only: true`, so a red run posts a
+comment on the change but never `-1`s it. Until that flips, a green Gerrit still does not prove
+this suite passed — read the comment, or the run's artifacts. To make it a gate, set
+`comment-only: false` in the `vote` job.
+
+The workflow is a self-contained three-job pipeline (`notify` → `playwright` → `vote`) rather than
+a thin caller of `lfit/releng-reusable-workflows/.../compose-maven-verify.yaml`, because that
+reusable workflow uploads no artifacts — and for a UI suite the traces *are* the debugging story.
+It runs two Maven commands, the same two documented above:
+
+```bash
+mvn clean install -P all,docker -DskipTests ...          # build images
+mvn verify -P run-integration-tests-playwright -f integration-tests/pom.xml
+```
+
+Every run uploads a `playwright-report` artifact (HTML report, JUnit XML, screenshots, traces),
+retained 14 days, with `if: always()` so a failing run still produces it. Download it and run
+`npx playwright show-trace <trace.zip>`. On failure it additionally dumps `docker ps -a` plus the
+last 200 log lines of every container, because a stack that never became healthy is the most
+common failure mode and is invisible in the Playwright report.
+
+Two constraints worth knowing before editing that workflow:
+
+- **JDK 11, not 17.** SDC is Java 11 source/target. The LF reusable workflows default to 17.
+- **The disk-reclaim step is load-bearing.** A GitHub-hosted runner has ~14 GB free; the stack
+  needs ~6 GB of images plus the build tree. Removing the preinstalled Android/.NET/GHC toolchains
+  buys ~30 GB. Without it the job dies mid-build with an ENOSPC that reads like a build error.
+  Jenkins ran this on an 8c-8g node that needed no such help.
+
+The Jenkins CSIT jobs in `ci-management/jjb/sdc/sdc-csit.yaml` are unchanged and still run; this
+job is additive, and replaces neither:
 
 | subproject | Maven profile | What runs |
 | --- | --- | --- |
 | `ui` | `docker,run-integration-tests-ui` | TestNG + Selenium (`onapUiSanity.xml`, `helmValidatorTests.xml`) |
 | `api` | `docker,run-integration-tests-api` | TestNG backend API suite |
 
-There is no `playwright` reference anywhere in `ci-management`. The
-`run-integration-tests-playwright` Maven profile exists and works, but nothing triggers it —
-so **run this suite locally before pushing**; a green Gerrit does not mean it passed.
+> **Gerrit trigger.** The workflow declares `workflow_dispatch` with the standard `GERRIT_*` input
+> block, which is what `gerrit_to_platform` dispatches into — the same mechanism `gerrit-clm.yaml`
+> uses. Wiring the per-patchset trigger itself is LF releng-side configuration, not something this
+> repo controls; until it is enabled, run the job manually from the Actions tab.
+
+### The Selenium grid is skipped here
+
+`integration-tests/pom.xml` gates the `selenium/standalone-firefox` container on a new
+`it.selenium.disabled` property, set to `true` **only** in the `run-integration-tests-playwright`
+profile. Playwright drives its own bundled Chromium, so that 1.45 GB image was pure dead weight —
+and on a disk-constrained runner, skipping it is the difference between fitting and not.
+
+The property defaults to `false`, so the two Jenkins profiles above are byte-identical to before.
+Verify with:
+
+```bash
+mvn help:evaluate -Dexpression=it.selenium.disabled -q -DforceStdout \
+  -f integration-tests/pom.xml -P run-integration-tests-ui    # -> false
+```
