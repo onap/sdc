@@ -365,6 +365,24 @@ describe('NavigationService', () => {
             service.navigate('dashboard');
             expect(service.getParam('componentCsar')).toBeUndefined();
         });
+
+        /**
+         * The breadcrumb component list and a menu item's own state name were both invisible to the
+         * URL under ui-router (a `resolve` and a plain `$stateParams` entry). Serialising them yields
+         * '?components=%5Bobject%20Object%5D&state=workspace.general' — an array cannot survive
+         * `encodeURIComponent`.
+         */
+        it('keeps the breadcrumb component list out of the url', () => {
+            const components = [{uniqueId: 'a'}, {uniqueId: 'b'}];
+            service.navigate('workspace.general', {id: 'abc', type: 'service', components});
+            expect(navigatedTo()).toBe('/dashboard/workspace/abc/service/general');
+            expect(service.getParam('components')).toBe(components);
+        });
+
+        it('keeps a menu item\'s state name out of the url', () => {
+            service.navigate('workspace.properties', {id: 'abc', type: 'service', state: 'workspace.properties'});
+            expect(navigatedTo()).toBe('/dashboard/workspace/abc/service/properties');
+        });
     });
 
     describe('includes', () => {

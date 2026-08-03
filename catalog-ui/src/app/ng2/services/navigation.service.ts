@@ -97,8 +97,15 @@ const COMPOSITION_PANEL_TABS: string[] =
  * `$stateParams` because it never round-tripped params through the URL. The Angular router only has
  * `NavigationExtras.state` for this and that landed in 7.2, so they go into a transient store that
  * `getParam()` reads and the next navigation clears.
+ *
+ * `components` (a `Component[]`, passed by workspace-container.component.ts:390/:585) and `state`
+ * (a state name, attached to every left-bar menu item at :670) belong here for the same reason:
+ * ui-router carried the first as a `resolve` and the second only in `$stateParams`, so neither ever
+ * reached the URL. Serialised they become '?components=%5Bobject%20Object%5D&state=workspace.general'
+ * — `encodeURIComponent` stringifies the array to '[object Object]'. Nothing reads either from the
+ * URL (the breadcrumb list comes from `cacheService.get('breadcrumbsComponents')`).
  */
-const TRANSIENT_PARAMS: string[] = ['componentCsar', 'importedFile', 'resourceType', 'queryParams'];
+const TRANSIENT_PARAMS: string[] = ['componentCsar', 'importedFile', 'resourceType', 'queryParams', 'components', 'state'];
 
 @Injectable()
 export class NavigationService {
