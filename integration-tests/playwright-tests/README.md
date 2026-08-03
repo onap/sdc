@@ -174,6 +174,23 @@ Everything written into `catalog-fe/src/main/webapp/` and `catalog-fe/sdc-fronte
 build byproduct and is already covered by `.gitignore` (`catalog-fe/src/main/webapp/*`, `*.war`).
 Never stage it.
 
+### 2b. Hot-swapping one bundle into the running FE serves the `.jsgz`, not the `.js`
+
+Handy for proving a CSS-only fix red-then-green without a 15-minute rebuild — but the FE ships a
+pre-gzipped sibling of every bundle and jetty serves *that* to any client sending
+`Accept-Encoding: gzip`, i.e. every browser. Patch only `styles.<hash>.bundle.js` and `curl` will
+confirm your fix while the browser keeps loading the stale `styles.<hash>.bundle.jsgz` — the test
+stays red and the served asset looks correct, which reads as a caching problem and is not one.
+Patch both, in **both** exploded-war dirs (jetty keeps more than one under `/tmp/jetty-*catalog-fe*`):
+
+```bash
+docker exec sdc-frontend-1 sh -c 'ls -d /tmp/jetty-*catalog-fe*/webapp/scripts'
+gzip -c -9 patched.js > patched.jsgz      # then docker cp each variant over its counterpart
+```
+
+Confirm from inside the page rather than from `curl` — walk `document.styleSheets` for the rule.
+Restore the originals afterwards; a patched container silently invalidates every later run.
+
 ### 3. Known-benign console noise
 
 These appear on a healthy local stack. Do not chase them: the ADMIN-tab `RangeError`, "AngularJS
@@ -314,6 +331,7 @@ test('...', async ({ sdcPage, api }) => { ... });
 | `tests/interface-tabs.spec.ts` | downgraded interface components receive their `component` input |
 | `tests/unsaved-changes.spec.ts` | the dirty-form navigation guard: warns, blocks, then releases on OK |
 | `tests/composition-geometry.spec.ts` | composition's `bodyClass`-driven full-bleed layout |
+| `tests/workspace-gutter.spec.ts` | the tab content gutter vs the sidebar, and top-bar overflow |
 
 ### Fixtures
 
