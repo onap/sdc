@@ -131,6 +131,12 @@
 
                     &.sprite-new {
                         text-indent: 100%;
+                        // `text-indent: 100%` only pushes the label ("Close") out of the sprite's 24px
+                        // box, it does not remove it: the text still contributes to scrollWidth (61px
+                        // for a 24px span), which inflates this flex row past the bar's width and so
+                        // trips the bar's own `overflow-x: auto` (:97) — a stray scrollbar under the top
+                        // bar and a truncated "✕ Clo…" at the right edge. The clip is what hides it.
+                        overflow: hidden;
                     }
                     &.disabled, &:hover.disabled {
                         pointer-events: none;
@@ -266,6 +272,30 @@
     bottom: 0;
     overflow: auto;
     background-color: @main_color_p;
+    // The horizontal gutter, declared HERE rather than on the tab's own content root, because the
+    // routed element is the only node that exists for all 19 tabs. Until f89b30141 the ui-view element
+    // itself was `<div class="w-sdc-main-container-body-content" data-ui-view>` and picked the gutter up
+    // from :208 above; that class is now emitted nowhere in this shell (only type-workspace still has
+    // it), so :208 no longer reaches any tab and every one of them rendered flush against the 242px
+    // sidebar. Do NOT reinstate this as `> .sdc-workspace-general-step`: that combinator is what
+    // f89b30141 tried and it silently matched nothing, since the form div is a child of <general-tab>.
+    padding: 0 100px 20px 100px;
+}
+
+// Composition and Deployment opt out — their canvases size themselves against the whole box. These
+// reproduce the pre-f89b30141 exclusions (`.composition … { padding: 0 0 0 0 }` at :319 below, and
+// `.deploy-body-content { padding: 0 }` in deployment-graph.component.less), both of which are now
+// dead: they keyed off classes this shell no longer emits.
+//
+// Deployment is matched by TAG because its route is the one full-bleed route that declares no
+// `bodyClass`, so `.deployment` matches nothing; composition conversely MUST be matched by body class,
+// as CompositionPageComponent is selectorless and renders as an anonymous <ng-component>.
+//
+// The third pre-f89b30141 exclusion, `.third-party` (:211), is deliberately not reproduced: it never
+// applied. workspace-view.html:120 carried two `data-ng-class` attributes and HTML keeps only the
+// first, so the flow-editor and plugin tabs always did get the gutter, and still should.
+.sdc-workspace-container .w-sdc-main-right-container > .w-sdc-main-right-container-content > router-outlet ~ deployment-page {
+    padding: 0;
 }
 
 // Composition is full-bleed: its canvas manages its own layout and the top bar floats OVER it
@@ -275,6 +305,8 @@
 // is strictly LESS than the General tab's, so this rule is load-bearing, not cosmetic.
 .composition .sdc-workspace-container .w-sdc-main-right-container > .w-sdc-main-right-container-content > router-outlet ~ * {
     top: 0;
+    // The other half of the full-bleed exclusion described above — the canvas needs the whole box.
+    padding: 0;
 }
 
 // Fix till we remove everything to angular5 and fix all workspace style
