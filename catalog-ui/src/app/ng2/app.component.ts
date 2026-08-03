@@ -17,17 +17,26 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-import { Component, ViewContainerRef} from '@angular/core';
+import { Component, OnInit, ViewContainerRef} from '@angular/core';
 import { AuthenticationService } from './services/authentication.service';
+import { RouteMetadataService } from './services/route-metadata.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html'
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
 
-  constructor(auth: AuthenticationService, public viewContainerRef: ViewContainerRef){
+  constructor(auth: AuthenticationService, public viewContainerRef: ViewContainerRef,
+              private routeMetadataService: RouteMetadataService){
 
+  }
+
+  // Started here rather than from an APP_INITIALIZER because it only has to beat the FIRST
+  // NavigationEnd, and the initial navigation is fired by hand from main.ts after
+  // upgrade.bootstrap() — well after this component's ngOnInit, which runs inside bootstrapModule().
+  ngOnInit(): void {
+    this.routeMetadataService.start();
   }
 
 }

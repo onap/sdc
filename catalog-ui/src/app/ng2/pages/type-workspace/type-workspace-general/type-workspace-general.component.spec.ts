@@ -2,6 +2,7 @@
  * -
  *  ============LICENSE_START=======================================================
  *  Copyright (C) 2022 Nordix Foundation.
+ *  Modifications Copyright (C) 2026 Deutsche Telekom AG.
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,9 +31,7 @@ import {Observable} from "rxjs/Observable";
 import {DataTypeModel} from "../../../../models/data-types";
 import {DataTypeService} from "../../../services/data-type.service";
 import {ModelService} from "../../../services/model.service";
-import {IWorkspaceViewModelScope} from "../../../../view-models/workspace/workspace-view-model-scope";
-import {IScope} from "angular";
-import {States} from "../../../../utils/constants";
+import {TypeWorkspaceService} from "../type-workspace.service";
 import {NavigationService} from "../../../services/navigation.service";
 
 describe('TypeWorkspaceGeneralComponent', () => {
@@ -45,19 +44,9 @@ describe('TypeWorkspaceGeneralComponent', () => {
   };
 
   let importedFileMock: File = null;
-  let stateParamsMock: Partial<ng.ui.IStateParamsService> = {
+  let stateParamsMock: any = {
       'importedFile': importedFileMock
   };
-  let resolveMock = {"$stateParams": stateParamsMock};
-  let parentScopeMock: Partial<IScope> = {
-      '$resolve': resolveMock
-  };
-  let scopeMock_: Partial<IWorkspaceViewModelScope> = {
-      '$parent': parentScopeMock,
-      'current': {
-          'name': States.TYPE_WORKSPACE
-      }
-  }
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -69,8 +58,8 @@ describe('TypeWorkspaceGeneralComponent', () => {
       ],
       providers: [
         {provide: TranslateService, useValue: translateServiceMock},
-        {provide: "$scope", useValue: scopeMock_ },
-        {provide: NavigationService, useValue: {navigate: jest.fn(), getParams: () => ({}), getCurrentStateName: () => '', includes: jest.fn(), updateUrlParams: jest.fn()}},
+        TypeWorkspaceService,
+        {provide: NavigationService, useValue: {navigate: jest.fn(), getParams: () => stateParamsMock, getParam: (key) => stateParamsMock[key], getCurrentStateName: () => '', includes: jest.fn()}},
         {provide: DataTypeService, useValue: dataTypeServiceMock},
         {provide: ModelService, useValue: modelServiceMock},
         {provide: TranslateService, useValue: translateServiceMock}

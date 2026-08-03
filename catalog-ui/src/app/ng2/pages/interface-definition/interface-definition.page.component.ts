@@ -17,8 +17,9 @@
 *
 *  SPDX-License-Identifier: Apache-2.0
 *  ============LICENSE_END=========================================================
+*  Modifications Copyright (C) 2026 Deutsche Telekom AG.
 */
-import {Component, ComponentRef, Inject, Input} from '@angular/core';
+import {Component, ComponentRef, Inject} from '@angular/core';
 import {Component as IComponent} from 'app/models/components/component';
 import {WorkflowServiceNg2} from 'app/ng2/services/workflow.service';
 import {HierarchyDisplayOptions} from "../../components/logic/hierarchy-navigtion/hierarchy-display-options";
@@ -53,6 +54,8 @@ import {Observable} from "rxjs/Observable";
 import {PluginsService} from 'app/ng2/services/plugins.service';
 import {NavigationService} from 'app/ng2/services/navigation.service';
 import { InstanceFeDetails } from 'app/models/instance-fe-details';
+import {WorkspaceService} from 'app/ng2/pages/workspace/workspace.service';
+import {WorkspaceMode} from 'app/utils/constants';
 
 export class UIOperationModel extends OperationModel {
     isCollapsed: boolean = true;
@@ -163,10 +166,8 @@ export class InterfaceDefinitionComponent {
     validMilestoneFilters: boolean = true;
     serviceInterfaces: InterfaceModel[];
 
-    @Input() component: IComponent;
-    @Input() readonly: boolean;
-    @Input() enableMenuItems: Function;
-    @Input() disableMenuItems: Function;
+    component: IComponent;
+    readonly: boolean;
 
     constructor(
         @Inject(SdcConfigToken) private sdcConfig: ISdcConfig,
@@ -181,13 +182,19 @@ export class InterfaceDefinitionComponent {
         private ComponentServiceNg2: ComponentServiceNg2,
         private WorkflowServiceNg2: WorkflowServiceNg2,
         private ModalServiceSdcUI: SdcUiServices.ModalService,
-        private PluginsService: PluginsService
+        private PluginsService: PluginsService,
+        private workspaceService: WorkspaceService
     ) {
         this.modalTranslation = new ModalTranslation(translateService);
         this.interfaceTypesMap = new Map<string, string[]>();
     }
 
     ngOnInit(): void {
+        this.component = this.workspaceService.component as any;
+        // Replaces the deleted workspace shim controller's [readonly]="isViewMode() || !isDesigner()"
+        // route-template binding; getComponentMode() already folds the designer-role check in.
+        this.readonly = !this.component ||
+            this.workspaceService.getComponentMode(this.workspaceService.component) === WorkspaceMode.VIEW;
         this.isLoading = true;
         this.interfaces = [];
         this.workflowIsOnline = !_.isUndefined(this.PluginsService.getPluginByStateUrl('workflowDesigner'));

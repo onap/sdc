@@ -20,6 +20,15 @@ html, body {
     overflow: hidden;
 }
 
+// AppComponent declares no styleUrls, so <app-root> is an unstyled custom element and therefore
+// `display: inline` by default. The height chain html -> body -> app-root -> the routed page used
+// to bypass it via index.html's `<div ui-view style="height:100%">`; with that gone, app-root is
+// the only link left and must carry the height itself.
+app-root {
+    display: block;
+    height: 100%;
+}
+
 a {
     text-decoration: none;
 }

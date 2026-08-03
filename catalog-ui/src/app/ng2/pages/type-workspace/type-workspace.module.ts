@@ -2,6 +2,7 @@
  * -
  *  ============LICENSE_START=======================================================
  *  Copyright (C) 2022 Nordix Foundation.
+ *  Modifications Copyright (C) 2026 Deutsche Telekom AG.
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,6 +23,7 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {TypeWorkspaceComponent} from "./type-workspace.component";
+import {TypeWorkspaceService} from "./type-workspace.service";
 import {WorkspaceMenuComponent} from "./workspace-menu/workspace-menu.component";
 import {CacheService} from "../../services/cache.service";
 import {UiElementsModule} from "../../components/ui/ui-elements.module";
@@ -69,6 +71,7 @@ import {ConstraintsModule} from "../properties-assignment/constraints/constraint
         WorkspaceMenuComponent,
         DataTypeService,
         ModalService,
+        TypeWorkspaceService,
         FileReader
     ],
     entryComponents: [TypeWorkspaceComponent, AddPropertyComponent],

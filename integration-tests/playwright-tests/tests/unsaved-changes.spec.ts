@@ -24,25 +24,26 @@
  * WHAT THIS GUARDS — the single most destructive thing the ui-router → Angular Router swap
  * (phase 13 CR 2) can break, because breaking it silently loses a user's work:
  *
- *   Today the guard is a ui-router `$stateChangeStart` interception in the app.ts run block
- *   (`onStateChangeStart` :686-700 → `onNavigateOut` :619-638). CR 2 DELETES that whole run
- *   block (task 10) and replaces the mechanism with a `CanDeactivate` guard wired onto
- *   individual child routes.
+ *   The guard used to be a ui-router `$stateChangeStart` interception in the app.ts run block
+ *   (`onStateChangeStart` :686-700 → `onNavigateOut` :619-638). CR 2 deleted that whole run block
+ *   and replaced the mechanism with `CanDeactivate` guards wired onto individual child routes —
+ *   `UnsavedChangesFlagGuard` for the General tab, `UnsavedChangesGuard` for the two tabs that own
+ *   their own modal.
  *
- *   That replacement is invisible to every other gate. `UnsavedChangesGuard` gets its own Jest
- *   unit tests, but they instantiate the guard directly — so if it is registered on the WRONG
- *   routes, or on none, the unit tests still pass, `build:prod` still passes, and Selenium still
- *   passes. Nothing but a real navigation from a real dirty form detects it.
+ *   That replacement is invisible to every other gate. Both guards get their own Jest unit tests,
+ *   but those instantiate the guard directly — so if one is registered on the WRONG routes, or on
+ *   none, the unit tests still pass, `build:prod` still passes, and Selenium still passes. Nothing
+ *   but a real navigation from a real dirty form detects it.
  *
  * WHY THE GENERAL TAB and not properties-assignment: the General tab has NO modal of its own
- * (verified — no `showUnsavedChangesAlert` anywhere in general-tab.component.ts). It depends
- * entirely on the run-block guard, which makes it the tab that CR 2 is most likely to strand.
- * It is also reachable in two steps on a freshly created VF, whereas dirtying PA requires
- * composition instances.
+ * (verified — no `showUnsavedChangesAlert` anywhere in general-tab.component.ts). It depended
+ * entirely on the run-block guard, which made it the tab CR 2 was most likely to strand, and it is
+ * the sole reason `UnsavedChangesFlagGuard` exists as a second guard. It is also reachable in two
+ * steps on a freshly created VF, whereas dirtying PA requires composition instances.
  *
  * NOTE this exercises the SECOND of the two 'navigate-modal' spellings — see SEL.warningModal
  * in the fixture for why its selector is `div.sdc-modal` and its OK button is
- * `navigate-modal-button-ok` rather than the `'OK'` testId app.ts:626 appears to set.
+ * `navigate-modal-button-ok` rather than the `'OK'` testId the button appears to set.
  *
  * HOW TO RUN: see README.md — `npx playwright test unsaved-changes`.
  */

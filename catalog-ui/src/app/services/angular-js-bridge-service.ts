@@ -21,11 +21,20 @@
 
 'use strict';
 import {IAppConfigurtaion} from "../models/app-config";
+import {getSdcConfig} from "../ng2/config/sdc-config.config.factory";
 
 export class AngularJSBridge {
     private static _sdcConfig:IAppConfigurtaion;
 
-    public static getAngularConfig() {
+    // The eight imagesPath readers are plain graph-node classes constructed with `new`, so they
+    // cannot inject SdcConfigToken. They used to depend on the AngularJS run block constructing
+    // this service for its side effect; seeding lazily from the same config module keeps them
+    // working now that the run block is gone. getSdcConfig() resolves to the identical webpack
+    // module object that ng1's `sdcConfig` constant held, so the value is unchanged.
+    public static getAngularConfig():IAppConfigurtaion {
+        if (!AngularJSBridge._sdcConfig) {
+            AngularJSBridge._sdcConfig = getSdcConfig() as IAppConfigurtaion;
+        }
         return AngularJSBridge._sdcConfig;
     }
 

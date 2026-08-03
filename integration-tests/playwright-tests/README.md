@@ -355,27 +355,31 @@ silent weakening — with no digest cycle there is nothing else to wait for.
 
 ## Navigation contract
 
-**Navigate by URL. Never through `$state`.** Phase 13 of the AngularJS removal deletes
+**Navigate by URL. Never through `$state`.** Phase 13 of the AngularJS removal deleted
 `angular-ui-router` (CR 2) and then the `angular` package itself (CR 3). Any spec reaching
-`window.angular.…injector().get('$state').go(...)` breaks at CR 2 and cannot even be *repaired*
+`window.angular.…injector().get('$state').go(...)` broke at CR 2 and cannot even be *repaired*
 at CR 3. The URL shape, by contrast, is pinned by `PathUtilities.java:256` ("the component id is
 the segment immediately after `workspace`") and by ~70 Cypress URL lines, so it survives both.
 Navigating this way also exercises deep-linking, which `$state.go()` never did.
 
 Use `gotoWorkspaceTab(page, {id, type, tab})` and `gotoTopLevel(page, '/catalog')`.
 
-### CREATE mode has a DOUBLE slash
+### CREATE mode omits the id segment entirely
 
 ```
 VIEW/EDIT: #!/dashboard/workspace/<id>/service/general
-CREATE:    #!/dashboard/workspace//service/general      ← empty id segment
+CREATE:    #!/dashboard/workspace/service/general       ← no id segment
 ```
 
-That is what `$state.href('workspace.general', {type})` actually mints — the `:id` parameter is
-simply absent from the interpolation. The single-slash form found in
-`cypress/integration/service-distribution.spec.js` is **wrong**: ui-router binds `service` to
-`:id` and the tab segment to `:type`, so the workspace never renders. Verified against a live
-stack; do not "tidy" the double slash away.
+ui-router matched the create form as `workspace//service/general` — a **double** slash, because
+`:id` was simply absent from `$state.href`'s interpolation. The Angular Router cannot represent
+that URL at all: `DefaultUrlSerializer.parse()` drops an empty segment *and everything after it*,
+so the tab would be silently lost. `app.routes.ts` therefore declares
+`':previousState/workspace/:type'` as a route of its own, ahead of the id-bearing one — the two
+consume a different segment count, so order alone disambiguates them, and with `:id` absent
+`WorkspaceComponentResolver` takes its create-an-empty-component branch. The single-slash form is
+also what `cypress/integration/service-distribution.spec.js` always used, so that spec was right
+about the shape and wrong only about the era.
 
 ### Assert views with `toBeAttached()`, not `toBeVisible()`
 
@@ -387,8 +391,8 @@ floated). `toBeVisible()` therefore reports "hidden" on a perfectly rendered pag
 The pattern that works, and which each part of earns its place:
 
 ```ts
-await expect(page.locator(SEL.catalogView)).toBeAttached();      // ui-router swapped the template
-await expect(page.locator(SEL.homeView)).toHaveCount(0);         // ...and removed the old one
+await expect(page.locator(SEL.catalogView)).toBeAttached();      // the outlet swapped the component
+await expect(page.locator(SEL.homeView)).toHaveCount(0);         // ...and destroyed the old one
 await expect(page.locator(SEL.catalogViewMarker).first()).toBeVisible();  // pixels were painted
 ```
 
@@ -396,31 +400,33 @@ The middle assertion is the one that catches the 2026-07-09 dead-click regressio
 and the menu highlight both updated correctly while the view never changed — a URL-only
 assertion passes and proves nothing.
 
-### Cold deep-links are broken product-side (known defect)
+### Cold deep-links work — and that is a fix worth knowing the history of
 
-A plain `page.goto('/sdc1#!/catalog')` silently lands on `#!/dashboard`. This is a **product
-defect**, not a test problem, and it has been there since `dd810f196` (2026-06-24). Angular's
-`HashLocationStrategy.prepareExternalUrl()` is `'#' + joinWithSlash(baseHref, internal)`, and
-`internal` is `/!/catalog` because `path()` strips only the leading `#`. The `!` is treated as a
-path segment, the URL becomes `#/!/catalog`, ui-router's `#!` prefix is destroyed, and ui-router
-falls through to `otherwise('dashboard')`. Observed hashchange sequence: `/!/catalog` → `!` →
-`!/dashboard`. Every route except `/dashboard` is affected, including F5 on a workspace URL.
+`page.goto('/sdc1#!/catalog')` lands on `/catalog`, and F5 on a workspace tab keeps your place.
+Neither was true before phase 13 CR 2: every route but `/dashboard` silently fell back to the
+dashboard, because Angular's `HashLocationStrategy.prepareExternalUrl()` is
+`'#' + joinWithSlash(baseHref, internal)` and `internal` was `/!/catalog` — `path()` strips only the
+leading `#`, so the `!` was treated as a path segment, the URL became `#/!/catalog`, the `#!` prefix
+was destroyed and ui-router fell through to `otherwise('dashboard')`. Observed hashchange sequence:
+`/!/catalog` → `!` → `!/dashboard`.
 
-`gotoCold()` works around it (load at the dashboard entry point, then assign the hash) and is
-documented in place. `SdcHashLocationStrategy` in phase 13 CR 2 is the fix.
+`SdcHashLocationStrategy` (`catalog-ui/src/app/ng2/utils/`) is the fix: it strips a leading `!` in
+`path()` and re-inserts it in `prepareExternalUrl()`, so the `#!` prefix every bookmark, Cypress
+spec and Selenium URL encodes survives. `gotoCold()` is now a single `page.goto()` — it used to be a
+two-step workaround, and the day it can go back to being one is the day this regressed.
 
-One test — *"page reload is lost to the #!-prefix defect"* — deliberately asserts the **current,
-broken** behaviour, with the correct assertions written out beside it. **When CR 2 fixes this,
-that test will fail, and that failure is the signal to invert it.** It is written that way on
-purpose: a skipped test would let CR 2 ship a still-broken deep link unnoticed.
+The reload test (*"page reload keeps you on the same workspace tab"*) originally asserted the
+**broken** behaviour on purpose, so that CR 2 could not ship a still-broken deep link unnoticed. The
+fix turned it red, and it was inverted rather than deleted; it now pins the working behaviour.
 
 ### Some tab URLs need a TRAILING SLASH
 
-`composition/`, `deployment/` and `activity_log/` are declared with a trailing slash in their
-`url:` (`app.ts:371`, `:405`, `:389`). Omit it and ui-router fails to match, then silently lands on
-`/dashboard` — so a spec that forgets it measures the dashboard while believing it is on the
-canvas. `gotoWorkspaceTab(page, {tab: 'composition/'})` passes the segment through verbatim; keep
-the slash.
+`composition/`, `deployment/` and `activity_log/` are declared with a trailing slash in
+`app.routes.ts`, inherited verbatim from their ui-router `url:`. To the Angular Router that slash is
+a real (empty) path segment, so `composition` does **not** match `/…/composition/` — omit it and the
+URL falls through to the `'**'` wildcard and lands on `/dashboard`, so a spec that forgets it
+measures the dashboard while believing it is on the canvas. `gotoWorkspaceTab(page, {tab:
+'composition/'})` passes the segment through verbatim; keep the slash.
 
 ---
 
@@ -432,26 +438,32 @@ and is not.
 
 | | Properties Assignment / Attributes-Outputs | General tab (and any tab with no modal of its own) |
 | --- | --- | --- |
-| Opened by | `ModalServiceSdcUI.openCustomModal` | `openWarningModal` in `app.ts:619-638`'s `onNavigateOut` |
+| Opened by | `ModalServiceSdcUI.openCustomModal` | `openWarningModal` in `UnsavedChangesFlagGuard.prompt()` |
 | Dialog selector | `[data-tests-id="navigate-modal"]` | `div.sdc-modal` — **carries no `data-tests-id` at all** |
 | Confirm button | `[data-tests-id="discardButton"]` | `[data-tests-id="navigate-modal-button-ok"]` |
 
 The second row's button id is the trap: `openWarningModal`'s third argument (`'navigate-modal'`)
-becomes the button-id **prefix**, *not* a testId on the dialog. So despite `app.ts:626` reading
+becomes the button-id **prefix**, *not* a testId on the dialog. So despite the button declaring
 `testId: 'OK'`, no element ever carries `data-tests-id="OK"` here — measured live. Both are in
 `SEL` (`navigateModal`/`discardButton` and `warningModal`/`warningModalOkButton`).
 
 ## Composition's layout comes from a class on `<body>`
 
-`bodyClass: 'composition'` travels from the state's `data` (`app.ts:381`) through
-`$rootScope.bodyClass` (`app.ts:726-729`) to `index.html:29`'s `<body data-ng-class="bodyClass">`,
-and `workspace.less:331-336` keys the full-bleed geometry off it. Nothing in Jest, AOT or Selenium
-models that chain. Measured on master at 1920×1080:
+`bodyClass: 'composition'` lives in the route's `data` (`app.routes.ts`); `RouteMetadataService`
+writes it onto `<body>` on every `NavigationEnd` — swapping only the class it previously applied, so
+that `modal-open` and any other foreign body class survives. `workspace.less` then keys the
+full-bleed geometry off `.composition … router-outlet ~ *`. Nothing in Jest, AOT or Selenium models
+that chain. Measured at 1920×1080:
 
-| | `<body>` class | `.workspace-child-view` | shell sidebar |
+| | `<body>` class | routed child tab | shell sidebar |
 | --- | --- | --- | --- |
-| General | `ng-scope general` | `242,103` 1678×977 | present, 242 px |
-| Composition | `ng-scope composition` | `0,50` 1920×1030 | **absent** (`*ngIf="!isComposition"`) |
+| General | `general` | `242,103` 1678×977 | present, 242 px |
+| Composition | `composition` | `0,50` 1920×1030 | **absent** (`*ngIf="!isComposition"`) |
+
+The routed child tab is the component the shell's `<router-outlet>` activated, matched as
+`router-outlet ~ *` — it is a *sibling* of the outlet, and no wrapper element may be introduced,
+because `.w-sdc-main-right-container`'s class attribute must stay exactly that string for the
+Selenium exact-class xpath waits.
 
 `composition-geometry.spec.ts` measures **both** tabs in one test on purpose: the absolute numbers
 are viewport-dependent, so what pins the behaviour is the *difference*. It also hit-tests

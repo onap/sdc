@@ -25,11 +25,13 @@
  * Created by rc2122 on 5/23/2017.
  */
 import { Injectable } from '@angular/core';
-import {WorkspaceMode, ComponentState, Role} from "../../../utils/constants";
+// ComponentType comes from the concrete module and NOT from the `app/utils` barrel, which re-exports
+// menu-handler and so drags in NavigationService — a cycle, since NavigationService injects this
+// service. The barrel is also the §OO JIT-bootstrap hazard.
+import {ComponentState, ComponentType, Role, WorkspaceMode} from "../../../utils/constants";
 import {Component as TopologyTemplate, ComponentMetadata} from "app/models";
 import {CacheService} from "../../services/cache.service";
 import {IComponentMetadata} from "../../../models/component-metadata";
-import {ComponentType} from "../../../utils";
 
 @Injectable()
 export class WorkspaceService {
@@ -44,6 +46,10 @@ export class WorkspaceService {
     // form). The shell reads this to enable/disable Create and lifecycle buttons. Replaces
     // the old AngularJS $scope.setValidState / $scope.isValidForm channel.
     public isValidForm: boolean = true;
+    // Dirty-state flag for the unsaved-changes prompt. ui-router held this on $state.current.data,
+    // but the Angular Router deep-freezes a Route's `data` (Recognizer.inheritParamsAndData), so a
+    // mutable owner outside the route config is required.
+    public unsavedChanges: boolean = false;
 
     constructor(private cacheService:CacheService) {
 
@@ -51,6 +57,7 @@ export class WorkspaceService {
 
     public setComponent = (component: TopologyTemplate) => {
         this.component = component;
+        this.unsavedChanges = false;
         if (component && component.componentMetadata) {
             this.metadata = component.componentMetadata;
         }

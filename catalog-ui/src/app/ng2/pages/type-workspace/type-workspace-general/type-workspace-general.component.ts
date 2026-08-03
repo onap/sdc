@@ -2,6 +2,7 @@
  * -
  *  ============LICENSE_START=======================================================
  *  Copyright (C) 2022 Nordix Foundation.
+ *  Modifications Copyright (C) 2026 Deutsche Telekom AG.
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,11 +20,11 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {DataTypeModel} from "../../../../models/data-types";
 import {DEFAULT_MODEL_NAME} from "app/utils/constants";
-import {IWorkspaceViewModelScope} from "../../../../view-models/workspace/workspace-view-model-scope";
+import {TypeWorkspaceService} from "../type-workspace.service";
 import {ServiceDataTypeReader} from "../../../../utils/service-data-type-reader";
 import {TranslateService} from "../../../shared/translator/translate.service";
 import {SdcUiServices} from "onap-ui-angular/dist";
@@ -66,7 +67,7 @@ export class TypeWorkspaceGeneralComponent implements OnInit {
     'derivedFrom': this.derivedFrom
   });
 
-  constructor(@Inject('$scope') private $scope: IWorkspaceViewModelScope,
+  constructor(private typeWorkspaceService: TypeWorkspaceService,
               private navigationService: NavigationService,
               protected dataTypeService: DataTypeService,
               private modalServiceSdcUI: SdcUiServices.ModalService,
@@ -89,7 +90,7 @@ export class TypeWorkspaceGeneralComponent implements OnInit {
                   this.dataType.creationTime = this.importedFile.lastModifiedDate;
                   this.derivedFromName = serviceType.derivedFromName;
                   this.dataType.uniqueId = this.dataType.model ? this.dataType.model + "." + this.dataType.name : this.dataType.name + ".datatype";
-                  this.$scope.dataType = this.dataType;
+                  this.typeWorkspaceService.dataType = this.dataType;
                   this.onImportedType.emit(this.dataType);
 
                   this.models = [];
@@ -105,7 +106,7 @@ export class TypeWorkspaceGeneralComponent implements OnInit {
                           this.models.push(model);
                       });
                       this.onModelChange();
-                      this.$scope.dataType = this.dataType;
+                      this.typeWorkspaceService.dataType = this.dataType;
                   });
 
               },
@@ -131,20 +132,15 @@ export class TypeWorkspaceGeneralComponent implements OnInit {
     this.dataType.model = new Model({"name": this.selectedModelName, "derivedFrom": "", "modelType": "normative"});
     this.dataType.uniqueId = this.dataType.model.name === DEFAULT_MODEL_NAME ?
         this.dataType.name + ".datatype" : this.dataType.model.name + "." + this.dataType.name + ".datatype";
-    this.$scope.dataType.derivedFromName = this.derivedFromName;
-    this.$scope.dataType = this.dataType;
-    this.$scope.dataType.model = this.dataType.model;
+    this.typeWorkspaceService.dataType.derivedFromName = this.derivedFromName;
+    this.typeWorkspaceService.dataType = this.dataType;
+    this.typeWorkspaceService.dataType.model = this.dataType.model;
   }
 
   private getImportedFile(): void {
-      // TODO(CR2): the only remaining direct $stateParams read in the app. It cannot go through
-      // NavigationService.getParam() yet because it does not read the live params object at all — it
-      // reaches the RESOLVED params snapshot published on the parent workspace $scope by ui-router's
-      // resolver ($scope.$parent.$resolve). Removing it therefore depends on both the $scope bus and
-      // the ui-router resolver being replaced, which is CR 2's work, not CR 1's.
-      let importedFile = this.$scope["$parent"]["$resolve"]["$stateParams"]["importedFile"];
+      let importedFile = this.navigationService.getParam('importedFile');
       this.importedFile = <File>importedFile;
-      this.$scope.importFile = this.importedFile;
+      this.typeWorkspaceService.importFile = this.importedFile;
       if (this.importedFile) {
           this.isViewOnly = false;
       }
@@ -156,7 +152,8 @@ export class TypeWorkspaceGeneralComponent implements OnInit {
     }
     this.type.setValue(this.dataType.name);
     this.description.setValue(this.dataType.description);
-    this.model.setValue(this.dataType.model ? this.dataType.model : this.$scope.dataType && this.$scope.dataType.model ? this.$scope.dataType.model : DEFAULT_MODEL_NAME);
+    this.model.setValue(this.dataType.model ? this.dataType.model :
+        this.typeWorkspaceService.dataType && this.typeWorkspaceService.dataType.model ? this.typeWorkspaceService.dataType.model : DEFAULT_MODEL_NAME);
     this.derivedFrom.setValue(this.dataType.derivedFromName);
   }
 }

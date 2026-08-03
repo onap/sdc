@@ -22,18 +22,16 @@
  * Interface Operation / Interface Definition tab guards.
  *
  * WHAT THIS GUARDS: both tabs render their migrated Angular components AND receive their
- * `component` input. Phase 13 CR 2 deletes the AngularJS shim controller that supplied
+ * `component` input. Phase 13 CR 2 deleted the AngularJS shim controller that supplied
  * `component` and `readonly` to these two routes, and BOTH page components dereference
  * `this.component` synchronously inside ngOnInit's forkJoin — so a missing feed throws during
  * activation and the tab renders empty. The `.workspace-interface-*` wrapper assertions catch
- * that: the element attaches even when the component throws, but the wrapper div (recreated by
- * CR 2 task 8, whose .less import is currently orphaned) does not.
+ * that: the element attaches even when the component throws, but the wrapper div does not.
  *
  * NOTE ON URL SHAPES: the two tabs use inconsistent URL segments — 'interface_operation'
- * (snake_case) but 'interfaceDefinition' (camelCase) — because the underlying ui-router states
- * are named 'workspace.interface_operation' and 'workspace.interface-definition'. Both shapes
- * must be preserved verbatim by the CR 2 route config; that inconsistency is a contract, not a
- * bug to tidy up here.
+ * (snake_case) but 'interfaceDefinition' (camelCase) — inherited from the ui-router state names
+ * 'workspace.interface_operation' and 'workspace.interface-definition'. app.routes.ts preserves
+ * both verbatim; that inconsistency is a contract, not a bug to tidy up here.
  *
  * HOW TO RUN: see README.md — `npx playwright test interface-tabs`.
  */

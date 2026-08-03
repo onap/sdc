@@ -22,11 +22,15 @@
 import { NO_ERRORS_SCHEMA, ViewContainerRef } from "@angular/core";
 import { async, TestBed } from "@angular/core/testing";
 import { AuthenticationService } from './services/authentication.service';
+import { RouteMetadataService } from './services/route-metadata.service';
 import { AppComponent } from './app.component'
 
 describe('AppComponent', () => {
 
+    let routeMetadataService: any;
+
     beforeEach(async(() => {
+        routeMetadataService = { start: jest.fn(), stop: jest.fn() };
         TestBed.configureTestingModule({
             imports: [],
             schemas: [NO_ERRORS_SCHEMA],
@@ -35,7 +39,8 @@ describe('AppComponent', () => {
             ],
             providers: [
                 { provide: AuthenticationService },
-                { provide: ViewContainerRef }
+                { provide: ViewContainerRef },
+                { provide: RouteMetadataService, useValue: routeMetadataService }
             ],
         }).compileComponents();
     }));
@@ -44,6 +49,14 @@ describe('AppComponent', () => {
         const fixture = TestBed.createComponent(AppComponent);
         const app = fixture.debugElement.componentInstance;
         expect(app).toBeTruthy();
+    });
+
+    // The <body> class and the WCAG page title are applied ONLY while this subscription is live, and
+    // nothing else in the app starts it — a lost ngOnInit is invisible to every other gate.
+    it('starts the route metadata subscription', () => {
+        const fixture = TestBed.createComponent(AppComponent);
+        fixture.detectChanges();
+        expect(routeMetadataService.start).toHaveBeenCalled();
     });
 
 });

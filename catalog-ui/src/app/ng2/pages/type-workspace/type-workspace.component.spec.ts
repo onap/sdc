@@ -2,6 +2,7 @@
  * -
  *  ============LICENSE_START=======================================================
  *  Copyright (C) 2022 Nordix Foundation.
+ *  Modifications Copyright (C) 2026 Deutsche Telekom AG.
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -43,8 +44,7 @@ import {NgxDatatableModule} from "@swimlane/ngx-datatable";
 import {SvgIconModule} from "onap-ui-angular/dist/svg-icon/svg-icon.module";
 import {SdcUiServices} from "onap-ui-angular/dist";
 import {NO_ERRORS_SCHEMA} from "@angular/core";
-import {IScope} from "angular";
-import {IWorkspaceViewModelScope} from "../../../view-models/workspace/workspace-view-model-scope";
+import {TypeWorkspaceService} from "./type-workspace.service";
 import {ModelService} from "../../services/model.service";
 import {NavigationService} from "../../services/navigation.service";
 
@@ -66,18 +66,9 @@ describe('TypeWorkspaceComponent', () => {
       }
     })
   };
-  let stateMock: Partial<ng.ui.IStateService> = {
-    'current': {
-      'name': States.TYPE_WORKSPACE
-    }
-  };
-
+  // WorkspaceMenuComponent pulls only `$q` off the injector (workspace-menu.component.ts:54).
   let injectorMock: Partial<ng.auto.IInjectorService> = {
-    'get': jest.fn(param => {
-      if (param === '$state') {
-        return stateMock;
-      }
-    })
+    'get': jest.fn()
   };
   let sdcMenuMock: Partial<IAppMenu> = {
     'component_workspace_menu_option': {
@@ -96,19 +87,9 @@ describe('TypeWorkspaceComponent', () => {
     })
   };
   let importedFileMock: File = null;
-  let stateParamsMock: Partial<ng.ui.IStateParamsService> = {
+  let stateParamsMock: any = {
       'importedFile': importedFileMock
   };
-  let resolveMock = {"$stateParams": stateParamsMock};
-  let parentScopeMock: Partial<IScope> = {
-      '$resolve': resolveMock
-  };
-  let scopeMock_: Partial<IWorkspaceViewModelScope> = {
-      '$parent': parentScopeMock,
-      'current': {
-          'name': States.TYPE_WORKSPACE
-      }
-  }
   let modelServiceMock: Partial<ModelService>;
 
   beforeEach(async(() => {
@@ -130,8 +111,8 @@ describe('TypeWorkspaceComponent', () => {
         {provide: CacheService, useValue: cacheService},
         {provide: SdcUiServices.NotificationsService, useValue: {push: jest.fn()}},
         {provide: ModelService, useValue: modelServiceMock},
-        {provide: "$scope", useValue: scopeMock_ },
-        {provide: NavigationService, useValue: {navigate: jest.fn(), getParams: () => stateParamsMock, getCurrentStateName: () => States.TYPE_WORKSPACE, includes: jest.fn(), updateUrlParams: jest.fn()}},
+        TypeWorkspaceService,
+        {provide: NavigationService, useValue: {navigate: jest.fn(), getParams: () => stateParamsMock, getParam: (key) => stateParamsMock[key], getCurrentStateName: () => States.TYPE_WORKSPACE, includes: jest.fn()}},
         {provide: '$injector', useValue: injectorMock},
         {provide: SdcMenuToken, useValue: sdcMenuMock},
         {provide: SdcConfigToken, useValue: sdcConfigMock},

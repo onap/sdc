@@ -77,15 +77,15 @@ describe('GeneralTabComponent - base type select rendering', () => {
 
     async function render(component: any) {
         baseTypes$ = new Subject<any>();
-        // A REAL NavigationService over a mocked ui-router $state, so the route-data facade the
+        // A REAL NavigationService over a mocked Router/ActivatedRoute, so the route-data facade the
         // component depends on (getParam / setUnsavedChanges / navigate) behaves as it does at runtime.
-        const mockState: any = {
-            current: {name: 'workspace.general', data: {unsavedChanges: false}},
-            params: {id: 'id-1'},
-            go: jest.fn(),
-            includes: jest.fn(() => false)
+        const router: any = {
+            url: '/dashboard/workspace/id-1/service/general',
+            events: new Subject<any>(),
+            navigateByUrl: jest.fn(() => Promise.resolve(true))
         };
-        const navigationService = new NavigationService(mockState, null, {$on: jest.fn(() => jest.fn())} as any);
+        const route: any = {snapshot: {params: {id: 'id-1'}, queryParams: {}, firstChild: null}};
+        const navigationService = new NavigationService(router, route, {unsavedChanges: false} as any);
         const ng1: any = {
             ComponentFactory: {createComponent: (c: any) => Object.assign({}, c)},
             ImportVSPService: {}, OnboardingService: {},

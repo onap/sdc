@@ -315,8 +315,6 @@ export class States {
     public static WORKSPACE_ACTIVITY_LOG = 'workspace.activity_log';
     public static WORKSPACE_DEPLOYMENT_ARTIFACTS = 'workspace.deployment_artifacts';
     public static WORKSPACE_PROPERTIES = 'workspace.properties';
-    public static WORKSPACE_SERVICE_INPUTS = 'workspace.service_inputs';
-    public static WORKSPACE_RESOURCE_INPUTS = 'workspace.resource_inputs';
     public static WORKSPACE_ATTRIBUTES = 'workspace.attributes';
     public static WORKSPACE_ATTRIBUTES_OUTPUTS = 'workspace.attributes_outputs';
     public static WORKSPACE_INFORMATION_ARTIFACTS = 'workspace.information_artifacts';
@@ -332,7 +330,6 @@ export class States {
     public static WORKSPACE_REQUIREMENTS_AND_CAPABILITIES = 'workspace.reqAndCap';
     public static WORKSPACE_REQUIREMENTS_AND_CAPABILITIES_EDITABLE = 'workspace.reqAndCapEditable';
     public static WORKSPACE_PLUGINS = 'workspace.plugins';
-    public static WORKSPACE_NG2 = 'workspace.ng2';
     public static TYPE_WORKSPACE = 'type-workspace';
 }
 

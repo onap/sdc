@@ -1,6 +1,7 @@
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2021 Nordix Foundation
+ *  Modifications Copyright (C) 2026 Deutsche Telekom AG.
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,7 +25,7 @@ import {Component as IComponent} from "../../../../../../models/components/compo
 import {ComponentServiceNg2} from "../../../../../services/component-services/component.service";
 import {Observable} from "rxjs";
 import {Operation} from "../create-interface-operation/model/operation";
-import {NavigationService} from "../../../../../services/navigation.service";
+import {WorkspaceService} from "../../../../workspace/workspace.service";
 
 @Component({
   selector: 'app-relationship-operations-step',
@@ -41,16 +42,18 @@ export class RelationshipOperationsStepComponent implements OnInit, IStepCompone
   operationList$: Observable<Array<Operation>>;
   enableAddOperation: boolean;
 
-  constructor(private navigationService: NavigationService,
+  constructor(private workspaceService: WorkspaceService,
               connectionWizardService: ConnectionWizardService,
               componentService: ComponentServiceNg2) {
-    this.component = navigationService.getParam('component');
     this.componentService = componentService;
     this.connectionWizardService = connectionWizardService;
     this.interfaceTypeMap = new Map<string, Array<string>>();
   }
 
+  // Read in ngOnInit, not the constructor: the route resolver that writes
+  // WorkspaceService.component is only guaranteed to have run by ngOnInit.
   ngOnInit() {
+    this.component = this.workspaceService.component;
     this.loadOperationList();
     this.loadInterfaceTypeMap();
   }

@@ -76,7 +76,7 @@ describe('home component', () => {
                     providers: [
                         {provide: SdcConfigToken, useValue: {"csarFileExtension":"csar", "toscaFileExtension":"yaml,yml"}},
                         {provide: SdcMenuToken, useValue: {}},
-                        {provide: NavigationService, useValue: {navigate: mockStateService.go, getParams: () => mockStateService.params, getCurrentStateName: () => mockStateService.current.name, includes: mockStateService.includes, updateUrlParams: mockStateService.go}},
+                        {provide: NavigationService, useValue: {navigate: mockStateService.go, getParams: () => mockStateService.params, getCurrentStateName: () => mockStateService.current.name, includes: mockStateService.includes}},
                         {provide: HomeService, useValue: {}},
                         {provide: AuthenticationService, useValue: {}},
                         {provide: CacheService, useValue: {}},

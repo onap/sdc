@@ -17,7 +17,6 @@ const bundledScripts = [
     "script-loader!./node_modules/lodash/lodash.min.js",
     "script-loader!./node_modules/angular/angular.min.js",
     "script-loader!./node_modules/jqueryui/jquery-ui.min.js",
-    "script-loader!./node_modules/angular-ui-router/release/angular-ui-router.min.js",
     "script-loader!./node_modules/cytoscape/dist/cytoscape.min.js",
     "script-loader!./node_modules/perfect-scrollbar/dist/js/perfect-scrollbar.jquery.min.js",
     "script-loader!./node_modules/qtip2/dist/jquery.qtip.min.js",

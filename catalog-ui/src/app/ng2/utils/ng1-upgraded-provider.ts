@@ -32,26 +32,6 @@ export function sharingServiceFactory(cacheObj: ICacheObject) {
     return cacheObj.get('Sdc.Services.SharingService');
 }
 
-export function stateServiceFactory(cacheObj: ICacheObject) {
-    return cacheObj.get('$state');
-}
-
-export function stateParamsServiceFactory(cacheObj: ICacheObject) {
-    return cacheObj.get('$stateParams');
-}
-
-export function scopeServiceFactory(cacheObj: ICacheObject) {
-    return cacheObj.get('$scope');
-}
-
-export function rootScopeServiceFactory(cacheObj: ICacheObject) {
-    return cacheObj.get('$rootScope');
-}
-
-export function eventListenerServiceServiceFactory(cacheObj: ICacheObject) {
-    return cacheObj.get('EventListenerService');
-}
-
 export function ModalsHandlerFactory(cacheObj: ICacheObject) {
     return cacheObj.get('ModalsHandler');
 }
@@ -64,30 +44,6 @@ export const SharingServiceProvider = {
 };
 
 
-
-export const StateServiceFactory = {
-    provide: '$state',
-    useFactory: stateServiceFactory,
-    deps: ['$injector']
-};
-
-export const ScopeServiceFactory = {
-    provide: '$scope',
-    useFactory: scopeServiceFactory,
-    deps: ['$injector']
-};
-
-export const RootScopeServiceFactory = {
-    provide: '$rootScope',
-    useFactory: rootScopeServiceFactory,
-    deps: ['$injector']
-};
-
-export const StateParamsServiceFactory = {
-    provide: '$stateParams',
-    useFactory: stateParamsServiceFactory,
-    deps: ['$injector']
-};
 
 export const ModalsHandlerProvider = {
     provide: ModalsHandler,

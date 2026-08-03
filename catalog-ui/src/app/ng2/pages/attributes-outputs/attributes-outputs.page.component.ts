@@ -16,9 +16,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG.
  */
 
-import {Component, Inject, ViewChild} from '@angular/core';
+import {Component, ViewChild} from '@angular/core';
 import {
   ButtonModel,
   Component as ComponentData,
@@ -62,7 +63,8 @@ import {AttributeBEModel} from "../../../models/attributes-outputs/attribute-be-
 import {AttributeCreatorComponent} from "app/ng2/pages/attributes-outputs/attribute-creator/attribute-creator.component";
 import {AttributeRowSelectedEvent} from "app/ng2/components/logic/attributes-table/attributes-table.component";
 import { DeclareInputComponent } from '../properties-assignment/declare-input/declare-input.component';
-import {NavigationService} from "../../services/navigation.service";
+import {UnsavedChangesAware} from "../../guards/unsaved-changes.guard";
+import {WorkspaceService} from "../workspace/workspace.service";
 
 const SERVICE_SELF_TITLE = "SELF";
 
@@ -71,7 +73,7 @@ const SERVICE_SELF_TITLE = "SELF";
   templateUrl: './attributes-outputs.page.component.html',
   styleUrls: ['./attributes-outputs.page.component.less', '../../../../assets/styles/table-style.less']
 })
-export class AttributesOutputsComponent {
+export class AttributesOutputsComponent implements UnsavedChangesAware {
   title = "Attributes & Outputs";
 
   @ViewChild('componentAttributesTable')
@@ -108,7 +110,6 @@ export class AttributesOutputsComponent {
   hasChangedData: boolean;
   isValidChangedData: boolean;
   savingChangedData: boolean;
-  stateChangeStartUnregister: Function;
   serviceBeAttributesMap: InstanceBeAttributesMap;
 
   @ViewChild('hierarchyNavTabs') hierarchyNavTabs: Tabs;
@@ -122,8 +123,7 @@ export class AttributesOutputsComponent {
     private outputsUtils: OutputsUtils,
     private componentServiceNg2: ComponentServiceNg2,
     private componentInstanceServiceNg2: ComponentInstanceServiceNg2,
-    @Inject("$scope") private $scope: ng.IScope,
-    private navigationService: NavigationService,
+    private workspaceService: WorkspaceService,
     private notificationsService: SdcUiServices.NotificationsService,
     private componentModeService: ComponentModeService,
     private EventListenerService: EventListenerService,
@@ -136,7 +136,7 @@ export class AttributesOutputsComponent {
     this.instanceFeAttributesMap = new InstanceFeAttributesMap();
     /* This is the way you can access the component data, please do not use any data except metadata, all other data should be received from the new api calls on the first time
     than if the data is already exist, no need to call the api again - Ask orit if you have any questions*/
-    this.component = this.navigationService.getParam('component');
+    this.component = this.workspaceService.component;
     this.EventListenerService.registerObserverCallback(EVENTS.ON_LIFECYCLE_CHANGE, this.onCheckout);
     this.updateViewMode();
 
@@ -200,21 +200,10 @@ export class AttributesOutputsComponent {
       this.loadingInstances = false;
       this.loadingAttributes = false;
     });
-
-    this.stateChangeStartUnregister = this.navigationService.onNavigationStart((event) => {
-      // stop if has changed attributes
-      if (this.hasChangedData) {
-        event.preventDefault();
-        this.showUnsavedChangesAlert().then(() => {
-          this.navigationService.navigate(event.toState, event.toParams);
-        });
-      }
-    });
   }
 
   ngOnDestroy() {
     this.EventListenerService.unRegisterObserver(EVENTS.ON_LIFECYCLE_CHANGE);
-    this.stateChangeStartUnregister();
   }
 
   selectFirstInstanceByDefault = () => {

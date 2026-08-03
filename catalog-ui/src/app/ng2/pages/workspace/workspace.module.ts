@@ -1,6 +1,7 @@
 import {NgModule, CUSTOM_ELEMENTS_SCHEMA} from "@angular/core";
 import {CommonModule} from "@angular/common";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {RouterModule} from "@angular/router";
 import {CompositionPageModule} from "../composition/composition-page.module";
 import {SdcUiComponentsModule} from "onap-ui-angular";
 import {LayoutModule} from "../../components/layout/layout.module";
@@ -11,7 +12,6 @@ import {ComponentMetadataService} from "./general-tab/component-metadata.service
 import {NgxsModule} from "@ngxs/store";
 import {TopologyTemplateService} from "../../services/component-services/topology-template.service";
 import {WorkspaceState} from "../../store/states/workspace.state";
-import {WorkspaceService} from "./workspace.service";
 import {DeploymentPageModule} from "./deployment/deployment-page.module";
 import {ToscaArtifactPageModule} from "./tosca-artifacts/tosca-artifact-page.module";
 import {InformationArtifactPageModule} from "./information-artifact/information-artifact-page.module";
@@ -35,6 +35,11 @@ import {WorkspacePropertiesTabComponent} from './properties-tab/properties-tab.c
         CommonModule,
         FormsModule,
         ReactiveFormsModule,
+        // Required for the <router-outlet> that hosts the 19 workspace tabs. NOT optional and NOT
+        // inherited: `schemas: [CUSTOM_ELEMENTS_SCHEMA]` below makes an unrecognised <router-outlet>
+        // compile as an inert unknown element instead of erroring, so without this import the tab
+        // renders as a silently empty shell — green in AOT, Jest and every static gate.
+        RouterModule,
         SdcUiComponentsModule,
         LayoutModule,
         DeploymentPageModule,
@@ -52,7 +57,9 @@ import {WorkspacePropertiesTabComponent} from './properties-tab/properties-tab.c
     exports: [WorkspaceContainerComponent, GeneralTabComponent],
     entryComponents: [WorkspaceContainerComponent, GeneralTabComponent,
         ManagementWorkflowTabComponent, NetworkCallFlowTabComponent, WorkspacePropertiesTabComponent],
-    providers: [TopologyTemplateService, WorkspaceService, GeneralFormService, ComponentMetadataService],
+    // WorkspaceService is deliberately absent: it moved to AppModule so the root NavigationService and
+    // the CanDeactivate guards share the one instance that holds the dirty flag.
+    providers: [TopologyTemplateService, GeneralFormService, ComponentMetadataService],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 

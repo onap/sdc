@@ -2,6 +2,7 @@
  * -
  *  ============LICENSE_START=======================================================
  *  Copyright (C) 2022 Nordix Foundation.
+ *  Modifications Copyright (C) 2026 Deutsche Telekom AG.
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,7 +20,7 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {Component, Inject, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {DataTypeModel} from "../../../../models/data-types";
 import {DataTypeService} from "../../../services/data-type.service";
 import {PropertyBEModel} from "../../../../models/properties-inputs/property-be-model";
@@ -30,7 +31,6 @@ import {ModalModel} from "../../../../models/modal";
 import {ButtonModel} from "../../../../models/button";
 import {TranslateService} from "../../../shared/translator/translate.service";
 import {AddPropertyComponent, PropertyValidationEvent} from "./add-property/add-property.component";
-import {IWorkspaceViewModelScope} from "../../../../view-models/workspace/workspace-view-model-scope";
 import {SdcUiServices} from "onap-ui-angular/dist";
 import {PropertyModel} from "../../../../models/properties";
 import {SdcUiCommon, SdcUiComponents} from "onap-ui-angular";
@@ -55,8 +55,7 @@ export class TypeWorkspacePropertiesComponent implements OnInit {
     tableFilterTerm: string = undefined;
     tableSearchTermUpdate = new Subject<string>();
 
-    constructor(@Inject('$scope') private $scope: IWorkspaceViewModelScope,
-                protected dataTypeService: DataTypeService,
+    constructor(protected dataTypeService: DataTypeService,
                 private modalServiceSdcUI: SdcUiServices.ModalService,
                 private modalService: ModalService,
                 private translateService: TranslateService) {
@@ -221,32 +220,6 @@ export class TypeWorkspacePropertiesComponent implements OnInit {
 
     public isTypeSimple(value:any): boolean {
         return ToscaTypeHelper.isTypeSimple(value);
-    }
-
-    onConstraintChange = (constraints: any): void => {
-        if (!this.$scope.invalidMandatoryFields) {
-            this.$scope.footerButtons[0].disabled = !constraints.valid;
-        } else {
-            this.$scope.footerButtons[0].disabled = this.$scope.invalidMandatoryFields;
-        }
-        if (!constraints.constraints || constraints.constraints.length == 0) {
-            this.$scope.editPropertyModel.property.propertyConstraints = null;
-            this.$scope.editPropertyModel.property.constraints = null;
-            return;
-        }
-        this.$scope.editPropertyModel.property.propertyConstraints = this.serializePropertyConstraints(constraints.constraints);
-        this.$scope.editPropertyModel.property.constraints = constraints.constraints;
-    }
-
-    private serializePropertyConstraints(constraints: any[]): string[] {
-        if (constraints) {
-            let stringConstraints = new Array();
-            constraints.forEach((constraint) => {
-                stringConstraints.push(JSON.stringify(constraint));
-            })
-            return stringConstraints;
-        }
-        return null;
     }
 
     delete(property: PropertyModel) {

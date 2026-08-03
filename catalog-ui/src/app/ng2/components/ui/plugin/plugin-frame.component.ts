@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output} from "@angular/core";
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from "@angular/core";
 import {URLSearchParams} from '@angular/http';
 import {Plugin} from "app/models";
 import {EventBusService} from "../../../services/event-bus.service";
@@ -25,7 +25,6 @@ export class PluginFrameComponent implements OnInit, OnDestroy {
 
     constructor(private eventBusService: EventBusService,
                 private pluginsService: PluginsService,
-                @Inject('$scope') private $scope: ng.IScope,
                 private navigationService: NavigationService) {
         this.urlSearchParams = new URLSearchParams();
         this.isPluginCheckDone = false;

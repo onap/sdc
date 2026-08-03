@@ -76,24 +76,32 @@ export const SEL = {
     catalogButton: '[data-tests-id="main-menu-button-catalog"]',
 
     /**
-     * The rendered VIEW for each top-level route: the element ui-router puts inside <div ui-view>.
-     * These are the discriminators for the 2026-07-09 dead-click regression, where the URL and the
-     * menu highlight both updated correctly while the view never changed — so a URL-only assertion
-     * passes and proves nothing. ui-router swaps the two, so exactly one is ever attached.
+     * The rendered VIEW for each top-level route: the component the app-level <router-outlet>
+     * activates. These are the discriminators for the 2026-07-09 dead-click regression, where the
+     * URL and the menu highlight both updated correctly while the view never changed — so a
+     * URL-only assertion passes and proves nothing. The outlet swaps the two, so exactly one is
+     * ever attached.
      *
-     * ASSERT WITH toBeAttached(), NOT toBeVisible(). Both <home-page> and <catalog-page> are bare
+     * ASSERT WITH toBeAttached(), NOT toBeVisible(). Both <home-page> and <catalog> are bare
      * custom elements with no CSS rule of their own, so they compute to `display: inline` and
      * measure 0x0 even when their content fills the viewport (their child .sdc-catalog-container
      * is 1920px wide but also 0-height, as its own children are floated). toBeVisible() therefore
      * reports "hidden" on a perfectly rendered page. Use the *Marker selectors below when a test
      * needs to prove pixels were actually painted.
+     *
+     * NOTE THE ASYMMETRY, it is not a typo: the catalog element is <catalog>, not <catalog-page>.
+     * Under ui-router both views were reached through AngularJS `downgradeComponent` wrappers named
+     * after the states' templates (directive-module.ts registered 'catalogPage' and 'homePage'), and
+     * CatalogComponent's own selector is 'catalog' while HomeComponent's really is 'home-page'. With
+     * the wrappers deleted in phase 13 CR 2 the router activates each component directly, so the
+     * element is now the component's own selector and only the catalog one changed name.
      */
     homeView: 'home-page',
-    catalogView: 'catalog-page',
+    catalogView: 'catalog',
 
     /**
      * Genuinely-painted content inside each view — verified live at >40x10 px. Pair these with the
-     * *View selectors: the view element proves ui-router swapped the template, the marker proves
+     * *View selectors: the view element proves the outlet swapped the component, the marker proves
      * the template actually rendered rather than erroring out to an empty shell.
      */
     homeViewMarker: '[data-tests-id="dashboard-Elements"]',
@@ -156,8 +164,9 @@ export const SEL = {
     discardButton: '[data-tests-id="discardButton"]',
 
     /**
-     * The SECOND, different unsaved-changes modal: app.ts:619-638's `onNavigateOut`, opened with
-     * openWarningModal(). It guards the General tab, which has no modal of its own.
+     * The SECOND, different unsaved-changes modal: UnsavedChangesFlagGuard's `prompt()`, opened with
+     * openWarningModal(). It guards the General tab, which has no modal of its own. (Before phase 13
+     * CR 2 the same modal was raised by app.ts:619-638's `onNavigateOut`.)
      *
      * Its markup does NOT match the custom-modal one, which is why a `.custom-modal` or
      * `[data-tests-id="navigate-modal"]` selector finds nothing here — measured live:
@@ -165,7 +174,7 @@ export const SEL = {
      *     data-tests-id at all, so it can only be reached by class;
      *   - openWarningModal's third argument ('navigate-modal') is NOT emitted as a testId on the
      *     dialog. It becomes the button-id PREFIX, so the OK button's real attribute is
-     *     data-tests-id="navigate-modal-button-ok" — NOT the bare 'OK' that app.ts:626's
+     *     data-tests-id="navigate-modal-button-ok" — NOT the bare 'OK' that the button's own
      *     `testId: 'OK'` suggests and that the phase 13 CR 2 plan records.
      */
     warningModal: 'div.sdc-modal',
@@ -274,35 +283,20 @@ export async function login(page: Page, userId: string = DESIGNER_USER): Promise
 // ---------------------------------------------------------------------------
 
 /**
- * KNOWN PRODUCT DEFECT — cold deep-linking is broken on master for EVERY route except
- * '/dashboard', and has been since dd810f196 (2026-06-24, "Activate Angular Router alongside
- * ui-router for leaf routes").
+ * Loads a deep '#!' route from cold — a real browser navigation, so the URL is parsed BEFORE the
+ * app bootstraps, which is the part no in-page hash assignment reaches.
  *
- * Mechanism, traced with a hashchange listener installed via addInitScript before bootstrap:
- *   1. The document loads at '#!/catalog'.
- *   2. The Angular Router (RouterModule.forRoot(routes, {useHash: true}),
- *      app.routing.module.ts:62) performs its initial navigation. Angular's
- *      HashLocationStrategy.prepareExternalUrl() is `'#' + joinWithSlash(baseHref, internal)`
- *      (@angular/common 5.2.11), and `internal` here is '/!/catalog' because path() strips only
- *      the leading '#'. The '!' is therefore treated as a path segment, and the URL is rewritten
- *      to '#/!/catalog' — ui-router's '#!' prefix is destroyed.
- *   3. ui-router no longer recognises the URL and falls through to
- *      $urlRouterProvider.otherwise('dashboard') (app.ts:75), landing on '#!/dashboard'.
- * Observed hashchange sequence: '/!/catalog' → '!' → '!/dashboard'.
- *
- * This is exactly what SdcHashLocationStrategy (phase 13 CR 2, task 3) exists to fix. Until then
- * `gotoCold()` reproduces a cold load in the only way that WORKS today: load the app at its
- * dashboard entry point, then assign the hash. That still exercises the resolver/guard ordering
- * and the full route recognition path, but NOT the pre-bootstrap URL parse.
- *
- * WHEN CR 2 LANDS: delete the two-step fallback below and make it a single page.goto(). If a
- * plain goto() to a deep hash route then works, the defect is fixed and the workaround is dead
- * weight; if it does not, SdcHashLocationStrategy is wrong and must not merge.
+ * This used to be a two-step workaround (load '#!/dashboard', then assign the hash), because a
+ * plain goto() to any route but '/dashboard' silently landed on the dashboard: Angular's
+ * HashLocationStrategy.prepareExternalUrl() is `'#' + joinWithSlash(baseHref, internal)` and
+ * path() strips only the leading '#', so '#!/catalog' became '#/!/catalog' and destroyed
+ * ui-router's '#!' prefix, which then fell through to otherwise('dashboard'). SdcHashLocationStrategy
+ * (phase 13 CR 2) re-inserts the '!' on write and tolerates it on read, so the single goto() below
+ * is now the whole story — keep it that way; a regression here shows up as a cold load landing on
+ * the dashboard, which is what the deep-link test asserts against.
  */
 export async function gotoCold(page: Page, path: string): Promise<void> {
-    await page.goto('/sdc1#!/dashboard');
-    await settles(page);
-    await page.evaluate((p) => { window.location.hash = `#!${p}`; }, path);
+    await page.goto(`/sdc1#!${path}`);
     await settles(page);
 }
 
@@ -314,26 +308,26 @@ export async function gotoCold(page: Page, path: string): Promise<void> {
  * segment immediately after 'workspace'") and by 70 Cypress URL lines. They therefore survive
  * the ui-router removal, which is exactly why navigating this way is durable.
  *
- * Uses a HASH ASSIGNMENT rather than page.goto() when already inside the app: a cold goto() to
- * a deep hash route silently lands on #!/dashboard (both ui-router's and the Angular Router's
- * initial-navigation races lose to the app bootstrap). Pass `cold: true` to deliberately test
- * the deep-link/reload path — that is a distinct behaviour worth its own assertions.
+ * Uses a HASH ASSIGNMENT rather than page.goto() by default: an in-page hash change is an order
+ * of magnitude faster than a full reload and is what a user clicking through the app produces.
+ * Pass `cold: true` for a real browser navigation, which additionally exercises the pre-bootstrap
+ * URL parse — a distinct behaviour worth its own assertions.
  */
 export async function gotoWorkspaceTab(
     page: Page,
     opts: { id?: string; type: 'resource' | 'service'; tab?: string; previousState?: string; cold?: boolean },
 ): Promise<void> {
     const { id, type, tab = 'general', previousState = 'dashboard', cold = false } = opts;
-    // CREATE mode has an EMPTY id segment, i.e. a DOUBLE slash:
-    // '#!/dashboard/workspace//service/general'. That is what $state.href('workspace.general',
-    // {type}) actually mints, because the ':id' parameter is simply absent from the interpolation.
-    // The single-slash form '#!/dashboard/workspace/service/general' used by
-    // cypress/integration/service-distribution.spec.js is WRONG — ui-router binds 'service' to
-    // :id and the tab segment to :type, so the workspace never renders. Verified against a live
-    // stack; do not "tidy" the double slash away.
+    // CREATE mode is a SINGLE slash: '#!/dashboard/workspace/service/general'. ui-router matched
+    // the DOUBLE-slash form ('workspace//service/general') because ':id' was simply absent from
+    // $state.href's interpolation, but the Angular Router cannot represent that URL at all —
+    // DefaultUrlSerializer.parse() drops an empty segment AND everything after it, so the tab
+    // would be lost. app.routes.ts therefore declares ':previousState/workspace/:type' as its own
+    // route, ahead of the id-bearing one, and this is the form that matches it. Incidentally it is
+    // also the shape cypress/integration/service-distribution.spec.js always used.
     const path = id
         ? `/${previousState}/workspace/${id}/${type}/${tab}`
-        : `/${previousState}/workspace//${type}/${tab}`;
+        : `/${previousState}/workspace/${type}/${tab}`;
 
     if (cold) {
         await gotoCold(page, path);

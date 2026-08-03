@@ -1,5 +1,6 @@
 <!--
   ~ Copyright (C) 2018 AT&T Intellectual Property. All rights reserved.
+  ~ Modifications Copyright (C) 2026 Deutsche Telekom AG.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -26,7 +27,9 @@
     <link rel="icon" type="image/x-icon" href="/sdc1/assets/styles/images/favicon.png">
 
 </head>
-<body data-ng-class="bodyClass">
+<!-- The body class is written directly by RouteMetadataService on NavigationEnd; the
+     `data-ng-class="bodyClass"` binding that used to live here died with $rootScope.bodyClass. -->
+<body>
 <a href="#main-content" class="skip-to-main">Skip to main content</a>
 
 <!--<h1>Index.html</h1>-->
@@ -38,9 +41,6 @@
         <div class="preloading-page-loading">Loading<span>.</span><span>.</span><span>.</span></div>
     </div>
 </app-root>
-<!--<h2>Before ui-view</h2>-->
-<div ui-view style="height:100%"></div>
-<!--<h2>After ui-view</h2>-->
 
 <script src="/sdc1/scripts/inline.bundle.js"></script>
 <script src="/sdc1/scripts/polyfills.bundle.js"></script>

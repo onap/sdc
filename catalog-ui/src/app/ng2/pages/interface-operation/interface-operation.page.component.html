@@ -12,8 +12,13 @@
     ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     ~ See the License for the specific language governing permissions and
     ~ limitations under the License.
+    ~
+    ~ Modifications Copyright (C) 2026 Deutsche Telekom AG.
     -->
-    
+
+<!-- .workspace-interface-operation (interface-operation.less, imported by app.less) positions the
+     tab content; it used to be supplied by the deleted ui-router state template. -->
+<div class="workspace-interface-operation">
 <div class="interface-operation">
     <loader [display]="isLoading" [size]="'large'" [relative]="true"></loader>
 
@@ -148,4 +153,5 @@
 
     </div>
 
+</div>
 </div>

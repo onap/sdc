@@ -243,6 +243,40 @@
         }
     }
 }
+// --- Routed workspace child tab ---
+// The child tabs are now rendered by a <router-outlet> INSIDE the workspace shell, as siblings
+// of the outlet element itself. This block gives the activated component the box the old
+// sibling `<div ui-view class="workspace-child-view">` used to provide: it is positioned into the
+// content region below the 50px top-nav + 53px action bar, and — critically — it is the SCROLL
+// container. Without it nothing between the tab and <body overflow:hidden> scrolls, so any tab
+// taller than the viewport (the General form, long artifact tables) is silently unreachable.
+// `router-outlet ~ *` rather than a wrapper element: the outlet renders its component as a
+// following sibling, and .w-sdc-main-right-container's class attribute must stay exactly that
+// string for the Selenium exact-class xpath waits, so no new wrapper may be introduced there.
+// NOTE the offset is @action_nav_height alone, not @top_nav_height + @action_nav_height as the old
+// rule used: .w-sdc-main-right-container is itself absolutely positioned and so is the containing
+// block here, whereas the old sibling div was positioned against <body> and had to clear the
+// top-nav itself.
+.sdc-workspace-container .w-sdc-main-right-container > .w-sdc-main-right-container-content > router-outlet ~ * {
+    display: block;
+    position: absolute;
+    top: @action_nav_height;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: auto;
+    background-color: @main_color_p;
+}
+
+// Composition is full-bleed: its canvas manages its own layout and the top bar floats OVER it
+// (position: absolute, z-index: 1 in the .composition block below), so the tab must also reclaim
+// the action-bar strip — reproducing `.composition .workspace-child-view { top: @top_nav_height }`.
+// integration-tests/playwright-tests/tests/composition-geometry.spec.ts asserts composition's top
+// is strictly LESS than the General tab's, so this rule is load-bearing, not cosmetic.
+.composition .sdc-workspace-container .w-sdc-main-right-container > .w-sdc-main-right-container-content > router-outlet ~ * {
+    top: 0;
+}
+
 // Fix till we remove everything to angular5 and fix all workspace style
 .composition{
     .sdc-workspace-container{
@@ -268,69 +302,5 @@
                 }
             }
         }
-    }
-}
-
-.deployment {
-
-    .sdc-workspace-container{
-        .w-sdc-main-container{
-            .w-sdc-main-right-container{
-                left:0;
-                //overflow-y: scroll;
-                .sdc-workspace-top-bar {
-                    position: absolute;
-                    left: 245px;
-                    right: 0;
-                    z-index: 1;
-                    .not-latest{
-                        left: 270px;
-                    }
-                }
-
-                > div:first-child{
-                    padding: 0;
-                }
-                .w-sdc-main-container-body-content-wrapper {
-                    padding: 0px;
-                }
-            }
-        }
-    }
-}
-
-// --- Workspace child view (Phase 2 migration) ---
-// During the AngularJS→Angular migration the workspace shell is an Angular
-// component (<workspace-container>) while the child tabs are still AngularJS
-// states rendered by ui-router. A ui-view cannot be projected through an
-// Angular component's <ng-content> (ui-router loses its view anchor and hangs),
-// so the <div ui-view> lives as a SIBLING of <workspace-container> and is
-// positioned here into the content region (right of the 242px sidebar, below
-// the 50px top-nav + 53px action bar). Remove once child tabs are Angular.
-.workspace-child-view {
-    position: absolute;
-    top: @top_nav_height + @action_nav_height;
-    left: 242px;
-    right: 0;
-    bottom: 0;
-    overflow: auto;
-    background-color: @main_color_p;
-    z-index: 0;
-
-    // The General tab (and other content tabs) wrap their form in this class.
-    // It carries the horizontal padding the old layout applied via
-    // .w-sdc-main-container-body-content.
-    > .sdc-workspace-general-step,
-    > [include-padding] {
-        padding: 0 100px 20px 100px;
-    }
-}
-
-// Composition and deployment tabs are full-bleed (their own graphs/canvases
-// manage layout), so the child view must not reserve the sidebar gutter.
-.composition, .deployment {
-    .workspace-child-view {
-        left: 0;
-        top: @top_nav_height;
     }
 }

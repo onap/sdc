@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-import {Component as NgComponent, ChangeDetectionStrategy, ChangeDetectorRef, Inject, OnInit, OnDestroy} from '@angular/core';
+import {Component as NgComponent, ChangeDetectorRef, Inject, OnInit, OnDestroy} from '@angular/core';
 import * as _ from 'lodash';
 
 import {Component, IAppMenu, IUserProperties, Plugin, PluginsConfiguration, Resource, Service} from 'app/models';
@@ -31,7 +31,6 @@ import {
     MenuHandler,
     MenuItem,
     MenuItemGroup,
-    PREVIOUS_CSAR_COMPONENT,
     ResourceType,
     Role,
     States,
@@ -53,21 +52,31 @@ import {WorkspaceService} from '../workspace.service';
 import {TranslateService} from '../../../shared/translator/translate.service';
 import {NavigationService} from '../../../services/navigation.service';
 
+/**
+ * Deliberately NOT OnPush, unlike most components here. It used to be, harmlessly: as a
+ * `downgradeComponent` its host view was attached to ApplicationRef, and `tick()` calls
+ * `detectChanges()` on each ROOT view directly, which bypasses the OnPush `ChecksEnabled` gate
+ * (core.umd.js: ViewRef_.detectChanges) — so the strategy never actually gated anything.
+ *
+ * Since CR 2 this shell is activated by a <router-outlet>, i.e. it is a CHILD view, reached through
+ * `callViewAction`, which DOES enforce the gate — and an unchecked OnPush parent skips its entire
+ * subtree. Every workspace tab was its own downgraded root before and is now a descendant of this
+ * component, so keeping OnPush here silently starved all 19 of them: a tab rendered its empty
+ * initial state (the click that navigated marked the parents) and then never re-rendered when its
+ * own XHRs resolved, because a resolving request marks nothing. Symptom was a permanently empty
+ * properties table / interface list.
+ */
 @NgComponent({
     selector: 'workspace-container',
     templateUrl: './workspace-container.component.html',
-    styleUrls: ['./workspace-container.component.less'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    styleUrls: ['./workspace-container.component.less']
 })
 export class WorkspaceContainerComponent implements OnInit, OnDestroy {
-
-    injectComponent: Component;
 
     component: Component;
     originComponent: Component;
     componentType: string;
     leftBarTabs: MenuItemGroup;
-    isLoading: boolean = false;
     isCreateProgress: boolean = false;
     isValidForm: boolean = true;
     mode: WorkspaceMode;
@@ -91,6 +100,9 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
     progressValue: number = 0;
 
     sdcMenu: IAppMenu;
+
+    isLoading: boolean = false;
+
     private role: string;
     private category: string;
     private components: Component[];
@@ -125,9 +137,7 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
         // Expose the shell's action methods so the AngularJS shim controller can delegate
         // create / save / changeLifecycleState calls that child tabs make via $scope inheritance.
         this.workspaceService.containerActions = this;
-        const comp = this.injectComponent || this.workspaceService.component;
-        if (comp) {
-            this.injectComponent = comp;
+        if (this.workspaceService.component) {
             this.initWorkspace();
             this.cdr.detectChanges();
         }
@@ -142,7 +152,7 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
     }
 
     private initWorkspace(): void {
-        const raw = this.injectComponent;
+        const raw = this.workspaceService.component;
         if (!raw) { return; }
         this.component = (typeof raw.isService === 'function') ? raw : this.componentFactory.createComponent(raw);
         if (!this.component) { return; }
@@ -280,7 +290,6 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
     // --- Progress / loader helpers (drive the shell <sdc-loader> spinners) ---
     // ChangeLifecycleStateHandler.changeLifecycleState(component, data, scope, ...) sets
     // scope.isLoading directly; we pass `this` as that scope so the shell loader reacts.
-
     startProgress = (message: string): void => {
         this.progressService.initCreateComponentProgress(this.component.uniqueId);
         this.isCreateProgress = true;
@@ -292,9 +301,30 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
         this.progressService.deleteProgressValue(this.component.uniqueId);
     }
 
+    // configurations/menu.js supplies DOTTED states ('workspace.general') for the 7 component
+    // groups and BARE states ('general') only for the DataType group, so every comparison must
+    // tolerate both forms.
+    private isMenuState(item: MenuItem, shortName: string): boolean {
+        return !!item && this.isState(item.state, shortName);
+    }
+
+    private isState(state: string, shortName: string): boolean {
+        if (!state) { return false; }
+        return state === shortName || state === 'workspace.' + shortName;
+    }
+
+    private applyCreateModeDisabling(items: MenuItem[], inCreateMode: boolean): void {
+        items.forEach((item: MenuItem) => {
+            item.isDisabled = (inCreateMode && !this.isMenuState(item, 'general')) ||
+                (this.isMenuState(item, 'deployment') && this.component.modules
+                    && this.component.modules.length === 0 && this.component.isResource()) ||
+                (item.disabledCategory === true);
+        });
+    }
+
     private disableMenuItems(): void {
         this.leftBarTabs.menuItems.forEach((item: MenuItem) => {
-            item.isDisabled = (States.WORKSPACE_GENERAL !== item.state);
+            item.isDisabled = !this.isMenuState(item, 'general');
         });
     }
 
@@ -313,7 +343,7 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
     }
 
     isGeneralView(): boolean {
-        return this.navigationService.getCurrentStateName() === States.WORKSPACE_GENERAL;
+        return this.isState(this.navigationService.getCurrentStateName(), 'general');
     }
 
     // --- Create (the shell's Create button in CREATE mode) ---
@@ -604,9 +634,8 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
     private updateSelectedMenuItem(stateName: string): void {
         if (!this.leftBarTabs) { return; }
         const stateNameShort = stateName.replace('workspace.', '');
-        const selectedItem: MenuItem = _.find(this.leftBarTabs.menuItems, (item: MenuItem) => {
-            return item.state === stateName || item.state === stateNameShort;
-        });
+        const selectedItem: MenuItem = _.find(this.leftBarTabs.menuItems,
+            (item: MenuItem) => this.isMenuState(item, stateNameShort));
         let selectedIndex = selectedItem ? this.leftBarTabs.menuItems.indexOf(selectedItem) : 0;
         if (this.isComposition || this.isDeployment || this.isPlugins) {
             selectedIndex = -1;
@@ -643,12 +672,9 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
                 menuItem.params = {state: menuItem.state};
             }
             menuItem.callback = (() => { this.onMenuItemPressed(menuItem.state, menuItem.params); }) as any;
-            menuItem.isDisabled = (inCreateMode && menuItem.state !== 'general') ||
-                (menuItem.state === 'deployment' && this.component.modules
-                    && this.component.modules.length === 0 && this.component.isResource()) ||
-                (menuItem.disabledCategory === true);
             return menuItem;
         });
+        this.applyCreateModeDisabling(this.leftBarTabs.menuItems, inCreateMode);
 
         if (this.cacheService.get('breadcrumbsComponents')) {
             this.initBreadcrumbs();

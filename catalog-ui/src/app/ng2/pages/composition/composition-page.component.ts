@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +23,7 @@ import { Component as TopologyTemplate } from 'app/models';
 import * as Constants from 'constants';
 import { EventListenerService } from '../../../services/event-listener-service';
 import { EVENTS } from '../../../utils';
-import { NavigationService } from '../../services/navigation.service';
+import { WorkspaceService } from '../workspace/workspace.service';
 
 @Component({
     templateUrl: './composition-page.component.html',
@@ -32,11 +33,13 @@ export class CompositionPageComponent implements OnInit, OnDestroy {
 
     private topologyTemplate: TopologyTemplate;
 
-    constructor(private navigationService: NavigationService, private eventListenerService: EventListenerService) {
-        this.topologyTemplate = navigationService.getParam('component');
+    constructor(private workspaceService: WorkspaceService, private eventListenerService: EventListenerService) {
     }
 
+    // Read in ngOnInit, not the constructor: the route resolver that writes
+    // WorkspaceService.component is only guaranteed to have run by ngOnInit.
     ngOnInit(): void {
+        this.topologyTemplate = this.workspaceService.component;
         this.eventListenerService.registerObserverCallback(EVENTS.ON_CHECKOUT, (comp) => {
             this.topologyTemplate = comp;
         });

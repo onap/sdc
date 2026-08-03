@@ -2,6 +2,7 @@
  * -
  *  ============LICENSE_START=======================================================
  *  Copyright (C) 2022 Nordix Foundation.
+ *  Modifications Copyright (C) 2026 Deutsche Telekom AG.
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,7 +26,7 @@ import {MenuItem, MenuItemGroup} from "../../../utils/menu-handler";
 import {CacheService} from "../../services/cache.service";
 import {DataTypeModel} from "../../../models/data-types";
 import {DataTypeService} from "../../services/data-type.service";
-import {IWorkspaceViewModelScope} from "../../../view-models/workspace/workspace-view-model-scope";
+import {TypeWorkspaceService} from "./type-workspace.service";
 import {TranslateService} from "../../shared/translator/translate.service";
 import {NavigationService} from "../../services/navigation.service";
 import {HttpErrorResponse} from "@angular/common/http";
@@ -51,7 +52,7 @@ export class TypeWorkspaceComponent implements OnInit {
   importedDataType: DataTypeModel = new DataTypeModel();
   currentMenu: MenuItem;
 
-  constructor(@Inject('$scope') private $scope: IWorkspaceViewModelScope,
+  constructor(private typeWorkspaceService: TypeWorkspaceService,
               private dataTypeService: DataTypeService, private cacheService: CacheService,
               private notificationsService: SdcUiServices.NotificationsService,
               private translateService: TranslateService,
@@ -89,16 +90,16 @@ export class TypeWorkspaceComponent implements OnInit {
   }
 
   private createImportType() {
-      if (this.$scope.dataType.derivedFromName != undefined && this.$scope.dataType.model != undefined) {
-          this.dataTypeService.createImportedType(this.$scope.dataType.model.name, this.$scope.importFile)
+      if (this.typeWorkspaceService.dataType.derivedFromName != undefined && this.typeWorkspaceService.dataType.model != undefined) {
+          this.dataTypeService.createImportedType(this.typeWorkspaceService.dataType.model.name, this.typeWorkspaceService.importFile)
               .subscribe(response => {
               this.importedDataType = new DataTypeModel(response);
               this.notificationsService.push(new NotificationSettings(
                   'success',
-                  this.$scope.dataType.name + ' ' + this.translateService.translate('IMPORT_DATA_TYPE_SUCCESS_MESSAGE_TEXT'),
+                  this.typeWorkspaceService.dataType.name + ' ' + this.translateService.translate('IMPORT_DATA_TYPE_SUCCESS_MESSAGE_TEXT'),
                   this.translateService.translate('IMPORT_DATA_TYPE_TITLE_TEXT'),
                   5000));
-              this.navigationService.navigate(this.navigationService.getCurrentStateName(), {importedFile: null, id: this.$scope.dataType.uniqueId, isViewOnly: true}, {reload: true});
+              this.navigationService.navigate(this.navigationService.getCurrentStateName(), {importedFile: null, id: this.typeWorkspaceService.dataType.uniqueId, isViewOnly: true}, {reload: true});
           }, error => {//because overriding http interceptor
                   if (error instanceof HttpErrorResponse) {
                       const errorResponse: ServerErrorResponse = new ServerErrorResponse(error);
@@ -115,7 +116,7 @@ export class TypeWorkspaceComponent implements OnInit {
       else {
           this.notificationsService.push(new NotificationSettings(
               'error',
-              this.$scope.dataType.name + ' ' + "Derived from is invalid in file",
+              this.typeWorkspaceService.dataType.name + ' ' + "Derived from is invalid in file",
               this.translateService.translate('IMPORT_DATA_TYPE_TITLE_TEXT'),
               5000));
       }
@@ -191,7 +192,9 @@ export class TypeWorkspaceComponent implements OnInit {
   onMenuUpdate(menuItemGroup: MenuItemGroup): void {
     this.breadcrumbsModel.push(...[this.typeMenuItemGroup, menuItemGroup]);
     if (!this.isViewOnly) {
-        this.$scope.leftBarTabs.menuItems.forEach((item: MenuItem) => {
+        // menu.js gives the DataType group BARE states ('general'), unlike the 7 component groups'
+        // dotted ones ('workspace.general'), so comparing against the bare name is correct here.
+        this.typeWorkspaceService.leftBarTabs.menuItems.forEach((item: MenuItem) => {
             item.isDisabled = ('general' !== item.state);
             item.disabledCategory = ('general' !== item.state);
         });

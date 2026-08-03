@@ -24,35 +24,43 @@
  * WHAT THIS GUARDS — a layout that is driven entirely by a CSS class on <body>, which is the
  * one category of breakage every other gate in this repo is blind to:
  *
- *   ui-router puts `bodyClass: 'composition'` in the state's `data` (app.ts:381-383); the run
- *   block copies it to `$rootScope.bodyClass` (app.ts:726-729) and `index.html:29`'s
- *   `<body data-ng-class="bodyClass">` paints it. `workspace.less:331-336` then keys the
- *   full-bleed geometry off `.composition .workspace-child-view` — reclaiming the 242px sidebar
- *   gutter and the 53px action-bar strip that every other tab reserves.
+ *   `bodyClass: 'composition'` lives in the route's `data` (app.routes.ts) and RouteMetadataService
+ *   writes it onto <body> on every NavigationEnd. `workspace.less` then keys the full-bleed geometry
+ *   off `.composition … router-outlet ~ *` — reclaiming the 242px sidebar gutter and the 53px
+ *   action-bar strip that every other tab reserves.
  *
- *   Phase 13 CR 2 deletes both the ui-router states and the `$stateChangeSuccess` run block that
- *   sets `bodyClass`. If the replacement forgets it — or sets it on the wrong element, or a tick
- *   too late — the canvas renders inside a 1678px box indented 242px, with the palette shoved off
- *   under the sidebar. Nothing detects that: Jest never mounts <body>, AOT has no opinion on CSS
- *   class strings, and Selenium's waits are all EXACT-class *existence* checks that pass on a
- *   mislaid canvas exactly as they do on a correct one.
+ *   Before phase 13 CR 2 this chain ran through ui-router: the state's `data`, then
+ *   `$rootScope.bodyClass` in the run block, then `index.html`'s `<body data-ng-class>`. CR 2
+ *   deleted all three. If the replacement forgets the class — or sets it on the wrong element, or a
+ *   tick too late — the canvas renders inside a 1678px box indented 242px, with the palette shoved
+ *   off under the sidebar. Nothing else detects that: Jest never mounts <body>, AOT has no opinion
+ *   on CSS class strings, and Selenium's waits are all EXACT-class *existence* checks that pass on
+ *   a mislaid canvas exactly as they do on a correct one.
  *
  * WHY GEOMETRY AND HIT-TESTING, not a screenshot: 242px of unwanted indent is the kind of
  * difference that reads as "looks fine" in a screenshot review. `elementFromPoint` additionally
  * proves the canvas is genuinely reachable at x=300 rather than merely sized to include it —
  * an overlay that swallows clicks is a real ngUpgrade failure mode and geometry alone misses it.
  *
- * Measured on master (1920x1080 viewport, Docker stack), which is what the numbers below encode:
- *   general      body='ng-scope general'      child-view 242,103 1678x977   sidebar 0,50 242x1030
- *   composition  body='ng-scope composition'  child-view   0,50 1920x1030   sidebar ABSENT
+ * Measured at 1920x1080 on the Docker stack, which is what the numbers below encode:
+ *   general      body='general'      child-view 242,103 1678x977   sidebar 0,50 242x1030
+ *   composition  body='composition'  child-view   0,50 1920x1030   sidebar ABSENT
  *
  * HOW TO RUN: see README.md — `npx playwright test composition-geometry`.
  */
 
 import { test, expect, SEL, settles, gotoWorkspaceTab, currentRoute } from './fixtures/sdc';
 
-/** The element the full-bleed rule targets. Not in SEL: nothing outside this spec asserts on it. */
-const CHILD_VIEW = '.workspace-child-view';
+/**
+ * The element the full-bleed rule targets: the component the workspace shell's <router-outlet>
+ * activated. It is a SIBLING of the outlet, not a child, so the rule (and this selector) matches it
+ * as `router-outlet ~ *` — there is deliberately no wrapper element, because
+ * `.w-sdc-main-right-container`'s class attribute must stay exactly that string for the Selenium
+ * exact-class xpath waits. Scoped to the shell so the app-level outlet in app.component.html cannot
+ * match. Not in SEL: nothing outside this spec asserts on it.
+ */
+const CHILD_VIEW =
+    '.sdc-workspace-container .w-sdc-main-right-container > .w-sdc-main-right-container-content > router-outlet ~ *';
 
 /** The workspace shell's left tab rail, suppressed on composition by `*ngIf="!isComposition"`. */
 const LEFT_SIDEBAR = '.w-sdc-left-sidebar';
@@ -105,11 +113,20 @@ test.describe('Composition full-bleed layout', () => {
             expect(general.childView!.left).toBeGreaterThan(200);
             expect(general.childView!.top).toBeGreaterThan(90);
 
-            // The trailing slash is NOT optional — app.ts:371 declares `url: 'composition/'`, and
-            // without it ui-router fails to match and silently lands on /dashboard.
+            // Deliberately the LEGACY trailing-slash form, which is what ui-router emitted and what 6
+            // Cypress specs and every old bookmark still use. It works because `Location.path()`
+            // normalises the slash away before the router matches — which is also why the route is
+            // declared as bare 'composition' (app.routes.ts). Keep this URL as-is: navigating with the
+            // slash is the only thing that pins the compatibility.
             await gotoWorkspaceTab(sdcPage, { id: vf.id, type: 'resource', tab: 'composition/' });
             await settles(sdcPage);
-            await expect(sdcPage.locator('composition-page')).toBeAttached({ timeout: 30_000 });
+            // Asserted on the template's own root div, not on a host element: CompositionPageComponent
+            // declares NO selector (it was only ever reached through the ui-router template
+            // '<composition-page>', an AngularJS downgradeComponent wrapper that CR 2 deleted), so the
+            // router now renders it as an anonymous <ng-component>. Nothing else in the product, the
+            // stylesheets or the Selenium page objects references either name, so the wrapper name was
+            // not worth resurrecting purely to be asserted on.
+            await expect(sdcPage.locator('.workspace-composition-page')).toBeAttached({ timeout: 30_000 });
             await expect.poll(() => sdcPage.evaluate(() => document.body.className),
                 { timeout: 20_000, message: 'body never got the composition class' })
                 .toContain('composition');
@@ -120,7 +137,9 @@ test.describe('Composition full-bleed layout', () => {
                 .toBe(0);
             const composition = await measure(sdcPage);
 
-            expect(await currentRoute(sdcPage)).toContain(`/workspace/${vf.id}/resource/composition/`);
+            // No trailing slash: we navigated WITH one, and the router normalised it away and rewrote
+            // the hash. Asserted to pin that rewrite, since it is what makes the legacy URL work.
+            expect(await currentRoute(sdcPage)).toContain(`/workspace/${vf.id}/resource/composition`);
 
             expect(composition.childView!.left,
                 'composition is indented — the full-bleed rule did not apply').toBe(0);

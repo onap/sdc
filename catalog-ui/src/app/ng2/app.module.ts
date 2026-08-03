@@ -27,14 +27,7 @@ import {UpgradeAdapter} from '@angular/upgrade';
 import {UpgradeModule} from '@angular/upgrade/static';
 import {SdcUiComponentsModule} from 'onap-ui-angular';
 import {PropertiesAssignmentModule} from './pages/properties-assignment/properties-assignment.module';
-import {
-  ModalsHandlerProvider,
-  QServiceProvider,
-  RootScopeServiceFactory,
-  ScopeServiceFactory,
-  StateParamsServiceFactory,
-  StateServiceFactory
-} from './utils/ng1-upgraded-provider';
+import {ModalsHandlerProvider, QServiceProvider} from './utils/ng1-upgraded-provider';
 import {ConfigService} from './services/config.service';
 import {AuthenticationService} from './services/authentication.service';
 import {Cookie2Service} from './services/cookie.service';
@@ -127,12 +120,20 @@ import {DeclareInputModule} from "./pages/properties-assignment/declare-input/de
 import {NavigationService} from "./services/navigation.service";
 import {AppRoutingModule} from "./app.routing.module";
 import {AuthGuard} from "./guards/auth.guard";
+import {LocationStrategy} from '@angular/common';
+import {SdcHashLocationStrategy} from './utils/sdc-hash-location-strategy';
+import {UnsavedChangesFlagGuard} from './guards/unsaved-changes-flag.guard';
+import {UnsavedChangesGuard} from './guards/unsaved-changes.guard';
+import {WorkspaceComponentResolver} from './pages/workspace/workspace-component.resolver';
+import {WorkspaceService} from './pages/workspace/workspace.service';
+import {RouteMetadataService} from './services/route-metadata.service';
 
 declare const __ENV__: string;
 
 export const upgradeAdapter = new UpgradeAdapter(forwardRef(() => AppModule));
 
-export function configServiceFactory(config: ConfigService, authService: AuthenticationService, eventListener: EventListenerService) {
+export function configServiceFactory(config: ConfigService, authService: AuthenticationService,
+                                     eventListener: EventListenerService, dataTypesService: DataTypesService) {
 
   return () => {
     return authService.authenticate().toPromise()
@@ -144,6 +145,10 @@ export function configServiceFactory(config: ConfigService, authService: Authent
         config.loadPluginsConfiguration(),
       ])
     }).then(() => {
+      // Moved here from the deleted AngularJS run block (app.ts:593), which primed the default-model
+      // data-type cache at startup. Deliberately NOT awaited, matching the run block: it was a
+      // fire-and-forget call there too, and blocking bootstrap on it would delay first paint.
+      dataTypesService.loadDataTypesCache(null);
       eventListener.notifyObservers('ON_FINISH_LOADING');
     })
     .catch(() => {
@@ -229,10 +234,6 @@ export function configServiceFactory(config: ConfigService, authService: Authent
     CookieService,
     ProgressService,
     ValidationUtils,
-    StateServiceFactory,
-    StateParamsServiceFactory,
-    ScopeServiceFactory,
-    RootScopeServiceFactory,
     ModalsHandlerProvider,
     UserService,
     Cookie2Service,
@@ -267,11 +268,24 @@ export function configServiceFactory(config: ConfigService, authService: Authent
     EventBusService,
     FileUtilsService,
     NavigationService,
+    RouteMetadataService,
     AuthGuard,
+    UnsavedChangesGuard,
+    UnsavedChangesFlagGuard,
+    WorkspaceComponentResolver,
+    // Root-provided, NOT WorkspaceModule-provided: the root NavigationService and the two
+    // CanDeactivate guards read the dirty flag off it, and PropertiesAssignmentModule /
+    // AttributesOutputsModule inject it without importing WorkspaceModule. One instance in the root
+    // injector is also what keeps the flag shared across a tab switch.
+    WorkspaceService,
+    // Must be provided HERE and not in AppRoutingModule: RouterModule.forRoot() registers its own
+    // `provideLocationStrategy` in the module it is imported into, so a competing provider in that
+    // same module is ambiguous — the root module's wins.
+    {provide: LocationStrategy, useClass: SdcHashLocationStrategy},
     {
       provide: APP_INITIALIZER,
       useFactory: configServiceFactory,
-      deps: [ConfigService, AuthenticationService, EventListenerService],
+      deps: [ConfigService, AuthenticationService, EventListenerService, DataTypesService],
       multi: true
     },
   ],

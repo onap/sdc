@@ -2,6 +2,7 @@
  * -
  *  ============LICENSE_START=======================================================
  *  Copyright (C) 2022 Nordix Foundation.
+ *  Modifications Copyright (C) 2026 Deutsche Telekom AG.
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,9 +27,9 @@ import {CacheService} from "../../../services/cache.service";
 import {States} from "../../../../utils/constants";
 import {IAppMenu} from "../../../../models/app-config";
 import {SdcMenuToken} from "../../../config/sdc-menu.config";
-import {IScope} from "../../../../../typings/angularjs/angular";
-import {IWorkspaceViewModelScope} from "../../../../view-models/workspace/workspace-view-model-scope";
+import {TypeWorkspaceService} from "../type-workspace.service";
 import {NavigationService} from "../../../services/navigation.service";
+import {Subject} from "rxjs/Subject";
 
 describe('WorkspaceMenuComponent', () => {
   let component: WorkspaceMenuComponent;
@@ -50,33 +51,21 @@ describe('WorkspaceMenuComponent', () => {
       ]
     }
   };
-  let stateMock: Partial<ng.ui.IStateService> = {
-    'current': {
-      'name': States.TYPE_WORKSPACE
-    }
+  // The url getCurrentStateName() has to map back to States.TYPE_WORKSPACE.
+  let routerMock: any = {
+    'url': '/dashboard/' + States.TYPE_WORKSPACE + '/datatype/id-1/general',
+    'events': new Subject<any>(),
+    'navigateByUrl': jest.fn(() => Promise.resolve(true))
+  };
+  let routeMock: any = {
+    'snapshot': {'params': {'type': 'datatype', 'id': 'id-1'}, 'queryParams': {}, 'firstChild': null}
   };
   let injectorMock: Partial<ng.auto.IInjectorService> = {
     'get': jest.fn(() => undefined)
   };
-  // A REAL NavigationService over the mocked ui-router $state — the component reads the current
-  // state name through the facade now instead of injecting $state itself.
-  let navigationServiceMock = new NavigationService(
-      Object.assign({go: jest.fn(), params: {}, includes: jest.fn(() => false)}, stateMock) as any,
-      null, {$on: jest.fn(() => jest.fn())} as any);
-  let importedFileMock: File = null;
-  let stateParamsMock: Partial<ng.ui.IStateParamsService> = {
-      'importedFile': importedFileMock
-  };
-  let resolveMock = {"$stateParams": stateParamsMock};
-  let parentScopeMock: Partial<IScope> = {
-      '$resolve': resolveMock
-  };
-  let scopeMock_: Partial<IWorkspaceViewModelScope> = {
-      '$parent': parentScopeMock,
-      'current': {
-          'name': States.TYPE_WORKSPACE
-      }
-  }
+  // A REAL NavigationService over the mocked Router — the component reads the current state name
+  // through the facade now instead of injecting $state itself.
+  let navigationServiceMock = new NavigationService(routerMock, routeMock, {unsavedChanges: false} as any);
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -85,7 +74,7 @@ describe('WorkspaceMenuComponent', () => {
         {provide: CacheService, useValue: cacheService},
         {provide: '$injector', useValue: injectorMock},
         {provide: NavigationService, useValue: navigationServiceMock},
-        {provide: "$scope", useValue: scopeMock_ },
+        TypeWorkspaceService,
         {provide: SdcMenuToken, useValue: sdcMenuMock}
       ]
     })

@@ -30,11 +30,7 @@ describe('ng1-upgraded-provider', () => {
         async(() => {
             const responseData = {
                 'Sdc.Services.SharingService': 'sharingService',
-                '$state': 'state',
-                '$stateParams': 'stateParams',
-                '$scope': 'scope',
                 '$q': 'qService',
-                'EventListenerService': 'eventListenerService',
                 'ModalsHandler': 'modalsHandler'
             };
             cacheObjMock = {
@@ -49,22 +45,6 @@ describe('ng1-upgraded-provider', () => {
 
     it('should return $q service', () => {
         expect(Utils.qServiceFactory(cacheObjMock)).toEqual('qService');
-    });
-
-    it('should return state', () => {
-        expect(Utils.stateServiceFactory(cacheObjMock)).toEqual('state');
-    });
-
-    it('should return stateParams', () => {
-        expect(Utils.stateParamsServiceFactory(cacheObjMock)).toEqual('stateParams');
-    });
-
-    it('should return scope', () => {
-        expect(Utils.scopeServiceFactory(cacheObjMock)).toEqual('scope');
-    });
-
-    it('should return eventListenerService', () => {
-        expect(Utils.eventListenerServiceServiceFactory(cacheObjMock)).toEqual('eventListenerService');
     });
 
     it('should return modalsHandler', () => {

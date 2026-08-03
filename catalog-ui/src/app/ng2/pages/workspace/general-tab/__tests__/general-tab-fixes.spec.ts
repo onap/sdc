@@ -37,6 +37,7 @@ import {GeneralFormService} from '../general-form.service';
 import {ComponentMetadataService} from '../component-metadata.service';
 import {NavigationService} from '../../../../services/navigation.service';
 import {of} from 'rxjs';
+import {Subject} from 'rxjs/Subject';
 
 function makeComponent(overrides: any = {}) {
     return Object.assign({
@@ -63,19 +64,21 @@ function makeService(overrides: any = {}) {
 }
 
 /**
- * A REAL NavigationService over a mocked ui-router $state, so the route-data facade the component
- * now depends on (getParam / setUnsavedChanges / navigate) behaves as it does at runtime.
- * `mockState` is exposed so tests can assert the underlying $state.go calls.
+ * A REAL NavigationService over a mocked Router/ActivatedRoute, so the route-data facade the
+ * component now depends on (getParam / setUnsavedChanges / navigate) behaves as it does at runtime.
+ * `mockRouter` is exposed so tests can assert the underlying navigateByUrl calls.
  */
 function makeNavigationService(stateParams: any = {id: 'id-1'}) {
-    const mockState: any = {
-        current: {name: 'workspace.general', data: {unsavedChanges: false}},
-        params: stateParams,
-        go: jest.fn(),
-        includes: jest.fn(() => false)
+    const router: any = {
+        // The id-less create form has one segment fewer, which is what puts the component in CREATE mode.
+        url: '/dashboard/workspace' + (stateParams.id ? '/' + stateParams.id : '') + '/service/general',
+        events: new Subject<any>(),
+        navigateByUrl: jest.fn(() => Promise.resolve(true))
     };
-    const nav: any = new NavigationService(mockState, null, {$on: jest.fn(() => jest.fn())} as any);
-    nav.mockState = mockState;
+    const route: any = {snapshot: {params: stateParams, queryParams: {}, firstChild: null}};
+    const workspaceService: any = {unsavedChanges: false};
+    const nav: any = new NavigationService(router, route, workspaceService);
+    nav.mockRouter = router;
     return nav;
 }
 
@@ -589,6 +592,6 @@ describe('GeneralTabComponent fixes - #10 import service from CSAR', () => {
         await comp.csarPrefill;
 
         expect(sdcUiModalService.openErrorDetailModal).toHaveBeenCalled();
-        expect(navigationService.mockState.go).toHaveBeenCalledWith('dashboard', undefined, undefined);
+        expect(navigationService.mockRouter.navigateByUrl).toHaveBeenCalledWith('/dashboard', {});
     });
 });

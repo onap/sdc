@@ -95,7 +95,7 @@ describe('artifact form component', () => {
                     schemas: [NO_ERRORS_SCHEMA],
                     providers: [
                         {provide: TranslateService, useValue: translateServiceMock},
-                        {provide: NavigationService, useValue: {navigate: mockStateService.go, getParams: () => mockStateService.params, getCurrentStateName: () => mockStateService.current.name, includes: mockStateService.includes, updateUrlParams: mockStateService.go}},
+                        {provide: NavigationService, useValue: {navigate: mockStateService.go, getParams: () => mockStateService.params, getCurrentStateName: () => mockStateService.current.name, includes: mockStateService.includes}},
                         {provide: AuthenticationService, useValue: authServiceMock},
                         {provide: SdcConfigToken, useValue: {csarFileExtension: 'csar', toscaFileExtension: 'yaml,yml'}},
                     ],

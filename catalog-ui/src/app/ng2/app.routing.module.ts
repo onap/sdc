@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2025 Deutsche Telekom AG. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,52 +20,39 @@
  */
 
 import {NgModule} from '@angular/core';
-import {RouterModule, Routes, UrlHandlingStrategy, UrlTree} from '@angular/router';
-import {HomeComponent} from './pages/home/home.component';
-import {CatalogComponent} from './pages/catalog/catalog.component';
-import {TypeWorkspaceComponent} from './pages/type-workspace/type-workspace.component';
-import {AuthGuard} from './guards/auth.guard';
+import {RouterModule} from '@angular/router';
+import {routes} from './app.routes';
 
-const routes: Routes = [
-    {path: 'dashboard', component: HomeComponent, canActivate: [AuthGuard], data: {permissions: ['DESIGNER']}},
-    {path: 'catalog', component: CatalogComponent, canActivate: [AuthGuard]},
-    {path: ':previousState/type-workspace/:type/:id/:subPage', component: TypeWorkspaceComponent},
-    {path: '', redirectTo: 'dashboard', pathMatch: 'full'}
-];
-
-export class SdcUrlHandlingStrategy implements UrlHandlingStrategy {
-
-    shouldProcessUrl(url: UrlTree): boolean {
-        const path = url.toString();
-        if (path === '/' || path.startsWith('/dashboard')) {
-            return true;
-        }
-        if (path.startsWith('/catalog') && !path.includes('/workspace/')) {
-            return true;
-        }
-        if (/^\/[^/]+\/type-workspace\//.test(path)) {
-            return true;
-        }
-        return false;
-    }
-
-    extract(url: UrlTree): UrlTree {
-        return url;
-    }
-
-    merge(newUrlPart: UrlTree, rawUrl: UrlTree): UrlTree {
-        return newUrlPart;
-    }
-}
-
+/**
+ * `SdcUrlHandlingStrategy` used to live here, gating which URLs the Angular router was allowed to
+ * process while ui-router owned the rest. With ui-router gone there is nothing to share the URL
+ * with, and the gate rejected every workspace URL — so it is deleted rather than widened.
+ *
+ * `LocationStrategy` is deliberately NOT overridden here: `RouterModule.forRoot()` registers its own
+ * `provideLocationStrategy` in whichever module imports it, so a competing provider in this same
+ * module is ambiguous. `SdcHashLocationStrategy` is bound in `AppModule` instead.
+ */
 @NgModule({
     imports: [
-        RouterModule.forRoot(routes, {useHash: true})
+        RouterModule.forRoot(routes, {
+            useHash: true,
+            // The initial navigation is triggered by hand from main.ts, AFTER upgrade.bootstrap().
+            // Left at the default ('legacy_enabled') the router navigates from an
+            // APP_BOOTSTRAP_LISTENER, so the first routed component is constructed before the
+            // AngularJS injector exists and every `deps: ['$injector']` provider it needs throws.
+            // 'disabled' still installs the location-change listener, so only the FIRST navigation
+            // is ours to fire; hash changes keep working untouched.
+            initialNavigation: 'disabled',
+            // ui-router's `{reload: true}` has no NavigationExtras equivalent; this is what makes
+            // NavigationService.reload() re-run the workspace resolver on an unchanged URL.
+            onSameUrlNavigation: 'reload',
+            // The 19 workspace children read the shell's :id/:type params. Without 'always' they
+            // would only inherit through a path-less or component-less parent, and the shell is
+            // neither — every tab would see empty params.
+            paramsInheritanceStrategy: 'always'
+        })
     ],
-    exports: [RouterModule],
-    providers: [
-        {provide: UrlHandlingStrategy, useClass: SdcUrlHandlingStrategy}
-    ]
+    exports: [RouterModule]
 })
 export class AppRoutingModule {
 }

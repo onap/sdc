@@ -103,6 +103,7 @@
                     {{getTabTitle()}}
                 </div>
             </div>
+            <router-outlet></router-outlet>
           </div>
         </div>
         <top-nav *ngIf="component" [hideSearch]="true" [menuModel]="breadcrumbsModel" [version]="version" [unsavedChanges]="unsavedChanges" [unsavedChangesCallback]="unsavedChangesCallback"></top-nav>

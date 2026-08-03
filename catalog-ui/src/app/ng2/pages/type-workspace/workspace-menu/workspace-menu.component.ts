@@ -2,6 +2,7 @@
  * -
  *  ============LICENSE_START=======================================================
  *  Copyright (C) 2022 Nordix Foundation.
+ *  Modifications Copyright (C) 2026 Deutsche Telekom AG.
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,7 +26,7 @@ import {CacheService} from "../../../services/cache.service";
 import {IAppMenu} from "../../../../models/app-config";
 import {IUserProperties} from "../../../../models/user";
 import {SdcMenuToken} from "../../../config/sdc-menu.config";
-import {IWorkspaceViewModelScope} from "../../../../view-models/workspace/workspace-view-model-scope";
+import {TypeWorkspaceService} from "../type-workspace.service";
 import {NavigationService} from "../../../services/navigation.service";
 
 @Component({
@@ -46,7 +47,7 @@ export class WorkspaceMenuComponent implements OnInit {
     leftBarTabs: MenuItemGroup = new MenuItemGroup();
 
     constructor(private cacheService: CacheService,
-                @Inject('$scope') private $scope: IWorkspaceViewModelScope,
+                private typeWorkspaceService: TypeWorkspaceService,
                 @Inject(SdcMenuToken) private sdcMenu: IAppMenu,
                 private navigationService: NavigationService,
                 @Inject('$injector') $injector) {
@@ -74,7 +75,7 @@ export class WorkspaceMenuComponent implements OnInit {
             return menuItem;
         });
         this.updateSelectedMenuItem();
-        this.$scope.leftBarTabs = this.leftBarTabs;
+        this.typeWorkspaceService.leftBarTabs = this.leftBarTabs;
         this.onMenuUpdate.emit(this.leftBarTabs);
     }
 

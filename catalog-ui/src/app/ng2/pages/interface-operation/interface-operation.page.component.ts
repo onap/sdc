@@ -17,9 +17,10 @@
 *
 *  SPDX-License-Identifier: Apache-2.0
 *  ============LICENSE_END=========================================================
+*  Modifications Copyright (C) 2026 Deutsche Telekom AG.
 */
 import * as _ from "lodash";
-import {Component, Inject, Input} from '@angular/core';
+import {Component, Inject} from '@angular/core';
 import {Component as IComponent} from 'app/models/components/component';
 
 import {ISdcConfig, SdcConfigToken} from "app/ng2/config/sdc-config.config";
@@ -42,6 +43,8 @@ import {ComponentServiceNg2} from 'app/ng2/services/component-services/component
 import {PluginsService} from 'app/ng2/services/plugins.service';
 import {WorkflowServiceNg2} from 'app/ng2/services/workflow.service';
 import {NavigationService} from 'app/ng2/services/navigation.service';
+import {WorkspaceService} from 'app/ng2/pages/workspace/workspace.service';
+import {WorkspaceMode} from 'app/utils/constants';
 
 import {
     OperationCreatorComponent,
@@ -146,10 +149,8 @@ export class InterfaceOperationComponent {
     workflows: any[];
     capabilities: CapabilitiesGroup;
 
-    @Input() component: IComponent;
-    @Input() readonly: boolean;
-    @Input() enableMenuItems: Function;
-    @Input() disableMenuItems: Function;
+    component: IComponent;
+    readonly: boolean;
 
     constructor(
         @Inject(SdcConfigToken) private sdcConfig: ISdcConfig,
@@ -159,13 +160,19 @@ export class InterfaceOperationComponent {
         private ComponentServiceNg2: ComponentServiceNg2,
         private WorkflowServiceNg2: WorkflowServiceNg2,
         private ModalServiceNg2: ModalService,
-        private ModalServiceSdcUI: SdcUiServices.ModalService
+        private ModalServiceSdcUI: SdcUiServices.ModalService,
+        private workspaceService: WorkspaceService
     ) {
         this.enableWorkflowAssociation = sdcConfig.enableWorkflowAssociation;
         this.modalTranslation = new ModalTranslation(TranslateService);
     }
 
     ngOnInit(): void {
+        this.component = this.workspaceService.component as any;
+        // Replaces the deleted workspace shim controller's [readonly]="isViewMode() || !isDesigner()"
+        // route-template binding; getComponentMode() already folds the designer-role check in.
+        this.readonly = !this.component ||
+            this.workspaceService.getComponentMode(this.workspaceService.component) === WorkspaceMode.VIEW;
         this.isLoading = true;
         this.workflowIsOnline = !_.isUndefined(this.PluginsService.getPluginByStateUrl('workflowDesigner'));
         Observable.forkJoin(

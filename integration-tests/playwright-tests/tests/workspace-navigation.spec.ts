@@ -28,11 +28,12 @@
  *      2026-07-09 regression: the buttons were routed through the Angular Router while the view
  *      was still rendered by ui-router's <ui-view>, so they became dead clicks.
  *   2. Deep-linking / page reload on a workspace child URL. A cold load of a deep hash route is
- *      the single most fragile part of a router swap and is exercised NOWHERE else.
+ *      the single most fragile part of a router swap and is exercised NOWHERE else. It is also
+ *      what SdcHashLocationStrategy exists for — it was broken product-side before CR 2.
  *   3. Browser BACK and FORWARD. Untested before; the Angular Router's history integration is
  *      completely different from ui-router's.
- *   4. An unknown route falls back to the dashboard (ui-router's `otherwise`, which becomes a
- *      wildcard route).
+ *   4. An unknown route falls back to the dashboard (ui-router's `otherwise`, now the `'**'`
+ *      wildcard route in app.routes.ts).
  *   5. The settle contract Selenium's AdditionalConditions.pageLoadWait() gates CI on.
  *
  * HOW TO RUN: see README.md — `npx playwright test workspace-navigation`.
@@ -52,8 +53,8 @@ test.describe('Navigation and routing', () => {
      *
      * Three assertions per direction, because each catches a different failure:
      *   - the URL changed (the router ran at all);
-     *   - the new view element is attached AND the old one is gone (ui-router swapped the
-     *     template — the dead-click regression fails precisely here);
+     *   - the new view element is attached AND the old one is gone (the outlet swapped the
+     *     component — the dead-click regression fails precisely here);
      *   - a painted marker inside the new view is visible (the template rendered rather than
      *     erroring out to an empty shell).
      */
@@ -78,11 +79,10 @@ test.describe('Navigation and routing', () => {
     });
 
     /**
-     * Deep-link into a workspace child URL. `cold: true` routes through gotoCold(), which loads
-     * the app at its dashboard entry point and then assigns the hash — see the long comment on
-     * gotoCold() in fixtures/sdc.ts for why a plain page.goto() to a deep hash route cannot work
-     * on master today. This still exercises full route recognition, the resolver and the guards;
-     * it does not exercise the pre-bootstrap URL parse, which is broken product-side.
+     * Deep-link into a workspace child URL. `cold: true` routes through gotoCold(), which is now a
+     * single page.goto() — a real browser navigation, so this exercises the PRE-BOOTSTRAP URL parse
+     * (SdcHashLocationStrategy's '!'-tolerant path()) on top of route recognition, the resolver and
+     * the guards. Before CR 2 that parse was broken and gotoCold() had to fake it in two steps.
      */
     test('deep-link: loading a workspace child URL lands on that tab', async ({ sdcPage, api }) => {
         const vf = await api.createVf('PwDeepLink');
@@ -97,17 +97,17 @@ test.describe('Navigation and routing', () => {
     });
 
     /**
-     * PINS THE KNOWN COLD-LOAD DEFECT (dd810f196, 2026-06-24) so that CR 2 cannot merge without
-     * confronting it. Angular's HashLocationStrategy rewrites '#!/x' to '#/!/x' during the
-     * Router's initial navigation, destroying ui-router's '#!' prefix, so ui-router falls through
-     * to otherwise('dashboard'). An F5 anywhere but the dashboard therefore loses your place.
+     * F5 KEEPS YOUR PLACE. This test previously pinned the INVERSE — the cold-load defect from
+     * dd810f196 (2026-06-24), where Angular's HashLocationStrategy rewrote '#!/x' to '#/!/x'
+     * during the Router's initial navigation, destroyed the '#!' prefix and dumped every reload
+     * onto otherwise('dashboard'). It was written as a failing-on-fix pin precisely so CR 2 could
+     * not ship a still-broken deep link unnoticed; SdcHashLocationStrategy fixed it, the pin went
+     * red, and these are the assertions it was inverted to.
      *
-     * The assertion is deliberately on the CURRENT (broken) behaviour, with the correct behaviour
-     * written out below it. When SdcHashLocationStrategy (CR 2 task 3) fixes this, THIS TEST WILL
-     * FAIL — that failure is the signal to invert it to the commented-out assertions. A test that
-     * merely skipped the case would let CR 2 ship a still-broken deep link unnoticed.
+     * The route assertion is the load-bearing one: the sidebar could render from a fallback
+     * dashboard route too, so only the id in the URL proves the reload was honoured.
      */
-    test('page reload is lost to the #!-prefix defect (pins it until CR 2 fixes it)', async ({ sdcPage, api }) => {
+    test('page reload keeps you on the same workspace tab', async ({ sdcPage, api }) => {
         const vf = await api.createVf('PwReload');
         await gotoWorkspaceTab(sdcPage, { id: vf.id, type: 'resource', tab: 'general' });
         await settles(sdcPage);
@@ -116,9 +116,10 @@ test.describe('Navigation and routing', () => {
         await sdcPage.reload();
         expect(await settles(sdcPage), 'page did not settle after reload').toBe(true);
 
-        await expect.poll(() => currentRoute(sdcPage), { timeout: 20_000 }).toMatch(/^\/dashboard$/);
-        // await expect(sdcPage.locator(SEL.generalSideMenu)).toBeVisible({timeout: 30_000});
-        // expect(await currentRoute(sdcPage)).toContain(`/workspace/${vf.id}/resource`);
+        await expect.poll(() => currentRoute(sdcPage), { timeout: 20_000 })
+            .toContain(`/workspace/${vf.id}/resource`);
+        await expect(sdcPage.locator(SEL.generalSideMenu)).toBeVisible({ timeout: 30_000 });
+        await expect(sdcPage.locator(SEL.name)).toBeVisible({ timeout: 15_000 });
     });
 
     /**

@@ -1,10 +1,10 @@
 // Styles are inherited from the existing workspace layout CSS.
 // This file exists for component encapsulation — most styling comes from
 // the global workspace LESS already loaded via webpack.
-// The host renders only the workspace chrome (sidebar, top-bar, breadcrumbs);
-// its inner .w-sdc-main-container is absolutely positioned, so the host itself
-// must NOT consume layout height — otherwise it pushes the sibling ui-view
-// (the child tab content) off-screen.
+// The host is a custom element (display: inline by default), and its inner
+// .w-sdc-main-container is absolutely positioned against the nearest positioned
+// ancestor (<body>), so the host is made a block only to give the chrome a
+// normal-flow box; it deliberately claims no height of its own.
 :host {
     display: block;
 }

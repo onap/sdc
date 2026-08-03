@@ -109,8 +109,11 @@ serviceModule.factory('CatalogService', downgradeInjectable(CatalogService));
 serviceModule.factory('GabServiceNg2', downgradeInjectable(GabServiceNg2));
 serviceModule.factory('AutomatedUpgradeService', downgradeInjectable(AutomatedUpgradeService));
 serviceModule.factory('ToscaTypesServiceNg2', downgradeInjectable(ToscaTypesServiceNg2));
-// Downgraded so the remaining AngularJS-DI'd classes (MenuHandler) navigate through the same
-// ui-router facade the Angular side uses, instead of injecting the router service directly.
+// Downgraded so the remaining AngularJS-DI'd classes navigate through the same facade the Angular
+// side uses, instead of injecting the Router directly. Still load-bearing after the ui-router
+// removal: MenuHandler is registered as an AngularJS service (modules/utils.ts:36) and injects
+// 'NavigationService' by string (menu-handler.ts:87), and WorkspaceContainerComponent reaches it
+// through $injector.get('MenuHandler') (:135). Both go when MenuHandler itself is migrated.
 serviceModule.factory('NavigationService', downgradeInjectable(NavigationService));
 // Downgraded so the remaining AngularJS-DI'd classes (ChangeLifecycleStateHandler) can resolve it
 // after the angular-translate $filter('translate') bridge was removed.

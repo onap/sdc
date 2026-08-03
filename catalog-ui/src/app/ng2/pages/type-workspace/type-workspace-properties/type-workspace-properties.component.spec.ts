@@ -2,6 +2,7 @@
  * -
  *  ============LICENSE_START=======================================================
  *  Copyright (C) 2022 Nordix Foundation.
+ *  Modifications Copyright (C) 2026 Deutsche Telekom AG.
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,9 +32,6 @@ import {DataTypeModel} from "../../../../models/data-types";
 import {Component, ViewChild} from "@angular/core";
 import {PropertyBEModel} from "../../../../models/properties-inputs/property-be-model";
 import {ModalService} from "../../../services/modal.service";
-import {IScope} from "../../../../../typings/angularjs/angular";
-import {IWorkspaceViewModelScope} from "../../../../view-models/workspace/workspace-view-model-scope";
-import {States} from "../../../../utils/constants";
 import {SdcUiServices} from "onap-ui-angular/dist";
 
 describe('TypeWorkspacePropertiesComponent', () => {
@@ -58,26 +56,6 @@ describe('TypeWorkspacePropertiesComponent', () => {
             return messages[translateKey];
         })
     };
-    let importedFileMock: File = null;
-    let stateParamsMock: Partial<ng.ui.IStateParamsService> = {
-        'importedFile': importedFileMock
-    };
-    let resolveMock = {"$stateParams": stateParamsMock};
-    let parentScopeMock: Partial<IScope> = {
-        '$resolve': resolveMock
-    };
-    let scopeMock_: Partial<IWorkspaceViewModelScope> = {
-        '$parent': parentScopeMock,
-        'current': {
-            'name': States.TYPE_WORKSPACE
-        }
-    }
-    let stateMock: Partial<ng.ui.IStateService> = {
-        'current': {
-            'name': States.TYPE_WORKSPACE
-        }
-    };
-
     let modalServiceSdcUIMock: Partial<SdcUiServices.ModalService>;
     let modalServiceMock: Partial<ModalService>;
 
@@ -93,8 +71,6 @@ describe('TypeWorkspacePropertiesComponent', () => {
                 {provide: TranslateService, useValue: translateServiceMock},
                 {provide: SdcUiServices.ModalService, useValue: modalServiceSdcUIMock},
                 {provide: ModalService, useValue: modalServiceMock},
-                {provide: "$scope", useValue: scopeMock_},
-                {provide: '$state', useValue: stateMock},
                 {provide: ModalService, useValue: modalService}
             ]
         })

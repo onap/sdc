@@ -16,10 +16,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG.
  */
 
 import * as _ from "lodash";
-import {Component, Inject, ViewChild} from "@angular/core";
+import {Component, ViewChild} from "@angular/core";
 import {PropertiesService} from "../../services/properties.service";
 import {
     ButtonModel,
@@ -75,14 +76,15 @@ import {DeclareInputComponent} from "./declare-input/declare-input.component";
 import {ElementService} from "../../services/element.service";
 import {CustomToscaFunction} from "../../../models/default-custom-functions";
 import {ToscaFunctionType} from "../../../models/tosca-function-type.enum";
-import {NavigationService} from "../../services/navigation.service";
+import {UnsavedChangesAware} from "../../guards/unsaved-changes.guard";
+import {WorkspaceService} from "../workspace/workspace.service";
 
 const SERVICE_SELF_TITLE = "SELF";
 @Component({
     templateUrl: './properties-assignment.page.component.html',
     styleUrls: ['./properties-assignment.page.component.less']
 })
-export class PropertiesAssignmentComponent {
+export class PropertiesAssignmentComponent implements UnsavedChangesAware {
     title = "Properties & Inputs";
 
     component: ComponentData;
@@ -125,7 +127,6 @@ export class PropertiesAssignmentComponent {
     hasChangedData: boolean;
     isValidChangedData: boolean;
     savingChangedData: boolean;
-    stateChangeStartUnregister: Function;
     serviceBePropertiesMap: InstanceBePropertiesMap;
     serviceBeCapabilitiesPropertiesMap: InstanceBePropertiesMap;
     selectedInstance_FlattenCapabilitiesList: Capability[];
@@ -144,8 +145,7 @@ export class PropertiesAssignmentComponent {
                 private componentServiceNg2: ComponentServiceNg2,
                 private componentInstanceServiceNg2: ComponentInstanceServiceNg2,
                 private propertyCreatorComponent: PropertyCreatorComponent,
-                @Inject("$scope") private $scope: ng.IScope,
-                private navigationService: NavigationService,
+                private workspaceService: WorkspaceService,
                 private notificationsService: SdcUiServices.NotificationsService,
                 private componentModeService: ComponentModeService,
                 private eventListenerService: EventListenerService,
@@ -159,7 +159,7 @@ export class PropertiesAssignmentComponent {
         this.instanceFePropertiesMap = new InstanceFePropertiesMap();
         /* This is the way you can access the component data, please do not use any data except metadata, all other data should be received from the new api calls on the first time
         than if the data is already exist, no need to call the api again - Ask orit if you have any questions*/
-        this.component = this.navigationService.getParam('component');
+        this.component = this.workspaceService.component;
         this.eventListenerService.registerObserverCallback(EVENTS.ON_LIFECYCLE_CHANGE, this.onCheckout);
         this.updateViewMode();
         this.changedData = [];
@@ -253,23 +253,11 @@ export class PropertiesAssignmentComponent {
                 this.loadingProperties = false;
             });
         }
-        this.stateChangeStartUnregister = this.navigationService.onNavigationStart((event) => {
-            // stop if has changed properties
-            if (this.hasChangedData) {
-                event.preventDefault();
-                this.showUnsavedChangesAlert().then(() => {
-                    this.navigationService.navigate(event.toState, event.toParams);
-                }, () => {
-                });
-            }
-        });
-
       this.loadDataTypesByComponentModel(this.component.model);
     }
 
     ngOnDestroy(){
         this.eventListenerService.unRegisterObserver(EVENTS.ON_LIFECYCLE_CHANGE);
-        this.stateChangeStartUnregister();
     }
 
     selectFirstInstanceByDefault = () => {
@@ -1293,7 +1281,7 @@ export class PropertiesAssignmentComponent {
         }
 
         return new Promise<any>((resolve, reject) => {
-            const modal = this.ModalServiceSdcUI.openCustomModal(
+            this.ModalServiceSdcUI.openCustomModal(
                 {
                     title: modalTitle,
                     size: 'sm',

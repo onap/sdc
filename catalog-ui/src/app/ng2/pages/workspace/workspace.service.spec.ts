@@ -109,4 +109,24 @@ describe('WorkspaceService', () => {
             expect(service.metadata).toBe(metadata);
         });
     });
+
+    /**
+     * The dirty flag lived on ui-router's `$state.current.data.unsavedChanges`, which was a plain
+     * mutable object. The Angular Router deep-freezes a Route's `data` (Recognizer.inheritParamsAndData),
+     * so it has to live on a service — and on this one, because the guard, the General tab and the
+     * workspace shell all already hold it.
+     */
+    describe('unsavedChanges', () => {
+        it('starts clean and round-trips', () => {
+            expect(service.unsavedChanges).toBe(false);
+            service.unsavedChanges = true;
+            expect(service.unsavedChanges).toBe(true);
+        });
+
+        it('is cleared when a new component is set', () => {
+            service.unsavedChanges = true;
+            service.setComponent(createServiceComponent({}));
+            expect(service.unsavedChanges).toBe(false);
+        });
+    });
 });

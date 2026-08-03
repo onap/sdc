@@ -119,7 +119,7 @@ describe('catalog component', () => {
                     providers: [
                         {provide: SdcConfigToken, useValue: {}},
                         {provide: SdcMenuToken, useValue: sdcMenu},
-                        {provide: NavigationService, useValue: {navigate: stateServiceMock.go, getParams: () => ({}), getCurrentStateName: () => 'catalog', includes: jest.fn(), updateUrlParams: stateServiceMock.go}},
+                        {provide: NavigationService, useValue: {navigate: stateServiceMock.go, getParams: () => ({}), getCurrentStateName: () => 'catalog', includes: jest.fn()}},
                         {provide: CacheService, useValue: cacheServiceMock },
                         {provide: CatalogService, useValue: catalogServiceMock },
                         {provide: ResourceNamePipe, useValue: {}},
@@ -604,7 +604,7 @@ describe('catalog component', () => {
         component.componentInstance.applyFilterParamsToView = jest.fn();
         component.componentInstance.filterParams =  { active: true, categories: [], components: [], order:  ["lastUpdateDate", true], statuses: [], term: ""};
         const navigateMock = jest.fn().mockImplementation(() => Promise.resolve({ json: () => [] }));
-        (component.componentInstance as any).navigationService = {navigate: navigateMock, getParams: () => ({}), getCurrentStateName: () => 'catalog', includes: jest.fn(), updateUrlParams: navigateMock};
+        (component.componentInstance as any).navigationService = {navigate: navigateMock, getParams: () => ({}), getCurrentStateName: () => 'catalog', includes: jest.fn()};
         const newParams = {"filter.active": true, "filter.categories": "resourceNewCategory.allotted resource.allotted resource,resourceNewCategory.allotted resource.contrail route,resourceNewCategory.application l4+.application server", "filter.components": "Resource.VF,Resource.VFC", "filter.models": "test", "filter.order": "-lastUpdateDate", "filter.statuses": "inDesign", "filter.term": "Vf"}
         component.componentInstance.changeFilterParams(filterParamsMock);
         expect(component.componentInstance.filterParams).toEqual(filterParamsMock);
@@ -619,7 +619,7 @@ describe('catalog component', () => {
         component.componentInstance.buildCheckboxLists = jest.fn();
         component.componentInstance.filterParams =  { active: true, categories: [], components: [], order:  ["lastUpdateDate", true], statuses: [], term: ""};
         const navigateMock = jest.fn().mockImplementation(() => Promise.resolve({ json: () => [] }));
-        (component.componentInstance as any).navigationService = {navigate: navigateMock, getParams: () => ({}), getCurrentStateName: () => 'catalog', includes: jest.fn(), updateUrlParams: navigateMock};
+        (component.componentInstance as any).navigationService = {navigate: navigateMock, getParams: () => ({}), getCurrentStateName: () => 'catalog', includes: jest.fn()};
         const newParams = {"filter.active": true, "filter.categories": "resourceNewCategory.allotted resource.allotted resource,resourceNewCategory.allotted resource.contrail route,resourceNewCategory.application l4+.application server", "filter.components": "Resource.VF,Resource.VFC", "filter.models": "test", "filter.order": "-lastUpdateDate", "filter.statuses": "inDesign", "filter.term": "Vf"}
         component.componentInstance.typesChecklistModel = checkListModelMock;
         component.componentInstance.categoriesChecklistModel = checkListModelMock;
