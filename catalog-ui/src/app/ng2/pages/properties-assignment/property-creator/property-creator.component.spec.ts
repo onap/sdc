@@ -27,8 +27,13 @@ describe('PropertyCreatorComponent', () => {
 
     const workspaceServiceMock = {metadata: {model: null}} as WorkspaceService;
 
-    const componentWithDataTypes = (dataTypes: any): PropertyCreatorComponent => {
-        const dataTypeServiceMock = {getDataTypeByModel: () => dataTypes} as any as DataTypeService;
+    // `sync` is what the synchronous accessor returns now (empty map while the request is in flight);
+    // `async` is what the awaited one resolves to once /dataTypes has come back.
+    const componentWithDataTypes = (sync: any, async: any = sync): PropertyCreatorComponent => {
+        const dataTypeServiceMock = {
+            getDataTypeByModel: () => sync,
+            getDataTypeByModelAsync: () => Promise.resolve(async),
+        } as any as DataTypeService;
         return new PropertyCreatorComponent(dataTypeServiceMock, workspaceServiceMock);
     };
 
@@ -41,7 +46,7 @@ describe('PropertyCreatorComponent', () => {
     });
 
     // DataTypesService.getAllDataTypesFromModel fires its async cache load without awaiting it, so
-    // getDataTypeByModel returns undefined until /dataTypes resolves. This component is a
+    // getDataTypeByModel returns an empty map until /dataTypes resolves. This component is a
     // constructor-injected provider of PropertiesAssignmentComponent, so a throw here escapes route
     // activation and the Angular router resetStateAndUrl()s — the Properties Assignment tab never
     // opens. Construction must therefore survive an unresolved cache.
@@ -52,5 +57,28 @@ describe('PropertyCreatorComponent', () => {
         const labels = component.typesProperties.map((dropdown) => dropdown.label);
         expect(labels).toContain('string');
         expect(labels).toContain('Select Type...');
+    });
+
+    // SDC-4855: with an empty cache at construction the dropdown would otherwise stay primitives-only
+    // for the lifetime of the modal, because nothing re-ran the build after /dataTypes resolved.
+    it('rebuilds the dropdowns once the in-flight cache load resolves', async () => {
+        const component = componentWithDataTypes({}, {'org.openecomp.datatypes.heat.MyType': {}});
+        expect(component.typesProperties.map((dropdown) => dropdown.label)).not.toContain('MyType');
+
+        await Promise.resolve();
+
+        expect(component.typesProperties.map((dropdown) => dropdown.label)).toContain('MyType');
+    });
+
+    // The late rebuild must not clobber what the user has already typed into the open modal.
+    it('keeps the in-progress property model when the late rebuild runs', async () => {
+        const component = componentWithDataTypes({}, {'org.openecomp.datatypes.heat.MyType': {}});
+        component.propertyModel.name = 'my_prop';
+        component.propertyModel.type = 'string';
+
+        await Promise.resolve();
+
+        expect(component.propertyModel.name).toBe('my_prop');
+        expect(component.propertyModel.type).toBe('string');
     });
 });

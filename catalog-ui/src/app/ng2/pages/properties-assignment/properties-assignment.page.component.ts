@@ -1421,7 +1421,12 @@ export class PropertiesAssignmentComponent implements UnsavedChangesAware {
                         .subscribe((response) => {
                             modal.instance.dynamicContent.instance.isLoading = false;
                             const newProp: PropertyFEModel = this.propertiesUtils.convertAddPropertyBAToPropertyFE(response);
-                            this.instanceFePropertiesMap[this.component.uniqueId].push(newProp);
+                            // The map has no entry for a component whose own property list came back empty,
+                            // so appending straight into it threw and lost the optimistic row even though the
+                            // property was already persisted (SDC-4855).
+                            const properties = this.instanceFePropertiesMap[this.component.uniqueId] || [];
+                            properties.push(newProp);
+                            this.instanceFePropertiesMap[this.component.uniqueId] = properties;
                             modal.instance.close();
                         }, (error) => {
                             modal.instance.dynamicContent.instance.isLoading = false;

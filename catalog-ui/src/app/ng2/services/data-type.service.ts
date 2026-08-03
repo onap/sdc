@@ -59,12 +59,19 @@ export class DataTypeService {
     }
 
     public getDataTypeByModelAndTypeName(modelName: string, typeName: string): DataTypeModel {
-        this.dataTypes = this.dataTypeService.getAllDataTypesFromModel(modelName);
+        this.dataTypes = this.dataTypeService.getAllDataTypesFromModel(modelName) || {} as DataTypesMap;
         let dataTypeFound = this.dataTypes[typeName];
         if (!dataTypeFound) {
             console.log("MISSING Datatype for model " + modelName + " and type: " + typeName);
         }
         return dataTypeFound;
+    }
+
+    // Resolves once the model's data types are cached, so callers that render off the returned map get
+    // a populated one instead of the empty placeholder the synchronous accessors must return while the
+    // first /dataTypes request is still in flight (SDC-4855).
+    public getDataTypeByModelAsync(modelName: string): Promise<DataTypesMap> {
+        return this.dataTypeService.getAllDataTypesFromModelAsync(modelName);
     }
 
     public getDataTypeByTypeName(typeName: string): DataTypeModel {

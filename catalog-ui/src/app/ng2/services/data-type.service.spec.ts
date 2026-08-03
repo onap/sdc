@@ -29,6 +29,7 @@ describe('DataTypeService', () => {
         dataTypesServiceMock = {
             getAllDataTypes: jest.fn(() => mockDataTypes),
             getAllDataTypesFromModel: jest.fn(() => mockDataTypesModel),
+            getAllDataTypesFromModelAsync: jest.fn(() => Promise.resolve(mockDataTypesModel)),
             findAllDataTypesByModel: jest.fn(() => Promise.resolve(new Map()))
         };
 
@@ -86,6 +87,23 @@ describe('DataTypeService', () => {
         it('should return undefined for missing type in model', () => {
             const result = service.getDataTypeByModelAndTypeName('myModel', 'missing');
             expect(result).toBeUndefined();
+        });
+
+        // SDC-4855: PropertiesUtils.convertPropertiesMapToFEAndCreateChildren calls this once per
+        // property. A throw here aborted the whole conversion, so instanceFePropertiesMap never got the
+        // component's own entry and the subsequent Add-Property save threw on an undefined array.
+        it('must not throw when the underlying cache has not been populated yet', () => {
+            // TestBed injects a shallow copy of this mock, so reassigning the property would not reach
+            // the service; re-stubbing the shared jest.fn itself does.
+            dataTypesServiceMock.getAllDataTypesFromModel.mockReturnValue(undefined);
+            expect(() => service.getDataTypeByModelAndTypeName('myModel', 'org.model.Type')).not.toThrow();
+        });
+    });
+
+    describe('getDataTypeByModelAsync', () => {
+        it('resolves the model data types through the awaitable accessor', async () => {
+            await expect(service.getDataTypeByModelAsync('myModel')).resolves.toBe(mockDataTypesModel);
+            expect(dataTypesServiceMock.getAllDataTypesFromModelAsync).toHaveBeenCalledWith('myModel');
         });
     });
 

@@ -66,15 +66,21 @@ export class PropertyCreatorComponent {
         this.propertyModel = new PropertyBEModel();
         this.propertyModel.type = '';
         this.propertyModel.schema.property.type = '';
+        this.buildTypeDropdowns();
+        // The synchronous accessor above returns an empty map while the first /dataTypes request is still
+        // in flight, which would leave the dropdown with primitives only. Rebuild the lists (but NOT
+        // propertyModel, which by then may hold user input) once it resolves.
+        // This component is a constructor-injected provider of PropertiesAssignmentComponent, so it must
+        // never throw here: under the Angular router a throw propagates out of route activation and the
+        // whole Properties Assignment tab silently fails to open.
+        this.dataTypeService.getDataTypeByModelAsync(modelName).then((dataTypes) => {
+            this.dataTypes = dataTypes;
+            this.buildTypeDropdowns();
+        });
+    }
+
+    private buildTypeDropdowns = () => {
         const types: string[] =  PROPERTY_DATA.TYPES; // All types - simple type + map + list
-        // getDataTypeByModel bottoms out in DataTypesService.getAllDataTypesFromModel, which fires the
-        // async loadDataTypesCache WITHOUT awaiting it and returns a still-undefined cache on the first
-        // call — so this is undefined whenever the /dataTypes request has not yet resolved. The throw
-        // that used to produce was merely logged, but this component is a constructor-injected provider
-        // of PropertiesAssignmentComponent, so under CR 2's Angular router it propagates out of route
-        // activation, where router.umd.js resetStateAndUrl()s and emits NavigationError — i.e. the whole
-        // Properties Assignment tab silently fails to open. Default to no non-primitive types instead;
-        // the dropdown is repopulated by the explicit filterDataTypesByModel() call on model change.
         const nonPrimitiveTypes: string[] = _.filter(Object.keys(this.dataTypes || {}), (type: string) => {
             return types.indexOf(type) === -1;
         });

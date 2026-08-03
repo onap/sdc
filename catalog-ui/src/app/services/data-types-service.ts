@@ -46,7 +46,7 @@ export interface IDataTypesService {
     selectedInstance:ComponentInstance;
     selectedComponentInputs:Array<InputModel>;
     //declare methods
-    loadDataTypesCache(modelName:string):void;
+    loadDataTypesCache(modelName:string):Promise<void>;
     findAllDataTypesByModel(modelName: string): void;
     getAllDataTypes():DataTypesMap;
     getFirsLevelOfDataTypeProperties(dataTypeName:string):Array<DataTypePropertyModel>;
@@ -66,23 +66,54 @@ export class DataTypesService implements IDataTypesService {
     // and angular.copy throws `ng:cpws` ("Can't copy Scope") on it — which aborts create/import and hangs
     // the loader. Keeping http off the enumerable surface avoids the copy entirely (failure-catalog §SS).
     private http:HttpClient;
+    // In-flight load per model, so the many synchronous getAllDataTypesFromModel() callers on one page
+    // render share a single request instead of each firing their own.
+    private pendingLoads = new Map<string, Promise<void>>();
 
     constructor(@Inject(SdcConfigToken) sdcConfig:IAppConfigurtaion, http:HttpClient) {
         this.baseUrl = sdcConfig.api.root + sdcConfig.api.component_api_root;
         Object.defineProperty(this, 'http', {value: http, enumerable: false, writable: false, configurable: true});
     }
 
-    dataTypes:DataTypesMap; //Data type map
+    // Starts as an empty map, never undefined: getAllDataTypesFromModel is a SYNCHRONOUS accessor over
+    // an asynchronously-filled cache, and its callers index straight into the result. Handing them
+    // `undefined` before the first /dataTypes response threw inside
+    // DataTypeService.getDataTypeByModelAndTypeName and aborted the whole property conversion (SDC-4855).
+    dataTypes:DataTypesMap = {} as DataTypesMap; //Data type map
     selectedPropertiesName:string;
     selectedInput:PropertyModel;
     alreadySelectedProperties:Array<InputPropertyBase>;
     selectedInstance:ComponentInstance;
     selectedComponentInputs:Array<InputModel>;
 
-    public loadDataTypesCache = async (modelName: string): Promise<void> => {
-        this.dataTypes = await this.fetchDataTypesByModel(modelName);
-        delete this.dataTypes['tosca.datatypes.Root'];
+    public loadDataTypesCache = (modelName: string): Promise<void> => {
+        const key = modelName || '';
+        const pending = this.pendingLoads.get(key);
+        if (pending) {
+            return pending;
+        }
+        const load = this.fetchDataTypesByModel(modelName)
+            .then((dataTypes: DataTypesMap) => {
+                delete dataTypes['tosca.datatypes.Root'];
+                this.dataTypes = dataTypes;
+            })
+            .catch((reason) => {
+                // Leave the previous cache in place; a failed refresh must not turn a populated map
+                // back into an unusable one for the synchronous accessors.
+                console.error('Failed to load data types for model ' + modelName, reason);
+            })
+            .then(() => {
+                this.pendingLoads.delete(key);
+            });
+        this.pendingLoads.set(key, load);
+        return load;
     };
+
+    // Resolves once the cache for this model is populated. Callers that can await (and therefore
+    // avoid reading a stale map) should prefer this over getAllDataTypesFromModel.
+    public getAllDataTypesFromModelAsync = (modelName: string): Promise<DataTypesMap> => {
+        return this.loadDataTypesCache(modelName).then(() => this.dataTypes);
+    }
 
     public fetchDataTypesByModel = (modelName: string): Promise<DataTypesMap> => {
         let params = new HttpParams();

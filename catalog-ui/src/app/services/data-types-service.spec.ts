@@ -115,6 +115,52 @@ describe('DataTypesService', () => {
         });
     });
 
+    // SDC-4855: getAllDataTypesFromModel is a SYNCHRONOUS accessor over this asynchronously-filled
+    // cache and its callers index straight into the result, so it must never hand back undefined.
+    describe('getAllDataTypesFromModel (synchronous accessor over the async cache)', () => {
+        it('returns an empty map, not undefined, before the first response arrives', () => {
+            const dataTypes = service.getAllDataTypesFromModel('MyModel');
+
+            expect(dataTypes).toBeDefined();
+            expect(Object.keys(dataTypes)).toEqual([]);
+            httpMock.expectOne((r) => r.url === baseUrl + 'dataTypes').flush({});
+        });
+
+        it('issues a single request when several callers ask for the same model before it resolves', () => {
+            service.getAllDataTypesFromModel('MyModel');
+            service.getAllDataTypesFromModel('MyModel');
+            service.getAllDataTypesFromModel('MyModel');
+
+            httpMock.expectOne((r) => r.url === baseUrl + 'dataTypes').flush({});
+        });
+
+        it('resolves the populated map through the async accessor, then serves it synchronously', async () => {
+            const promise = service.getAllDataTypesFromModelAsync('MyModel');
+            httpMock.expectOne((r) => r.url === baseUrl + 'dataTypes').flush({'org.custom.T': {name: 'org.custom.T'}});
+
+            expect((await promise)['org.custom.T']).toBeDefined();
+
+            // The pending entry is cleared on resolve, so this synchronous call serves the cache and
+            // starts a refresh.
+            expect(service.getAllDataTypesFromModel('MyModel')['org.custom.T']).toBeDefined();
+            httpMock.expectOne((r) => r.url === baseUrl + 'dataTypes').flush({});
+        });
+
+        it('keeps the previously cached types when a later refresh fails', async () => {
+            const first = service.loadDataTypesCache('MyModel');
+            httpMock.expectOne((r) => r.url === baseUrl + 'dataTypes').flush({'org.custom.T': {name: 'org.custom.T'}});
+            await first;
+
+            const second = service.loadDataTypesCache('MyModel');
+            httpMock.expectOne((r) => r.url === baseUrl + 'dataTypes')
+                .error(new ErrorEvent('network'), {status: 500, statusText: 'Server Error'});
+            await expect(second).resolves.toBeUndefined();
+
+            expect(service.getAllDataTypesFromModel('MyModel')['org.custom.T']).toBeDefined();
+            httpMock.expectOne((r) => r.url === baseUrl + 'dataTypes').flush({});
+        });
+    });
+
     describe('findAllDataTypesByModel', () => {
         it('resolves a Map keyed by type name with the ROOT_DATA_TYPE removed', async () => {
             const rootKey = PROPERTY_DATA.ROOT_DATA_TYPE;
