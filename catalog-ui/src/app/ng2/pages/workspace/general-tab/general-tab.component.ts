@@ -18,6 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component as NgComponent, Inject, OnDestroy, OnInit} from '@angular/core';
+import {ISdcConfig, SdcConfigToken} from '../../../config/sdc-config.config';
 import {FormGroup, Validators} from '@angular/forms';
 import {Subject} from 'rxjs/Subject';
 import 'rxjs/add/operator/takeUntil';
@@ -28,7 +29,7 @@ import {NotificationSettings} from 'onap-ui-angular/dist/notifications/utilities
 import {CacheService} from 'app/services-ng2';
 import {EventListenerService} from 'app/services';
 import {ValidationConfiguration} from 'app/models/validation-config';
-import {EVENTS, WorkspaceMode, ComponentState, ComponentType, Role, PREVIOUS_CSAR_COMPONENT, instantiationType, DEFAULT_MODEL_NAME, DEFAULT_ICON, CATEGORY_SERVICE_METADATA_KEYS} from 'app/utils/constants';
+import {EVENTS, WorkspaceMode, ComponentState, ComponentType, ResourceType, Role, PREVIOUS_CSAR_COMPONENT, instantiationType, DEFAULT_MODEL_NAME, DEFAULT_ICON, CATEGORY_SERVICE_METADATA_KEYS} from 'app/utils/constants';
 import {ServiceCsarReader} from 'app/utils/service-csar-reader';
 import {FileUtilsService} from '../../../services/file-utils.service';
 import {NavigationService} from '../../../services/navigation.service';
@@ -36,6 +37,9 @@ import {TranslateService} from '../../../shared/translator/translate.service';
 import {WorkspaceService} from '../workspace.service';
 import {GeneralFormService, ValidationPatterns} from './general-form.service';
 import {ComponentMetadataService} from './component-metadata.service';
+
+// The old <file-upload> passed maxsize="10240" to angular-base64-upload, whose unit is KB.
+const MAX_IMPORT_FILE_SIZE_BYTES = 10240 * 1024;
 
 @NgComponent({
     selector: 'general-tab',
@@ -65,6 +69,16 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
     environmentContextObj: any = null;
     categories: any[] = [];
     isHiddenCategorySelected: boolean = false;
+
+    // "Browse to select file" widget state (ported from GeneralViewModel.initScope,
+    // general-view-model.ts:278-330 + 353-369). isShowFileBrowse defaults FALSE and is turned on for
+    // only four narrow cases — see initFileBrowse().
+    isShowFileBrowse: boolean = false;
+    browseFileLabel: string = 'Upload VFC:';
+    importedFileExtensions: string = '';
+    importedFileExtensionsWithDot: string = '';
+    importedFileError: string = null;
+    private restoreFile: any = null;
 
     // Service Role / Function dropdown state (ported from the old GeneralViewModel). The dropdown
     // lists getMetadataKeyValidValues('Service Role'|'Service Function') + an "Others" sentinel;
@@ -99,6 +113,7 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
         private notificationsService: SdcUiServices.NotificationsService,
         private cdr: ChangeDetectorRef,
         private navigationService: NavigationService,
+        @Inject(SdcConfigToken) private sdcConfig: ISdcConfig,
         @Inject('$injector') private $injector: any
     ) {}
 
@@ -157,6 +172,7 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
         this.initInstantiationTypes();
         this.initModel();
         this.initBaseTypes();
+        this.initFileBrowse();
         // Resolve the Service Role / Function dropdown selection from the loaded values — must run
         // after the category (and thus its metadataKeys/validValues) is resolved above. Mirrors the
         // old GeneralViewModel.initScope which called setFunctionRole() once, separately from the
@@ -289,9 +305,13 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
         this.showDefaultModelOption = true;
         this.applyModelRequiredValidator();
 
-        // filterCategoriesByModel — now that initCategories() populates this.categories,
-        // apply model-based filtering here (ported from GeneralViewModel, Task 8c).
-        this.filterCategoriesByModel(this.component.model || null);
+        // SERVICE only, matching GeneralViewModel.initModel (general-view-model.ts:557-559). The guard is
+        // load-bearing: only SERVICE categories carry a `models` array, so filtering a RESOURCE whose
+        // component.model is set drops every resource category (they all have models === null) and the
+        // Category dropdown renders empty, losing the stored selection.
+        if (this.component.componentType === ComponentType.SERVICE) {
+            this.filterCategoriesByModel(this.component.model || null);
+        }
 
         if (this.isCreateMode() && this.isVspImport()) {
             const modelOptions = this.component.componentMetadata && this.component.componentMetadata.models;
@@ -1083,8 +1103,141 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
             });
     }
 
-    onImportFileChange(): void {
-        this.navigationService.setUnsavedChanges(true);
+    /**
+     * Decide whether the "Browse to select file" widget is shown, and with which label/extensions.
+     * Ported from GeneralViewModel.initScope (general-view-model.ts:278-330 + 353-369).
+     *
+     * The default is FALSE and only four cases turn it on: a resource/service that arrived WITH an
+     * imported file, a VF that has no VSP behind it, and an in-edit plain Service without a VSP. Any
+     * broader condition puts a file picker on components that cannot accept an upload at all — e.g.
+     * every certified VFC in view mode.
+     */
+    private initFileBrowse(): void {
+        this.isShowFileBrowse = false;
+        const isResource = !!(this.component.isResource && this.component.isResource());
+        if (isResource) {
+            if (this.component.importedFile) { this.isShowFileBrowse = true; }
+            if (this.component.resourceType === ResourceType.VF && !this.component.csarUUID) { this.isShowFileBrowse = true; }
+        } else if (this.component.isService && this.component.isService()) {
+            if (this.component.importedFile) { this.isShowFileBrowse = true; }
+            if (this.isEditMode() && this.component.serviceType === 'Service' && !this.component.csarUUID) {
+                this.isShowFileBrowse = true;
+            }
+        }
+
+        this.browseFileLabel = (isResource && (this.component.resourceType === ResourceType.VF || this.component.resourceType === 'SRVC'))
+            || (this.component.isService && this.component.isService()) ? 'Upload File:' : 'Upload VFC:';
+
+        // Which extensions the picker accepts depends on what was already imported: a .csar keeps the
+        // CSAR list, a .yaml/.yml keeps the TOSCA list. A VF being edited accepts CSARs.
+        const csarExt: string = this.sdcConfig.csarFileExtension || '';
+        const toscaExt: string = this.sdcConfig.toscaFileExtension || '';
+        if (isResource && this.component.importedFile && this.component.importedFile.filename) {
+            const ext: string = this.component.importedFile.filename.split('.').pop().toLowerCase();
+            if (csarExt.indexOf(ext) !== -1) {
+                this.importedFileExtensions = csarExt;
+                this.component.importedFile.filetype = 'csar';
+            } else if (toscaExt.indexOf(ext) !== -1) {
+                this.importedFileExtensions = toscaExt;
+                this.component.importedFile.filetype = 'yaml';
+            }
+            this.restoreFile = _.cloneDeep(this.originComponent ? this.originComponent.importedFile : null);
+        } else if (this.isEditMode() && isResource && this.component.resourceType === ResourceType.VF) {
+            this.importedFileExtensions = csarExt;
+        } else if (this.component.isService && this.component.isService()) {
+            this.importedFileExtensions = csarExt;
+        }
+        this.importedFileExtensionsWithDot = this.importedFileExtensions
+            ? this.importedFileExtensions.split(',').map((e: string) => '.' + e).join(',')
+            : '';
+    }
+
+    isFileBrowseDisabled(): boolean {
+        // Mirrors the old element-disabled expression (general-view.html:244): editable only while
+        // creating, or while editing a VF.
+        return (!this.isCreateMode() && !(this.isEditMode() && this.component && this.component.resourceType === ResourceType.VF))
+            || this.isViewMode() || !!(this.component && this.component.vspArchived);
+    }
+
+    isImportedFileInvalid(): boolean {
+        return !!this.importedFileError;
+    }
+
+    /**
+     * Workaround kept from the old FileUploadDirective (file-upload.ts:onFileClick): if the user picks
+     * a file, clears it with the x button, then picks the SAME file again, the browser fires no change
+     * event because input.value never changed. Blanking it on every click forces the event.
+     */
+    onImportFileClick(event: any): void {
+        if (event && event.target) { event.target.value = null; }
+    }
+
+    onImportFileChange(event?: any): void {
+        const input = event && event.target;
+        const file = input && input.files && input.files[0];
+        if (file) {
+            this.importedFileError = null;
+            if (!file.size) {
+                this.importedFileError = this.translateService.translate('VALIDATION_ERROR_EMPTY_FILE');
+                this.component.importedFile = undefined;
+                this.detectChangesSafe();
+                return;
+            }
+            if (file.size > MAX_IMPORT_FILE_SIZE_BYTES) {
+                this.importedFileError = this.translateService.translate('VALIDATION_ERROR_MAX_FILE_SIZE');
+                this.component.importedFile = undefined;
+                this.detectChangesSafe();
+                return;
+            }
+            const ext: string = (file.name.split('.').pop() || '').toLowerCase();
+            if (this.importedFileExtensions && this.importedFileExtensions.split(',').indexOf(ext) === -1) {
+                this.importedFileError = this.translateService.translate('NEW_SERVICE_RESOURCE_ERROR_VALID_TOSCA_EXTENSIONS',
+                    {extensions: this.importedFileExtensions});
+                this.component.importedFile = undefined;
+                this.detectChangesSafe();
+                return;
+            }
+            // The BE takes the upload as base64 on component.payloadData, which Resource/Service
+            // createComponentOnServer reads off component.importedFile — so the read has to complete
+            // before a save, and the raw <input> alone never populated it.
+            const reader = new FileReader();
+            reader.onload = () => {
+                this.component.importedFile = {
+                    filename: file.name,
+                    filetype: ext,
+                    filesize: file.size,
+                    base64: btoa(reader.result as string)
+                };
+                this.flagUnsavedFile();
+                this.detectChangesSafe();
+            };
+            reader.readAsBinaryString(file);
+            return;
+        }
+        this.flagUnsavedFile();
+    }
+
+    clearImportedFile(): void {
+        this.component.importedFile = undefined;
+        this.importedFileError = null;
+        this.flagUnsavedFile();
+        this.detectChangesSafe();
+    }
+
+    /**
+     * Ported from GeneralViewModel.onImportFileChange (general-view-model.ts:775-784): flag unsaved
+     * work when a file is newly added or swapped for a different one.
+     *
+     * Deliberate deviation from the old code, which also cleared the flag on the else branch: it wrote
+     * its own `unsavedFile` boolean, whereas here the only sink is the shared workspace
+     * unsavedChanges flag that every OTHER edit on this form also feeds. Clearing it would silently
+     * drop the "unsaved changes" guard for a user who edited a field and then cancelled a file pick.
+     */
+    private flagUnsavedFile(): void {
+        const current = this.component.importedFile;
+        const added = !this.restoreFile && current && current.filename;
+        const swapped = this.restoreFile && !_.isEqual(this.restoreFile, current);
+        if (added || swapped) { this.navigationService.setUnsavedChanges(true); }
     }
 
     /**

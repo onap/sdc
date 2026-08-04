@@ -123,6 +123,7 @@ function createComp(opts: any = {}) {
         new GeneralFormService(), new ComponentMetadataService(),
         workspaceService, cacheService, eventListener, fileUtils, sdcUiModalService,
         translateService, notificationsService, cdr, navigationService,
+        opts.sdcConfig || {toscaFileExtension: 'yaml,yml', csarFileExtension: 'csar'},
         opts.injector || makeInjector(opts)
     );
     return {comp, workspaceService, cacheService, eventListener, cdr, fileUtils, sdcUiModalService, translateService, notificationsService, navigationService};
