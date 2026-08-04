@@ -1554,7 +1554,11 @@ limitations under the License.
                                     <goal>npm</goal>
                                 </goals>
                                 <configuration>
-                                    <arguments>install</arguments>
+                                    <!-- 'ci', not 'install': it fails loudly when package-lock.json
+                                         has drifted from package.json instead of quietly rewriting the
+                                         lockfile, which is how a developer's private-proxy 'resolved'
+                                         URLs reached CI and broke it with E401. -->
+                                    <arguments>ci --no-audit --no-fund</arguments>
                                 </configuration>
                             </execution>
                             <execution>

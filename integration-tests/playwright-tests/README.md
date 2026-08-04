@@ -19,7 +19,7 @@ Assuming images are built and the stack is up (see [Starting the stack](#startin
 
 ```bash
 cd integration-tests/playwright-tests
-npm install && npx playwright install chromium      # first time only
+npm ci && npx playwright install chromium           # first time only
 SDC_BASE_URL=http://localhost:8285 npx playwright test --reporter=list
 ```
 
@@ -566,6 +566,40 @@ commit. The check is per-commit (`base-ref: HEAD~1`), so stacking two changes in
 satisfies it while a single squashed commit does not — and note this cuts both ways: a change to
 this file cannot carry a `.github/` edit along with it either. That is why this section and the
 workflow it describes arrived as two separate changes.
+
+### Never regenerate the lockfile behind a corporate proxy
+
+`package-lock.json` is committed, and every `"resolved"` URL in it must point at
+`https://registry.npmjs.org/`. This is the one way a purely local action breaks CI:
+
+npm rewrites `"resolved"` to whatever registry it installed *from*, so running `npm install` behind
+a private mirror (`.npmrc` with `registry=https://artifactory…/api/npm/registry.npmjs.org/`, as a
+Deutsche Telekom workstation has) silently rewrites all of them to that host. npm then honours the
+`"resolved"` URLs over *any* registry setting — a `--registry` flag and a project `.npmrc` both
+leave them untouched — so CI, which holds no credentials for that mirror, fails every fetch with:
+
+```
+npm error code E401
+npm error Incorrect or missing password.
+```
+
+The pom therefore runs **`npm ci`**, which fails on lockfile drift rather than rewriting it, and a
+project `.npmrc` pins `registry=https://registry.npmjs.org/` so a regeneration on a
+proxy-configured machine stays public. Check before committing a lockfile change:
+
+```bash
+grep -o '"resolved": "[^"]*"' package-lock.json | grep -v registry.npmjs.org   # must print nothing
+```
+
+To repair a lockfile that already has private URLs, rewrite the host in place — that keeps the
+pinned versions and their `integrity` hashes, which a full regeneration would churn:
+
+```bash
+sed -i 's#https://artifactory\.devops\.telekom\.de/artifactory/api/npm/registry\.npmjs\.org/#https://registry.npmjs.org/#g' package-lock.json
+```
+
+Do **not** point this at ONAP's own `npm.public` mirror instead: it resolves, but rewrites the URLs
+to plain `http://nexus3.onap.org`, trading one non-portable lockfile for another.
 
 ### The Selenium grid is skipped here
 
