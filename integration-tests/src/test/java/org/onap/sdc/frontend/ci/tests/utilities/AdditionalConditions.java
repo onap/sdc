@@ -20,7 +20,6 @@
 
 package org.onap.sdc.frontend.ci.tests.utilities;
 
-import com.paulhammant.ngwebdriver.NgWebDriver;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -29,26 +28,6 @@ public class AdditionalConditions {
 
     private AdditionalConditions() {
 
-    }
-
-    public static ExpectedCondition<Boolean> jQueryAJAXCallsHaveCompleted() {
-        return new ExpectedCondition<Boolean>() {
-            @Override
-            public Boolean apply(WebDriver driver) {
-                return (Boolean) ((JavascriptExecutor) driver).
-                        executeScript("return (window.jQuery!= null) && (jQuery.active === 0);");
-            }
-        };
-    }
-
-    public static ExpectedCondition<Boolean> angularHasFinishedProcessing() {
-        return new ExpectedCondition<Boolean>() {
-            @Override
-            public Boolean apply(WebDriver driver) {
-                new NgWebDriver((JavascriptExecutor) driver).waitForAngularRequestsToFinish();
-                return true;
-            }
-        };
     }
 
     public static ExpectedCondition<Boolean> pageLoadWait() {
@@ -66,37 +45,9 @@ public class AdditionalConditions {
                                 + "      return false;\r\n"
                                 + "    }\r\n"
                                 + "  }\r\n"
-                                + "  if (window.angular) {\r\n"
-                                + "    if (!window.qa) {\r\n"
-                                + "      // Used to track the render cycle finish after loading is complete\r\n"
-                                + "      window.qa = {\r\n"
-                                + "        doneRendering: false\r\n"
-                                + "      };\r\n"
-                                + "    }\r\n"
-                                + "    // Get the angular injector for this app (change element if necessary)\r\n"
-                                + "    var injector = window.angular.element('body').injector();\r\n"
-                                + "    // Store providers to use for these checks\r\n"
-                                + "    var $rootScope = injector.get('$rootScope');\r\n"
-                                + "    var $http = injector.get('$http');\r\n"
-                                + "    var $timeout = injector.get('$timeout');\r\n"
-                                + "    // Check if digest\r\n"
-                                + "    if ($rootScope.$$phase === '$apply' || $rootScope.$$phase === '$digest' || $http.pendingRequests.length !== 0) {\r\n"
-                                + "      window.qa.doneRendering = false;\r\n"
-                                + "      return false; // Angular digesting or loading data\r\n"
-                                + "    }\r\n"
-                                + "    if (!window.qa.doneRendering) {\r\n"
-                                + "      // Set timeout to mark angular rendering as finished\r\n"
-                                + "      $timeout(function() {\r\n"
-                                + "        window.qa.doneRendering = true;\r\n"
-                                + "      }, 0);\r\n"
-                                + "      return false;\r\n"
-                                + "    }\r\n"
-                                + "  }\r\n"
-                                // The catalog-ui is a hybrid AngularJS/Angular app being migrated to pure
-                                // Angular. $http.pendingRequests above only covers the AngularJS half;
-                                // requests issued through Angular's HttpClient are reported to Testability
-                                // by HeadersInterceptor instead. Angular's own isStable()/whenStable() are
-                                // unusable here because the hybrid runtime always has a macrotask pending.
+                                // Requests issued through Angular's HttpClient are reported to Testability
+                                // by HeadersInterceptor. Angular's own isStable()/whenStable() are unusable
+                                // here because the runtime can always have a macrotask pending.
                                 + "  if (window.getAllAngularTestabilities) {\r\n"
                                 + "    var testabilities = window.getAllAngularTestabilities();\r\n"
                                 + "    for (var i = 0; i < testabilities.length; i++) {\r\n"

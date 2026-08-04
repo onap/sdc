@@ -59,12 +59,13 @@ export interface IDataTypesService {
 export class DataTypesService implements IDataTypesService {
 
     private baseUrl:string;
-    // Non-enumerable so AngularJS `angular.copy()` never traverses it. This service is held (as an
-    // enumerable field) by the Resource/Service component services, which are in turn held
-    // by the Component/Resource model classes whose toJSON()/angular.copy(this) deep-copies the graph.
-    // An Angular HttpClient's reachable object graph contains a Scope (via the ngUpgrade root injector),
-    // and angular.copy throws `ng:cpws` ("Can't copy Scope") on it — which aborts create/import and hangs
-    // the loader. Keeping http off the enumerable surface avoids the copy entirely (failure-catalog §SS).
+    // Non-enumerable so `_.cloneDeep()` never traverses it. This service is held (as an enumerable
+    // field) by the Resource/Service component services, which are in turn held by the
+    // Component/Resource model classes whose toJSON() deep-copies the whole graph. An HttpClient's
+    // reachable object graph is large and ends up in the POST body. Keeping http off the enumerable
+    // surface avoids the copy entirely (failure-catalog §SS). This used to be load-bearing against a
+    // hard `ng:cpws` throw from angular.copy; lodash tolerates such graphs, so the same mistake now
+    // fails silently as a bloated request body instead of a visible hang — keep the guard.
     private http:HttpClient;
     // In-flight load per model, so the many synchronous getAllDataTypesFromModel() callers on one page
     // render share a single request instead of each firing their own.

@@ -21,7 +21,7 @@
 import { GraphColors, GraphUIObjects} from "app/utils/constants";
 import constant = require("lodash/constant");
 import {ImagesUrl} from "app/utils/constants";
-import {AngularJSBridge} from "app/services/angular-js-bridge-service";
+import {getSdcConfig} from "app/ng2/config/sdc-config.config.factory";
 import { CanvasHandleTypes } from "app/utils";
 /**
  * Created by obarda on 12/18/2016.
@@ -323,7 +323,7 @@ export class ComponentInstanceNodesStyle {
 
             single: false,
             type: CanvasHandleTypes.ADD_EDGE,
-            imageUrl: AngularJSBridge.getAngularConfig().imagesPath + ImagesUrl.CANVAS_PLUS_ICON,
+            imageUrl: getSdcConfig().imagesPath + ImagesUrl.CANVAS_PLUS_ICON,
             lineColor: '#27a337',
             lineWidth: 2,
             lineStyle: 'dashed'
@@ -335,7 +335,7 @@ export class ComponentInstanceNodesStyle {
         return {
             single: false,
             type: CanvasHandleTypes.TAG_AVAILABLE,
-            imageUrl: AngularJSBridge.getAngularConfig().imagesPath + ImagesUrl.CANVAS_TAG_ICON,
+            imageUrl: getSdcConfig().imagesPath + ImagesUrl.CANVAS_TAG_ICON,
         }        
     }
 
@@ -343,7 +343,7 @@ export class ComponentInstanceNodesStyle {
         return {
             single: false,
             type: CanvasHandleTypes.TAGGED_POLICY,
-            imageUrl: AngularJSBridge.getAngularConfig().imagesPath + ImagesUrl.CANVAS_POLICY_TAGGED_ICON,
+            imageUrl: getSdcConfig().imagesPath + ImagesUrl.CANVAS_POLICY_TAGGED_ICON,
         }        
     }
 
@@ -351,7 +351,7 @@ export class ComponentInstanceNodesStyle {
         return {
             single: false,
             type: CanvasHandleTypes.TAGGED_GROUP,
-            imageUrl: AngularJSBridge.getAngularConfig().imagesPath + ImagesUrl.CANVAS_GROUP_TAGGED_ICON,
+            imageUrl: getSdcConfig().imagesPath + ImagesUrl.CANVAS_GROUP_TAGGED_ICON,
         }        
     }
     

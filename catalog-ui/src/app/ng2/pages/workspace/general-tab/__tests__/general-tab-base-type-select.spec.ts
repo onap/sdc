@@ -44,8 +44,14 @@ import {EventListenerService} from 'app/services';
 import {CacheService} from 'app/services-ng2';
 import {SdcUiServices} from 'onap-ui-angular';
 import {Subject} from 'rxjs/Subject';
+import {ComponentFactory} from 'app/utils/component-factory';
+import {ModalsHandler} from 'app/utils/modals-handler';
 import {ConfigureFn, configureTests} from '../../../../../../jest/test-config.helper';
+import {ImportVSPService} from '../../../../components/modals/onboarding-modal/import-vsp.service';
 import {SdcConfigToken} from '../../../../config/sdc-config.config';
+import {SdcMenuToken} from '../../../../config/sdc-menu.config';
+import {ElementService} from '../../../../services/element.service';
+import {ModelService} from '../../../../services/model.service';
 import {FileUtilsService} from '../../../../services/file-utils.service';
 import {NavigationService} from '../../../../services/navigation.service';
 import {TranslateService} from '../../../../shared/translator/translate.service';
@@ -87,16 +93,6 @@ describe('GeneralTabComponent - base type select rendering', () => {
         };
         const route: any = {snapshot: {params: {id: 'id-1'}, queryParams: {}, firstChild: null}};
         const navigationService = new NavigationService(router, route, {unsavedChanges: false} as any);
-        const ng1: any = {
-            ComponentFactory: {createComponent: (c: any) => Object.assign({}, c)},
-            ImportVSPService: {}, OnboardingService: {},
-            ModelService: {getModels: () => baseTypes$.asObservable().filter(() => false),
-                           getModelsOfType: () => baseTypes$.asObservable().filter(() => false)},
-            // Deferred on purpose — this is what makes the options arrive after the first CD pass.
-            ElementService: {getCategoryBaseTypes: () => baseTypes$.asObservable()},
-            ModalsHandler: {}, sdcMenu: {component_workspace_menu_option: {SERVICE: [{hiddenCategories: []}]}},
-            sdcConfig: {csarFileExtension: ['csar'], toscaFileExtension: ['yaml', 'yml']}
-        };
 
         const configure: ConfigureFn = (testBed) => {
             testBed.configureTestingModule({
@@ -126,7 +122,14 @@ describe('GeneralTabComponent - base type select rendering', () => {
                     {provide: SdcUiServices.NotificationsService, useValue: {push: jest.fn()}},
                     {provide: NavigationService, useValue: navigationService},
                     {provide: SdcConfigToken, useValue: {toscaFileExtension: 'yaml,yml', csarFileExtension: 'csar'}},
-                    {provide: '$injector', useValue: {get: (n: string) => ng1[n]}}
+                    {provide: SdcMenuToken, useValue: {component_workspace_menu_option: {SERVICE: [{hiddenCategories: []}]}}},
+                    {provide: ComponentFactory, useValue: {createComponent: (c: any) => Object.assign({}, c)}},
+                    {provide: ImportVSPService, useValue: {}},
+                    {provide: ModelService, useValue: {getModels: () => baseTypes$.asObservable().filter(() => false),
+                                                      getModelsOfType: () => baseTypes$.asObservable().filter(() => false)}},
+                    // Deferred on purpose — this is what makes the options arrive after the first CD pass.
+                    {provide: ElementService, useValue: {getCategoryBaseTypes: () => baseTypes$.asObservable()}},
+                    {provide: ModalsHandler, useValue: {}}
                 ]
             });
         };

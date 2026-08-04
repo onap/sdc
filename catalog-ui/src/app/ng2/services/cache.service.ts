@@ -19,7 +19,12 @@
  */
 
 import {Injectable} from "@angular/core";
-import {Dictionary} from "app/utils";
+// Deep-imported, NOT via the 'app/utils' barrel: the barrel also re-exports ModalsHandler and
+// ChangeLifecycleStateHandler, whose import graphs reach DataTypeService, which injects
+// AuthenticationService, which imports this file. Through the barrel that cycle is closed and
+// AuthenticationService's design:paramtypes entry in DataTypeService reflects as undefined,
+// so the app throws "Can't resolve all parameters for DataTypeService" and never bootstraps.
+import {Dictionary} from "../../utils/dictionary/dictionary";
 
 @Injectable()
 export class CacheService {

@@ -221,7 +221,9 @@ public class DeploymentPage {
     }
 
     public static List<WebElement> getPropertyErrorValidationMessdge() throws Exception {
-        List<WebElement> propertyErrorElements = GeneralUIUtils.getElementsByCSS("div[class='input-error'] span[class='ng-scope']");
+        // Both elements are created by *ngIf (module-property-modal.component.html:38-44), and Angular adds
+        // ng-star-inserted to such elements, so neither can be matched with an exact class= selector.
+        List<WebElement> propertyErrorElements = GeneralUIUtils.getElementsByCSS("div.input-error span");
         return propertyErrorElements;
     }
 

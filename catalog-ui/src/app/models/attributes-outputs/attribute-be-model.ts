@@ -22,6 +22,7 @@ import {PROPERTY_DATA, PROPERTY_TYPES} from 'app/utils/constants';
 import {ToscaPresentationData} from '../tosca-presentation';
 import {AttributeOutputDetail} from "app/models/attributes-outputs/attribute-output-detail";
 import {SchemaAttribute, SchemaAttributeGroupModel} from "../schema-attribute";
+import * as _ from 'lodash';
 
 export enum DerivedAttributeType {
   SIMPLE,
@@ -89,7 +90,7 @@ export class AttributeBEModel {
   }
 
   public toJSON = (): any => {
-    const temp = angular.copy(this);
+    const temp = _.cloneDeep(this);
     temp.value = temp.value === '{}' || temp.value === '[]' ? undefined : temp.value;
     temp.defaultValue = temp.defaultValue === '{}' || temp.defaultValue === '[]' ? undefined : temp.defaultValue;
     return temp;

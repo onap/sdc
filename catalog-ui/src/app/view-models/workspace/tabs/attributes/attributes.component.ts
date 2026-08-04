@@ -99,7 +99,7 @@ export class AttributesComponent implements OnInit {
   };
 
   openAddEditModal(selectedRow: AttributeModel, isEdit: boolean) {
-    const component = new Resource(undefined, undefined, undefined);
+    const component = new Resource(undefined, undefined);
     component.componentType = this.componentType;
     component.uniqueId = this.componentUid;
 

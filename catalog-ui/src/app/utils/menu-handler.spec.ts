@@ -43,10 +43,7 @@ describe('MenuHandler', () => {
     }, over) as Component;
 
     beforeEach(() => {
-        handler = new MenuHandler(
-            {} as any, {} as any, {} as any, {} as any,
-            {go: jest.fn()} as any,
-            {when: jest.fn()} as any);
+        handler = new MenuHandler({navigate: jest.fn()} as any);
     });
 
     describe('generateBreadcrumbsModelFromComponents', () => {

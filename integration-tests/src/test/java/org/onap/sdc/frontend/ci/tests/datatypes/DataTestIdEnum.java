@@ -224,7 +224,12 @@ public final class DataTestIdEnum {
         ARTIFACT_NAME("artifactDisplayName_"),
         UPLOAD_HEAT_ENV_PARAMETERS("uplaodEnv_"),
         VERSION_ENV("artifactEnvVersion_"),
-        ADD_OTHER_ARTIFACT_BUTTON("//button[@class='add-button ng-scope']");
+        // Matches every "add an artifact" control on the Informational Artifacts screen: the always-present
+        // svg-icon-label (information-artifact-page.component.html:3, testId add-information-artifact-button)
+        // plus one sdc-button per artifact placeholder (same file, line 74, testId add_artifact_<displayName>).
+        // Cannot be anchored on //button: svg-icon-label renders a <div>.
+        ADD_OTHER_ARTIFACT_BUTTON(
+            "//*[@data-tests-id='add-information-artifact-button' or starts-with(@data-tests-id, 'add_artifact_')]");
 
         private final String value;
 
@@ -626,7 +631,6 @@ public final class DataTestIdEnum {
         VF_INSTANCE_ROWS("expand-collapse[expanded-selector^='.vf-instance-list.']"),
         VF_INSTANCE_ROW_NAME("span[class^='title-text']"),
         VF_INSTANCE_INPUTS("div[class^='vf-instance-list ']"),
-        VF_INSTANCE_INPUT("div[class^='input-row ng-scope']"),
         VF_INSTNCE_PROPERTY_NAME("div[class^='title-text']"),
         INPUT_CHECKBOX("span[class^='tlv-checkbox-label']"),
         SERVICE_INPUT_ROW("div[class^='service-input-row input-row']"),

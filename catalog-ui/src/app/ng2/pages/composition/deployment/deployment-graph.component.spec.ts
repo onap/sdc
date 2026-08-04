@@ -4,7 +4,6 @@ import {DeploymentGraphComponent} from "./deployment-graph.component";
 import {DeploymentGraphService} from "./deployment-graph.service";
 import {NO_ERRORS_SCHEMA} from "@angular/core";
 import * as cytoscape from "cytoscape/dist/cytoscape"
-import {AngularJSBridge} from "../../../../services/angular-js-bridge-service";
 import {NodesFactory} from "../../../../models/graph/nodes/nodes-factory";
 import {CommonGraphUtils} from "../graph/common/common-graph-utils";
 import {groupsMock} from "../../../../../jest/mocks/groups.mock";
@@ -23,8 +22,7 @@ describe('DeploymentGraphComponent', () => {
     let deploymentGraphServiceMock: Partial<DeploymentGraphService>;
     let nodeFactoryServiceMock: Partial<NodesFactory>;
     let commonGraphUtilsServiceMock: Partial<CommonGraphUtils>;
-    let angularJsBridgeServiceMock: Partial<AngularJSBridge>;
-    let sdcConfigTokenMock: Partial<AngularJSBridge>;
+    let sdcConfigTokenMock: Partial<any>;
 
     beforeEach(
         async(() => {
@@ -61,7 +59,6 @@ describe('DeploymentGraphComponent', () => {
                         {provide: WorkspaceService, useValue: {}},
                         {provide: CommonGraphUtils, useValue: commonGraphUtilsServiceMock},
                         {provide: CompositionGraphLinkUtils, useValue: {}},
-                        {provide: AngularJSBridge, useValue: angularJsBridgeServiceMock},
                         {provide: SdcConfigToken, useValue: SdcConfigToken}
                     ]
                 });

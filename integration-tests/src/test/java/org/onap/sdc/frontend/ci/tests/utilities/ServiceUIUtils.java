@@ -46,7 +46,7 @@ public class ServiceUIUtils {
         for (String tag : serviceTags) {
             serviceTagsTextbox.clear();
             serviceTagsTextbox.sendKeys(tag);
-            GeneralUIUtils.waitForAngular();
+            GeneralUIUtils.waitForPageLoad();
             serviceTagsTextbox.sendKeys(Keys.ENTER);
         }
     }

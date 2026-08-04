@@ -175,7 +175,10 @@ public class CompositionPage extends GeneralPageElements {
     }
 
     public static List<WebElement> getOpenTabTitle() throws Exception {
-        return GeneralUIUtils.getElementsByCSS("expand-collapse ng-transclude");
+        // The panel's collapsible sections are <ng2-expand-collapse> components and each section title is the
+        // projected <header> element. sdc-tab keeps de-selected tabs in the DOM behind [hidden], so the query
+        // is scoped to the visible .sdc-tab-content to return only the OPEN tab's titles.
+        return GeneralUIUtils.getElementsByCSS(".sdc-tab-content:not([hidden]) ng2-expand-collapse header");
     }
 
     public static void clickOnTab(DataTestIdEnum.CompositionScreenEnum tabSelector) throws Exception {

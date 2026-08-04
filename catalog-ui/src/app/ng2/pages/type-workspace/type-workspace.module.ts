@@ -29,7 +29,6 @@ import {CacheService} from "../../services/cache.service";
 import {UiElementsModule} from "../../components/ui/ui-elements.module";
 import {LayoutModule} from "../../components/layout/layout.module";
 import {TypeWorkspaceGeneralComponent} from './type-workspace-general/type-workspace-general.component';
-import {UpgradeModule} from "@angular/upgrade/static";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {TranslateModule} from "../../shared/translator/translate.module";
 import {DataTypeService} from "../../services/data-type.service";
@@ -48,7 +47,6 @@ import {ConstraintsModule} from "../properties-assignment/constraints/constraint
         CommonModule,
         UiElementsModule,
         LayoutModule,
-        UpgradeModule,
         ReactiveFormsModule,
         TranslateModule,
         FormsModule,

@@ -129,7 +129,7 @@ export class Relationship {
     }
 
     public toJSON = ():any => {
-        let temp = angular.copy(this);
+        let temp = _.cloneDeep(this);
         temp.capability = undefined;
         temp.requirement = undefined;
         return temp;

@@ -35,7 +35,7 @@ import {DataTypesService} from "../data-types-service";
 import {SdcConfigToken} from "../../ng2/config/sdc-config.config";
 
 export interface IResourceService extends IComponentService {
-    updateResourceGroupProperties(uniqueId:string, groupId:string, properties:Array<PropertyModel>):ng.IPromise<Array<PropertyModel>>
+    updateResourceGroupProperties(uniqueId:string, groupId:string, properties:Array<PropertyModel>):Promise<Array<PropertyModel>>
 }
 
 @Injectable()
@@ -44,17 +44,16 @@ export class ResourceService extends ComponentService implements IResourceServic
     constructor(@Inject(SdcConfigToken) sdcConfig: IAppConfigurtaion,
                 http: HttpClient,
                 sharingService: SharingService,
-                dataTypeService: DataTypesService,
-                @Inject('$q') $q: ng.IQService) {
-        super(sdcConfig, http, sharingService, dataTypeService, $q);
+                dataTypeService: DataTypesService) {
+        super(sdcConfig, http, sharingService, dataTypeService);
         this.typeName = 'resources';
     }
 
     createComponentObject = (component: Component): Component => {
-        return new Resource(this, this.$q, <Resource>component);
+        return new Resource(this, <Resource>component);
     };
 
-    updateResourceGroupProperties = (uniqueId: string, groupId: string, properties: Array<PropertyModel>): ng.IPromise<Array<PropertyModel>> => {
+    updateResourceGroupProperties = (uniqueId: string, groupId: string, properties: Array<PropertyModel>): Promise<Array<PropertyModel>> => {
         return this.http.put(this.url(uniqueId, 'groups', groupId, 'properties'), JSON.stringify(properties)).toPromise()
             .then((updated: any) => _.map(updated, (p: PropertyModel) => new PropertyModel(p))) as any;
     };

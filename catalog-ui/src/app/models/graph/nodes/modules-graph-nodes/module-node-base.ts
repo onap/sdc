@@ -24,7 +24,7 @@
 import {ImagesUrl} from "../../../../utils/constants";
 import {Module} from "../../../modules/base-module";
 import {CommonNodeBase} from "../base-common-node";
-import {AngularJSBridge} from "../../../../services/angular-js-bridge-service";
+import {getSdcConfig} from "app/ng2/config/sdc-config.config.factory";
 
 export interface IModuleNodeBase {
 }
@@ -45,7 +45,7 @@ export class ModuleNodeBase extends CommonNodeBase implements IModuleNodeBase {
         this.name = this.module.name;
         this.displayName = this.module.name;
         this.isGroup = true;
-        this.img = AngularJSBridge.getAngularConfig().imagesPath + ImagesUrl.MODULE_ICON;
+        this.img = getSdcConfig().imagesPath + ImagesUrl.MODULE_ICON;
         this.classes = "module-node";
 
     }

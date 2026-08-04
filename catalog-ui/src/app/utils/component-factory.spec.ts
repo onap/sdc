@@ -24,7 +24,6 @@
 // We stub out the barrel's exports that are needed by the transitive graph.
 jest.mock('app/services', () => ({
     AvailableIconsService: class {},
-    AngularJSBridge: {setup: () => {}},
     ResourceService: class {},
     ServiceService: class {},
     DataTypesService: class {},
@@ -35,7 +34,6 @@ import {ComponentType} from './constants';
 
 describe('ComponentFactory', () => {
     let factory: ComponentFactory;
-    const $q = {defer: () => ({promise: null, resolve: () => {}, reject: () => {}})} as any;
 
     beforeEach(() => {
         // ResourceService / ServiceService test doubles. They carry a NON-enumerable http property
@@ -50,7 +48,6 @@ describe('ComponentFactory', () => {
             mkSvc(),                        // ResourceService double
             mkSvc(),                        // ServiceService double
             {get: () => []} as any,         // CacheService double
-            $q,                             // $q double
             {} as any                       // ComponentServiceNg2 double
         );
     });
@@ -61,15 +58,14 @@ describe('ComponentFactory', () => {
     });
 
     it('createEmptyComponent(RESOURCE) returns a component whose componentType is RESOURCE', () => {
-        // new Resource(service, $q) with no data arg skips the angular.copy branch in the
-        // Component base constructor (component? guard on line 148 of component.ts), so this
-        // path is safely runnable in Jest without a real angular global.
+        // new Resource(service) with no data arg skips the deep-copy branch in the
+        // Component base constructor (the `component?` guard).
         const c = factory.createEmptyComponent(ComponentType.RESOURCE);
         expect(c.componentType).toBe(ComponentType.RESOURCE);
     });
 
     it('createEmptyComponent(SERVICE) returns a component whose componentType is SERVICE', () => {
-        // Likewise: new Service(service, $q) with no data skips angular.copy.
+        // Likewise: new Service(service) with no data skips the deep copy.
         const c = factory.createEmptyComponent(ComponentType.SERVICE);
         expect(c.componentType).toBe(ComponentType.SERVICE);
     });
@@ -77,7 +73,7 @@ describe('ComponentFactory', () => {
     // §SS regression guard: ComponentFactory is NOT stored inside a model class's enumerable graph
     // (unlike ResourceService/ServiceService which ARE held as model.componentService). Therefore
     // ComponentFactory's own private fields do NOT need to be non-enumerable — the factory is never
-    // traversed by angular.copy(model). The §SS guarantee here is indirect: the services the factory
+    // traversed by a deep copy of a model. The §SS guarantee here is indirect: the services the factory
     // HOLDS (ResourceService/ServiceService doubles above) already have non-enumerable http — meaning
     // even IF something deep-copied the factory, it would NOT traverse into service.http.
     //

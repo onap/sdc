@@ -25,10 +25,16 @@ export * from './utils/dictionary/dictionary';
 export * from './utils/validation-utils'
 export * from './utils/component-factory';
 export * from './utils/component-instance-factory';
-export * from './utils/change-lifecycle-state-handler';
+// change-lifecycle-state-handler is deliberately NOT re-exported here. It became @Injectable in
+// SDC-4862, so TypeScript now emits a RUNTIME reference to ServiceServiceNg2 for its
+// design:paramtypes metadata — where before the type-only import was elided. Re-exporting it made
+// this barrel pull service.service.ts in, closing models -> utils -> handler -> service.service ->
+// models; whichever module of that ring loaded second got an undefined base class ("Object prototype
+// may only be an Object or null"). Both real consumers (app.module, workspace-container) already
+// deep-import it, so nothing needs the re-export. Same reasoning as the deep Dictionary import in
+// ng2/services/cache.service.ts.
 export * from './utils/modals-handler';
 export * from './utils/menu-handler';
 export * from './utils/constants';
 export * from './utils/common-utils';
-export * from './utils/functions';
 export * from './utils/service-csar-reader';

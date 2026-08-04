@@ -37,17 +37,6 @@ export class CommonGraphUtils {
 
     }
 
-    public safeApply = (scope:ng.IScope, fn:any) => { //todo remove to general utils
-        let phase = scope.$root.$$phase;
-        if (phase == '$apply' || phase == '$digest') {
-            if (fn && (typeof(fn) === 'function')) {
-                fn();
-            }
-        } else {
-            scope.$apply(fn);
-        }
-    };
-
     /**
      * Draw node on the graph
      * @param cy

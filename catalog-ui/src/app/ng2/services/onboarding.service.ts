@@ -34,6 +34,7 @@ import { CacheService } from "./cache.service";
 import { IComponentMetadata, ComponentMetadata } from "../../models/component-metadata";
 import { IMainCategory, ISubCategory } from "../../models/category";
 import { Resource } from "../../models/components/resource";
+import * as _ from 'lodash';
 
 export interface OnboardingComponents {
     listCount: number;
@@ -79,7 +80,7 @@ export class OnboardingService {
          * Then find the selected sub category and category.
          * @type {any}
          */
-        let availableCategories = angular.copy(this.cacheService.get('resourceCategories'));
+        let availableCategories = _.cloneDeep(this.cacheService.get('resourceCategories'));
         let allSubs = [];
         _.each(availableCategories, (main:IMainCategory)=> {
             if (main.subcategories) {

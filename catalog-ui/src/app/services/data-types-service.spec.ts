@@ -65,12 +65,11 @@ describe('DataTypesService', () => {
         expect(service).toBeTruthy();
     });
 
-    // Regression guard for the ng:cpws hang (failure-catalog §SS): this service is held as an enumerable
-    // field by the still-ng1 Restangular Resource/Service services, which are held by the Component/Resource
-    // model classes whose toJSON() does angular.copy(this). If the injected HttpClient were an ENUMERABLE
-    // own property, angular.copy would deep-traverse it, reach a Scope (via the ngUpgrade root injector) and
-    // throw ng:cpws — aborting create/import and hanging the loader. It MUST stay non-enumerable.
-    it('keeps the injected HttpClient as a non-enumerable field (angular.copy must not traverse it)', () => {
+    // Regression guard (failure-catalog §SS): this service is held as an enumerable field by the
+    // Resource/Service component services, which are held by the Component/Resource model classes whose
+    // toJSON() deep-copies itself. If the injected HttpClient were an ENUMERABLE own property, the copy
+    // would traverse its whole object graph into the request body. It MUST stay non-enumerable.
+    it('keeps the injected HttpClient as a non-enumerable field (the deep copy must not traverse it)', () => {
         const desc = Object.getOwnPropertyDescriptor(service, 'http');
         expect(desc).toBeDefined();
         expect(desc.enumerable).toBe(false);

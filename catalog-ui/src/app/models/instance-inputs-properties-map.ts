@@ -70,8 +70,7 @@ export class InstancesInputsPropertiesMap {
 
     public cleanUnnecessaryDataBeforeSending = ():InstancesInputsPropertiesMap => {
 
-        let map:InstancesInputsPropertiesMap = new InstancesInputsPropertiesMap(new InstancesInputsOrPropertiesMapData(), new InstancesInputsOrPropertiesMapData());
-        angular.copy(this, map);
+        let map:InstancesInputsPropertiesMap = _.cloneDeep(this);
 
         //Removing unnecessary data from inputs map
         _.forEach(map.componentInstanceInputsMap, (inputs:Array<InputModel>, instanceId:string) => {

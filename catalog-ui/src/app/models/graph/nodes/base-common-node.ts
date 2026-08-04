@@ -21,7 +21,7 @@
  * Created by obarda on 6/29/2016.
  */
 'use strict';
-import {AngularJSBridge} from "../../../services/angular-js-bridge-service";
+import {getSdcConfig} from "app/ng2/config/sdc-config.config.factory";
 
 export abstract class CommonNodeBase {
 
@@ -44,7 +44,7 @@ export abstract class CommonNodeBase {
 
     constructor() {
 
-        this.imagesPath = AngularJSBridge.getAngularConfig().imagesPath;
+        this.imagesPath = getSdcConfig().imagesPath;
         this.type = "basic-node";
         this.isSdcElement = true;
         this.isDraggable = true;

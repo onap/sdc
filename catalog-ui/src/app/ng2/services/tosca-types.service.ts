@@ -28,8 +28,6 @@ import {Observable} from 'rxjs/Observable';
 import {ISdcConfig, SdcConfigToken} from '../config/sdc-config.config';
 import 'rxjs/add/operator/toPromise';
 
-declare var angular: angular.IAngularStatic;
-
 @Injectable()
 export class ToscaTypesServiceNg2 {
 

@@ -27,11 +27,8 @@ import {Error403PageComponent} from './error-403/error-403.component';
 import {OnboardVendorPageComponent} from './onboard-vendor/onboard-vendor.component';
 
 /**
- * StandaloneStatesModule — declares the two Angular components that replace
- * the AngularJS error-403 and onboard-vendor ui-router states (Phase 8
- * migration). Both are exposed as downgraded AngularJS directives via
- * downgradeComponent in directive-module.ts so the existing ui-router state
- * definitions in app.ts can render them without modification (Task 4).
+ * Declares the two page components routed to by the 'error-403' and
+ * 'onboardVendor' routes in app.routes.ts.
  *
  * SdcConfigToken is NOT provided here — it is already root-provided via
  * SdcConfig in AppModule.providers, so OnboardVendorPageComponent receives

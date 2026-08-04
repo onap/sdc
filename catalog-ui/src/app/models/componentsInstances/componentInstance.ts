@@ -226,7 +226,7 @@ export class ComponentInstance implements IComponentInstance{
     }
 
     public toJSON = ():any => {
-        let temp = angular.copy(this);
+        let temp = _.cloneDeep(this);
         temp.certified = undefined;
         temp.iconSprite = undefined;
         temp.inputs = undefined;

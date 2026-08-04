@@ -1,6 +1,6 @@
 const mockApis = require('./configurations/mock.json').sdcConfig;
 const proxy = require('http-proxy-middleware');
-const devPort = 9000;
+const devPort = process.env.SDC_DEV_PORT || 9000;
 
 const fePort = process.env.SDC_BACKEND_PORT || 8080;
 const feHost = process.env.SDC_BACKEND_HOST || "localhost";

@@ -98,7 +98,11 @@ public class InputsPage extends GeneralPageElements {
         SetupCDTest.getExtendTest().log(Status.INFO, String.format("Clicking on VF instance input checkbox"));
         instancInput.findElement(By.className("tlv-checkbox-label")).click();
         GeneralUIUtils.ultimateWait();
-        return instancInput.findElement(By.className("tlv-checkbox-i")).getAttribute("class").contains("ng-not-empty");
+        // Every Angular checkbox in catalog-ui wraps a real <input type="checkbox"> whose checked state is
+        // driven by ngModel (sdc-checkbox renders input.sdc-checkbox__input, the local <checkbox> renders
+        // input.checkbox-hidden), so read the live checked state off the input rather than a CSS class:
+        // Angular emits no "is checked" class at all.
+        return instancInput.findElement(By.cssSelector("input[type='checkbox']")).isSelected();
     }
 
     public static WebElement getServiceInput(String VFInstanceName, String propertyName) throws Exception {

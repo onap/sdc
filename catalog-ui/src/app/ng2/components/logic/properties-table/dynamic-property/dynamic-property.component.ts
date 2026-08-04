@@ -194,12 +194,12 @@ export class DynamicPropertyComponent {
             const property: PropertyFEModel = <PropertyFEModel>this.property;
             //Update only if all this property parents has key name
             if (property.getParentNamesArray(childrenProps[0].propertiesName, []).indexOf('') === -1){
-                angular.forEach(childrenProps, (prop:DerivedFEProperty):void => { //Update parent PropertyFEModel with value for each child, including nested props
+                _.forEach(childrenProps, (prop:DerivedFEProperty):void => { //Update parent PropertyFEModel with value for each child, including nested props
                     property.childPropUpdated(prop);
                     if (prop.isChildOfListOrMap && prop.mapKey !== undefined) {
                         property.childPropMapKeyUpdated(prop, prop.mapKey, true);
                     }
-                },this);
+                });
                 //grab the cumulative value for the new item from parent PropertyFEModel and assign that value to DerivedFEProp[0] (which is the list or map parent with UUID of the set we just added)
                 let parentNames = (<PropertyFEModel>property).getParentNamesArray(childrenProps[0].propertiesName, []);
                 childrenProps[0].valueObj = _.get(property.valueObj, parentNames.join('.'), null);

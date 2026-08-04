@@ -25,6 +25,7 @@
 import {PropertyModel} from "./properties";
 import {InputPropertyBase} from "./input-property-base";
 import {SchemaPropertyGroupModel} from "./schema-property";
+import * as _ from 'lodash';
 
 export class InputsGroup {
     constructor(inputsObj?: InputsGroup) {
@@ -100,7 +101,7 @@ export class InputModel implements IInputModel {
     }
 
     public toJSON = ():any => {
-        let input = angular.copy(this);
+        let input = _.cloneDeep(this);
         input.isNew = undefined;
         input.isDeleteDisabled = undefined;
         input.properties = undefined;

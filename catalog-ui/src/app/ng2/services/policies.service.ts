@@ -27,6 +27,7 @@ import {IZoneService} from "../../models/graph/zones/zone";
 import {TargetUiObject} from "../../models/ui-models/ui-target-object";
 import {TargetOrMemberType} from "../../utils/constants";
 import { HttpClient } from "@angular/common/http";
+import * as _ from 'lodash';
 
 
 @Injectable()
@@ -51,10 +52,10 @@ export class PoliciesService implements IZoneService {
         let _members:Array<string>;
 
         if (targetType === TargetOrMemberType.COMPONENT_INSTANCES) {
-            _targets = angular.copy(policy.targets.COMPONENT_INSTANCES);
+            _targets = _.cloneDeep(policy.targets.COMPONENT_INSTANCES);
             _targets.push(targetId);
         } else if (targetType === TargetOrMemberType.GROUPS) {
-            _members = angular.copy(policy.targets.GROUPS);
+            _members = _.cloneDeep(policy.targets.GROUPS);
             _members.push(targetId);
         }
         let policyTargetRequest:PolicyTargetsRequest = new PolicyTargetsRequest(_members, _targets);
@@ -62,8 +63,8 @@ export class PoliciesService implements IZoneService {
     }
 
     public deletePolicyTarget(topologyTemplateType:string, topologyTemplateId:string, policy:PolicyInstance, targetId:string, targetType:TargetOrMemberType): Observable<PolicyInstance> {
-        let _targets:Array<string> = angular.copy(policy.targets.COMPONENT_INSTANCES);
-        let _members:Array<string> = angular.copy(policy.targets.GROUPS);
+        let _targets:Array<string> = _.cloneDeep(policy.targets.COMPONENT_INSTANCES);
+        let _members:Array<string> = _.cloneDeep(policy.targets.GROUPS);
         if (targetType === TargetOrMemberType.COMPONENT_INSTANCES) {
             _targets = _.without(_targets, targetId);
         } else if (targetType === TargetOrMemberType.GROUPS) {

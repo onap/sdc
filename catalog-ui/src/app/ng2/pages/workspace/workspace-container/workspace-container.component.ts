@@ -22,9 +22,11 @@ import {Component as NgComponent, ChangeDetectorRef, Inject, OnInit, OnDestroy} 
 import * as _ from 'lodash';
 
 import {Component, IAppMenu, IUserProperties, Plugin, PluginsConfiguration, Resource, Service} from 'app/models';
+// Deep-imported rather than taken from the `app/utils` barrel — see the comment on that barrel:
+// re-exporting the now-@Injectable handler closed a runtime import cycle through app/models.
+import {ChangeLifecycleStateHandler} from 'app/utils/change-lifecycle-state-handler';
 import {
     CHANGE_COMPONENT_CSAR_VERSION_FLAG,
-    ChangeLifecycleStateHandler,
     ComponentFactory,
     ComponentState,
     EVENTS,
@@ -51,6 +53,7 @@ import {WorkspaceNg1BridgeService} from '../workspace-ng1-bridge-service';
 import {WorkspaceService} from '../workspace.service';
 import {TranslateService} from '../../../shared/translator/translate.service';
 import {NavigationService} from '../../../services/navigation.service';
+import {SdcMenuToken} from '../../../config/sdc-menu.config';
 
 /**
  * Deliberately NOT OnPush, unlike most components here. It used to be, harmlessly: as a
@@ -99,17 +102,11 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
     lifecycleButtonEntries: Array<{key: string, value: any}> = [];
     progressValue: number = 0;
 
-    sdcMenu: IAppMenu;
-
     isLoading: boolean = false;
 
     private role: string;
     private category: string;
     private components: Component[];
-    private componentFactory: any;
-    private menuHandler: any;
-    private changeLifecycleStateHandler: any;
-    private progressService: any;
     private deregisterStateChange: Function;
 
     constructor(
@@ -128,12 +125,15 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
         private navigationService: NavigationService,
         private notificationsService: SdcUiServices.NotificationsService,
         private cdr: ChangeDetectorRef,
-        @Inject('$injector') private $injector: any
+        @Inject(SdcMenuToken) public sdcMenu: IAppMenu,
+        private componentFactory: ComponentFactory,
+        private menuHandler: MenuHandler,
+        private changeLifecycleStateHandler: ChangeLifecycleStateHandler,
+        private progressService: ProgressService
     ) {
     }
 
     ngOnInit(): void {
-        this.resolveNg1Services();
         // Expose the shell's action methods so the AngularJS shim controller can delegate
         // create / save / changeLifecycleState calls that child tabs make via $scope inheritance.
         this.workspaceService.containerActions = this;
@@ -141,14 +141,6 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
             this.initWorkspace();
             this.cdr.detectChanges();
         }
-    }
-
-    private resolveNg1Services(): void {
-        this.sdcMenu = this.$injector.get('sdcMenu');
-        this.componentFactory = this.$injector.get('ComponentFactory');
-        this.menuHandler = this.$injector.get('MenuHandler');
-        this.changeLifecycleStateHandler = this.$injector.get('ChangeLifecycleStateHandler');
-        this.progressService = this.$injector.get('Sdc.Services.ProgressService');
     }
 
     private initWorkspace(): void {

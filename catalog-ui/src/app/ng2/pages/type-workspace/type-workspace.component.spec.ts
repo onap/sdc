@@ -66,10 +66,6 @@ describe('TypeWorkspaceComponent', () => {
       }
     })
   };
-  // WorkspaceMenuComponent pulls only `$q` off the injector (workspace-menu.component.ts:54).
-  let injectorMock: Partial<ng.auto.IInjectorService> = {
-    'get': jest.fn()
-  };
   let sdcMenuMock: Partial<IAppMenu> = {
     'component_workspace_menu_option': {
       "DataType": [
@@ -113,7 +109,6 @@ describe('TypeWorkspaceComponent', () => {
         {provide: ModelService, useValue: modelServiceMock},
         TypeWorkspaceService,
         {provide: NavigationService, useValue: {navigate: jest.fn(), getParams: () => stateParamsMock, getParam: (key) => stateParamsMock[key], getCurrentStateName: () => States.TYPE_WORKSPACE, includes: jest.fn()}},
-        {provide: '$injector', useValue: injectorMock},
         {provide: SdcMenuToken, useValue: sdcMenuMock},
         {provide: SdcConfigToken, useValue: sdcConfigMock},
         {provide: AuthenticationService, useValue: authenticationService},

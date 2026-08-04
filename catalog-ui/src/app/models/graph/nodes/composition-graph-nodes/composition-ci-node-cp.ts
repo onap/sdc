@@ -21,7 +21,7 @@
 import {CompositionCiNodeBase} from "./composition-ci-node-base";
 import {ComponentInstance} from "../../../componentsInstances/componentInstance";
 import {ImageCreatorService} from "app/ng2/pages/composition/graph/common/image-creator.service";
-import {AngularJSBridge} from "../../../../services/angular-js-bridge-service";
+import {getSdcConfig} from "app/ng2/config/sdc-config.config.factory";
 import { ImagesUrl, GraphUIObjects} from "../../../../utils/constants";
 
 export class CompositionCiNodeCp extends CompositionCiNodeBase {
@@ -33,7 +33,7 @@ export class CompositionCiNodeCp extends CompositionCiNodeBase {
     }
 
     private initCp():void {
-        let sdcConfig = AngularJSBridge.getAngularConfig();
+        let sdcConfig = getSdcConfig();
         this.imagesPath = this.imagesPath + ImagesUrl.RESOURCE_ICONS;
         this.img =  this.imagesPath + this.componentInstance.icon + '.png';
         this.imgWidth = GraphUIObjects.SMALL_RESOURCE_WIDTH;

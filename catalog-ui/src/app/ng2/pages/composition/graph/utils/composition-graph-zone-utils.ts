@@ -8,6 +8,7 @@ import {
     ZoneInstanceAssignmentType
 } from "app/models";
 import {CanvasHandleTypes} from "app/utils";
+import * as $ from 'jquery';
 import {Observable} from "rxjs";
 import {GroupInstance} from "app/models/graph/zones/group-instance";
 import {Injectable} from "@angular/core";
@@ -123,7 +124,7 @@ export class CompositionGraphZoneUtils {
 
     private findZoneCoordinates(zoneType): Point {
         let point: Point = new Point(0, 0);
-        let zone = angular.element(document.querySelector('.' + zoneType + '-zone'));
+        let zone = $(document.querySelector('.' + zoneType + '-zone'));
         let wrapperZone = zone.offsetParent();
         point.x = zone.prop('offsetLeft') + wrapperZone.prop('offsetLeft');
         point.y = zone.prop('offsetTop') + wrapperZone.prop('offsetTop');

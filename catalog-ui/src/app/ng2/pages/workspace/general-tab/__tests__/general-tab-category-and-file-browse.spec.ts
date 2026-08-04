@@ -94,15 +94,6 @@ function createComp(opts: any = {}) {
         if (cache[k] !== undefined) { return cache[k]; }
         return null;
     }), set: jest.fn(), remove: jest.fn(), contains: jest.fn(() => false)};
-    const ng1: any = {
-        ComponentFactory: {createComponent: (c: any) => Object.assign({}, c)},
-        ImportVSPService: {}, OnboardingService: {},
-        ModelService: {getModels: jest.fn(() => of([])), getModelsOfType: jest.fn(() => of([]))},
-        ElementService: {getCategoryBaseTypes: jest.fn(() => of({required: false, baseTypes: []}))},
-        ModalsHandler: {},
-        sdcMenu: {component_workspace_menu_option: {VFC: [{hiddenCategories: []}], SERVICE: [{hiddenCategories: []}]}},
-        sdcConfig: {csarFileExtension: 'csar', toscaFileExtension: 'yaml,yml'}
-    };
     const comp = new GeneralTabComponent(
         new GeneralFormService(), new ComponentMetadataService(),
         workspaceService, cacheService,
@@ -114,7 +105,12 @@ function createComp(opts: any = {}) {
         {detectChanges: jest.fn()} as any,
         opts.navigationService || makeNavigationService(opts.stateParams),
         {toscaFileExtension: 'yaml,yml', csarFileExtension: 'csar'} as any,
-        {get: (n: string) => ng1[n]} as any
+        {component_workspace_menu_option: {VFC: [{hiddenCategories: []}], SERVICE: [{hiddenCategories: []}]}} as any,
+        {createComponent: (c: any) => Object.assign({}, c)} as any,
+        {} as any,
+        {getModels: jest.fn(() => of([])), getModelsOfType: jest.fn(() => of([]))} as any,
+        {getCategoryBaseTypes: jest.fn(() => of({required: false, baseTypes: []}))} as any,
+        {} as any
     );
     return {comp, component, workspaceService};
 }

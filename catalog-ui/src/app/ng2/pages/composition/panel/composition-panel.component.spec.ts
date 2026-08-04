@@ -170,7 +170,7 @@ describe('composition-panel component', () => {
     });
 
     it('When Topology Template is Service and no instance is selected Expect tabs info, deployment, inputs, info, api, substitution filter', () => {
-        const selectedComponent: Service = new Service(null, null);
+        const selectedComponent: Service = new Service(null);
         selectedComponent.isResource = jest.fn(() => false);
         selectedComponent.isService = jest.fn(() => true);
         selectedComponent.isSubstituteCandidate = jest.fn(() => true);
@@ -194,7 +194,7 @@ describe('composition-panel component', () => {
 
     it('When Topology Template is Service without base type, and no instance is selected. Expect tabs info, deployment, inputs, info and api', () => {
 
-        const selectedComponent: Service = new Service(null, null);
+        const selectedComponent: Service = new Service(null);
         selectedComponent.isResource = jest.fn(() => false);
         selectedComponent.isService = jest.fn(() => true);
         selectedComponent.isSubstituteCandidate = jest.fn(() => false);
@@ -217,7 +217,7 @@ describe('composition-panel component', () => {
 
     it('When Topology Template is Resource and no instance is selected Expect (info, deployment, inputs, info and api)', () => {
 
-        const selectedComponent: Service = new Service(null, null);
+        const selectedComponent: Service = new Service(null);
         selectedComponent.isResource = jest.fn(() => true);
         selectedComponent.isService = jest.fn(() => false );
 
@@ -241,7 +241,7 @@ describe('composition-panel component', () => {
     it('When Topology Template is Service and proxyService instance is selected ' +
         'Expect (info, deployment, inputs, info and api)', () => {
 
-        const selectedComponent: Service = new Service(null, null);
+        const selectedComponent: Service = new Service(null);
         selectedComponent.isResource = jest.fn(() => false);
         selectedComponent.isService = jest.fn(() => true );
         selectedComponent.isSubstituteCandidate = jest.fn(() => true );
@@ -266,7 +266,7 @@ describe('composition-panel component', () => {
     it('When Topology Template is Resource and VL is selected ' +
         'Expect (info, deployment, inputs, info and api)', () => {
 
-        const topologyTemplate: Resource = new Resource(null, null);
+        const topologyTemplate: Resource = new Resource(null);
         topologyTemplate.isResource = jest.fn(() => true);
         topologyTemplate.isService = jest.fn(() => false );
 
@@ -291,7 +291,7 @@ describe('composition-panel component', () => {
     it('When Topology Template is Service and VL is selected ' +
         'Expect (info, deployment, inputs, info and api)', () => {
 
-        const topologyTemplate: Service = new Service(null, null);
+        const topologyTemplate: Service = new Service(null);
         topologyTemplate.isResource = jest.fn(() => true);
         topologyTemplate.isService = jest.fn(() => false );
 

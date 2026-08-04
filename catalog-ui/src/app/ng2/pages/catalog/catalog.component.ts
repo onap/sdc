@@ -430,7 +430,7 @@ export class CatalogComponent {
     }
 
     private isDefaultFilter = (): boolean => {
-        return angular.equals(this.defaultFilterParams, this.filterParams);
+        return _.isEqual(this.defaultFilterParams, this.filterParams);
     }
 
     private componentShouldReload = ():boolean => {
@@ -575,9 +575,9 @@ export class CatalogComponent {
 
     private loadFilterParams() {
         const params = this.navigationService.getParams();
-        this.filterParams = angular.copy(this.defaultFilterParams);
+        this.filterParams = _.cloneDeep(this.defaultFilterParams);
         Object.keys(params).forEach((k) => {
-            if (!angular.isUndefined(params[k])) {
+            if (params[k] !== undefined) {
                 let newVal;
                 let paramsChecklist: SdcUiCommon.ChecklistModel = null;
                 let filterKey = k.substr('filter.'.length);

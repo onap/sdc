@@ -68,7 +68,7 @@ public class ProductUIUtils {
         for (String tag : productTags) {
             productTagsTextbox.clear();
             productTagsTextbox.sendKeys(tag);
-            GeneralUIUtils.waitForAngular();
+            GeneralUIUtils.waitForPageLoad();
             productTagsTextbox.sendKeys(Keys.ENTER);
         }
     }

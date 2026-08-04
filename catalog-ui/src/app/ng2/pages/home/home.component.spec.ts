@@ -269,6 +269,36 @@ describe('home component', () => {
     //     expect(mockStateService.go).toBeCalledWith('workspace.general', {});
     // });
 
+    // isDefaultFilter() used to call angular.equals, which SKIPS function-valued keys. HomeFilter
+    // carries a toUrlParam arrow field — a fresh closure per instance — so a plain _.isEqual is
+    // never true, componentShouldReload() always returns true, and the dashboard re-fetches every
+    // visit instead of using the cached breadcrumbs. These pin the function-skipping semantics.
+    describe('isDefaultFilter (angular.equals parity)', () => {
+        it('treats a pristine HomeFilter as the default despite its per-instance arrow field', () => {
+            const component = TestBed.createComponent(HomeComponent);
+            component.componentInstance.homeFilter = new HomeFilter();
+            expect(component.componentInstance.isDefaultFilter()).toBe(true);
+        });
+
+        it('does not treat a search term as default', () => {
+            const component = TestBed.createComponent(HomeComponent);
+            component.componentInstance.homeFilter = new HomeFilter({'filter.term': 'abc'});
+            expect(component.componentInstance.isDefaultFilter()).toBe(false);
+        });
+
+        it('does not treat a selected status as default', () => {
+            const component = TestBed.createComponent(HomeComponent);
+            component.componentInstance.homeFilter = new HomeFilter({'filter.status': 'CERTIFIED'});
+            expect(component.componentInstance.isDefaultFilter()).toBe(false);
+        });
+
+        it('does not treat a distributed selection as default', () => {
+            const component = TestBed.createComponent(HomeComponent);
+            component.componentInstance.homeFilter = new HomeFilter({'filter.distributed': 'DISTRIBUTED'});
+            expect(component.componentInstance.isDefaultFilter()).toBe(false);
+        });
+    });
+
 
 
 

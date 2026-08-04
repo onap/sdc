@@ -525,15 +525,9 @@ describe('PropertyFormModalComponent', () => {
             const ctx = modalService.save.mock.calls[0][0];
             expect(ctx.property.type).toBeNull();
 
-            // PropertyModel.toJSON() runs angular.copy(this) (angular is the AngularJS global, absent under Jest)
-            // and does NOT touch type — so it faithfully forwards whatever type the property holds. Stub copy
-            // with a shallow clone to prove the wire payload carries null, not "".
-            (global as any).angular = {copy: (o: any) => Object.assign(Object.create(Object.getPrototypeOf(o)), o)};
-            try {
-                expect(ctx.property.toJSON().type).toBeNull();
-            } finally {
-                delete (global as any).angular;
-            }
+            // PropertyModel.toJSON() deep-copies itself and does NOT touch type — so it faithfully
+            // forwards whatever type the property holds. Assert on the real wire payload.
+            expect(ctx.property.toJSON().type).toBeNull();
         });
 
         it('leaves a real type untouched (no coercion for a populated type)', () => {

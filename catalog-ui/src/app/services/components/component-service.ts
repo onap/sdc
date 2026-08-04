@@ -54,52 +54,52 @@ import {SdcConfigToken} from "../../ng2/config/sdc-config.config";
 export interface IComponentService {
 
     getComponent(id:string);
-    updateComponent(component:Component):ng.IPromise<Component>;
-    changeLifecycleState(component:Component, state:string, userRemarks:AsdcComment):ng.IPromise<ComponentMetadata> ;
-    validateName(newName:string, subtype?:string):ng.IPromise<IValidate>;
-    createComponent(component:Component):ng.IPromise<Component>;
+    updateComponent(component:Component):Promise<Component>;
+    changeLifecycleState(component:Component, state:string, userRemarks:AsdcComment):Promise<ComponentMetadata> ;
+    validateName(newName:string, subtype?:string):Promise<IValidate>;
+    createComponent(component:Component):Promise<Component>;
     //importComponent
-    importComponent(component: Component): ng.IPromise<Component>;
-    addOrUpdateArtifact(componentId:string, artifact:ArtifactModel):ng.IPromise<ArtifactModel>;
-    deleteArtifact(componentId:string, artifact:string, artifactLabel):ng.IPromise<ArtifactModel>;
-    addProperty(componentId:string, property:PropertyModel):ng.IPromise<PropertyModel>;
-    updateProperty(componentId:string, property:PropertyModel):ng.IPromise<PropertyModel>;
-    addAttribute(componentId:string, attribute:AttributeModel):ng.IPromise<AttributeModel>;
-    updateAttribute(componentId:string, attribute:AttributeModel):ng.IPromise<AttributeModel>;
-    deleteProperty(componentId:string, propertyId:string):ng.IPromise<PropertyModel>;
-    deleteAttribute(componentId:string, attributeId:string):ng.IPromise<AttributeModel>;
-    checkResourceInstanceVersionChange(componentId:string, componentInstanceId:string, componentUid:string):ng.IPromise<any>;
-    changeResourceInstanceVersion(componentId:string, componentInstanceId:string, componentUid:string):ng.IPromise<ComponentInstance>;
-    updateInstanceArtifact(componentId:string, instanceId:string, artifact:ArtifactModel):ng.IPromise<ArtifactModel>;
-    addInstanceArtifact(componentId:string, instanceId:string, artifact:ArtifactModel):ng.IPromise<ArtifactModel>;
-    deleteInstanceArtifact(componentId:string, instanceId:string, artifact:string, artifactLabel):ng.IPromise<ArtifactModel>;
-    createComponentInstance(componentId:string, componentInstance:ComponentInstance):ng.IPromise<ComponentInstance>;
-    updateComponentInstance(componentId:string, componentInstance:ComponentInstance):ng.IPromise<ComponentInstance>;
-    updateMultipleComponentInstances(componentId:string, instances:Array<ComponentInstance>):ng.IPromise< Array<ComponentInstance>>;
-    downloadArtifact(componentId: string, artifactId: string, vendorName?: string): ng.IPromise<IFileDownload>;
-    uploadInstanceEnvFile(componentId:string, instanceId:string, artifact:ArtifactModel):ng.IPromise<ArtifactModel>;
-    downloadInstanceArtifact(componentId:string, instanceId:string, artifactId:string):ng.IPromise<IFileDownload>;
-    deleteComponentInstance(componentId:string, componentInstanceId:string):ng.IPromise<ComponentInstance>;
-    createRelation(componentId:string, link:RelationshipModel):ng.IPromise<RelationshipModel>;
-    deleteRelation(componentId:string, link:RelationshipModel):ng.IPromise<RelationshipModel>;
-    fetchRelation(componentId:string, linkId:string):ng.IPromise<RelationshipModel>;
-    getRequirementsCapabilities(componentId:string):ng.IPromise<any>;
-    updateInstanceProperties(componentId:string, componentInstanceId:string, properties:PropertyModel[]):ng.IPromise<PropertyModel[]>;
-    updateInstanceAttribute(componentId:string, attribute:AttributeModel):ng.IPromise<AttributeModel>;
-    getComponentInstancesFilteredByInputsAndProperties(componentId:string, searchText:string):ng.IPromise<Array<ComponentInstance>>
-    getComponentInstanceInputs(componentId:string, instanceId:string, originComponentUid):ng.IPromise<Array<InputModel>>;
-    getComponentInputs(componentId:string):ng.IPromise<Array<InputModel>>;
-    getComponentInstanceInputProperties(componentId:string, instanceId:string, inputId:string):ng.IPromise<Array<PropertyModel>>;
-    getComponentInstanceProperties(componentId:string, instanceId:string):ng.IPromise<Array<PropertyModel>>;
-    getModuleForDisplay(componentId:string, moduleId:string):ng.IPromise<DisplayModule>;
-    getComponentInstanceModule(componentId:string, componentInstanceId:string, moduleId:string):ng.IPromise<DisplayModule>;
-    updateGroupMetadata(componentId:string, group:Module):ng.IPromise<Module>;
-    getComponentInputInputsAndProperties(serviceId:string, input:string):ng.IPromise<InputsAndProperties>;
-    createInputsFromInstancesInputs(serviceId:string, instancesInputsMap:InstancesInputsPropertiesMap):ng.IPromise<Array<InputModel>>;
-    createInputsFromInstancesInputsProperties(resourceId:string, instanceInputsPropertiesMap:InstancesInputsPropertiesMap):ng.IPromise<Array<PropertyModel>>;
-    deleteComponentInput(serviceId:string, inputId:string):ng.IPromise<InputModel>;
-    getArtifactByGroupType(componentId:string, artifactGroupType:string):ng.IPromise<ArtifactGroupModel>;
-    getComponentInstanceArtifactsByGroupType(componentId:string, componentInstanceId:string, artifactGroupType:string):ng.IPromise<ArtifactGroupModel>;
+    importComponent(component: Component): Promise<Component>;
+    addOrUpdateArtifact(componentId:string, artifact:ArtifactModel):Promise<ArtifactModel>;
+    deleteArtifact(componentId:string, artifact:string, artifactLabel):Promise<ArtifactModel>;
+    addProperty(componentId:string, property:PropertyModel):Promise<PropertyModel>;
+    updateProperty(componentId:string, property:PropertyModel):Promise<PropertyModel>;
+    addAttribute(componentId:string, attribute:AttributeModel):Promise<AttributeModel>;
+    updateAttribute(componentId:string, attribute:AttributeModel):Promise<AttributeModel>;
+    deleteProperty(componentId:string, propertyId:string):Promise<PropertyModel>;
+    deleteAttribute(componentId:string, attributeId:string):Promise<AttributeModel>;
+    checkResourceInstanceVersionChange(componentId:string, componentInstanceId:string, componentUid:string):Promise<any>;
+    changeResourceInstanceVersion(componentId:string, componentInstanceId:string, componentUid:string):Promise<ComponentInstance>;
+    updateInstanceArtifact(componentId:string, instanceId:string, artifact:ArtifactModel):Promise<ArtifactModel>;
+    addInstanceArtifact(componentId:string, instanceId:string, artifact:ArtifactModel):Promise<ArtifactModel>;
+    deleteInstanceArtifact(componentId:string, instanceId:string, artifact:string, artifactLabel):Promise<ArtifactModel>;
+    createComponentInstance(componentId:string, componentInstance:ComponentInstance):Promise<ComponentInstance>;
+    updateComponentInstance(componentId:string, componentInstance:ComponentInstance):Promise<ComponentInstance>;
+    updateMultipleComponentInstances(componentId:string, instances:Array<ComponentInstance>):Promise< Array<ComponentInstance>>;
+    downloadArtifact(componentId: string, artifactId: string, vendorName?: string): Promise<IFileDownload>;
+    uploadInstanceEnvFile(componentId:string, instanceId:string, artifact:ArtifactModel):Promise<ArtifactModel>;
+    downloadInstanceArtifact(componentId:string, instanceId:string, artifactId:string):Promise<IFileDownload>;
+    deleteComponentInstance(componentId:string, componentInstanceId:string):Promise<ComponentInstance>;
+    createRelation(componentId:string, link:RelationshipModel):Promise<RelationshipModel>;
+    deleteRelation(componentId:string, link:RelationshipModel):Promise<RelationshipModel>;
+    fetchRelation(componentId:string, linkId:string):Promise<RelationshipModel>;
+    getRequirementsCapabilities(componentId:string):Promise<any>;
+    updateInstanceProperties(componentId:string, componentInstanceId:string, properties:PropertyModel[]):Promise<PropertyModel[]>;
+    updateInstanceAttribute(componentId:string, attribute:AttributeModel):Promise<AttributeModel>;
+    getComponentInstancesFilteredByInputsAndProperties(componentId:string, searchText:string):Promise<Array<ComponentInstance>>
+    getComponentInstanceInputs(componentId:string, instanceId:string, originComponentUid):Promise<Array<InputModel>>;
+    getComponentInputs(componentId:string):Promise<Array<InputModel>>;
+    getComponentInstanceInputProperties(componentId:string, instanceId:string, inputId:string):Promise<Array<PropertyModel>>;
+    getComponentInstanceProperties(componentId:string, instanceId:string):Promise<Array<PropertyModel>>;
+    getModuleForDisplay(componentId:string, moduleId:string):Promise<DisplayModule>;
+    getComponentInstanceModule(componentId:string, componentInstanceId:string, moduleId:string):Promise<DisplayModule>;
+    updateGroupMetadata(componentId:string, group:Module):Promise<Module>;
+    getComponentInputInputsAndProperties(serviceId:string, input:string):Promise<InputsAndProperties>;
+    createInputsFromInstancesInputs(serviceId:string, instancesInputsMap:InstancesInputsPropertiesMap):Promise<Array<InputModel>>;
+    createInputsFromInstancesInputsProperties(resourceId:string, instanceInputsPropertiesMap:InstancesInputsPropertiesMap):Promise<Array<PropertyModel>>;
+    deleteComponentInput(serviceId:string, inputId:string):Promise<InputModel>;
+    getArtifactByGroupType(componentId:string, artifactGroupType:string):Promise<ArtifactGroupModel>;
+    getComponentInstanceArtifactsByGroupType(componentId:string, componentInstanceId:string, artifactGroupType:string):Promise<ArtifactGroupModel>;
 }
 
 @Injectable()
@@ -111,24 +111,20 @@ export class ComponentService implements IComponentService {
     constructor(@Inject(SdcConfigToken) sdcConfig: IAppConfigurtaion,
                 http: HttpClient,
                 sharingService: SharingService,
-                dataTypeService: DataTypesService,
-                @Inject('$q') $q: ng.IQService) {
+                dataTypeService: DataTypesService) {
         this.baseUrl = sdcConfig.api.root + sdcConfig.api.component_api_root;
         // §SS: keep Angular deps OFF the enumerable surface. The Component/Resource/Service model
-        // classes hold this service (enumerable `componentService`) and their toJSON() does
-        // angular.copy(this); HttpClient's object graph reaches an ngUpgrade Scope, so an enumerable
-        // http field makes angular.copy throw `ng:cpws` and hangs create/import (failure-catalog §SS).
+        // classes hold this service (enumerable `componentService`) and their toJSON() deep-copies
+        // itself, so an enumerable http field drags HttpClient's whole object graph into the POST body.
         Object.defineProperty(this, 'http', {value: http, enumerable: false, writable: false, configurable: true});
         Object.defineProperty(this, 'sharingService', {value: sharingService, enumerable: false, writable: false, configurable: true});
         Object.defineProperty(this, 'dataTypeService', {value: dataTypeService, enumerable: false, writable: false, configurable: true});
-        Object.defineProperty(this, '$q', {value: $q, enumerable: false, writable: false, configurable: true});
     }
 
     // typed non-enumerable fields (declared for the compiler; assigned via defineProperty above)
     protected http: HttpClient;
     protected sharingService: SharingService;
     protected dataTypeService: DataTypesService;
-    protected $q: ng.IQService;
 
     // URL helper: {baseUrl}{typeName}/{seg}/{seg}... (typeName '' for base, no leading segment)
     protected url = (...segments: Array<string>): string => {
@@ -148,12 +144,12 @@ export class ComponentService implements IComponentService {
         return new HttpHeaders({'Content-MD5': btoa(md5Result)});
     };
 
-    public getComponent = (id: string): ng.IPromise<Component> => {
+    public getComponent = (id: string): Promise<Component> => {
         return this.http.get(this.url(id)).toPromise().then(
             (response: Component) => this.createComponentObject(response)) as any;
     };
 
-    public updateComponent = (component: Component): ng.IPromise<Component> => {
+    public updateComponent = (component: Component): Promise<Component> => {
         if (component instanceof Resource) {
             let resource: Resource = <Resource>component;
             if (resource.importedFile) {
@@ -170,17 +166,17 @@ export class ComponentService implements IComponentService {
         }
     };
 
-    private updateService = (component: Component): ng.IPromise<Component> => {
+    private updateService = (component: Component): Promise<Component> => {
         return this.http.put(this.url(component.uniqueId, 'metadata'), JSON.stringify(component)).toPromise()
             .then((response: Component) => this.createComponentObject(response)) as any;
     };
 
-    private updateResource = (component: Component): ng.IPromise<Component> => {
+    private updateResource = (component: Component): Promise<Component> => {
         return this.http.put(this.url(component.uniqueId), JSON.stringify(component)).toPromise()
             .then((response: Component) => this.createComponentObject(response)) as any;
     };
 
-    private updateResourceMetadata = (component: Component): ng.IPromise<Component> => {
+    private updateResourceMetadata = (component: Component): Promise<Component> => {
         return this.http.put(this.url(component.uniqueId, 'metadata'), JSON.stringify(component)).toPromise()
             .then((response: Component) => this.createComponentObject(response)) as any;
     };
@@ -188,9 +184,9 @@ export class ComponentService implements IComponentService {
     /**
      * Only resource can be updated with payload data
      * @param component
-     * @returns {IPromise<T>}
+     * @returns {Promise<T>}
      */
-    private updateResourceWithPayload = (resource: Resource): ng.IPromise<Component> => {
+    private updateResourceWithPayload = (resource: Resource): Promise<Component> => {
         resource.payloadData = resource.importedFile.base64;
         resource.payloadName = resource.importedFile.filename;
         const headers = this.getHeaderMd5(resource);
@@ -198,13 +194,13 @@ export class ComponentService implements IComponentService {
             .then((response: Component) => this.createComponentObject(response)) as any;
     };
 
-    public createComponent = (component: Component): ng.IPromise<Component> => {
+    public createComponent = (component: Component): Promise<Component> => {
         const headers = this.getHeaderMd5(component);
         return this.http.post(this.url(), JSON.stringify(component), {headers}).toPromise()
             .then((response: Component) => this.createComponentObject(response)) as any;
     };
 
-    public importComponent = (component: Component): ng.IPromise<Component> => {
+    public importComponent = (component: Component): Promise<Component> => {
         component.vendorName = "xfr";
         component.vendorRelease = "xfr";
         const headers = this.getHeaderMd5(component);
@@ -216,13 +212,13 @@ export class ComponentService implements IComponentService {
             }) as any;
     };
 
-    public validateName = (newName: string, subtype?: string): ng.IPromise<IValidate> => {
+    public validateName = (newName: string, subtype?: string): Promise<IValidate> => {
         let params = new HttpParams();
         if (subtype !== undefined) { params = params.set('subtype', subtype); }
         return this.http.get(this.url('validate-name', newName), {params}).toPromise() as any;
     };
 
-    public changeLifecycleState = (component: Component, state: string, commentObj: AsdcComment): ng.IPromise<ComponentMetadata> => {
+    public changeLifecycleState = (component: Component, state: string, commentObj: AsdcComment): Promise<ComponentMetadata> => {
         const onOk = (response: ComponentMetadata) => {
             this.sharingService.addUuidValue(response.uniqueId, response.uuid);
             return new ComponentMetadata().deserialize(response);
@@ -235,7 +231,7 @@ export class ComponentService implements IComponentService {
     };
 
     // ------------------------------------------------ Artifacts API --------------------------------------------------//
-    public addOrUpdateArtifact = (componentId: string, artifact: ArtifactModel): ng.IPromise<ArtifactModel> => {
+    public addOrUpdateArtifact = (componentId: string, artifact: ArtifactModel): Promise<ArtifactModel> => {
         let headers: HttpHeaders | undefined;
         if (artifact.payloadData) {
             headers = this.getHeaderMd5(artifact);
@@ -244,7 +240,7 @@ export class ComponentService implements IComponentService {
         return this.http.post(this.url(componentId, 'artifacts', artifact.uniqueId), JSON.stringify(artifact), options).toPromise() as any;
     };
 
-    public downloadArtifact = (componentId: string, artifactId: string, vendorName?: string): ng.IPromise<IFileDownload> => {
+    public downloadArtifact = (componentId: string, artifactId: string, vendorName?: string): Promise<IFileDownload> => {
         if (vendorName === 'IsService') {
             return this.http.get(this.url('importService', componentId, 'artifacts', artifactId)).toPromise() as any;
         } else {
@@ -252,54 +248,54 @@ export class ComponentService implements IComponentService {
         }
     };
 
-    public deleteArtifact = (componentId: string, artifactId: string, artifactLabel: string): ng.IPromise<ArtifactModel> => {
+    public deleteArtifact = (componentId: string, artifactId: string, artifactLabel: string): Promise<ArtifactModel> => {
         const params = new HttpParams().set('operation', artifactLabel);
         return this.http.delete(this.url(componentId, 'artifacts', artifactId), {params}).toPromise() as any;
     };
 
-    public getArtifactByGroupType = (componentId: string, artifactGroupType: string): ng.IPromise<ArtifactGroupModel> => {
+    public getArtifactByGroupType = (componentId: string, artifactGroupType: string): Promise<ArtifactGroupModel> => {
         return this.http.get(this.url(componentId, 'artifactsByType', artifactGroupType)).toPromise()
             .then((response: any) => new ArtifactGroupModel(response)) as any;
     };
 
-    public getComponentInstanceArtifactsByGroupType = (componentId: string, componentInstanceId: string, artifactGroupType: string): ng.IPromise<ArtifactGroupModel> => {
+    public getComponentInstanceArtifactsByGroupType = (componentId: string, componentInstanceId: string, artifactGroupType: string): Promise<ArtifactGroupModel> => {
         return this.http.get(this.url(componentId, 'resourceInstances', componentInstanceId, 'artifactsByType', artifactGroupType)).toPromise()
             .then((response: any) => new ArtifactGroupModel(response)) as any;
     };
 
     // ------------------------------------------------ Properties API --------------------------------------------------//
-    public addProperty = (componentId: string, property: PropertyModel): ng.IPromise<PropertyModel> => {
+    public addProperty = (componentId: string, property: PropertyModel): Promise<PropertyModel> => {
         return this.http.post(this.url(componentId, 'properties'), property.convertToServerObject()).toPromise()
             .then((response: any) => new PropertyModel(response[Object.keys(response)[0]])) as any;
     };
 
-    public updateProperty = (componentId: string, property: PropertyModel): ng.IPromise<PropertyModel> => {
+    public updateProperty = (componentId: string, property: PropertyModel): Promise<PropertyModel> => {
         return this.http.put(this.url(componentId, 'properties', property.uniqueId), property.convertToServerObject()).toPromise()
             .then((response: any) => new PropertyModel(response[Object.keys(response)[0]])) as any;
     };
 
-    public deleteProperty = (componentId: string, propertyId: string): ng.IPromise<PropertyModel> => {
+    public deleteProperty = (componentId: string, propertyId: string): Promise<PropertyModel> => {
         return this.http.delete(this.url(componentId, 'properties', propertyId)).toPromise() as any;
     };
 
     // ------------------------------------------------ Attributes API --------------------------------------------------//
-    public addAttribute = (componentId: string, attribute: AttributeModel): ng.IPromise<AttributeModel> => {
+    public addAttribute = (componentId: string, attribute: AttributeModel): Promise<AttributeModel> => {
         return this.http.post(this.url(componentId, 'attributes'), attribute.convertToServerObject()).toPromise()
             .then((response: any) => new AttributeModel(response)) as any;
     };
 
-    public updateAttribute = (componentId: string, attribute: AttributeModel): ng.IPromise<AttributeModel> => {
+    public updateAttribute = (componentId: string, attribute: AttributeModel): Promise<AttributeModel> => {
         return this.http.put(this.url(componentId, 'attributes', attribute.uniqueId), attribute.convertToServerObject()).toPromise()
             .then((response: any) => new AttributeModel(response)) as any;
     };
 
-    public deleteAttribute = (componentId: string, attributeId: string): ng.IPromise<AttributeModel> => {
+    public deleteAttribute = (componentId: string, attributeId: string): Promise<AttributeModel> => {
         return this.http.delete(this.url(componentId, 'attributes', attributeId)).toPromise() as any;
     };
 
     // ------------------------------------------------ Component Instances API --------------------------------------------------//
 
-    public createComponentInstance = (componentId: string, componentInstance: ComponentInstance): ng.IPromise<ComponentInstance> => {
+    public createComponentInstance = (componentId: string, componentInstance: ComponentInstance): Promise<ComponentInstance> => {
         return this.http.post(this.url(componentId, 'resourceInstance'), JSON.stringify(componentInstance)).toPromise()
             .then((response: any) => {
                 let createdInstance: ComponentInstance = ComponentInstanceFactory.createComponentInstance(response);
@@ -311,7 +307,7 @@ export class ComponentService implements IComponentService {
             }) as any;
     };
 
-    public updateComponentInstance = (componentId: string, componentInstance: ComponentInstance): ng.IPromise<ComponentInstance> => {
+    public updateComponentInstance = (componentId: string, componentInstance: ComponentInstance): Promise<ComponentInstance> => {
         return this.http.post(this.url(componentId, 'resourceInstance', componentInstance.uniqueId), JSON.stringify(componentInstance)).toPromise()
             .then((response: any) => {
                 let updatedInstance: ComponentInstance = ComponentInstanceFactory.createComponentInstance(response);
@@ -323,7 +319,7 @@ export class ComponentService implements IComponentService {
             }) as any;
     };
 
-    public updateMultipleComponentInstances = (componentId: string, instances: Array<ComponentInstance>): ng.IPromise<Array<ComponentInstance>> => {
+    public updateMultipleComponentInstances = (componentId: string, instances: Array<ComponentInstance>): Promise<Array<ComponentInstance>> => {
         return this.http.post(this.url(componentId, 'resourceInstance/multipleComponentInstance'), JSON.stringify(instances)).toPromise()
             .then((response: any) => {
                 console.log("Multiple Component Instances was updated", response);
@@ -339,7 +335,7 @@ export class ComponentService implements IComponentService {
             }) as any;
     };
 
-    public deleteComponentInstance = (componentId: string, componentInstanceId: string): ng.IPromise<ComponentInstance> => {
+    public deleteComponentInstance = (componentId: string, componentInstanceId: string): Promise<ComponentInstance> => {
         return this.http.delete(this.url(componentId, 'resourceInstance', componentInstanceId)).toPromise()
             .then(() => {
                 console.log("Component Instance was deleted");
@@ -349,20 +345,20 @@ export class ComponentService implements IComponentService {
             }) as any;
     };
 
-    public checkResourceInstanceVersionChange = (componentId: string, componentInstanceId: string, componentUid: string): ng.IPromise<ComponentInstance> => {
+    public checkResourceInstanceVersionChange = (componentId: string, componentInstanceId: string, componentUid: string): Promise<ComponentInstance> => {
         return this.http.get(this.url(componentId, 'resourceInstance', componentInstanceId, componentUid, 'checkForwardingPathOnVersionChange')).toPromise() as any;
     };
 
-    public changeResourceInstanceVersion = (componentId: string, componentInstanceId: string, componentUid: string): ng.IPromise<ComponentInstance> => {
+    public changeResourceInstanceVersion = (componentId: string, componentInstanceId: string, componentUid: string): Promise<ComponentInstance> => {
         return this.http.post(this.url(componentId, 'resourceInstance', componentInstanceId, 'changeVersion'), {'componentUid': componentUid}).toPromise()
             .then((response: any) => ComponentInstanceFactory.createComponentInstance(response)) as any;
     };
 
-    public downloadInstanceArtifact = (componentId: string, instanceId: string, artifactId: string): ng.IPromise<IFileDownload> => {
+    public downloadInstanceArtifact = (componentId: string, instanceId: string, artifactId: string): Promise<IFileDownload> => {
         return this.http.get(this.url(componentId, 'resourceInstances', instanceId, 'artifacts', artifactId)).toPromise() as any;
     };
 
-    public updateInstanceArtifact = (componentId: string, instanceId: string, artifact: ArtifactModel): ng.IPromise<ArtifactModel> => {
+    public updateInstanceArtifact = (componentId: string, instanceId: string, artifact: ArtifactModel): Promise<ArtifactModel> => {
         let headers: HttpHeaders | undefined;
         if (artifact.payloadData) {
             headers = this.getHeaderMd5(artifact);
@@ -372,7 +368,7 @@ export class ComponentService implements IComponentService {
             .then((response: any) => new ArtifactModel(response)) as any;
     };
 
-    public addInstanceArtifact = (componentId: string, instanceId: string, artifact: ArtifactModel): ng.IPromise<ArtifactModel> => {
+    public addInstanceArtifact = (componentId: string, instanceId: string, artifact: ArtifactModel): Promise<ArtifactModel> => {
         let headers: HttpHeaders | undefined;
         if (artifact.payloadData) {
             headers = this.getHeaderMd5(artifact);
@@ -382,12 +378,12 @@ export class ComponentService implements IComponentService {
             .then((response: any) => new ArtifactModel(response)) as any;
     };
 
-    public deleteInstanceArtifact = (componentId: string, instanceId: string, artifactId: string, artifactLabel: string): ng.IPromise<ArtifactModel> => {
+    public deleteInstanceArtifact = (componentId: string, instanceId: string, artifactId: string, artifactLabel: string): Promise<ArtifactModel> => {
         const params = new HttpParams().set('operation', artifactLabel);
         return this.http.delete(this.url(componentId, 'resourceInstance', instanceId, 'artifacts', artifactId), {params}).toPromise() as any;
     };
 
-    public uploadInstanceEnvFile = (componentId: string, instanceId: string, artifact: ArtifactModel): ng.IPromise<ArtifactModel> => {
+    public uploadInstanceEnvFile = (componentId: string, instanceId: string, artifact: ArtifactModel): Promise<ArtifactModel> => {
         let headers: HttpHeaders | undefined;
         if (artifact.payloadData) {
             headers = this.getHeaderMd5(artifact);
@@ -397,7 +393,7 @@ export class ComponentService implements IComponentService {
             .then((response: any) => new ArtifactModel(response)) as any;
     };
 
-    public updateInstanceProperties = (componentId: string, componentInstanceId: string, properties: PropertyModel[]): ng.IPromise<PropertyModel[]> => {
+    public updateInstanceProperties = (componentId: string, componentInstanceId: string, properties: PropertyModel[]): Promise<PropertyModel[]> => {
         return this.http.post(this.url(componentId, 'resourceInstance', componentInstanceId, 'properties'), JSON.stringify(properties)).toPromise()
             .then((response: any) => {
                 const newProperties = response.map((res) => {
@@ -410,7 +406,7 @@ export class ComponentService implements IComponentService {
             }) as any;
     };
 
-    public updateInstanceAttribute = (componentId: string, attribute: AttributeModel): ng.IPromise<AttributeModel> => {
+    public updateInstanceAttribute = (componentId: string, attribute: AttributeModel): Promise<AttributeModel> => {
         let instanceId = attribute.resourceInstanceUniqueId;
         return this.http.post(this.url(componentId, 'resourceInstance', instanceId, 'attribute'), JSON.stringify(attribute)).toPromise()
             .then((response: any) => {
@@ -421,7 +417,7 @@ export class ComponentService implements IComponentService {
             }) as any;
     };
 
-    public createRelation = (componentId: string, link: RelationshipModel): ng.IPromise<RelationshipModel> => {
+    public createRelation = (componentId: string, link: RelationshipModel): Promise<RelationshipModel> => {
         const linkPayload: RelationshipModel = new RelationshipModel(link);
         linkPayload.relationships.forEach((rel) => {
             delete rel.capability;
@@ -438,7 +434,7 @@ export class ComponentService implements IComponentService {
             }) as any;
     };
 
-    public deleteRelation = (componentId: string, link: RelationshipModel): ng.IPromise<RelationshipModel> => {
+    public deleteRelation = (componentId: string, link: RelationshipModel): Promise<RelationshipModel> => {
         const linkPayload: RelationshipModel = new RelationshipModel(link);
         linkPayload.relationships.forEach((rel) => {
             delete rel.capability;
@@ -455,7 +451,7 @@ export class ComponentService implements IComponentService {
             }) as any;
     };
 
-    public fetchRelation = (componentId: string, linkId: string): ng.IPromise<RelationshipModel> => {
+    public fetchRelation = (componentId: string, linkId: string): Promise<RelationshipModel> => {
         return this.http.get(this.url(componentId, 'relationId', linkId)).toPromise()
             .then((response: any) => {
                 let relation: RelationshipModel = new RelationshipModel(response);
@@ -467,7 +463,7 @@ export class ComponentService implements IComponentService {
             }) as any;
     };
 
-    public getRequirementsCapabilities = (componentId: string): ng.IPromise<any> => {
+    public getRequirementsCapabilities = (componentId: string): Promise<any> => {
         return this.http.get(this.url(componentId, 'requirmentsCapabilities')).toPromise()
             .then((response: any) => {
                 console.log("Component requirement capabilities recived: ", response);
@@ -478,7 +474,7 @@ export class ComponentService implements IComponentService {
             }) as any;
     };
 
-    public getModuleForDisplay = (componentId: string, moduleId: string): ng.IPromise<DisplayModule> => {
+    public getModuleForDisplay = (componentId: string, moduleId: string): Promise<DisplayModule> => {
         return this.http.get(this.url(componentId, 'groups', moduleId)).toPromise()
             .then((response: any) => {
                 console.log("module loaded successfully: ", response);
@@ -489,7 +485,7 @@ export class ComponentService implements IComponentService {
             }) as any;
     };
 
-    public getComponentInstanceModule = (componentId: string, componentInstanceId: string, moduleId: string): ng.IPromise<DisplayModule> => {
+    public getComponentInstanceModule = (componentId: string, componentInstanceId: string, moduleId: string): Promise<DisplayModule> => {
         return this.http.get(this.url(componentId, 'resourceInstance', componentInstanceId, 'groupInstance', moduleId)).toPromise()
             .then((response: any) => {
                 console.log("module loaded successfully: ", response);
@@ -500,7 +496,7 @@ export class ComponentService implements IComponentService {
             }) as any;
     };
 
-    public getComponentInstancesFilteredByInputsAndProperties = (componentId: string, searchText?: string): ng.IPromise<Array<ComponentInstance>> => {
+    public getComponentInstancesFilteredByInputsAndProperties = (componentId: string, searchText?: string): Promise<Array<ComponentInstance>> => {
         let params = new HttpParams();
         if (searchText !== undefined) { params = params.set('searchText', searchText); }
         return this.http.get(this.url(componentId, 'componentInstances'), {params}).toPromise()
@@ -513,7 +509,7 @@ export class ComponentService implements IComponentService {
             }) as any;
     };
 
-    public getComponentInstanceInputs = (componentId: string, instanceId: string, originComponentUid): ng.IPromise<Array<InputModel>> => {
+    public getComponentInstanceInputs = (componentId: string, instanceId: string, originComponentUid): Promise<Array<InputModel>> => {
         return this.http.get(this.url(componentId, 'componentInstances', instanceId, originComponentUid, 'inputs')).toPromise()
             .then((response: any) => {
                 console.log("component instance input return successfully: ", response);
@@ -528,7 +524,7 @@ export class ComponentService implements IComponentService {
             }) as any;
     };
 
-    public getComponentInputs = (componentId: string): ng.IPromise<Array<InputModel>> => {
+    public getComponentInputs = (componentId: string): Promise<Array<InputModel>> => {
         return this.http.get(this.url(componentId, 'inputs')).toPromise()
             .then((response: any) => {
                 console.log("component inputs return successfully: ", response);
@@ -543,7 +539,7 @@ export class ComponentService implements IComponentService {
             }) as any;
     };
 
-    public getComponentInstanceInputProperties = (componentId: string, instanceId: string, inputId: string): ng.IPromise<Array<PropertyModel>> => {
+    public getComponentInstanceInputProperties = (componentId: string, instanceId: string, inputId: string): Promise<Array<PropertyModel>> => {
         return this.http.get(this.url(componentId, 'componentInstances', instanceId, inputId, 'properties')).toPromise()
             .then((response: any) => {
                 console.log("component instance input properties return successfully: ", response);
@@ -558,7 +554,7 @@ export class ComponentService implements IComponentService {
             }) as any;
     };
 
-    public getComponentInstanceProperties = (componentId: string, instanceId: string): ng.IPromise<Array<PropertyModel>> => {
+    public getComponentInstanceProperties = (componentId: string, instanceId: string): Promise<Array<PropertyModel>> => {
         return this.http.get(this.url(componentId, 'componentInstances', instanceId, 'properties')).toPromise()
             .then((response: any) => {
                 console.log("component instance  properties return successfully: ", response);
@@ -573,7 +569,7 @@ export class ComponentService implements IComponentService {
             }) as any;
     };
 
-    public updateGroupMetadata = (componentId: string, group: Module): ng.IPromise<Module> => {
+    public updateGroupMetadata = (componentId: string, group: Module): Promise<Module> => {
         return this.http.put(this.url(componentId, 'groups', group.uniqueId, 'metadata'), JSON.stringify(group)).toPromise()
             .then((response: Module) => {
                 console.log("group metadata updated successfully: ", response);
@@ -584,7 +580,7 @@ export class ComponentService implements IComponentService {
             }) as any;
     };
 
-    public getComponentInputInputsAndProperties = (serviceId: string, inputId: string): ng.IPromise<InputsAndProperties> => {
+    public getComponentInputInputsAndProperties = (serviceId: string, inputId: string): Promise<InputsAndProperties> => {
         return this.http.get(this.url(serviceId, 'inputs', inputId)).toPromise()
             .then((response: InputsAndProperties) => {
                 let inputsArray: Array<InputModel> = new Array<InputModel>();
@@ -604,7 +600,7 @@ export class ComponentService implements IComponentService {
             }) as any;
     };
 
-    createInputsFromInstancesInputsProperties = (resourceId: string, instancePropertyMap: InstancesInputsPropertiesMap): ng.IPromise<Array<PropertyModel>> => {
+    createInputsFromInstancesInputsProperties = (resourceId: string, instancePropertyMap: InstancesInputsPropertiesMap): Promise<Array<PropertyModel>> => {
         return this.http.post(this.url(resourceId, 'create/properties'), instancePropertyMap).toPromise()
             .then((response: any) => {
                 let inputsArray: Array<PropertyModel> = new Array<PropertyModel>();
@@ -618,7 +614,7 @@ export class ComponentService implements IComponentService {
             }) as any;
     };
 
-    createInputsFromInstancesInputs = (serviceId: string, instancesMap: InstancesInputsPropertiesMap): ng.IPromise<Array<InputModel>> => {
+    createInputsFromInstancesInputs = (serviceId: string, instancesMap: InstancesInputsPropertiesMap): Promise<Array<InputModel>> => {
         return this.http.post(this.url(serviceId, 'create/inputs'), instancesMap).toPromise()
             .then((response: any) => {
                 let inputsArray: Array<InputModel> = new Array<InputModel>();
@@ -632,7 +628,7 @@ export class ComponentService implements IComponentService {
             }) as any;
     };
 
-    deleteComponentInput = (serviceId: string, inputId: string): ng.IPromise<InputModel> => {
+    deleteComponentInput = (serviceId: string, inputId: string): Promise<InputModel> => {
         return this.http.delete(this.url(serviceId, 'delete', inputId, 'input')).toPromise()
             .then((response: any) => new InputModel(response),
             (err) => {

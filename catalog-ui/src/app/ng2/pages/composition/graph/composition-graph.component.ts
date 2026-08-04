@@ -284,7 +284,7 @@ export class CompositionGraphComponent implements AfterViewInit {
         });
 
         this._cy.on('tapstart', 'node', (event: Cy.EventObject) => {
-            this.currentlyClickedNodePosition = angular.copy(event.cyTarget[0].position()); // update node position on drag
+            this.currentlyClickedNodePosition = _.cloneDeep(event.cyTarget[0].position()); // update node position on drag
         });
 
         this._cy.on('drag', 'node', (event: Cy.EventObject) => {

@@ -472,7 +472,7 @@ export class AttributesOutputsComponent implements UnsavedChangesAware {
   generateDefaultOutputName = (): string => {
     let defaultInputName: string;
     let instancesIds = this.keysPipe.transform(this.instanceFeAttributesMap, []);
-    angular.forEach(instancesIds, (instanceId: string) => {
+    _.forEach(instancesIds, (instanceId: string) => {
       const selectedOutput : AttributeBEModel = this.attributesService.getCheckedAttributes(this.instanceFeAttributesMap[instanceId])[0];
         let selectedInstanceData: any = this.instances.find(instance => instance.uniqueId == instanceId);
         defaultInputName = selectedOutput.name;
@@ -490,7 +490,7 @@ export class AttributesOutputsComponent implements UnsavedChangesAware {
     let selectedComponentInstancesOutputs: InstanceBeAttributesMap = new InstanceBeAttributesMap();
     let instancesIds = this.keysPipe.transform(this.instanceFeAttributesMap, []);
 
-    angular.forEach(instancesIds, (instanceId: string): void => {
+    _.forEach(instancesIds, (instanceId: string): void => {
       let selectedInstanceData: any = this.instances.find(instance => instance.uniqueId == instanceId);
       if (selectedInstanceData instanceof ComponentInstance) {
         if (!this.isOutput(selectedInstanceData.originType)) {

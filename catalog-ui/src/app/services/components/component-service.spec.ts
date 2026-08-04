@@ -25,7 +25,6 @@
 // as a non-entry-point so the cycle resolves. The production runtime is not affected.
 jest.mock('app/services', () => ({
     AvailableIconsService: class {},
-    AngularJSBridge: {setup: () => {}},
     ResourceService: class {},
     ServiceService: class {},
     DataTypesService: class {},
@@ -52,7 +51,6 @@ describe('ComponentService', () => {
                 {provide: SdcConfigToken, useValue: sdcConfig},
                 {provide: SharingService, useValue: {addUuidValue: () => {}}},
                 {provide: DataTypesService, useValue: {loadDataTypesCache: () => {}}},
-                {provide: '$q', useValue: {defer: () => ({promise: null, resolve: () => {}, reject: () => {}})}},
             ],
         });
         service = TestBed.get(ComponentService);
@@ -60,7 +58,7 @@ describe('ComponentService', () => {
     });
     afterEach(() => httpMock.verify());
 
-    it('§SS: injected HttpClient is a NON-ENUMERABLE field (angular.copy must not traverse it)', () => {
+    it('§SS: injected HttpClient is a NON-ENUMERABLE field (the deep copy must not traverse it)', () => {
         expect(Object.keys(service)).not.toContain('http');
         expect(Object.keys(service)).not.toContain('sharingService');
         expect(Object.keys(service)).not.toContain('dataTypeService');

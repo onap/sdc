@@ -789,7 +789,7 @@ export class PropertiesAssignmentComponent implements UnsavedChangesAware {
         let selectedComponentInstancesInputs: InstanceBePropertiesMap = new InstanceBePropertiesMap();
         let instancesIds = this.keysPipe.transform(this.instanceFePropertiesMap, []);
 
-        angular.forEach(instancesIds, (instanceId: string): void => {
+        _.forEach(instancesIds, (instanceId: string): void => {
             let selectedInstanceData: any = this.instances.find(instance => instance.uniqueId == instanceId);
             if (selectedInstanceData instanceof ComponentInstance) {
                 if (!this.isInput(selectedInstanceData.originType)) {
@@ -859,7 +859,7 @@ export class PropertiesAssignmentComponent implements UnsavedChangesAware {
     generateDefaultInputName = (): string => {
         let defaultInputName: string;
         let instancesIds = this.keysPipe.transform(this.instanceFePropertiesMap, []);
-        angular.forEach(instancesIds, (instanceId: string) => {
+        _.forEach(instancesIds, (instanceId: string) => {
             let selectedProperty: PropertyBEModel = new PropertyBEModel(this.propertiesService.getCheckedProperties(this.instanceFePropertiesMap[instanceId])[0]);
             let selectedInstanceData: any = this.instances.find(instance => instance.uniqueId == instanceId);
             defaultInputName = this.generateInputName(selectedInstanceData.invariantName, selectedProperty.name);
@@ -924,7 +924,7 @@ export class PropertiesAssignmentComponent implements UnsavedChangesAware {
         let propertyNameList: Array<string> = [];
         let insId :string;
 
-        angular.forEach(instancesIds, (instanceId: string): void => {
+        _.forEach(instancesIds, (instanceId: string): void => {
             insId = instanceId;
             let selectedInstanceData: any = this.instances.find(instance => instance.uniqueId == instanceId);
             let checkedProperties: PropertyBEModel[] = this.propertiesService.getCheckedProperties(this.instanceFePropertiesMap[instanceId]);
@@ -942,7 +942,7 @@ export class PropertiesAssignmentComponent implements UnsavedChangesAware {
                 selectedPolicyInstancesProperties[instanceId] = checkedProperties;
             }
 
-            angular.forEach(checkedProperties, (property: PropertyBEModel) => {
+            _.forEach(checkedProperties, (property: PropertyBEModel) => {
                 propertyNameList.push(property.name);
             });
         });
@@ -1032,7 +1032,7 @@ export class PropertiesAssignmentComponent implements UnsavedChangesAware {
         let selectedComponentInstancesProperties: InstanceBePropertiesMap = new InstanceBePropertiesMap();
         let instancesIds = new KeysPipe().transform(this.instanceFePropertiesMap, []);
 
-        angular.forEach(instancesIds, (instanceId: string): void => {
+        _.forEach(instancesIds, (instanceId: string): void => {
             let selectedInstanceData: any = this.instances.find(instance => instance.uniqueId == instanceId);
             if (selectedInstanceData instanceof ComponentInstance) {
                 if (!this.isInput(selectedInstanceData.originType)) {

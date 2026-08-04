@@ -25,7 +25,6 @@ import {HierarchyNavigationComponent} from "./hierarchy-navigation.component";
 @NgModule({
   imports: [BrowserModule],
   declarations: [HierarchyNavigationComponent],
-  bootstrap: [],
   exports: [HierarchyNavigationComponent]
 })
 export class HierarchyNavigationModule {

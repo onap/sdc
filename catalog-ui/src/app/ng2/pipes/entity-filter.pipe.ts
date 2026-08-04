@@ -19,6 +19,7 @@
  */
 
 import {Pipe, PipeTransform} from "@angular/core";
+import * as _ from 'lodash';
 import {Component, Resource} from "app/models";
 import {ComponentType, DEFAULT_MODEL_NAME, ToscaType} from "app/utils/constants";
 import {DataTypeCatalogComponent} from "../../models/data-type-catalog-component";
@@ -26,8 +27,6 @@ import {DataTypeCatalogComponent} from "../../models/data-type-catalog-component
 export interface ISearchFilter {
     [key:string]: string;
 }
-
-const angular = require('angular');
 
 export interface IEntityFilterObject {
     // Types
@@ -60,7 +59,7 @@ export class EntityFilterPipe implements PipeTransform{
         if ((filter.selectedComponentTypes && filter.selectedComponentTypes.length > 0) || (filter.selectedResourceSubTypes && filter.selectedResourceSubTypes.length > 0)
             || (filter.selectedToscaTypes && filter.selectedToscaTypes.length > 0)) {
             let filteredTypes = [];
-            angular.forEach(components, (component: Component | DataTypeCatalogComponent): void => {
+            _.forEach(components, (component: Component | DataTypeCatalogComponent): void => {
                 // Filter by component type
                     if (component.componentType === ComponentType.RESOURCE || ComponentType.SERVICE && component.componentType !== ToscaType.DATATYPE) {
                         let typeLower: string = component.componentType.toLowerCase();
@@ -91,7 +90,7 @@ export class EntityFilterPipe implements PipeTransform{
         // --------------------------------------------------------------------------
         if (filter.selectedCategoriesModel && filter.selectedCategoriesModel.length > 0) {
             let filteredCategories = [];
-            angular.forEach(filteredComponents, (component:Component):void => {
+            _.forEach(filteredComponents, (component:Component):void => {
                 let componentCategory = component.categoryNormalizedName +
                     ((component.subCategoryNormalizedName) ? '.' + component.subCategoryNormalizedName : '');
                 if (component.componentType === ComponentType.RESOURCE) {
@@ -111,7 +110,7 @@ export class EntityFilterPipe implements PipeTransform{
         if (filter.selectedStatuses && filter.selectedStatuses.length > 0) {
 
             let filteredStatuses = [];
-            angular.forEach(filteredComponents, (component:Component):void => {
+            _.forEach(filteredComponents, (component:Component):void => {
                 if (filter.selectedStatuses.indexOf(component.lifecycleState) > -1) {
                     filteredStatuses.push(component);
                 }
@@ -130,7 +129,7 @@ export class EntityFilterPipe implements PipeTransform{
         if (filter.distributed != undefined && filter.distributed.length > 0) {
             let filterDistributed:Array<any> = filter.distributed;
             let filteredDistributed = [];
-            angular.forEach(filteredComponents, (entity) => {
+            _.forEach(filteredComponents, (entity: Component) => {
                 filterDistributed.forEach((distribute) => {
                     let distributeItem = distribute.split(',');
                     distributeItem.forEach((item) => {
@@ -148,7 +147,7 @@ export class EntityFilterPipe implements PipeTransform{
         if (filter.selectedModels && filter.selectedModels.length > 0) {
             let filteredModels = [];
             let allSelectedModels =  [].concat.apply([], filter.selectedModels);
-            angular.forEach(filteredComponents, (component:Component | DataTypeCatalogComponent):void => {
+            _.forEach(filteredComponents, (component:Component | DataTypeCatalogComponent):void => {
                 if (component.model && allSelectedModels.indexOf(component.model) > -1) {
                     filteredModels.push(component);
                 } else if (!component.model && allSelectedModels.indexOf(DEFAULT_MODEL_NAME) > -1) {
@@ -166,7 +165,7 @@ export class EntityFilterPipe implements PipeTransform{
                 let searchVal = filter.search[searchKey];
                 if (searchVal) {
                     searchVal = searchVal.toLowerCase();
-                    angular.forEach(filteredComponents, (component: Component | DataTypeCatalogComponent): void => {
+                    _.forEach(filteredComponents, (component: Component | DataTypeCatalogComponent): void => {
                         if (component[searchKey].toLowerCase().indexOf(searchVal) !== -1) {
                             filteredSearchComponents.push(component);
                         }

@@ -42,16 +42,13 @@ export class WorkspaceMenuComponent implements OnInit {
 
     private role: string;
     private user: IUserProperties;
-    private $q: ng.IQService;
 
     leftBarTabs: MenuItemGroup = new MenuItemGroup();
 
     constructor(private cacheService: CacheService,
                 private typeWorkspaceService: TypeWorkspaceService,
                 @Inject(SdcMenuToken) private sdcMenu: IAppMenu,
-                private navigationService: NavigationService,
-                @Inject('$injector') $injector) {
-        this.$q = $injector.get('$q');
+                private navigationService: NavigationService) {
     }
 
     ngOnInit(): void {
@@ -83,12 +80,10 @@ export class WorkspaceMenuComponent implements OnInit {
         return this.leftBarTabs.selectedIndex === this.leftBarTabs.menuItems.indexOf(menuItem);
     }
 
-    private onMenuItemPressed(menuItem: MenuItem): angular.IPromise<boolean> {
+    private onMenuItemPressed(menuItem: MenuItem): Promise<boolean> {
         this.leftBarTabs.selectedIndex = this.leftBarTabs.menuItems.indexOf(menuItem);
         this.onClick.emit(this.leftBarTabs.menuItems[this.leftBarTabs.selectedIndex]);
-        const deferred: ng.IDeferred<boolean> = this.$q.defer();
-        deferred.resolve(true);
-        return deferred.promise;
+        return Promise.resolve(true);
     }
 
     private updateMenuItemByRole(menuItems: MenuItem[], role: string): MenuItem[] {

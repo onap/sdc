@@ -151,7 +151,7 @@ export class PropertyModel extends PropertyBEModel implements IPropertyModel {
         // if(!this.resourceInstanceUniqueId){
         //     this.value = undefined;
         // }
-        let temp = angular.copy(this);
+        let temp = _.cloneDeep(this);
         temp.readonly = undefined;
         temp.resourceInstanceUniqueId = undefined;
         temp.simpleType = undefined;

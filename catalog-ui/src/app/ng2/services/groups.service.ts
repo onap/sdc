@@ -6,6 +6,7 @@ import {GroupInstance} from '../../models/graph/zones/group-instance';
 import {UiBaseObject} from "../../models/ui-models/ui-base-object";
 import {IZoneService} from "../../models/graph/zones/zone";
 import { HttpClient } from '@angular/common/http';
+import * as _ from 'lodash';
 
 @Injectable()
 export class GroupsService implements IZoneService {
@@ -34,7 +35,7 @@ export class GroupsService implements IZoneService {
     }
 
     public deleteGroupMember(topologyTemplateType:string, topologyTemplateId:string, group:GroupInstance, memberId:string) {
-        let _members:Array<string> = angular.copy(group.members);
+        let _members:Array<string> = _.cloneDeep(group.members);
         _members =_.without(_members, memberId);
         return this.updateGroupMembers(topologyTemplateType, topologyTemplateId, group.uniqueId, _members);
     }

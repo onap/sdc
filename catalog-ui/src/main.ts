@@ -18,12 +18,9 @@
  * ============LICENSE_END=========================================================
  */
 
-import {ng1appModule} from './app/app';
 import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
 import {enableProdMode} from '@angular/core';
-import {Router} from '@angular/router';
 import {AppModule} from './app/ng2/app.module';
-import {UpgradeModule} from '@angular/upgrade/static';
 import {IAppConfigurtaion} from "./app/models/app-config";
 
 declare const __ENV__: string;
@@ -42,19 +39,5 @@ if (__ENV__ === 'dev') {
   timeout = 0;
 }
 window.setTimeout(() => {
-  platformBrowserDynamic().bootstrapModule(AppModule).then(platformRef => {
-    const upgrade = platformRef.injector.get(UpgradeModule) as UpgradeModule;
-    upgrade.bootstrap(document.body, [ng1appModule.name], {strictDi: true});
-    // ORDER IS LOAD-BEARING: the first route activation must happen AFTER the line above, never
-    // before it. Routed components inject upgraded AngularJS services (HomeComponent →
-    // ModalsHandler, whose provider is `deps: ['$injector']`), and that $injector only exists once
-    // upgrade.bootstrap() has run. The router's default `initialNavigation: 'legacy_enabled'`
-    // navigates from an APP_BOOTSTRAP_LISTENER — i.e. inside bootstrapModule(), before this
-    // callback — so those providers threw "Trying to get the AngularJS injector before it being
-    // set" and the whole app rendered an empty <app-root>. `initialNavigation: 'disabled'`
-    // (app.routing.module.ts) suppresses that navigation and only installs the location listener,
-    // leaving us to trigger it here by hand. ui-router had no equivalent hazard: it resolved states
-    // from its own run block, which by construction ran inside the AngularJS bootstrap.
-    (platformRef.injector.get(Router) as Router).initialNavigation();
-  });
+  platformBrowserDynamic().bootstrapModule(AppModule);
 }, timeout);

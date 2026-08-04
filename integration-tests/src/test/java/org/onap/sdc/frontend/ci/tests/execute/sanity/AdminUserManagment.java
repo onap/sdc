@@ -134,7 +134,9 @@ public class AdminUserManagment extends SetupCDTest {
         try {
             WebElement inputField = GeneralUIUtils.getWebElementByClassName("input-error");
             ExtentTestActions.log(Status.INFO, String.format("Validating the message is : '%s'", expectedErrorMsg));
-            inputErrors = inputField.findElements(By.className("ng-scope"));
+            // Angular's .input-error containers hold one *ngIf-guarded <span> per validation message, so
+            // only the currently-failing messages are present and the spans ARE the error elements.
+            inputErrors = inputField.findElements(By.tagName("span"));
             inputErrorsSize = inputErrors.size();
             for (WebElement err : inputErrors) {
                 String actualErrorMessage = err.getText();
@@ -147,6 +149,8 @@ public class AdminUserManagment extends SetupCDTest {
             Assert.fail("Did not find an error message input.");
         }
 
+        // inputErrorsSize starts at the full count and is decremented once per matching message, so the
+        // "- 1" asserts that exactly one error equalled expectedErrorMsg. It is not slack for a wrapper.
         Assert.assertEquals(inputErrors.size() - 1, inputErrorsSize, "Did not find an error : " + expectedErrorMsg);
     }
 

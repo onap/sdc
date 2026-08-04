@@ -507,13 +507,12 @@ public final class GeneralUIUtils {
                 ExpectedConditions.elementToBeClickable(findByText(textInElement))).click();
     }
 
-    public static void waitForAngular() {
-        LOGGER.debug("Waiting for angular");
+    public static void waitForPageLoad() {
+        LOGGER.debug("Waiting for page load");
         final int webDriverWaitingTime = 90;
         WebDriverWait wait = new WebDriverWait(getDriver(), webDriverWaitingTime, NAP_PERIOD);
         wait.until(AdditionalConditions.pageLoadWait());
-        wait.until(AdditionalConditions.angularHasFinishedProcessing());
-        LOGGER.debug("Waiting for angular finished");
+        LOGGER.debug("Waiting for page load finished");
     }
 
     public static Object getAllElementAttributes(WebElement element) {
@@ -549,7 +548,7 @@ public final class GeneralUIUtils {
 
         GeneralUIUtils.waitForLoader();
         GeneralUIUtils.waitForBackLoader();
-        GeneralUIUtils.waitForAngular();
+        GeneralUIUtils.waitForPageLoad();
 
         long estimateTime = System.nanoTime();
         long duration = TimeUnit.NANOSECONDS.toSeconds(estimateTime - startTime);

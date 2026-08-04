@@ -17,7 +17,6 @@
 <div>
   <form class="gab-column-provider-form" #generalForm="ngForm">
     <input type="text" name="name" (keyup)='checkNameDuplications($event)'
-           ng-maxlength="50"
            [(ngModel)]="name"
            class="gab-column-provider-input"
            required>

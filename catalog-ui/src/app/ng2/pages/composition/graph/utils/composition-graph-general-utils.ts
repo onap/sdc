@@ -167,7 +167,7 @@ export class CompositionGraphGeneralUtils {
     private isValidDropInsideUCPE(cy: Cy.Instance, nodeToInsert: ComponentInstance, ucpeNode: ComponentInstance): boolean {
 
         let hostedOnMatch: Match = this.canBeHostedOn(cy, ucpeNode, nodeToInsert);
-        let result: boolean = !angular.isUndefined(hostedOnMatch) || nodeToInsert.isVl(); //group validation
+        let result: boolean = hostedOnMatch !== undefined || nodeToInsert.isVl(); //group validation
         return result;
 
     };

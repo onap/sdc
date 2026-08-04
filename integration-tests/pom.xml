@@ -364,12 +364,6 @@ limitations under the License.
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>com.paulhammant</groupId>
-            <artifactId>ngwebdriver</artifactId>
-            <version>0.9.7</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>com.github.markusbernhardt</groupId>
             <artifactId>proxy-vole</artifactId>
             <version>1.0.2</version>

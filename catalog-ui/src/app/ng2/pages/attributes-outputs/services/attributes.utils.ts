@@ -46,7 +46,7 @@ export class AttributesUtils {
      */
     public convertAttributesMapToFEAndCreateChildren = (instanceAttributesMap:InstanceBeAttributesMap | InstanceBePropertiesMap, isVF:boolean, outputs?:Array<OutputFEModel>): InstanceFeAttributesMap => {
         let instanceFeAttributesMap:InstanceFeAttributesMap = new InstanceFeAttributesMap();
-        angular.forEach(instanceAttributesMap, (attributes:Array<AttributeBEModel>, instanceId:string) => {
+        _.forEach(instanceAttributesMap, (attributes:Array<AttributeBEModel>, instanceId:string) => {
             let propertyFeArray: Array<AttributeFEModel> = [];
             _.forEach(attributes, (property: AttributeBEModel) => {
 

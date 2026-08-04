@@ -89,9 +89,9 @@ export class PropertyFormModalComponent implements OnInit {
     // The FEModel the reused <dynamic-property> edits (built for complex types only). undefined for simple types.
     public propertyFEModel: PropertyFEModel;
 
-    // BUG 2: the ModalsHandler owns the outer $q deferred that the caller's .then(reloadProperties) awaits;
+    // BUG 2: the ModalsHandler owns the outer Promise that the caller's .then(reloadProperties) awaits;
     // this component cannot resolve it directly. On launch the ModalsHandler sets this callback (mirroring the
-    // Save button's deferred.resolve + closeCurrentModal) so the delete-success path can resolve the deferred
+    // Save button's resolve + closeCurrentModal) so the delete-success path can resolve the Promise
     // and close the modal, letting the caller reload the table. Falls back to closeModal() when unset (unit tests).
     public deleteCallback: () => void;
 
@@ -532,7 +532,7 @@ export class PropertyFormModalComponent implements OnInit {
 
         // §Q / reviewer Important #2: the form inits type/schemaType to '' (matching the old AngularJS
         // <option value="">), but the OLD VM held null (property-form-view-model.ts:167). PropertyModel.toJSON()
-        // does angular.copy() and does NOT coerce type, so an empty '' would wire type:"" — which keys the BE
+        // deep-copies and does NOT coerce type, so an empty '' would wire type:"" — which keys the BE
         // datatype cache differently from null/omitted. save() therefore coerces ''->null on the property before
         // delegating to the BE (see save() below); the wire payload never ships type:'' (asserted in the spec).
         this.form = new FormGroup({
@@ -740,7 +740,7 @@ export class PropertyFormModalComponent implements OnInit {
         property.value = this.form.get('value').value;
 
         // §Q / reviewer Important #2: coerce empty '' type/schemaType back to null so PropertyModel.toJSON()
-        // (which does angular.copy() and does NOT touch type) never wires type:"" — matching the old VM's
+        // (which deep-copies and does NOT touch type) never wires type:"" — matching the old VM's
         // null (property-form-view-model.ts:167) and keeping the BE datatype-cache key parity.
         if (property.type === '') {
             property.type = null;

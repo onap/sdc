@@ -36,13 +36,12 @@ import {routes} from './app.routes';
     imports: [
         RouterModule.forRoot(routes, {
             useHash: true,
-            // The initial navigation is triggered by hand from main.ts, AFTER upgrade.bootstrap().
-            // Left at the default ('legacy_enabled') the router navigates from an
-            // APP_BOOTSTRAP_LISTENER, so the first routed component is constructed before the
-            // AngularJS injector exists and every `deps: ['$injector']` provider it needs throws.
-            // 'disabled' still installs the location-change listener, so only the FIRST navigation
-            // is ours to fire; hash changes keep working untouched.
-            initialNavigation: 'disabled',
+            // `initialNavigation` is deliberately left at its default ('legacy_enabled'): the router
+            // then navigates from an APP_BOOTSTRAP_LISTENER, i.e. after every APP_INITIALIZER has
+            // resolved, so the first routed component sees an authenticated user and a loaded
+            // configuration. 'enabled' would run the navigation from a competing APP_INITIALIZER and
+            // race `configServiceFactory`. It was 'disabled' while the hybrid bootstrap owned the
+            // ordering — main.ts fired the first navigation by hand after upgrade.bootstrap().
             // ui-router's `{reload: true}` has no NavigationExtras equivalent; this is what makes
             // NavigationService.reload() re-run the workspace resolver on an unchanged URL.
             onSameUrlNavigation: 'reload',

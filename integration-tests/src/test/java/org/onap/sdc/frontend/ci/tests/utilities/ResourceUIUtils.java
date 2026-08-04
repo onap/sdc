@@ -132,7 +132,7 @@ public final class ResourceUIUtils {
         ResourceGeneralPage.defineVendorNameWithPaste();
         ResourceGeneralPage.defineVendorReleaseWithPaste();
         ResourceGeneralPage.defineTagsListWithPaste();
-        GeneralUIUtils.waitForAngular();
+        GeneralUIUtils.waitForPageLoad();
     }
 
     public static String buildStringFromPattern(String stringPattern, int stringLength) {

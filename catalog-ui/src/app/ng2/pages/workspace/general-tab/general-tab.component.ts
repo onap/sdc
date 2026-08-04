@@ -19,6 +19,7 @@
  */
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component as NgComponent, Inject, OnDestroy, OnInit} from '@angular/core';
 import {ISdcConfig, SdcConfigToken} from '../../../config/sdc-config.config';
+import {IAppMenu, SdcMenuToken} from '../../../config/sdc-menu.config';
 import {FormGroup, Validators} from '@angular/forms';
 import {Subject} from 'rxjs/Subject';
 import 'rxjs/add/operator/takeUntil';
@@ -31,6 +32,13 @@ import {EventListenerService} from 'app/services';
 import {ValidationConfiguration} from 'app/models/validation-config';
 import {EVENTS, WorkspaceMode, ComponentState, ComponentType, ResourceType, Role, PREVIOUS_CSAR_COMPONENT, instantiationType, DEFAULT_MODEL_NAME, DEFAULT_ICON, CATEGORY_SERVICE_METADATA_KEYS} from 'app/utils/constants';
 import {ServiceCsarReader} from 'app/utils/service-csar-reader';
+// Deep paths, not the `app/utils` barrel: the barrel re-exports the whole utils tree, and pulling it
+// in here ahead of `app/services-ng2` re-orders module evaluation enough to break DI metadata (§TT).
+import {ComponentFactory} from 'app/utils/component-factory';
+import {ModalsHandler} from 'app/utils/modals-handler';
+import {ImportVSPService} from '../../../components/modals/onboarding-modal/import-vsp.service';
+import {ElementService} from '../../../services/element.service';
+import {ModelService} from '../../../services/model.service';
 import {FileUtilsService} from '../../../services/file-utils.service';
 import {NavigationService} from '../../../services/navigation.service';
 import {TranslateService} from '../../../shared/translator/translate.service';
@@ -92,15 +100,6 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
     // resolved promise when there is no imported file). Exposed only so tests can await the unzip.
     csarPrefill: Promise<void> = Promise.resolve();
 
-    // AngularJS services resolved lazily in ngOnInit
-    private componentFactory: any;
-    private importVSPService: any;
-    private onBoardingService: any;
-    private modelService: any;
-    private elementService: any;
-    private sdcMenu: any;
-    private modalsHandler: any;
-
     constructor(
         private generalFormService: GeneralFormService,
         private metadataService: ComponentMetadataService,
@@ -114,11 +113,15 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
         private cdr: ChangeDetectorRef,
         private navigationService: NavigationService,
         @Inject(SdcConfigToken) private sdcConfig: ISdcConfig,
-        @Inject('$injector') private $injector: any
+        @Inject(SdcMenuToken) private sdcMenu: IAppMenu,
+        private componentFactory: ComponentFactory,
+        private importVSPService: ImportVSPService,
+        private modelService: ModelService,
+        private elementService: ElementService,
+        private modalsHandler: ModalsHandler
     ) {}
 
     ngOnInit(): void {
-        this.resolveNg1Services();
         this.component = this.workspaceService.component;
         if (!this.component) { return; }
         this.originComponent = this.componentFactory.createComponent(this.component);
@@ -197,16 +200,6 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
         this.eventListenerService.unRegisterObserver(EVENTS.ON_LIFECYCLE_CHANGE);
         this.destroy$.next();
         this.destroy$.complete();
-    }
-
-    private resolveNg1Services(): void {
-        this.componentFactory = this.$injector.get('ComponentFactory');
-        this.importVSPService = this.$injector.get('ImportVSPService');
-        this.onBoardingService = this.$injector.get('OnboardingService');
-        this.modelService = this.$injector.get('ModelService');
-        this.elementService = this.$injector.get('ElementService');
-        this.sdcMenu = this.$injector.get('sdcMenu');
-        this.modalsHandler = this.$injector.get('ModalsHandler');
     }
 
     // ---- Data-init methods ported from the old AngularJS GeneralViewModel ----
@@ -1295,7 +1288,7 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
     }
 
     revert(): void {
-        const restored = this.componentFactory.createComponent(this.originComponent);
+        const restored: any = this.componentFactory.createComponent(this.originComponent);
         this.workspaceService.setComponent(restored);
         this.component = restored;
         this.form.reset({

@@ -26,6 +26,7 @@ import {PREVIOUS_CSAR_COMPONENT} from 'app/utils/constants';
 import {CacheService} from '../../services/cache.service';
 import {NavigationService} from '../../services/navigation.service';
 import {WorkspaceService} from './workspace.service';
+import * as _ from 'lodash';
 
 /**
  * Port of the `injectComponent` ui-router resolve (app.ts). Every workspace tab depended on it
@@ -57,7 +58,7 @@ export class WorkspaceComponentResolver implements Resolve<Component> {
             ).then((component: Component) => {
                 if (componentCsar && component.isResource()) {
                     if ((component as Resource).csarVersion !== componentCsar.csarVersion) {
-                        this.cacheService.set(PREVIOUS_CSAR_COMPONENT, angular.copy(component));
+                        this.cacheService.set(PREVIOUS_CSAR_COMPONENT, _.cloneDeep(component));
                     }
                     component = this.componentFactory.updateComponentFromCsar(componentCsar, component as Resource);
                 }

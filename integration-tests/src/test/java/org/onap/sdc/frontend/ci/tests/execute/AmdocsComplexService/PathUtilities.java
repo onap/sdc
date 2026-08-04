@@ -223,7 +223,7 @@ public class PathUtilities {
     public static void waitUntilVnfCreated() {
         GeneralUIUtils.clickOnElementByTestIdWithoutWait(DataTestIdEnum.GeneralElementsEnum.CREATE_BUTTON.getValue());
         GeneralUIUtils.waitForLoader(WAITING_FOR_LOADRE_TIME_OUT);
-        GeneralUIUtils.waitForAngular();
+        GeneralUIUtils.waitForPageLoad();
         GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.GeneralElementsEnum.CHECKIN_BUTTON.getValue());
     }
 

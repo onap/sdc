@@ -56,8 +56,7 @@
             <span [attr.data-tests-id]="'property-description-' + property.name" [title]="property.description">{{property.description}}</span>
           </div>
           <div class="table-btn-col flex-item" *ngIf="!isViewOnly">
-            <button class="table-delete-btn" data-ng-if="!property.ownerId || property.ownerId==component.uniqueId"
-                    (click)="delete(property); $event.stopPropagation();"  data-ng-class="{'disabled': isViewOnly}"></button>
+            <button class="table-delete-btn" (click)="delete(property); $event.stopPropagation();"></button>
           </div>
         </div>
       </div>

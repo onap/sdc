@@ -50,7 +50,7 @@ export class PropertiesUtils {
      */
     public convertPropertiesMapToFEAndCreateChildren = (instancePropertiesMap:InstanceBePropertiesMap, isVF:boolean, inputs?:Array<InputFEModel>, model?:string): InstanceFePropertiesMap => {
         let instanceFePropertiesMap:InstanceFePropertiesMap = new InstanceFePropertiesMap();
-        angular.forEach(instancePropertiesMap, (properties:Array<PropertyBEModel>, instanceId:string) => {
+        _.forEach(instancePropertiesMap, (properties:Array<PropertyBEModel>, instanceId:string) => {
             let propertyFeArray: Array<PropertyFEModel> = [];
             _.forEach(properties, (property: PropertyBEModel) => {
 	

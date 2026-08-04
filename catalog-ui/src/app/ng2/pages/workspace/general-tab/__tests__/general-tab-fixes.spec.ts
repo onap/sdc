@@ -82,25 +82,20 @@ function makeNavigationService(stateParams: any = {id: 'id-1'}) {
     return nav;
 }
 
-function makeInjector(opts: any = {}) {
-    const modelService = Object.assign({
-        getModels: jest.fn(() => of([])),
-        getModelsOfType: jest.fn(() => of([]))
-    }, opts.modelService || {});
-    const elementService = Object.assign({
-        getCategoryBaseTypes: jest.fn(() => of({required: false, baseTypes: []}))
-    }, opts.elementService || {});
-    const services: any = {
-        'ComponentFactory': {createComponent: (c: any) => Object.assign({}, c)},
-        'ImportVSPService': {},
-        'OnboardingService': {},
-        'ModelService': modelService,
-        'ElementService': elementService,
-        'ModalsHandler': opts.modalsHandler || {openUpdateIconModal: jest.fn(() => Promise.resolve(true))},
-        'sdcMenu': opts.sdcMenu || {component_workspace_menu_option: {VF: [{hiddenCategories: []}], SERVICE: [{hiddenCategories: []}]}},
-        'sdcConfig': {csarFileExtension: ['csar'], toscaFileExtension: ['yaml', 'yml']}
+function makeDeps(opts: any = {}) {
+    return {
+        sdcMenu: opts.sdcMenu || {component_workspace_menu_option: {VF: [{hiddenCategories: []}], SERVICE: [{hiddenCategories: []}]}},
+        componentFactory: {createComponent: (c: any) => Object.assign({}, c)},
+        importVSPService: {},
+        modelService: Object.assign({
+            getModels: jest.fn(() => of([])),
+            getModelsOfType: jest.fn(() => of([]))
+        }, opts.modelService || {}),
+        elementService: Object.assign({
+            getCategoryBaseTypes: jest.fn(() => of({required: false, baseTypes: []}))
+        }, opts.elementService || {}),
+        modalsHandler: opts.modalsHandler || {openUpdateIconModal: jest.fn(() => Promise.resolve(true))}
     };
-    return {get: (name: string) => services[name]};
 }
 
 function createComp(opts: any = {}) {
@@ -119,12 +114,14 @@ function createComp(opts: any = {}) {
     const translateService: any = opts.translateService || {translate: (k: string) => k};
     const notificationsService: any = opts.notificationsService || {push: jest.fn()};
     const navigationService = opts.navigationService || makeNavigationService(opts.stateParams);
+    const deps: any = opts.deps || makeDeps(opts);
     const comp = new GeneralTabComponent(
         new GeneralFormService(), new ComponentMetadataService(),
         workspaceService, cacheService, eventListener, fileUtils, sdcUiModalService,
         translateService, notificationsService, cdr, navigationService,
         opts.sdcConfig || {toscaFileExtension: 'yaml,yml', csarFileExtension: 'csar'},
-        opts.injector || makeInjector(opts)
+        deps.sdcMenu, deps.componentFactory, deps.importVSPService,
+        deps.modelService, deps.elementService, deps.modalsHandler
     );
     return {comp, workspaceService, cacheService, eventListener, cdr, fileUtils, sdcUiModalService, translateService, notificationsService, navigationService};
 }
@@ -300,7 +297,7 @@ describe('GeneralTabComponent fixes - #3 base types loaded on category change', 
             }))
         };
         const svc = makeService({selectedCategory: undefined, categories: undefined, derivedFromGenericType: undefined});
-        const {comp} = createComp({component: svc, stateParams: {}, injector: makeInjector({elementService})});
+        const {comp} = createComp({component: svc, stateParams: {}, deps: makeDeps({elementService})});
         comp.ngOnInit();
         (comp as any).categories = [{name: 'Network Service', subcategories: []}];
         comp.form.get('category').setValue('Network Service');
@@ -315,7 +312,7 @@ describe('GeneralTabComponent fixes - #3 base types loaded on category change', 
     it('onCategoryChange does NOT load base types for a Resource', () => {
         const elementService = {getCategoryBaseTypes: jest.fn(() => of({required: false, baseTypes: []}))};
         const res = makeComponent({selectedCategory: undefined});
-        const {comp} = createComp({component: res, stateParams: {}, injector: makeInjector({elementService})});
+        const {comp} = createComp({component: res, stateParams: {}, deps: makeDeps({elementService})});
         comp.ngOnInit();
         (comp as any).categories = [{name: 'Generic', uniqueId: 'g1'}];
         comp.form.get('category').setValue('Generic');
@@ -349,7 +346,7 @@ describe('GeneralTabComponent fixes - #4 icon / name validation / csar auto-save
 
     it('updateIcon opens the icon modal and, when dirty in EDIT mode, sets unsavedChanges', async () => {
         const modalsHandler = {openUpdateIconModal: jest.fn(() => Promise.resolve(true))};
-        const {comp, navigationService} = createComp({injector: makeInjector({modalsHandler})}); // EDIT mode
+        const {comp, navigationService} = createComp({deps: makeDeps({modalsHandler})}); // EDIT mode
         comp.ngOnInit();
         await comp.updateIcon();
         expect(modalsHandler.openUpdateIconModal).toHaveBeenCalledWith(comp.component);
@@ -377,7 +374,7 @@ describe('GeneralTabComponent fixes - #4 icon / name validation / csar auto-save
 
     it('auto-saves on init when navigated with a componentCsar outside CREATE mode', () => {
         const csarComp = makeComponent();
-        const {comp} = createComp({component: csarComp, stateParams: {id: 'id-1', componentCsar: {csarVersion: '2.0'}}, injector: makeInjector({})});
+        const {comp} = createComp({component: csarComp, stateParams: {id: 'id-1', componentCsar: {csarVersion: '2.0'}}, deps: makeDeps({})});
         comp.ngOnInit();
         expect(csarComp.updateComponent).toHaveBeenCalled();
     });
@@ -397,7 +394,7 @@ describe('GeneralTabComponent fixes - #5 model required validator', () => {
             csarUUID: 'csar-1', model: undefined,
             componentMetadata: {models: ['mA', 'mB']}
         });
-        const {comp} = createComp({component: vsp, stateParams: {}, injector: makeInjector({})}); // CREATE + VSP import
+        const {comp} = createComp({component: vsp, stateParams: {}, deps: makeDeps({})}); // CREATE + VSP import
         comp.ngOnInit();
         expect((comp as any).isModelRequired).toBe(true);
         // model is empty -> required makes it invalid
@@ -409,7 +406,7 @@ describe('GeneralTabComponent fixes - #5 model required validator', () => {
             csarUUID: 'csar-1', model: undefined,
             componentMetadata: {models: ['onlyModel']}
         });
-        const {comp} = createComp({component: vsp, stateParams: {}, injector: makeInjector({})});
+        const {comp} = createComp({component: vsp, stateParams: {}, deps: makeDeps({})});
         comp.ngOnInit();
         expect((comp as any).showDefaultModelOption).toBe(false);
         expect(comp.component.model).toBe('onlyModel');
@@ -583,10 +580,10 @@ describe('GeneralTabComponent fixes - #10 import service from CSAR', () => {
 
     it('shows an error modal and returns to the dashboard when the CSAR is unreadable', async () => {
         const svc = importedServiceComponent();
-        const injector = makeInjector({});
+        const deps = makeDeps({});
         const sdcUiModalService = {openErrorDetailModal: jest.fn()};
         const {comp, navigationService} = createComp({
-            component: svc, injector, sdcUiModalService,
+            component: svc, deps, sdcUiModalService,
             fileUtils: {base64toBlob: jest.fn(() => new Blob(['not-a-zip']))}
         });
         comp.ngOnInit();

@@ -21,16 +21,15 @@
 
 'use strict';
 import * as _ from "lodash";
+import {Injectable} from "@angular/core";
 import {WorkspaceMode, ComponentState} from "./constants";
-import {IAppConfigurtaion, IAppMenu, Component} from "../models";
-import {ComponentFactory} from "./component-factory";
-import {ModalsHandler} from "./modals-handler";
+import {Component} from "../models";
 import {ResourceNamePipe} from "../ng2/pipes/resource-name.pipe";
 import {NavigationService} from "../ng2/services/navigation.service";
 
 export class MenuItem {
     text:string;
-    callback:(...args:Array<any>) => ng.IPromise<boolean>;
+    callback:(...args:Array<any>) => Promise<boolean>;
     state:string;
     action:string;
     params:any;
@@ -46,7 +45,7 @@ export class MenuItem {
     url:string;                     // Data added to menu item, in case the function need to use it, example: for function "changeLifecycleState", I need to pass also the state "CHECKOUT" that I want the state to change to.
 
 
-    constructor(text:string, callback:(...args:Array<any>) => ng.IPromise<boolean>, state:string, action:string, params?:any, blockedForTypes?:Array<string>, disabledCategory?:boolean) {
+    constructor(text:string, callback:(...args:Array<any>) => Promise<boolean>, state:string, action:string, params?:any, blockedForTypes?:Array<string>, disabledCategory?:boolean) {
         this.text = text;
         this.callback = callback;
         this.state = state;
@@ -77,23 +76,10 @@ export class MenuItemGroup {
 }
 
 
+@Injectable()
 export class MenuHandler {
 
-    static '$inject' = [
-        'sdcConfig',
-        'sdcMenu',
-        'ComponentFactory',
-        'ModalsHandler',
-        'NavigationService',
-        '$q'
-    ];
-
-    constructor(private sdcConfig:IAppConfigurtaion,
-                private sdcMenu:IAppMenu,
-                private ComponentFactory:ComponentFactory,
-                private ModalsHandler:ModalsHandler,
-                private navigationService:NavigationService,
-                private $q:ng.IQService) {
+    constructor(private navigationService:NavigationService) {
 
     }
 
@@ -128,13 +114,13 @@ export class MenuHandler {
         let result = new MenuItemGroup(0, [], false);
         if (components) {
             result.selectedIndex = this.findBreadcrumbComponentIndex(components, selected);
-            let clickItemCallback = (component:Component):ng.IPromise<boolean> => {
+            let clickItemCallback = (component:Component):Promise<boolean> => {
                 this.navigationService.navigate('workspace.general', {
                     id: component.uniqueId,
                     type: component.componentType.toLowerCase(),
                     mode: WorkspaceMode.VIEW
                 });
-                return this.$q.when(true);
+                return Promise.resolve(true);
             };
 
             components.forEach((component:Component) => {

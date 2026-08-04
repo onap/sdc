@@ -21,7 +21,6 @@
 // → extends ComponentService. We stub out only what's needed to unblock the import.
 jest.mock('app/services', () => ({
     AvailableIconsService: class {},
-    AngularJSBridge: {setup: () => {}},
     ResourceService: class {},
     ServiceService: class {},
     DataTypesService: class {},
@@ -50,7 +49,6 @@ describe('ServiceService', () => {
                 {provide: SdcConfigToken, useValue: sdcConfig},
                 {provide: SharingService, useValue: {addUuidValue: () => {}}},
                 {provide: DataTypesService, useValue: {loadDataTypesCache: () => {}}},
-                {provide: '$q', useValue: {defer: () => ({promise: null, resolve: () => {}, reject: () => {}})}},
             ],
         });
         service = TestBed.get(ServiceService);
@@ -58,13 +56,12 @@ describe('ServiceService', () => {
     });
     afterEach(() => httpMock.verify());
 
-    // Regression guard for the ng:cpws hang (failure-catalog §SS): ServiceService is held as an
-    // enumerable field by Service model instances, whose toJSON() does angular.copy(this). If any
-    // injected Angular dep were an ENUMERABLE own property, angular.copy would deep-traverse it,
-    // reach a Scope (via the ngUpgrade root injector) and throw ng:cpws — aborting create/import
-    // and hanging the loader. All four injected deps MUST be non-enumerable.
-    it('§SS: all injected Angular deps are non-enumerable own properties (angular.copy must not traverse them)', () => {
-        for (const field of ['http', 'sharingService', 'dataTypeService', '$q']) {
+    // Regression guard (failure-catalog §SS): ServiceService is held as an enumerable field by
+    // Service model instances, whose toJSON() deep-copies itself. If any injected Angular dep were
+    // an ENUMERABLE own property, the copy would traverse its whole object graph into the request
+    // body. All three injected deps MUST be non-enumerable.
+    it('§SS: all injected Angular deps are non-enumerable own properties (the deep copy must not traverse them)', () => {
+        for (const field of ['http', 'sharingService', 'dataTypeService']) {
             const desc = Object.getOwnPropertyDescriptor(service, field);
             expect(desc).toBeDefined();
             expect(desc.enumerable).toBe(false);
@@ -106,7 +103,6 @@ describe('ServiceService', () => {
     });
 
     it('createComponentObject is defined as an overriding method on ServiceService', () => {
-        // Service constructor calls angular.copy internally — that global is absent in Jest.
         // We verify the method override is present; full end-to-end coverage comes from Selenium.
         expect(service.createComponentObject).toBeDefined();
         expect(Object.prototype.hasOwnProperty.call(service, 'createComponentObject')).toBe(true);

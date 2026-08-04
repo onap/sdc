@@ -35,10 +35,10 @@ import {DataTypesService} from "../data-types-service";
 import {SdcConfigToken} from "../../ng2/config/sdc-config.config";
 
 export interface IServiceService extends IComponentService {
-    getDistributionsList(uuid:string):ng.IPromise<Array<Distribution>>;
-    getDistributionComponents(distributionId:string):ng.IPromise<Array<DistributionComponent>>;
-    markAsDeployed(serviceId:string, distributionId:string):ng.IPromise<any>;
-    updateGroupInstanceProperties(serviceId:string, resourceInstanceId:string, groupInstanceId:string, groupInstanceProperties:Array<PropertyModel>):ng.IPromise<Array<PropertyModel>>;
+    getDistributionsList(uuid:string):Promise<Array<Distribution>>;
+    getDistributionComponents(distributionId:string):Promise<Array<DistributionComponent>>;
+    markAsDeployed(serviceId:string, distributionId:string):Promise<any>;
+    updateGroupInstanceProperties(serviceId:string, resourceInstanceId:string, groupInstanceId:string, groupInstanceProperties:Array<PropertyModel>):Promise<Array<PropertyModel>>;
 }
 
 @Injectable()
@@ -49,31 +49,30 @@ export class ServiceService extends ComponentService implements IServiceService 
     constructor(@Inject(SdcConfigToken) sdcConfig: IAppConfigurtaion,
                 http: HttpClient,
                 sharingService: SharingService,
-                dataTypeService: DataTypesService,
-                @Inject('$q') $q: ng.IQService) {
-        super(sdcConfig, http, sharingService, dataTypeService, $q);
+                dataTypeService: DataTypesService) {
+        super(sdcConfig, http, sharingService, dataTypeService);
         this.typeName = 'services';
     }
 
     createComponentObject = (component: Component): Component => {
-        return new Service(this, this.$q, <Service>component);
+        return new Service(this, <Service>component);
     };
 
-    getDistributionsList = (uuid: string): ng.IPromise<Array<Distribution>> => {
+    getDistributionsList = (uuid: string): Promise<Array<Distribution>> => {
         return this.http.get(this.url(uuid, 'distribution')).toPromise()
             .then((distributions: any) => <Array<Distribution>> distributions.distributionStatusOfServiceList) as any;
     };
 
-    getDistributionComponents = (distributionId: string): ng.IPromise<Array<DistributionComponent>> => {
+    getDistributionComponents = (distributionId: string): Promise<Array<DistributionComponent>> => {
         return this.http.get(this.url('distribution', distributionId)).toPromise()
             .then((distributions: any) => <Array<DistributionComponent>> distributions.distributionStatusList) as any;
     };
 
-    markAsDeployed = (serviceId: string, distributionId: string): ng.IPromise<any> => {
+    markAsDeployed = (serviceId: string, distributionId: string): Promise<any> => {
         return this.http.post(this.url(serviceId, 'distribution', distributionId, 'markDeployed'), null).toPromise() as any;
     };
 
-    updateGroupInstanceProperties = (serviceId: string, resourceInstanceId: string, groupInstanceId: string, groupInstanceProperties: Array<PropertyModel>): ng.IPromise<Array<PropertyModel>> => {
+    updateGroupInstanceProperties = (serviceId: string, resourceInstanceId: string, groupInstanceId: string, groupInstanceProperties: Array<PropertyModel>): Promise<Array<PropertyModel>> => {
         return this.http.put(this.url(serviceId, 'resourceInstance', resourceInstanceId, 'groupInstance', groupInstanceId), JSON.stringify(groupInstanceProperties)).toPromise()
             .then((updated: any) => _.map(updated, (p: PropertyModel) => new PropertyModel(p))) as any;
     };

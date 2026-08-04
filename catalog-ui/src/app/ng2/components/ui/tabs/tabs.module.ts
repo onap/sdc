@@ -28,7 +28,6 @@ import { Tab } from './tab/tab.component';
 @NgModule({
     imports: [BrowserModule],
     declarations: [Tabs, Tab],
-    bootstrap: [],
     exports: [Tabs, Tab]
 })
 export class TabModule { }

@@ -20,14 +20,14 @@
 
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {BrowserModule} from '@angular/platform-browser';
-import {APP_INITIALIZER, forwardRef, NgModule} from '@angular/core';
+import {APP_INITIALIZER, NgModule} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {AppComponent} from './app.component';
-import {UpgradeAdapter} from '@angular/upgrade';
-import {UpgradeModule} from '@angular/upgrade/static';
 import {SdcUiComponentsModule} from 'onap-ui-angular';
 import {PropertiesAssignmentModule} from './pages/properties-assignment/properties-assignment.module';
-import {ModalsHandlerProvider, QServiceProvider} from './utils/ng1-upgraded-provider';
+import {ChangeLifecycleStateHandler} from '../utils/change-lifecycle-state-handler';
+import {MenuHandler} from '../utils/menu-handler';
+import {ModalsHandler} from '../utils/modals-handler';
 import {ConfigService} from './services/config.service';
 import {AuthenticationService} from './services/authentication.service';
 import {Cookie2Service} from './services/cookie.service';
@@ -130,8 +130,6 @@ import {RouteMetadataService} from './services/route-metadata.service';
 
 declare const __ENV__: string;
 
-export const upgradeAdapter = new UpgradeAdapter(forwardRef(() => AppModule));
-
 export function configServiceFactory(config: ConfigService, authService: AuthenticationService,
                                      eventListener: EventListenerService, dataTypesService: DataTypesService) {
 
@@ -164,7 +162,6 @@ export function configServiceFactory(config: ConfigService, authService: Authent
   imports: [
     BrowserAnimationsModule,
     BrowserModule,
-    UpgradeModule,
     FormsModule,
     HttpClientModule,
     LayoutModule,
@@ -230,11 +227,12 @@ export function configServiceFactory(config: ConfigService, authService: Authent
     ServiceService,
     ComponentFactory,
     LeftPaletteLoaderService,
-    QServiceProvider,
     CookieService,
     ProgressService,
     ValidationUtils,
-    ModalsHandlerProvider,
+    ModalsHandler,
+    MenuHandler,
+    ChangeLifecycleStateHandler,
     UserService,
     Cookie2Service,
     ConfigService,
@@ -293,7 +291,4 @@ export function configServiceFactory(config: ConfigService, authService: Authent
 })
 
 export class AppModule {
-  constructor(public upgrade: UpgradeModule) {
-
-  }
 }

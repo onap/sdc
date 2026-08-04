@@ -17,38 +17,25 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+import { Inject, Injectable } from '@angular/core';
 import { ServiceServiceNg2 } from 'app/ng2/services/component-services/service.service';
 import { EventBusService } from 'app/ng2/services/event-bus.service';
 import { TranslateService } from 'app/ng2/shared/translator/translate.service';
 import { EVENTS, ValidationUtils } from 'app/utils';
 import { SdcUiCommon, SdcUiComponents, SdcUiServices } from 'onap-ui-angular';
-import { Component, IAppConfigurtaion, IAppMenu, Service } from '../models';
+import { Component, IAppMenu, Service } from '../models';
 import { AsdcComment } from '../models/comments';
 import { CommentModalComponent } from '../ng2/components/modals/comment-modal/comment-modal.component';
+import { SdcMenuToken } from '../ng2/config/sdc-menu.config';
 import { EventListenerService } from '../services/event-listener-service';
 import { ComponentFactory } from './component-factory';
-import { ModalsHandler } from './modals-handler';
 
+@Injectable()
 export class ChangeLifecycleStateHandler {
 
-    static '$inject' = [
-        'sdcConfig',
-        'sdcMenu',
-        'ComponentFactory',
-        'TranslateService',
-        'ModalsHandler',
-        'ServiceServiceNg2',
-        'EventBusService',
-        'ModalServiceSdcUI',
-        'ValidationUtils',
-        'EventListenerService'
-    ];
-
-    constructor(private sdcConfig: IAppConfigurtaion,
-                private sdcMenu: IAppMenu,
+    constructor(@Inject(SdcMenuToken) private sdcMenu: IAppMenu,
                 private componentFactory: ComponentFactory,
                 private translateService: TranslateService,
-                private modalsHandler: ModalsHandler,
                 private serviceServiceNg2: ServiceServiceNg2,
                 private eventBusService: EventBusService,
                 private modalService: SdcUiServices.ModalService,

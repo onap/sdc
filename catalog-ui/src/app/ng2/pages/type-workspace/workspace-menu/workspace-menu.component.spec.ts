@@ -60,9 +60,6 @@ describe('WorkspaceMenuComponent', () => {
   let routeMock: any = {
     'snapshot': {'params': {'type': 'datatype', 'id': 'id-1'}, 'queryParams': {}, 'firstChild': null}
   };
-  let injectorMock: Partial<ng.auto.IInjectorService> = {
-    'get': jest.fn(() => undefined)
-  };
   // A REAL NavigationService over the mocked Router — the component reads the current state name
   // through the facade now instead of injecting $state itself.
   let navigationServiceMock = new NavigationService(routerMock, routeMock, {unsavedChanges: false} as any);
@@ -72,7 +69,6 @@ describe('WorkspaceMenuComponent', () => {
       declarations: [ WorkspaceMenuComponent ],
       providers: [
         {provide: CacheService, useValue: cacheService},
-        {provide: '$injector', useValue: injectorMock},
         {provide: NavigationService, useValue: navigationServiceMock},
         TypeWorkspaceService,
         {provide: SdcMenuToken, useValue: sdcMenuMock}

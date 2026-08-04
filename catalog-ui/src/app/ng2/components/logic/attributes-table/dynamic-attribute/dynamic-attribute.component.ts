@@ -155,12 +155,12 @@ export class DynamicAttributeComponent {
       const attributeFEModel: AttributeFEModel = <AttributeFEModel>this.attribute;
       //Update only if all this attributeFEModel parents has key name
       if (attributeFEModel.getParentNamesArray(childrenProps[0].attributesName, []).indexOf('') === -1) {
-        angular.forEach(childrenProps, (prop: DerivedFEAttribute): void => { //Update parent AttributeFEModel with value for each child, including nested props
+        _.forEach(childrenProps, (prop: DerivedFEAttribute): void => { //Update parent AttributeFEModel with value for each child, including nested props
           attributeFEModel.childPropUpdated(prop);
           if (prop.isChildOfListOrMap && prop.mapKey !== undefined) {
             attributeFEModel.childPropMapKeyUpdated(prop, prop.mapKey, true);
           }
-        }, this);
+        });
         //grab the cumulative value for the new item from parent AttributeFEModel and assign that value to DerivedFEProp[0] (which is the list or map parent with UUID of the set we just added)
         let parentNames = (<AttributeFEModel>attributeFEModel).getParentNamesArray(childrenProps[0].attributesName, []);
         childrenProps[0].valueObj = _.get(attributeFEModel.valueObj, parentNames.join('.'), null);

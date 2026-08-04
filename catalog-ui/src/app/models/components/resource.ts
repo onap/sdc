@@ -23,10 +23,6 @@
  */
 'use strict';
 import * as _ from "lodash";
-import {InstancesInputsOrPropertiesMapData} from "../instance-inputs-properties-map";
-import {PropertyModel} from "../properties";
-import {DisplayModule} from "../modules/base-module";
-import {InputModel} from "../inputs";
 import {ResourceType} from "../../utils/constants";
 import {Component} from "./component";
 import {FileUploadModel} from "../file-upload-model";
@@ -51,8 +47,8 @@ export class Resource extends Component {
     public csarPackageType:string;
     public packageId:string;
 
-    constructor(componentService:IResourceService, $q:ng.IQService, component?:Resource) {
-        super(componentService, $q, component);
+    constructor(componentService:IResourceService, component?:Resource) {
+        super(componentService, component);
         if (component) {
 
             this.interfaces = component.interfaces;
@@ -106,49 +102,23 @@ export class Resource extends Component {
         return !!this.csarUUID;
     };
 
-    public createComponentOnServer = ():ng.IPromise<Component> => {
-        let deferred = this.$q.defer<Component>();
-        let onSuccess = (component:Resource):void => {
-            this.payloadData = undefined;
-            this.payloadName = undefined;
-            deferred.resolve(component);
-        };
-        let onError = (error:any):void => {
-            deferred.reject(error);
-        };
-
-        this.handleTags();
-        if (this.importedFile) {
-            this.payloadData = this.importedFile.base64;
-            this.payloadName = this.importedFile.filename;
-        }
-        this.componentService.createComponent(this).then(onSuccess, onError);
-        return deferred.promise;
-    };
-
-
-    public updateResourceGroupProperties = (module:DisplayModule, properties:Array<PropertyModel>):ng.IPromise<Array<PropertyModel>> => {
-        let deferred = this.$q.defer<Array<PropertyModel>>();
-        let onSuccess = (updatedProperties:Array<PropertyModel>):void => {
-            _.forEach(updatedProperties, (property:PropertyModel) => { // Replace all updated properties on the module we needed to update
-                _.extend(_.find(module.properties, {uniqueId: property.uniqueId}), property);
-
-            });
-            //_.extend(_.findWhere(this.groups, {uniqueId: module.uniqueId }), module); // replace the module on the component so all data will be updates if the module sent to the function is a copy
-            deferred.resolve(updatedProperties);
-        };
-        let onError = (error:any):void => {
-            deferred.reject(error);
-        };
-
-        this.componentService.updateResourceGroupProperties(this.uniqueId, module.uniqueId, properties).then(onSuccess, onError);
-        return deferred.promise;
-    };
-
-    // For now we only implement the logic in service level
-    public createInputsFormInstances = (instanceInputsPropertiesMap:InstancesInputsOrPropertiesMapData):ng.IPromise<Array<InputModel>> => {
-        let deferred = this.$q.defer<Array<InputModel>>();
-        return deferred.promise;
+    public createComponentOnServer = ():Promise<Component> => {
+        return new Promise<Component>((resolve, reject) => {
+            this.handleTags();
+            if (this.importedFile) {
+                this.payloadData = this.importedFile.base64;
+                this.payloadName = this.importedFile.filename;
+            }
+            this.componentService.createComponent(this).then(
+                (component:Resource):void => {
+                    this.payloadData = undefined;
+                    this.payloadName = undefined;
+                    resolve(component);
+                },
+                (error:any):void => {
+                    reject(error);
+                });
+        });
     };
 
     getTypeUrl():string {
@@ -167,7 +137,7 @@ export class Resource extends Component {
     };
 
     public toJSON = ():any => {
-        let temp = angular.copy(this);
+        let temp = _.cloneDeep(this);
         temp.componentService = undefined;
         temp.filterTerm = undefined;
         temp.iconSprite = undefined;
@@ -175,7 +145,6 @@ export class Resource extends Component {
         temp.subCategory = undefined;
         temp.selectedInstance = undefined;
         temp.showMenu = undefined;
-        temp.$q = undefined;
         temp.selectedCategory = undefined;
         temp.importedFile = undefined;
         temp.modules = undefined;

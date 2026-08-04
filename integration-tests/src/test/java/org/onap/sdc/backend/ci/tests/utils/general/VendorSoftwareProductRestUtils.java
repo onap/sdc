@@ -621,7 +621,7 @@ public class VendorSoftwareProductRestUtils {
 //	private static void waitUntilVnfCreated() {
 //		GeneralUIUtils.clickOnElementByTestIdWithoutWait(DataTestIdEnum.GeneralElementsEnum.CREATE_BUTTON.getValue());
 //		GeneralUIUtils.waitForLoader(60*10);
-//		GeneralUIUtils.waitForAngular();
+//		GeneralUIUtils.waitForPageLoad();
 //		GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.GeneralElementsEnum.CHECKIN_BUTTON.getValue());
 //	}
 //

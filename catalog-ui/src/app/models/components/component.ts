@@ -40,30 +40,18 @@ export interface IComponent {
     //---------------------------------------------- API CALLS ----------------------------------------------------//
 
     //Component API
-    getComponent():ng.IPromise<Component>;
-    updateComponent():ng.IPromise<Component>;
-    createComponentOnServer():ng.IPromise<Component>;
-    changeLifecycleState(state:string, commentObj:AsdcComment):ng.IPromise<Component>;
-    validateName(newName:string):ng.IPromise<IValidate>;
+    getComponent():Promise<Component>;
+    updateComponent():Promise<Component>;
+    createComponentOnServer():Promise<Component>;
+    changeLifecycleState(state:string, commentObj:AsdcComment):Promise<Component>;
+    validateName(newName:string):Promise<IValidate>;
 
     //Artifacts API
-    addOrUpdateArtifact(artifact:ArtifactModel):ng.IPromise<ArtifactModel>;
-    deleteArtifact(artifactId:string, artifactLabel:string):ng.IPromise<ArtifactModel>;
-    downloadInstanceArtifact(artifactId:string):ng.IPromise<IFileDownload>;
-    downloadArtifact(artifactId:string):ng.IPromise<IFileDownload>;
+    downloadInstanceArtifact(artifactId:string):Promise<IFileDownload>;
+    downloadArtifact(artifactId:string):Promise<IFileDownload>;
 
     //Property API
-    addOrUpdateProperty(property:PropertyModel):ng.IPromise<PropertyModel>;
-    deleteProperty(propertyId:string):ng.IPromise<PropertyModel>;
-
-    //Attribute API
-    deleteAttribute(attributeId:string):ng.IPromise<AttributeModel>;
-    addOrUpdateAttribute(attribute:AttributeModel):ng.IPromise<AttributeModel>;
-
-    //Modules
-    getModuleForDisplay(moduleId:string):ng.IPromise<DisplayModule>;
-    getModuleInstanceForDisplay(componentInstanceId:string, moduleId:string):ng.IPromise<DisplayModule>;
-    updateGroupMetadata(group:Module):ng.IPromise<Module>;
+    deleteProperty(propertyId:string):Promise<void>;
 
     //---------------------------------------------- HELP FUNCTIONS ----------------------------------------------------//
 
@@ -144,7 +132,7 @@ export abstract class Component implements IComponent {
     public derivedFromGenericVersion: string;
     public model: string;
 
-    constructor(componentService:IComponentService, protected $q:ng.IQService, component?:Component) {
+    constructor(componentService:IComponentService, component?:Component) {
         if (component) {
             this.abstract = component.abstract;
             this.uniqueId = component.uniqueId;
@@ -172,8 +160,7 @@ export abstract class Component implements IComponent {
             this.componentInstancesAttributes = new AttributesGroup(component.componentInstancesAttributes);
             this.name = component.name;
             this.version = component.version;
-            this.tags = [];
-            angular.copy(component.tags, this.tags);
+            this.tags = component.tags ? _.cloneDeep(component.tags) : [];
             this.capabilities = new CapabilitiesGroup(component.capabilities);
             this.requirements = new RequirementsGroup(component.requirements);
             this.allVersions = component.allVersions;
@@ -241,48 +228,44 @@ export abstract class Component implements IComponent {
     };
 
     //------------------------------------------ API Calls ----------------------------------------------------------------//
-    public changeLifecycleState = (state:string, commentObj:AsdcComment):ng.IPromise<Component> => {
-        console.log('changeLifecycleState called', state);
-        let deferred = this.$q.defer<Component>();
-        let onSuccess = (componentMetadata:ComponentMetadata):void => {
-            console.log('changeLifecycleState onSuccess', componentMetadata);
-            this.setComponentMetadata(componentMetadata);
-            // this.version = componentMetadata.version;
-            this.lifecycleState = componentMetadata.lifecycleState;
-
-            deferred.resolve(this);
-        };
-        let onError = (error:any):void => {
-            deferred.reject(error);
-        };
-        this.componentService.changeLifecycleState(this, state, commentObj).then(onSuccess, onError);
-        return deferred.promise;
+    public changeLifecycleState = (state:string, commentObj:AsdcComment):Promise<Component> => {
+        return new Promise<Component>((resolve, reject) => {
+            this.componentService.changeLifecycleState(this, state, commentObj).then(
+                (componentMetadata:ComponentMetadata):void => {
+                    this.setComponentMetadata(componentMetadata);
+                    this.lifecycleState = componentMetadata.lifecycleState;
+                    resolve(this);
+                },
+                (error:any):void => {
+                    reject(error);
+                });
+        });
     };
 
-    public getComponent = ():ng.IPromise<Component> => {
+    public getComponent = ():Promise<Component> => {
         return this.componentService.getComponent(this.uniqueId);
     };
 
-    public createComponentOnServer = ():ng.IPromise<Component> => {
+    public createComponentOnServer = ():Promise<Component> => {
         this.handleTags();
         return this.componentService.createComponent(this);
     };
     
-    public importComponentOnServer = (): ng.IPromise<Component> => {
+    public importComponentOnServer = (): Promise<Component> => {
         this.handleTags();
         return this.componentService.importComponent(this);
     };
 
-    public updateComponent = ():ng.IPromise<Component> => {
+    public updateComponent = ():Promise<Component> => {
         this.handleTags();
         return this.componentService.updateComponent(this);
     };
 
-    public validateName = (newName:string, subtype?:string):ng.IPromise<IValidate> => {
+    public validateName = (newName:string, subtype?:string):Promise<IValidate> => {
         return this.componentService.validateName(newName, subtype);
     };
 
-    public downloadArtifact = (artifactId: string): ng.IPromise<IFileDownload> => {
+    public downloadArtifact = (artifactId: string): Promise<IFileDownload> => {
         if(this.vendorName === 'IsService'){
             return this.componentService.downloadArtifact(this.uniqueId, artifactId, this.vendorName);
         }else{
@@ -290,173 +273,23 @@ export abstract class Component implements IComponent {
         }
     };
 
-    public addOrUpdateArtifact = (artifact:ArtifactModel):ng.IPromise<ArtifactModel> => {
-        let deferred = this.$q.defer<ArtifactModel>();
-        let onSuccess = (artifactObj:ArtifactModel):void => {
-            let newArtifact = new ArtifactModel(artifactObj);
-            let artifacts = this.getArtifactsByType(artifactObj.artifactGroupType);
-            artifacts[artifactObj.artifactLabel] = newArtifact;
-            deferred.resolve(newArtifact);
-        };
-        let onError = (error:any):void => {
-            deferred.reject(error);
-        };
-        this.componentService.addOrUpdateArtifact(this.uniqueId, artifact).then(onSuccess, onError);
-        return deferred.promise;
+    // Resolves with no value: the sole caller (ng2/pages/workspace/properties-tab) only needs to know
+    // the round-trip finished so it can refresh the table.
+    public deleteProperty = (propertyId:string):Promise<void> => {
+        return new Promise<void>((resolve, reject) => {
+            this.componentService.deleteProperty(this.uniqueId, propertyId).then(
+                ():void => {
+                    delete _.remove(this.properties, {uniqueId: propertyId})[0];
+                    resolve();
+                },
+                ():void => {
+                    reject();
+                });
+        });
     };
 
-    public deleteArtifact = (artifactId:string, artifactLabel:string):ng.IPromise<ArtifactModel> => {
-        let deferred = this.$q.defer<ArtifactModel>();
-        let onSuccess = (artifactObj:ArtifactModel):void => {
-            let newArtifact = new ArtifactModel(artifactObj);
-            let artifacts = this.getArtifactsByType(artifactObj.artifactGroupType);
-            if (newArtifact.mandatory || newArtifact.serviceApi) {
-                artifacts[newArtifact.artifactLabel] = newArtifact;
-            }
-            else {
-                delete artifacts[artifactLabel];
-            }
-            deferred.resolve(newArtifact);
-        };
-        this.componentService.deleteArtifact(this.uniqueId, artifactId, artifactLabel).then(onSuccess);
-        return deferred.promise;
-    };
-
-    public addOrUpdateProperty = (property:PropertyModel):ng.IPromise<PropertyModel> => {
-        let deferred = this.$q.defer<PropertyModel>();
-
-        let onError = (error:any):void => {
-            deferred.reject(error);
-        };
-
-        if (!property.uniqueId) {
-            let onSuccess = (property:PropertyModel):void => {
-                let newProperty = new PropertyModel(property);
-                this.properties.push(newProperty);
-                deferred.resolve(newProperty);
-            };
-            this.componentService.addProperty(this.uniqueId, property).then(onSuccess, onError);
-        }
-        else {
-            let onSuccess = (newProperty:PropertyModel):void => {
-                // find exist instance property in parent component for update the new value ( find bu uniqueId )
-                let existProperty:PropertyModel = <PropertyModel>_.find(this.properties, {uniqueId: newProperty.uniqueId});
-                let propertyIndex = this.properties.indexOf(existProperty);
-                this.properties[propertyIndex] = newProperty;
-                deferred.resolve(newProperty);
-            };
-            this.componentService.updateProperty(this.uniqueId, property).then(onSuccess, onError);
-        }
-        return deferred.promise;
-    };
-
-    public addOrUpdateAttribute = (attribute:AttributeModel):ng.IPromise<AttributeModel> => {
-        let deferred = this.$q.defer<AttributeModel>();
-
-        let onError = (error:any):void => {
-            deferred.reject(error);
-        };
-
-        if (!attribute.uniqueId) {
-            let onSuccess = (attribute:AttributeModel):void => {
-                let newAttribute = new AttributeModel(attribute);
-                this.attributes.push(newAttribute);
-                deferred.resolve(newAttribute);
-            };
-            this.componentService.addAttribute(this.uniqueId, attribute).then(onSuccess, onError);
-        }
-        else {
-            let onSuccess = (newAttribute:AttributeModel):void => {
-                let existAttribute:AttributeModel = <AttributeModel>_.find(this.attributes, {uniqueId: newAttribute.uniqueId});
-                let attributeIndex = this.attributes.indexOf(existAttribute);
-                newAttribute.readonly = this.uniqueId != newAttribute.parentUniqueId;
-                this.attributes[attributeIndex] = newAttribute;
-                deferred.resolve(newAttribute);
-            };
-            this.componentService.updateAttribute(this.uniqueId, attribute).then(onSuccess, onError);
-        }
-        return deferred.promise;
-    };
-
-    public deleteProperty = (propertyId:string):ng.IPromise<PropertyModel> => {
-        let deferred = this.$q.defer<PropertyModel>();
-        let onSuccess = ():void => {
-            console.log("Property deleted");
-            delete _.remove(this.properties, {uniqueId: propertyId})[0];
-            deferred.resolve();
-        };
-        let onFailed = ():void => {
-            console.log("Failed to delete property");
-            deferred.reject();
-        };
-        this.componentService.deleteProperty(this.uniqueId, propertyId).then(onSuccess, onFailed);
-        return deferred.promise;
-    };
-
-    public deleteAttribute = (attributeId:string):ng.IPromise<AttributeModel> => {
-        let deferred = this.$q.defer<AttributeModel>();
-        let onSuccess = ():void => {
-            console.log("Attribute deleted");
-            delete _.remove(this.attributes, {uniqueId: attributeId})[0];
-        };
-        let onFailed = ():void => {
-            console.log("Failed to delete attribute");
-        };
-        this.componentService.deleteAttribute(this.uniqueId, attributeId).then(onSuccess, onFailed);
-        return deferred.promise;
-    };
-
-    public downloadInstanceArtifact = (artifactId:string):ng.IPromise<IFileDownload> => {
+    public downloadInstanceArtifact = (artifactId:string):Promise<IFileDownload> => {
         return this.componentService.downloadInstanceArtifact(this.uniqueId, this.selectedInstance.uniqueId, artifactId);
-    };
-
-    public getModuleForDisplay = (moduleId:string):ng.IPromise<DisplayModule> => {
-
-        let deferred = this.$q.defer<DisplayModule>();
-        let onSuccess = (response:DisplayModule):void => {
-            deferred.resolve(response);
-        };
-        let onFailed = (error:any):void => {
-            deferred.reject(error);
-        };
-        this.componentService.getModuleForDisplay(this.uniqueId, moduleId).then(onSuccess, onFailed);
-        return deferred.promise;
-    };
-
-    public getModuleInstanceForDisplay = (componentInstanceId:string, moduleId:string):ng.IPromise<DisplayModule> => {
-
-        let deferred = this.$q.defer<DisplayModule>();
-        let onSuccess = (response:DisplayModule):void => {
-            deferred.resolve(response);
-        };
-        let onFailed = (error:any):void => {
-            deferred.reject(error);
-        };
-        this.componentService.getComponentInstanceModule(this.uniqueId, componentInstanceId, moduleId).then(onSuccess, onFailed);
-        return deferred.promise;
-    };
-
-    public updateGroupMetadata = (module:Module):ng.IPromise<Module> => {
-
-        let deferred = this.$q.defer<Module>();
-
-        let onSuccess = (updatedModule:Module):void => {
-            let groupIndex:number = _.indexOf(this.modules, _.find(this.modules, (module:Module) => {
-                return module.uniqueId === updatedModule.uniqueId;
-            }));
-
-            if (groupIndex !== -1) {
-                this.modules[groupIndex] = updatedModule;
-            }
-            deferred.resolve(updatedModule);
-        };
-        let onFailed = (error:any):void => {
-            deferred.reject(error);
-        };
-
-        this.componentService.updateGroupMetadata(this.uniqueId, module).then(onSuccess, onFailed);
-
-        return deferred.promise;
     };
 
     //------------------------------------------ Help Functions ----------------------------------------------------------------//
@@ -563,7 +396,13 @@ export abstract class Component implements IComponent {
         this.lifecycleState = componentMetadata.lifecycleState;
         this.name = componentMetadata.name;
         this.version = componentMetadata.version;
-        this.tags = angular.copy(componentMetadata.tags, this.tags);
+        // Falls back to [] rather than undefined: the BE may omit tags, and displayComponent /
+        // the catalog filter term call tags.join()/.toString() unguarded. angular.copy gave this
+        // for free by emptying the existing array destination instead of replacing it. Unlike
+        // angular.copy(src, dest) this replaces the array rather than refilling it, so a caller
+        // holding a reference across this call would go stale — none does; every consumer re-reads
+        // component.tags (general-tab calls patchFormFromComponent right after setComponentMetadata).
+        this.tags = componentMetadata.tags ? _.cloneDeep(componentMetadata.tags) : [];
         this.allVersions = componentMetadata.allVersions;
         this.componentType = componentMetadata.componentType;
         this.distributionStatus = componentMetadata.distributionStatus;
@@ -584,7 +423,7 @@ export abstract class Component implements IComponent {
     }
 
     public toJSON = ():any => {
-        let temp = angular.copy(this);
+        let temp = _.cloneDeep(this);
         temp.componentService = undefined;
         temp.filterTerm = undefined;
         temp.iconSprite = undefined;
@@ -592,7 +431,6 @@ export abstract class Component implements IComponent {
         temp.subCategory = undefined;
         temp.selectedInstance = undefined;
         temp.showMenu = undefined;
-        temp.$q = undefined;
         temp.selectedCategory = undefined;
         temp.modules = undefined
         temp.groupInstances = undefined;

@@ -38,16 +38,15 @@ function makeNavigationService(stateParams: any = {id: 'id-1'}) {
     return nav;
 }
 
-function makeInjector(stateParams: any = {id: 'id-1'}) {
-    const services: any = {
-        'ComponentFactory': {createComponent: (c: any) => Object.assign({}, c)},
-        'ImportVSPService': {},
-        'OnboardingService': {},
-        'ModelService': {getModels: jest.fn(() => of([])), getModelsOfType: jest.fn(() => of([]))},
-        'ElementService': {getCategoryBaseTypes: jest.fn(() => of({required: false, baseTypes: []}))},
-        'sdcConfig': {csarFileExtension: ['csar'], toscaFileExtension: ['yaml', 'yml']}
+function makeDeps() {
+    return {
+        sdcMenu: {},
+        componentFactory: {createComponent: (c: any) => Object.assign({}, c)},
+        importVSPService: {},
+        modelService: {getModels: jest.fn(() => of([])), getModelsOfType: jest.fn(() => of([]))},
+        elementService: {getCategoryBaseTypes: jest.fn(() => of({required: false, baseTypes: []}))},
+        modalsHandler: {}
     };
-    return {get: (name: string) => services[name]};
 }
 
 function createComp(opts: any = {}) {
@@ -62,12 +61,14 @@ function createComp(opts: any = {}) {
     const translateService: any = opts.translateService || {translate: (k: string) => k};
     const notificationsService: any = opts.notificationsService || {push: jest.fn()};
     const navigationService = opts.navigationService || makeNavigationService(opts.stateParams);
+    const deps: any = opts.deps || makeDeps();
     const comp = new GeneralTabComponent(
         new GeneralFormService(), new ComponentMetadataService(),
         workspaceService, cacheService, eventListener, fileUtils, sdcUiModalService,
         translateService, notificationsService, cdr, navigationService,
         opts.sdcConfig || {toscaFileExtension: 'yaml,yml', csarFileExtension: 'csar'},
-        opts.injector || makeInjector(opts.stateParams)
+        deps.sdcMenu, deps.componentFactory, deps.importVSPService,
+        deps.modelService, deps.elementService, deps.modalsHandler
     );
     return {comp, workspaceService, cacheService, eventListener, cdr, fileUtils, sdcUiModalService, translateService, notificationsService, navigationService};
 }
@@ -244,8 +245,8 @@ describe('GeneralTabComponent - dirty tracking', () => {
 
 // ─── Task 8c: initCategories tests ───────────────────────────────────────────
 
-/** Extend makeInjector to include sdcMenu with hiddenCategories. */
-function makeInjectorWithCategories(stateParams: any = {id: 'id-1'}, sdcMenuOverride?: any) {
+/** Extend makeDeps to include sdcMenu with hiddenCategories. */
+function makeDepsWithCategories(sdcMenuOverride?: any) {
     const defaultSdcMenu = {
         component_workspace_menu_option: {
             VF:      [{hiddenCategories: []}],
@@ -253,19 +254,7 @@ function makeInjectorWithCategories(stateParams: any = {id: 'id-1'}, sdcMenuOver
             SERVICE: [{hiddenCategories: ['SomeHidden']}]
         }
     };
-    const sdcMenu = sdcMenuOverride || defaultSdcMenu;
-    const services: any = {
-        '$state': {current: {name: 'workspace.general', data: {unsavedChanges: false}}, go: jest.fn()},
-        '$stateParams': stateParams,
-        'ComponentFactory': {createComponent: (c: any) => Object.assign({}, c)},
-        'ImportVSPService': {},
-        'OnboardingService': {},
-        'ModelService': {getModels: jest.fn(() => of([])), getModelsOfType: jest.fn(() => of([]))},
-        'ElementService': {getCategoryBaseTypes: jest.fn(() => of({required: false, baseTypes: []}))},
-        'sdcMenu': sdcMenu,
-        'sdcConfig': {csarFileExtension: ['csar'], toscaFileExtension: ['yaml', 'yml']}
-    };
-    return {get: (name: string) => services[name]};
+    return Object.assign(makeDeps(), {sdcMenu: sdcMenuOverride || defaultSdcMenu});
 }
 
 const RESOURCE_CATEGORIES = [
@@ -283,8 +272,8 @@ describe('GeneralTabComponent - Task 8c categories', () => {
     // Test 1 (regression guard): Resource categories load from cache into comp.categories
     it('Resource categories load from cache into comp.categories (non-empty)', () => {
         const resourceComp = makeComponent(); // RESOURCE, create mode (no id)
-        const injector = makeInjectorWithCategories({});
-        const {comp, cacheService} = createComp({component: resourceComp, injector, stateParams: {}});
+        const deps = makeDepsWithCategories();
+        const {comp, cacheService} = createComp({component: resourceComp, deps, stateParams: {}});
         cacheService.get = jest.fn((k: string) => {
             if (k === 'user') { return {userId: 'cs0008', role: 'DESIGNER'}; }
             if (k === 'resourceCategories') { return RESOURCE_CATEGORIES; }
@@ -312,8 +301,8 @@ describe('GeneralTabComponent - Task 8c categories', () => {
             lifecycleState: 'NOT_CERTIFIED_CHECKOUT',
             selectedCategory: 'Network Service'
         }));
-        const injector = makeInjectorWithCategories({}); // create mode: no id
-        const {comp, cacheService} = createComp({component: serviceComp, injector, stateParams: {}});
+        const deps = makeDepsWithCategories();
+        const {comp, cacheService} = createComp({component: serviceComp, deps, stateParams: {}});
         cacheService.get = jest.fn((k: string) => {
             if (k === 'user') { return {userId: 'cs0008', role: 'DESIGNER'}; }
             if (k === 'serviceCategories') { return SERVICE_CATEGORIES; }
@@ -331,8 +320,8 @@ describe('GeneralTabComponent - Task 8c categories', () => {
     // Test 3: categories are populated before initModel so the dropdown is ready on first render
     it('categories are populated when ngOnInit completes in create mode (ready for Selenium selectByVisibleText)', () => {
         const resourceComp = makeComponent();
-        const injector = makeInjectorWithCategories({});
-        const {comp, cacheService} = createComp({component: resourceComp, injector, stateParams: {}});
+        const deps = makeDepsWithCategories();
+        const {comp, cacheService} = createComp({component: resourceComp, deps, stateParams: {}});
         cacheService.get = jest.fn((k: string) => {
             if (k === 'user') { return {userId: 'cs0008', role: 'DESIGNER'}; }
             if (k === 'resourceCategories') { return RESOURCE_CATEGORIES; }
@@ -361,25 +350,16 @@ function makeServiceComponent(overrides: any = {}) {
     }, overrides));
 }
 
-function makeInjectorWithModels(stateParams: any = {id: 'id-1'}, modelServiceOverrides: any = {}, elementServiceOverrides: any = {}) {
-    const modelService = Object.assign({
-        getModels: jest.fn(() => of([])),
-        getModelsOfType: jest.fn(() => of([]))
-    }, modelServiceOverrides);
-    const elementService = Object.assign({
-        getCategoryBaseTypes: jest.fn(() => of({required: false, baseTypes: []}))
-    }, elementServiceOverrides);
-    const services: any = {
-        '$state': {current: {name: 'workspace.general', data: {unsavedChanges: false}}, go: jest.fn()},
-        '$stateParams': stateParams,
-        'ComponentFactory': {createComponent: (c: any) => Object.assign({}, c)},
-        'ImportVSPService': {},
-        'OnboardingService': {},
-        'ModelService': modelService,
-        'ElementService': elementService,
-        'sdcConfig': {csarFileExtension: ['csar'], toscaFileExtension: ['yaml', 'yml']}
-    };
-    return {get: (name: string) => services[name]};
+function makeDepsWithModels(modelServiceOverrides: any = {}, elementServiceOverrides: any = {}) {
+    return Object.assign(makeDeps(), {
+        modelService: Object.assign({
+            getModels: jest.fn(() => of([])),
+            getModelsOfType: jest.fn(() => of([]))
+        }, modelServiceOverrides),
+        elementService: Object.assign({
+            getCategoryBaseTypes: jest.fn(() => of({required: false, baseTypes: []}))
+        }, elementServiceOverrides)
+    });
 }
 
 // ─── Task 8d: Tags widget (addTag / deleteTag / displayedTags) ────────────────
@@ -628,8 +608,8 @@ describe('GeneralTabComponent - Task 8b data-init', () => {
     // Test 1: initInstantiationTypes for a Service component
     it('initInstantiationTypes populates A_LA_CARTE and MACRO for a Service component', () => {
         const serviceComp = makeServiceComponent();
-        const injector = makeInjectorWithModels();
-        const {comp} = createComp({component: serviceComp, injector});
+        const deps = makeDepsWithModels();
+        const {comp} = createComp({component: serviceComp, deps});
         comp.ngOnInit();
         expect((comp as any).instantiationTypes).toContain('A-la-carte');
         expect((comp as any).instantiationTypes).toContain('Macro');
@@ -638,8 +618,8 @@ describe('GeneralTabComponent - Task 8b data-init', () => {
     // Test 2: initInstantiationTypes does NOT run for a Resource component
     it('initInstantiationTypes leaves instantiationTypes empty for a Resource component', () => {
         const resourceComp = makeComponent(); // default is Resource
-        const injector = makeInjectorWithModels();
-        const {comp} = createComp({component: resourceComp, injector});
+        const deps = makeDepsWithModels();
+        const {comp} = createComp({component: resourceComp, deps});
         comp.ngOnInit();
         const types = (comp as any).instantiationTypes;
         expect(!types || types.length === 0).toBe(true);
@@ -651,8 +631,8 @@ describe('GeneralTabComponent - Task 8b data-init', () => {
             lifecycleState: 'NOT_CERTIFIED_CHECKOUT',
             lastUpdaterUserId: 'cs0008'
         });
-        const injector = makeInjectorWithModels({id: 'id-1'});
-        const {comp, cacheService} = createComp({component: serviceComp, injector});
+        const deps = makeDepsWithModels();
+        const {comp, cacheService} = createComp({component: serviceComp, deps});
         // Mock the UIConfiguration in cacheService
         cacheService.get = jest.fn((k: string) => {
             if (k === 'user') { return {userId: 'cs0008', role: 'DESIGNER'}; }
@@ -671,11 +651,8 @@ describe('GeneralTabComponent - Task 8b data-init', () => {
     // Test 4: initModel normative path populates models from getModelsOfType('normative')
     it('initModel normative path populates models from getModelsOfType', () => {
         const serviceComp = makeServiceComponent({csarUUID: undefined});
-        const injector = makeInjectorWithModels(
-            {id: 'id-1'}, // non-create mode
-            {getModelsOfType: jest.fn(() => of([{name: 'modelA'}, {name: 'modelB'}]))}
-        );
-        const {comp} = createComp({component: serviceComp, injector});
+        const deps = makeDepsWithModels({getModelsOfType: jest.fn(() => of([{name: 'modelA'}, {name: 'modelB'}]))});
+        const {comp} = createComp({component: serviceComp, deps});
         comp.ngOnInit();
         expect((comp as any).models).toContain('modelA');
         expect((comp as any).models).toContain('modelB');
@@ -684,8 +661,8 @@ describe('GeneralTabComponent - Task 8b data-init', () => {
     // Test 5: tags round-trip — editing tags form control and calling save() writes back to component.tags
     it('tags round-trip: edited tags are written to component.tags on save()', async () => {
         const serviceComp = makeServiceComponent({tags: ['tag1'], name: 'MyService'});
-        const injector = makeInjectorWithModels();
-        const {comp, workspaceService} = createComp({component: serviceComp, injector});
+        const deps = makeDepsWithModels();
+        const {comp, workspaceService} = createComp({component: serviceComp, deps});
         comp.ngOnInit();
         // Edit the tags form control
         comp.form.get('tags').setValue(['tag1', 'tag2']);
@@ -822,14 +799,14 @@ describe('GeneralTabComponent - C6 init defaults reflected into the form', () =>
             categories: [{name: 'Network Service'}], tags: [], name: 'CI-Service'
         }, overrides));
     }
-    function injectorWithUiConfig(stateParams: any = {}) {
-        return makeInjectorWithModels(stateParams);
+    function depsWithUiConfig() {
+        return makeDepsWithModels();
     }
 
     it('environmentContext default reaches the form control and survives a later form change (regression for "Invalid Environment context")', () => {
         const svc = makeServiceForInit();
         const {comp, cacheService} = createComp({
-            component: svc, injector: injectorWithUiConfig({}), stateParams: {} // CREATE mode
+            component: svc, deps: depsWithUiConfig(), stateParams: {} // CREATE mode
         });
         cacheService.get = jest.fn((k: string) => {
             if (k === 'user') { return {userId: 'cs0008', role: 'DESIGNER'}; }
@@ -852,7 +829,7 @@ describe('GeneralTabComponent - C6 init defaults reflected into the form', () =>
     it('instantiationType default reaches the form control and survives a later form change', () => {
         const svc = makeServiceForInit({instantiationType: undefined});
         const {comp, cacheService} = createComp({
-            component: svc, injector: injectorWithUiConfig({}), stateParams: {} // CREATE mode
+            component: svc, deps: depsWithUiConfig(), stateParams: {} // CREATE mode
         });
         cacheService.get = jest.fn((k: string) => {
             if (k === 'user') { return {userId: 'cs0008', role: 'DESIGNER'}; }
@@ -1087,7 +1064,7 @@ describe('GeneralTabComponent - C10 category-specific metadata', () => {
     });
 });
 
-// ─── Validation patterns come from ValidationConfiguration, not the ng1 injector ──────────────
+// ─── Validation patterns come from ValidationConfiguration ────────────────────────────────────
 // The seven patterns the General tab needs used to be duplicated as AngularJS
 // `ng1appModule.value('…ValidationPattern', /re/)` constants in app.ts and read back through
 // $injector. They are byte-identical to configurations/validation.json, which ConfigService loads
@@ -1103,7 +1080,7 @@ describe('GeneralTabComponent - validation patterns source', () => {
         ValidationConfiguration.validation = savedValidation;
     });
 
-    it('reads validation patterns from ValidationConfiguration, not the ng1 injector', () => {
+    it('reads validation patterns from ValidationConfiguration', () => {
         // validation.json holds STRINGS (models/validation-config.ts mistypes them as RegExp).
         ValidationConfiguration.validation = {
             propertyValue: {min: 0, max: 2500},
@@ -1112,13 +1089,9 @@ describe('GeneralTabComponent - validation patterns source', () => {
                 vendorRelease: '^vr$', vendorModelNumber: '^vm$', comment: '^cm$'
             }
         } as any;
-        const inner = makeInjector();
-        const injector = {get: jest.fn((n: string) => inner.get(n))};
-        const {comp} = createComp({injector});
+        const {comp} = createComp();
         comp.ngOnInit();
         expect((comp as any).tagPattern.source).toBe('^t$');
-        const asked = injector.get.mock.calls.map((c: any[]) => c[0]);
-        expect(asked.filter((n: string) => /ValidationPattern$/.test(n))).toEqual([]);
     });
 
     it('compiles every configured pattern string into the form validators', () => {

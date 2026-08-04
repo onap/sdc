@@ -21,7 +21,7 @@
 import {ComponentInstance} from "../../../componentsInstances/componentInstance";
 import {CommonCINodeBase} from "../common-ci-node-base";
 import {ImagesUrl, GraphUIObjects} from "app/utils";
-import {AngularJSBridge} from "app/services";
+import {getSdcConfig} from "app/ng2/config/sdc-config.config.factory";
 import {ResourceNamePipe} from "app/ng2/pipes/resource-name.pipe";
 import {ComponentInstanceNodesStyle} from "app/ng2/pages/composition/graph/common/style/component-instances-nodes-style";
 import {ImageCreatorService, ICanvasImage} from "app/ng2/pages/composition/graph/common/image-creator.service";
@@ -87,7 +87,7 @@ export abstract class CompositionCiNodeBase extends CommonCINodeBase implements 
 
         const canvasImages = [
             { src: this.imagesPath + this.componentInstance.icon + '.png', x, y, width, height},
-            { src: AngularJSBridge.getAngularConfig().imagesPath + ImagesUrl.RESOURCE_ICONS + archiveImage, x, y, width, height}
+            { src: getSdcConfig().imagesPath + ImagesUrl.RESOURCE_ICONS + archiveImage, x, y, width, height}
         ];
 
         //Create the image and update the node background styles

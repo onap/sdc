@@ -22,6 +22,7 @@ import {Component, ViewChild, ElementRef} from '@angular/core';
 import {ButtonsModelMap, ButtonModel} from "app/models";
 import {PopoverContentComponent} from "../../popover/popover-content.component";
 import {UiElementBase, UiElementBaseInterface} from "../ui-element-base.component";
+import * as _ from 'lodash';
 
 @Component({
     selector: 'ui-element-popover-input',
@@ -51,7 +52,7 @@ export class UiElementPopoverInputComponent extends UiElementBase implements UiE
 
     public setEditValue() {
         // copy value to edit
-        this.editValue = angular.copy(this.value);
+        this.editValue = _.cloneDeep(this.value);
     }
 
     public onChange() {

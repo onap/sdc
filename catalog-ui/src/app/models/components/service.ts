@@ -24,8 +24,7 @@
 'use strict';
 import * as _ from "lodash";
 import {IServiceService} from "../../services/components/service-service";
-import {Component, PropertyModel, DisplayModule, InputsAndProperties, InputModel, InstancesInputsOrPropertiesMapData, InstancesInputsPropertiesMap,
-    Distribution, DistributionComponent, ArtifactGroupModel} from "../../models";
+import {Component, Distribution, DistributionComponent, ArtifactGroupModel} from "../../models";
 import {ArtifactGroupType} from "../../utils/constants";
 import {FileUploadModel} from "../file-upload-model";
 import {ComponentMetadata} from "../component-metadata";
@@ -53,8 +52,8 @@ export class Service extends Component {
     public csarPackageType: string;
     public packageId: string;
 
-    constructor(componentService:IServiceService, $q:ng.IQService, component?:Service) {
-        super(componentService, $q, component);
+    constructor(componentService:IServiceService, component?:Service) {
+        super(componentService, component);
         this.ecompGeneratedNaming = true;
         if (component) {
             this.serviceApiArtifacts = new ArtifactGroupModel(component.serviceApiArtifacts);
@@ -80,90 +79,35 @@ export class Service extends Component {
         this.iconSprite = "sprite-services-icons";
     }
 
-    public importComponentOnServer = (): ng.IPromise<Component> => {
-        let deferred = this.$q.defer<Component>();
-        let onSuccess = (component: Service): void => {
-            this.payloadData = undefined;
-            this.payloadName = undefined;
-            deferred.resolve(component);
-        };
-        let onError = (error: any): void => {
-            deferred.reject(error);
-        };
-
-        this.handleTags();
-        if (this.importedFile) {
-            this.payloadData = this.importedFile.base64;
-            this.payloadName = this.importedFile.filename;
-        }
-        this.componentService.importComponent(this).then(onSuccess, onError);
-        return deferred.promise;
+    public importComponentOnServer = (): Promise<Component> => {
+        return new Promise<Component>((resolve, reject) => {
+            this.handleTags();
+            if (this.importedFile) {
+                this.payloadData = this.importedFile.base64;
+                this.payloadName = this.importedFile.filename;
+            }
+            this.componentService.importComponent(this).then(
+                (component: Service): void => {
+                    this.payloadData = undefined;
+                    this.payloadName = undefined;
+                    resolve(component);
+                },
+                (error: any): void => {
+                    reject(error);
+                });
+        });
     };
 
-    public getDistributionsList = ():ng.IPromise<Array<Distribution>> => {
+    public getDistributionsList = ():Promise<Array<Distribution>> => {
         return this.componentService.getDistributionsList(this.uuid);
     };
 
-    public getDistributionsComponent = (distributionId:string):ng.IPromise<Array<DistributionComponent>> => {
+    public getDistributionsComponent = (distributionId:string):Promise<Array<DistributionComponent>> => {
         return this.componentService.getDistributionComponents(distributionId);
     };
 
-    public markAsDeployed = (distributionId:string):ng.IPromise<any> => {
+    public markAsDeployed = (distributionId:string):Promise<any> => {
         return this.componentService.markAsDeployed(this.uniqueId, distributionId);
-    };
-
-    /* we need to change the name of the input to vfInstanceName + input name before sending to server in order to create the inputs on the service
-     *  we also need to remove already selected inputs (the inputs that already create on server, and disabled in the view - but they are selected so they are still in the view model
-     */
-    public createInputsFormInstances = (instancesInputsMap:InstancesInputsOrPropertiesMapData, instancePropertiesMap:InstancesInputsOrPropertiesMapData):ng.IPromise<Array<InputModel>> => {
-
-        let deferred = this.$q.defer<Array<InputModel>>();
-        let onSuccess = (inputsCreated:Array<InputModel>):void => {
-            this.inputs = inputsCreated.concat(this.inputs);
-            deferred.resolve(inputsCreated);
-        };
-        let onFailed = (error:any):void => {
-            deferred.reject(error);
-        };
-
-        let propertiesAndInputsMap:InstancesInputsPropertiesMap = new InstancesInputsPropertiesMap(instancesInputsMap, instancePropertiesMap);
-        propertiesAndInputsMap = propertiesAndInputsMap.cleanUnnecessaryDataBeforeSending(); // We need to create a copy of the map, without the already selected inputs / properties, and to send the clean map
-        this.componentService.createInputsFromInstancesInputs(this.uniqueId, propertiesAndInputsMap).then(onSuccess, onFailed);
-        return deferred.promise;
-    };
-
-    // we need to change the name of the input to vfInstanceName + input name before sending to server in order to create the inputs on the service
-    public getServiceInputInputsAndProperties = (inputId:string):ng.IPromise<InputsAndProperties> => {
-        let deferred = this.$q.defer<InputsAndProperties>();
-        let onSuccess = (inputsAndProperties:InputsAndProperties):void => {
-            let input:InputModel = _.find(this.inputs, (input:InputModel) => {
-                return input.uniqueId === inputId;
-            });
-            input.inputs = inputsAndProperties.inputs;
-            input.properties = inputsAndProperties.properties;
-            deferred.resolve(inputsAndProperties);
-        };
-        let onFailed = (error:any):void => {
-            deferred.reject(error);
-        };
-        this.componentService.getComponentInputInputsAndProperties(this.uniqueId, inputId).then(onSuccess, onFailed);
-        return deferred.promise;
-    };
-
-    public deleteServiceInput = (inputId:string):ng.IPromise<InputModel> => {
-        let deferred = this.$q.defer<InputModel>();
-
-        let onSuccess = (deletedInput:InputModel):void => {
-            delete _.remove(this.inputs, {uniqueId: deletedInput.uniqueId})[0];
-            deferred.resolve(deletedInput);
-        };
-
-        let onFailed = (error:any):void => {
-            deferred.reject(error);
-        };
-
-        this.componentService.deleteComponentInput(this.uniqueId, inputId).then(onSuccess, onFailed);
-        return deferred.promise;
     };
 
     public getArtifactsByType = (artifactGroupType:string):ArtifactGroupModel => {
@@ -175,23 +119,6 @@ export class Service extends Component {
             case ArtifactGroupType.SERVICE_API:
                 return this.serviceApiArtifacts;
         }
-    };
-
-    public updateGroupInstanceProperties = (resourceInstanceId:string, group:DisplayModule, properties:Array<PropertyModel>):ng.IPromise<Array<PropertyModel>> => {
-
-        let deferred = this.$q.defer<Array<PropertyModel>>();
-        let onSuccess = (updatedProperties:Array<PropertyModel>):void => {
-            _.forEach(updatedProperties, (property:PropertyModel) => { // Replace all updated properties on the we needed to update
-                _.extend(_.find(group.properties, {uniqueId: property.uniqueId}), property);
-            });
-            deferred.resolve(updatedProperties);
-        };
-        let onError = (error:any):void => {
-            deferred.reject(error);
-        };
-
-        this.componentService.updateGroupInstanceProperties(this.uniqueId, resourceInstanceId, group.groupInstanceUniqueId, properties).then(onSuccess, onError);
-        return deferred.promise;
     };
 
     getTypeUrl():string {
@@ -224,7 +151,7 @@ export class Service extends Component {
     }
 
     public toJSON = ():any => {
-        let temp = angular.copy(this);
+        let temp = _.cloneDeep(this);
         temp.componentService = undefined;
         temp.filterTerm = undefined;
         temp.iconSprite = undefined;
@@ -232,7 +159,6 @@ export class Service extends Component {
         temp.subCategory = undefined;
         temp.selectedInstance = undefined;
         temp.showMenu = undefined;
-        temp.$q = undefined;
         temp.selectedCategory = undefined;
         temp.modules = undefined;
         temp.groupInstances = undefined;

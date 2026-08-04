@@ -22,6 +22,7 @@ import { CapabilitiesGroup, RequirementsGroup } from 'app/models';
 import {ComponentState, ComponentType, ResourceType} from 'app/utils';
 import { IMainCategory } from './category';
 import { Metadata } from "app/models/metadata";
+import * as _ from 'lodash';
 /**
  * Created by obarda on 4/18/2017.
  */
@@ -174,7 +175,7 @@ export class ComponentMetadata implements IComponentMetadata {
         this.lifecycleState = response.lifecycleState;
         this.name = response.name;
         this.version = response.version;
-        this.tags = angular.copy(response.tags, this.tags);
+        this.tags = _.cloneDeep(response.tags);
         this.allVersions = response.allVersions;
         this.componentType = response.componentType;
         this.distributionStatus = response.distributionStatus;

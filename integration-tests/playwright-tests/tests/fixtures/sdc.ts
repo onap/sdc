@@ -56,12 +56,18 @@ export const SIM_PASSWORD = '123123a';
 export const DESIGNER_USER = 'cs0008';
 
 /**
- * True when SDC_BASE_URL points at the webpack dev server (:9000) rather than the
- * webseal-simulator (:8285). The dev server injects its own auth cookies and serves a
- * built-in /login page, but it has no plugins-config endpoint, so it raises a transient
- * "Not Found" modal that must be dismissed before clicks land.
+ * True when SDC_BASE_URL points at the webpack dev server rather than the webseal-simulator
+ * (:8285). The dev server injects its own auth cookies and serves a built-in /login page, but it
+ * has no plugins-config endpoint, so it raises a transient "Not Found" modal that must be
+ * dismissed before clicks land.
+ *
+ * Matches :9000-:9009, not just :9000, because `webpack.server.js` honours SDC_DEV_PORT: verifying
+ * a bootstrap change means running a baseline and a patched dev server side by side, and a
+ * hardcoded :9000 silently skipped the plugins stub on every other port — which surfaces as a dozen
+ * unrelated click timeouts rather than as a configuration error. The range stops at :9009 on
+ * purpose; :9042 is Cassandra's port in the Docker stack.
  */
-export const IS_DEV_SERVER = (process.env.SDC_BASE_URL || '').includes(':9000');
+export const IS_DEV_SERVER = /:900\d(\/|$)/.test(process.env.SDC_BASE_URL || '');
 
 // ---------------------------------------------------------------------------
 // Selectors — single source of truth

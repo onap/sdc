@@ -21,7 +21,7 @@
 
 'use strict';
 import * as _ from "lodash";
-import {Inject, Injectable} from "@angular/core";
+import {Injectable} from "@angular/core";
 import {DEFAULT_ICON, ResourceType, ComponentType} from "./constants";
 // Keep barrel imports for ServiceService/ResourceService. component-factory.ts lives in the
 // "app/utils" barrel, which is loaded transitively by many modules (e.g. artifacts.ts). Using
@@ -46,7 +46,6 @@ export class ComponentFactory {
     constructor(private ResourceService: ResourceService,
                 private ServiceService: ServiceService,
                 private cacheService: CacheService,
-                @Inject('$q') private $q: ng.IQService,
                 private ComponentServiceNg2: ComponentServiceNg2) {
     }
 
@@ -55,11 +54,11 @@ export class ComponentFactory {
         switch (component.componentType) {
 
             case 'SERVICE':
-                newComponent = new Service(this.ServiceService, this.$q, <Service> component);
+                newComponent = new Service(this.ServiceService, <Service> component);
                 break;
 
             case 'RESOURCE':
-                newComponent = new Resource(this.ResourceService, this.$q, <Resource> component);
+                newComponent = new Resource(this.ResourceService, <Resource> component);
                 break;
 
         }
@@ -67,12 +66,12 @@ export class ComponentFactory {
     };
 
     public createService = (service:Service):Service => {
-        let newService:Service = new Service(this.ServiceService, this.$q, <Service> service);
+        let newService:Service = new Service(this.ServiceService, <Service> service);
         return newService;
     };
 
     public createResource = (resource:Resource):Resource => {
-        let newResource:Resource = new Resource(this.ResourceService, this.$q, <Resource> resource);
+        let newResource:Resource = new Resource(this.ResourceService, <Resource> resource);
         return newResource;
     };
 
@@ -106,7 +105,7 @@ export class ComponentFactory {
          * Then find the selected sub category and category.
          * @type {any}
          */
-        let availableCategories = angular.copy(this.cacheService.get('resourceCategories'));
+        let availableCategories = _.cloneDeep(this.cacheService.get('resourceCategories'));
         let allSubs = [];
         _.each(availableCategories, (main:IMainCategory)=> {
             if (main.subcategories) {
@@ -154,7 +153,7 @@ export class ComponentFactory {
             case ComponentType.SERVICE_PROXY:
             case ComponentType.SERVICE:
             case ComponentType.SERVICE_SUBSTITUTION:
-                newComponent = new Service(this.ServiceService, this.$q);
+                newComponent = new Service(this.ServiceService);
                 break;
 
             case ComponentType.RESOURCE:
@@ -166,7 +165,7 @@ export class ComponentFactory {
             case ResourceType.PNF:
             case ResourceType.CVFC:
             case ResourceType.CONFIGURATION:
-                newComponent = new Resource(this.ResourceService, this.$q);
+                newComponent = new Resource(this.ResourceService);
                 if (resourceType){
                     (<Resource> newComponent).resourceType = resourceType;
                 }
@@ -178,35 +177,35 @@ export class ComponentFactory {
         return newComponent;
     };
 
-    public getComponentFromServer = (componentType:string, componentId:string):ng.IPromise<Component> => {
+    public getComponentFromServer = (componentType:string, componentId:string):Promise<Component> => {
         let newComponent:Component = this.createEmptyComponent(componentType);
         newComponent.setUniqueId(componentId);
         return newComponent.getComponent();
     };
 
-    public createComponentOnServer = (componentObject:Component):ng.IPromise<Component> => {
+    public createComponentOnServer = (componentObject:Component):Promise<Component> => {
         let component:Component = this.createComponent(componentObject);
         return component.createComponentOnServer();
 
     };
 
-    public importComponentOnServer = (componentObject: Component): ng.IPromise<Component> => {
+    public importComponentOnServer = (componentObject: Component): Promise<Component> => {
         let component: Component = this.createComponent(componentObject);
         return component.importComponentOnServer();
 
     };
 
-    public getComponentWithMetadataFromServer = (componentType:string, componentId:string):ng.IPromise<Component> => {
-        let deferred = this.$q.defer<Component>();
-        let component = this.createEmptyComponent(componentType);
-        component.setUniqueId(componentId);
-        this.ComponentServiceNg2.getComponentMetadata(component.uniqueId, component.componentType).subscribe((response:ComponentGenericResponse) => {
-            component.setComponentMetadata(response.metadata);
-            component.derivedFromGenericType = response.derivedFromGenericType;
-            component.derivedFromGenericVersion = response.derivedFromGenericVersion;
-            component.model = response.model;
-            deferred.resolve(component);
+    public getComponentWithMetadataFromServer = (componentType:string, componentId:string):Promise<Component> => {
+        return new Promise<Component>((resolve) => {
+            let component = this.createEmptyComponent(componentType);
+            component.setUniqueId(componentId);
+            this.ComponentServiceNg2.getComponentMetadata(component.uniqueId, component.componentType).subscribe((response:ComponentGenericResponse) => {
+                component.setComponentMetadata(response.metadata);
+                component.derivedFromGenericType = response.derivedFromGenericType;
+                component.derivedFromGenericVersion = response.derivedFromGenericVersion;
+                component.model = response.model;
+                resolve(component);
+            });
         });
-        return deferred.promise;
     }
 }

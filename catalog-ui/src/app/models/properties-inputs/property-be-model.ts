@@ -28,6 +28,7 @@ import {ToscaFunction} from "../tosca-function";
 import {ToscaGetFunction} from "../tosca-get-function";
 import {ToscaGetFunctionTypeConverter} from "../tosca-get-function-type-converter";
 import {ToscaGetFunctionDto} from "../tosca-get-function-dto";
+import * as _ from 'lodash';
 
 export enum DerivedPropertyType {
     SIMPLE,
@@ -134,7 +135,7 @@ export class PropertyBEModel {
     }
 
     public toJSON = (): any => {
-        const temp = angular.copy(this);
+        const temp = _.cloneDeep(this);
         temp.value = temp.value === '{}' || temp.value === '[]' ? undefined : temp.value;
         temp.defaultValue = temp.defaultValue === '{}' || temp.defaultValue === '[]' ? undefined : temp.defaultValue;
         return temp;

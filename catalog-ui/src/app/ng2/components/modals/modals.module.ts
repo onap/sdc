@@ -21,8 +21,7 @@ import { OnboardingModalComponent } from './onboarding-modal/onboarding-modal.co
         NgxDatatableModule],
     exports: [CommentModalComponent, OnboardingModalComponent],
     entryComponents: [CommentModalComponent, OnboardingModalComponent],
-    providers: [OnboardingService, ImportVSPService],
-    bootstrap: []
+    providers: [OnboardingService, ImportVSPService]
 })
 
 export class ModalsModule {

@@ -18,6 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
+import { Injectable } from '@angular/core';
 import {  ButtonModel, Component, DisplayModule , ModalModel, PropertyModel, InputFEModel } from '../models';
 import { ComponentMetadata } from '../models/component-metadata';
 import { ModalService } from 'app/ng2/services/modal.service';
@@ -28,44 +29,38 @@ import { ModulePropertyModalComponent } from 'app/ng2/pages/module-property-moda
 export interface IModalsHandler {
 
     openEditPropertyModal(property: PropertyModel, component: Component, filteredProperties: PropertyModel[], isPropertyOwnValue: boolean,
-                          propertyOwnerType: string, propertyOwnerId: string, isViewOnly?: boolean): ng.IPromise<any>;
+                          propertyOwnerType: string, propertyOwnerId: string, isViewOnly?: boolean): Promise<any>;
 }
 
+@Injectable()
 export class ModalsHandler implements IModalsHandler {
 
-    static '$inject' = [
-        '$q',
-        'ModalServiceNg2'
-    ];
-
-    constructor(private $q: ng.IQService,
-                private modalServiceNg2: ModalService) {
+    constructor(private modalServiceNg2: ModalService) {
     }
 
-    openUpdateIconModal = (component: Component): ng.IPromise<any> => {
-        const deferred = this.$q.defer();
-        let dyn: IconsModalComponent;
+    openUpdateIconModal = (component: Component): Promise<any> => {
+        return new Promise<any>((resolve) => {
+            let dyn: IconsModalComponent;
 
-        const okBtn = new ButtonModel('OK', 'blue', () => {
-            const isDirty: boolean = dyn.updateIcon();
-            deferred.resolve(isDirty);
-            this.modalServiceNg2.closeCurrentModal();
+            const okBtn = new ButtonModel('OK', 'blue', () => {
+                const isDirty: boolean = dyn.updateIcon();
+                resolve(isDirty);
+                this.modalServiceNg2.closeCurrentModal();
+            });
+            const cancelBtn = new ButtonModel('Cancel', 'grey', () => {
+                resolve(undefined);
+                this.modalServiceNg2.closeCurrentModal();
+            });
+
+            const modal = this.modalServiceNg2.createCustomModal(
+                new ModalModel('l', 'Choose Icon', null, [okBtn, cancelBtn], 'standard'));
+            // addDynamicContentToModalAndBindInputs sets instance[key]=value, i.e. instance.component — the field
+            // IconsModalComponent reads. (addDynamicContentToModal would set instance.input instead, leaving
+            // this.component undefined and crashing initIcons.)
+            this.modalServiceNg2.addDynamicContentToModalAndBindInputs(modal, IconsModalComponent, {component});
+            dyn = modal.instance.dynamicContent.instance as IconsModalComponent;
+            modal.instance.open();
         });
-        const cancelBtn = new ButtonModel('Cancel', 'grey', () => {
-            deferred.resolve();
-            this.modalServiceNg2.closeCurrentModal();
-        });
-
-        const modal = this.modalServiceNg2.createCustomModal(
-            new ModalModel('l', 'Choose Icon', null, [okBtn, cancelBtn], 'standard'));
-        // addDynamicContentToModalAndBindInputs sets instance[key]=value, i.e. instance.component — the field
-        // IconsModalComponent reads. (addDynamicContentToModal would set instance.input instead, leaving
-        // this.component undefined and crashing initIcons.)
-        this.modalServiceNg2.addDynamicContentToModalAndBindInputs(modal, IconsModalComponent, {component});
-        dyn = modal.instance.dynamicContent.instance as IconsModalComponent;
-        modal.instance.open();
-
-        return deferred.promise;
     }
 
     /**
@@ -76,51 +71,48 @@ export class ModalsHandler implements IModalsHandler {
      * @param component - the component who is the owner of the property
      * @param filteredProperties - the filtered properties list to scroll between in the edit modal
      * @param isPropertyValueOwner - boolean telling if the component is eligible of editing the property
-     * @returns {IPromise<T>} - Promise telling if the modal has opened or not
+     * @returns {Promise<T>} - Promise telling if the modal has opened or not
      */
     openEditPropertyModal = (property: PropertyModel, component: Component | ComponentMetadata, filteredProperties: PropertyModel[],
-                             isPropertyValueOwner: boolean, propertyOwnerType: string, propertyOwnerId: string, isViewOnly: boolean = false): ng.IPromise<any> => {
-        const deferred = this.$q.defer();
+                             isPropertyValueOwner: boolean, propertyOwnerType: string, propertyOwnerId: string, isViewOnly: boolean = false): Promise<any> => {
+        return new Promise<any>((resolve) => {
+            const inputs = {
+                property,
+                component: component as Component,
+                filteredProperties,
+                isPropertyValueOwner,
+                propertyOwnerType,
+                propertyOwnerId,
+                isViewOnly,
+                inputProperty: null as InputFEModel
+            };
 
-        const inputs = {
-            property,
-            component: component as Component,
-            filteredProperties,
-            isPropertyValueOwner,
-            propertyOwnerType,
-            propertyOwnerId,
-            isViewOnly,
-            inputProperty: null as InputFEModel
-        };
+            const isNew: boolean = !property.name;
+            let dyn: PropertyFormModalComponent;
 
-        const isNew: boolean = !property.name;
-        let dyn: PropertyFormModalComponent;
-
-        const okBtn = new ButtonModel('Save', 'blue', () => {
-            dyn.save().subscribe((saved) => {
-                // save() returns Observable<PropertyModel | void>; the deferred is untyped ($q.defer<any>).
-                deferred.resolve(saved as any);
+            const okBtn = new ButtonModel('Save', 'blue', () => {
+                dyn.save().subscribe((saved) => {
+                    resolve(saved as any);
+                    this.modalServiceNg2.closeCurrentModal();
+                });
+            }, () => !dyn.isValid());
+            const cancelBtn = new ButtonModel('Cancel', 'grey', () => {
+                resolve(undefined);
                 this.modalServiceNg2.closeCurrentModal();
             });
-        }, () => !dyn.isValid());
-        const cancelBtn = new ButtonModel('Cancel', 'grey', () => {
-            deferred.resolve();
-            this.modalServiceNg2.closeCurrentModal();
+
+            const modal = this.modalServiceNg2.createCustomModal(
+                new ModalModel('l', (isNew ? 'Add' : 'Update') + ' Property', null, [okBtn, cancelBtn], 'standard'));
+            this.modalServiceNg2.addDynamicContentToModal(modal, PropertyFormModalComponent, inputs);
+            dyn = modal.instance.dynamicContent.instance as PropertyFormModalComponent;
+            // Resolve (so the caller's .then(reloadProperties) runs) and close the modal on an
+            // in-modal delete-success. Mirrors the Cancel button; the component invokes this from deleteCurrent().
+            dyn.deleteCallback = () => {
+                resolve(undefined);
+                this.modalServiceNg2.closeCurrentModal();
+            };
+            modal.instance.open();
         });
-
-        const modal = this.modalServiceNg2.createCustomModal(
-            new ModalModel('l', (isNew ? 'Add' : 'Update') + ' Property', null, [okBtn, cancelBtn], 'standard'));
-        this.modalServiceNg2.addDynamicContentToModal(modal, PropertyFormModalComponent, inputs);
-        dyn = modal.instance.dynamicContent.instance as PropertyFormModalComponent;
-        // Resolve the deferred (so the caller's .then(reloadProperties) runs) and close the modal on an
-        // in-modal delete-success. Mirrors the Cancel button; the component invokes this from deleteCurrent().
-        dyn.deleteCallback = () => {
-            deferred.resolve();
-            this.modalServiceNg2.closeCurrentModal();
-        };
-        modal.instance.open();
-
-        return deferred.promise;
     }
 
     /**
@@ -130,76 +122,72 @@ export class ModalsHandler implements IModalsHandler {
      * @param property - the property to edit
      * @param filteredProperties - the filtered properties list to scroll between in the edit modal
      * @param isPropertyValueOwner - boolean telling if the component is eligible of editing the property
-     * @returns {IPromise<T>} - Promise telling if the modal has opened or not
+     * @returns {Promise<T>} - Promise telling if the modal has opened or not
      */
-    newOpenEditPropertyModal = (property: PropertyModel, filteredProperties: PropertyModel[], isPropertyValueOwner: boolean, propertyOwnerType: string, propertyOwnerId: string, component: Component, inputProperty: InputFEModel): ng.IPromise<any> => {
-        const deferred = this.$q.defer();
+    newOpenEditPropertyModal = (property: PropertyModel, filteredProperties: PropertyModel[], isPropertyValueOwner: boolean, propertyOwnerType: string, propertyOwnerId: string, component: Component, inputProperty: InputFEModel): Promise<any> => {
+        return new Promise<any>((resolve) => {
+            const inputs = {
+                property,
+                component: component as Component,
+                filteredProperties,
+                isPropertyValueOwner,
+                propertyOwnerType,
+                propertyOwnerId,
+                isViewOnly: false,
+                inputProperty
+            };
 
-        const inputs = {
-            property,
-            component: component as Component,
-            filteredProperties,
-            isPropertyValueOwner,
-            propertyOwnerType,
-            propertyOwnerId,
-            isViewOnly: false,
-            inputProperty
-        };
+            const isNew: boolean = !property.name;
+            let dyn: PropertyFormModalComponent;
 
-        const isNew: boolean = !property.name;
-        let dyn: PropertyFormModalComponent;
-
-        const okBtn = new ButtonModel('Save', 'blue', () => {
-            dyn.save().subscribe((saved) => {
-                // save() returns Observable<PropertyModel | void>; the deferred is untyped ($q.defer<any>).
-                deferred.resolve(saved as any);
+            const okBtn = new ButtonModel('Save', 'blue', () => {
+                dyn.save().subscribe((saved) => {
+                    resolve(saved as any);
+                    this.modalServiceNg2.closeCurrentModal();
+                });
+            }, () => !dyn.isValid());
+            const cancelBtn = new ButtonModel('Cancel', 'grey', () => {
+                resolve(undefined);
                 this.modalServiceNg2.closeCurrentModal();
             });
-        }, () => !dyn.isValid());
-        const cancelBtn = new ButtonModel('Cancel', 'grey', () => {
-            deferred.resolve();
-            this.modalServiceNg2.closeCurrentModal();
+
+            const modal = this.modalServiceNg2.createCustomModal(
+                new ModalModel('l', (isNew ? 'Add' : 'Update') + ' Property', null, [okBtn, cancelBtn], 'standard'));
+            this.modalServiceNg2.addDynamicContentToModal(modal, PropertyFormModalComponent, inputs);
+            dyn = modal.instance.dynamicContent.instance as PropertyFormModalComponent;
+            // Resolve (so the caller's .then(reloadProperties) runs) and close the modal on an
+            // in-modal delete-success. Mirrors the Cancel button; the component invokes this from deleteCurrent().
+            dyn.deleteCallback = () => {
+                resolve(undefined);
+                this.modalServiceNg2.closeCurrentModal();
+            };
+            modal.instance.open();
         });
-
-        const modal = this.modalServiceNg2.createCustomModal(
-            new ModalModel('l', (isNew ? 'Add' : 'Update') + ' Property', null, [okBtn, cancelBtn], 'standard'));
-        this.modalServiceNg2.addDynamicContentToModal(modal, PropertyFormModalComponent, inputs);
-        dyn = modal.instance.dynamicContent.instance as PropertyFormModalComponent;
-        // Resolve the deferred (so the caller's .then(reloadProperties) runs) and close the modal on an
-        // in-modal delete-success. Mirrors the Cancel button; the component invokes this from deleteCurrent().
-        dyn.deleteCallback = () => {
-            deferred.resolve();
-            this.modalServiceNg2.closeCurrentModal();
-        };
-        modal.instance.open();
-
-        return deferred.promise;
     }
 
-    openEditModulePropertyModal = (property: PropertyModel, component: Component, selectedModule: DisplayModule, filteredProperties: PropertyModel[]): ng.IPromise<any> => {
-        const deferred = this.$q.defer();
-        let dyn: ModulePropertyModalComponent;
+    openEditModulePropertyModal = (property: PropertyModel, component: Component, selectedModule: DisplayModule, filteredProperties: PropertyModel[]): Promise<any> => {
+        return new Promise<any>((resolve) => {
+            let dyn: ModulePropertyModalComponent;
 
-        const okBtn = new ButtonModel('Save', 'blue', () => {
-            dyn.save().subscribe((saved) => {
-                deferred.resolve(saved as any);
+            const okBtn = new ButtonModel('Save', 'blue', () => {
+                dyn.save().subscribe((saved) => {
+                    resolve(saved as any);
+                    this.modalServiceNg2.closeCurrentModal();
+                });
+            }, () => !dyn.isValid());
+            const cancelBtn = new ButtonModel('Cancel', 'grey', () => {
+                resolve(undefined);
                 this.modalServiceNg2.closeCurrentModal();
             });
-        }, () => !dyn.isValid());
-        const cancelBtn = new ButtonModel('Cancel', 'grey', () => {
-            deferred.resolve();
-            this.modalServiceNg2.closeCurrentModal();
-        });
 
-        const modal = this.modalServiceNg2.createCustomModal(
-            new ModalModel('l', 'Update Property', null, [okBtn, cancelBtn], 'standard'));
-        this.modalServiceNg2.addDynamicContentToModalAndBindInputs(modal, ModulePropertyModalComponent, {
-            input: {property, component, selectedModule, filteredProperties}
+            const modal = this.modalServiceNg2.createCustomModal(
+                new ModalModel('l', 'Update Property', null, [okBtn, cancelBtn], 'standard'));
+            this.modalServiceNg2.addDynamicContentToModalAndBindInputs(modal, ModulePropertyModalComponent, {
+                input: {property, component, selectedModule, filteredProperties}
+            });
+            dyn = modal.instance.dynamicContent.instance as ModulePropertyModalComponent;
+            modal.instance.open();
         });
-        dyn = modal.instance.dynamicContent.instance as ModulePropertyModalComponent;
-        modal.instance.open();
-
-        return deferred.promise;
     }
 
 }

@@ -9,8 +9,6 @@
                    class="search-text"
                    data-tests-id="searchTextbox"
                    placeholder="Search"
-                   data-ng-model="searchBind"
-                   ng-model-options="{ debounce: 500 }"
                    (keyup)="updateFilter($event)"/>
         </div>
         <div class="sprite-new refresh-btn" data-tests-id="refreshButton" (click)="refreshDistributions()" title="Refresh"></div>

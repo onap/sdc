@@ -34,15 +34,11 @@ const WorkspaceContainerComponent = require('./workspace-container.component').W
 // compiling a template that hosts <router-outlet> and <top-nav> for tests that only exercise
 // pure methods.
 function createComponent(overrides: any = {}) {
-    const injector: any = {
-        get: (name: string) => ({
-            'sdcMenu': {roles: {}, LifeCycleStatuses: {}, DistributionStatuses: {}, component_workspace_menu_option: {}},
-            'ComponentFactory': {createComponent: (c: any) => c},
-            'MenuHandler': {generateBreadcrumbsModelFromComponents: jest.fn()},
-            'ChangeLifecycleStateHandler': {changeLifecycleState: jest.fn()},
-            'Sdc.Services.ProgressService': {initCreateComponentProgress: jest.fn(), deleteProgressValue: jest.fn()}
-        })[name]
-    };
+    const sdcMenu: any = {roles: {}, LifeCycleStatuses: {}, DistributionStatuses: {}, component_workspace_menu_option: {}};
+    const componentFactory: any = {createComponent: (c: any) => c};
+    const menuHandler: any = {generateBreadcrumbsModelFromComponents: jest.fn()};
+    const changeLifecycleStateHandler: any = {changeLifecycleState: jest.fn()};
+    const progressService: any = {initCreateComponentProgress: jest.fn(), deleteProgressValue: jest.fn()};
     const cacheService: any = {get: jest.fn(), set: jest.fn(), remove: jest.fn()};
     const eventListenerService: any = {registerObserverCallback: jest.fn(), unRegisterObserver: jest.fn(), notifyObservers: jest.fn()};
     const homeService: any = {getAllComponents: jest.fn()};
@@ -69,7 +65,8 @@ function createComponent(overrides: any = {}) {
         cacheService, eventListenerService, homeService, catalogService, componentServiceNg2,
         automatedUpgradeService, eventBusService, modalServiceSdcUI, pluginsService,
         workspaceNg1BridgeService, workspaceService, translateService, navigationService,
-        notificationsService, cdr, injector
+        notificationsService, cdr, sdcMenu, componentFactory, menuHandler,
+        changeLifecycleStateHandler, progressService
     );
     return {comp, workspaceService, navigationService, cdr, eventListenerService};
 }

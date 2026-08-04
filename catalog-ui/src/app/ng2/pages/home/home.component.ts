@@ -45,6 +45,7 @@ import {FoldersItemsMenu, FoldersItemsMenuGroup, FoldersMenu} from './folders';
 import {ImportVSPdata} from "../../components/modals/onboarding-modal/onboarding-modal.component";
 import {DataTypeCatalogComponent} from "../../../models/data-type-catalog-component";
 import {ModalImportTypeComponent} from "../../components/ui/modal-import-type/modal-import-type.component";
+import * as _ from 'lodash';
 
 @NgComponent({
     selector: 'home-page',
@@ -341,7 +342,11 @@ export class HomeComponent implements OnInit {
 
     private isDefaultFilter = (): boolean => {
         const defaultFilter = new HomeFilter();
-        return angular.equals(defaultFilter, this.homeFilter);
+        // Function-valued keys must be skipped: HomeFilter carries a toUrlParam arrow field that is a
+        // fresh closure per instance, so a plain _.isEqual is never true and the dashboard would
+        // re-fetch on every visit. angular.equals ignored functions; this reproduces that.
+        return _.isEqualWith(defaultFilter, this.homeFilter,
+            (a, b) => (typeof a === 'function' || typeof b === 'function') ? true : undefined);
     }
 
     private componentShouldReload = (): boolean => {

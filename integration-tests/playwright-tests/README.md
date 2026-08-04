@@ -228,6 +228,16 @@ cd integration-tests/playwright-tests
 SDC_BASE_URL=http://localhost:9000 npx playwright test
 ```
 
+`SDC_DEV_PORT` moves the dev server off 9000, which is what lets a baseline and a patched build run
+side by side — the only way to tell a real regression from a pre-existing console error. `IS_DEV_SERVER`
+recognises :9000-:9009, so stay inside that range or the plugins stub is skipped and a dozen
+specs fail on a click-blocking modal instead of on anything real.
+
+```bash
+SDC_DEV_PORT=9001 SDC_BACKEND_HOST=localhost npm start        # in catalog-ui
+SDC_BASE_URL=http://localhost:9001 npx playwright test
+```
+
 ### Pair the port with `SDC_DIRECT_FE` correctly, or every API call 404s
 
 `webpack.server.js:83` rewrites `^/sdc1/feProxy/rest` → `/sdc2/rest` **only when
