@@ -199,17 +199,36 @@
         <!-- ==================== RIGHT COLUMN ==================== -->
         <div class="w-sdc-form-column">
 
-          <!-- IMPORT TOSCA FILE VIA BROWSE (non-VSP) -->
-          <div class="i-sdc-form-item" *ngIf="!isVspImport()">
-            <label class="i-sdc-form-label">Browse to select file</label>
-            <input type="file"
-                   class="i-sdc-form-input"
-                   [attr.disabled]="isViewMode() || component?.vspArchived ? '' : null"
-                   (change)="onImportFileChange()"/>
+          <!-- IMPORT TOSCA FILE VIA BROWSE (ALSO VFC) -->
+          <div class="i-sdc-form-item" *ngIf="isShowFileBrowse">
+            <label class="i-sdc-form-label"
+                   [class.required]="isCreateMode() && component?.resourceType !== 'VF'">{{browseFileLabel}}</label>
+            <div class="i-sdc-form-file-upload i-sdc-form-input"
+                 [class.error]="isImportedFileInvalid()">
+              <span class="i-sdc-form-file-name"
+                    data-tests-id="filename">{{component?.importedFile?.filename || 'Browse to select file'}}</span>
+              <div class="i-sdc-form-file-upload-x-btn"
+                   *ngIf="component?.importedFile?.filename && !isFileBrowseDisabled()"
+                   (click)="clearImportedFile()"></div>
+              <label class="i-sdc-form-file-upload-label">
+                <input type="file"
+                       name="fileElement"
+                       [accept]="importedFileExtensionsWithDot"
+                       [attr.disabled]="isFileBrowseDisabled() ? '' : null"
+                       (click)="onImportFileClick($event)"
+                       (change)="onImportFileChange($event)"
+                       data-tests-id="browseButton"/>
+                <div class="file-upload-browse-btn"
+                     [class.disabled]="isFileBrowseDisabled()">Browse</div>
+              </label>
+            </div>
+            <div class="input-error-file-upload" *ngIf="importedFileError">
+              <span>{{importedFileError}}</span>
+            </div>
           </div>
 
           <!-- IMPORT TOSCA FILE VIA ONBOARDING (VSP) -->
-          <div class="i-sdc-form-item" *ngIf="isVspImport()">
+          <div class="i-sdc-form-item" *ngIf="isVspImport() && !isShowFileBrowse">
             <label class="i-sdc-form-label required">VSP</label>
             <div class="i-sdc-form-file-upload i-sdc-form-input">
               <span class="i-sdc-form-file-name"

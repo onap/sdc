@@ -45,6 +45,7 @@ import {CacheService} from 'app/services-ng2';
 import {SdcUiServices} from 'onap-ui-angular';
 import {Subject} from 'rxjs/Subject';
 import {ConfigureFn, configureTests} from '../../../../../../jest/test-config.helper';
+import {SdcConfigToken} from '../../../../config/sdc-config.config';
 import {FileUtilsService} from '../../../../services/file-utils.service';
 import {NavigationService} from '../../../../services/navigation.service';
 import {TranslateService} from '../../../../shared/translator/translate.service';
@@ -124,6 +125,7 @@ describe('GeneralTabComponent - base type select rendering', () => {
                     {provide: TranslateService, useValue: {translate: (k: string) => k}},
                     {provide: SdcUiServices.NotificationsService, useValue: {push: jest.fn()}},
                     {provide: NavigationService, useValue: navigationService},
+                    {provide: SdcConfigToken, useValue: {toscaFileExtension: 'yaml,yml', csarFileExtension: 'csar'}},
                     {provide: '$injector', useValue: {get: (n: string) => ng1[n]}}
                 ]
             });
