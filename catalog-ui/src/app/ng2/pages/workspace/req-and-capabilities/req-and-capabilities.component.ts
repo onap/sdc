@@ -1,6 +1,6 @@
 import { Component, ComponentRef, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import * as _ from 'lodash';
-import { SdcUiServices } from 'onap-ui-angular';
+import { SdcUiCommon, SdcUiServices } from 'onap-ui-angular';
 import { Capability, CapabilityUI } from '../../../../models/capability';
 import { Requirement, RequirementUI } from '../../../../models/requirement';
 import { TopologyTemplateService } from '../../../services/component-services/topology-template.service';
@@ -147,9 +147,9 @@ export class ReqAndCapabilitiesComponent implements OnInit {
 
     private addCapability() {
         let modalConfig = {
-            size: 'md',
+            size: SdcUiCommon.ModalSize.medium,
             title:  'Add Capability',
-            type: 'custom',
+            type: SdcUiCommon.ModalType.custom,
             buttons: [
                 {
                     id: 'saveButton',
@@ -185,9 +185,9 @@ export class ReqAndCapabilitiesComponent implements OnInit {
 
     private addRequirement () {
         let modalConfig = {
-            size: 'md',
+            size: SdcUiCommon.ModalSize.medium,
             title: 'Add Requirement',
-            type: 'custom',
+            type: SdcUiCommon.ModalType.custom,
             buttons: [
                 {
                     id: 'saveButton',

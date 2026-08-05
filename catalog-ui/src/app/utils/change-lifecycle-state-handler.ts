@@ -94,7 +94,7 @@ export class ChangeLifecycleStateHandler {
             let commentModalInstance: SdcUiComponents.ModalComponent;
             const onOk = () => {
                 const confirmationText: string = commentModalInstance.innerModalContent.instance.comment.text;
-                commentModalInstance.closeModal();
+                commentModalInstance.closeModal(null);
                 comment.userRemarks = this.validationUtils.stripAndSanitize(confirmationText);
 
                 if (data.url === 'lifecycleState/CHECKIN') {

@@ -50,7 +50,8 @@ import {
     OperationCreatorComponent,
     OperationCreatorInput
 } from 'app/ng2/pages/interface-operation/operation-creator/operation-creator.component';
-import {IModalButtonComponent, IModalConfig, SdcUiServices} from 'onap-ui-angular';
+import {SdcUiCommon, SdcUiComponents, SdcUiServices} from 'onap-ui-angular';
+import {IModalButtonComponent, IModalConfig} from 'onap-ui-angular/dist/modals/models/modal-config';
 
 export class UIOperationModel extends OperationModel {
     isCollapsed: boolean = true;
@@ -267,7 +268,7 @@ export class InterfaceOperationComponent {
         const cancelButton: IModalButtonComponent = {
             id: 'cancelButton',
             text: this.modalTranslation.CANCEL_BUTTON,
-            type: 'secondary',
+            type: SdcUiCommon.ButtonType.secondary,
             size: 'small',
             closeModal: true,
             callback: () => {
@@ -278,7 +279,7 @@ export class InterfaceOperationComponent {
         const saveButton: IModalButtonComponent = {
             id: 'saveButton',
             text: modalData.saveBtnText,
-            type: 'primary',
+            type: SdcUiCommon.ButtonType.primary,
             size: 'small',
             closeModal: true,
             callback: () => {
@@ -313,7 +314,7 @@ export class InterfaceOperationComponent {
         const modalConfig: IModalConfig = {
             title: modalData.modalTitle,
             size: 'l',
-            type: 'custom',
+            type: SdcUiCommon.ModalType.custom,
             buttons: [saveButton, cancelButton] as IModalButtonComponent[]
         };
 
@@ -326,7 +327,7 @@ export class InterfaceOperationComponent {
         const deleteButton: IModalButtonComponent = {
             id: 'deleteButton',
             text: this.modalTranslation.DELETE_BUTTON,
-            type: 'primary',
+            type: SdcUiCommon.ButtonType.primary,
             size: 'small',
             closeModal: true,
             callback: () => {
@@ -347,7 +348,7 @@ export class InterfaceOperationComponent {
         const cancelButton: IModalButtonComponent = {
             id: 'cancelButton',
             text: this.modalTranslation.CANCEL_BUTTON,
-            type: 'secondary',
+            type: SdcUiCommon.ButtonType.secondary,
             size: 'small',
             closeModal: true,
             callback: () => {
@@ -359,7 +360,9 @@ export class InterfaceOperationComponent {
             this.modalTranslation.DELETE_TITLE,
             this.modalTranslation.deleteText(operation.name),
             'deleteOperationModal',
-            [deleteButton, cancelButton],
+            // openWarningModal is typed against the ModalButtonComponent class, but only reads the
+            // IModalButtonComponent fields these literals provide.
+            [deleteButton, cancelButton] as any as SdcUiComponents.ModalButtonComponent[],
         );
     }
 

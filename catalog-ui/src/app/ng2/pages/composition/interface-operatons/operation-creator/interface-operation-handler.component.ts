@@ -38,7 +38,7 @@ import {ArtifactModel} from "../../../../../models/artifacts";
 import {PropertyBEModel} from "../../../../../models/properties-inputs/property-be-model";
 import {PropertyParamRowComponent} from "./property-param-row/property-param-row.component";
 import {PropertyFEModel} from "../../../../../models/properties-inputs/property-fe-model";
-import {IDropDownOption} from 'onap-ui-angular';
+import {IDropDownOption} from 'onap-ui-angular/dist/form-elements/dropdown/dropdown-models';
 import {ComponentServiceNg2} from "../../../../services/component-services/component.service";
 import {DropDownComponent} from "onap-ui-angular/dist/form-elements/dropdown/dropdown.component";
 import {DataTypeService} from "../../../../services/data-type.service";

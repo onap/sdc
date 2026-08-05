@@ -25,7 +25,7 @@ export class ImportVSPService {
         onboardingModalInstance.innerModalContent.instance.closeModalEvent.subscribe(
             (result: ImportVSPdata) => {
                 subject.next(result);
-                onboardingModalInstance.closeModal(); 
+                onboardingModalInstance.closeModal(null);
             }, (err) =>{}
         )
         return subject.asObservable();

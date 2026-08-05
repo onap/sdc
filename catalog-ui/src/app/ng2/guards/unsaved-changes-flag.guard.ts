@@ -104,12 +104,12 @@ export class UnsavedChangesFlagGuard implements CanDeactivate<any> {
             testId: 'OK',
             text: this.sdcMenu.alertMessages.okButton,
             type: SdcUiCommon.ButtonType.warning,
-            callback: () => {
+            callback: ((): void => {
                 // app.ts:621 cleared the flag before re-issuing the transition; without this the
                 // re-navigation would hit this same guard again and block a second time.
                 this.workspaceService.unsavedChanges = false;
                 this.router.navigateByUrl(targetUrl);
-            },
+            }) as Function,
             closeModal: true
         } as SdcUiComponents.ModalButtonComponent;
 

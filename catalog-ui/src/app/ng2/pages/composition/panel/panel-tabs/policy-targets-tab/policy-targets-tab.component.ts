@@ -102,7 +102,7 @@ export class PolicyTargetsTabComponent implements OnInit {
 
         const targetsToAdd: TargetUiObject[] = this.addModalInstance.innerModalContent.instance.existingElements; // TODO refactor sdc-ui modal in order to return the data
         if (targetsToAdd.length > 0) {
-            this.addModalInstance.closeModal();
+            this.addModalInstance.closeModal(null);
             this.loaderService.activate();
             const updatedTargets: TargetUiObject[] = _.union(this.targets, targetsToAdd);
             this.policiesService.updateTargets(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId, this.policy.uniqueId, updatedTargets).subscribe(

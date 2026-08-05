@@ -1,6 +1,6 @@
 import {Capability, CapabilityUI} from "../../../../../models/capability";
 import { ViewChild, Input, OnInit, Component } from "@angular/core";
-import {SdcUiServices} from "onap-ui-angular";
+import {SdcUiCommon, SdcUiServices} from "onap-ui-angular";
 import {CapabilitiesEditorComponent} from "./capabilityEditor/capabilities-editor.component";
 import {WorkspaceService} from "../../workspace.service";
 import {TopologyTemplateService} from "../../../../services/component-services/topology-template.service";
@@ -33,9 +33,9 @@ export class CapabilitiesComponent {
 
     editCapability(cap: CapabilityUI) {
         let modalConfig = {
-            size: 'md',
+            size: SdcUiCommon.ModalSize.medium,
             title: 'Update Capability',
-            type: 'custom',
+            type: SdcUiCommon.ModalType.custom,
             buttons: [
                 {
                     id: 'saveButton',

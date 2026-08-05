@@ -140,7 +140,8 @@ export class DeploymentArtifactsPageComponent implements OnInit {
 
         if (noConfig) {
             const msg = this.translateService.translate('DEPLOYMENT_ARTIFACT_GAB_NO_CONFIG');
-            this.modalService.openAlertModal(titleStr, msg);
+            // openAlertModal does not exist on ModalService; openWarningModal is the equivalent API.
+            this.modalService.openWarningModal(titleStr, msg, 'gab-no-config');
         }
 
         const modalInputs = {

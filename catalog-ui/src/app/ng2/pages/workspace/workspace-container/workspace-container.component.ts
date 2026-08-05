@@ -627,7 +627,7 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
             testId: 'ok-button',
             text: this.sdcMenu.alertMessages.okButton,
             type: SdcUiCommon.ButtonType.warning,
-            callback: this.handleDeleteArchivedComponent,
+            callback: this.handleDeleteArchivedComponent as Function,
             closeModal: true
         } as SdcUiComponents.ModalButtonComponent;
         this.modalServiceSdcUI.openWarningModal(

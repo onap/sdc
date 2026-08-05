@@ -99,7 +99,7 @@ export class GroupMembersTabComponent implements OnInit, OnDestroy {
         // TODO refactor sdc-ui modal in order to return the data
         const membersToAdd: MemberUiObject[] = this.addMemberModalInstance.innerModalContent.instance.existingElements;
         if (membersToAdd.length > 0) {
-            this.addMemberModalInstance.closeModal();
+            this.addMemberModalInstance.closeModal(null);
             this.loaderService.activate();
             const locallyUpdatedMembers: MemberUiObject[] = _.union(this.members, membersToAdd);
             this.groupsService.updateMembers(
