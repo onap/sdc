@@ -34,4 +34,4 @@ describe('component instance nodes style component', () => {
         let res = ComponentInstanceNodesStyle.getGraphDisplayName(inputString);
         expect(res).toBe(expectedRes);
     });
-}
+});

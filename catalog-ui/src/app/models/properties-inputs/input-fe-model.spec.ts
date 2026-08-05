@@ -24,7 +24,7 @@ describe('InputFEModel', () => {
   [
     { inputValue: undefined, expectedValue: null },
     { inputValue: null, expectedValue: null },
-    { inputValue: ' this is a test ', expectedValue: 'this is a test' }
+    { inputValue: ' this is a test ', expectedValue: 'this is a test' },
     { inputValue: '       this is another test            ', expectedValue: 'this is another test' }
   ].forEach(({inputValue, expectedValue}) => {
       describe(`input is ${inputValue}`, () => {

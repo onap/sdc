@@ -1,6 +1,15 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
+    // Both options only matter to an IDE language server newer than the pinned typescript 2.4.2;
+    // the webpack/@ngtools AOT build behaves identically with or without them.
+    // strict: 2.4.2 defaulted it to false, TypeScript >=6 defaults it to true — leaving it unset
+    // makes a modern tsserver report thousands of strictNullChecks/noImplicitAny errors the build
+    // does not have. rootDir: `configurations/*.js` sits ABOVE this file and is pulled in by
+    // allowJs + a relative import, so the inferred common source dir is the catalog-ui root and
+    // tsc >=6 refuses to emit with TS5055 "would overwrite input file".
+    "strict": false,
+    "rootDir": "..",
     "declaration": false,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,

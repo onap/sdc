@@ -287,8 +287,8 @@ describe('composition graph component', () => {
                 cyTarget: [{
                     isEdge: jest.fn().mockReturnValue(true),
                     data: jest.fn().mockReturnValue({type: 'simple'})
-                }
-            }];
+                }]
+            };
             instance.openModifyLinkMenu = jest.fn();
             instance.onTapEnd(event);
             expect(instance.compositionGraphLinkUtils.handleLinkClick).toHaveBeenCalledWith(instance._cy, event);
