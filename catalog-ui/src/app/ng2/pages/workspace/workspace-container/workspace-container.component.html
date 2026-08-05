@@ -78,10 +78,15 @@
                     <span *ngIf="!isCreateMode() && !component.isLatestVersion() && !showLatestVersion()" [class.disabled]="unsavedChanges">
                         Switch to the&nbsp;<a data-tests-id="latest-version" (click)="getLatestVersion()">latest version</a>
                     </span>
+                    <button *ngIf="showUpgradeServicesButton()"
+                            (click)="openAutomatedUpgradeModal()"
+                            [disabled]="hasNoDependencies"
+                            [class.disabled]="component.isArchived"
+                            class="tlv-btn blue"
+                            data-tests-id="open-upgrade-vsp-popup">{{component.isResource() ? 'Upgrade Services' : 'Update Services'}}</button>
                     <ng-container *ngIf="changeLifecycleStateButtons">
                         <button *ngFor="let entry of lifecycleButtonEntries; trackBy: trackByKey; let first = first"
                                 (click)="changeLifecycleState(entry.key)"
-                                [hidden]="entry.key === 'deleteVersion'"
                                 [disabled]="checkDisableButton(entry.value)"
                                 class="change-lifecycle-state-btn tlv-btn"
                                 [ngClass]="first ? 'outline green' : 'grey'"
@@ -89,11 +94,38 @@
                             {{entry.value.text}}
                         </button>
                     </ng-container>
+                    <button *ngIf="showRestoreButton()"
+                            (click)="restoreComponent()"
+                            [class.disabled]="!isDesigner() || !component.isLatestVersion()"
+                            class="tlv-btn blue"
+                            data-tests-id="restore-component-button">Restore</button>
                     <button *ngIf="!isViewMode() && isCreateMode()"
                             (click)="create()"
                             [disabled]="!isValidForm || isDisableMode() || isLoading || unsavedChanges"
                             class="tlv-btn outline green"
                             data-tests-id="create/save">Create</button>
+                    <!-- The three sprite spans below carry the label text the AngularJS original had, kept
+                         because `.sdc-workspace-top-bar-buttons > span.sprite-new` text-indents it out of
+                         the 24px box (workspace.less). `sdc-smart-tooltip` from the deleted AngularJS
+                         directives is substituted by the shipped library's [sdc-tooltip]; the deleted
+                         `prevent-double-click` directive has no replacement and no remaining users. -->
+                    <span *ngIf="showDeleteVersionButton()"
+                          (click)="changeLifecycleState('deleteVersion')"
+                          [class.disabled]="!isValidForm || isDisableMode() || isViewMode() || unsavedChanges"
+                          class="sprite-new delete-btn"
+                          data-tests-id="delete_version"
+                          sdc-tooltip [tooltip-text]="'Delete'">Delete</span>
+                    <span *ngIf="showDeleteArchivedButton()"
+                          (click)="deleteArchivedComponent()"
+                          class="sprite-new delete-btn"
+                          data-tests-id="delete_archive_version"
+                          sdc-tooltip [tooltip-text]="'Delete Component'">Delete</span>
+                    <span *ngIf="showArchiveButton()"
+                          (click)="archiveComponent()"
+                          [class.disabled]="!component.isLatestVersion()"
+                          class="sprite-new archive-btn"
+                          data-tests-id="archive-component-button"
+                          sdc-tooltip [tooltip-text]="'Archive'">Archive</span>
                     <span class="delimiter"></span>
                     <span class="sprite-new x-btn" (click)="goToBreadcrumbHome()" [class.disabled]="unsavedChanges">Close</span>
                 </div>

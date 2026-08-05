@@ -221,9 +221,14 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
             this.lifecycleButtonEntries = [];
             return;
         }
-        this.lifecycleButtonEntries = Object.keys(this.changeLifecycleStateButtons).map(key => ({
-            key, value: this.changeLifecycleStateButtons[key]
-        }));
+        // deleteVersion is FILTERED OUT rather than hidden in the template. Both spellings look
+        // equivalent, but `[hidden]` leaves a second, 0x0 element carrying
+        // data-tests-id="delete_version" in the DOM, and Selenium/Playwright resolve the FIRST
+        // match — so the standalone sprite span below it becomes unreachable. The AngularJS
+        // original used `ng-if="key != 'deleteVersion'"`, which removed the node outright.
+        this.lifecycleButtonEntries = Object.keys(this.changeLifecycleStateButtons)
+            .filter((key) => key !== 'deleteVersion')
+            .map((key) => ({key, value: this.changeLifecycleStateButtons[key]}));
     }
 
     trackByKey(index: number, entry: {key: string, value: any}): string {
@@ -261,6 +266,30 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
 
     showLatestVersion(): boolean {
         return this.component && this.component.isLatestVersion();
+    }
+
+    showUpgradeServicesButton(): boolean {
+        return this.isDesigner() && !this.isCreateMode() &&
+            this.component.lifecycleState === ComponentState.CERTIFIED &&
+            (this.component.isService() || this.component.getComponentSubType() === ResourceType.VF);
+    }
+
+    showRestoreButton(): boolean {
+        return !this.isCreateMode() && this.component.isArchived;
+    }
+
+    showDeleteVersionButton(): boolean {
+        return this.isDesigner() && !this.isCreateMode() &&
+            this.component.lifecycleState === ComponentState.NOT_CERTIFIED_CHECKOUT && !this.component.isArchived;
+    }
+
+    showDeleteArchivedButton(): boolean {
+        return !this.isCreateMode() && this.component.isArchived;
+    }
+
+    showArchiveButton(): boolean {
+        return this.isDesigner() && !this.isCreateMode() &&
+            this.component.lifecycleState !== ComponentState.NOT_CERTIFIED_CHECKOUT && !this.component.isArchived;
     }
 
     isSelected(menuItem: MenuItem): boolean {
@@ -549,6 +578,115 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
             this.navigationService.reload({id: component.uniqueId, componentCsar: null});
         } else {
             this.navigationService.reload({id: component.uniqueId});
+        }
+    }
+
+    // --- Archive / restore / delete-archived ---
+
+    archiveComponent = (): void => {
+        this.isLoading = true;
+        this.componentServiceNg2.archiveComponent(this.component.componentType, this.component.uniqueId).subscribe(() => {
+            this.isLoading = false;
+            this.navigateToPreviousState();
+            this.component.isArchived = true;
+            this.deleteArchiveCache();
+            this.notificationsService.push(new NotificationSettings(
+                'success',
+                this.component.name + ' ' + this.translateService.translate('ARCHIVE_SUCCESS_MESSAGE_TEXT'),
+                this.translateService.translate('ARCHIVE_SUCCESS_MESSAGE_TITLE'),
+                5000));
+            this.cdr.detectChanges();
+        }, () => {
+            this.isLoading = false;
+            this.cdr.detectChanges();
+        });
+    }
+
+    restoreComponent = (): void => {
+        this.isLoading = true;
+        this.componentServiceNg2.restoreComponent(this.component.componentType, this.component.uniqueId).subscribe(() => {
+            this.isLoading = false;
+            this.notificationsService.push(new NotificationSettings(
+                'success',
+                this.component.name + ' ' + this.translateService.translate('RESTORE_SUCCESS_MESSAGE_TEXT'),
+                this.translateService.translate('RESTORE_SUCCESS_MESSAGE_TITLE'),
+                5000));
+            this.reload(this.component);
+        }, () => {
+            this.isLoading = false;
+            this.cdr.detectChanges();
+        });
+        // Deliberately OUTSIDE the subscribe, matching the AngularJS original: the flag flips and
+        // the cache drops as soon as the request is fired, not when it returns.
+        this.component.isArchived = false;
+        this.deleteArchiveCache();
+    }
+
+    deleteArchivedComponent = (): void => {
+        const modalButton = {
+            testId: 'ok-button',
+            text: this.sdcMenu.alertMessages.okButton,
+            type: SdcUiCommon.ButtonType.warning,
+            callback: this.handleDeleteArchivedComponent,
+            closeModal: true
+        } as SdcUiComponents.ModalButtonComponent;
+        this.modalServiceSdcUI.openWarningModal(
+            this.translateService.translate('COMPONENT_VIEW_DELETE_MODAL_TITLE'),
+            this.translateService.translate('COMPONENT_VIEW_DELETE_MODAL_TEXT'),
+            'alert-modal',
+            [modalButton]);
+    }
+
+    handleDeleteArchivedComponent = (): void => {
+        this.isLoading = true;
+        this.componentServiceNg2.deleteComponent(this.component.componentType, this.component.uniqueId).subscribe(() => {
+            this.deleteArchiveCache();
+            this.notificationsService.push(new NotificationSettings(
+                'success',
+                this.component.name + ' ' + this.translateService.translate('DELETE_SUCCESS_MESSAGE_TEXT'),
+                this.translateService.translate('DELETE_SUCCESS_MESSAGE_TITLE'),
+                5000));
+            this.navigateToPreviousState('dashboard');
+            this.isLoading = false;
+            this.cdr.detectChanges();
+        }, () => {
+            this.notificationsService.push(new NotificationSettings(
+                'error',
+                this.component.name + ' ' + this.translateService.translate('DELETE_FAILURE_MESSAGE_TEXT'),
+                this.translateService.translate('DELETE_FAILURE_MESSAGE_TITLE'),
+                5000));
+            this.isLoading = false;
+            this.cdr.detectChanges();
+        });
+    }
+
+    openAutomatedUpgradeModal = (): void => {
+        this.isLoading = true;
+        this.componentServiceNg2.getDependencies(this.component.componentType, this.component.uniqueId)
+            .subscribe((response: IDependenciesServerResponse[]) => {
+                this.isLoading = false;
+                this.automatedUpgradeService.openAutomatedUpgradeModal(response, this.component, false);
+                this.cdr.detectChanges();
+            });
+    }
+
+    // The catalog's Archive left-switch view is served from this cache entry, so leaving it in place
+    // makes an archived/restored/deleted component keep showing its previous archive state there.
+    private deleteArchiveCache(): void {
+        this.cacheService.remove('archiveComponents');
+    }
+
+    // Archive and delete-archived both leave the current component unviewable, so they return the
+    // user to wherever they came from. `fallback` is where delete-archived goes when the previous
+    // state is something other than catalog/dashboard; archive passes none and stays put instead.
+    // Entering the workspace without a previousState at all navigates nowhere in either case.
+    private navigateToPreviousState(fallback?: string): void {
+        const previousState = this.navigationService.getParam('previousState');
+        if (!previousState) { return; }
+        if (previousState === 'catalog' || previousState === 'dashboard') {
+            this.navigationService.navigate(previousState);
+        } else if (fallback) {
+            this.navigationService.navigate(fallback);
         }
     }
 
