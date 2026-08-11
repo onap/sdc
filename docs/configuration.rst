@@ -1302,6 +1302,10 @@ FE-configuration.yaml
         # Onboarding frontend health check url
         healthCheckUri: "/onboarding/v1.0/healthcheck"
 
+    # User assumed for requests that carry none of the identificationHeaderFields below and no ONAP
+    # Portal cookie. Set to an empty value to reject such requests with 305 instead.
+    defaultUserId: cs0008
+
     # Request headers for identification of the user that made the request
     identificationHeaderFields:
         -

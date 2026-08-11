@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
+import org.apache.commons.lang3.StringUtils;
 import org.onap.portalsdk.core.onboarding.exception.CipherUtilException;
 import org.onap.portalsdk.core.onboarding.util.CipherUtil;
 import org.onap.sdc.security.AuthenticationCookie;
@@ -124,16 +126,20 @@ public class PortalServlet extends HttpServlet {
         if (null == userId) {
             // Authentication via ecomp portal
             try {
-                String userIdFromCookie = getUserIdFromCookie(request);
-                if (("").equals(userIdFromCookie)) {
-                    // This is probably a webseal request, so missing header in request should be printed.
-                    response.sendError(HttpServletResponse.SC_USE_PROXY, MISSING_HEADERS_MSG);
-                }
-                userId = userIdFromCookie;
+                userId = getUserIdFromCookie(request);
             } catch (Exception e) {
-                response.sendError(HttpServletResponse.SC_USE_PROXY, AUTHORIZATION_ERROR_MSG);
                 log.error("Error during adding request header", e);
+                response.sendError(HttpServletResponse.SC_USE_PROXY, AUTHORIZATION_ERROR_MSG);
+                return;
             }
+        }
+        if (StringUtils.isEmpty(userId)) {
+            userId = configuration.getDefaultUserId();
+            if (StringUtils.isEmpty(userId)) {
+                response.sendError(HttpServletResponse.SC_USE_PROXY, MISSING_HEADERS_MSG);
+                return;
+            }
+            log.info("Request carries no identity headers and no portal cookie, falling back to default user {}", userId);
         }
         // Replace webseal header with open source header
         mutableRequest.putHeader(Constants.USER_ID, userId);

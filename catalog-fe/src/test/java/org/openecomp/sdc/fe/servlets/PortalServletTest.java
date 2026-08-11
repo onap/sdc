@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +22,7 @@
 package org.openecomp.sdc.fe.servlets;
 
 import static org.glassfish.jersey.test.TestProperties.CONTAINER_PORT;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.times;
@@ -47,6 +49,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 import org.openecomp.sdc.common.api.Constants;
@@ -136,12 +139,25 @@ class PortalServletTest extends JerseyTest {
     }
 
     @Test
-    void testMissingHeadersRequest() throws IOException {
+    void testMissingHeadersRequestWithoutDefaultUserFallsBack() throws IOException {
+        when(configuration.getDefaultUserId()).thenReturn("");
         when(request.getHeader(Mockito.anyString())).thenReturn(null);
         when(request.getCookies()).thenReturn(getCookies());
         target().path("/portal").request().get();
         Mockito.verify(response, times(1))
             .sendError(HttpServletResponse.SC_USE_PROXY, PortalServlet.MISSING_HEADERS_MSG);
+    }
+
+    @Test
+    void testMissingHeadersRequestUsesConfiguredDefaultUser() throws IOException, ServletException {
+        when(configuration.getDefaultUserId()).thenReturn("cs0008");
+        when(request.getHeader(Mockito.anyString())).thenReturn(null);
+        when(request.getCookies()).thenReturn(getCookies());
+        target().path("/portal").request().get();
+        Mockito.verify(response, Mockito.never()).sendError(Mockito.anyInt(), Mockito.anyString());
+        final ArgumentCaptor<ServletRequest> forwarded = ArgumentCaptor.forClass(ServletRequest.class);
+        verify(rd).forward(forwarded.capture(), Mockito.any(ServletResponse.class));
+        assertEquals("cs0008", ((HttpServletRequest) forwarded.getValue()).getHeader("USER_ID"));
     }
 
     @Test

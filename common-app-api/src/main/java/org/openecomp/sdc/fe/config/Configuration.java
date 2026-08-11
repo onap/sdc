@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,6 +76,11 @@ public class Configuration extends BasicConfiguration {
     private List<List<String>> identificationHeaderFields;
     private List<List<String>> optionalHeaderFields;
     private List<String> forwardHeaderFields;
+    /**
+     * User id assumed when a request carries no identity headers. The ONAP Portal used to supply them; with no portal deployed there is nothing to
+     * authenticate against, so requests are attributed to this user. Set it to empty to reject unidentified requests instead.
+     */
+    private String defaultUserId = "cs0008";
     private String dataValidatorFilterExcludedUrls; // Comma separated list of excluded URLs by the DataValidatorFilter
     private String permittedAncestors; // Space separated list of permitted ancestors
 

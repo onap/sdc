@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2019 Nokia Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -85,7 +86,8 @@ public class ConfigMgrServletTest {
             + "  \"beProtocol\": \"PROTO\",\n"
             + "  \"version\": \"VERSION 1\",\n"
             + "  \"threadpoolSize\": 0,\n"
-            + "  \"requestTimeout\": 0\n"
+            + "  \"requestTimeout\": 0,\n"
+            + "  \"defaultUserId\": \"cs0008\"\n"
             + "}";
 
         Configuration configuration = new Configuration();

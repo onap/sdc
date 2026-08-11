@@ -51,6 +51,10 @@ dcae:
   port: 8181
   healthCheckUri: "/dcae/healthCheck"
 
+# User assumed for requests that carry none of the identificationHeaderFields below and no ONAP Portal
+# cookie. Set to an empty value to reject such requests with 305 instead.
+defaultUserId: cs0008
+
 identificationHeaderFields:
    -
         - &HTTP_IV_USER HTTP_IV_USER
