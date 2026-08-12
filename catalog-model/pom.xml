@@ -522,6 +522,12 @@
             </exclusions>
         </dependency>
 
+        <!-- compile (not provided) scope: the agent silently ignores @WithSpan if the annotation is absent at runtime -->
+        <dependency>
+            <groupId>io.opentelemetry.instrumentation</groupId>
+            <artifactId>opentelemetry-instrumentation-annotations</artifactId>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>
