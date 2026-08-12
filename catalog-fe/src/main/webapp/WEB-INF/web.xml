@@ -81,6 +81,16 @@
     </filter-mapping>
 
     <filter>
+        <filter-name>defaultUserIdFilter</filter-name>
+        <filter-class>org.openecomp.sdc.fe.filters.DefaultUserIdFilter</filter-class>
+        <async-supported>true</async-supported>
+    </filter>
+    <filter-mapping>
+        <filter-name>defaultUserIdFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter>
         <filter-name>AuditLogServletFilter</filter-name>
         <filter-class>org.onap.logging.filter.base.AuditLogServletFilter</filter-class>
         <async-supported>true</async-supported>
