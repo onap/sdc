@@ -20,6 +20,7 @@
 package org.openecomp.sdc.be.model.cache;
 
 import fj.data.Either;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -218,7 +219,12 @@ public class ApplicationDataTypeCache implements ApplicationCache<DataTypeDefini
         return dataTypesByModelCacheMap.containsKey(model) ? dataTypesByModelCacheMap.get(model) : new HashMap<>();
     }
 
+    /**
+     * Runs on a scheduled executor, so there is no incoming trace context. Without a span started here, every database
+     * query this triggers is exported as a separate single-span trace.
+     */
     @Override
+    @WithSpan("ApplicationDataTypeCache.refresh")
     public void run() {
         try {
             refreshDataTypesCacheIfStale();

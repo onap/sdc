@@ -35,6 +35,7 @@ import static org.openecomp.sdc.common.impl.ExternalConfiguration.getAppVersion;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -390,7 +391,12 @@ public class HealthCheckBusinessLogic {
 
     public class HealthCheckScheduledTask implements Runnable {
 
+        /**
+         * Runs on a scheduled executor, so there is no incoming trace context. Without a span started here, each
+         * downstream health probe is exported as a separate single-span trace.
+         */
         @Override
+        @WithSpan("HealthCheckBusinessLogic.healthCheck")
         public void run() {
             mdcFieldsHandler.addInfoForErrorAndDebugLogging(LOG_PARTNER_NAME);
             Configuration config = ConfigurationManager.getConfigurationManager().getConfiguration();

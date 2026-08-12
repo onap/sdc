@@ -58,6 +58,8 @@ Modifications copyright (c) 2018-2019 Nokia
     <servlet-api.version>4.0.4</servlet-api.version>
     <wire-mock.version>2.26.3</wire-mock.version>
     <opentelemetry-javaagent.version>2.26.1</opentelemetry-javaagent.version>
+    <!-- kept in step with opentelemetry-javaagent.version; only the agent acts on @WithSpan, the annotation is inert -->
+    <opentelemetry-instrumentation-annotations.version>2.26.1</opentelemetry-instrumentation-annotations.version>
     <ecomp.version>3.4.0</ecomp.version>
     <cassandra.unit.version>4.3.1.0</cassandra.unit.version>
     <cadi.version>2.1.21</cadi.version>
@@ -284,6 +286,11 @@ Modifications copyright (c) 2018-2019 Nokia
         <groupId>net.logstash.logback</groupId>
         <artifactId>logstash-logback-encoder</artifactId>
         <version>${logstash.encoder.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.opentelemetry.instrumentation</groupId>
+        <artifactId>opentelemetry-instrumentation-annotations</artifactId>
+        <version>${opentelemetry-instrumentation-annotations.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

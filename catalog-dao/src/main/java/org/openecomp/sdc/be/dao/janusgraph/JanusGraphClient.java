@@ -20,6 +20,7 @@
 package org.openecomp.sdc.be.dao.janusgraph;
 
 import fj.data.Either;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.Callable;
@@ -346,7 +347,12 @@ public class JanusGraphClient {
 
     private class HealthCheckScheduledTask implements Runnable {
 
+        /**
+         * Runs on a scheduled executor, so there is no incoming trace context. The span started here also covers the
+         * graph query, which {@link #isGraphOpen()} hands off to a second executor.
+         */
         @Override
+        @WithSpan("JanusGraphClient.healthCheck")
         public void run() {
             healthLogger.trace("Executing janusGraph Health Check Task - Start");
             boolean healthStatus = isGraphOpen();
