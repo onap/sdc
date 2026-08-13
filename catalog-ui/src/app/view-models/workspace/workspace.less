@@ -259,14 +259,18 @@
 // `router-outlet ~ *` rather than a wrapper element: the outlet renders its component as a
 // following sibling, and .w-sdc-main-right-container's class attribute must stay exactly that
 // string for the Selenium exact-class xpath waits, so no new wrapper may be introduced there.
-// NOTE the offset is @action_nav_height alone, not @top_nav_height + @action_nav_height as the old
-// rule used: .w-sdc-main-right-container is itself absolutely positioned and so is the containing
-// block here, whereas the old sibling div was positioned against <body> and had to clear the
-// top-nav itself.
+// NOTE the offset excludes @top_nav_height, which the old rule included:
+// .w-sdc-main-right-container is itself absolutely positioned and so is the containing block here,
+// whereas the old sibling div was positioned against <body> and had to clear the top-nav itself.
+// It DOES include @tab_title, because .w-sdc-main-container-body-content-header — the 110px
+// `{{getTabTitle()}}` strip — is a preceding SIBLING of the outlet in this shell, not an ancestor:
+// it is in normal flow and claims no space from an absolutely positioned box, so an offset of
+// @action_nav_height alone made every tab paint over its own heading. The header is suppressed on
+// exactly the three full-bleed routes, which subtract this again below.
 .sdc-workspace-container .w-sdc-main-right-container > .w-sdc-main-right-container-content > router-outlet ~ * {
     display: block;
     position: absolute;
-    top: @action_nav_height;
+    top: @action_nav_height + @tab_title;
     left: 0;
     right: 0;
     bottom: 0;
@@ -296,6 +300,18 @@
 // first, so the flow-editor and plugin tabs always did get the gutter, and still should.
 .sdc-workspace-container .w-sdc-main-right-container > .w-sdc-main-right-container-content > router-outlet ~ deployment-page {
     padding: 0;
+    // Deployment renders no title strip (the *ngIf on the header excludes it), so it must give back
+    // the @tab_title the base rule adds — otherwise it starts 110px down with a white band above.
+    top: @action_nav_height;
+}
+
+// The `plugins/:path` tab likewise suppresses the header (`isPlugins`), so it too gives back
+// @tab_title. Matched by TAG for the same reason as deployment-page: the route declares no
+// `bodyClass`, so there is no ancestor class to key off. NOT the flow-editor tabs — Management
+// Workflow and Network Call Flow are their own states with their own tags and DO render a heading,
+// so they keep the base rule's offset.
+.sdc-workspace-container .w-sdc-main-right-container > .w-sdc-main-right-container-content > router-outlet ~ plugin-context-view {
+    top: @action_nav_height;
 }
 
 // Composition is full-bleed: its canvas manages its own layout and the top bar floats OVER it

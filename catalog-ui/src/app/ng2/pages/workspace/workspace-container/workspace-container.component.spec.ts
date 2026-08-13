@@ -166,6 +166,55 @@ describe('updateSelectedMenuItem', () => {
     });
 });
 
+// The three flags drive BOTH the *ngIf on the 110px tab-title header and the left-bar deselection,
+// and workspace.less subtracts @tab_title for exactly the same three states. `isPlugins` was
+// declared and assigned NOWHERE (the AngularJS controller set it at workspace-view-model.ts:760;
+// the port kept its two neighbours and dropped it), so plugin tabs rendered a header the old shell
+// suppressed. Asserted per state because the composition check is an indexOf — its state name
+// carries a panel-tab suffix — while the other two are exact comparisons.
+describe('updateFullBleedFlags', () => {
+    const flagsFor = (stateName: string) => {
+        const navigationService: any = {
+            getParam: jest.fn(), getParams: jest.fn(() => ({})),
+            getCurrentStateName: jest.fn(() => stateName),
+            onNavigationSuccess: jest.fn(() => jest.fn()), navigate: jest.fn()
+        };
+        const {comp} = createComponent({navigationService});
+        (comp as any).updateFullBleedFlags();
+        return {
+            isComposition: (comp as any).isComposition,
+            isDeployment: (comp as any).isDeployment,
+            isPlugins: (comp as any).isPlugins
+        };
+    };
+
+    it('flags the plugins state, which nothing set before', () => {
+        expect(flagsFor('workspace.plugins')).toEqual(
+            {isComposition: false, isDeployment: false, isPlugins: true});
+    });
+
+    it('flags composition including its panel-tab suffix', () => {
+        expect(flagsFor('workspace.composition')).toEqual(
+            {isComposition: true, isDeployment: false, isPlugins: false});
+        expect(flagsFor('workspace.composition.details')).toEqual(
+            {isComposition: true, isDeployment: false, isPlugins: false});
+    });
+
+    it('flags deployment but not the similarly-named deployment_artifacts tab', () => {
+        expect(flagsFor('workspace.deployment')).toEqual(
+            {isComposition: false, isDeployment: true, isPlugins: false});
+        // A titled tab whose state name is a PREFIX-match of the full-bleed one: an indexOf here
+        // would suppress its heading and hand it 110px of dead space.
+        expect(flagsFor('workspace.deployment_artifacts')).toEqual(
+            {isComposition: false, isDeployment: false, isPlugins: false});
+    });
+
+    it('leaves every flag clear on an ordinary titled tab', () => {
+        expect(flagsFor('workspace.general')).toEqual(
+            {isComposition: false, isDeployment: false, isPlugins: false});
+    });
+});
+
 describe('ngOnInit component feed', () => {
     it('reads the component from WorkspaceService and exposes the container actions', () => {
         const workspaceService: any = {component: undefined, containerActions: undefined};
