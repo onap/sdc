@@ -11,9 +11,8 @@ name: "Gerrit Verify (Playwright UI)"
 # This job is ADDITIVE to the Jenkins CSIT jobs in ci-management/jjb/sdc/sdc-csit.yaml
 # ('ui' = TestNG/Selenium, 'api' = TestNG backend). It replaces neither.
 #
-# NON-VOTING for now: the vote step passes comment-only, so a red run posts a comment but
-# never -1s the change. Flip comment-only to false once the suite has proven itself on real
-# changes.
+# VOTING: the vote job casts Verified+1 / Verified-1, so a red run blocks submission. A flaky
+# -1 is cleared by commenting 'recheck' on the change, which re-dispatches this workflow.
 
 # yamllint disable-line rule:truthy
 on:
@@ -96,8 +95,9 @@ jobs:
           known_hosts: ${{ vars.GERRIT_KNOWN_HOSTS }}
           gerrit-change-number: ${{ inputs.GERRIT_CHANGE_NUMBER }}
           gerrit-patchset-number: ${{ inputs.GERRIT_PATCHSET_NUMBER }}
+          # Now that the job votes, 'clear' has to zero its own previous Verified vote —
+          # with comment-only that vote would stand until the new run finished.
           vote-type: clear
-          comment-only: true
 
       - name: Allow replication
         run: sleep 10s
@@ -337,6 +337,7 @@ jobs:
           known_hosts: ${{ vars.GERRIT_KNOWN_HOSTS }}
           gerrit-change-number: ${{ inputs.GERRIT_CHANGE_NUMBER }}
           gerrit-patchset-number: ${{ inputs.GERRIT_PATCHSET_NUMBER }}
+          # comment-only is deliberately absent, so this defaults to false and the run votes:
+          # Verified+1 on success, Verified-1 on failure, Verified-1 + Code-Review-1 on a
+          # cancelled run. Set it back to true to make the job advisory again.
           vote-type: ${{ env.WORKFLOW_CONCLUSION }}
-          # NON-VOTING while the suite builds a track record. Set to false to make it a gate.
-          comment-only: true
