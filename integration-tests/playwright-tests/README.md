@@ -524,10 +524,21 @@ evidence the intended asset is gone.
 This suite runs in **GitHub Actions**, not Jenkins: `.github/workflows/gerrit-verify-playwright.yaml`.
 ONAP is migrating CI off Jenkins/`ci-management` onto GHA, so new jobs are added there.
 
-**It is currently NON-VOTING.** The `vote` job passes `comment-only: true`, so a red run posts a
-comment on the change but never `-1`s it. Until that flips, a green Gerrit still does not prove
-this suite passed — read the comment, or the run's artifacts. To make it a gate, set
-`comment-only: false` in the `vote` job.
+**It is VOTING.** The `vote` job casts `Verified+1` on success and `Verified-1` on failure, so a red
+run blocks submission and a green Gerrit does mean this suite passed. `notify` clears the job's own
+previous vote when a run starts, so an in-flight run never shows a stale `+1`. To take it back off
+the gate, set `comment-only: true` on both steps — the run then only comments.
+
+Two behaviours of the gate worth knowing:
+
+- **A flaky `-1` is cleared with `recheck`,** exactly as for the Jenkins CSIT jobs: commenting
+  `recheck` on the change re-dispatches this workflow. The suite is not flake-free — 146984 passed
+  and then failed on a `recheck` of the same patchset, and `checkout-gerrit-change-action` does a
+  bare `git checkout FETCH_HEAD`, so both runs built an identical tree.
+- **A cancelled run votes `Verified-1` *and* `Code-Review-1`** on the patchset it was running
+  against. That is `gerrit-review-action`'s contract for `cancelled`, not a real failure, and
+  pushing a new patchset triggers it via `cancel-in-progress`. The vote lands on the superseded
+  patchset; the new one gets its own run.
 
 The workflow is a self-contained three-job pipeline (`notify` → `playwright` → `vote`) rather than
 a thin caller of `lfit/releng-reusable-workflows/.../compose-maven-verify.yaml`, because that
