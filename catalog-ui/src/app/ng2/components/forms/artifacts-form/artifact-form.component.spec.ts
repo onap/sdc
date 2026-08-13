@@ -1,5 +1,6 @@
 import {ArtifactFormComponent} from "./artifact-form.component";
 import {async, ComponentFixture} from "@angular/core/testing";
+import {By} from "@angular/platform-browser";
 import {ConfigureFn, configureTests} from "../../../../../jest/test-config.helper";
 import {NO_ERRORS_SCHEMA} from "@angular/core";
 import {TranslateModule} from "../../../shared/translator/translate.module";
@@ -47,7 +48,7 @@ describe('artifact form component', () => {
                     providers: [
                         {provide: CacheService, useValue: cacheServiceMock},
                         {provide: ArtifactConfigService, useValue: artifactConfigService},
-                        {provide: TranslateService, useValue: {}}
+                        {provide: TranslateService, useValue: {translate: jest.fn((key) => key)}}
                     ],
                 });
             };
@@ -130,6 +131,36 @@ describe('artifact form component', () => {
 
     it('should match current snapshot of artifact form component', () => {
         expect(fixture).toMatchSnapshot();
+    });
+
+    it('should allow browsing for a file before a Type is selected', () => {
+        fixture.componentInstance.artifact = new ArtifactModel();
+        fixture.componentInstance.isViewOnly = false;
+        fixture.componentInstance.showTypeFields = true;
+
+        expect(fixture.componentInstance.isFileBrowseDisabled()).toBe(false);
+    });
+
+    it('should disable browsing for a file when the form is view only', () => {
+        fixture.componentInstance.artifact = new ArtifactModel();
+        fixture.componentInstance.artifact.artifactType = 'YANG_XML';
+        fixture.componentInstance.isViewOnly = true;
+
+        expect(fixture.componentInstance.isFileBrowseDisabled()).toBe(true);
+    });
+
+    it('should bind the upload file element to isFileBrowseDisabled', () => {
+        const cacheService = fixture.debugElement.injector.get(CacheService) as any;
+        cacheService.get.mockReturnValue({validationPatterns: {}});
+        artifactConfigService.findAllTypeBy.mockImplementation(() => []);
+
+        fixture.componentInstance.artifact = new ArtifactModel();
+        fixture.componentInstance.artifactType = ArtifactType.DEPLOYMENT;
+        fixture.componentInstance.isViewOnly = false;
+        fixture.detectChanges();
+
+        const fileUpload = fixture.debugElement.query(By.css('onap-file-upload'));
+        expect(fileUpload.properties.disabled).toBe(false);
     });
 
     it('should verify onUploadFile -> file gets file name', () => {

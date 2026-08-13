@@ -1,6 +1,6 @@
 <form class="artifact-form" novalidate name="artifactForm">
 
-    <onap-file-upload [disabled]="isViewOnly || showTypeFields && !artifact.artifactType" [convertToBase64]="true" [(value)]="artifact.artifactName" (fileUpload)="onUploadFile($event)" [placeHolder]="'Select File'" [label]="'Upload File'" [testId]="'fileUploadElement'" [required]="true">
+    <onap-file-upload [disabled]="isFileBrowseDisabled()" [convertToBase64]="true" [(value)]="artifact.artifactName" (fileUpload)="onUploadFile($event)" [placeHolder]="'Select File'" [label]="'Upload File'" [testId]="'fileUploadElement'" [required]="true">
 
     </onap-file-upload>
     <div class="artifact-form-container">

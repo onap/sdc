@@ -44,6 +44,12 @@ export class ArtifactFormComponent {
         this.showTypeFields = (this.artifact.artifactGroupType === 'DEPLOYMENT' || !this.artifact.mandatory) && this.artifact.artifactGroupType !== 'SERVICE_API';
     }
 
+    // The Type is validated on its own and the backend rejects a file whose extension does not match
+    // the chosen type, so browsing must not depend on the Type having been picked first.
+    public isFileBrowseDisabled = (): boolean => {
+        return !!this.isViewOnly;
+    };
+
     public onTypeChange = (selectedFileType: IDropDownOption) => {
         this.artifact.artifactType = selectedFileType.value;
         this.verifyTypeAndFileWereFilled();

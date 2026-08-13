@@ -6,6 +6,7 @@ exports[`artifact form component should match current snapshot of artifact form 
   artifactTypesOptions={[Function Array]}
   cacheService={[Function Object]}
   initArtifactTypes={[Function Function]}
+  isFileBrowseDisabled={[Function Function]}
   onDescriptionChange={[Function Function]}
   onLabelChange={[Function Function]}
   onTypeChange={[Function Function]}
