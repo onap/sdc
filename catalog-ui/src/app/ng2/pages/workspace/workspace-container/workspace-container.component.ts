@@ -158,8 +158,7 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
         this.mode = this.initViewMode();
         this.initChangeLifecycleStateButtons();
         this.initVersionObject();
-        this.isComposition = (this.navigationService.getCurrentStateName().indexOf(States.WORKSPACE_COMPOSITION) > -1);
-        this.isDeployment = this.navigationService.getCurrentStateName() === States.WORKSPACE_DEPLOYMENT;
+        this.updateFullBleedFlags();
         this.initMenuItems();
         this.verifyIfDependenciesExist();
         this.updateSelectedMenuItem(this.navigationService.getCurrentStateName());
@@ -170,8 +169,7 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
         // this the title/selection stay stuck on the initial tab (e.g. Selenium waiting for the
         // 'TOSCA Artifacts' tab-title after navigating there would time out).
         this.deregisterStateChange = this.navigationService.onNavigationSuccess(() => {
-            this.isComposition = (this.navigationService.getCurrentStateName().indexOf(States.WORKSPACE_COMPOSITION) > -1);
-            this.isDeployment = this.navigationService.getCurrentStateName() === States.WORKSPACE_DEPLOYMENT;
+            this.updateFullBleedFlags();
             this.updateSelectedMenuItem(this.navigationService.getCurrentStateName());
             this.cdr.detectChanges();
         });
@@ -757,6 +755,24 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
 
     onMenuItemPressed(state: string, params?: any): void {
         this.navigationService.navigate(state, params || {});
+    }
+
+    /**
+     * The three full-bleed states: they suppress the tab-title header and deselect the left bar.
+     * Kept in ONE place because the two callers (ngOnInit and the onNavigationSuccess handler) must
+     * agree — `isPlugins` was previously assigned in neither, so it stayed false forever and plugin
+     * tabs grew a title header the AngularJS shell never showed them
+     * (workspace-view-model.ts:760 set it on every state change; the port dropped that line while
+     * keeping its two neighbours). workspace.less subtracts @tab_title for the same three states, so
+     * a flag that never goes true also means a 110px band of dead space.
+     */
+    private updateFullBleedFlags(): void {
+        const stateName = this.navigationService.getCurrentStateName();
+        // indexOf, not ===, for composition alone: its state name carries a panel-tab suffix
+        // ('workspace.composition.details'), whereas the other two are always exact.
+        this.isComposition = stateName.indexOf(States.WORKSPACE_COMPOSITION) > -1;
+        this.isDeployment = stateName === States.WORKSPACE_DEPLOYMENT;
+        this.isPlugins = stateName === States.WORKSPACE_PLUGINS;
     }
 
     // --- Menu Items ---
