@@ -51,16 +51,9 @@
 
 import { test, expect, SEL, settles, gotoWorkspaceTab, currentRoute } from './fixtures/sdc';
 
-/**
- * The element the full-bleed rule targets: the component the workspace shell's <router-outlet>
- * activated. It is a SIBLING of the outlet, not a child, so the rule (and this selector) matches it
- * as `router-outlet ~ *` — there is deliberately no wrapper element, because
- * `.w-sdc-main-right-container`'s class attribute must stay exactly that string for the Selenium
- * exact-class xpath waits. Scoped to the shell so the app-level outlet in app.component.html cannot
- * match. Not in SEL: nothing outside this spec asserts on it.
- */
-const CHILD_VIEW =
-    '.sdc-workspace-container .w-sdc-main-right-container > .w-sdc-main-right-container-content > router-outlet ~ *';
+// The element the full-bleed rule targets — the component the workspace shell's <router-outlet>
+// activated — is SEL.workspaceRoutedTab. Its note explains why it is matched as the outlet's sibling
+// and why no wrapper element may be introduced to match instead.
 
 /** The workspace shell's left tab rail, suppressed on composition by `*ngIf="!isComposition"`. */
 const LEFT_SIDEBAR = '.w-sdc-left-sidebar';
@@ -86,7 +79,7 @@ async function measure(page): Promise<Geometry> {
             sidebarPresent: !!document.querySelector(sidebarSel),
             hitAt300x400: hit ? hit.tagName : 'NONE',
         };
-    }, { childViewSel: CHILD_VIEW, sidebarSel: LEFT_SIDEBAR });
+    }, { childViewSel: SEL.workspaceRoutedTab, sidebarSel: LEFT_SIDEBAR });
 }
 
 test.describe('Composition full-bleed layout', () => {

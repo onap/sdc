@@ -53,15 +53,18 @@
 
 import { test, expect, SEL, settles, gotoWorkspaceTab } from './fixtures/sdc';
 
-const CHILD_VIEW =
-    '.sdc-workspace-container .w-sdc-main-right-container > .w-sdc-main-right-container-content > router-outlet ~ *';
 const LEFT_SIDEBAR = '.w-sdc-left-sidebar';
 const TOP_BAR = '.sdc-workspace-top-bar';
 const TOP_BAR_BUTTONS = '.sdc-workspace-top-bar-buttons';
 
 interface Layout {
     routedTag: string | null;
-    routedPaddingLeft: number;
+    /**
+     * NULL, not 0, when no element is mounted. The distinction is the whole reason this field is
+     * nullable: 0 is a legitimate expected value here (the full-bleed tabs must have no gutter), so
+     * a missing element reported as 0 satisfied that expectation and made the assertion vacuous.
+     */
+    routedPaddingLeft: number | null;
     sidebarRight: number | null;
     /** Leftmost laid-out label/field inside the tab, and the rightmost field edge. */
     contentLeft: number | null;
@@ -98,7 +101,7 @@ async function measure(page): Promise<Layout> {
         const cs = routed && getComputedStyle(routed);
         return {
             routedTag: routed ? routed.tagName.toLowerCase() : null,
-            routedPaddingLeft: cs ? parseFloat(cs.paddingLeft) || 0 : 0,
+            routedPaddingLeft: cs ? parseFloat(cs.paddingLeft) || 0 : null,
             sidebarRight: sidebar ? Math.round(sidebar.getBoundingClientRect().right) : null,
             contentLeft: left === Infinity ? null : Math.round(left),
             contentRight: right === -Infinity ? null : Math.round(right),
@@ -113,7 +116,10 @@ async function measure(page): Promise<Layout> {
                 }
                 : null,
         };
-    }, { childViewSel: CHILD_VIEW, sidebarSel: LEFT_SIDEBAR, barSel: TOP_BAR, buttonsSel: TOP_BAR_BUTTONS });
+    }, {
+        childViewSel: SEL.workspaceRoutedTab, sidebarSel: LEFT_SIDEBAR,
+        barSel: TOP_BAR, buttonsSel: TOP_BAR_BUTTONS,
+    });
 }
 
 test.describe('Workspace layout', () => {
@@ -138,7 +144,7 @@ test.describe('Workspace layout', () => {
         expect(g.contentRight!, 'form content reaches the viewport edge — the right gutter is gone')
             .toBeLessThan(g.viewportWidth);
         // Asserted last: the two relations above are what users see, this pins the mechanism.
-        expect(g.routedPaddingLeft, 'the routed element carries no left padding').toBeGreaterThan(0);
+        expect(g.routedPaddingLeft!, 'the routed element carries no left padding').toBeGreaterThan(0);
     });
 
     test('the top bar does not overflow and the Close label stays clipped', async ({ sdcPage, api }) => {
@@ -180,8 +186,19 @@ test.describe('Workspace layout', () => {
             await settles(sdcPage);
             // The canvas mounts asynchronously after the route resolves; poll rather than assert once
             // so a slow graph init is not read as a layout regression.
+            //
+            // Polls the NULLABLE padding deliberately. This assertion used to pass with nothing
+            // rendered — measure() reported a missing element as `routedPaddingLeft: 0` and 0 is the
+            // expected value, so the first poll matched an empty shell. A trace from the 2026-08-14
+            // run has it in the clear: routedTag null and barOverflow null for both tabs, 68 ms after
+            // the hash change. `null` cannot satisfy .toBe(0), and gotoWorkspaceTab() now waits for
+            // the tab to attach before we get here, so "never mounted" fails in two places instead of
+            // passing silently.
             await expect.poll(async () => (await measure(sdcPage)).routedPaddingLeft,
-                { timeout: 30_000, message: `the ${tab} tab was given the content gutter` })
+                {
+                    timeout: 30_000,
+                    message: `the ${tab} tab never mounted, or was given the content gutter`,
+                })
                 .toBe(0);
         }
     });

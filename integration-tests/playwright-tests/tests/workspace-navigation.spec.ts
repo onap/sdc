@@ -34,7 +34,8 @@
  *      completely different from ui-router's.
  *   4. An unknown route falls back to the dashboard (ui-router's `otherwise`, now the `'**'`
  *      wildcard route in app.routes.ts).
- *   5. The settle contract Selenium's AdditionalConditions.pageLoadWait() gates CI on.
+ *   5. gotoWorkspaceTab() waits for the tab it navigated to. Every layout assertion in this suite
+ *      rests on that, and nothing else checks it.
  *
  * HOW TO RUN: see README.md — `npx playwright test workspace-navigation`.
  */
@@ -189,10 +190,29 @@ test.describe('Navigation and routing', () => {
     });
 
     /**
-     * The exact settle predicate Selenium's AdditionalConditions.pageLoadWait() uses. When this
-     * fails, the CI UI job fails with an opaque timeout, so it is worth asserting directly.
+     * The navigation helper's synchronisation contract.
+     *
+     * This replaces a test that asserted only `settles(sdcPage)` on an already-idle dashboard. That
+     * was a tautology: with AngularJS gone the predicate reduces to readyState + jQuery.active, both
+     * of which are true the instant the page is up, and the 2026-08-14 run bears it out — 96
+     * invocations across the suite, every one satisfied on its FIRST evaluation, not a single 500 ms
+     * back-off anywhere in the run. So it could not fail, while implying the suite had a working
+     * wait for route resolution. It did not, and one assertion was silently reading an empty shell
+     * because of it (see workspace-gutter.spec.ts).
+     *
+     * What matters is therefore asserted instead: that gotoWorkspaceTab() does not return until the
+     * target tab is in the DOM. Asserted with a bare count() rather than a web-first matcher ON
+     * PURPOSE — toBeAttached() would retry for its own timeout and pass whether or not the helper
+     * waited, which is exactly the hole being closed.
      */
-    test('the page settles by the Selenium pageLoadWait definition', async ({ sdcPage }) => {
-        expect(await settles(sdcPage, 20_000)).toBe(true);
+    test('gotoWorkspaceTab returns only once the target tab has mounted', async ({ sdcPage, api }) => {
+        const vf = await api.createVf('PwSettle');
+        await gotoWorkspaceTab(sdcPage, { id: vf.id, type: 'resource', tab: 'general' });
+
+        expect(await sdcPage.locator(SEL.workspaceRoutedTab).count(),
+            'gotoWorkspaceTab returned before the routed tab mounted — callers that measure the DOM '
+            + 'immediately afterwards are reading the previous tab, or nothing')
+            .toBeGreaterThan(0);
+        expect(await settles(sdcPage, 20_000), 'the page never became quiescent').toBe(true);
     });
 });
