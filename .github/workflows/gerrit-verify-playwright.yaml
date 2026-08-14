@@ -286,8 +286,18 @@ jobs:
             echo "::endgroup::"
           done
 
-      # playwright.config.ts sets trace: 'on' unconditionally, so every run leaves traces.
-      # These are the primary debugging artifact — 'npx playwright show-trace <zip>'.
+      # playwright.config.ts sets trace: 'on', so every test leaves a trace.
+      # Keep that — traces are the primary debugging artifact for a UI suite.
+      #
+      # Do NOT add the raw outputDir (target/playwright-results/) back to this
+      # list: the html reporter already *copies* every attachment into
+      # playwright-report/data/ keyed by content SHA-1, so uploading it too
+      # shipped a second byte-identical copy of all 32 traces and doubled the
+      # artifact for nothing (145 MB -> 75 MB on run #27, identical contents).
+      #
+      # Read it with 'npx playwright show-report <dir>' after unzipping; traces
+      # open in the report's own bundled viewer. Opening index.html over
+      # file:// will not load them.
       - name: Upload Playwright report and traces
         if: always()
         # yamllint disable-line rule:line-length
@@ -296,7 +306,6 @@ jobs:
           name: playwright-report
           path: |
             integration-tests/target/playwright-report/
-            integration-tests/target/playwright-results/
             integration-tests/target/playwright-reports/
           retention-days: 14
           if-no-files-found: warn
