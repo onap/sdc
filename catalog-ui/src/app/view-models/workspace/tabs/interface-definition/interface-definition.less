@@ -18,9 +18,15 @@
 *  SPDX-License-Identifier: Apache-2.0
 *  ============LICENSE_END=========================================================
 */
+// NO negative `top` belongs here. The routed component is itself the clipping box in this shell
+// (`router-outlet ~ *` in workspace.less: absolutely positioned, `overflow: auto`) and its top edge
+// is the title strip's bottom edge, so anything shifted above it is cut off — and an `overflow: auto`
+// box cannot scroll UP to reach it. The -26px this rule used to carry was tuned for the AngularJS
+// shell, whose clipping ancestor was .w-sdc-main-container-body-content-wrapper, 110px
+// higher up; there the shift merely pulled the content into the title strip's empty lower band.
+// `position: relative` stays: the tab's <loader [relative]> overlay positions against this box.
 .workspace-interface-definition {
     width: 100%;
     display: inline-block;
-    top: -26px;
     position: relative;
 }

@@ -1,6 +1,10 @@
+// NO negative `top` belongs here — same reasoning as the sibling rule in ../interface-definition/.
+// The routed component is itself the clipping box in this shell (`router-outlet ~ *` in
+// workspace.less: absolutely positioned, `overflow: auto`), so content shifted above its top edge is
+// cut off with nothing able to scroll up to it. `position: relative` stays: the tab's
+// <loader [relative]> overlay positions against this box.
 .workspace-interface-operation {
     width: 100%;
     display: inline-block;
-    top: -26px;
     position: relative;
 }

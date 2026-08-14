@@ -16,8 +16,9 @@
     ~ Modifications Copyright (C) 2026 Deutsche Telekom AG.
     -->
 
-<!-- .workspace-interface-operation (interface-operation.less, imported by app.less) positions the
-     tab content; it used to be supplied by the deleted ui-router state template. -->
+<!-- This wrapper came from the deleted ui-router state template. .workspace-interface-operation
+     (interface-operation.less, imported by app.less) makes it the containing block for the
+     <loader [relative]> below; it must NOT offset the tab, which the routed host itself clips. -->
 <div class="workspace-interface-operation">
 <div class="interface-operation">
     <loader [display]="isLoading" [size]="'large'" [relative]="true"></loader>

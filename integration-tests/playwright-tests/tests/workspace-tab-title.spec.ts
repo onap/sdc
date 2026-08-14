@@ -76,6 +76,14 @@ const TITLE = '.workspace-tab-title';
 const TOP_BAR = '.sdc-workspace-top-bar';
 /** The `overflow: hidden` box the routed tab must stay inside (assets/styles/layout/main.less). */
 const CLIP = '.w-sdc-main-right-container';
+/**
+ * Any full-viewport load overlay: `position: fixed; z-index: 9999`, 50% black. Deliberately
+ * UNSCOPED — the one that matters here is raised by onap-ui-angular's LoaderService (activated in
+ * ActivityLogComponent.ngOnInit) and mounts outside `.sdc-workspace-container` entirely, so a
+ * selector scoped to the shell misses it and only catches the shell's own inline twin
+ * (workspace-container.component.html:5). Both are torn down, not hidden, so counting is the check.
+ */
+const LOADER = '.sdc-loader-global-wrapper';
 
 interface TitleLayout {
     titlePresent: boolean;
@@ -185,6 +193,15 @@ test.describe('Workspace tab title', () => {
             await expect.poll(async () => (await measure(sdcPage)).routedTag,
                 { timeout: 30_000, message: `the ${tab} tab never mounted` })
                 .toBe(tag);
+            // A tab may raise the load overlay from its own ngOnInit and drop it only when its
+            // request resolves, i.e. AFTER it has mounted — activity_log does exactly that. While
+            // that overlay is up it is the topmost element at the heading's probe point, so
+            // measuring here reads backend latency as a covered heading. Waiting for it does not
+            // weaken the guard: the regression this test exists for is a static CSS offset, which
+            // never clears.
+            await expect(sdcPage.locator(LOADER),
+                `${tab}: the load overlay never came down`)
+                .toHaveCount(0, { timeout: 30_000 });
 
             const g = await measure(sdcPage);
 
