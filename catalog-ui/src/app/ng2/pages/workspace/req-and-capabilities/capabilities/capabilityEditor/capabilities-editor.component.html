@@ -24,8 +24,8 @@
                             testId="capType"
                             [disabled]="isReadonly"
                             [options]="capabilityTypesMappedList"
-                            selectedOption="{{ capabilityData.type }}"
-                            [placeHolder] = "capabilityData.type"
+                            [selectedOptionVal]="capabilityData.type"
+                            [placeHolder]="'CAP_TYPE_PLACEHOLDER' | translate"
                             (changed)="onSelectCapabilityType($event)">
                     </sdc-dropdown>
                 </div>

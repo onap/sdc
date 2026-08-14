@@ -22,8 +22,8 @@
                             required="true"
                             [disabled]="isReadonly"
                             [options]="capabilityTypesMappedList"
-                            selectedOption="{{requirementData.capability}}"
-                            [placeHolder] = "requirementData.capability"
+                            [selectedOptionVal]="requirementData.capability"
+                            [placeHolder]="'REQ_RELATED_CAPABILITY_PLACEHOLDER' | translate"
                             (changed)="onCapabilityChanged($event)">
                     </sdc-dropdown>
                 </div>
@@ -33,8 +33,8 @@
                             testId="reqNode"
                             [disabled]="isReadonly"
                             [options]="nodeTypesMappedList"
-                            selectedOption="{{requirementData.node}}"
-                            [placeHolder] = "requirementData.node"
+                            [selectedOptionVal]="requirementData.node"
+                            [placeHolder]="'REQ_NODE_PLACEHOLDER' | translate"
                             (changed)="onNodeChanged($event)">
                     </sdc-dropdown>
                 </div>
@@ -44,8 +44,8 @@
                             testId="reqRelationship"
                             [disabled]="isReadonly"
                             [options]="relationshipTypesMappedList"
-                            selectedOption="{{requirementData.relationship}}"
-                            [placeHolder] = "requirementData.relationship"
+                            [selectedOptionVal]="requirementData.relationship"
+                            [placeHolder]="'REQ_RELATIONSHIP_PLACEHOLDER' | translate"
                             (changed)="onRelationshipChanged($event)">
                     </sdc-dropdown>
                 </div>
