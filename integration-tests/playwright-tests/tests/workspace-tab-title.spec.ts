@@ -39,7 +39,9 @@
  *     already resolve `.workspace-tab-title` — cannot see this at all.
  *   - Jest never lays out a page and AOT has no opinion on CSS.
  *   - The mechanism is therefore asserted with `elementFromPoint` at the heading's own centre:
- *     the ONE check that distinguishes "rendered" from "rendered and not covered".
+ *     the ONE check that distinguishes "rendered" from "rendered and not covered". It has to ask
+ *     whether the hit element IS the heading (or lies inside it), not what its TAG is — see the note
+ *     on `titleIsTopmost` below for why the tag form of this check could never have failed.
  *
  * THE SECOND INVARIANT — `routedOverhang`. Offsetting the tab downwards is only safe while the box
  * stays inside `.w-sdc-main-right-container`, which is `overflow: hidden`. A routed component that
@@ -71,8 +73,6 @@
 import { test, expect, SEL, settles, gotoWorkspaceTab } from './fixtures/sdc';
 
 const TITLE = '.workspace-tab-title';
-const CHILD_VIEW =
-    '.sdc-workspace-container .w-sdc-main-right-container > .w-sdc-main-right-container-content > router-outlet ~ *';
 const TOP_BAR = '.sdc-workspace-top-bar';
 /** The `overflow: hidden` box the routed tab must stay inside (assets/styles/layout/main.less). */
 const CLIP = '.w-sdc-main-right-container';
@@ -90,7 +90,20 @@ interface TitleLayout {
     overlapsTitle: boolean | null;
     /** How far the routed tab's bottom edge falls past the clipping box's — must be <= 0. */
     routedOverhang: number | null;
-    /** The tag actually painted at the heading's centre — the tab element iff it covers the title. */
+    /**
+     * Whether the heading is the topmost thing at its own centre — i.e. elementFromPoint there
+     * returns the heading or a descendant of it.
+     *
+     * IDENTITY, NOT TAG NAME, and the distinction is not academic: this started life as
+     * `tagAtTitleCentre !== routedTag` and could not fail. `.workspace-tab-title` is itself a
+     * `<div>` (workspace-container.component.html:134), and every routed tab's template roots at a
+     * plain `<div>` too (`general-tab.component.html:1` is `div.sdc-workspace-general-step`), so
+     * elementFromPoint returned the string "div" whether the heading was clear or buried — the
+     * custom element host is never the topmost hit node. The tag is still reported, but only to make
+     * the failure message useful.
+     */
+    titleIsTopmost: boolean | null;
+    /** Purely diagnostic: what was actually hit, for the failure message. */
     tagAtTitleCentre: string | null;
 }
 
@@ -106,14 +119,18 @@ async function measure(page): Promise<TitleLayout> {
         const c = clip ? clip.getBoundingClientRect() : null;
 
         let tagAtCentre: string | null = null;
+        let titleTopmost: boolean | null = null;
         if (t && t.width && t.height) {
             // Probed 60px in from the heading's left edge rather than at its horizontal midpoint:
-            // the heading is a full-width flex child, so its centre can fall beyond the end of a
-            // short label ("General") and hit the heading's own padding either way. 60px is inside
-            // the shortest tab name once the 100px text indent is accounted for by the caller's
-            // left edge, and is where the covering element — if any — is painted.
+            // the heading is a full-width flex child, so its centre can fall well beyond the end of a
+            // short label ("General"). 60px lands inside the heading's own 100px `padding-left`
+            // (workspace.less:198) — to the LEFT of the text, not on it, which is fine and in fact
+            // preferable: a hit test wants a point the heading itself owns, and any element painted
+            // over the strip covers that point too. What it cannot support is a tag comparison, since
+            // the heading is a div and so is every covering candidate.
             const el = document.elementFromPoint(t.left + 60, t.top + t.height / 2);
             tagAtCentre = el ? el.tagName.toLowerCase() : null;
+            titleTopmost = !!el && (el === title || title.contains(el));
         }
 
         return {
@@ -127,9 +144,10 @@ async function measure(page): Promise<TitleLayout> {
             topBarBottom: bar ? Math.round(bar.getBoundingClientRect().bottom) : null,
             overlapsTitle: t && r ? !(r.top >= t.bottom || r.bottom <= t.top) : null,
             routedOverhang: r && c ? Math.round(r.bottom - c.bottom) : null,
+            titleIsTopmost: titleTopmost,
             tagAtTitleCentre: tagAtCentre,
         };
-    }, { titleSel: TITLE, childViewSel: CHILD_VIEW, barSel: TOP_BAR, clipSel: CLIP });
+    }, { titleSel: TITLE, childViewSel: SEL.workspaceRoutedTab, barSel: TOP_BAR, clipSel: CLIP });
 }
 
 /**
@@ -178,9 +196,10 @@ test.describe('Workspace tab title', () => {
             expect(g.overlapsTitle,
                 `${tab}: the routed tab overlaps the heading — the tab is painted over its own title`)
                 .toBe(false);
-            expect(g.tagAtTitleCentre,
-                `${tab}: <${g.tagAtTitleCentre}> is painted at the heading's centre, not the heading`)
-                .not.toBe(tag);
+            expect(g.titleIsTopmost,
+                `${tab}: <${g.tagAtTitleCentre}> is painted over the heading — the heading is not the `
+                + 'topmost element at its own centre')
+                .toBe(true);
 
             // The heading occupies the strip between the top bar and the tab, in that order.
             expect(g.titleTop!, `${tab}: the heading starts above the top bar`)

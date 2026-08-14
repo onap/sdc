@@ -23,7 +23,7 @@ npm ci && npx playwright install chromium           # first time only
 SDC_BASE_URL=http://localhost:8285 npx playwright test --reporter=list
 ```
 
-Expected: **24 passed**, ~2.5 minutes, zero retries. Anything less is a real finding — read
+Expected: **31 passed**, ~3.5 minutes, zero retries. Anything less is a real finding — read
 [Triage](#triage-when-tests-fail) before touching a spec, because most red runs here have been
 environmental, not test bugs.
 
@@ -114,7 +114,8 @@ Assumes the images already exist locally (step 1). Reports:
 | Screenshots & traces | `integration-tests/target/playwright-results/`            |
 
 `trace: 'on'` is set unconditionally in `playwright.config.ts`, so every run leaves a trace.
-`npx playwright show-trace <zip>` is by far the fastest way to diagnose a failure.
+`npx playwright show-trace <zip>` is by far the fastest way to diagnose a failure — pointed at a
+single trace zip out of `playwright-results/`, **not** at a whole report bundle (see CI below).
 
 ---
 
@@ -342,6 +343,8 @@ test('...', async ({ sdcPage, api }) => { ... });
 | `tests/unsaved-changes.spec.ts` | the dirty-form navigation guard: warns, blocks, then releases on OK |
 | `tests/composition-geometry.spec.ts` | composition's `bodyClass`-driven full-bleed layout |
 | `tests/workspace-gutter.spec.ts` | the tab content gutter vs the sidebar, and top-bar overflow |
+| `tests/workspace-tab-title.spec.ts` | every titled tab's heading is visible and not painted over (SDC-4879) |
+| `tests/workspace-topbar-controls.spec.ts` | the 5 top-bar controls the AngularJS removal dropped: they render, are hit-testable, and reach the BE |
 
 ### Fixtures
 
@@ -351,6 +354,21 @@ test('...', async ({ sdcPage, api }) => { ... });
   Deliberately *not* the page's `$http`: an in-page POST adds a pending request that the settle
   predicate then blocks on, which is what made the earlier specs racy. It also survives CR 3,
   since there is no AngularJS injector left to reach.
+
+  `createVf()` / `createService()` **poll until the new asset reads back** before returning.
+  JanusGraph/Cassandra gives no read-after-write guarantee across the BE's transactions, so a `201`
+  is sometimes followed within the same second by `404`/`SVC4063` on the very `uniqueId` it just
+  returned (observed on the 2026-08-14 run: `GET .../catalog/resources/<id>/filteredDataByParams`).
+  The UI then bounces to the dashboard behind an error modal and the spec fails on a missing sidebar
+  — which reads as a UI regression and is not one. `retries: 1` made it worse, not better: the
+  retry passed, so the run reported all-green and the flake showed up only in the HTML report, never
+  in the JUnit XML the gate votes on. If a red run looks like "the workspace did not render",
+  check the network log for a 404 on the asset before suspecting the UI.
+
+  The gate has since fired for real (CI run 31798342250): one VF stayed 404 for the whole 30 s
+  budget while the retry's freshly created asset read back immediately. So the message means *this
+  write did not land*, not *the BE is slow* — a new asset is the way out, which is what `retries: 1`
+  now buys, and the run stays green with a visible `1 flaky` instead of a mystery failure.
 
 ### Selectors are contracts, not conveniences
 
@@ -366,18 +384,46 @@ particular:
 - `chromeCreateButton` vs `formSaveButton`: both carry `data-tests-id="create/save"`, so an
   unscoped selector is ambiguous. Always scope by the wrapper class.
 
-### Settle detection
+### Settle detection — and why it is not synchronisation
 
-`settles(page)` mirrors `AdditionalConditions.pageLoadWait()` from the Selenium suite — the
-predicate CI actually gates on (readyState, `jQuery.active`, `$rootScope.$$phase`,
-`$http.pendingRequests`, one `$timeout` flush). Prefer it over `waitForTimeout`.
+`settles(page)` derives from `AdditionalConditions.pageLoadWait()` in the Selenium suite, minus the
+AngularJS branch: `document.readyState === 'complete'` and an idle `jQuery.active`. Prefer it over
+`waitForTimeout`.
+
+**Do not add Angular's testability hook to it.** `window.getAllAngularTestabilities` is there, but
+Angular 5's `isStable()` includes `!hasPendingMacrotasks`, and zone.js treats a repeating timer or an
+animation-frame loop as a macrotask that never completes — so Composition, Deployment and Catalog are
+never "stable" and the predicate becomes an unconditional hang (five tests timed out this way in
+CI run 31798342250). Same reason Protractor needed `waitForAngularEnabled(false)`; the product's
+`ProgressService` dodges it from the other side with `ngZone.runOutsideAngular()`.
 
 It returns **`false` rather than throwing** when the page is frozen: a `page.evaluate()` that
-never resolves means the Angular zone is blocked, which is the classic ngUpgrade hang signature,
-and it must fail loudly instead of timing out opaquely.
+never resolves means the Angular zone is blocked, which is the classic hang signature, and it must
+fail loudly instead of timing out opaquely.
 
-The `window.angular` branch self-disables once CR 3 removes AngularJS. That is intentional, not a
-silent weakening — with no digest cycle there is nothing else to wait for.
+**Do not treat it as a wait for the page you navigated to.** It cannot be one. AngularJS is gone
+(`4a302206e`), so `readyState === 'complete'` and an idle jQuery are both already true the moment an
+in-page hash assignment returns. Measured on the 2026-08-14 CI run: 96 invocations across the suite,
+every single one satisfied on its **first** evaluation, and not one 500 ms back-off anywhere in the
+run. Anything measured straight afterwards is reading the *previous* tab, or an empty shell.
+
+That is why:
+
+- `gotoWorkspaceTab()` waits for `SEL.workspaceRoutedTab` — the element the workspace outlet
+  activates — before returning, and `workspace-navigation.spec.ts` pins that contract with a bare
+  `count()` (a web-first matcher there would retry and pass whether or not the helper waited);
+- every assertion after a navigation either polls or uses a web-first matcher.
+
+**A polled value must distinguish "absent" from "expected".** `workspace-gutter.spec.ts` polled
+`routedPaddingLeft` to `0` while `measure()` reported a missing element as `0` — so the assertion
+passed with no tab mounted at all, for both canvas tabs, 68 ms after the hash change. Report absence
+as `null`, or anchor the poll on the element's presence first.
+
+**Prefer identity over tag names in hit tests.** `elementFromPoint` returns the innermost box, and in
+this app that is a `<div>` almost everywhere — `.workspace-tab-title` is a div, and every routed
+tab's template roots at one. Comparing the hit *tag* against the routed component's tag therefore
+never fails; ask whether the element you expect **is** the hit node or contains it
+(`workspace-tab-title.spec.ts`'s `titleIsTopmost`, `workspace-topbar-controls.spec.ts`'s `hitSelf`).
 
 ---
 
@@ -505,7 +551,10 @@ click-swallowing overlay.
 1. Import from `./fixtures/sdc`, take `{ sdcPage, api }`.
 2. Create data through `api`, not the UI, unless creating it *is* the thing under test.
 3. Navigate with `gotoWorkspaceTab` / `gotoTopLevel`.
-4. `await settles(sdcPage)` after each navigation; never `waitForTimeout`.
+4. **Wait for the thing you are about to assert on**, never `waitForTimeout`. `settles(sdcPage)` is
+   not that wait — see *Settle detection* above; `gotoWorkspaceTab` already waits for the tab to
+   mount, and beyond that use a web-first matcher, `expect.poll`, or `waitForResponse` on the
+   request whose result you are reading.
 5. Add selectors to `SEL` rather than inlining them.
 6. **Assert on the effect, not the appearance.** The data-loss bug left the field showing the
    typed text while sending nothing, so `general-tab-save.spec.ts` asserts on the PUT *body*.
@@ -552,9 +601,30 @@ mvn verify -P run-integration-tests-playwright -f integration-tests/pom.xml
 
 Every run uploads a `playwright-report` artifact — the HTML report, with every screenshot and
 trace embedded in it, plus the JUnit XML — retained 14 days, with `if: always()` so a failing run
-still produces it. Unzip it and run `npx playwright show-report <playwright-report>`: traces open
-in the report's own bundled viewer, so you need neither `show-trace` nor trace.playwright.dev.
-Opening `index.html` over `file://` will not load them.
+still produces it. Unzip it and serve it:
+
+```bash
+unzip -q playwright-report.zip -d /tmp/pw-report
+npx playwright show-report /tmp/pw-report/playwright-report --host 0.0.0.0 --port 9323
+```
+
+Traces open in the report's own bundled viewer, so you need neither `show-trace` nor
+trace.playwright.dev. Opening `index.html` over `file://` will not load them.
+
+`--host`/`--port` are what make this work on a headless box, and are not optional there. Without
+them both viewers try to open a browser window of their own and die with
+
+```
+Error: Protocol error (Browser.getVersion): Internal server error, session closed.
+```
+
+which says nothing about the real cause. With them, the viewer is served over HTTP and you tunnel
+to it instead. `show-trace` takes the same two flags.
+
+Also note `show-trace` is the wrong command for this artifact regardless: it is a *report* bundle —
+an `index.html` plus one trace zip per test under `playwright-report/data/`, keyed by content SHA-1
+— not a trace. Use `show-report` on the extracted directory, or point `show-trace` at one member of
+`data/`.
 
 The workflow deliberately does **not** upload the raw `target/playwright-results/`, and re-adding
 it is the one edit to avoid. The html reporter *copies* every attachment into

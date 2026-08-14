@@ -49,8 +49,9 @@ test.describe('Workspace shell', () => {
     });
 
     test('CREATE mode: the id-less workspace URL renders an empty form and the Create button', async ({ sdcPage }) => {
-        // Omitting the id yields the DOUBLE-slash form '#!/dashboard/workspace//resource/general'
-        // — see the comment on gotoWorkspaceTab() for why the single-slash shape does not work.
+        // Omitting the id yields the SINGLE-slash form '#!/dashboard/workspace/resource/general'.
+        // ui-router matched a double slash here; the Angular Router cannot represent that URL at all
+        // — see the comment on gotoWorkspaceTab() for the parser detail.
         await gotoWorkspaceTab(sdcPage, { type: 'resource', tab: 'general' });
 
         expect(await settles(sdcPage), 'page did not settle').toBe(true);

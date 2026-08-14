@@ -43,7 +43,7 @@
  * See README.md "Navigation contract" for the full rationale.
  */
 
-import { test as base, expect, Page, APIRequestContext } from '@playwright/test';
+import { test as base, expect, Page, APIRequestContext, APIResponse } from '@playwright/test';
 
 // ---------------------------------------------------------------------------
 // Environment
@@ -162,6 +162,21 @@ export const SEL = {
     topBar: 'div.sdc-workspace-top-bar',
 
     /**
+     * The element the workspace <router-outlet> activates for the current tab, whatever its tag
+     * (`general-tab`, `deployment-page`, or a bare `ng-component` for the two selectorless pages).
+     * Matched as the outlet's element SIBLING because the outlet itself renders nothing — Angular
+     * inserts the activated component after the <router-outlet> comment anchor, not inside it. There
+     * is deliberately no wrapper element to match instead: `.w-sdc-main-right-container`'s class
+     * attribute has to stay exactly that string for the Selenium exact-class xpath waits. Scoped to
+     * the shell so the app-level outlet in app.component.html cannot match.
+     *
+     * This is what "the tab has mounted" means, and it is the only tab-agnostic way to say it, so
+     * gotoWorkspaceTab() waits on it and three layout specs measure it.
+     */
+    workspaceRoutedTab:
+        '.sdc-workspace-container .w-sdc-main-right-container > .w-sdc-main-right-container-content > router-outlet ~ *',
+
+    /**
      * The PA/AO unsaved-changes modal, opened via ModalServiceSdcUI.openCustomModal with
      * testId: "navigate-modal" (properties-assignment.page.component.ts:1301,
      * attributes-outputs.page.component.ts:696). Its three buttons are a Cypress contract.
@@ -193,35 +208,51 @@ export const SEL = {
 // ---------------------------------------------------------------------------
 
 /**
- * Mirrors AdditionalConditions.pageLoadWait() from the Selenium suite, which is what CI
- * actually gates on. The `window.angular` branch is skipped automatically once CR 3 removes
- * AngularJS, at which point only readyState + jQuery.active remain — that is intentional and
- * correct, not a silent weakening: with no digest cycle there is nothing else to wait for.
+ * Derived from AdditionalConditions.pageLoadWait() in the Selenium suite, which is what CI gates on.
+ *
+ * The `window.angular` branch that predicate carries is GONE here, not skipped: AngularJS was
+ * removed in 4a302206e, so the digest/$http/$timeout checks can never run and keeping them implied a
+ * synchronisation this helper does not provide.
+ *
+ * Angular's own stability hook is deliberately NOT put in its place. `window.getAllAngularTestabilities`
+ * does exist (platform-browser installs BrowserGetTestability, the registry Protractor's
+ * waitForAngular() gated on), but Angular 5.2.11's Testability.isStable() is
+ * `_isZoneStable && _pendingCount == 0 && !_ngZone.hasPendingMacrotasks`, and zone.js counts a
+ * repeating timer or an animation-frame loop as a macrotask that never completes. Any page holding
+ * one is therefore permanently "unstable": consulting the registry here made settles() an
+ * unconditional 60 s hang on Composition, Deployment and Catalog, and timed out five tests
+ * (CI run 31798342250). The product already documents the same trap from the other side —
+ * ProgressService starts its poll inside ngZone.runOutsideAngular() precisely so Selenium's
+ * waitForAngular does not hang on it — and third-party canvas code gets no such courtesy.
+ *
+ * So this stays a cheap two-check barrier and the load-bearing waits live at the call sites (see the
+ * note on settles() below).
  */
 const PAGE_LOAD_WAIT = `
   try {
     if (document.readyState !== 'complete') return false;
     if (window.jQuery && window.jQuery.active) return false;
-    if (window.angular) {
-      if (!window.qa) { window.qa = { doneRendering: false }; }
-      var injector = window.angular.element('body').injector();
-      if (!injector) return false;
-      var $rootScope = injector.get('$rootScope');
-      var $http = injector.get('$http');
-      var $timeout = injector.get('$timeout');
-      if ($rootScope.$$phase === '$apply' || $rootScope.$$phase === '$digest' || $http.pendingRequests.length !== 0) {
-        window.qa.doneRendering = false; return false;
-      }
-      if (!window.qa.doneRendering) { $timeout(function() { window.qa.doneRendering = true; }, 0); return false; }
-    }
     return true;
   } catch (ex) { return false; }
 `;
 
 /**
- * Waits until the page settles by the Selenium definition. Returns false on timeout AND on a
- * frozen page — a page.evaluate() that never resolves means the Angular zone is blocked, which
- * is the classic ngUpgrade hang signature and must fail loudly rather than time out silently.
+ * Waits until the page is quiescent by the predicate above.
+ *
+ * NOT a substitute for waiting on the thing under test, and it cannot be made into one. With
+ * AngularJS gone, readyState is already 'complete' and jQuery already idle the instant an in-page
+ * hash assignment returns, so on a route change this can be satisfied before the router has begun
+ * resolving — a one-shot measurement taken straight afterwards is reading the PREVIOUS tab, or no
+ * tab at all. That is why gotoWorkspaceTab() waits for the routed tab itself and why every
+ * assertion downstream polls or uses a web-first matcher. Treat this as a cheap extra barrier.
+ *
+ * "Cheap" is a requirement, not a description: ~100 calls per run sit on the critical path, and a
+ * predicate that can block does not fail here — it silently eats the caller's 60 s test budget and
+ * surfaces as a timeout on whatever step comes next.
+ *
+ * Returns false on timeout AND on a frozen page — a page.evaluate() that never resolves means the
+ * Angular zone is blocked, which is the classic hang signature and must fail loudly rather than
+ * time out silently.
  */
 export async function settles(page: Page, timeoutMs = 30_000): Promise<boolean> {
     const start = Date.now();
@@ -318,12 +349,22 @@ export async function gotoCold(page: Page, path: string): Promise<void> {
  * of magnitude faster than a full reload and is what a user clicking through the app produces.
  * Pass `cold: true` for a real browser navigation, which additionally exercises the pre-bootstrap
  * URL parse — a distinct behaviour worth its own assertions.
+ *
+ * RETURNS ONLY ONCE THE TARGET TAB HAS MOUNTED. This is the helper's contract and it is load-bearing:
+ * settles() cannot provide it (see its note), so without an explicit wait here every caller that
+ * measured the DOM in one shot was reading the tab it navigated AWAY from — or an empty shell. Pass
+ * `expectTab: false` for a URL that deliberately activates no workspace tab.
  */
 export async function gotoWorkspaceTab(
     page: Page,
-    opts: { id?: string; type: 'resource' | 'service'; tab?: string; previousState?: string; cold?: boolean },
+    opts: {
+        id?: string; type: 'resource' | 'service'; tab?: string; previousState?: string;
+        cold?: boolean; expectTab?: boolean;
+    },
 ): Promise<void> {
-    const { id, type, tab = 'general', previousState = 'dashboard', cold = false } = opts;
+    const {
+        id, type, tab = 'general', previousState = 'dashboard', cold = false, expectTab = true,
+    } = opts;
     // CREATE mode is a SINGLE slash: '#!/dashboard/workspace/service/general'. ui-router matched
     // the DOUBLE-slash form ('workspace//service/general') because ':id' was simply absent from
     // $state.href's interpolation, but the Angular Router cannot represent that URL at all —
@@ -341,6 +382,11 @@ export async function gotoWorkspaceTab(
         await page.evaluate((p) => { window.location.hash = `#!${p}`; }, path);
     }
     await settles(page);
+    if (expectTab) {
+        await expect(page.locator(SEL.workspaceRoutedTab).first(),
+            `no workspace tab mounted at '${path}' — the route never resolved`)
+            .toBeAttached({ timeout: 30_000 });
+    }
 }
 
 /** Navigates to a top-level route (dashboard, catalog, onboardVendor, adminDashboard, …). */
@@ -385,6 +431,51 @@ export class SdcApi {
         return `${this.baseUrl}/sdc1/feProxy/rest/v1${path}`;
     }
 
+    private static collectionOf(type: 'resource' | 'service'): string {
+        return type === 'resource' ? 'resources' : 'services';
+    }
+
+    /**
+     * Turns a creation response into a CreatedAsset — but not before the backend can READ the asset
+     * back.
+     *
+     * The read-back poll is not belt and braces. JanusGraph/Cassandra offers no read-after-write
+     * guarantee across the BE's transactions, so a 201 from the create endpoint is sometimes followed
+     * — within the same second — by a 404/SVC4063 on the very uniqueId it just handed out. The UI
+     * then bounces to the dashboard behind an error modal and the spec fails on a missing sidebar,
+     * which reads as a UI regression and is not one. `retries: 1` compounded it: the second attempt
+     * passed, so the run reported all-green and the flake appeared only in the HTML report, never in
+     * the JUnit XML the gate votes on.
+     *
+     * Polled on `filteredDataByParams?include=metadata` specifically because that is the request the
+     * workspace fires on entry — the one that actually 404'd, not a proxy for it.
+     */
+    private async readable(
+        resp: APIResponse, name: string, type: 'resource' | 'service',
+    ): Promise<CreatedAsset> {
+        const body = await resp.json().catch(() => ({}));
+        if (resp.status() !== 201) {
+            // Built ONLY on the failure path. `body` is ~4 KB of component JSON, and an eager
+            // template literal put all of it into the HTML report's step title once per created
+            // asset — the bulk of a 682 KB index.html across a run, and of every trace.
+            expect(resp.status(), `${type} creation failed: ${JSON.stringify(body)}`).toBe(201);
+        }
+        const id: string = body.uniqueId;
+        expect(id, `${type} creation returned 201 with no uniqueId`).toBeTruthy();
+
+        const probe = this.url(
+            `/catalog/${SdcApi.collectionOf(type)}/${id}/filteredDataByParams?include=metadata`);
+        await expect.poll(
+            async () => (await this.request.get(probe, { headers: this.headers })).status(),
+            {
+                timeout: 30_000,
+                message: `${name} (${id}) was created but never became readable — entering its `
+                    + 'workspace would 404 and bounce to the dashboard',
+            }).toBe(200);
+
+        return { id, name, type };
+    }
+
     /** Creates a VF resource in NOT_CERTIFIED_CHECKOUT state (i.e. immediately editable). */
     async createVf(namePrefix = 'PwVF'): Promise<CreatedAsset> {
         const name = namePrefix + Date.now();
@@ -412,9 +503,7 @@ export class SdcApi {
                 tags: [name],
             },
         });
-        const body = await resp.json().catch(() => ({}));
-        expect(resp.status(), `VF creation failed: ${JSON.stringify(body)}`).toBe(201);
-        return { id: body.uniqueId, name, type: 'resource' };
+        return this.readable(resp, name, 'resource');
     }
 
     /**
@@ -439,9 +528,7 @@ export class SdcApi {
                 tags: [name],
             },
         });
-        const body = await resp.json().catch(() => ({}));
-        expect(resp.status(), `Service creation failed: ${JSON.stringify(body)}`).toBe(201);
-        return { id: body.uniqueId, name, type: 'service' };
+        return this.readable(resp, name, 'service');
     }
 
     /**
@@ -449,7 +536,7 @@ export class SdcApi {
      * returns 204, so a 204 is not evidence the intended asset is gone.
      */
     async deleteAsset(asset: CreatedAsset): Promise<void> {
-        const collection = asset.type === 'resource' ? 'resources' : 'services';
+        const collection = SdcApi.collectionOf(asset.type);
         await this.request
             .delete(this.url(`/catalog/${collection}/${asset.id}`), { headers: this.headers })
             .catch(() => { /* best-effort cleanup; a leaked test asset must not fail the suite */ });
