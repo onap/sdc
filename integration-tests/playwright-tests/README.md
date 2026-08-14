@@ -539,11 +539,22 @@ mvn clean install -P all,docker -DskipTests ...          # build images
 mvn verify -P run-integration-tests-playwright -f integration-tests/pom.xml
 ```
 
-Every run uploads a `playwright-report` artifact (HTML report, JUnit XML, screenshots, traces),
-retained 14 days, with `if: always()` so a failing run still produces it. Download it and run
-`npx playwright show-trace <trace.zip>`. On failure it additionally dumps `docker ps -a` plus the
-last 200 log lines of every container, because a stack that never became healthy is the most
-common failure mode and is invisible in the Playwright report.
+Every run uploads a `playwright-report` artifact — the HTML report, with every screenshot and
+trace embedded in it, plus the JUnit XML — retained 14 days, with `if: always()` so a failing run
+still produces it. Unzip it and run `npx playwright show-report <playwright-report>`: traces open
+in the report's own bundled viewer, so you need neither `show-trace` nor trace.playwright.dev.
+Opening `index.html` over `file://` will not load them.
+
+The workflow deliberately does **not** upload the raw `target/playwright-results/`, and re-adding
+it is the one edit to avoid. The html reporter *copies* every attachment into
+`playwright-report/data/` keyed by content SHA-1, so shipping the output dir as well sent a second
+byte-identical copy of all 32 traces — 145 MB where 75 MB holds the same bytes (run #27; verified
+by hashing all 36 files). `trace: 'on'` stays as it is: one trace per test is the point, and it is
+the duplication that was wasteful, not the traces.
+
+On failure it additionally dumps `docker ps -a` plus the last 200 log lines of every container,
+because a stack that never became healthy is the most common failure mode and is invisible in the
+Playwright report.
 
 Two constraints worth knowing before editing that workflow:
 
