@@ -425,6 +425,15 @@ tab's template roots at one. Comparing the hit *tag* against the routed componen
 never fails; ask whether the element you expect **is** the hit node or contains it
 (`workspace-tab-title.spec.ts`'s `titleIsTopmost`, `workspace-topbar-controls.spec.ts`'s `hitSelf`).
 
+**And wait for the load overlay before probing.** Any component that calls
+`loaderService.activate()` in its `ngOnInit` and deactivates in the response handler — `activity_log`
+and `composition` both do — holds a `position: fixed; z-index: 9999` div over the whole viewport
+until its request lands, i.e. *after* the tab has mounted. It is then the topmost element at every
+probe point, so a hit test measured there reads backend latency as an occluded element. Wait for
+`.sdc-loader-global-wrapper` to reach count `0` first; it is torn down rather than hidden, so
+counting is the check, and it is unscoped deliberately (app-root's global loader mounts outside
+`.sdc-workspace-container`). This has now cost two red gates, SDC-4887 and SDC-4890.
+
 ---
 
 ## Navigation contract

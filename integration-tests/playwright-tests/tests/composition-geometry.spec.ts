@@ -42,6 +42,15 @@
  * proves the canvas is genuinely reachable at x=300 rather than merely sized to include it —
  * an overlay that swallows clicks is a real ngUpgrade failure mode and geometry alone misses it.
  *
+ * The hit test has to outlast the LOAD OVERLAY, which is why it waits for it below. The canvas
+ * itself is not the slow part: CompositionGraphComponent creates it in ngAfterViewInit, so all
+ * three cytoscape layers exist before any request resolves. What arrives late is the *data* —
+ * loadCompositionData() raises the global loader from ngOnInit and drops it only when the topology
+ * response lands — and while that overlay is up it is `position: fixed; z-index: 9999` over the
+ * whole viewport, so it, not the canvas, is the topmost element at the probe point. A trace from
+ * the 2026-08-17 run has it exactly: canvas layers at left 244 / top 103 covering (300,400), the
+ * overlay still mounted, `elementFromPoint` returning DIV, four BE requests still in flight.
+ *
  * Measured at 1920x1080 on the Docker stack, which is what the numbers below encode:
  *   general      body='general'      child-view 242,103 1678x977   sidebar 0,50 242x1030
  *   composition  body='composition'  child-view   0,50 1920x1030   sidebar ABSENT
@@ -57,6 +66,13 @@ import { test, expect, SEL, settles, gotoWorkspaceTab, currentRoute } from './fi
 
 /** The workspace shell's left tab rail, suppressed on composition by `*ngIf="!isComposition"`. */
 const LEFT_SIDEBAR = '.w-sdc-left-sidebar';
+/**
+ * Any full-viewport load overlay. Deliberately UNSCOPED, matching workspace-tab-title.spec.ts: the
+ * one that matters here is app-root's own `<sdc-loader [global]="true">`, which mounts outside
+ * `.sdc-workspace-container` entirely. It is torn down rather than hidden when it deactivates, so
+ * counting is the check.
+ */
+const LOADER = '.sdc-loader-global-wrapper';
 
 interface Geometry {
     bodyClass: string;
@@ -128,6 +144,14 @@ test.describe('Composition full-bleed layout', () => {
             await expect.poll(async () => (await measure(sdcPage)).childView?.left,
                 { timeout: 20_000, message: 'the child view never went full-bleed' })
                 .toBe(0);
+            // The composition tab raises the load overlay from its own ngOnInit and drops it only
+            // when the topology request resolves — i.e. AFTER the geometry above has settled, since
+            // none of it depends on that request. Measuring here reads backend latency as an
+            // occluded canvas. Waiting does not weaken the guard: what the hit test exists to catch
+            // is an overlay that never comes down, and 30s of a backend not answering is a backend
+            // problem, reported as such by this wait rather than mis-reported by the assertion below.
+            await expect(sdcPage.locator(LOADER), 'the load overlay never came down')
+                .toHaveCount(0, { timeout: 30_000 });
             const composition = await measure(sdcPage);
 
             // No trailing slash: we navigated WITH one, and the router normalised it away and rewrote
@@ -146,8 +170,13 @@ test.describe('Composition full-bleed layout', () => {
                 .toBe(false);
 
             // Geometry alone would pass on a canvas covered by a stale overlay.
-            expect(composition.hitAt300x400,
-                'nothing hit-testable at x=300 inside the reclaimed gutter')
+            //
+            // Polled, not asserted once, even though the overlay is already down by here: the last
+            // thing loadGraphData() does is `setTimeout(() => zoomAllWithMax(cy))`, so cytoscape
+            // re-lays out its layers one macrotask after the response the wait above observed. The
+            // poll costs nothing on the happy path and keeps that step from deciding the verdict.
+            await expect.poll(async () => (await measure(sdcPage)).hitAt300x400,
+                { timeout: 20_000, message: 'nothing hit-testable at x=300 inside the reclaimed gutter' })
                 .toBe('CANVAS');
         });
 });
