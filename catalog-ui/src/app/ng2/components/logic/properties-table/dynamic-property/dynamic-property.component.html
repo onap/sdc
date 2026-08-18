@@ -14,7 +14,7 @@
  -->
  
  
-<div *ngIf="!property.hidden" class="dynamic-property-row nested-level-{{nestedLevel}}" [@fadeIn]
+<div *ngIf="!propertyAsDerived.hidden" class="dynamic-property-row nested-level-{{nestedLevel}}" [@fadeIn]
     [ngClass]="{'selected': selectedPropertyId && selectedPropertyId === property.propertiesName, 'readonly':  property.isDisabled || property.isDeclared || property.isToscaFunction()}"
     [class.with-top-border]="property.isChildOfListOrMap"
     (click)="onClickPropertyRow(property, $event)">
@@ -77,7 +77,7 @@
 
 </div>
 <!-- FLAT CHILDREN -->
-<div class="flat-children-container" *ngIf="isPropertyFEModel && !property.isDeclared && (!property.isToscaFunction() || (property.isToscaFunction() && property.isChildOfListOrMap && propType != derivedPropertyTypes.SIMPLE))">
+<div class="flat-children-container" *ngIf="isPropertyFEModel && !property.isDeclared && (!property.isToscaFunction() || (property.isToscaFunction() && propertyAsDerived.isChildOfListOrMap && propType != derivedPropertyTypes.SIMPLE))">
     <ng-container *ngFor="let prop of property.flattenedChildren | filterChildProperties: expandedChildId; trackBy:prop?.propertiesName">
         <dynamic-property
             [selectedPropertyId]="selectedPropertyId"

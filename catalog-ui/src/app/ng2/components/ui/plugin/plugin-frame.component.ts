@@ -20,7 +20,7 @@ export class PluginFrameComponent implements OnInit, OnDestroy {
     private urlSearchParams: URLSearchParams;
     private isClosed: boolean;
     private isReady: boolean;
-    private isPluginCheckDone: boolean;
+    isPluginCheckDone: boolean;
     private stateChangeStartUnregister: Function;
 
     constructor(private eventBusService: EventBusService,

@@ -11,6 +11,13 @@ export class CanvasSearchComponent extends AutoCompleteComponent {
     @Output() public searchButtonClicked: EventEmitter<string> = new EventEmitter<string>();
     @Output() public onSelectedItem: EventEmitter<string> = new EventEmitter<string>();
 
+    // AutoCompleteComponent declares onClearSearch protected, which AOT rejects because the
+    // generated factory reads template-bound members off the instance from outside the class.
+    // Widening it here emits no code — a declaration without an initializer leaves the base
+    // class's assignment as the only one — so it is purely a compile-time bridge. Drop it once
+    // onap-ui-angular publishes the fix (SDC-4895).
+    public onClearSearch: () => void;
+
     public onSearchClicked = (searchText:string)=> {
         this.searchButtonClicked.emit(searchText);
     }

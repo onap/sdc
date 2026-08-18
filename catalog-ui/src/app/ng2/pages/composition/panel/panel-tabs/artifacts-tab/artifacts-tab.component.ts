@@ -7,7 +7,6 @@ import { ComponentInstanceServiceNg2 } from 'app/ng2/services/component-instance
 import { TopologyTemplateService } from 'app/ng2/services/component-services/topology-template.service';
 import { ArtifactType } from 'app/utils';
 import * as _ from 'lodash';
-import { SdcUiServices } from 'onap-ui-angular';
 import { Observable } from 'rxjs/Observable';
 import { map } from 'rxjs/operators';
 import { ArtifactsService } from '../../../../../components/forms/artifacts-form/artifacts.service';
@@ -21,8 +20,7 @@ import { CompositionService } from '../../../composition.service';
 @Component({
     selector: 'artifacts-tab',
     styleUrls: ['./artifacts-tab.component.less'],
-    templateUrl: './artifacts-tab.component.html',
-    providers: [SdcUiServices.ModalService]
+    templateUrl: './artifacts-tab.component.html'
 })
 
 export class ArtifactsTabComponent {
@@ -40,7 +38,7 @@ export class ArtifactsTabComponent {
     private topologyTemplateId: string;
     private heatToEnv: Map<string, ArtifactModel>;
     private resourceType: string;
-    private isComplex: boolean;
+    public isComplex: boolean;
 
     constructor(private store: Store,
                 private compositionService: CompositionService,

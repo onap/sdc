@@ -1,0 +1,28 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      // The ~900 `from 'app/...'` imports resolved through baseUrl alone before, because the legacy
+      // AotPlugin applied the whole PathsPlugin, whose apply() registers an
+      // enhanced-resolve ModulesInRootPlugin for baseUrl. AngularCompilerPlugin calls only the
+      // resolveWithPaths *function*, which handles `paths` and nothing else, so baseUrl stops
+      // being a webpack module root and every one of those imports becomes "Module not found".
+      // This mapping is what baseUrl was doing implicitly.
+      "app/*": ["app/*"],
+      // onap-ui-angular@5.4.4 declares "types": "dist/components/index.d.ts", a path that does not
+      // exist in the package. TypeScript therefore falls back to "main" (dist/index.umd.js) and,
+      // because allowJs is on, resolves the raw UMD bundle — which has no index.umd.metadata.json
+      // beside it, so AOT sees every exported NgModule as un-annotated. dist/index.d.ts and
+      // dist/index.metadata.json are both present, so resolve there instead.
+      "onap-ui-angular": ["../node_modules/onap-ui-angular/dist/index"]
+    }
+  },
+  // Specs are already excluded from the webpack build, but AngularCompilerPlugin builds a full
+  // TypeScript program, so a spec's `import {Mock} from 'ts-mockery'` still drags that package's
+  // .d.ts into type checking — and it uses conditional types, which the pinned typescript 2.4.2
+  // cannot parse (TS1005). Excluding the specs from the AOT program is what keeps the build green.
+  "exclude": [
+    "**/*.spec.ts",
+    "jest"
+  ]
+}

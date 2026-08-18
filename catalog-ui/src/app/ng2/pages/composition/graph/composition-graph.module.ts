@@ -17,7 +17,7 @@ import {DndModule} from "ngx-drag-drop";
 import { MenuListNg2Module } from "app/ng2/components/downgrade-wrappers/menu-list-ng2/menu-list-ng2.module";
 import { UiElementsModule } from "app/ng2/components/ui/ui-elements.module";
 import {ServicePathSelectorModule} from "./service-path-selector/service-path-selector.module";
-import {SdcUiComponentsModule, SdcUiServices} from "onap-ui-angular";
+import {SdcUiComponentsModule} from "onap-ui-angular";
 import {CanvasSearchModule} from "./canvas-search/canvas-search.module";
 import {CompositionGraphLinkUtils, ServicePathGraphUtils} from "./utils";
 
@@ -47,7 +47,6 @@ import {CompositionGraphLinkUtils, ServicePathGraphUtils} from "./utils";
         ConnectionWizardService,
         CompositionGraphPaletteUtils,
         QueueServiceUtils,
-        SdcUiServices.simplePopupMenuService,
         ServicePathGraphUtils
     ]
 })

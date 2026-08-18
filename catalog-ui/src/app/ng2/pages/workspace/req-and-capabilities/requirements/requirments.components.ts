@@ -6,7 +6,7 @@ import {TopologyTemplateService} from "../../../../services/component-services/t
 import {ReqAndCapabilitiesService} from "../req-and-capabilities.service";
 import {EventListenerService} from "../../../../../services/event-listener-service";
 import {ModalComponent} from "onap-ui-angular/dist/modals/modal.component";
-import {SdcUiServices} from "onap-ui-angular";
+import {SdcUiCommon, SdcUiServices} from "onap-ui-angular";
 import sortedIndexBy = require("lodash/sortedIndexBy");
 
 @Component({
@@ -52,7 +52,7 @@ export class RequirmentsComponent implements OnInit {
         let modalConfig = {
             size: 'md',
             title: 'Update Requirement',
-            type: 'custom',
+            type: SdcUiCommon.ModalType.custom,
             buttons: [
                 {
                     id: 'saveButton',

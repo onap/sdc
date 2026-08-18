@@ -1,6 +1,6 @@
 import { Component, ComponentRef, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import * as _ from 'lodash';
-import { SdcUiServices } from 'onap-ui-angular';
+import { SdcUiCommon, SdcUiServices } from 'onap-ui-angular';
 import { Capability, CapabilityUI } from '../../../../models/capability';
 import { Requirement, RequirementUI } from '../../../../models/requirement';
 import { TopologyTemplateService } from '../../../services/component-services/topology-template.service';
@@ -24,11 +24,11 @@ export class ReqAndCapabilitiesComponent implements OnInit {
 
     @ViewChild('requirmentsContainer', { read: ViewContainerRef }) requirmentsContainer: ViewContainerRef;
     @ViewChild('capabilitiesContainer', { read: ViewContainerRef }) capabilitiesContainer: ViewContainerRef;
-    private requirements: Requirement[] = [];
+    requirements: Requirement[] = [];
     private requirementsUI: RequirementUI[] = [];
-    private capabilities: Capability[] = [];
-    private selectTabName: string = 'REQUIREMENTS';
-    private notEmptyTable: boolean = true;
+    capabilities: Capability[] = [];
+    selectTabName: string = 'REQUIREMENTS';
+    notEmptyTable: boolean = true;
     private instanceRef: ComponentRef<any>;
     private customModalInstance: ModalComponent;
     readonly INPUTS_FOR_CAPABILITIES: string = 'INPUTS_FOR_CAPABILITIES';
@@ -102,12 +102,12 @@ export class ReqAndCapabilitiesComponent implements OnInit {
 
     }
 
-    private selectTab($event) {
+    selectTab($event) {
         this.selectTabName = $event.title.contains('Requirement') ? 'REQUIREMENTS' : 'CATPABILITIES';
         this.loadReqOrCap();
     }
 
-    private showAdd() {
+    showAdd() {
         return this.workspaceService.metadata.lifecycleState === ComponentState.NOT_CERTIFIED_CHECKOUT;
     }
 
@@ -149,7 +149,7 @@ export class ReqAndCapabilitiesComponent implements OnInit {
         let modalConfig = {
             size: 'md',
             title:  'Add Capability',
-            type: 'custom',
+            type: SdcUiCommon.ModalType.custom,
             buttons: [
                 {
                     id: 'saveButton',
@@ -187,7 +187,7 @@ export class ReqAndCapabilitiesComponent implements OnInit {
         let modalConfig = {
             size: 'md',
             title: 'Add Requirement',
-            type: 'custom',
+            type: SdcUiCommon.ModalType.custom,
             buttons: [
                 {
                     id: 'saveButton',

@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2026 Deutsche Telekom AG.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,27 +18,15 @@
  * ============LICENSE_END=========================================================
  */
 
-
-import {Injectable} from "@angular/core";
-import {Component} from "app/models";
-import {ComponentServiceNg2} from "./component.service";
-import {ServiceServiceNg2} from "./service.service";
-import {CacheService} from "../cache.service";
-
-@Injectable()
-export class ComponentServiceFactoryNg2 {
-
-    componentService: ComponentServiceNg2;
-    serviceService: ServiceServiceNg2;
-
-    constructor(componentService: ComponentServiceNg2, serviceService: ServiceServiceNg2, private cacheService:CacheService) {
-        this.serviceService = serviceService;
-        this.componentService = componentService;
-    }
-    getComponentService(component: Component):ComponentServiceNg2 {
-        if (component.isService()) {
-            return this.serviceService;
-        }
-        return this.componentService;
-    }
-}
+// Swapped for environment.prod.ts by AngularCompilerPlugin's hostReplacementPaths — see
+// webpack.common.js for why the replacement has to happen in the TypeScript compiler host and
+// not via NormalModuleReplacementPlugin.
+//
+// This must be a real exported const rather than the `__ENV__` DefinePlugin global that
+// app.module.ts used before. AOT evaluates @NgModule metadata off the TypeScript AST, which
+// happens before DefinePlugin's textual substitution, so `declare const __ENV__` is an
+// unresolvable symbol there and the comparison folds to the wrong value with no diagnostic.
+// (A `declare const` is still fine inside a function body — only decorator metadata is affected.)
+export const environment = {
+  production: false
+};

@@ -35,7 +35,7 @@ export class ZoneInstanceComponent implements OnInit {
     @Output() assignmentSaveComplete: EventEmitter<boolean> = new EventEmitter<boolean>();
     @Output() tagHandleClick: EventEmitter<ZoneInstance> = new EventEmitter<ZoneInstance>();
     @ViewChild('currentComponent') currentComponent: ElementRef;
-    private MODE = ZoneInstanceMode;
+    MODE = ZoneInstanceMode;
     private zoneService:IZoneService;
 
     constructor(private policiesService:PoliciesService, private groupsService:GroupsService, private eventListenerService:EventListenerService, private compositionService:CompositionService, private store:Store){}
@@ -65,7 +65,7 @@ export class ZoneInstanceComponent implements OnInit {
         }
     }
 
-    private setMode = (mode:ZoneInstanceMode, event?:any, afterSaveCallback?:Function):void => {
+    setMode = (mode:ZoneInstanceMode, event?:any, afterSaveCallback?:Function):void => {
 
         if(event){ //prevent event from handle and then repeat event from zone instance
             event.stopPropagation();

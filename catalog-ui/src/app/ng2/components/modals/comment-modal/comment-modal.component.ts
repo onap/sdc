@@ -16,10 +16,10 @@ export class CommentModalComponent {
     @Input() message:string;
     onValidationChange: Subject<boolean> = new Subject();
     //@Input() showComment:boolean;
-    private comment = {"text": ''};
-    private commentValidationPattern = ValidationConfiguration.validation.validationPatterns.comment;
+    comment = {"text": ''};
+    commentValidationPattern = ValidationConfiguration.validation.validationPatterns.comment;
 
-    private onValidityChange = (isValid: boolean):void => {
+    onValidityChange = (isValid: boolean):void => {
         this.onValidationChange.next(isValid);
     }
 }

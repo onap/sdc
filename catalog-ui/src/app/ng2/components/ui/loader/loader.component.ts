@@ -34,7 +34,7 @@ export class LoaderComponent {
     @Input() relative: boolean; // If is relative is set to true, loader will appear over parent element. Otherwise, will be fixed over the entire page.
     @Input() loaderDelay: number; //optional - number of ms to delay loader display.
     
-    private isVisible: boolean = false;
+    isVisible: boolean = false;
     private offset : {
         top: string;
         left: string;

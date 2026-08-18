@@ -131,7 +131,7 @@ export class CompositionPanelHeaderComponent implements OnInit {
                             capability.ownerName = componentInstance.name;
                         });
                     });
-                    this.valueEditModalInstance.closeModal();
+                    this.valueEditModalInstance.closeModal(undefined);
                     this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_COMPONENT_INSTANCE_NAME_CHANGED, this.selectedComponent);
                 };
 
@@ -140,16 +140,16 @@ export class CompositionPanelHeaderComponent implements OnInit {
             } else if (this.selectedComponent instanceof PolicyInstance) {
                 this.policiesService.updateName(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId, this.selectedComponent.uniqueId, nameFromModal).subscribe((success)=>{
                     this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_POLICY_INSTANCE_UPDATE, this.selectedComponent);
-                    this.valueEditModalInstance.closeModal();
+                    this.valueEditModalInstance.closeModal(undefined);
                 }, onFailed);
             } else if (this.selectedComponent instanceof GroupInstance){
                 this.groupService.updateName(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId, this.selectedComponent.uniqueId, nameFromModal).subscribe((success)=>{
                     this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_GROUP_INSTANCE_UPDATE, this.selectedComponent);
-                    this.valueEditModalInstance.closeModal();
+                    this.valueEditModalInstance.closeModal(undefined);
                 }, onFailed);
             }
         }  else {
-            this.valueEditModalInstance.closeModal();
+            this.valueEditModalInstance.closeModal(undefined);
         }
     };
 

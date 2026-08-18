@@ -18,7 +18,7 @@ export class PanelWrapperComponent {
     constructor(public store: Store) {
     }
 
-    private toggleSidebarDisplay = () => {
+    toggleSidebarDisplay = () => {
         // this.withSidebar = !this.withSidebar;
         this.store.dispatch(new OnSidebarOpenOrCloseAction());
     }

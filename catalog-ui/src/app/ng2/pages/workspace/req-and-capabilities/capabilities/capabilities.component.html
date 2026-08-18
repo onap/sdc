@@ -16,7 +16,7 @@
         [rows]="capabilities"
         (select)="onSelectCapabilities($event)"
         [selectionType]="'single'">
-        <ngx-datatable-row-detail [rowHeight]="undefiend">
+        <ngx-datatable-row-detail [rowHeight]="undefined">
             <ng-template let-row="row"  ngx-datatable-row-detail-template>
                 <div class="properties-title">Properties</div>
                 <capabilities-properties [capabilitiesProperties]="row.properties"></capabilities-properties>

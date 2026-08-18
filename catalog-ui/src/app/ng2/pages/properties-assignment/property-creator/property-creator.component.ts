@@ -1,6 +1,6 @@
 
 import { Component } from '@angular/core';
-import { DataTypesMap, PropertyBEModel } from 'app/models';
+import { DataTypesMap, PropertyBEModel, ValidationConfiguration } from 'app/models';
 import { DropdownValue } from 'app/ng2/components/ui/form-components/dropdown/ui-element-dropdown.component';
 import { DataTypeService } from 'app/ng2/services/data-type.service';
 import { PROPERTY_DATA } from 'app/utils';
@@ -18,6 +18,12 @@ import {WorkspaceService} from "../../workspace/workspace.service";
 export class PropertyCreatorComponent {
 
     validation:Validation;
+    // Bound by [pattern] on the description textarea. validation.json holds pattern STRINGS
+    // (validation-config.ts mistypes them as RegExp) and Angular's PatternValidator takes either.
+    // The guard is load-bearing: ConfigService.loadValidationConfiguration()'s error path never
+    // assigns ValidationConfiguration.validation, and an unguarded read here would throw while the
+    // modal content is being instantiated, killing the whole Add-Property flow.
+    commentValidationPattern = ValidationConfiguration.validation && ValidationConfiguration.validation.validationPatterns.comment;
     typesProperties: DropdownValue[];
     typesSchemaProperties: DropdownValue[];
     propertyModel: PropertyBEModel;

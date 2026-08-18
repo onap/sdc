@@ -25,7 +25,10 @@ export class ImportVSPService {
         onboardingModalInstance.innerModalContent.instance.closeModalEvent.subscribe(
             (result: ImportVSPdata) => {
                 subject.next(result);
-                onboardingModalInstance.closeModal(); 
+                // Explicit undefined only to satisfy onap-ui-angular's over-strict typing
+                // (closeModal: (btnName: string) => void); btnName is just the onClose.emit
+                // payload, and every other call site in catalog-ui also passes nothing.
+                onboardingModalInstance.closeModal(undefined);
             }, (err) =>{}
         )
         return subject.asObservable();
