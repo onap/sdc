@@ -40,7 +40,7 @@ export class ArtifactsTabComponent {
     private topologyTemplateId: string;
     private heatToEnv: Map<string, ArtifactModel>;
     private resourceType: string;
-    private isComplex: boolean;
+    public isComplex: boolean;
 
     constructor(private store: Store,
                 private compositionService: CompositionService,

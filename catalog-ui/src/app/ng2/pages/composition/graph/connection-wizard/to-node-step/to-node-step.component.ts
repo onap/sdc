@@ -43,7 +43,7 @@ export class ToNodeStepComponent implements IStepComponent{
         return false;
     }
 
-    private updateSelectedReqOrCap = (selected:Requirement|Capability):void => {
+    updateSelectedReqOrCap = (selected:Requirement|Capability):void => {
         if (!selected) {
             if (this.connectWizardService.selectedMatch.isFromTo) {
                 this.connectWizardService.selectedMatch.capability = undefined;

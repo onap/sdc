@@ -69,8 +69,7 @@ import {ConstraintsModule} from "../properties-assignment/constraints/constraint
         WorkspaceMenuComponent,
         DataTypeService,
         ModalService,
-        TypeWorkspaceService,
-        FileReader
+        TypeWorkspaceService
     ],
     entryComponents: [TypeWorkspaceComponent, AddPropertyComponent],
     exports: [TypeWorkspaceComponent]

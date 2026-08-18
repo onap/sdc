@@ -127,8 +127,8 @@ import {UnsavedChangesGuard} from './guards/unsaved-changes.guard';
 import {WorkspaceComponentResolver} from './pages/workspace/workspace-component.resolver';
 import {WorkspaceService} from './pages/workspace/workspace.service';
 import {RouteMetadataService} from './services/route-metadata.service';
+import {environment} from '../../environments/environment';
 
-declare const __ENV__: string;
 
 export function configServiceFactory(config: ConfigService, authService: AuthenticationService,
                                      eventListener: EventListenerService, dataTypesService: DataTypesService) {
@@ -209,7 +209,7 @@ export function configServiceFactory(config: ConfigService, authService: Authent
     NgxsModule.forRoot([]),
     NgxsLoggerPluginModule.forRoot({logger: console, collapsed: false}),
     NgxsReduxDevtoolsPluginModule.forRoot({
-      disabled: __ENV__ === 'prod'
+      disabled: environment.production
     })
   ],
   exports: [],

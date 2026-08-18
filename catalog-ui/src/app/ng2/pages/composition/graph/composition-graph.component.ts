@@ -90,13 +90,13 @@ export class CompositionGraphComponent implements AfterViewInit {
 
     // tslint:disable:variable-name
     private _cy: Cy.Instance;
-    private zoneTagMode: string;
+    public zoneTagMode: string;
     private activeZoneInstance: ZoneInstance;
-    private zones: Zone[];
+    public zones: Zone[];
     private currentlyClickedNodePosition: Cy.Position;
     private dragElement: JQuery;
     private dragComponent: ComponentInstance;
-    private componentInstanceNames: string[];
+    public componentInstanceNames: string[];
     private topologyTemplateId: string;
     private topologyTemplateType: string;
 
@@ -115,7 +115,7 @@ export class CompositionGraphComponent implements AfterViewInit {
                 private componentInstanceService: ComponentInstanceServiceNg2,
                 private matchCapabilitiesRequirementsUtils: MatchCapabilitiesRequirementsUtils,
                 private store: Store,
-                private compositionService: CompositionService,
+                public compositionService: CompositionService,
                 private loaderService: SdcUiServices.LoaderService,
                 private workspaceService: WorkspaceService,
                 private notificationService: SdcUiServices.NotificationsService,

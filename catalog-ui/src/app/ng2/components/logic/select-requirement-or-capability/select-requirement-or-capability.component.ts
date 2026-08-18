@@ -142,7 +142,7 @@ export class SelectRequirementOrCapabilityComponent implements OnInit {
         }
     }
 
-    private onTypeSelected = ():void => {
+    onTypeSelected = ():void => {
         this.initCapReqListFilterByType();
         if (this.displayCapReqListFilterByType.indexOf(this.selectedReqOrCapModel) === -1) {
             this.selectReqOrCapFromList(null);
@@ -155,7 +155,7 @@ export class SelectRequirementOrCapabilityComponent implements OnInit {
         this.initCapReqListFilterByType();
     }
     
-    private onSelectRequirementOrCapability = ():void => {
+    onSelectRequirementOrCapability = ():void => {
         this.types = this.selectedReqOrCapOption === REQUIREMENT ? this.requirementsTypes : this.capabilitiesTypes;
         this.selectReqOrCapFromList(null);
         this.setDefaultValueType();

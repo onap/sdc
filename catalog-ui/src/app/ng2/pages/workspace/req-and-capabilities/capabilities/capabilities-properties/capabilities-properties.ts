@@ -14,7 +14,7 @@ import { PropertyModel } from "../../../../../../models/properties";
 export class CapabilitiesPropertiesComponent {
     @Input() public capabilitiesProperties: Array<PropertyModel> = [];
 
-    private capabilityPropertiesColumns = [
+    public capabilityPropertiesColumns = [
         {name: 'Name', prop: 'name', flexGrow: 1},
         {name: 'Type', prop: 'type', flexGrow: 1},
         {name: 'Schema', prop: 'schema', flexGrow: 1},

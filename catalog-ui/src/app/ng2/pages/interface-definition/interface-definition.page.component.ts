@@ -25,7 +25,9 @@ import {WorkflowServiceNg2} from 'app/ng2/services/workflow.service';
 import {HierarchyDisplayOptions} from "../../components/logic/hierarchy-navigtion/hierarchy-display-options";
 import {ISdcConfig, SdcConfigToken} from "app/ng2/config/sdc-config.config";
 import {TranslateService} from "app/ng2/shared/translator/translate.service";
-import {IModalButtonComponent, SdcUiServices} from 'onap-ui-angular';
+import {SdcUiCommon, SdcUiServices} from 'onap-ui-angular';
+import {IModalButtonComponent} from 'onap-ui-angular/dist/common';
+import {ModalButtonComponent} from 'onap-ui-angular/dist/modals/modal-button.component';
 import {NotificationSettings} from 'onap-ui-angular/dist/notifications/utilities/notification.config';
 import {ModalComponent} from 'app/ng2/components/ui/modal/modal.component';
 import {ResourceType, ComponentType} from "app/utils";
@@ -587,7 +589,7 @@ export class InterfaceDefinitionComponent {
         const deleteButton: IModalButtonComponent = {
             id: 'deleteButton',
             text: this.modalTranslation.DELETE_BUTTON,
-            type: 'primary',
+            type: SdcUiCommon.ButtonType.primary,
             size: 'small',
             closeModal: true,
             callback: () => {
@@ -608,7 +610,7 @@ export class InterfaceDefinitionComponent {
         const cancelButton: IModalButtonComponent = {
             id: 'cancelButton',
             text: this.modalTranslation.CANCEL_BUTTON,
-            type: 'secondary',
+            type: SdcUiCommon.ButtonType.secondary,
             size: 'small',
             closeModal: true,
             callback: () => {
@@ -620,7 +622,10 @@ export class InterfaceDefinitionComponent {
             this.modalTranslation.DELETE_TITLE,
             this.modalTranslation.deleteText(operation.name),
             'deleteOperationModal',
-            [deleteButton, cancelButton],
+            // onap-ui-angular types this parameter as the ModalButtonComponent *class* while
+            // IModalConfig.buttons is IModalButtonComponent[]; the service only ever reads the
+            // config fields, so the declared type is wrong upstream rather than here.
+            [deleteButton, cancelButton] as any as ModalButtonComponent[],
         );
     }
 

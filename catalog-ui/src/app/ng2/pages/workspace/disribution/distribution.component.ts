@@ -21,7 +21,7 @@ export class DistributionComponent implements OnInit {
   public componentUuid: string;
   public distributions = [];
   private expanded: any = {};
-  private serviceHasDistibutions: boolean = false;
+  public serviceHasDistibutions: boolean = false;
   private readonly uniqueId: string;
   private  userRole: string;
 

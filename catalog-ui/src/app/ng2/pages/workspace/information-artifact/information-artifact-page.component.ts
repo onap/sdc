@@ -58,7 +58,7 @@ export class InformationArtifactPageComponent implements OnInit {
         }
     }
 
-    public addOrUpdateArtifact = (artifact: ArtifactModel, isViewOnly?: boolean) => {
+    public addOrUpdateArtifact = (artifact?: ArtifactModel, isViewOnly?: boolean) => {
         this.artifactsService.openArtifactModal(this.componentId, this.componentType, artifact, ArtifactGroupType.INFORMATION, isViewOnly, null, this.resourceType);
     };
 

@@ -37,7 +37,17 @@ export class InfoTabComponent implements OnInit, OnDestroy {
     public versions: IDropDownOption[];
     private leftPalletElements: LeftPaletteComponent[];
     private isDisabledFlag: boolean;
-    private isComponentSelectedFlag: boolean;
+    public isComponentSelectedFlag: boolean;
+
+    /**
+     * The tab renders whichever fields the selected entity happens to carry, and `component` is a
+     * four-arm union whose arms share almost nothing. Angular 5 templates have no cast syntax
+     * ($any() arrived in 6.1) and AOT type-checks templates, so the presence probes need a widened
+     * view. The class itself keeps the precise union.
+     */
+    public get details(): any {
+        return this.component;
+    }
 
     constructor(private store: Store,
                 private compositionPaletteService: CompositionPaletteService,
@@ -76,7 +86,7 @@ export class InfoTabComponent implements OnInit, OnDestroy {
         return retValArr;
     }
 
-    private isComponentInstanceSelected () {
+    public isComponentInstanceSelected () {
         return this.componentType === SelectedComponentType.COMPONENT_INSTANCE;
     }
 

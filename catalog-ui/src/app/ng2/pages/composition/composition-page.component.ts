@@ -31,7 +31,7 @@ import { WorkspaceService } from '../workspace/workspace.service';
 })
 export class CompositionPageComponent implements OnInit, OnDestroy {
 
-    private topologyTemplate: TopologyTemplate;
+    topologyTemplate: TopologyTemplate;
 
     constructor(private workspaceService: WorkspaceService, private eventListenerService: EventListenerService) {
     }

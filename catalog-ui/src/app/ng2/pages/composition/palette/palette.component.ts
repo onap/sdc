@@ -44,11 +44,14 @@ export class PaletteComponent {
     constructor(private compositionPaletteService: CompositionPaletteService, private eventListenerService: EventListenerService) {}
 
     @Select(WorkspaceState.isViewOnly) isViewOnly$: boolean;
-    private paletteElements: Dictionary<Dictionary<LeftPaletteComponent[]>>;
+    public paletteElements: Dictionary<Dictionary<LeftPaletteComponent[]>>;
     public numberOfElements: number = 0;
     public isPaletteLoading: boolean;
-    private paletteDraggedElement: LeftPaletteComponent;
+    public paletteDraggedElement: LeftPaletteComponent;
     public position: Point = new Point();
+    // The "No Elements Found" message is conditioned on this alongside numberOfElements, so it has
+    // to be recorded wherever numberOfElements is recomputed rather than in the search handler.
+    public searchText: string;
     private openAccordion: boolean = false;
 
     ngOnInit() {
@@ -65,6 +68,7 @@ export class PaletteComponent {
     }
 
     public buildPaletteByCategories = (searchText?: string) => { // create nested by category & subcategory, filtered by search parans
+        this.searchText = searchText;
         // Flat the object and run on its leaves
         if (searchText) {
             this.openAccordion = true;

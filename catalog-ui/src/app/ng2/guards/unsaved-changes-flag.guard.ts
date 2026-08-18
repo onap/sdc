@@ -21,6 +21,7 @@
 import {Inject, Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, CanDeactivate, Router, RouterStateSnapshot} from '@angular/router';
 import {SdcUiCommon, SdcUiComponents, SdcUiServices} from 'onap-ui-angular';
+import {IModalButtonComponent} from 'onap-ui-angular/dist/common';
 import {IAppMenu, SdcMenuToken} from '../config/sdc-menu.config';
 import {WorkspaceService} from '../pages/workspace/workspace.service';
 
@@ -111,8 +112,12 @@ export class UnsavedChangesFlagGuard implements CanDeactivate<any> {
                 this.router.navigateByUrl(targetUrl);
             },
             closeModal: true
-        } as SdcUiComponents.ModalButtonComponent;
+        } as IModalButtonComponent;
 
-        this.modalService.openWarningModal(data.title, data.message, 'navigate-modal', [okButton]);
+        // openWarningModal declares ModalButtonComponent[] (the component class, which carries a
+        // closeModalEvent EventEmitter) while IModalConfig.buttons declares IModalButtonComponent[].
+        // The service only reads the config fields, so the cast bridges an upstream inconsistency.
+        this.modalService.openWarningModal(data.title, data.message, 'navigate-modal',
+            [okButton] as any as SdcUiComponents.ModalButtonComponent[]);
     }
 }
