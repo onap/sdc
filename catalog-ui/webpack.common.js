@@ -8,7 +8,7 @@ const autoprefixer = require('autoprefixer');
 const postcssUrl = require('postcss-url');
 const {GlobCopyWebpackPlugin, BaseHrefWebpackPlugin} = require('@angular/cli/plugins/webpack');
 const {CommonsChunkPlugin} = require('webpack').optimize;
-const {AotPlugin} = require('@ngtools/webpack');
+const {AotPlugin, AngularCompilerPlugin} = require('@ngtools/webpack');
 var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const nodeModules = path.join(process.cwd(), 'node_modules');
 
@@ -42,6 +42,12 @@ module.exports = function(params) {
             ],
             alias: {
                 directives: path.join(__dirname, 'app/directives/'),
+                // onap-ui-angular's package.json "main" is dist/index.umd.js, and there is no
+                // index.umd.metadata.json beside it — only dist/index.metadata.json. AOT reads the
+                // resolved file's adjacent metadata, so via the UMD entry every exported NgModule
+                // looks un-annotated ("Please add a @NgModule annotation"). Point at the ESM entry,
+                // which does have metadata next to it.
+                'onap-ui-angular$': path.join(nodeModules, 'onap-ui-angular/dist/index.js'),
             }
         },
         resolveLoader: {
@@ -61,7 +67,10 @@ module.exports = function(params) {
                     enforce: "pre",
                     test: /\.js$/,
                     loader: "source-map-loader",
-                    exclude: [ path.join(__dirname, 'node_modules') ]
+                    // The ngfactory/ngstyle exclusions are for AOT: it synthesises those files
+                    // without .map siblings, and source-map-loader warns once per file — 320 lines
+                    // of noise in the build log, which is where a reviewer looks for real problems.
+                    exclude: [ path.join(__dirname, 'node_modules'), /\.(ngfactory|ngstyle)\.js$/ ]
                 },
                 { test: /\.json$/, loader: "json-loader" },
                 { test: /\.html$/, loader: "html-loader" },
@@ -272,12 +281,32 @@ module.exports = function(params) {
                     context: ""
                 }
             }),
-            new AotPlugin({
-                mainPath: "main.ts",
-                exclude: [    "**/*.spec.ts" ],
-                tsConfigPath: "src/tsconfig.json",
-                skipCodeGeneration: true
-            })
+            // AOT is production-only on purpose. AngularCompilerPlugin with
+            // skipCodeGeneration:false generates a factory per component and type-checks every
+            // template on each rebuild, which is far too slow for the dev server's HMR loop.
+            // webpack.config.js sets no `aot` key, so the dev server keeps the JIT plugin.
+            params.aot
+                ? new AngularCompilerPlugin({
+                    mainPath: "main.ts",
+                    exclude: ["**/*.spec.ts"],
+                    tsConfigPath: "src/tsconfig.aot.json",
+                    skipCodeGeneration: false,
+                    // Swaps environment.ts for environment.prod.ts *inside the TypeScript compiler
+                    // host*, which is the only place that works. A NormalModuleReplacementPlugin
+                    // rewrites the webpack module request, and by then AOT has already read
+                    // `environment.production` off the AST and folded the literal into
+                    // AppModuleNgFactory — silently shipping the dev value.
+                    hostReplacementPaths: {
+                        [path.join(__dirname, 'src/environments/environment.ts')]:
+                            path.join(__dirname, 'src/environments/environment.prod.ts')
+                    }
+                })
+                : new AotPlugin({
+                    mainPath: "main.ts",
+                    exclude: ["**/*.spec.ts"],
+                    tsConfigPath: "src/tsconfig.json",
+                    skipCodeGeneration: true
+                })
         ],
         node: {
             fs: "empty",

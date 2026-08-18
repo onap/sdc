@@ -11,14 +11,14 @@ import { ValidationConfiguration } from "../../../../../../../models/validation-
 export class EditModuleName implements OnInit{
     @Input() selectModule:DisplayModule;
     @Output() clickButtonEvent: EventEmitter<String> = new EventEmitter();
-    private pattern = ValidationConfiguration.validation.validationPatterns.stringOrEmpty;
-    private originalName: string;
+    public pattern = ValidationConfiguration.validation.validationPatterns.stringOrEmpty;
+    public originalName: string;
     constructor(){}
     public ngOnInit(): void {
          this.originalName = this.selectModule.heatName;
     }
 
-    private clickButton(saveOrCancel: boolean) : void {
+    public clickButton(saveOrCancel: boolean) : void {
         this.clickButtonEvent.emit(saveOrCancel ? this.selectModule.heatName : null);
     }
 }

@@ -40,9 +40,7 @@ import { GlobalPipesModule } from "app/ng2/pipes/global-pipes.module";
 import {ModalModule} from "../../../components/ui/modal/modal.module";
 import {EnvParamsComponent} from "../../../components/forms/env-params/env-params.component";
 import {ModalsModule} from "../../../components/modals/modals.module";
-// import {EnvParamsModule} from "../../../components/forms/env-params/env-params.module";
 import { NgxDatatableModule } from "@swimlane/ngx-datatable";
-import {EnvParamsModule} from "../../../components/forms/env-params/env-params.module";
 import { ServiceConsumptionTabComponent } from "./panel-tabs/service-consumption-tab/service-consumption-tab.component";
 import { ServiceDependenciesTabComponent } from "./panel-tabs/service-dependencies-tab/service-dependencies-tab.component";
 import { ServiceDependenciesModule } from "../../../components/logic/service-dependencies/service-dependencies.module";
@@ -83,7 +81,6 @@ import {CompositionService} from "../composition.service";
         ServiceDependenciesModule,
         ServiceConsumptionModule,
         SubstitutionFilterModule,
-        // EnvParamsModule
     ],
     entryComponents: [
         CompositionPanelComponent,
@@ -104,7 +101,6 @@ import {CompositionService} from "../composition.service";
         ],
     exports: [
         CompositionPanelComponent
-        // EnvParamsModule
     ],
     providers: [SdcUiServices.ModalService, CompositionService]
 })

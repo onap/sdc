@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  -->
 
-<div *ngIf="!attribute.hidden" class="dynamic-property-row nested-level-{{nestedLevel}}" [@fadeIn]
+<div *ngIf="!attributeAsDerived.hidden" class="dynamic-property-row nested-level-{{nestedLevel}}" [@fadeIn]
      [ngClass]="{'selected': selectedAttributeId && selectedAttributeId === attribute.propertiesName, 'readonly':  attribute.isDisabled ||attribute.isDeclared}"
      [class.with-top-border]="attribute.isChildOfListOrMap"
      (click)="onClickPropertyRow(attribute, $event)">

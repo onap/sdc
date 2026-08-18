@@ -139,8 +139,14 @@ export class DeploymentArtifactsPageComponent implements OnInit {
 
 
         if (noConfig) {
+            // Was openAlertModal, which exists only on SDC's own ng2/services/modal.service.ts, not
+            // on the injected SdcUiServices.ModalService — so it threw a TypeError, aborting this
+            // method: no notice, and no browser either. The explicit return is what keeps that
+            // second half true now that the call actually succeeds; without it the method would
+            // fall through and open the browser with an empty path list.
             const msg = this.translateService.translate('DEPLOYMENT_ARTIFACT_GAB_NO_CONFIG');
-            this.modalService.openAlertModal(titleStr, msg);
+            this.modalService.openWarningModal(titleStr, msg, 'gabNoConfigModal');
+            return;
         }
 
         const modalInputs = {

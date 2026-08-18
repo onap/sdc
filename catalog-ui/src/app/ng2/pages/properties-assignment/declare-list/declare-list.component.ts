@@ -19,7 +19,7 @@
  */
 
 import { Component } from '@angular/core';
-import { DataTypesMap, PropertyBEModel } from 'app/models';
+import { DataTypesMap, PropertyBEModel, ValidationConfiguration } from 'app/models';
 import { DataTypeModel } from 'app/models/data-types';
 import { ModalModel } from 'app/models/modal';
 import { InstancePropertiesAPIMap } from 'app/models/properties-inputs/property-fe-map';
@@ -42,8 +42,13 @@ export class DeclareListComponent {
     typesProperties: DropdownValue[];
     typesSchemaProperties: DropdownValue[];
     propertyModel: PropertyBEModel;
+    // Bound by [pattern] on the description textarea. validation.json holds pattern STRINGS
+    // (validation-config.ts mistypes them as RegExp) and Angular's PatternValidator takes either.
+    // The guard is load-bearing: ConfigService.loadValidationConfiguration()'s error path never
+    // assigns ValidationConfiguration.validation, and an unguarded read here would throw while the
+    // modal content is being instantiated, killing the whole Declare-as-List flow.
+    commentValidationPattern = ValidationConfiguration.validation && ValidationConfiguration.validation.validationPatterns.comment;
     // propertyNameValidationPattern:RegExp = /^[a-zA-Z0-9_:-]{1,50}$/;
-    // commentValidationPattern:RegExp = /^[\u0000-\u00BF]*$/;
     // types:Array<string>;
     dataTypes: DataTypesMap;
     isLoading: boolean;

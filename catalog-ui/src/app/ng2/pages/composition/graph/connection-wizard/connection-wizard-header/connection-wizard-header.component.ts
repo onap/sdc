@@ -27,7 +27,7 @@ export class ConnectionWizardHeaderComponent extends WizardHeaderBaseComponent{
         return '';
     }
 
-    private getSelectedReqOrCapName = (isFromNode:boolean):string => {
+    public getSelectedReqOrCapName = (isFromNode:boolean):string => {
         if(!this.connectWizardService.selectedMatch){
             return '';
         }

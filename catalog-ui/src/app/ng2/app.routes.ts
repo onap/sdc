@@ -114,20 +114,6 @@ const workspaceChildren: Routes = [
     {path: 'plugins/:path', component: PluginContextViewPageComponent}
 ];
 
-const workspaceShell = {
-    component: WorkspaceContainerComponent,
-    resolve: {component: WorkspaceComponentResolver},
-    // 'paramsChange' (the default, stated for the record) and NOT 'always'. Measured on router
-    // 5.2.11: `equalParamsAndUrlSegments` recurses into parents, so 'paramsChange' already re-runs
-    // the resolve when only :id changes — a version switch or the post-create redirect refetches,
-    // which is the behaviour that matters. 'always' would additionally refetch the component on
-    // every TAB switch, a server round-trip per click that ui-router never made: it declared
-    // `injectComponent` once on the parent state (app.ts:201), so tab switches reused it.
-    runGuardsAndResolvers: 'paramsChange' as 'paramsChange',
-    data: {bodyClass: 'workspace', title: 'SDC - Workspace'},
-    children: workspaceChildren
-};
-
 /**
  * `data.title` reproduces app.ts:731-738's WCAG 2.4.2 page-title map, which keyed off the state's
  * BASE name — so every workspace tab shared one title and everything outside the three entries
@@ -152,8 +138,36 @@ export const routes: Routes = [
     // so that URL is unrepresentable here; the single-slash form is the replacement. Declared BEFORE
     // the id-bearing route: the two consume a different segment count so order alone disambiguates,
     // and with :id absent WorkspaceComponentResolver takes its create-an-empty-component branch.
-    Object.assign({path: ':previousState/workspace/:type'}, workspaceShell),
-    Object.assign({path: ':previousState/workspace/:id/:type'}, workspaceShell),
+    //
+    // Both entries are spelled out in full rather than sharing a `workspaceShell` const via
+    // Object.assign(). Under AOT the metadata collector statically evaluates the array passed to
+    // RouterModule.forRoot(); it cannot evaluate a function call, so it DROPS such an element
+    // silently — no warning, no build error. That deleted both routes and all 20 tab children from
+    // the compiled ROUTES provider, sending every workspace URL to the '**' → dashboard fallback.
+    // Only object literals are safe here.
+    //
+    // 'paramsChange' below is the router default, stated for the record, and NOT 'always'. Measured
+    // on router 5.2.11: `equalParamsAndUrlSegments` recurses into parents, so 'paramsChange' already
+    // re-runs the resolve when only :id changes — a version switch or the post-create redirect
+    // refetches, which is the behaviour that matters. 'always' would additionally refetch the
+    // component on every TAB switch, a server round-trip per click that ui-router never made: it
+    // declared `injectComponent` once on the parent state (app.ts:201), so tab switches reused it.
+    {
+        path: ':previousState/workspace/:type',
+        component: WorkspaceContainerComponent,
+        resolve: {component: WorkspaceComponentResolver},
+        runGuardsAndResolvers: 'paramsChange' as 'paramsChange',
+        data: {bodyClass: 'workspace', title: 'SDC - Workspace'},
+        children: workspaceChildren
+    },
+    {
+        path: ':previousState/workspace/:id/:type',
+        component: WorkspaceContainerComponent,
+        resolve: {component: WorkspaceComponentResolver},
+        runGuardsAndResolvers: 'paramsChange' as 'paramsChange',
+        data: {bodyClass: 'workspace', title: 'SDC - Workspace'},
+        children: workspaceChildren
+    },
 
     // Replaces the 'workspace-old' state and its oldWorkspaceController (app.ts:110-122), which
     // rewrote bare /workspace/* URLs to /catalog/workspace/*. Declared AFTER the two shell routes

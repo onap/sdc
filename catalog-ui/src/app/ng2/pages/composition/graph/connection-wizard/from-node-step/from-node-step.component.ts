@@ -31,7 +31,7 @@ export class FromNodeStepComponent implements IStepComponent, OnInit{
         return true;
     }
 
-    private updateSelectedReqOrCap = (selected: Requirement|Capability): void => {
+    updateSelectedReqOrCap = (selected: Requirement|Capability): void => {
         if (!selected) {
             this.connectWizardService.selectedMatch = null;
         } else if (selected instanceof Requirement) {

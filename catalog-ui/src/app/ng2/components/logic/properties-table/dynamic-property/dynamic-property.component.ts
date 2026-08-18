@@ -72,6 +72,16 @@ export class DynamicPropertyComponent {
     constructor(private propertiesUtils: PropertiesUtils, private dataTypeService: DataTypeService) {
     }
 
+    /**
+     * `hidden` and `isChildOfListOrMap` are declared (and only ever assigned) on
+     * DerivedFEProperty; the PropertyFEModel arm of the union has neither, so the bindings
+     * that probe them for both arms need a widened view of `property`. Angular 5 templates
+     * have no `$any()` cast - that arrived in 6.1 - so the cast has to live here.
+     */
+    public get propertyAsDerived(): DerivedFEProperty {
+        return <DerivedFEProperty>this.property;
+    }
+
     ngOnInit() {
         this.isPropertyFEModel = this.property instanceof PropertyFEModel;
         this.propType = this.property.derivedDataType;

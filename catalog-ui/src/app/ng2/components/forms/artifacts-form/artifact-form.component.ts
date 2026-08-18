@@ -97,7 +97,7 @@ export class ArtifactFormComponent {
 
     // Verify that the Type and the Name (file) are filled in the Modal
     // For Description and Label - I used this.descriptionIsValid:boolean & this.labelIsValid:boolean as part of the sdc-validation Element
-    private verifyTypeAndFileWereFilled = () => {
+    public verifyTypeAndFileWereFilled = () => {
         if (this.artifact.artifactType === 'DEPLOYMENT' || !this.artifact.mandatory && this.artifact.artifactGroupType !== 'SERVICE_API') {
             // In case of all fields are required:
             // File, Description, Type and Label
@@ -118,7 +118,7 @@ export class ArtifactFormComponent {
     };
 
     // sdc-validation for Description
-    private onDescriptionChange = (isValid: boolean): void => {
+    public onDescriptionChange = (isValid: boolean): void => {
         this.descriptionIsValid = isValid;
         this.onValidationChange.next(isValid) && this.verifyTypeAndFileWereFilled();
     };

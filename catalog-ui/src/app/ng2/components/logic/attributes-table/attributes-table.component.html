@@ -38,7 +38,7 @@
     <div class="table-body" [ngClass]="{'view-mode': readonly}">
         <div class="no-data" *ngIf="!feAttributesMap || !(feAttributesMap | keys).length">No data to display</div>
 
-        <ng-container *ngFor="let instanceId of feAttributesMap | keys; trackBy:vspId">
+        <ng-container *ngFor="let instanceId of feAttributesMap | keys">
             <!-- Icon & Instance Name -->
             <div class="table-rows-header white-sub-header" *ngIf="feInstanceNamesMap">
                 <span [ngClass]="['attrib-instance-icon', feInstanceNamesMap[instanceId].iconClass, 'small']"></span>
