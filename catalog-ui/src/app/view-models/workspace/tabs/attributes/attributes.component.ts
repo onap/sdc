@@ -28,7 +28,7 @@ export class AttributesComponent implements OnInit {
   private componentType: string;
   private componentUid: string;
 
-  private attributes: IAttributeModel[] = [];
+  attributes: IAttributeModel[] = [];
   private temp: IAttributeModel[] = [];
   private customModalInstance: ModalComponent;
 

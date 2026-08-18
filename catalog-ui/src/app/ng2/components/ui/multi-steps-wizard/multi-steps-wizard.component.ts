@@ -56,7 +56,7 @@ export class MultiStepsWizardComponent extends ModalComponent {
         super(el);
     }
 
-    private currentStepIndex:number = 0;
+    currentStepIndex:number = 0;
 
     nextStep = ():void => {
         if(this.currentStepIndex + 1 < this.steps.length){

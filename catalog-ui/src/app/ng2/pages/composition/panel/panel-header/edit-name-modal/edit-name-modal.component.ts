@@ -10,11 +10,11 @@ export class EditNameModalComponent {
     @Input() name:String;
     @Input() validityChangedCallback: Function;
 
-    private pattern:string = "^[\\s\\w\&_.:-]{1,1024}$"
+    pattern:string = "^[\\s\\w\&_.:-]{1,1024}$"
     constructor(){
     }
 
-    private validityChanged = (value):void => {
+    validityChanged = (value):void => {
         if(this.validityChangedCallback) {
             this.validityChangedCallback(value);
         }

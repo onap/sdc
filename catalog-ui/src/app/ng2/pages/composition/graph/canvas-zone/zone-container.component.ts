@@ -16,7 +16,7 @@ export class ZoneContainerComponent implements OnInit {
     @Input() minimized:boolean;
     @Output() minimize: EventEmitter<any> = new EventEmitter<any>();
     @Output() backgroundClick: EventEmitter<void> = new EventEmitter<void>();
-    private class:string;
+    class:string;
 
     constructor() {}
 
@@ -24,11 +24,11 @@ export class ZoneContainerComponent implements OnInit {
         this.class = ZoneInstanceType[this.type].toLowerCase();
     }
 
-    private unminifyZone = () => {
+    unminifyZone = () => {
         this.minimize.emit();
     }
 
-    private backgroundClicked = () => {
+    backgroundClicked = () => {
         this.backgroundClick.emit();
     }
 

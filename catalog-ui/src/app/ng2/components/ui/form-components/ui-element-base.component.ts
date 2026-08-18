@@ -37,8 +37,8 @@ export interface IUiElementChangeEvent {
 })
 export class UiElementBase {
 
-    protected validation = ValidationConfiguration.validation;
-    protected control: FormControl;
+    validation = ValidationConfiguration.validation;
+    control: FormControl;
 
     @Input() value: any;
     @Output() valueChange: EventEmitter<any> = new EventEmitter<any>();

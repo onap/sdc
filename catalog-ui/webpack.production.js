@@ -11,7 +11,10 @@ var CompressionPlugin = require('compression-webpack-plugin');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 var currentTime = new Date().getTime();
 
-const params = {};
+const params = {
+    // Build templates ahead of time. See webpack.common.js for why this is production-only.
+    aot: true
+};
 
 const webpackProdConfig = {
     module: {

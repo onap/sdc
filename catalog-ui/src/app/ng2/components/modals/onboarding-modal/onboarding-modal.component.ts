@@ -43,7 +43,7 @@ export class OnboardingModalComponent implements OnInit {
     @ViewChild('componentsMetadataTable') table: any;
     @Output() closeModalEvent: EventEmitter<ImportVSPdata> = new EventEmitter<ImportVSPdata>();
 
-    private columns = [
+    public columns = [
         {name: 'Name', prop: 'name', flexGrow: 22},
         {name: 'Vendor', prop: 'vendorName', flexGrow: 26},
         {name: 'Category', prop: 'categories', flexGrow: 33},
@@ -51,7 +51,7 @@ export class OnboardingModalComponent implements OnInit {
         {name: 'Type', prop: 'resourceType', flexGrow: 10},
         {name: '#', prop: '', flexGrow: 20}
     ];
-    private componentsMetadataList: IComponentMetadata[] = [];
+    public componentsMetadataList: IComponentMetadata[] = [];
     private temp: IComponentMetadata[] = [];
     private componentFromServer: ComponentMetadata;
     private isCsarComponentExists: boolean = false;

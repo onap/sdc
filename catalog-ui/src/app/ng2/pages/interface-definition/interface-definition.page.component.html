@@ -33,7 +33,12 @@
     <div class="top-add-btn add-btn" [ngClass]="{'disabled': readonly}" *ngIf="!component.isService()" data-tests-id="add-operation" (click)="onSelectInterfaceOperation(undefined, undefined)">
     {{ 'INTERFACE_ADD_OPERATION' | translate }}
     </div>
-    <div class="operation-list" *ngIf="!this.component.isService() || this.enableFlag || this.selectedInstanceData && !this.selectedInstanceData.name === 'SELF'">
+    <!-- Was `!this.selectedInstanceData.name === 'SELF'`, which parses as
+         `(!name) === 'SELF'` and is therefore always false, so this third condition never
+         contributed. Restoring the intent means the list now also appears for a selected
+         non-SELF instance whose originType disallows adding operations; the Add button below
+         stays disabled for those via enableFlag. -->
+    <div class="operation-list" *ngIf="!this.component.isService() || this.enableFlag || this.selectedInstanceData && this.selectedInstanceData.name !== 'SELF'">
       <div *ngIf="!isInterfaceListEmpty()">
         <div class="expand-collapse" *ngIf="isOperationListEmpty()">
           <a class="link"

@@ -35,7 +35,7 @@ export class MenuListComponent {
     @ContentChildren(MenuItemComponent) menuItems:QueryList<MenuItemComponent>;
 
     private position:Point;
-    private isOpen:boolean = false;
+    isOpen:boolean = false;
 
     constructor() {
     }

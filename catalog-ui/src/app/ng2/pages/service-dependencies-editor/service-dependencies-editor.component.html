@@ -64,12 +64,12 @@
                            data-tests-id="value-type-static"
                            [(ngModel)]="selectedSourceType"
                            [value]="SOURCE_TYPES.STATIC.value"
-                           (ngModelChange)="onSourceTypeChange($event)"/> {{"VALUE_LABEL" | translate}}
+                           (ngModelChange)="onSourceTypeChange()"/> {{"VALUE_LABEL" | translate}}
                     <input type="radio" name="sourceType"
                            data-tests-id="value-type-tosca-function"
                            [(ngModel)]="selectedSourceType"
                            [value]="isValidValuesOperator() || isRangeType() || isInRangeOperator() ? SOURCE_TYPES.TOSCA_FUNCTION_LIST.value: SOURCE_TYPES.TOSCA_FUNCTION.value"
-                           (ngModelChange)="onSourceTypeChange($event)"/> {{"VALUE_EXPRESSION_LABEL" | translate}}
+                           (ngModelChange)="onSourceTypeChange()"/> {{"VALUE_EXPRESSION_LABEL" | translate}}
                 </div>
             </div>
             <div class="rule-builder-content" *ngIf="isToscaFunctionSource() && selectedProperty">

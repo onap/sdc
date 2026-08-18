@@ -64,6 +64,11 @@ export class PropertyBEModel {
     required: boolean;
     schema: SchemaPropertyGroupModel;
     schemaType: string;
+    // Client-side only, and misleadingly named on the base class: the "Declare Properties as List
+    // Input" form (declare-list.component.html) writes the new list's schema type here, and
+    // PropertiesAssignmentComponent.declareListProperties() reads it back into schemaType/
+    // schema.property.type. DataTypesService uses it for its original meaning on PropertyModel.
+    simpleType: string;
     type: string;
     uniqueId: string;
     value: string;

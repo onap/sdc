@@ -16,9 +16,9 @@ export class AddElementsComponent {
     @Input() elementsToAdd:Array<UiBaseObject>;
     @Input() elementName: string;
 
-    private existingElements:Array<UiBaseObject>;
-    private dropdownOptions:Array<IDropDownOption>;
-    private selectedElement:IDropDownOption;
+    existingElements:Array<UiBaseObject>;
+    dropdownOptions:Array<IDropDownOption>;
+    selectedElement:IDropDownOption;
 
     ngOnInit() {
         this.existingElements = [];

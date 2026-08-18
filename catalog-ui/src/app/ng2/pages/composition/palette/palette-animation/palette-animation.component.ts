@@ -43,8 +43,8 @@ export class PaletteAnimationComponent  {
   @Input() zoneInstance : ZoneInstance;
 
   public  animation;
-  private visible:boolean = false;
-  private transformStyle:string = "";
+  public visible:boolean = false;
+  public transformStyle:string = "";
 
 
   constructor(private eventListenerService:EventListenerService) {}
@@ -62,7 +62,7 @@ export class PaletteAnimationComponent  {
     }, 0);
   };
 
-  public animationComplete = (e) => {
+  public animationComplete = () => {
     this.visible = false;
     this.zoneInstance.hidden = false;
   };

@@ -1,5 +1,9 @@
+<!-- canvas-search-visible used to be bound to autoCompleteValues, an @Input of the unrelated
+     SearchWithAutocompleteComponent that this component never had, so the class could never be
+     applied. Removed rather than repointed at autoCompleteResults: that would change when the bar
+     stays expanded. See SDC-4896. -->
 <div class="canvas-search-component" [ngClass]="{'results-shown': autoCompleteResults.length}"
-     [class.canvas-search-visible]="autoCompleteValues && autoCompleteValues.length" [attr.data-tests-id]="testId">
+     [attr.data-tests-id]="testId">
     <div class="canvas-search-bar-container" [attr.data-tests-id]="testId"
          [class.active]="searchQuery && searchQuery.length">
         <sdc-search-bar class="canvas-search-bar"

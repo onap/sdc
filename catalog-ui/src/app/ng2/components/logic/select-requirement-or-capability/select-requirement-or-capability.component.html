@@ -21,12 +21,12 @@
         [options]="selectOptions"
         [readonly]="disabledSelectReqOrCapOption"
         [direction]="'horizontal'"
-        (valueChange)="onSelectRequirementOrCapability($event)">
+        (valueChange)="onSelectRequirementOrCapability()">
 
 </radio-buttons>
     <label class="select-type-label">Select type:</label>
     <div class="select-type">
-        <ui-element-dropdown [values]="types" [(value)]="selectedType" (valueChange)="onTypeSelected($event)" testId="select"></ui-element-dropdown>
+        <ui-element-dropdown [values]="types" [(value)]="selectedType" (valueChange)="onTypeSelected()" testId="select"></ui-element-dropdown>
     </div>
 
     <div class="table-and-list-container">

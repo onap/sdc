@@ -69,6 +69,16 @@ export class DynamicAttributeComponent {
   constructor(private attributesUtils: AttributesUtils, private dataTypeService: DataTypeService) {
   }
 
+  /**
+   * `hidden` is declared on DerivedFEAttribute only; the AttributeFEModel arm of the union
+   * does not have it, so the binding that probes it for both arms needs a widened view of
+   * `attribute`. Angular 5 templates have no `$any()` cast - that arrived in 6.1 - so the
+   * cast has to live here.
+   */
+  public get attributeAsDerived(): DerivedFEAttribute {
+    return <DerivedFEAttribute>this.attribute;
+  }
+
   ngOnInit() {
     this.isAttributeFEModel = this.attribute instanceof AttributeFEModel;
     this.attribType = this.attribute.derivedDataType;
