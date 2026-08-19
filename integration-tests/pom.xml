@@ -4,6 +4,7 @@ SDC
 ================================================================================
 Copyright (C) 2020 AT&T Intellectual Property. All rights reserved.
 Modifications copyright (c) 2020-2021 Nokia
+Modifications copyright (c) 2026 Deutsche Telekom AG
 ================================================================================
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -61,10 +62,20 @@ limitations under the License.
         <it.selenium.disabled>false</it.selenium.disabled>
         <it.test-model.disabled>true</it.test-model.disabled>
         <it.helm-validator.version>1.3.1</it.helm-validator.version>
+        <!-- The Docker stack is integration-test infrastructure, not a build artifact, so starting
+             it is opt-in: a plain 'mvn install' should neither pay for a full startup/teardown cycle
+             nor tear down a stack somebody started with '-P start-sdc'. The profiles below flip it
+             back to false. -->
+        <it.stack.disabled>true</it.stack.disabled>
 
         <!-- parser-->
         <sdc-tosca-parser.version>1.9.0</sdc-tosca-parser.version>
-        <docker.showLogs>false</docker.showLogs>
+        <!-- Container stdout is what names the normative type an import died on, so the short-lived
+             init containers - whose whole contract is emitting the marker the <wait><log> checker
+             greps for - stream theirs into the build log. The long-running services are left out on
+             purpose: their Jetty logs are large and land in ${it.shared.volume} anyway. Note that
+             'false' would suppress logs for EVERY image, per-image <log> configuration included. -->
+        <docker.showLogs>sdc-cassandra-init,sdc-cassandra-onboard-init,sdc-backend-init,integration-tests-init</docker.showLogs>
     </properties>
 
     <dependencies>
@@ -1107,10 +1118,10 @@ limitations under the License.
                                         <volume>${it.shared.volume}:/home/onap/logs</volume>
                                     </bind>
                                 </volumes>
-                                <cmd>/bin/sh -c "/home/onap/check_backend.sh"</cmd>
-                                <cmd>/bin/sh -c "/home/onap/create_consumer_and_user.sh"</cmd>
-                                <cmd>/bin/sh -c "/home/onap/import_normatives.sh"</cmd>
-
+                                <!-- No <cmd> here: the image ENTRYPOINT is exec-form
+                                     ["/home/onap/startup.sh"], so a CMD arrives as arguments that
+                                     startup.sh ignores - it runs check_backend.sh,
+                                     create_consumer_and_user.sh and import_normatives.sh itself. -->
                                 <wait>
                                     <time>660000</time>
                                     <log>Done</log>
@@ -1319,6 +1330,9 @@ limitations under the License.
                     </images>
                 </configuration>
                 <executions>
+                    <!-- Building the images is NOT gated by it.stack.disabled: this module is the
+                         only place onap/sdc-backend-init and onap/sdc-integration-tests-init are
+                         built, so the staging job has to keep producing them from a plain build. -->
                     <execution>
                         <id>docker-build-for-it</id>
                         <phase>pre-integration-test</phase>
@@ -1326,12 +1340,18 @@ limitations under the License.
                             <goal>build</goal>
                         </goals>
                     </execution>
+                    <!-- Start and stop must be gated together. Gating only 'start' would leave a
+                         plain build stopping containers it never started - docker:stop finds them
+                         by label, not from session state. -->
                     <execution>
                         <id>docker-start-for-it</id>
                         <phase>pre-integration-test</phase>
                         <goals>
                             <goal>start</goal>
                         </goals>
+                        <configuration>
+                            <skip>${it.stack.disabled}</skip>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>docker-stop-for-it</id>
@@ -1339,6 +1359,9 @@ limitations under the License.
                         <goals>
                             <goal>stop</goal>
                         </goals>
+                        <configuration>
+                            <skip>${it.stack.disabled}</skip>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -1388,6 +1411,22 @@ limitations under the License.
         </plugins>
     </build>
     <profiles>
+        <!-- start-sdc and stop-sdc exist in the root pom, which cannot hand the stack toggle down:
+             a property a module declares itself is never overridden by an inherited one, so these
+             two ids have to be re-declared here. Both need the executions to run - stop-sdc already
+             neutralises the start one with docker.skip.run. -->
+        <profile>
+            <id>start-sdc</id>
+            <properties>
+                <it.stack.disabled>false</it.stack.disabled>
+            </properties>
+        </profile>
+        <profile>
+            <id>stop-sdc</id>
+            <properties>
+                <it.stack.disabled>false</it.stack.disabled>
+            </properties>
+        </profile>
         <profile>
             <id>add-test-model</id>
             <properties>
@@ -1397,6 +1436,7 @@ limitations under the License.
         <profile>
             <id>all-for-integration-tests-only</id>
             <properties>
+                <it.stack.disabled>false</it.stack.disabled>
                 <surefire.skip.tests>true</surefire.skip.tests>
                 <skipTest>false</skipTest>
                 <it.test-model.disabled>false</it.test-model.disabled>
@@ -1433,6 +1473,7 @@ limitations under the License.
         <profile>
             <id>run-integration-tests-api</id>
             <properties>
+                <it.stack.disabled>false</it.stack.disabled>
                 <it.helm-validator.disabled>false</it.helm-validator.disabled>
                 <skipYamlJsonValidator>true</skipYamlJsonValidator>
                 <checkstyle.skip>true</checkstyle.skip>
@@ -1462,6 +1503,7 @@ limitations under the License.
         <profile>
             <id>run-integration-tests-ui</id>
             <properties>
+                <it.stack.disabled>false</it.stack.disabled>
                 <it.helm-validator.disabled>false</it.helm-validator.disabled>
                 <skipYamlJsonValidator>true</skipYamlJsonValidator>
                 <checkstyle.skip>true</checkstyle.skip>
@@ -1498,6 +1540,7 @@ limitations under the License.
             -->
             <id>run-integration-tests-playwright</id>
             <properties>
+                <it.stack.disabled>false</it.stack.disabled>
                 <skipYamlJsonValidator>true</skipYamlJsonValidator>
                 <checkstyle.skip>true</checkstyle.skip>
                 <surefire.skip.tests>true</surefire.skip.tests>

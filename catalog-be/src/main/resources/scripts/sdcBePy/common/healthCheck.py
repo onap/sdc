@@ -32,7 +32,7 @@ def run(be_host, be_port, header, protocol, tls_key, tls_cert, tls_key_pw, ca_ce
     if not check_backend(reply_append_count=properties.retry_attempts, be_host=be_host,
                          be_port=be_port, header=header, scheme=protocol, ca_cert=ca_cert, tls_cert=tls_cert, tls_key=tls_key, tls_key_pw=tls_key_pw):
         print('[ERROR]: ' + time.strftime('%Y/%m/%d %H:%M:%S') + colors.FAIL + ' Backend is DOWN :-(' + colors.END_C)
-        sys.exit()
+        sys.exit(1)
 
 
 def get_args():

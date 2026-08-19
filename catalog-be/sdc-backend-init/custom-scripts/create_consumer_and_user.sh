@@ -44,12 +44,18 @@ fi
 start_time=$(date +"%Y-%m-%d %H:%M:%S")
 echo "[$start_time] Starting sdcuserinit..."
 
-sdcuserinit -i $BE_IP -p $be_port $basic_auth_config $user_conf_dir $https_flag $tls_cert $tls_key $tls_key_pw $ca_cert
+if ! sdcuserinit -i $BE_IP -p $be_port $basic_auth_config $user_conf_dir $https_flag $tls_cert $tls_key $tls_key_pw $ca_cert; then
+  echo "sdcuserinit failed - not importing normatives, they need the admin user." >&2
+  exit 1
+fi
 echo "sdcuserinit executed successfully."
 
 start_time=$(date +"%Y-%m-%d %H:%M:%S")
 echo "[$start_time] Starting sdcconsumerinit..."
-sdcconsumerinit -i $BE_IP -p $be_port $basic_auth_config $https_flag $tls_cert $tls_key $tls_key_pw $ca_cert
+if ! sdcconsumerinit -i $BE_IP -p $be_port $basic_auth_config $https_flag $tls_cert $tls_key $tls_key_pw $ca_cert; then
+  echo "sdcconsumerinit failed." >&2
+  exit 1
+fi
 
 end_time=$(date +"%Y-%m-%d %H:%M:%S")
 echo "[$end_time] Finished sdcuserinit and sdcconsumerinit."
