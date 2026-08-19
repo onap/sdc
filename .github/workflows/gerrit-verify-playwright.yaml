@@ -264,25 +264,34 @@ jobs:
 
       # Starts the stack, installs Node/npm + Chromium, runs the suite, tears the stack down.
       # The Selenium grid container is skipped via it.selenium.disabled in this profile.
+      #
+      # keepContainer stops the containers without removing them, which is what makes the
+      # diagnostics step below able to read anything: docker-maven-plugin otherwise deletes
+      # them in post-integration-test — and on a startup failure in its own cleanup path — so
+      # 'docker ps -a' printed nothing but its header row. The runner is thrown away after
+      # the job, and a stopped container still releases its network endpoint, so the custom
+      # sdc-network is removed as before.
       - name: Run Playwright integration tests
         run: |
           mvn verify \
             -P run-integration-tests-playwright \
             -f integration-tests/pom.xml \
+            -Ddocker.keepContainer=true \
             -Ddocker.skip.push=true \
             -Dnpm.registry=${NPM_REGISTRY} \
             -Dmaven.repo.local=/tmp/r \
             --batch-mode --no-transfer-progress
 
       # A stack that never became healthy is the most common failure mode and is invisible
-      # in the Playwright report, so capture container state separately.
+      # in the Playwright report, so capture container state separately. 200 lines was not
+      # enough to reach the start of a failed normative import.
       - name: Collect container diagnostics
         if: failure()
         run: |
           docker ps -a || true
           for c in $(docker ps -aq); do
             echo "::group::docker logs $(docker inspect --format '{{.Name}}' "$c")"
-            docker logs --tail 200 "$c" 2>&1 || true
+            docker logs --tail 500 "$c" 2>&1 || true
             echo "::endgroup::"
           done
 
@@ -319,6 +328,22 @@ jobs:
           path: |
             **/*.log
             **/hs_err_*.log
+          retention-days: 14
+          if-no-files-found: ignore
+
+      # Every service in the stack bind-mounts its Jetty log directory onto
+      # it.shared.volume (/tmp/sdc-integration-tests), which is outside the workspace and so
+      # matched by none of the globs above — the backend logs that explain a failed startup
+      # were being uploaded nowhere. This needs its own step because upload-artifact roots the
+      # archive at the common ancestor of all its paths: mixing this absolute path with the
+      # relative globs above would root the artifact at '/'.
+      - name: Upload stack volume logs
+        if: failure()
+        # yamllint disable-line rule:line-length
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        with:
+          name: playwright-stack-logs
+          path: /tmp/sdc-integration-tests/
           retention-days: 14
           if-no-files-found: ignore
 
