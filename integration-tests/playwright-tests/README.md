@@ -55,6 +55,12 @@ mvn clean install -P all,docker -DskipTests
 required: the `build-helper-maven-plugin` `parse-version` goal is bound to `pre-clean`, and
 without it the `${parsedVersion.*}` variables in the Docker image tags do not resolve.
 
+This step builds images only. It used to start and immediately stop the whole stack as well,
+because the `docker:start`/`docker:stop` executions sit in the default `<build>` of
+`integration-tests`; they are now gated on `it.stack.disabled`, which defaults to `true` and is
+flipped by the `run-integration-tests-*`, `all-for-integration-tests-only`, `start-sdc` and
+`stop-sdc` profiles. Set `-Dit.stack.disabled=false` if you want the old behaviour back.
+
 ### 2. Start the containers
 
 ```bash
@@ -76,6 +82,11 @@ First start takes **4–6 minutes** — the bulk of it is importing ~97 normativ
 actually matters is `sdc-BE-init` reaching `Done` (fabric8 waits up to 660 s on that log line). A
 backend that is up but has not finished importing normatives will fail asset creation with
 confusing category errors, so do not start testing early.
+
+The init containers stream their stdout into the Maven output (`docker.showLogs` names them), so
+the import progress — and the type it dies on, if it does — is in the build log itself. Note that
+setting `-Ddocker.showLogs=false` does not narrow that: `false` suppresses logs for *every* image,
+per-image `<log>` configuration included.
 
 ```bash
 curl -s http://localhost:8080/sdc2/rest/healthCheck | python3 -m json.tool

@@ -37,7 +37,10 @@ fi
 start_time=$(date +"%Y-%m-%d %H:%M:%S")
 echo "[$start_time] Starting sdccheckbackend..."
 
-sdccheckbackend -i $BE_IP -p $be_port $basic_auth_config $https_flag $tls_cert $tls_key $tls_key_pw $ca_cert
+if ! sdccheckbackend -i $BE_IP -p $be_port $basic_auth_config $https_flag $tls_cert $tls_key $tls_key_pw $ca_cert; then
+  echo "sdccheckbackend failed - the backend at $BE_IP:$be_port never became healthy." >&2
+  exit 1
+fi
 
 end_time=$(date +"%Y-%m-%d %H:%M:%S")
 echo "[$end_time] Finished sdccheckbackend."
