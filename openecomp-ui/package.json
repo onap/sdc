@@ -31,7 +31,7 @@
         "lodash": "^4.13.1",
         "md5": "^2.1.0",
         "onap-ui-react": "^1.0.2",
-        "onap-ui-common": "^1.0.101",
+        "onap-ui-common": "1.0.119",
         "prop-types": "^15.6.2",
         "react": "^16.4.2",
         "react-bootstrap": "^0.32.1",
