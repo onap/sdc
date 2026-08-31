@@ -14,8 +14,7 @@
         "test-coverage": "jest --coverage && start ./coverage/lcov-report/index.html",
         "test-build": "jest --coverage",
         "storyshots": "jest storyshots.test.js",
-        "lint-fix": "eslint --fix  --ext .js --ext .jsx src",
-        "postinstall": "patch-package"
+        "lint-fix": "eslint --fix  --ext .js --ext .jsx src"
     },
     "dependencies": {
         "attr-accept": "^1.1.0",
@@ -31,7 +30,7 @@
         "lodash": "^4.13.1",
         "md5": "^2.1.0",
         "onap-ui-react": "1.0.2",
-        "onap-ui-common": "1.0.119",
+        "onap-ui-common": "1.1.0",
         "prop-types": "^15.6.2",
         "react": "^16.4.2",
         "react-bootstrap": "^0.32.1",
@@ -92,7 +91,6 @@
         "mkdirp": "^0.5.1",
         "moment": "^2.18.1",
         "sass": "~1.100.0",
-        "patch-package": "^8.0.0",
         "node-watch": "^0.3.5",
         "prettier": "1.10.2",
         "prompt": "^0.2.14",
