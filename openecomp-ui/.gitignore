@@ -8,7 +8,6 @@ node_modules
 devConfig.json
 runLocalFE.cmd
 runLocalFE.js
-.npmrc
 test/coverage
 npm-debug.log
 **/.DS_Store
