@@ -11,7 +11,7 @@ import {PropertiesGroup} from 'app/models/properties';
 import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
 import { ComponentMetadata } from '../../../../../../models/component-metadata';
 import { ServiceInstanceObject } from '../../../../../../models/service-instance-properties-and-interfaces';
-import { EventListenerService } from '../../../../../../services/event-listener-service';
+import { EventListenerService } from '../../../../../services/event-listener.service';
 import { TopologyTemplateService } from '../../../../../services/component-services/topology-template.service';
 import { ComponentGenericResponse } from '../../../../../services/responses/component-generic-response';
 import { WorkspaceService } from '../../../../workspace/workspace.service';

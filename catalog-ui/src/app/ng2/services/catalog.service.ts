@@ -29,7 +29,7 @@ import { ComponentFactory } from 'app/utils/component-factory';
 import {ResourceType} from "../../utils/constants";
 import {SharingService} from "./sharing.service";
 import { HttpClient, HttpParams } from "@angular/common/http";
-import {DataTypesService} from "../../services/data-types-service";
+import {DataTypesService} from "./data-types.service";
 import {DataTypeCatalogComponent} from "../../models/data-type-catalog-component";
 import {zip} from "rxjs";
 import {map} from "rxjs/operators";

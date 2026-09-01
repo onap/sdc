@@ -23,8 +23,8 @@
 import * as _ from "lodash";
 import {Injectable} from "@angular/core";
 import {DEFAULT_ICON, ResourceType, ComponentType} from "./constants";
-import {ResourceService} from 'app/services/components/resource-service';
-import {ServiceService} from 'app/services/components/service-service';
+import {ResourceService} from 'app/ng2/services/legacy/resource.service';
+import {ServiceService} from 'app/ng2/services/legacy/service.service';
 import {CacheService} from "../ng2/services/cache.service";
 import {IMainCategory, ISubCategory} from 'app/models/category';
 import {Component} from 'app/models/components/component';

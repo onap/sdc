@@ -27,18 +27,21 @@ import {forwardRef, Inject, Injectable} from "@angular/core";
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {LeftPaletteComponent, LeftPaletteMetadataTypes} from "app/models/components/displayComponent";
 import {Component} from "app/models/components/component";
-import {EventListenerService} from "../../event-listener-service";
-// ComponentFactory imports the "app/services" barrel, which re-exports THIS file, so at module-eval
-// time the ComponentFactory binding here is still undefined (JIT circular dep, failure-catalog §OO).
-// The forwardRef on the constructor param below defers resolving the class value to injection time.
-import {ComponentFactory} from "../../../utils/component-factory";
+import {EventListenerService} from "./event-listener.service";
+// Nothing injects LeftPaletteLoaderService. The composition palette is served by
+// CompositionPaletteService (ng2/pages/composition/palette/services/palette.service.ts), which builds
+// the same sdcConfig.api.uicache_root + GET_uicache_left_palette URL itself; only app.module.ts's
+// provider list and this file's spec still name this class, so the forwardRef below guards a cycle
+// that is never constructed. Left verbatim because this change only moves files - the class is a
+// deletion candidate for the dead-code sweep.
+import {ComponentFactory} from "../../utils/component-factory";
 import {IAppConfigurtaion} from "app/models/app-config";
-import {ResourceType, ComponentType, EVENTS} from "../../../utils/constants";
+import {ResourceType, ComponentType, EVENTS} from "../../utils/constants";
 import {ComponentMetadata} from "app/models/component-metadata";
 import {GroupMetadata, GroupTpes} from "app/models/group-metadata";
 import {PolicyMetadata, PolicyTpes} from "app/models/policy-metadata";
 import {Resource} from "app/models/components/resource";
-import {SdcConfigToken} from "../../../ng2/config/sdc-config.config";
+import {SdcConfigToken} from "../config/sdc-config.config";
 
 @Injectable()
 export class LeftPaletteLoaderService {

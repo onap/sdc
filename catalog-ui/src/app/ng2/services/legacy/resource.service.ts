@@ -26,21 +26,26 @@
 import * as _ from "lodash";
 import {Inject, Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
-import {IComponentService, ComponentService} from "./component-service";
-import {IAppConfigurtaion} from '../../models/app-config';
-import {Component} from '../../models/components/component';
-import {Resource} from '../../models/components/resource';
-import {PropertyModel} from '../../models/properties';
+import {IComponentService, ComponentService} from "./component.service";
+import {IAppConfigurtaion} from '../../../models/app-config';
+import {Component} from '../../../models/components/component';
+import {Resource} from '../../../models/components/resource';
+import {PropertyModel} from '../../../models/properties';
 // Direct imports to avoid loading the services-ng2 barrel which causes a circular dep
 // at module-load time once @Injectable emits type metadata (emitDecoratorMetadata).
-import {SharingService} from "../../ng2/services/sharing.service";
-import {DataTypesService} from "../data-types-service";
-import {SdcConfigToken} from "../../ng2/config/sdc-config.config";
+import {SharingService} from "../sharing.service";
+import {DataTypesService} from "../data-types.service";
+import {SdcConfigToken} from "../../config/sdc-config.config";
 
 export interface IResourceService extends IComponentService {
     updateResourceGroupProperties(uniqueId:string, groupId:string, properties:Array<PropertyModel>):Promise<Array<PropertyModel>>
 }
 
+/**
+ * @deprecated Superseded by ResourceServiceNg2 (ng2/services/component-services/resource.service.ts).
+ * Injected in utils/component-factory.ts and handed to models/components/resource.ts, which calls its
+ * promise-based API. Both sites move to the Observable API before this can go. Tracked by SDC-4913.
+ */
 @Injectable()
 export class ResourceService extends ComponentService implements IResourceService {
 

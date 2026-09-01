@@ -8,7 +8,7 @@ import { ComponentInstanceServiceNg2 } from "app/ng2/services/component-instance
 import { WorkspaceService } from "app/ng2/pages/workspace/workspace.service";
 import { Store } from "@ngxs/store";
 import {TogglePanelLoadingAction} from "../../../../common/store/graph.actions";
-import {EventListenerService} from 'app/services/event-listener-service';
+import {EventListenerService} from 'app/ng2/services/event-listener.service';
 import {GRAPH_EVENTS} from 'app/utils/constants';
 
 @Component({

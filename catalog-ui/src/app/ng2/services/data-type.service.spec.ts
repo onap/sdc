@@ -3,7 +3,7 @@ import {TestBed} from '@angular/core/testing';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {HttpBackend} from '@angular/common/http';
 import {DataTypeService} from './data-type.service';
-import {DataTypesService} from '../../services/data-types-service';
+import {DataTypesService} from './data-types.service';
 import {AuthenticationService} from './authentication.service';
 import {SdcConfigToken} from '../config/sdc-config.config';
 import {mockSdcConfig} from '../../../jest/mocks/sdc-config.mock';

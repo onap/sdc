@@ -25,7 +25,7 @@ import {DataTypesMap} from 'app/models/data-types-map';
 import {DerivedFEProperty} from 'app/models/properties-inputs/derived-fe-property';
 import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
 import {PropertyFEModel} from 'app/models/properties-inputs/property-fe-model';
-import {DataTypesService} from "app/services/data-types-service";
+import {DataTypesService} from "app/ng2/services/data-types.service";
 import {PROPERTY_DATA} from 'app/utils/constants';
 import {DerivedFEAttribute} from "../../models/attributes-outputs/derived-fe-attribute";
 import {ISdcConfig} from "../config/sdc-config.config.factory";
@@ -34,7 +34,7 @@ import {HttpBackend, HttpClient, HttpHeaders} from "@angular/common/http";
 import {Observable} from "rxjs/Observable";
 import {AuthenticationService} from "./authentication.service";
 
-/** This is a new service for NG2, to eventually replace app/services/data-types-service.ts
+/** This is a new service for NG2, to eventually replace app/ng2/services/data-types.service.ts
  *
  *  This service is a singleton that holds a map of all DataTypes, recieved from server on load.
  *  It also contains convenience methods to check if a string is a valid dataType, and to retrieve a dataType's properties recursively

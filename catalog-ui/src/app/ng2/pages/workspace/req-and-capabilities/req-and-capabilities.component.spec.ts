@@ -16,7 +16,7 @@ import {
 } from "../../../../../jest/mocks/req-and-capabilities.mock";
 import {ComponentMetadata} from "../../../../models/component-metadata";
 import { TopologyTemplateService } from "../../../services/component-services/topology-template.service";
-import {EventListenerService} from "../../../../services/event-listener-service";
+import {EventListenerService} from "../../../services/event-listener.service";
 
 describe('req and capabilities component', () => {
 

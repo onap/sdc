@@ -16,7 +16,7 @@ import { CompositionService } from "app/ng2/pages/composition/composition.servic
 import {ServiceServiceNg2} from 'app/ng2/services/component-services/service.service';
 import { WorkspaceService } from "app/ng2/pages/workspace/workspace.service";
 import { ComponentInstanceServiceNg2 } from "app/ng2/services/component-instance-services/component-instance.service";
-import {EventListenerService} from 'app/services/event-listener-service';
+import {EventListenerService} from 'app/ng2/services/event-listener.service';
 import * as _ from 'lodash';
 import {SelectedComponentType, TogglePanelLoadingAction} from "../../../common/store/graph.actions";
 import Dictionary = _.Dictionary;

@@ -38,7 +38,7 @@ import {PropertiesGroup, PropertyModel} from '../properties';
 import {RequirementsGroup} from '../requirement';
 import {IValidate} from '../validate';
 
-import {IComponentService} from "../../services/components/component-service";
+import {IComponentService} from "../../ng2/services/legacy/component.service";
 import {CommonUtils} from "../../utils/common-utils";
 import {ArtifactGroupType} from "../../utils/constants";
 import {ComponentMetadata} from "../component-metadata";

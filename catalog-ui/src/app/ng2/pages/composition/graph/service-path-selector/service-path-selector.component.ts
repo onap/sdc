@@ -4,7 +4,7 @@ import {TranslateService} from "app/ng2/shared/translator/translate.service";
 import {ForwardingPath} from "app/models/forwarding-path";
 import {DropdownValue} from "app/ng2/components/ui/form-components/dropdown/ui-element-dropdown.component";
 import {CompositionService} from "app/ng2/pages/composition/composition.service";
-import {EventListenerService} from "app/services/event-listener-service";
+import {EventListenerService} from "app/ng2/services/event-listener.service";
 import {GRAPH_EVENTS} from "app/utils/constants";
 
 @Component({

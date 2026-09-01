@@ -45,7 +45,7 @@ import { ModalService } from 'app/ng2/services/modal.service';
 import { ComponentGenericResponse } from 'app/ng2/services/responses/component-generic-response';
 import { ServiceGenericResponse } from 'app/ng2/services/responses/service-generic-response';
 import { WorkspaceState } from 'app/ng2/store/states/workspace.state';
-import {EventListenerService} from 'app/services/event-listener-service';
+import {EventListenerService} from 'app/ng2/services/event-listener.service';
 import {ComponentInstanceFactory} from 'app/utils/component-instance-factory';
 import {EVENTS, SdcElementType} from 'app/utils/constants';
 import { ComponentType, GRAPH_EVENTS, GraphColors, DEPENDENCY_EVENTS , SUBSTITUTION_FILTER_EVENTS} from 'app/utils/constants';

@@ -22,8 +22,8 @@
 'use strict';
 import {Inject, Injectable} from "@angular/core";
 import {DOCUMENT} from "@angular/common";
-import {SdcConfigToken} from "../ng2/config/sdc-config.config";
-import {IAppConfigurtaion, ICookie} from "../models/app-config";
+import {SdcConfigToken} from "../../config/sdc-config.config";
+import {IAppConfigurtaion, ICookie} from "../../../models/app-config";
 
 interface ICookieService {
     getUserId():string;
@@ -33,6 +33,12 @@ interface ICookieService {
     getUserIdSuffix():string;
 }
 
+/**
+ * @deprecated Duplicates Cookie2Service (ng2/services/cookie.service.ts) — same five synchronous
+ * getters. Its only consumer is ng2/pages/error-403/error-403.component.ts, plus the provider
+ * registration in ng2/app.module.ts. The two differ only in DOCUMENT injection vs. reading the
+ * global document directly; which half survives is SDC-4913's call.
+ */
 @Injectable()
 export class CookieService implements ICookieService {
 

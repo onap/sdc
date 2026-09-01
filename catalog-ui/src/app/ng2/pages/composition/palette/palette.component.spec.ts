@@ -1,7 +1,7 @@
 import {async, ComponentFixture, TestBed} from "@angular/core/testing";
 import {NO_ERRORS_SCHEMA} from "@angular/core";
 import {CompositionPaletteService} from "./services/palette.service";
-import {EventListenerService} from "../../../../services/event-listener-service";
+import {EventListenerService} from "../../../services/event-listener.service";
 import {PaletteElementComponent} from "./palette-element/palette-element.component";
 import {PaletteComponent} from "./palette.component";
 import {ConfigureFn, configureTests} from "../../../../../jest/test-config.helper";

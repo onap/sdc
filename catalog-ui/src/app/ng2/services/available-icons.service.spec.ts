@@ -26,8 +26,8 @@
  * picker depends on: SERVICE and RESOURCE each return their known set, and any other type
  * returns undefined (no default branch in the switch).
  */
-import {AvailableIconsService} from './available-icons-service';
-import {ComponentType} from '../utils/constants';
+import {AvailableIconsService} from './available-icons.service';
+import {ComponentType} from '../../utils/constants';
 
 describe('AvailableIconsService (AngularJS characterization)', () => {
     let service: AvailableIconsService;

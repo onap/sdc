@@ -27,7 +27,7 @@ import { LeftPaletteComponent, LeftPaletteMetadataTypes } from 'app/models/compo
 import { Point } from 'app/models/graph/point';
 import { WorkspaceState } from 'app/ng2/store/states/workspace.state';
 import Dictionary = _.Dictionary;
-import { EventListenerService } from 'app/services/event-listener-service';
+import { EventListenerService } from 'app/ng2/services/event-listener.service';
 import { GRAPH_EVENTS } from 'app/utils/constants';
 import { DndDropEvent } from 'ngx-drag-drop/ngx-drag-drop';
 import { CompositionPaletteService } from './services/palette.service';

@@ -30,7 +30,7 @@ import {Service} from '../models/components/service';
 import { AsdcComment } from '../models/comments';
 import { CommentModalComponent } from '../ng2/components/modals/comment-modal/comment-modal.component';
 import { SdcMenuToken } from '../ng2/config/sdc-menu.config';
-import { EventListenerService } from '../services/event-listener-service';
+import { EventListenerService } from '../ng2/services/event-listener.service';
 import { ComponentFactory } from './component-factory';
 
 @Injectable()

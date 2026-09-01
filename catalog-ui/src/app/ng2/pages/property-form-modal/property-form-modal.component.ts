@@ -28,7 +28,7 @@ import {Component as IComponent} from 'app/models/components/component';
 import {PropertyModel} from 'app/models/properties';
 import {InputFEModel} from 'app/models/properties-inputs/input-fe-model';
 import {PropertyFEModel} from 'app/models/properties-inputs/property-fe-model';
-import {DataTypesService} from 'app/services/data-types-service';
+import {DataTypesService} from 'app/ng2/services/data-types.service';
 import {InstanceFeDetails} from 'app/models/instance-fe-details';
 import {CustomToscaFunction} from 'app/models/default-custom-functions';
 import {ToscaGetFunction} from 'app/models/tosca-get-function';

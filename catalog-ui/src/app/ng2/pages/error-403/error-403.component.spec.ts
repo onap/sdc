@@ -21,7 +21,7 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {Error403PageComponent} from './error-403.component';
-import {CookieService} from 'app/services/cookie-service';
+import {CookieService} from 'app/ng2/services/legacy/cookie.service';
 import {TranslateModule} from 'app/ng2/shared/translator/translate.module';
 import {TranslateServiceConfigToken} from 'app/ng2/shared/translator/translate.service.config';
 

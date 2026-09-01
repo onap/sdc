@@ -31,7 +31,7 @@ import {ResourceType} from 'app/utils/constants';
 import {DEPENDENCY_EVENTS} from 'app/utils/constants';
 import {ComponentMetadata} from '../../../../../../models/component-metadata';
 import {ServiceInstanceObject} from '../../../../../../models/service-instance-properties-and-interfaces';
-import {EventListenerService} from '../../../../../../services/event-listener-service';
+import {EventListenerService} from '../../../../../services/event-listener.service';
 import {TopologyTemplateService} from '../../../../../services/component-services/topology-template.service';
 import {ComponentInstanceServiceNg2} from '../../../../../services/component-instance-services/component-instance.service';
 import {ComponentGenericResponse} from '../../../../../services/responses/component-generic-response';

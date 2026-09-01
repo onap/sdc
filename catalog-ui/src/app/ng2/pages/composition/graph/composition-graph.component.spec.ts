@@ -9,7 +9,7 @@ import {ComponentInstance} from '../../../../models/componentsInstances/componen
 import {NodesFactory} from '../../../../models/graph/nodes/nodes-factory';
 import {GroupInstance} from '../../../../models/graph/zones/group-instance';
 import {ZoneInstance, ZoneInstanceMode} from '../../../../models/graph/zones/zone-instance';
-import {EventListenerService} from '../../../../services/event-listener-service';
+import {EventListenerService} from '../../../services/event-listener.service';
 import {
     CompositionGraphGeneralUtils,
     CompositionGraphNodesUtils,

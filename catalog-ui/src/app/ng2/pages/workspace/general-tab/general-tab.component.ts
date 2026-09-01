@@ -28,7 +28,7 @@ import * as _ from 'lodash';
 import {SdcUiServices} from 'onap-ui-angular';
 import {NotificationSettings} from 'onap-ui-angular/dist/notifications/utilities/notification.config';
 import {CacheService} from 'app/ng2/services/cache.service';
-import {EventListenerService} from 'app/services/event-listener-service';
+import {EventListenerService} from 'app/ng2/services/event-listener.service';
 import {ValidationConfiguration} from 'app/models/validation-config';
 import {EVENTS, WorkspaceMode, ComponentState, ComponentType, ResourceType, Role, PREVIOUS_CSAR_COMPONENT, instantiationType, DEFAULT_MODEL_NAME, DEFAULT_ICON, CATEGORY_SERVICE_METADATA_KEYS} from 'app/utils/constants';
 import {ServiceCsarReader} from 'app/utils/service-csar-reader';

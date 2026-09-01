@@ -7,7 +7,7 @@ import { Store } from "@ngxs/store";
 import {GRAPH_EVENTS} from 'app/utils/constants';
 import { ComponentGenericResponse } from "app/ng2/services/responses/component-generic-response";
 import { TopologyTemplateService } from "app/ng2/services/component-services/topology-template.service";
-import {EventListenerService} from 'app/services/event-listener-service';
+import {EventListenerService} from 'app/ng2/services/event-listener.service';
 import { WorkspaceService } from "app/ng2/pages/workspace/workspace.service";
 import { CompositionService } from "app/ng2/pages/composition/composition.service";
 import {SelectedComponentType, TogglePanelLoadingAction} from "../../../common/store/graph.actions";

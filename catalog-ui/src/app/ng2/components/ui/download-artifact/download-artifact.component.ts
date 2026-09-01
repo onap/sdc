@@ -1,7 +1,7 @@
 import { Component, Input } from "@angular/core";
 import {ArtifactModel} from 'app/models/artifacts';
 import {IFileDownload} from 'app/models/file-download';
-import {EventListenerService} from 'app/services/event-listener-service';
+import {EventListenerService} from 'app/ng2/services/event-listener.service';
 import {CacheService} from 'app/ng2/services/cache.service';
 import {EVENTS} from 'app/utils/constants';
 import { TopologyTemplateService } from "app/ng2/services/component-services/topology-template.service";

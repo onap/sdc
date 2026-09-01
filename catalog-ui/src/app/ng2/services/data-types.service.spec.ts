@@ -33,10 +33,10 @@
 import 'rxjs/add/operator/map';
 import {TestBed} from '@angular/core/testing';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
-import {DataTypesService} from './data-types-service';
-import {SdcConfigToken} from '../ng2/config/sdc-config.config';
-import {mockSdcConfig} from '../../jest/mocks/sdc-config.mock';
-import {PROPERTY_DATA} from '../utils/constants';
+import {DataTypesService} from './data-types.service';
+import {SdcConfigToken} from '../config/sdc-config.config';
+import {mockSdcConfig} from '../../../jest/mocks/sdc-config.mock';
+import {PROPERTY_DATA} from '../../utils/constants';
 
 describe('DataTypesService', () => {
     let service: DataTypesService;

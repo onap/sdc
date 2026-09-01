@@ -19,36 +19,36 @@
  */
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {TestBed} from '@angular/core/testing';
-import {ResourceService} from './resource-service';
-import {ComponentService} from './component-service';
-import {SdcConfigToken} from '../../ng2/config/sdc-config.config';
-import {SharingService} from '../../ng2/services/sharing.service';
-import {DataTypesService} from '../data-types-service';
+import {ServiceService} from './service.service';
+import {ComponentService} from './component.service';
+import {SdcConfigToken} from '../../config/sdc-config.config';
+import {SharingService} from '../sharing.service';
+import {DataTypesService} from '../data-types.service';
 
 const sdcConfig = {api: {root: 'http://localhost/', component_api_root: 'v1/catalog/'}} as any;
 
-describe('ResourceService', () => {
-    let service: ResourceService;
+describe('ServiceService', () => {
+    let service: ServiceService;
     let httpMock: HttpTestingController;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [HttpClientTestingModule],
             providers: [
-                ResourceService,
+                ServiceService,
                 ComponentService,
                 {provide: SdcConfigToken, useValue: sdcConfig},
                 {provide: SharingService, useValue: {addUuidValue: () => {}}},
                 {provide: DataTypesService, useValue: {loadDataTypesCache: () => {}}},
             ],
         });
-        service = TestBed.get(ResourceService);
+        service = TestBed.get(ServiceService);
         httpMock = TestBed.get(HttpTestingController);
     });
     afterEach(() => httpMock.verify());
 
-    // Regression guard (failure-catalog §SS): ResourceService is held as an enumerable field by
-    // Resource model instances, whose toJSON() deep-copies itself. If any injected Angular dep were
+    // Regression guard (failure-catalog §SS): ServiceService is held as an enumerable field by
+    // Service model instances, whose toJSON() deep-copies itself. If any injected Angular dep were
     // an ENUMERABLE own property, the copy would traverse its whole object graph into the request
     // body. All three injected deps MUST be non-enumerable.
     it('§SS: all injected Angular deps are non-enumerable own properties (the deep copy must not traverse them)', () => {
@@ -60,21 +60,46 @@ describe('ResourceService', () => {
         }
     });
 
-    it('updateResourceGroupProperties PUTs to resources/{id}/groups/{gid}/properties', () => {
-        service.updateResourceGroupProperties('id1', 'g1', []);
-        const req = httpMock.expectOne('http://localhost/v1/catalog/resources/id1/groups/g1/properties');
+    it('getDistributionsList GETs services/{uuid}/distribution', () => {
+        service.getDistributionsList('u1');
+        const req = httpMock.expectOne('http://localhost/v1/catalog/services/u1/distribution');
+        expect(req.request.method).toBe('GET');
+        req.flush({distributionStatusOfServiceList: []});
+    });
+
+    it('getDistributionComponents GETs services/distribution/{distributionId}', () => {
+        service.getDistributionComponents('d1');
+        const req = httpMock.expectOne('http://localhost/v1/catalog/services/distribution/d1');
+        expect(req.request.method).toBe('GET');
+        req.flush({distributionStatusList: []});
+    });
+
+    it('markAsDeployed POSTs to services/{serviceId}/distribution/{distributionId}/markDeployed', () => {
+        service.markAsDeployed('s1', 'dist1');
+        const req = httpMock.expectOne('http://localhost/v1/catalog/services/s1/distribution/dist1/markDeployed');
+        expect(req.request.method).toBe('POST');
+        req.flush({});
+    });
+
+    it('updateGroupInstanceProperties PUTs the nested groupInstance path', () => {
+        service.updateGroupInstanceProperties('s1', 'ri1', 'gi1', []);
+        const req = httpMock.expectOne('http://localhost/v1/catalog/services/s1/resourceInstance/ri1/groupInstance/gi1');
         expect(req.request.method).toBe('PUT');
         req.flush([]);
     });
 
-    it('getComponent (inherited) targets the resources/ segment', () => {
-        service.getComponent('r1');
-        httpMock.expectOne('http://localhost/v1/catalog/resources/r1').flush({uniqueId: 'r1'});
+    it('getComponent (inherited) targets the services/ segment', () => {
+        service.getComponent('svc1');
+        httpMock.expectOne('http://localhost/v1/catalog/services/svc1').flush({uniqueId: 'svc1'});
     });
 
-    it('createComponentObject is defined as an overriding method on ResourceService', () => {
+    it('createComponentObject is defined as an overriding method on ServiceService', () => {
         // We verify the method override is present; full end-to-end coverage comes from Selenium.
         expect(service.createComponentObject).toBeDefined();
         expect(Object.prototype.hasOwnProperty.call(service, 'createComponentObject')).toBe(true);
+    });
+
+    it('distribution property defaults to "distribution"', () => {
+        expect(service.distribution).toBe('distribution');
     });
 });

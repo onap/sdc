@@ -8,7 +8,7 @@ import { ComponentMetadata } from '../../../../../models/component-metadata';
 import { Resource } from '../../../../../models/components/resource';
 import { CompositionCiNodeCp } from '../../../../../models/graph/nodes/composition-graph-nodes/composition-ci-node-cp';
 import { CompositionCiNodeVl } from '../../../../../models/graph/nodes/composition-graph-nodes/composition-ci-node-vl';
-import {EventListenerService} from '../../../../../services/event-listener-service';
+import {EventListenerService} from '../../../../services/event-listener.service';
 import CollectionEdges = Cy.CollectionEdges;
 import { GRAPH_EVENTS } from '../../../../../utils/constants';
 import { ServiceServiceNg2 } from '../../../../services/component-services/service.service';

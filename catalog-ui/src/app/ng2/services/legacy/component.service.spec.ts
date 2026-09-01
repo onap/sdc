@@ -19,10 +19,10 @@
  */
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {TestBed} from '@angular/core/testing';
-import {ComponentService} from './component-service';
-import {SdcConfigToken} from '../../ng2/config/sdc-config.config';
-import {SharingService} from '../../ng2/services/sharing.service';
-import {DataTypesService} from '../data-types-service';
+import {ComponentService} from './component.service';
+import {SdcConfigToken} from '../../config/sdc-config.config';
+import {SharingService} from '../sharing.service';
+import {DataTypesService} from '../data-types.service';
 
 const sdcConfig = {api: {root: 'http://localhost/', component_api_root: 'v1/catalog/'}} as any;
 

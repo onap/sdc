@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { SdcUiCommon, SdcUiServices } from 'onap-ui-angular';
-import { EventListenerService } from '../../../../services/event-listener-service';
+import { EventListenerService } from '../../../services/event-listener.service';
 import { AuthenticationService } from '../../../services/authentication.service';
 import { WorkspaceService } from '../workspace.service';
 import { DistributionService } from './distribution.service';

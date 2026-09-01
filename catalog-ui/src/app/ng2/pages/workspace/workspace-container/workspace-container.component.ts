@@ -33,8 +33,8 @@ import {ChangeLifecycleStateHandler} from 'app/utils/change-lifecycle-state-hand
 import {ComponentFactory} from 'app/utils/component-factory';
 import {CHANGE_COMPONENT_CSAR_VERSION_FLAG, ComponentState, EVENTS, ResourceType, Role, States, WorkspaceMode} from 'app/utils/constants';
 import {MenuHandler, MenuItem, MenuItemGroup} from 'app/utils/menu-handler';
-import {EventListenerService} from 'app/services/event-listener-service';
-import {ProgressService} from 'app/services/progress-service';
+import {EventListenerService} from 'app/ng2/services/event-listener.service';
+import {ProgressService} from 'app/ng2/services/progress.service';
 import {CacheService} from 'app/ng2/services/cache.service';
 import {SdcUiCommon, SdcUiComponents, SdcUiServices} from 'onap-ui-angular';
 import {NotificationSettings} from 'onap-ui-angular/dist/notifications/utilities/notification.config';

@@ -35,7 +35,7 @@ import {CompositionService} from 'app/ng2/pages/composition/composition.service'
 import {TopologyTemplateService} from 'app/ng2/services/component-services/topology-template.service';
 import {TranslateService} from 'app/ng2/shared/translator/translate.service';
 import {ModalService} from 'app/ng2/services/modal.service';
-import {DataTypesService} from 'app/services/data-types-service';
+import {DataTypesService} from 'app/ng2/services/data-types.service';
 import {SdcUiServices} from 'onap-ui-angular';
 import {PropertyFormModalComponent} from './property-form-modal.component';
 import {PropertyFormModalService} from './property-form-modal.service';

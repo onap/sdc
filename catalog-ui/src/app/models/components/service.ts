@@ -23,7 +23,7 @@
  */
 'use strict';
 import * as _ from "lodash";
-import {IServiceService} from "../../services/components/service-service";
+import {IServiceService} from "../../ng2/services/legacy/service.service";
 import {ArtifactGroupModel} from '../artifacts';
 import {Distribution, DistributionComponent} from '../distribution';
 import {Component} from './component';

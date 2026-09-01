@@ -21,7 +21,7 @@
 import {Component, Input } from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import { setTimeout } from 'core-js/library/web/timers';
-import {EventListenerService} from 'app/services/event-listener-service';
+import {EventListenerService} from 'app/ng2/services/event-listener.service';
 import {GRAPH_EVENTS} from 'app/utils/constants';
 import {Point} from 'app/models/graph/point';
 import { ZoneInstanceType, ZoneInstance } from 'app/models/graph/zones/zone-instance';

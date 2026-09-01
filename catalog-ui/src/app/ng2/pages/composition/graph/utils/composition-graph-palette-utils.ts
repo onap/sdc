@@ -21,7 +21,7 @@
 import {Component, Injectable} from "@angular/core";
 import {CompositionGraphGeneralUtils, RequirementAndCapabilities} from "./composition-graph-general-utils";
 import {CommonGraphUtils} from "../common/common-graph-utils";
-import {EventListenerService} from "../../../../../services/event-listener-service";
+import {EventListenerService} from "../../../../services/event-listener.service";
 import {ResourceNamePipe} from "app/ng2/pipes/resource-name.pipe";
 import {ComponentInstanceFactory} from "app/utils/component-instance-factory";
 import {GRAPH_EVENTS, GraphUIObjects} from "app/utils/constants";

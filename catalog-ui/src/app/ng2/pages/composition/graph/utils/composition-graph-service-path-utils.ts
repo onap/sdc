@@ -40,7 +40,7 @@ import {WorkspaceService} from "app/ng2/pages/workspace/workspace.service";
 import {CompositionService} from "../../composition.service";
 import {CommonGraphUtils} from "../common/common-graph-utils";
 import {GRAPH_EVENTS} from "app/utils/constants";
-import {EventListenerService} from "app/services/event-listener-service";
+import {EventListenerService} from "app/ng2/services/event-listener.service";
 
 @Injectable()
 export class ServicePathGraphUtils {

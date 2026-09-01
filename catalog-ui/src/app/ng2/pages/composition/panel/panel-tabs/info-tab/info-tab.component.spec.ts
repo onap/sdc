@@ -7,7 +7,7 @@ import { CompositionService } from '../../../../../pages/composition/composition
 import {ServiceServiceNg2} from '../../../../../services/component-services/service.service';
 import { WorkspaceService } from '../../../../../../../app/ng2/pages/workspace/workspace.service';
 import { ComponentInstanceServiceNg2 } from '../../../../../../../app/ng2/services/component-instance-services/component-instance.service';
-import {EventListenerService} from '../../../../../../services/event-listener-service';
+import {EventListenerService} from '../../../../../services/event-listener.service';
 import { InfoTabComponent } from './info-tab.component';
 import { ConfigureFn, configureTests } from "../../../../../../../jest/test-config.helper";
 import { Observable } from "rxjs";

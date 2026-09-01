@@ -30,7 +30,7 @@
  * cookie string). Before Phase 11 this was AngularJS's jqLite `$document` (read as `[0].cookie`);
  * the migration to @Injectable switched it to the raw DOCUMENT read as `.cookie`.
  */
-import {CookieService} from './cookie-service';
+import {CookieService} from './cookie.service';
 
 describe('CookieService (characterization)', () => {
     const cookieConfig = {

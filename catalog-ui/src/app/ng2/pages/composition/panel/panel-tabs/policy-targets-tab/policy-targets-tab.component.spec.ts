@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/Rx';
 import { Mock } from 'ts-mockery';
 import { ConfigureFn, configureTests } from '../../../../../../../jest/test-config.helper';
 import { ComponentMetadata } from '../../../../../../models/component-metadata';
-import { EventListenerService } from '../../../../../../services/event-listener-service';
+import { EventListenerService } from '../../../../../services/event-listener.service';
 import { TranslateService } from '../../../../../shared/translator/translate.service';
 import { WorkspaceService } from '../../../../workspace/workspace.service';
 import { CompositionService } from '../../../composition.service';

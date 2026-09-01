@@ -30,7 +30,7 @@
  *  - unregister with multiple observers removes only the matching callback;
  *  - notify for an unknown event is a no-op.
  */
-import {EventListenerService} from './event-listener-service';
+import {EventListenerService} from './event-listener.service';
 
 describe('EventListenerService (characterization)', () => {
     let bus: EventListenerService;

@@ -6,7 +6,7 @@ import { Mock } from 'ts-mockery';
 import { ConfigureFn, configureTests } from '../../../../../../../jest/test-config.helper';
 import { ComponentMetadata } from '../../../../../../models/component-metadata';
 import { GroupInstance } from '../../../../../../models/graph/zones/group-instance';
-import { EventListenerService } from '../../../../../../services/event-listener-service';
+import { EventListenerService } from '../../../../../services/event-listener.service';
 import { GroupsService } from '../../../../../services/groups.service';
 import { TranslateService } from '../../../../../shared/translator/translate.service';
 import { WorkspaceService } from '../../../../workspace/workspace.service';

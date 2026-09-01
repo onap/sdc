@@ -43,10 +43,10 @@ import {ComponentInstanceFactory} from 'app/utils/component-instance-factory';
 // at module-load time once @Injectable emits type metadata (emitDecoratorMetadata):
 // services-ng2 barrel -> catalog.service -> data-type-catalog-component -> service.ts,
 // which tries to extend Component from the still-loading models.ts (partial) -> crash.
-import {SharingService} from "../../ng2/services/sharing.service";
-import {DataTypesService} from "../data-types-service";
-import {ComponentMetadata} from "../../models/component-metadata";
-import {SdcConfigToken} from "../../ng2/config/sdc-config.config";
+import {SharingService} from "../sharing.service";
+import {DataTypesService} from "../data-types.service";
+import {ComponentMetadata} from "../../../models/component-metadata";
+import {SdcConfigToken} from "../../config/sdc-config.config";
 
 export interface IComponentService {
 
@@ -99,6 +99,13 @@ export interface IComponentService {
     getComponentInstanceArtifactsByGroupType(componentId:string, componentInstanceId:string, artifactGroupType:string):Promise<ArtifactGroupModel>;
 }
 
+/**
+ * @deprecated Superseded by ComponentServiceNg2 (ng2/services/component-services/component.service.ts).
+ * Nothing injects this class directly: it is the base class of the ResourceService and ServiceService
+ * beside it, and models/components/component.ts holds its promise-based IComponentService interface.
+ * Removing it means moving those call sites to the Observable API. Tracked by SDC-4913. When
+ * services/legacy/ is empty, that work is done.
+ */
 @Injectable()
 export class ComponentService implements IComponentService {
 

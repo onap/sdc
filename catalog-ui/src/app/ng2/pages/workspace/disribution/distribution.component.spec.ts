@@ -8,7 +8,7 @@ import { AuthenticationService } from '../../../services/authentication.service'
 import { WorkspaceService } from '../workspace.service';
 import { DistributionComponent } from './distribution.component';
 import { DistributionService } from './distribution.service';
-import {EventListenerService} from "../../../../services/event-listener-service";
+import {EventListenerService} from "../../../services/event-listener.service";
 
 describe('DistributionComponent', () => {
   let fixture: ComponentFixture<DistributionComponent>;

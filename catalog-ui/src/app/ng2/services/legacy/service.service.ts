@@ -26,17 +26,17 @@
 import * as _ from "lodash";
 import {Inject, Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
-import {IComponentService, ComponentService} from "./component-service";
-import {IAppConfigurtaion} from '../../models/app-config';
-import {Component} from '../../models/components/component';
-import {Service} from '../../models/components/service';
-import {Distribution, DistributionComponent} from '../../models/distribution';
-import {PropertyModel} from '../../models/properties';
+import {IComponentService, ComponentService} from "./component.service";
+import {IAppConfigurtaion} from '../../../models/app-config';
+import {Component} from '../../../models/components/component';
+import {Service} from '../../../models/components/service';
+import {Distribution, DistributionComponent} from '../../../models/distribution';
+import {PropertyModel} from '../../../models/properties';
 // Direct imports to avoid loading the services-ng2 barrel which causes a circular dep
 // at module-load time once @Injectable emits type metadata (emitDecoratorMetadata).
-import {SharingService} from "../../ng2/services/sharing.service";
-import {DataTypesService} from "../data-types-service";
-import {SdcConfigToken} from "../../ng2/config/sdc-config.config";
+import {SharingService} from "../sharing.service";
+import {DataTypesService} from "../data-types.service";
+import {SdcConfigToken} from "../../config/sdc-config.config";
 
 export interface IServiceService extends IComponentService {
     getDistributionsList(uuid:string):Promise<Array<Distribution>>;
@@ -45,6 +45,11 @@ export interface IServiceService extends IComponentService {
     updateGroupInstanceProperties(serviceId:string, resourceInstanceId:string, groupInstanceId:string, groupInstanceProperties:Array<PropertyModel>):Promise<Array<PropertyModel>>;
 }
 
+/**
+ * @deprecated Superseded by ServiceServiceNg2 (ng2/services/component-services/service.service.ts).
+ * Injected in utils/component-factory.ts and handed to models/components/service.ts, which calls its
+ * promise-based API. Both sites move to the Observable API before this can go. Tracked by SDC-4913.
+ */
 @Injectable()
 export class ServiceService extends ComponentService implements IServiceService {
 

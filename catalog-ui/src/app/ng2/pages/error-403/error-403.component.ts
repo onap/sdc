@@ -19,7 +19,7 @@
  */
 
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
-import {CookieService} from 'app/services/cookie-service';
+import {CookieService} from 'app/ng2/services/legacy/cookie.service';
 
 @Component({
     selector: 'error-403-page',

@@ -26,7 +26,7 @@ import * as _ from "lodash";
 import {ResourceType} from "../../utils/constants";
 import {Component} from "./component";
 import {FileUploadModel} from "../file-upload-model";
-import {IResourceService} from "../../services/components/resource-service";
+import {IResourceService} from "../../ng2/services/legacy/resource.service";
 import {ComponentMetadata} from "../component-metadata";
 
 export class Resource extends Component {

@@ -3,7 +3,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { SimpleChanges } from '@angular/core';
 import { PoliciesService } from 'app/ng2/services/policies.service';
 import { GroupsService } from 'app/ng2/services/groups.service';
-import {EventListenerService} from 'app/services/event-listener-service';
+import {EventListenerService} from 'app/ng2/services/event-listener.service';
 import { Store } from '@ngxs/store';
 import { CompositionService } from 'app/ng2/pages/composition/composition.service';
 import { ZoneInstanceComponent } from './zone-instance.component';

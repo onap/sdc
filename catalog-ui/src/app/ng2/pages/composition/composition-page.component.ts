@@ -21,7 +21,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import {Component as TopologyTemplate} from 'app/models/components/component';
 import * as Constants from 'constants';
-import { EventListenerService } from '../../../services/event-listener-service';
+import { EventListenerService } from '../../services/event-listener.service';
 import {EVENTS} from '../../../utils/constants';
 import { WorkspaceService } from '../workspace/workspace.service';
 

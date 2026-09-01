@@ -3,7 +3,7 @@ import {ArtifactModel} from '../../../../models/artifacts';
 import {DataTypeModel} from '../../../../models/data-types';
 import {IFileDownload} from '../../../../models/file-download';
 import {Store} from "@ngxs/store";
-import {DataTypesService} from "../../../../services/data-types-service";
+import {DataTypesService} from "../../../services/data-types.service";
 
 @Component({
     selector: 'app-type-workspace-tosca-artifact',

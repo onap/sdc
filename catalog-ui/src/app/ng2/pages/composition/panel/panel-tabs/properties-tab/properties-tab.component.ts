@@ -7,7 +7,7 @@ import {ComponentInstance} from 'app/models/componentsInstances/componentInstanc
 import {FullComponentInstance} from 'app/models/componentsInstances/fullComponentInstance';
 import {InputModel, InputsGroup} from 'app/models/inputs';
 import {PropertiesGroup, PropertyModel} from 'app/models/properties';
-import {DataTypesService} from 'app/services/data-types-service';
+import {DataTypesService} from 'app/ng2/services/data-types.service';
 import {ToscaGetFunctionType} from "app/models/tosca-get-function-type";
 import { CompositionService } from 'app/ng2/pages/composition/composition.service';
 import { WorkspaceService } from 'app/ng2/pages/workspace/workspace.service';

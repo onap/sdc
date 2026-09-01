@@ -209,7 +209,7 @@ export class ComponentInstanceServiceNg2 {
     }
 
     // Service group-instance property update: PUT {svcId}/resourceInstance/{ri}/groupInstance/{gi}. Mirrors the
-    // AngularJS ServiceService.updateGroupInstanceProperties (services/components/service-service.ts:97), used by the
+    // legacy ServiceService.updateGroupInstanceProperties (app/ng2/services/legacy/service.service.ts), used by the
     // module-property modal for a service (a resource uses updateComponentGroupInstanceProperties above instead).
     updateGroupInstanceProperties(componentType: string, componentId: string, resourceInstanceId: string, groupInstanceId: string, properties: PropertyBEModel[]): Observable<Array<PropertyBEModel>> {
         return this.http.put<Array<PropertyBEModel>>(

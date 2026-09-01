@@ -20,11 +20,11 @@
 
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {TestBed} from '@angular/core/testing';
-import {LeftPaletteLoaderService} from './composition-left-palette-service';
-import {SdcConfigToken} from '../../../ng2/config/sdc-config.config';
-import {ComponentFactory} from '../../../utils/component-factory';
-import {EventListenerService} from '../../event-listener-service';
-import {ComponentType} from '../../../utils/constants';
+import {LeftPaletteLoaderService} from './composition-left-palette.service';
+import {SdcConfigToken} from '../config/sdc-config.config';
+import {ComponentFactory} from '../../utils/component-factory';
+import {EventListenerService} from './event-listener.service';
+import {ComponentType} from '../../utils/constants';
 
 const sdcConfig = {
     api: {

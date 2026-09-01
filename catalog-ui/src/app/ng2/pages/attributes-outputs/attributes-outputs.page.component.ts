@@ -34,7 +34,7 @@ import {OutputFEModel} from "../../../models/attributes-outputs/output-fe-model"
 import {OutputBEModel} from "../../../models/attributes-outputs/output-be-model";
 import {EVENTS, ResourceType, WorkspaceMode} from "../../../utils/constants";
 import {ComponentModeService} from "../../services/component-services/component-mode.service";
-import {EventListenerService} from 'app/services/event-listener-service';
+import {EventListenerService} from 'app/ng2/services/event-listener.service';
 import {HierarchyNavService} from "./services/hierarchy-nav.service";
 import {ComponentServiceNg2} from "../../services/component-services/component.service";
 import {ComponentInstanceServiceNg2} from "../../services/component-instance-services/component-instance.service";

@@ -6,7 +6,7 @@ import {WorkspaceService} from "../../workspace.service";
 import {TopologyTemplateService} from "../../../../services/component-services/topology-template.service";
 import {ReqAndCapabilitiesService} from "../req-and-capabilities.service";
 import {ModalComponent} from "onap-ui-angular/dist/modals/modal.component";
-import {EventListenerService} from "../../../../../services/event-listener-service";
+import {EventListenerService} from "../../../../services/event-listener.service";
 
 
 @Component({

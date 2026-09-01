@@ -45,7 +45,7 @@ import {TopologyTemplateService} from "../../services/component-services/topolog
 import {ComponentInstanceServiceNg2} from "../../services/component-instance-services/component-instance.service"
 import {KeysPipe} from 'app/ng2/pipes/keys.pipe';
 import {EVENTS, PROPERTY_TYPES, WorkspaceMode, PROPERTY_DATA} from "../../../utils/constants";
-import {EventListenerService} from "app/services/event-listener-service"
+import {EventListenerService} from "app/ng2/services/event-listener.service"
 import {HierarchyDisplayOptions} from "../../components/logic/hierarchy-navigtion/hierarchy-display-options";
 import {FilterPropertiesAssignmentComponent} from "../../components/logic/filter-properties-assignment/filter-properties-assignment.component";
 import {PropertyRowSelectedEvent} from "../../components/logic/properties-table/properties-table.component";
