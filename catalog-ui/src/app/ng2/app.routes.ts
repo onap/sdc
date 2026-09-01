@@ -45,7 +45,7 @@ import {ReqAndCapabilitiesComponent} from './pages/workspace/req-and-capabilitie
 import {ToscaArtifactPageComponent} from './pages/workspace/tosca-artifacts/tosca-artifact-page.component';
 import {WorkspaceComponentResolver} from './pages/workspace/workspace-component.resolver';
 import {WorkspaceContainerComponent} from './pages/workspace/workspace-container/workspace-container.component';
-import {AttributesComponent} from '../view-models/workspace/tabs/attributes/attributes.component';
+import {AttributesComponent} from './pages/workspace/attributes/attributes.component';
 import {AuthGuard} from './guards/auth.guard';
 import {UnsavedChangesFlagGuard} from './guards/unsaved-changes-flag.guard';
 import {UnsavedChangesGuard} from './guards/unsaved-changes.guard';
