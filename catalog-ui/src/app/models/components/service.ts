@@ -24,7 +24,9 @@
 'use strict';
 import * as _ from "lodash";
 import {IServiceService} from "../../services/components/service-service";
-import {Component, Distribution, DistributionComponent, ArtifactGroupModel} from "../../models";
+import {ArtifactGroupModel} from '../artifacts';
+import {Distribution, DistributionComponent} from '../distribution';
+import {Component} from './component';
 import {ArtifactGroupType} from "../../utils/constants";
 import {FileUploadModel} from "../file-upload-model";
 import {ComponentMetadata} from "../component-metadata";
@@ -78,6 +80,8 @@ export class Service extends Component {
         this.componentService = componentService;
         this.iconSprite = "sprite-services-icons";
     }
+
+    public isService = ():boolean => true;
 
     public importComponentOnServer = (): Promise<Component> => {
         return new Promise<Component>((resolve, reject) => {

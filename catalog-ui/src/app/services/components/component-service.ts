@@ -22,26 +22,23 @@
 import * as _ from "lodash";
 import {Inject, Injectable} from "@angular/core";
 import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
-import {
-    ArtifactModel,
-    IFileDownload,
-    InstancesInputsPropertiesMap,
-    InputModel,
-    IValidate,
-    RelationshipModel,
-    PropertyModel,
-    Component,
-    ComponentInstance,
-    AttributeModel,
-    IAppConfigurtaion,
-    Resource,
-    Module,
-    DisplayModule,
-    ArtifactGroupModel,
-    InputsAndProperties,
-    AsdcComment
-} from "app/models";
-import {ComponentInstanceFactory, CommonUtils} from "app/utils";
+import {IAppConfigurtaion} from 'app/models/app-config';
+import {ArtifactGroupModel, ArtifactModel} from 'app/models/artifacts';
+import {AttributeModel} from 'app/models/attributes';
+import {AsdcComment} from 'app/models/comments';
+import {Component} from 'app/models/components/component';
+import {Resource} from 'app/models/components/resource';
+import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
+import {IFileDownload} from 'app/models/file-download';
+import {RelationshipModel} from 'app/models/graph/relationship';
+import {InputModel} from 'app/models/inputs';
+import {InputsAndProperties} from 'app/models/inputs-and-properties';
+import {InstancesInputsPropertiesMap} from 'app/models/instance-inputs-properties-map';
+import {DisplayModule, Module} from 'app/models/modules/base-module';
+import {PropertyModel} from 'app/models/properties';
+import {IValidate} from 'app/models/validate';
+import {CommonUtils} from 'app/utils/common-utils';
+import {ComponentInstanceFactory} from 'app/utils/component-instance-factory';
 // Direct imports to avoid loading the services-ng2 barrel which causes a circular dep
 // at module-load time once @Injectable emits type metadata (emitDecoratorMetadata):
 // services-ng2 barrel -> catalog.service -> data-type-catalog-component -> service.ts,

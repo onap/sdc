@@ -23,7 +23,7 @@ import { Select, Store } from '@ngxs/store';
 import { CompositionService } from 'app/ng2/pages/composition/composition.service';
 import { WorkspaceService } from 'app/ng2/pages/workspace/workspace.service';
 import { EventListenerService } from 'app/services/event-listener-service';
-import { GRAPH_EVENTS } from 'app/utils';
+import {GRAPH_EVENTS} from 'app/utils/constants';
 import * as _ from 'lodash';
 import { SdcUiCommon, SdcUiComponents, SdcUiServices } from 'onap-ui-angular';
 import { Observable } from 'rxjs';

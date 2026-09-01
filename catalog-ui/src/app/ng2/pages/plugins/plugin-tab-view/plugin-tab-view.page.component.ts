@@ -1,6 +1,8 @@
 import {Component} from "@angular/core";
-import {IUserProperties, Plugin} from "app/models";
-import {CacheService, PluginsService} from "app/services-ng2";
+import {Plugin} from 'app/models/plugins-config';
+import {IUserProperties} from 'app/models/user';
+import {CacheService} from 'app/ng2/services/cache.service';
+import {PluginsService} from 'app/ng2/services/plugins.service';
 import {NavigationService} from "../../../services/navigation.service";
 
 @Component({

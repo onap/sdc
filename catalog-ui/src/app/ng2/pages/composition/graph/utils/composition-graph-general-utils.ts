@@ -19,8 +19,12 @@
  */
 
 import * as _ from "lodash";
-import {ComponentInstance, Match, CompositionCiLinkBase, CompositionCiNodeUcpeCp} from "app/models";
-import {Dictionary, GraphUIObjects} from "app/utils";
+import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
+import {CompositionCiLinkBase} from 'app/models/graph/graph-links/composition-graph-links/composition-ci-link-base';
+import {Match} from 'app/models/graph/match-relation';
+import {CompositionCiNodeUcpeCp} from 'app/models/graph/nodes/composition-graph-nodes/composition-ci-node-ucpe-cp';
+import {GraphUIObjects} from 'app/utils/constants';
+import {Dictionary} from 'app/utils/dictionary/dictionary';
 import {MatchCapabilitiesRequirementsUtils} from "./match-capability-requirement-utils";
 import {CommonGraphUtils} from "../common/common-graph-utils";
 import {Injectable} from "@angular/core";

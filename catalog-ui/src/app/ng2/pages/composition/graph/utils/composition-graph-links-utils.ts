@@ -22,21 +22,18 @@
  * Created by obarda on 6/28/2016.
  */
 import * as _ from "lodash";
-import {GraphUIObjects} from "app/utils";
-import {
-    Match,
-    CompositionCiNodeBase,
-    RelationshipModel,
-    ConnectRelationModel,
-    Component,
-    LinkMenu,
-    Point,
-    CompositionCiLinkBase,
-    Requirement,
-    Capability,
-    Relationship,
-    ComponentInstance
-} from "app/models";
+import {GraphUIObjects} from 'app/utils/constants';
+import {Capability} from 'app/models/capability';
+import {Component} from 'app/models/components/component';
+import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
+import {ConnectRelationModel} from 'app/models/graph/connectRelationModel';
+import {CompositionCiLinkBase} from 'app/models/graph/graph-links/composition-graph-links/composition-ci-link-base';
+import {LinkMenu} from 'app/models/graph/link-menu';
+import {Match} from 'app/models/graph/match-relation';
+import {CompositionCiNodeBase} from 'app/models/graph/nodes/composition-graph-nodes/composition-ci-node-base';
+import {Point} from 'app/models/graph/point';
+import {Relationship, RelationshipModel} from 'app/models/graph/relationship';
+import {Requirement} from 'app/models/requirement';
 // LinksFactory is deep-imported (not via the 'app/models' barrel) to avoid a
 // barrel↔links-factory circular dependency that leaves this @Injectable's
 // constructor param metadata undefined under JIT ("Can't resolve all parameters").

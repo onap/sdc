@@ -22,7 +22,7 @@
  */
 import { Component, ElementRef, forwardRef, Inject, Input, ViewChild, ViewContainerRef, ComponentRef} from "@angular/core";
 import {trigger, state, style, transition, animate} from '@angular/animations';
-import {StepModel} from "app/models";
+import {StepModel} from 'app/models/wizard-step';
 import {ModalService} from "../../../services/modal.service";
 import {ModalComponent} from "../modal/modal.component";
 import {WizardHeaderBaseComponent} from "./multi-steps-wizard-header-base.component";

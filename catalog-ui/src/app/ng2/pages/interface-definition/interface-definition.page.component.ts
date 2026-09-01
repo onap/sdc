@@ -30,19 +30,15 @@ import {IModalButtonComponent} from 'onap-ui-angular/dist/common';
 import {ModalButtonComponent} from 'onap-ui-angular/dist/modals/modal-button.component';
 import {NotificationSettings} from 'onap-ui-angular/dist/notifications/utilities/notification.config';
 import {ModalComponent} from 'app/ng2/components/ui/modal/modal.component';
-import {ResourceType, ComponentType} from "app/utils";
+import {ComponentType, ResourceType} from 'app/utils/constants';
 import {ModalService} from 'app/ng2/services/modal.service';
-import {
-    ArtifactModel,
-    ButtonModel,
-    CapabilitiesGroup,
-    InputBEModel,
-    InterfaceModel,
-    ComponentInstance,
-    ModalModel,
-    OperationModel,
-    WORKFLOW_ASSOCIATION_OPTIONS
-} from 'app/models';
+import {ArtifactModel} from 'app/models/artifacts';
+import {ButtonModel} from 'app/models/button';
+import {CapabilitiesGroup} from 'app/models/capability';
+import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
+import {ModalModel} from 'app/models/modal';
+import {InterfaceModel, OperationModel, WORKFLOW_ASSOCIATION_OPTIONS} from 'app/models/operation';
+import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
 
 import {ComponentServiceNg2} from 'app/ng2/services/component-services/component.service';
 import {TopologyTemplateService} from "../../services/component-services/topology-template.service";

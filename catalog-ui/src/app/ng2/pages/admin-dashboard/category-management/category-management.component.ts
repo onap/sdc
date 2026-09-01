@@ -19,12 +19,13 @@
  */
 
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
-import {ButtonModel, ModalModel} from 'app/models';
+import {ButtonModel} from 'app/models/button';
+import {ModalModel} from 'app/models/modal';
 import {IMainCategory, ISubCategory} from 'app/models/category';
-import {CacheService} from 'app/services-ng2';
+import {CacheService} from 'app/ng2/services/cache.service';
 import {ModalService} from 'app/ng2/services/modal.service';
 import {TranslateService} from 'app/ng2/shared/translator/translate.service';
-import {ValidationUtils} from 'app/utils';
+import {ValidationUtils} from 'app/utils/validation-utils';
 import {AddCategoryModalComponent} from '../add-category-modal/add-category-modal.component';
 
 @Component({

@@ -28,8 +28,9 @@ import { ConfigureFn, configureTests } from '../../../../../../jest/test-config.
 import { DynamicPropertyComponent } from './dynamic-property.component';
 import { PropertiesUtils } from '../../../../pages/properties-assignment/services/properties.utils';
 import { DataTypeService } from '../../../../services/data-type.service';
-import { PropertyFEModel, PropertyBEModel } from 'app/models';
-import { PROPERTY_TYPES } from 'app/utils';
+import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
+import {PropertyFEModel} from 'app/models/properties-inputs/property-fe-model';
+import {PROPERTY_TYPES} from 'app/utils/constants';
 import { ContentAfterLastDotPipe } from '../../../../pipes/contentAfterLastDot.pipe';
 import { FilterChildPropertiesPipe } from '../pipes/filterChildProperties.pipe';
 

@@ -23,7 +23,7 @@
  */
 import { Injectable } from '@angular/core';
 import {WorkspaceMode, ComponentState, Role} from "../../../utils/constants";
-import { Component as ComponentData } from "app/models";
+import {Component as ComponentData} from 'app/models/components/component';
 import { CacheService } from "../cache.service";
 
 @Injectable()

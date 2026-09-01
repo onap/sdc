@@ -1,13 +1,15 @@
 import { Component, Input } from '@angular/core';
-import { Component as TopologyTemplate, RelationshipModel, Relationship, Requirement } from "app/models";
+import {Component as TopologyTemplate} from 'app/models/components/component';
+import {Relationship, RelationshipModel} from 'app/models/graph/relationship';
+import {Requirement} from 'app/models/requirement';
 import { CompositionService } from "app/ng2/pages/composition/composition.service";
 import { ResourceNamePipe } from "app/ng2/pipes/resource-name.pipe";
 import { ComponentInstanceServiceNg2 } from "app/ng2/services/component-instance-services/component-instance.service";
 import { WorkspaceService } from "app/ng2/pages/workspace/workspace.service";
 import { Store } from "@ngxs/store";
 import {TogglePanelLoadingAction} from "../../../../common/store/graph.actions";
-import { EventListenerService } from "app/services";
-import { GRAPH_EVENTS } from "app/utils";
+import {EventListenerService} from 'app/services/event-listener-service';
+import {GRAPH_EVENTS} from 'app/utils/constants';
 
 @Component({
     selector: 'requirement-list',

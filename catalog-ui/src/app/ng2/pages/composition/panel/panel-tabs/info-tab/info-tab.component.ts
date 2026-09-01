@@ -1,23 +1,22 @@
 import { Component, OnInit, Input, Inject, OnDestroy } from '@angular/core';
-import {
-    PolicyInstance,
-    GroupInstance,
-    Component as TopologyTemplate,
-    ComponentInstance,
-    LeftPaletteComponent,
-    FullComponentInstance, IMainCategory
-} from "app/models";
+import {IMainCategory} from 'app/models/category';
+import {Component as TopologyTemplate} from 'app/models/components/component';
+import {LeftPaletteComponent} from 'app/models/components/displayComponent';
+import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
+import {FullComponentInstance} from 'app/models/componentsInstances/fullComponentInstance';
+import {GroupInstance} from 'app/models/graph/zones/group-instance';
+import {PolicyInstance} from 'app/models/graph/zones/policy-instance';
 import {Store} from "@ngxs/store";
-import { EVENTS, GRAPH_EVENTS } from 'app/utils';
+import {EVENTS, GRAPH_EVENTS} from 'app/utils/constants';
 import {IDropDownOption} from "onap-ui-angular/dist/form-elements/dropdown/dropdown-models";
 import { CompositionPaletteService } from "app/ng2/pages/composition/palette/services/palette.service";
 import { SdcUiCommon, SdcUiComponents, SdcUiServices } from "onap-ui-angular";
 import { SdcMenuToken, IAppMenu } from "app/ng2/config/sdc-menu.config";
 import { CompositionService } from "app/ng2/pages/composition/composition.service";
-import { ServiceServiceNg2 } from "app/services-ng2";
+import {ServiceServiceNg2} from 'app/ng2/services/component-services/service.service';
 import { WorkspaceService } from "app/ng2/pages/workspace/workspace.service";
 import { ComponentInstanceServiceNg2 } from "app/ng2/services/component-instance-services/component-instance.service";
-import { EventListenerService } from "app/services";
+import {EventListenerService} from 'app/services/event-listener-service';
 import * as _ from 'lodash';
 import {SelectedComponentType, TogglePanelLoadingAction} from "../../../common/store/graph.actions";
 import Dictionary = _.Dictionary;

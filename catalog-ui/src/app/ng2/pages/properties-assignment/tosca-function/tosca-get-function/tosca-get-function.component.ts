@@ -18,7 +18,13 @@
  */
 
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
-import {AttributeBEModel, ComponentMetadata, DataTypeModel, PropertyBEModel, PropertyModel, PropertyDeclareAPIModel, DerivedFEProperty} from 'app/models';
+import {AttributeBEModel} from 'app/models/attributes-outputs/attribute-be-model';
+import {ComponentMetadata} from 'app/models/component-metadata';
+import {DataTypeModel} from 'app/models/data-types';
+import {PropertyModel} from 'app/models/properties';
+import {DerivedFEProperty} from 'app/models/properties-inputs/derived-fe-property';
+import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
+import {PropertyDeclareAPIModel} from 'app/models/properties-inputs/property-declare-api-model';
 import {TopologyTemplateService} from "../../../../services/component-services/topology-template.service";
 import {WorkspaceService} from "../../../workspace/workspace.service";
 import {PropertiesService} from "../../../../services/properties.service";
@@ -33,7 +39,7 @@ import {InstanceFeDetails} from "../../../../../models/instance-fe-details";
 import {ToscaGetFunction} from "../../../../../models/tosca-get-function";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {ToscaGetFunctionTypeConverter} from "../../../../../models/tosca-get-function-type-converter";
-import {ResourceType} from "app/utils";
+import {ResourceType} from 'app/utils/constants';
 
 @Component({
     selector: 'app-tosca-get-function',

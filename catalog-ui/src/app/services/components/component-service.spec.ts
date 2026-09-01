@@ -17,19 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-// Break the circular dep that crashes module loading for this specific spec:
-//   component-service.ts → app/models (barrel) → app/utils (barrel) → modals-handler →
-//   icons-modal → app/services (barrel) → resource-service.ts → extends ComponentService
-//   (CYCLE: component-service.ts is not yet exported when resource-service.ts loads it).
-// This mock is ONLY needed in this spec file; other test files load component-service
-// as a non-entry-point so the cycle resolves. The production runtime is not affected.
-jest.mock('app/services', () => ({
-    AvailableIconsService: class {},
-    ResourceService: class {},
-    ServiceService: class {},
-    DataTypesService: class {},
-}));
-
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {TestBed} from '@angular/core/testing';
 import {ComponentService} from './component-service';

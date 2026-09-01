@@ -20,7 +20,7 @@
 import {AfterViewInit, ChangeDetectorRef, ElementRef, OnDestroy, OnInit} from '@angular/core';
 import {UUID} from 'angular2-uuid';
 import {WorkspaceMode} from 'app/utils/constants';
-import {CacheService} from 'app/services-ng2';
+import {CacheService} from 'app/ng2/services/cache.service';
 import {ComponentServiceNg2} from 'app/ng2/services/component-services/component.service';
 import {WorkspaceService} from '../workspace.service';
 import {VendorModel} from './vendor-model';

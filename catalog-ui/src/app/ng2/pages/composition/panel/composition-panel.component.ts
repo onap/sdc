@@ -20,7 +20,13 @@
 
 import { Component, HostBinding, Input } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
-import { Component as TopologyTemplate, ComponentInstance, FullComponentInstance, GroupInstance, PolicyInstance, Resource, Service } from 'app/models';
+import {Component as TopologyTemplate} from 'app/models/components/component';
+import {Resource} from 'app/models/components/resource';
+import {Service} from 'app/models/components/service';
+import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
+import {FullComponentInstance} from 'app/models/componentsInstances/fullComponentInstance';
+import {GroupInstance} from 'app/models/graph/zones/group-instance';
+import {PolicyInstance} from 'app/models/graph/zones/policy-instance';
 import { ArtifactsTabComponent } from 'app/ng2/pages/composition/panel/panel-tabs/artifacts-tab/artifacts-tab.component';
 import { GroupMembersTabComponent } from 'app/ng2/pages/composition/panel/panel-tabs/group-members-tab/group-members-tab.component';
 import { GroupOrPolicyPropertiesTab } from 'app/ng2/pages/composition/panel/panel-tabs/group-or-policy-properties-tab/group-or-policy-properties-tab.component';
@@ -28,7 +34,7 @@ import { InfoTabComponent } from 'app/ng2/pages/composition/panel/panel-tabs/inf
 import { PolicyTargetsTabComponent } from 'app/ng2/pages/composition/panel/panel-tabs/policy-targets-tab/policy-targets-tab.component';
 import { PropertiesTabComponent } from 'app/ng2/pages/composition/panel/panel-tabs/properties-tab/properties-tab.component';
 import { ReqAndCapabilitiesTabComponent } from 'app/ng2/pages/composition/panel/panel-tabs/req-capabilities-tab/req-capabilities-tab.component';
-import { ComponentType, ResourceType } from 'app/utils';
+import {ComponentType, ResourceType} from 'app/utils/constants';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { Observable } from 'rxjs/Observable';

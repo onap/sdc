@@ -20,7 +20,10 @@
 
 import * as _ from "lodash";
 import { Injectable } from '@angular/core';
-import { PropertyFEModel, PropertyBEModel, PropertyDeclareAPIModel, DerivedFEProperty} from "app/models";
+import {DerivedFEProperty} from 'app/models/properties-inputs/derived-fe-property';
+import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
+import {PropertyDeclareAPIModel} from 'app/models/properties-inputs/property-declare-api-model';
+import {PropertyFEModel} from 'app/models/properties-inputs/property-fe-model';
 
 @Injectable()
 export class PropertiesService {

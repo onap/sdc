@@ -22,7 +22,7 @@
  * Created by ngordon on 7/30/2017.
  */
 import { Component, Input } from '@angular/core';
-import { ServerErrorResponse } from 'app/models';
+import {ServerErrorResponse} from 'app/models/server-error-response';
 
 @Component({
     selector: 'error-message',

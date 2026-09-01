@@ -3,7 +3,10 @@
  */
 import * as _ from "lodash";
 import {Component, EventEmitter, Input, OnInit, Output, SimpleChanges} from '@angular/core';
-import {RadioButtonModel, PropertyModel, InstanceFePropertiesMap, Component as ComponentModel} from "app/models";
+import {Component as ComponentModel} from 'app/models/components/component';
+import {PropertyModel} from 'app/models/properties';
+import {InstanceFePropertiesMap} from 'app/models/properties-inputs/property-fe-map';
+import {RadioButtonModel} from 'app/models/radio-button';
 import {Dictionary} from "lodash";
 import {ComponentInstanceServiceNg2} from "../../../services/component-instance-services/component-instance.service";
 import {PropertiesUtils} from "app/ng2/pages/properties-assignment/services/properties.utils";

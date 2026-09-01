@@ -73,9 +73,11 @@ import {IconsModalModule} from './components/modals/icons-modal/icons-modal.modu
 import {ModulePropertyModalModule} from './pages/module-property-modal/module-property-modal.module';
 import {StandaloneStatesModule} from './pages/standalone-states.module';
 import {ModalsModule} from './components/modals/modals.module';
-import {CacheService, HomeService, SharingService} from 'app/services-ng2';
+import {CacheService} from 'app/ng2/services/cache.service';
+import {HomeService} from 'app/ng2/services/home.service';
+import {SharingService} from 'app/ng2/services/sharing.service';
 import {ArtifactConfigService} from "./services/artifact-config.service";
-import {IUserProperties} from 'app/models';
+import {IUserProperties} from 'app/models/user';
 import {PluginsModule} from './pages/plugins/plugins-module';
 import {WorkspaceNg1BridgeService} from './pages/workspace/workspace-ng1-bridge-service';
 import {NgxsModule} from '@ngxs/store';

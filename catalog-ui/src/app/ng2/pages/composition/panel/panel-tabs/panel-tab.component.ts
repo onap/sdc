@@ -8,7 +8,7 @@ import {
   ChangeDetectorRef,
   OnChanges, OnDestroy, AfterViewInit
 } from '@angular/core';
-import {Component as TopologyTemplate} from 'app/models';
+import {Component as TopologyTemplate} from 'app/models/components/component';
 
 // Helper component to add dynamic tabs
 @Component({

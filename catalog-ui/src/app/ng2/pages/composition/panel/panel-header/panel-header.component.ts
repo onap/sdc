@@ -21,7 +21,13 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { SdcUiComponents, SdcUiCommon, SdcUiServices } from "onap-ui-angular";
 import { EditNameModalComponent } from "app/ng2/pages/composition/panel/panel-header/edit-name-modal/edit-name-modal.component";
-import {Component as TopologyTemplate, FullComponentInstance, GroupInstance, PolicyInstance, Requirement, Capability, ComponentInstance} from "app/models";
+import {Capability} from 'app/models/capability';
+import {Component as TopologyTemplate} from 'app/models/components/component';
+import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
+import {FullComponentInstance} from 'app/models/componentsInstances/fullComponentInstance';
+import {GroupInstance} from 'app/models/graph/zones/group-instance';
+import {PolicyInstance} from 'app/models/graph/zones/policy-instance';
+import {Requirement} from 'app/models/requirement';
 import { Select } from "@ngxs/store";
 import { Observable } from "rxjs/Observable";
 import { Subscription } from "rxjs";
@@ -30,7 +36,8 @@ import { CompositionService } from "app/ng2/pages/composition/composition.servic
 import {EventListenerService} from "../../../../../services/event-listener-service";
 import { ComponentInstanceServiceNg2 } from "app/ng2/services/component-instance-services/component-instance.service";
 import { WorkspaceService } from "app/ng2/pages/workspace/workspace.service";
-import { GroupsService, PoliciesService } from "app/services-ng2";
+import {GroupsService} from 'app/ng2/services/groups.service';
+import {PoliciesService} from 'app/ng2/services/policies.service';
 import { UIZoneInstanceObject } from "../../../../../models/ui-models/ui-zone-instance-object";
 import {SelectedComponentType} from "../../common/store/graph.actions";
 import * as _ from 'lodash';

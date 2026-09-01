@@ -5,7 +5,12 @@ import {
     SetSelectedComponentAction,
     TogglePanelLoadingAction
 } from "./graph.actions";
-import { PolicyInstance, GroupInstance, Component as TopologyTemplate, ComponentInstance, LeftPaletteComponent, FullComponentInstance} from "app/models";
+import {Component as TopologyTemplate} from 'app/models/components/component';
+import {LeftPaletteComponent} from 'app/models/components/displayComponent';
+import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
+import {FullComponentInstance} from 'app/models/componentsInstances/fullComponentInstance';
+import {GroupInstance} from 'app/models/graph/zones/group-instance';
+import {PolicyInstance} from 'app/models/graph/zones/policy-instance';
 import { TopologyTemplateService } from "app/ng2/services/component-services/topology-template.service";
 import { tap } from "rxjs/operators";
 import { CompositionService } from "app/ng2/pages/composition/composition.service";

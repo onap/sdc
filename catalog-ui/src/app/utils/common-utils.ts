@@ -19,9 +19,16 @@
  */
 
 import * as _ from "lodash";
-import {Module, AttributeModel, ResourceInstance, PropertyModel, InputFEModel, OperationModel} from "../models";
+import {AttributeModel} from '../models/attributes';
+import {ResourceInstance} from '../models/componentsInstances/resourceInstance';
+import {Module} from '../models/modules/base-module';
+import {OperationModel} from '../models/operation';
+import {PropertyModel} from '../models/properties';
+import {InputFEModel} from '../models/properties-inputs/input-fe-model';
 import {ComponentInstanceFactory} from "./component-instance-factory";
-import {InputBEModel, PropertyBEModel, RelationshipModel} from "app/models";
+import {RelationshipModel} from 'app/models/graph/relationship';
+import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
+import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
 import { PolicyInstance } from "app/models/graph/zones/policy-instance";
 import { GroupInstance } from "../models/graph/zones/group-instance";
 import { InterfaceModel } from "../models/operation";

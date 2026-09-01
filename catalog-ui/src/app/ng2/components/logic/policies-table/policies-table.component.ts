@@ -15,7 +15,7 @@
  */
 
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { PolicyInstance } from 'app/models';
+import {PolicyInstance} from 'app/models/graph/zones/policy-instance';
 import { InstanceFeDetails } from 'app/models/instance-fe-details';
 import { TranslateService } from 'app/ng2/shared/translator/translate.service';
 import { ModalService } from '../../../services/modal.service';

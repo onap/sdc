@@ -5,8 +5,7 @@
  * Created by rc2122 on 9/4/2017.
  */
 import {Component, Inject, forwardRef} from '@angular/core';
-import {IStepComponent} from "app/models"
-import {ConnectionWizardService} from "../connection-wizard.service";
+import {IStepComponent} from 'app/models/wizard-step';import {ConnectionWizardService} from "../connection-wizard.service";
 import {PropertyFEModel} from "app/models/properties-inputs/property-fe-model";
 import {InstanceFePropertiesMap} from "app/models/properties-inputs/property-fe-map";
 import {PropertiesUtils} from "app/ng2/pages/properties-assignment/services/properties.utils";

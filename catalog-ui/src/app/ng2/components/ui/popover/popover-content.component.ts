@@ -19,7 +19,7 @@
  */
 
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnDestroy, Output, Renderer, ViewChild } from '@angular/core';
-import { ButtonsModelMap } from 'app/models';
+import {ButtonsModelMap} from 'app/models/button';
 import { PopoverComponent } from './popover.component';
 
 @Component({

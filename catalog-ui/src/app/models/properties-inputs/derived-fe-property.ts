@@ -20,10 +20,11 @@
 
 import * as _ from "lodash";
 import { SchemaPropertyGroupModel, SchemaProperty } from '../schema-property';
-import { DerivedPropertyType, PropertyBEModel, PropertyFEModel } from '../../models';
+import {DerivedPropertyType, PropertyBEModel} from './property-be-model';
+import {PropertyFEModel} from './property-fe-model';
 import {SubPropertyToscaFunction} from "../sub-property-tosca-function";
 import {ToscaFunction} from "../tosca-function";
-import { PROPERTY_TYPES } from 'app/utils';
+import {PROPERTY_TYPES} from 'app/utils/constants';
 import { UUID } from "angular2-uuid";
 
 

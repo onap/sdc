@@ -1,16 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 import { Mock } from 'ts-mockery';
-import {
-    CapabilitiesGroup,
-    Capability,
-    ComponentInstance,
-    CompositionCiLinkBase,
-    CompositionCiNodeCp,
-    CompositionCiNodeVf,
-    CompositionCiNodeVl,
-    Requirement,
-    RequirementsGroup
-} from '../../../../../models';
+import {CapabilitiesGroup, Capability} from '../../../../../models/capability';
+import {ComponentInstance} from '../../../../../models/componentsInstances/componentInstance';
+import {CompositionCiLinkBase} from '../../../../../models/graph/graph-links/composition-graph-links/composition-ci-link-base';
+import {CompositionCiNodeCp} from '../../../../../models/graph/nodes/composition-graph-nodes/composition-ci-node-cp';
+import {CompositionCiNodeVf} from '../../../../../models/graph/nodes/composition-graph-nodes/composition-ci-node-vf';
+import {CompositionCiNodeVl} from '../../../../../models/graph/nodes/composition-graph-nodes/composition-ci-node-vl';
+import {Requirement, RequirementsGroup} from '../../../../../models/requirement';
 import { MatchCapabilitiesRequirementsUtils } from './match-capability-requirement-utils';
 
 describe('match capability requirements utils service ', () => {

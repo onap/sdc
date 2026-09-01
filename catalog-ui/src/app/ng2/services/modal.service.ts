@@ -2,7 +2,9 @@ import {
     Injectable, Type, ViewContainerRef, ApplicationRef, ComponentFactory, ComponentFactoryResolver, ComponentRef,
     TemplateRef
 } from '@angular/core';
-import { ModalModel, ButtonModel, StepModel } from 'app/models';
+import {ButtonModel} from 'app/models/button';
+import {ModalModel} from 'app/models/modal';
+import {StepModel} from 'app/models/wizard-step';
 import {MultiStepsWizardComponent} from "../components/ui/multi-steps-wizard/multi-steps-wizard.component";
 import {ModalComponent} from "../components/ui/modal/modal.component";
 import {WizardHeaderBaseComponent} from "app/ng2/components/ui/multi-steps-wizard/multi-steps-wizard-header-base.component";

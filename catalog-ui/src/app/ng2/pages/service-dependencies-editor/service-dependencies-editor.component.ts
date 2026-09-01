@@ -15,11 +15,14 @@
  * permissions and limitations under the License.
  */
 import {Component, Input, OnInit} from '@angular/core';
-import {InputBEModel, PropertyBEModel, PropertyFEModel, PropertyModel} from 'app/models';
+import {PropertyModel} from 'app/models/properties';
+import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
+import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
+import {PropertyFEModel} from 'app/models/properties-inputs/property-fe-model';
 import {SourceType} from 'app/ng2/components/logic/service-dependencies/service-dependencies.component';
 import {DropdownValue} from 'app/ng2/components/ui/form-components/dropdown/ui-element-dropdown.component';
 import {ServiceServiceNg2} from 'app/ng2/services/component-services/service.service';
-import {PROPERTY_DATA, PROPERTY_TYPES} from 'app/utils';
+import {PROPERTY_DATA, PROPERTY_TYPES} from 'app/utils/constants';
 import {PropertiesUtils} from '../properties-assignment/services/properties.utils';
 import {ToscaFunctionValidationEvent} from "../properties-assignment/tosca-function/tosca-function.component";
 import {InstanceFeDetails} from "../../../models/instance-fe-details";

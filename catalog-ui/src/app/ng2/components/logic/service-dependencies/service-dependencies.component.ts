@@ -16,7 +16,12 @@
  */
 
 import {Component, ComponentRef, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
-import {ButtonModel, ComponentInstance, InputBEModel, ModalModel, PropertyBEModel, PropertyModel,} from 'app/models';
+import {ButtonModel} from 'app/models/button';
+import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
+import {ModalModel} from 'app/models/modal';
+import {PropertyModel} from 'app/models/properties';
+import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
+import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
 import {ModalComponent} from 'app/ng2/components/ui/modal/modal.component';
 import {FilterType, ServiceDependenciesEditorComponent} from 'app/ng2/pages/service-dependencies-editor/service-dependencies-editor.component';
 import {ModalService} from 'app/ng2/services/modal.service';

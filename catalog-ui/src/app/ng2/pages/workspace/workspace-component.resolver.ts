@@ -20,7 +20,8 @@
 
 import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, Resolve} from '@angular/router';
-import {Component, Resource} from 'app/models';
+import {Component} from 'app/models/components/component';
+import {Resource} from 'app/models/components/resource';
 import {ComponentFactory} from 'app/utils/component-factory';
 import {PREVIOUS_CSAR_COMPONENT} from 'app/utils/constants';
 import {CacheService} from '../../services/cache.service';

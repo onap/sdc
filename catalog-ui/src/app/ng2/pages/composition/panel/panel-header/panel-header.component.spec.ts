@@ -4,21 +4,19 @@ import {CompositionService} from 'app/ng2/pages/composition/composition.service'
 import {EventListenerService} from '../../../../../services/event-listener-service';
 import {ComponentInstanceServiceNg2} from 'app/ng2/services/component-instance-services/component-instance.service';
 import {WorkspaceService} from 'app/ng2/pages/workspace/workspace.service';
-import {GroupsService, PoliciesService} from 'app/services-ng2';
+import {GroupsService} from 'app/ng2/services/groups.service';
+import {PoliciesService} from 'app/ng2/services/policies.service';
 import {CompositionPanelHeaderComponent} from './panel-header.component';
 import {SdcUiServices} from 'onap-ui-angular';
-import {
-    CapabilitiesGroup,
-    Capability,
-    Component,
-    ComponentInstance,
-    FullComponentInstance,
-    GroupInstance,
-    PolicyInstance,
-    Requirement,
-    RequirementsGroup
-} from "app/models";
+import {CapabilitiesGroup, Capability} from 'app/models/capability';
+import {Component} from 'app/models/components/component';
+import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
+import {FullComponentInstance} from 'app/models/componentsInstances/fullComponentInstance';
+import {GroupInstance} from 'app/models/graph/zones/group-instance';
+import {PolicyInstance} from 'app/models/graph/zones/policy-instance';
+import {Requirement, RequirementsGroup} from 'app/models/requirement';
 import {Observable, of} from "rxjs";
+import 'rxjs/add/observable/throw';
 
 describe('CompositionPanelHeaderComponent', () => {
     let component: CompositionPanelHeaderComponent;

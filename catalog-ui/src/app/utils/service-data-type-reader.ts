@@ -18,7 +18,8 @@
  * ============LICENSE_END=========================================================
  */
 
-import {DataTypeModel, PropertyBEModel} from "../models";
+import {DataTypeModel} from '../models/data-types';
+import {PropertyBEModel} from '../models/properties-inputs/property-be-model';
 import {Constraint, ConstraintTypes} from "../ng2/pages/properties-assignment/constraints/constraints.component";
 import {load} from 'js-yaml';
 

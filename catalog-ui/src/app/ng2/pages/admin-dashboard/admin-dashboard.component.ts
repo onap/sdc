@@ -20,7 +20,7 @@
 
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {Subscription} from 'rxjs/Subscription';
-import {CacheService} from 'app/services-ng2';
+import {CacheService} from 'app/ng2/services/cache.service';
 import {SdcConfigToken, ISdcConfig} from 'app/ng2/config/sdc-config.config';
 import {TranslateService} from 'app/ng2/shared/translator/translate.service';
 

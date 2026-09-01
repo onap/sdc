@@ -14,7 +14,7 @@
   ~ limitations under the License.
   -- */
 
-import {IAppMenu} from "app/models";
+import {IAppMenu} from 'app/models/app-config';
 
 export function getSdcMenu(): IAppMenu {
     return require('./../../../../configurations/menu.js');

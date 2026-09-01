@@ -18,7 +18,7 @@
  */
 
 import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { ArtifactModel } from "app/models";
+import {ArtifactModel} from 'app/models/artifacts';
 import { TranslateService } from '../../../shared/translator/translate.service';
 import { SdcUiServices } from 'onap-ui-angular';
 

@@ -19,7 +19,7 @@
  */
 
 import { Pipe, PipeTransform } from '@angular/core';
-import { DerivedFEProperty } from 'app/models';
+import {DerivedFEProperty} from 'app/models/properties-inputs/derived-fe-property';
 
 @Pipe({
     name: 'filterChildProperties',

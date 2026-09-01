@@ -24,7 +24,8 @@ import * as _ from 'lodash';
 import { PropertiesUtils } from './properties.utils';
 import { DataTypeService } from 'app/ng2/services/data-type.service';
 import { PropertiesService } from 'app/ng2/services/properties.service';
-import { PropertyBEModel, PropertyFEModel, DerivedPropertyType } from 'app/models';
+import {DerivedPropertyType, PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
+import {PropertyFEModel} from 'app/models/properties-inputs/property-fe-model';
 
 describe('PropertiesUtils characterization (engine used by dynamic-property)', () => {
     let utils: PropertiesUtils;

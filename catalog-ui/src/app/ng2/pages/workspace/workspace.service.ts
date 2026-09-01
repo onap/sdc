@@ -29,7 +29,8 @@ import { Injectable } from '@angular/core';
 // menu-handler and so drags in NavigationService — a cycle, since NavigationService injects this
 // service. The barrel is also the §OO JIT-bootstrap hazard.
 import {ComponentState, ComponentType, Role, WorkspaceMode} from "../../../utils/constants";
-import {Component as TopologyTemplate, ComponentMetadata} from "app/models";
+import {ComponentMetadata} from 'app/models/component-metadata';
+import {Component as TopologyTemplate} from 'app/models/components/component';
 import {CacheService} from "../../services/cache.service";
 import {IComponentMetadata} from "../../../models/component-metadata";
 

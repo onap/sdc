@@ -19,22 +19,20 @@
  */
 'use strict';
 
-import {
-    CompositionCiNodeUcpeCp,
-    Module,
-    ModuleNodeBase,
-    CompositionCiNodeVf,
-    CompositionCiNodeVl,
-    CompositionCiNodeCp,
-    CompositionCiNodeConfiguration,
-    NodeUcpe,
-    CompositionCiNodeService,
-    CompositionCiNodeServiceProxy,
-    CompositionCiNodeServiceSubstitution,
-    CompositionCiNodeBase,
-    ComponentInstance,
-    CompositionCiNodeVfc
-} from "./../../../models";
+import {ComponentInstance} from '../../componentsInstances/componentInstance';
+import {Module} from '../../modules/base-module';
+import {CompositionCiNodeBase} from './composition-graph-nodes/composition-ci-node-base';
+import {CompositionCiNodeConfiguration} from './composition-graph-nodes/composition-ci-node-configuration';
+import {CompositionCiNodeCp} from './composition-graph-nodes/composition-ci-node-cp';
+import {CompositionCiNodeService} from './composition-graph-nodes/composition-ci-node-service';
+import {CompositionCiNodeServiceProxy} from './composition-graph-nodes/composition-ci-node-service-proxy';
+import {CompositionCiNodeServiceSubstitution} from './composition-graph-nodes/composition-ci-node-service-substitution';
+import {NodeUcpe} from './composition-graph-nodes/composition-ci-node-ucpe';
+import {CompositionCiNodeUcpeCp} from './composition-graph-nodes/composition-ci-node-ucpe-cp';
+import {CompositionCiNodeVf} from './composition-graph-nodes/composition-ci-node-vf';
+import {CompositionCiNodeVfc} from './composition-graph-nodes/composition-ci-node-vfc';
+import {CompositionCiNodeVl} from './composition-graph-nodes/composition-ci-node-vl';
+import {ModuleNodeBase} from './modules-graph-nodes/module-node-base';
 import {ComponentType, ResourceType} from "../../../utils/constants";
 import {ImageCreatorService} from "app/ng2/pages/composition/graph/common/image-creator.service";
 import {Injectable} from "@angular/core";

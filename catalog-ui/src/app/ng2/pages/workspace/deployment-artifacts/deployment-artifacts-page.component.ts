@@ -1,6 +1,6 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {Select, Store} from '@ngxs/store';
-import {ArtifactModel} from 'app/models';
+import {ArtifactModel} from 'app/models/artifacts';
 import * as _ from 'lodash';
 import {SdcUiCommon, SdcUiServices} from 'onap-ui-angular';
 import {Observable} from 'rxjs';

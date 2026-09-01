@@ -23,8 +23,9 @@ import { Component, Inject, Input} from "@angular/core";
 import { TranslateService } from './../../../../../shared/translator/translate.service';
 import { PolicyInstance } from 'app/models/graph/zones/policy-instance';
 import { PropertyModel } from './../../../../../../models/properties';
-import { ModalsHandler } from "app/utils";
-import { Component as TopologyTemplate, GroupInstance } from "app/models";
+import {ModalsHandler} from 'app/utils/modals-handler';
+import {Component as TopologyTemplate} from 'app/models/components/component';
+import {GroupInstance} from 'app/models/graph/zones/group-instance';
 
 @Component({
     selector: 'group-or-policy-properties-tab',

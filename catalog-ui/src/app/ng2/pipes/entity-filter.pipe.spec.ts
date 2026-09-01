@@ -22,7 +22,7 @@
 import { TestBed } from "@angular/core/testing";
 import { EntityFilterPipe } from './entity-filter.pipe';
 import { IEntityFilterObject } from './entity-filter.pipe';
-import {Component} from "app/models";
+import {Component} from 'app/models/components/component';
 import { ISearchFilter } from './entity-filter.pipe';
 import {DataTypeCatalogComponent} from "../../models/data-type-catalog-component";
 

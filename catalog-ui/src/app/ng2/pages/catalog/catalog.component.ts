@@ -22,18 +22,14 @@ import * as _ from "lodash";
 import { Component as NgComponent, Inject } from '@angular/core';
 import { NavigationService } from "../../services/navigation.service";
 import { SdcUiCommon, SdcUiServices } from "onap-ui-angular";
-import { CacheService, CatalogService } from "app/services-ng2";
+import {CacheService} from 'app/ng2/services/cache.service';
+import {CatalogService} from 'app/ng2/services/catalog.service';
 import { SdcConfigToken, ISdcConfig } from "../../config/sdc-config.config";
 import { SdcMenuToken, IAppMenu } from "../../config/sdc-menu.config";
-import {
-    Component,
-    ICategoryBase,
-    IMainCategory,
-    ISubCategory,
-    IConfigStatuses,
-    ICatalogSelector,
-    CatalogSelectorTypes
-} from "app/models";
+import {IConfigStatuses} from 'app/models/app-config';
+import {CatalogSelectorTypes, ICatalogSelector} from 'app/models/catalogSelector';
+import {ICategoryBase, IMainCategory, ISubCategory} from 'app/models/category';
+import {Component} from 'app/models/components/component';
 import { ResourceNamePipe } from "../../pipes/resource-name.pipe";
 import { EntityFilterPipe, IEntityFilterObject, ISearchFilter} from "../../pipes/entity-filter.pipe";
 import {DEFAULT_MODEL_NAME, States} from "app/utils/constants";

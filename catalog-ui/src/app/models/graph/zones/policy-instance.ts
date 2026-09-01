@@ -1,5 +1,5 @@
-import { PropertyModel } from "app/models";
-import { CommonUtils } from "app/utils";
+import {PropertyModel} from 'app/models/properties';
+import {CommonUtils} from 'app/utils/common-utils';
 import {IZoneInstanceMethod, IZoneInstanceAssignment} from "./zone-instance";
 import {GroupInstance} from "./group-instance";
 import {ComponentInstance} from "../../componentsInstances/componentInstance";

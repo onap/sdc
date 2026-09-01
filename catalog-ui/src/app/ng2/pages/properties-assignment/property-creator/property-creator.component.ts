@@ -1,11 +1,13 @@
 
 import { Component } from '@angular/core';
-import { DataTypesMap, PropertyBEModel, ValidationConfiguration } from 'app/models';
+import {DataTypesMap} from 'app/models/data-types-map';
+import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
+import {ValidationConfiguration} from 'app/models/validation-config';
 import { DropdownValue } from 'app/ng2/components/ui/form-components/dropdown/ui-element-dropdown.component';
 import { DataTypeService } from 'app/ng2/services/data-type.service';
-import { PROPERTY_DATA } from 'app/utils';
+import {PROPERTY_DATA} from 'app/utils/constants';
 import * as _ from 'lodash';
-import { PROPERTY_TYPES } from '../../../../utils';
+import {PROPERTY_TYPES} from '../../../../utils/constants';
 import {Validation} from "../../../../models/validation-config";
 import {WorkspaceService} from "../../workspace/workspace.service";
 

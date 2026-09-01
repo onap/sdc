@@ -23,14 +23,12 @@ import {Inject, Injectable} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
-import {
-    Component,
-    FilterPropertiesAssignmentData,
-    InputBEModel,
-    InstancePropertiesAPIMap,
-    OperationModel
-} from "app/models";
-import {API_QUERY_PARAMS, COMPONENT_FIELDS} from "app/utils";
+import {Component} from 'app/models/components/component';
+import {FilterPropertiesAssignmentData} from 'app/models/filter-properties-assignment-data';
+import {OperationModel} from 'app/models/operation';
+import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
+import {InstancePropertiesAPIMap} from 'app/models/properties-inputs/property-fe-map';
+import {API_QUERY_PARAMS, COMPONENT_FIELDS} from 'app/utils/constants';
 import {ComponentGenericResponse} from "../responses/component-generic-response";
 import {InstanceBePropertiesMap} from "../../../models/properties-inputs/property-fe-map";
 import {ComponentType, ServerTypeUrl, SERVICE_FIELDS} from "../../../utils/constants";

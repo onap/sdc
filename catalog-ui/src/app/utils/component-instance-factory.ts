@@ -21,8 +21,13 @@
  * Created by obarda on 3/7/2016.
  */
 'use strict';
-import { ComponentType } from 'app/utils';
-import { Component, ComponentInstance, ResourceInstance, ServiceInstance, ServiceSubstitutionInstance, ServiceProxyInstance } from '../models';
+import {ComponentType} from 'app/utils/constants';
+import {Component} from '../models/components/component';
+import {ComponentInstance} from '../models/componentsInstances/componentInstance';
+import {ResourceInstance} from '../models/componentsInstances/resourceInstance';
+import {ServiceInstance} from '../models/componentsInstances/serviceInstance';
+import {ServiceProxyInstance} from '../models/componentsInstances/serviceProxyInstance';
+import {ServiceSubstitutionInstance} from '../models/componentsInstances/serviceSubstitutionInstance';
 import { LeftPaletteComponent } from '../models/components/displayComponent';
 
 export class ComponentInstanceFactory {

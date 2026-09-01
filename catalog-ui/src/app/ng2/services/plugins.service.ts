@@ -1,7 +1,8 @@
 import {Inject, Injectable} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import {Http, Response} from '@angular/http';
-import {IApi, IAppConfigurtaion, Plugin, PluginsConfiguration} from "app/models";
+import {IApi, IAppConfigurtaion} from 'app/models/app-config';
+import {Plugin, PluginsConfiguration} from 'app/models/plugins-config';
 import {ISdcConfig, SdcConfigToken} from "../config/sdc-config.config";
 
 @Injectable()

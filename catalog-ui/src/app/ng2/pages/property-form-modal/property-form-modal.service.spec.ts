@@ -20,7 +20,8 @@
  */
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
-import {PropertyModel, InputFEModel} from 'app/models';
+import {PropertyModel} from 'app/models/properties';
+import {InputFEModel} from 'app/models/properties-inputs/input-fe-model';
 import {PropertyFormModalService, PropertyFormModalSaveContext} from './property-form-modal.service';
 
 function makeProperty(overrides: any = {}): PropertyModel {

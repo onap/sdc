@@ -18,7 +18,8 @@
  * ============LICENSE_END=========================================================
  */
 import {ImagesUrl, GraphUIObjects} from "../../../../utils/constants";
-import {ComponentInstance, CompositionCiNodeBase} from "../../../../models";
+import {ComponentInstance} from '../../../componentsInstances/componentInstance';
+import {CompositionCiNodeBase} from './composition-ci-node-base';
 import {ImageCreatorService} from "app/ng2/pages/composition/graph/common/image-creator.service";
 
 export class CompositionCiNodeVfc extends CompositionCiNodeBase {

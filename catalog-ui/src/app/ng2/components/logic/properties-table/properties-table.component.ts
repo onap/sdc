@@ -20,7 +20,9 @@
  */
 
 import {Component, EventEmitter, Inject, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
-import { DerivedFEProperty, InstanceFePropertiesMap, PropertyFEModel} from 'app/models';
+import {DerivedFEProperty} from 'app/models/properties-inputs/derived-fe-property';
+import {InstanceFePropertiesMap} from 'app/models/properties-inputs/property-fe-map';
+import {PropertyFEModel} from 'app/models/properties-inputs/property-fe-model';
 import { InstanceFeDetails } from '../../../../models/instance-fe-details';
 import { PropertiesService } from '../../../services/properties.service';
 import { ModalService } from '../../../services/modal.service';

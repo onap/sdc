@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-import {GraphColors} from "app/utils";
+import {GraphColors} from 'app/utils/constants';
 export class ModulesNodesStyle {
 
     public static getModuleGraphStyle = ():Array<Cy.Stylesheet> => {

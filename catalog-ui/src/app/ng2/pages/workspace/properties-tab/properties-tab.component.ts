@@ -18,8 +18,8 @@
  * ============LICENSE_END=========================================================
  */
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
-import {PropertyModel} from 'app/models';
-import {ModalsHandler} from 'app/utils';
+import {PropertyModel} from 'app/models/properties';
+import {ModalsHandler} from 'app/utils/modals-handler';
 import {SdcUiCommon, SdcUiComponents, SdcUiServices} from 'onap-ui-angular';
 import {WorkspaceMode} from 'app/utils/constants';
 import {TranslateService} from 'app/ng2/shared/translator/translate.service';

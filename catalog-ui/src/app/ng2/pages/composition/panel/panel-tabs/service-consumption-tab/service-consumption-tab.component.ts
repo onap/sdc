@@ -1,17 +1,14 @@
 
 import { Component, Input } from '@angular/core';
 import { Store } from '@ngxs/store';
-import {
-    CapabilitiesGroup,
-    Capability,
-    Component as TopologyTemplate,
-    ComponentInstance,
-    FullComponentInstance,
-    InputBEModel,
-    InputsGroup,
-    InterfaceModel,
-    PropertiesGroup
-} from 'app/models';
+import {CapabilitiesGroup, Capability} from 'app/models/capability';
+import {Component as TopologyTemplate} from 'app/models/components/component';
+import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
+import {FullComponentInstance} from 'app/models/componentsInstances/fullComponentInstance';
+import {InputsGroup} from 'app/models/inputs';
+import {InterfaceModel} from 'app/models/operation';
+import {PropertiesGroup} from 'app/models/properties';
+import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
 import { ComponentMetadata } from '../../../../../../models/component-metadata';
 import { ServiceInstanceObject } from '../../../../../../models/service-instance-properties-and-interfaces';
 import { EventListenerService } from '../../../../../../services/event-listener-service';

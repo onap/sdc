@@ -20,20 +20,22 @@
 'use strict';
 import {Component as NgComponent, Inject, OnInit} from '@angular/core';
 import {NavigationService} from '../../services/navigation.service';
-import {
-    ButtonModel,
-    Component,
-    ComponentMetadata,
-    IConfigRoles,
-    IUserProperties,
-    ModalModel,
-    Resource,
-    Service
-} from 'app/models';
+import {IConfigRoles} from 'app/models/app-config';
+import {ButtonModel} from 'app/models/button';
+import {ComponentMetadata} from 'app/models/component-metadata';
+import {Component} from 'app/models/components/component';
+import {Resource} from 'app/models/components/resource';
+import {Service} from 'app/models/components/service';
+import {ModalModel} from 'app/models/modal';
+import {IUserProperties} from 'app/models/user';
 import {ModalService} from "../../services/modal.service";
 import {HomeFilter} from 'app/models/home-filter';
-import {AuthenticationService, CacheService, HomeService, ResourceServiceNg2} from 'app/services-ng2';
-import {ComponentState, ModalsHandler, States} from 'app/utils';
+import {AuthenticationService} from 'app/ng2/services/authentication.service';
+import {CacheService} from 'app/ng2/services/cache.service';
+import {ResourceServiceNg2} from 'app/ng2/services/component-services/resource.service';
+import {HomeService} from 'app/ng2/services/home.service';
+import {ComponentState, States} from 'app/utils/constants';
+import {ModalsHandler} from 'app/utils/modals-handler';
 import {SdcUiServices} from 'onap-ui-angular';
 import {CHANGE_COMPONENT_CSAR_VERSION_FLAG, ComponentType, ResourceType} from '../../../utils/constants';
 import {ImportVSPService} from '../../components/modals/onboarding-modal/import-vsp.service';

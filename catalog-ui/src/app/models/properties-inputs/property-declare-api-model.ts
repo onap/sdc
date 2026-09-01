@@ -19,7 +19,9 @@
  */
 
 'use strict';
-import { PropertyBEModel, PropertyFEModel, DerivedFEProperty } from "../../models";
+import {DerivedFEProperty} from './derived-fe-property';
+import {PropertyBEModel} from './property-be-model';
+import {PropertyFEModel} from './property-fe-model';
 
 
 export class PropertyDeclareAPIModel extends PropertyBEModel{

@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-import {PropertyBEModel} from 'app/models';
+import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
 /**
  * Created by rc2122 on 6/1/2017.
  */

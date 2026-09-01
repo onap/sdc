@@ -30,14 +30,9 @@ import {Observable} from "rxjs/Observable";
 
 import {ModalComponent} from 'onap-ui-angular/dist/modals/modal.component';
 import {ModalService} from 'app/ng2/services/modal.service';
-import {
-    CapabilitiesGroup,
-    Capability,
-    InputBEModel,
-    InterfaceModel,
-    OperationModel,
-    WORKFLOW_ASSOCIATION_OPTIONS
-} from 'app/models';
+import {CapabilitiesGroup, Capability} from 'app/models/capability';
+import {InterfaceModel, OperationModel, WORKFLOW_ASSOCIATION_OPTIONS} from 'app/models/operation';
+import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
 
 import {ComponentServiceNg2} from 'app/ng2/services/component-services/component.service';
 import {PluginsService} from 'app/ng2/services/plugins.service';

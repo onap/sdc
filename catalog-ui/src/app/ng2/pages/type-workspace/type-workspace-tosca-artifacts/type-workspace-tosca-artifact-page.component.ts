@@ -1,5 +1,7 @@
 import {Component, Input, OnInit, ViewChild} from "@angular/core";
-import {ArtifactModel, DataTypeModel, IFileDownload} from "../../../../models";
+import {ArtifactModel} from '../../../../models/artifacts';
+import {DataTypeModel} from '../../../../models/data-types';
+import {IFileDownload} from '../../../../models/file-download';
 import {Store} from "@ngxs/store";
 import {DataTypesService} from "../../../../services/data-types-service";
 

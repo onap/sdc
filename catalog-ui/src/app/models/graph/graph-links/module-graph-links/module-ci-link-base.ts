@@ -20,7 +20,8 @@
 /**
  * Created by obarda on 6/29/2016.
  */
-import {Relationship, RelationshipModel, ICommonCiLinkBase, CommonCiLinkBase} from "../../../../models";
+import {Relationship, RelationshipModel} from '../../relationship';
+import {CommonCiLinkBase, ICommonCiLinkBase} from '../common-ci-link-base';
 import {GraphColors} from "../../../../utils/constants";
 
 export interface IModuleCiLinkBase extends ICommonCiLinkBase {

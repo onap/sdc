@@ -1,6 +1,9 @@
 import {Injectable} from "@angular/core";
 import 'rxjs/add/observable/forkJoin';
-import {Component, PropertiesGroup, AttributesGroup, PolicyInstance} from "app/models";
+import {AttributesGroup} from 'app/models/attributes';
+import {Component} from 'app/models/components/component';
+import {PolicyInstance} from 'app/models/graph/zones/policy-instance';
+import {PropertiesGroup} from 'app/models/properties';
 import {GroupInstance} from "app/models/graph/zones/group-instance";
 import {CommonGraphDataService} from "./common/common-graph-data.service";
 import {ForwardingPath} from "../../../models/forwarding-path";

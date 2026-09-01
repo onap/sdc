@@ -2,7 +2,7 @@
  * Created by rc2122 on 5/31/2018.
  */
 import { Component, Input } from "@angular/core";
-import { ValidationConfiguration } from "app/models";
+import {ValidationConfiguration} from 'app/models/validation-config';
 import { Subject } from "rxjs/Subject";
 
 @Component({

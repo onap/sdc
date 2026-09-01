@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from "@angular/core";
 import {URLSearchParams} from '@angular/http';
-import {Plugin} from "app/models";
+import {Plugin} from 'app/models/plugins-config';
 import {EventBusService} from "../../../services/event-bus.service";
 import {NavigationService} from "../../../services/navigation.service";
 import {PluginsService} from "../../../services/plugins.service";

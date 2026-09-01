@@ -1,6 +1,7 @@
 import {Component} from '@angular/core';
 import {ServiceServiceNg2} from "app/ng2/services/component-services/service.service";
-import {Capability, CapabilityTypeModel} from 'app/models';
+import {Capability} from 'app/models/capability';
+import {CapabilityTypeModel} from 'app/models/capability-types';
 import {DropdownValue} from "app/ng2/components/ui/form-components/dropdown/ui-element-dropdown.component";
 import {TranslateService} from 'app/ng2/shared/translator/translate.service';
 import {Subject} from "rxjs";

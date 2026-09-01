@@ -23,7 +23,8 @@
  */
 import * as _ from "lodash";
 import {Component, Input, Output, EventEmitter, ViewChild} from '@angular/core';
-import {ButtonModel, ButtonsModelMap, FilterPropertiesAssignmentData} from "app/models";
+import {ButtonModel, ButtonsModelMap} from 'app/models/button';
+import {FilterPropertiesAssignmentData} from 'app/models/filter-properties-assignment-data';
 import * as sdcConfig from "../../../../../../configurations/dev"
 import {PopoverComponent} from "../../ui/popover/popover.component";
 

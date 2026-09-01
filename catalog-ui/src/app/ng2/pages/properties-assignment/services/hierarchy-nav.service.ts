@@ -20,7 +20,9 @@
 
 import * as _ from "lodash";
 import { Injectable } from '@angular/core';
-import { SimpleFlatProperty, PropertyFEModel, DerivedFEProperty } from 'app/models';
+import {DerivedFEProperty} from 'app/models/properties-inputs/derived-fe-property';
+import {PropertyFEModel} from 'app/models/properties-inputs/property-fe-model';
+import {SimpleFlatProperty} from 'app/models/properties-inputs/simple-flat-property';
 
 
 @Injectable()

@@ -19,9 +19,9 @@
  */
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject} from '@angular/core';
 import * as _ from 'lodash';
-import {ArtifactType, ResourceType} from 'app/utils';
-import {ComponentInstance} from 'app/models';
-import {CacheService} from 'app/services-ng2';
+import {ArtifactType, ResourceType} from 'app/utils/constants';
+import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
+import {CacheService} from 'app/ng2/services/cache.service';
 import {ComponentServiceNg2} from 'app/ng2/services/component-services/component.service';
 import {ComponentGenericResponse} from 'app/ng2/services/responses/component-generic-response';
 import {SdcConfigToken} from 'app/ng2/config/sdc-config.config';

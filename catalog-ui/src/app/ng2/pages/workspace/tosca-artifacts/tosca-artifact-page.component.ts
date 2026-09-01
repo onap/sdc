@@ -1,9 +1,9 @@
 import { Component, Inject, OnInit, ViewChild } from "@angular/core";
 import { WorkspaceService } from "../workspace.service";
-import { ArtifactModel } from "../../../../models";
+import {ArtifactModel} from '../../../../models/artifacts';
 import { Select, Store } from "@ngxs/store";
 import { WorkspaceState } from "../../../store/states/workspace.state";
-import { ArtifactGroupType } from "../../../../utils";
+import {ArtifactGroupType} from '../../../../utils/constants';
 import { GetArtifactsByTypeAction } from "../../../store/actions/artifacts.action";
 import { Observable } from "rxjs/index";
 import { ArtifactsState } from "../../../store/states/artifacts.state";

@@ -22,7 +22,7 @@
 
 import * as _ from "lodash";
 import { Component, Compiler, EventEmitter, ViewContainerRef, ViewChild, Input, Output, ElementRef, ComponentRef, ComponentFactoryResolver } from '@angular/core'
-import {ValidationConfiguration} from "app/models";
+import {ValidationConfiguration} from 'app/models/validation-config';
 import {IUiElementChangeEvent} from "../form-components/ui-element-base.component";
 import {UiElementInputComponent} from "../form-components/input/ui-element-input.component";
 import {UiElementPopoverInputComponent} from "../form-components/popover-input/ui-element-popover-input.component";

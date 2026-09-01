@@ -19,7 +19,7 @@
  */
 
 import * as _ from "lodash";
-import {PROPERTY_DATA, PROPERTY_TYPES} from 'app/utils';
+import {PROPERTY_DATA, PROPERTY_TYPES} from 'app/utils/constants';
 import {
   AttributeBEModel,
   DerivedAttributeType

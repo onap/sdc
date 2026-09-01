@@ -5,8 +5,11 @@ import 'rxjs/add/observable/of';
 import {ConfigureFn, configureTests} from '../../../../../jest/test-config.helper';
 import {CompositionGraphComponent} from "./composition-graph.component";
 import {WorkspaceService} from "../../workspace/workspace.service";
-import {ComponentInstance, GroupInstance, NodesFactory, ZoneInstance, ZoneInstanceMode} from "../../../../models";
-import {EventListenerService} from "../../../../services";
+import {ComponentInstance} from '../../../../models/componentsInstances/componentInstance';
+import {NodesFactory} from '../../../../models/graph/nodes/nodes-factory';
+import {GroupInstance} from '../../../../models/graph/zones/group-instance';
+import {ZoneInstance, ZoneInstanceMode} from '../../../../models/graph/zones/zone-instance';
+import {EventListenerService} from '../../../../services/event-listener-service';
 import {
     CompositionGraphGeneralUtils,
     CompositionGraphNodesUtils,

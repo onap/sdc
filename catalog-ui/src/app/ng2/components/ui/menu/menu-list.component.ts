@@ -20,7 +20,7 @@
 
 import { Component, Input, ContentChildren, SimpleChanges, QueryList } from '@angular/core';
 import { MenuItemComponent } from "./menu-item.component";
-import { Point } from "app/models";
+import {Point} from 'app/models/graph/point';
 
 @Component({
     selector: 'menu-list',

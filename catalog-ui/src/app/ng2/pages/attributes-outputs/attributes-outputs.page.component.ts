@@ -20,13 +20,11 @@
  */
 
 import {Component, ViewChild} from '@angular/core';
-import {
-  ButtonModel,
-  Component as ComponentData,
-  ComponentInstance,
-  ModalModel,
-  ToscaPresentationData
-} from 'app/models';
+import {ButtonModel} from 'app/models/button';
+import {Component as ComponentData} from 'app/models/components/component';
+import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
+import {ModalModel} from 'app/models/modal';
+import {ToscaPresentationData} from 'app/models/tosca-presentation';
 import {SdcUiCommon, SdcUiServices} from 'onap-ui-angular';
 import {NotificationSettings} from 'onap-ui-angular/dist/notifications/utilities/notification.config';
 import {TopologyTemplateService} from "../../services/component-services/topology-template.service";
@@ -36,7 +34,7 @@ import {OutputFEModel} from "../../../models/attributes-outputs/output-fe-model"
 import {OutputBEModel} from "../../../models/attributes-outputs/output-be-model";
 import {EVENTS, ResourceType, WorkspaceMode} from "../../../utils/constants";
 import {ComponentModeService} from "../../services/component-services/component-mode.service";
-import {EventListenerService} from "app/services";
+import {EventListenerService} from 'app/services/event-listener-service';
 import {HierarchyNavService} from "./services/hierarchy-nav.service";
 import {ComponentServiceNg2} from "../../services/component-services/component.service";
 import {ComponentInstanceServiceNg2} from "../../services/component-instance-services/component-instance.service";

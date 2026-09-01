@@ -1,18 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Store } from '@ngxs/store';
-import {
-    AttributeModel,
-    AttributesGroup,
-    Component as TopologyTemplate,
-    ComponentInstance,
-    ComponentMetadata,
-    FullComponentInstance,
-    PropertiesGroup,
-    PropertyModel,
-    InputsGroup,
-    InputModel
-} from 'app/models';
-import {DataTypesService} from "app/services";
+import {AttributeModel, AttributesGroup} from 'app/models/attributes';
+import {ComponentMetadata} from 'app/models/component-metadata';
+import {Component as TopologyTemplate} from 'app/models/components/component';
+import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
+import {FullComponentInstance} from 'app/models/componentsInstances/fullComponentInstance';
+import {InputModel, InputsGroup} from 'app/models/inputs';
+import {PropertiesGroup, PropertyModel} from 'app/models/properties';
+import {DataTypesService} from 'app/services/data-types-service';
 import {ToscaGetFunctionType} from "app/models/tosca-get-function-type";
 import { CompositionService } from 'app/ng2/pages/composition/composition.service';
 import { WorkspaceService } from 'app/ng2/pages/workspace/workspace.service';
@@ -23,7 +18,7 @@ import { ComponentInstanceServiceNg2 } from "app/ng2/services/component-instance
 import { DropdownValue } from 'app/ng2/components/ui/form-components/dropdown/ui-element-dropdown.component';
 import { ComponentGenericResponse } from 'app/ng2/services/responses/component-generic-response';
 import { TranslateService } from 'app/ng2/shared/translator/translate.service';
-import { ModalsHandler } from 'app/utils';
+import {ModalsHandler} from 'app/utils/modals-handler';
 import { SdcUiCommon, SdcUiComponents, SdcUiServices } from 'onap-ui-angular';
 import {SelectedComponentType, TogglePanelLoadingAction} from "../../../common/store/graph.actions";
 

@@ -40,8 +40,8 @@
 import {NO_ERRORS_SCHEMA} from '@angular/core';
 import {ComponentFixture} from '@angular/core/testing';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {EventListenerService} from 'app/services';
-import {CacheService} from 'app/services-ng2';
+import {EventListenerService} from 'app/services/event-listener-service';
+import {CacheService} from 'app/ng2/services/cache.service';
 import {SdcUiServices} from 'onap-ui-angular';
 import {Subject} from 'rxjs/Subject';
 import {ComponentFactory} from 'app/utils/component-factory';

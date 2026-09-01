@@ -15,18 +15,14 @@
  */
 
 import { Component, ComponentRef, Input } from '@angular/core';
-import {
-    ButtonModel,
-    CapabilitiesGroup,
-    Capability,
-    Component as TopologyTemplate,
-    InputBEModel,
-    InterfaceModel,
-    ModalModel,
-    OperationModel,
-    PropertyBEModel,
-    PropertyFEModel
-} from 'app/models';
+import {ButtonModel} from 'app/models/button';
+import {CapabilitiesGroup, Capability} from 'app/models/capability';
+import {Component as TopologyTemplate} from 'app/models/components/component';
+import {ModalModel} from 'app/models/modal';
+import {InterfaceModel, OperationModel} from 'app/models/operation';
+import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
+import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
+import {PropertyFEModel} from 'app/models/properties-inputs/property-fe-model';
 import { ModalComponent } from 'app/ng2/components/ui/modal/modal.component';
 import { ServiceConsumptionCreatorComponent } from 'app/ng2/pages/service-consumption-editor/service-consumption-editor.component';
 import { ComponentInstanceServiceNg2 } from 'app/ng2/services/component-instance-services/component-instance.service';

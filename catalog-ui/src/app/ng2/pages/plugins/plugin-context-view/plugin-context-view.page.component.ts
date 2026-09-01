@@ -19,8 +19,11 @@
  */
 
 import {Component, OnInit} from "@angular/core";
-import {Component as ComponentData, IUserProperties, Plugin} from "app/models";
-import {CacheService, PluginsService} from "app/services-ng2";
+import {Component as ComponentData} from 'app/models/components/component';
+import {Plugin} from 'app/models/plugins-config';
+import {IUserProperties} from 'app/models/user';
+import {CacheService} from 'app/ng2/services/cache.service';
+import {PluginsService} from 'app/ng2/services/plugins.service';
 import {NavigationService} from "../../../services/navigation.service";
 import {WorkspaceService} from "../../workspace/workspace.service";
 

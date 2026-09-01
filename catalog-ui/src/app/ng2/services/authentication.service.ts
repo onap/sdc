@@ -23,7 +23,7 @@ import {IAppConfigurtaion, ICookie} from "../../models/app-config";
 import {Cookie2Service} from "./cookie.service";
 import { Observable } from 'rxjs/Observable';
 import {SdcConfigToken, ISdcConfig} from "../config/sdc-config.config";
-import { IUserProperties } from "app/models";
+import {IUserProperties} from 'app/models/user';
 import { CacheService } from "app/ng2/services/cache.service";
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 

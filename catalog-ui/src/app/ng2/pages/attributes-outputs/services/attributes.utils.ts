@@ -21,7 +21,7 @@
 import * as _ from "lodash";
 import { Injectable } from '@angular/core';
 import { DataTypeService } from "app/ng2/services/data-type.service";
-import { PROPERTY_TYPES } from "app/utils";
+import {PROPERTY_TYPES} from 'app/utils/constants';
 import { AttributesService } from "app/ng2/services/attributes.service";
 import { InstanceBeAttributesMap, InstanceFeAttributesMap } from "app/models/attributes-outputs/attribute-fe-map";
 import { InstanceBePropertiesMap } from "app/models/properties-inputs/property-fe-map";
@@ -29,7 +29,7 @@ import {OutputFEModel} from "../../../../models/attributes-outputs/output-fe-mod
 import { AttributeBEModel, DerivedAttributeType } from "app/models/attributes-outputs/attribute-be-model";
 import { AttributeFEModel } from "app/models/attributes-outputs/attribute-fe-model";
 import { DerivedFEAttribute } from "app/models/attributes-outputs/derived-fe-attribute";
-import { DataTypeModel } from "app/models";
+import {DataTypeModel} from 'app/models/data-types';
 
 @Injectable()
 export class AttributesUtils {

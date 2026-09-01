@@ -29,7 +29,8 @@ import {CompositionCiServicePathLink} from "app/models/graph/graph-links/composi
 import {SdcUiServices} from "onap-ui-angular";
 import {QueueServiceUtils} from "app/ng2/utils/queue-service-utils";
 import {ServicePathsListComponent} from "app/ng2/pages/composition/graph/service-paths-list/service-paths-list.component";
-import {ButtonModel, ModalModel} from "app/models";
+import {ButtonModel} from 'app/models/button';
+import {ModalModel} from 'app/models/modal';
 import {ServicePathCreatorComponent} from "app/ng2/pages/composition/graph/service-path-creator/service-path-creator.component";
 import {ModalService} from "app/ng2/services/modal.service";
 import {ModalComponent} from "app/ng2/components/ui/modal/modal.component";

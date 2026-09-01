@@ -10,13 +10,14 @@ import { TranslateService } from '../../../../../shared/translator/translate.ser
 import { WorkspaceService } from '../../../../workspace/workspace.service';
 import { CompositionService } from '../../../composition.service';
 import { PolicyTargetsTabComponent } from "app/ng2/pages/composition/panel/panel-tabs/policy-targets-tab/policy-targets-tab.component";
-import { PoliciesService } from "app/services-ng2";
-import { PolicyInstance, GroupInstance } from "app/models";
+import {PoliciesService} from 'app/ng2/services/policies.service';
+import {GroupInstance} from 'app/models/graph/zones/group-instance';
+import {PolicyInstance} from 'app/models/graph/zones/policy-instance';
 import { NgxsModule } from "@ngxs/store";
 import { GraphState } from "app/ng2/pages/composition/common/store/graph.state";
 import { WorkspaceState } from "app/ng2/store/states/workspace.state";
 import { TargetUiObject } from "app/models/ui-models/ui-target-object";
-import { TargetOrMemberType } from "app/utils";
+import {TargetOrMemberType} from 'app/utils/constants';
 
 
 

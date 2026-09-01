@@ -19,7 +19,7 @@
  */
 
 import {Component, ViewChild, ElementRef} from '@angular/core';
-import {ButtonsModelMap, ButtonModel} from "app/models";
+import {ButtonModel, ButtonsModelMap} from 'app/models/button';
 import {PopoverContentComponent} from "../../popover/popover-content.component";
 import {UiElementBase, UiElementBaseInterface} from "../ui-element-base.component";
 import * as _ from 'lodash';

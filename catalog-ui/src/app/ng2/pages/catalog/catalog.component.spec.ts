@@ -2,7 +2,7 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 import {ConfigureFn, configureTests} from "../../../../jest/test-config.helper";
 import {NO_ERRORS_SCHEMA} from "@angular/core";
-import { CacheService} from "../../../../app/services-ng2";
+import {CacheService} from '../../services/cache.service';
 import {CatalogComponent} from "./catalog.component";
 import {  SdcUiServices } from "onap-ui-angular";
 import { SdcConfigToken } from "../../config/sdc-config.config";

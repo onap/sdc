@@ -1,5 +1,8 @@
 import {Component, Input} from "@angular/core";
-import {Component as TopologyTemplate, ComponentInstance, DisplayModule, Module, PropertyModel} from "app/models";
+import {Component as TopologyTemplate} from 'app/models/components/component';
+import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
+import {DisplayModule, Module} from 'app/models/modules/base-module';
+import {PropertyModel} from 'app/models/properties';
 import {TranslateService} from "app/ng2/shared/translator/translate.service";
 import {ComponentType} from "app/utils/constants";
 import {WorkspaceService} from "../../../../workspace.service";

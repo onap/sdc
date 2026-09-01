@@ -18,7 +18,10 @@
  */
 
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
-import {ComponentMetadata, PropertyBEModel, PropertyDeclareAPIModel, DerivedFEProperty} from 'app/models';
+import {ComponentMetadata} from 'app/models/component-metadata';
+import {DerivedFEProperty} from 'app/models/properties-inputs/derived-fe-property';
+import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
+import {PropertyDeclareAPIModel} from 'app/models/properties-inputs/property-declare-api-model';
 import {TopologyTemplateService} from "../../../services/component-services/topology-template.service";
 import {WorkspaceService} from "../../workspace/workspace.service";
 import {ToscaGetFunctionType} from "../../../../models/tosca-get-function-type";

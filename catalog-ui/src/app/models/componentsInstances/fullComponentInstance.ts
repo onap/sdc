@@ -1,14 +1,12 @@
-import {
-    ArtifactGroupModel,
-    AttributeModel,
-    CapabilitiesGroup,
-    Component,
-    ComponentInstance,
-    IMainCategory,
-    RequirementsGroup,
-    Resource,
-    Service
-} from "app/models";
+import {ArtifactGroupModel} from 'app/models/artifacts';
+import {AttributeModel} from 'app/models/attributes';
+import {CapabilitiesGroup} from 'app/models/capability';
+import {IMainCategory} from 'app/models/category';
+import {Component} from 'app/models/components/component';
+import {Resource} from 'app/models/components/resource';
+import {Service} from 'app/models/components/service';
+import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
+import {RequirementsGroup} from 'app/models/requirement';
 import {ComponentType} from '../../utils/constants';
 import * as _ from 'lodash';
 

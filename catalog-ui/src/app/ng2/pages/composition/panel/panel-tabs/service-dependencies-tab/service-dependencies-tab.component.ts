@@ -21,14 +21,13 @@
 
 import {Component, Input, OnInit} from '@angular/core';
 import {Store} from '@ngxs/store';
-import {
-    CapabilitiesGroup, Capability,
-    Component as TopologyTemplate,
-    FullComponentInstance,
-    PropertiesGroup,
-    PropertyBEModel, PropertyModel, ComponentInstance,
-} from 'app/models';
-import {ResourceType} from "app/utils";
+import {CapabilitiesGroup, Capability} from 'app/models/capability';
+import {Component as TopologyTemplate} from 'app/models/components/component';
+import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
+import {FullComponentInstance} from 'app/models/componentsInstances/fullComponentInstance';
+import {PropertiesGroup, PropertyModel} from 'app/models/properties';
+import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
+import {ResourceType} from 'app/utils/constants';
 import {DEPENDENCY_EVENTS} from 'app/utils/constants';
 import {ComponentMetadata} from '../../../../../../models/component-metadata';
 import {ServiceInstanceObject} from '../../../../../../models/service-instance-properties-and-interfaces';

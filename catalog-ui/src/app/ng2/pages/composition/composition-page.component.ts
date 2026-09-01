@@ -19,10 +19,10 @@
  * ============LICENSE_END=========================================================
  */
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Component as TopologyTemplate } from 'app/models';
+import {Component as TopologyTemplate} from 'app/models/components/component';
 import * as Constants from 'constants';
 import { EventListenerService } from '../../../services/event-listener-service';
-import { EVENTS } from '../../../utils';
+import {EVENTS} from '../../../utils/constants';
 import { WorkspaceService } from '../workspace/workspace.service';
 
 @Component({

@@ -22,28 +22,24 @@
 import * as _ from "lodash";
 import {Component, ViewChild} from "@angular/core";
 import {PropertiesService} from "../../services/properties.service";
-import {
-    ButtonModel,
-    Component as ComponentData,
-    ComponentInstance,
-    DerivedFEProperty,
-    FilterPropertiesAssignmentData,
-    GroupInstance,
-    InputBEModel,
-    InputFEModel,
-    InstanceBePropertiesMap,
-    InstanceFePropertiesMap,
-    InstancePropertiesAPIMap,
-    ModalModel,
-    PolicyInstance,
-    PropertyBEModel,
-    PropertyFEModel,
-    Service,
-    SimpleFlatProperty,
-    PropertyDeclareAPIModel,
-    PropertiesGroup
-} from "app/models";
-import {ResourceType} from "app/utils";
+import {ButtonModel} from 'app/models/button';
+import {Component as ComponentData} from 'app/models/components/component';
+import {Service} from 'app/models/components/service';
+import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
+import {FilterPropertiesAssignmentData} from 'app/models/filter-properties-assignment-data';
+import {GroupInstance} from 'app/models/graph/zones/group-instance';
+import {PolicyInstance} from 'app/models/graph/zones/policy-instance';
+import {ModalModel} from 'app/models/modal';
+import {PropertiesGroup} from 'app/models/properties';
+import {DerivedFEProperty} from 'app/models/properties-inputs/derived-fe-property';
+import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
+import {InputFEModel} from 'app/models/properties-inputs/input-fe-model';
+import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
+import {PropertyDeclareAPIModel} from 'app/models/properties-inputs/property-declare-api-model';
+import {InstanceBePropertiesMap, InstanceFePropertiesMap, InstancePropertiesAPIMap} from 'app/models/properties-inputs/property-fe-map';
+import {PropertyFEModel} from 'app/models/properties-inputs/property-fe-model';
+import {SimpleFlatProperty} from 'app/models/properties-inputs/simple-flat-property';
+import {ResourceType} from 'app/utils/constants';
 import {ComponentServiceNg2} from "../../services/component-services/component.service";
 import {TopologyTemplateService} from "../../services/component-services/topology-template.service";
 import {ComponentInstanceServiceNg2} from "../../services/component-instance-services/component-instance.service"

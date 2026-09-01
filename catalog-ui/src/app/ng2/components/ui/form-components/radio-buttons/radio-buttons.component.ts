@@ -2,8 +2,7 @@
  * Created by rc2122 on 9/4/2017.
  */
 import { Component, Input, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
-import { RadioButtonModel } from 'app/models'
-import {UiElementBaseInterface, UiElementBase} from "../ui-element-base.component";
+import {RadioButtonModel} from 'app/models/radio-button';import {UiElementBaseInterface, UiElementBase} from "../ui-element-base.component";
 
 @Component({
     selector: 'radio-buttons',

@@ -86,6 +86,8 @@ export class Resource extends Component {
         this.setComponentDisplayData();
     };
 
+    public isResource = ():boolean => true;
+
     public getComponentSubType = ():string => {
         return this.resourceType;
     };

@@ -2,7 +2,8 @@ import { Injectable, Inject } from "@angular/core";
 import { Observable } from "rxjs/Observable";
 import { SdcConfigToken, ISdcConfig } from "../config/sdc-config.config";
 import { HttpClient } from "@angular/common/http";
-import { Component, OperationModel } from "app/models";
+import {Component} from 'app/models/components/component';
+import {OperationModel} from 'app/models/operation';
 
 interface WorkflowOutputParameter {
     name: string;

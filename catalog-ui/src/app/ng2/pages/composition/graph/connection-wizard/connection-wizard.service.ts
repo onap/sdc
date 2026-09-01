@@ -1,9 +1,12 @@
 import * as _ from "lodash";
 import {ConnectRelationModel} from "app/models/graph/connectRelationModel";
 import {Injectable} from "@angular/core";
-import { Requirement, Capability} from "app/models";
+import {Capability} from 'app/models/capability';
+import {Requirement} from 'app/models/requirement';
 import {Dictionary} from "lodash";
-import {Match, Component, PropertyFEModel} from "app/models";
+import {Component} from 'app/models/components/component';
+import {Match} from 'app/models/graph/match-relation';
+import {PropertyFEModel} from 'app/models/properties-inputs/property-fe-model';
 import {Store} from "@ngxs/store";
 import {WorkspaceService} from "../../../workspace/workspace.service";
 

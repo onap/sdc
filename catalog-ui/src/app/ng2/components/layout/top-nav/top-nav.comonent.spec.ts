@@ -1,6 +1,6 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture } from '@angular/core/testing';
-import { PluginsConfiguration } from 'app/models';
+import {PluginsConfiguration} from 'app/models/plugins-config';
 import { Observable } from 'rxjs';
 import { Mock } from 'ts-mockery';
 import { ConfigureFn, configureTests } from '../../../../../jest/test-config.helper';

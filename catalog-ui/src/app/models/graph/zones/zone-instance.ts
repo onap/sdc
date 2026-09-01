@@ -1,6 +1,6 @@
 import {PolicyInstance} from "app/models/graph/zones/policy-instance";
 import {GroupInstance} from "./group-instance";
-import {Component as TopologyTemplate} from "app/models";
+import {Component as TopologyTemplate} from 'app/models/components/component';
 import {IUiBaseObject} from "../../ui-models/ui-base-object";
 import { Subject } from "rxjs";
 

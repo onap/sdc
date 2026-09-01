@@ -23,19 +23,14 @@
 import * as _ from "lodash";
 import {Injectable} from "@angular/core";
 import {DEFAULT_ICON, ResourceType, ComponentType} from "./constants";
-// Keep barrel imports for ServiceService/ResourceService. component-factory.ts lives in the
-// "app/utils" barrel, which is loaded transitively by many modules (e.g. artifacts.ts). Using
-// the "app/services" barrel for these two preserves the loading order that prevents the pre-existing
-// resource-service ↔ app/models circular dep from crashing (failure-catalog §TT).
-// component-factory.spec.ts mocks "app/services" to break the dep there.
-//
-// CacheService uses a DIRECT DEEP PATH (not "app/services-ng2") to avoid a separate circular dep:
-// "app/services-ng2" → catalog.service.ts → data-type-catalog-component.ts → "app/models",
-// but "app/models" is already loading when component-factory.ts is triggered (via app/utils →
-// artifacts.ts), causing "service.ts extends Component (undefined)" to crash.
-import {ServiceService, ResourceService} from "app/services";
+import {ResourceService} from 'app/services/components/resource-service';
+import {ServiceService} from 'app/services/components/service-service';
 import {CacheService} from "../ng2/services/cache.service";
-import {IMainCategory, ISubCategory, ICsarComponent, Component, Resource, Service} from "app/models";
+import {IMainCategory, ISubCategory} from 'app/models/category';
+import {Component} from 'app/models/components/component';
+import {Resource} from 'app/models/components/resource';
+import {Service} from 'app/models/components/service';
+import {ICsarComponent} from 'app/models/csar-component';
 import {ComponentServiceNg2} from "../ng2/services/component-services/component.service";
 import {ComponentGenericResponse} from "../ng2/services/responses/component-generic-response";
 

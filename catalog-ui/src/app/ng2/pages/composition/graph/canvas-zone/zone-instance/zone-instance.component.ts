@@ -6,12 +6,12 @@ import {
 import { PoliciesService } from 'app/ng2/services/policies.service';
 import { GroupsService } from 'app/ng2/services/groups.service';
 import { IZoneService } from "app/models/graph/zones/zone";
-import { EventListenerService } from 'app/services';
-import { GRAPH_EVENTS } from 'app/utils';
+import {EventListenerService} from 'app/services/event-listener-service';
+import {GRAPH_EVENTS} from 'app/utils/constants';
 import { Subject } from 'rxjs';
 import { Store } from "@ngxs/store";
 import { CompositionService } from "app/ng2/pages/composition/composition.service";
-import { PolicyInstance } from "app/models";
+import {PolicyInstance} from 'app/models/graph/zones/policy-instance';
 import {SelectedComponentType, SetSelectedComponentAction} from "../../../common/store/graph.actions";
 
 

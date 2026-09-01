@@ -23,7 +23,7 @@
 import * as _ from "lodash";
 import {Injectable} from "@angular/core";
 import {WorkspaceMode, ComponentState} from "./constants";
-import {Component} from "../models";
+import {Component} from '../models/components/component';
 import {ResourceNamePipe} from "../ng2/pipes/resource-name.pipe";
 import {NavigationService} from "../ng2/services/navigation.service";
 

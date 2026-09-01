@@ -1,10 +1,13 @@
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
-import { Component as TopologyTemplate, Capability, Requirement, CapabilitiesGroup, RequirementsGroup, FullComponentInstance } from "app/models";
+import {CapabilitiesGroup, Capability} from 'app/models/capability';
+import {Component as TopologyTemplate} from 'app/models/components/component';
+import {FullComponentInstance} from 'app/models/componentsInstances/fullComponentInstance';
+import {Requirement, RequirementsGroup} from 'app/models/requirement';
 import { Store } from "@ngxs/store";
-import { GRAPH_EVENTS } from "app/utils";
+import {GRAPH_EVENTS} from 'app/utils/constants';
 import { ComponentGenericResponse } from "app/ng2/services/responses/component-generic-response";
 import { TopologyTemplateService } from "app/ng2/services/component-services/topology-template.service";
-import { EventListenerService } from "app/services";
+import {EventListenerService} from 'app/services/event-listener-service';
 import { WorkspaceService } from "app/ng2/pages/workspace/workspace.service";
 import { CompositionService } from "app/ng2/pages/composition/composition.service";
 import {SelectedComponentType, TogglePanelLoadingAction} from "../../../common/store/graph.actions";

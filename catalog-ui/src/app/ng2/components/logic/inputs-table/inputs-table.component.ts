@@ -23,8 +23,10 @@
  * Created by rc2122 on 5/4/2017.
  */
 import { Component, Input, Output, EventEmitter, ViewChildren, QueryList } from "@angular/core";
-import { InputFEModel, PropertyModel, PropertiesGroup, Component as ComponentData } from "app/models";
-import { ModalsHandler } from 'app/utils';
+import {Component as ComponentData} from 'app/models/components/component';
+import {PropertiesGroup, PropertyModel} from 'app/models/properties';
+import {InputFEModel} from 'app/models/properties-inputs/input-fe-model';
+import {ModalsHandler} from 'app/utils/modals-handler';
 import { ModalService } from "../../../services/modal.service";
 import { InstanceFeDetails } from "app/models/instance-fe-details";
 import { InstanceFePropertiesMap } from "../../../../models/properties-inputs/property-fe-map";

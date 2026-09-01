@@ -18,17 +18,6 @@
  * ============LICENSE_END=========================================================
  */
 
-// Break the circular dep that arises once @Injectable emits type metadata:
-//   component-factory.spec.ts → "app/services" barrel → resource-service.ts (and others)
-//   → ComponentService → SharingService → … circular.
-// We stub out the barrel's exports that are needed by the transitive graph.
-jest.mock('app/services', () => ({
-    AvailableIconsService: class {},
-    ResourceService: class {},
-    ServiceService: class {},
-    DataTypesService: class {},
-}));
-
 import {ComponentFactory} from './component-factory';
 import {ComponentType} from './constants';
 

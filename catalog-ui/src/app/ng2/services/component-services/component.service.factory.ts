@@ -20,7 +20,7 @@
 
 
 import {Injectable} from "@angular/core";
-import {Component} from "app/models";
+import {Component} from 'app/models/components/component';
 import {ComponentServiceNg2} from "./component.service";
 import {ServiceServiceNg2} from "./service.service";
 import {CacheService} from "../cache.service";

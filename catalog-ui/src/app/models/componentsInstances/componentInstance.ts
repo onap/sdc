@@ -23,14 +23,12 @@
  */
 'use strict';
 import * as _ from "lodash";
-import {
-    ArtifactGroupModel,
-    CapabilitiesGroup,
-    RequirementsGroup,
-    PropertyModel,
-    InputModel,
-    Module
-} from "../../models";
+import {ArtifactGroupModel} from '../artifacts';
+import {CapabilitiesGroup} from '../capability';
+import {InputModel} from '../inputs';
+import {Module} from '../modules/base-module';
+import {PropertyModel} from '../properties';
+import {RequirementsGroup} from '../requirement';
 import {ResourceType, ComponentType} from "../../utils/constants";
 import {Capability} from "../capability";
 import {Requirement} from "../requirement";

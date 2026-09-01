@@ -1,6 +1,5 @@
 import {Component, forwardRef, Inject} from '@angular/core';
-import {IStepComponent} from "app/models"
-import {Dictionary} from "lodash";
+import {IStepComponent} from 'app/models/wizard-step';import {Dictionary} from "lodash";
 import {ConnectionWizardService} from "../connection-wizard.service";
 import {Match} from "app/models/graph/match-relation";
 import {Requirement} from "app/models/requirement";

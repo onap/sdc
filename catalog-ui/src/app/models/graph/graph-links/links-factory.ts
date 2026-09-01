@@ -22,10 +22,16 @@
  */
 'use strict';
 import * as _ from "lodash";
-import {
-    RelationshipModel, Relationship, CompositionCiLinkBase, CompositionCiNodeBase, LinkUcpeHost, CompositionCiUcpeLink,
-    CompositionCiVlUcpeLink, CompositionCiSimpleLink, ModuleCiLinkBase, ModuleCiVlLink, CompositionCiVLink
-} from "app/models";
+import {CompositionCiLinkBase} from 'app/models/graph/graph-links/composition-graph-links/composition-ci-link-base';
+import {CompositionCiSimpleLink} from 'app/models/graph/graph-links/composition-graph-links/composition-ci-simple-link';
+import {LinkUcpeHost} from 'app/models/graph/graph-links/composition-graph-links/composition-ci-ucpe-host-link';
+import {CompositionCiUcpeLink} from 'app/models/graph/graph-links/composition-graph-links/composition-ci-ucpe-link';
+import {CompositionCiVLink} from 'app/models/graph/graph-links/composition-graph-links/composition-ci-vl-link';
+import {CompositionCiVlUcpeLink} from 'app/models/graph/graph-links/composition-graph-links/composition-ci-vl-ucpe-link';
+import {ModuleCiLinkBase} from 'app/models/graph/graph-links/module-graph-links/module-ci-link-base';
+import {ModuleCiVlLink} from 'app/models/graph/graph-links/module-graph-links/module-ci-vl-link';
+import {CompositionCiNodeBase} from 'app/models/graph/nodes/composition-graph-nodes/composition-ci-node-base';
+import {Relationship, RelationshipModel} from 'app/models/graph/relationship';
 import {Injectable} from "@angular/core";
 
 @Injectable()

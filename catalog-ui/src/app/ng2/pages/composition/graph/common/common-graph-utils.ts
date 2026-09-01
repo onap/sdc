@@ -19,13 +19,12 @@
  */
 
 import * as _ from "lodash";
-import {
-    CommonNodeBase,
-    Relationship,
-    CompositionCiNodeBase
-} from "app/models";
+import {CommonNodeBase} from 'app/models/graph/nodes/base-common-node';
+import {CompositionCiNodeBase} from 'app/models/graph/nodes/composition-graph-nodes/composition-ci-node-base';
+import {Relationship} from 'app/models/graph/relationship';
 import {CompositionCiServicePathLink} from "app/models/graph/graph-links/composition-graph-links/composition-ci-service-path-link";
-import {Requirement, Capability} from "app/models";
+import {Capability} from 'app/models/capability';
+import {Requirement} from 'app/models/requirement';
 import {Injectable} from "@angular/core";
 
 

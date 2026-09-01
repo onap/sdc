@@ -7,7 +7,7 @@ import {MockBackend} from '@angular/http/testing';
 import {PluginsService} from './plugins.service';
 import {SdcConfigToken} from '../config/sdc-config.config';
 import {mockSdcConfig} from '../../../jest/mocks/sdc-config.mock';
-import {Plugin, PluginsConfiguration} from 'app/models';
+import {Plugin, PluginsConfiguration} from 'app/models/plugins-config';
 
 describe('PluginsService', () => {
     let service: PluginsService;

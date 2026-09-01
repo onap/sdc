@@ -19,7 +19,7 @@
  */
 import {of, throwError} from 'rxjs';
 import {WorkspaceMode} from 'app/utils/constants';
-import {PropertyModel} from 'app/models';
+import {PropertyModel} from 'app/models/properties';
 import {WorkspacePropertiesTabComponent} from '../properties-tab.component';
 
 function makeProperty(name: string, overrides: any = {}): PropertyModel {

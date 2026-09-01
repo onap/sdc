@@ -3,30 +3,25 @@
  */
 import { AfterViewInit, Component, ElementRef, HostBinding, Input } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
-import {
-    ButtonModel,
-    Component as TopologyTemplate,
-    ComponentInstance,
-    CompositionCiNodeBase,
-    ConnectRelationModel,
-    GroupInstance,
-    LeftPaletteComponent,
-    LinkMenu,
-    Match,
-    ModalModel,
-    Point,
-    PolicyInstance,
-    PropertyBEModel,
-    Relationship,
-    StepModel,
-    Zone,
-    ZoneInstance,
-    ZoneInstanceAssignmentType,
-    ZoneInstanceMode,
-    ZoneInstanceType,
-    Requirement,
-    Capability
-} from 'app/models';
+import {ButtonModel} from 'app/models/button';
+import {Capability} from 'app/models/capability';
+import {Component as TopologyTemplate} from 'app/models/components/component';
+import {LeftPaletteComponent} from 'app/models/components/displayComponent';
+import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
+import {ConnectRelationModel} from 'app/models/graph/connectRelationModel';
+import {LinkMenu} from 'app/models/graph/link-menu';
+import {Match} from 'app/models/graph/match-relation';
+import {CompositionCiNodeBase} from 'app/models/graph/nodes/composition-graph-nodes/composition-ci-node-base';
+import {Point} from 'app/models/graph/point';
+import {Relationship} from 'app/models/graph/relationship';
+import {GroupInstance} from 'app/models/graph/zones/group-instance';
+import {PolicyInstance} from 'app/models/graph/zones/policy-instance';
+import {Zone} from 'app/models/graph/zones/zone';
+import {ZoneInstance, ZoneInstanceAssignmentType, ZoneInstanceMode, ZoneInstanceType} from 'app/models/graph/zones/zone-instance';
+import {ModalModel} from 'app/models/modal';
+import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
+import {Requirement} from 'app/models/requirement';
+import {StepModel} from 'app/models/wizard-step';
 import { ForwardingPath } from 'app/models/forwarding-path';
 // NodesFactory is deep-imported (not via the 'app/models' barrel) to avoid a
 // barrel↔nodes-factory circular dependency that leaves this @Injectable's
@@ -50,8 +45,9 @@ import { ModalService } from 'app/ng2/services/modal.service';
 import { ComponentGenericResponse } from 'app/ng2/services/responses/component-generic-response';
 import { ServiceGenericResponse } from 'app/ng2/services/responses/service-generic-response';
 import { WorkspaceState } from 'app/ng2/store/states/workspace.state';
-import { EventListenerService } from 'app/services';
-import { ComponentInstanceFactory, EVENTS, SdcElementType } from 'app/utils';
+import {EventListenerService} from 'app/services/event-listener-service';
+import {ComponentInstanceFactory} from 'app/utils/component-instance-factory';
+import {EVENTS, SdcElementType} from 'app/utils/constants';
 import { ComponentType, GRAPH_EVENTS, GraphColors, DEPENDENCY_EVENTS , SUBSTITUTION_FILTER_EVENTS} from 'app/utils/constants';
 import * as _ from 'lodash';
 import { DndDropEvent } from 'ngx-drag-drop/ngx-drag-drop';

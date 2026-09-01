@@ -5,14 +5,9 @@ import {Subscription} from "rxjs/Subscription";
 
 import {TranslateService} from "app/ng2/shared/translator/translate.service";
 import {WorkflowServiceNg2} from 'app/ng2/services/workflow.service';
-import {
-    InterfaceModel,
-    OperationModel,
-    OperationParameter,
-    InputBEModel,
-    WORKFLOW_ASSOCIATION_OPTIONS,
-    Capability
-} from 'app/models';
+import {Capability} from 'app/models/capability';
+import {InterfaceModel, OperationModel, OperationParameter, WORKFLOW_ASSOCIATION_OPTIONS} from 'app/models/operation';
+import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
 
 import { Tabs } from "app/ng2/components/ui/tabs/tabs.component";
 import { DropdownValue } from "app/ng2/components/ui/form-components/dropdown/ui-element-dropdown.component";

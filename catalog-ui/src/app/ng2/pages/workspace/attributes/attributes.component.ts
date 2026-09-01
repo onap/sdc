@@ -1,11 +1,12 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {Select} from '@ngxs/store';
-import {IAttributeModel} from 'app/models';
+import {IAttributeModel} from 'app/models/attributes';
 import * as _ from 'lodash';
 import {SdcUiCommon, SdcUiComponents, SdcUiServices} from 'onap-ui-angular';
 import {ModalComponent} from 'onap-ui-angular/dist/modals/modal.component';
-import {AttributeModel, Resource} from '../../../../models';
-import {ModalsHandler} from '../../../../utils';
+import {AttributeModel} from '../../../../models/attributes';
+import {Resource} from '../../../../models/components/resource';
+import {ModalsHandler} from '../../../../utils/modals-handler';
 import {TopologyTemplateService} from '../../../../ng2/services/component-services/topology-template.service';
 import {TranslateService} from '../../../../ng2/shared/translator/translate.service';
 import {WorkspaceState} from '../../../../ng2/store/states/workspace.state';

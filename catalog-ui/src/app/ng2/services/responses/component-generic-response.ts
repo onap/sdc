@@ -22,9 +22,18 @@
  * Created by ob0695 on 4/18/2017.
  */
 
-import { ArtifactGroupModel, PropertyModel, PropertiesGroup, AttributeModel, AttributesGroup, ComponentInstance, OperationModel,
-    InputBEModel, Module, ComponentMetadata, RelationshipModel, RequirementsGroup, CapabilitiesGroup} from "app/models";
-import {CommonUtils} from "app/utils";
+import {ArtifactGroupModel} from 'app/models/artifacts';
+import {AttributeModel, AttributesGroup} from 'app/models/attributes';
+import {CapabilitiesGroup} from 'app/models/capability';
+import {ComponentMetadata} from 'app/models/component-metadata';
+import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
+import {RelationshipModel} from 'app/models/graph/relationship';
+import {Module} from 'app/models/modules/base-module';
+import {OperationModel} from 'app/models/operation';
+import {PropertiesGroup, PropertyModel} from 'app/models/properties';
+import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
+import {RequirementsGroup} from 'app/models/requirement';
+import {CommonUtils} from 'app/utils/common-utils';
 import {Serializable} from "../utils/serializable";
 import { PolicyInstance } from "app/models/graph/zones/policy-instance";
 import { GroupInstance } from "../../../models/graph/zones/group-instance";

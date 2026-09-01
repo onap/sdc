@@ -21,7 +21,7 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {TranslateModule} from 'app/ng2/shared/translator/translate.module';
-import {AvailableIconsService} from 'app/services';
+import {AvailableIconsService} from 'app/services/available-icons-service';
 import {IconsModalComponent} from './icons-modal.component';
 
 @NgModule({

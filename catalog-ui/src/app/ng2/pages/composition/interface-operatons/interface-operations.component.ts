@@ -40,15 +40,13 @@ import {
     InterfaceOperationHandlerComponent
 } from "./operation-creator/interface-operation-handler.component";
 
-import {
-    ArtifactModel,
-    ButtonModel,
-    ComponentInstance,
-    ComponentMetadata,
-    InputBEModel,
-    InterfaceModel,
-    ModalModel
-} from 'app/models';
+import {ArtifactModel} from 'app/models/artifacts';
+import {ButtonModel} from 'app/models/button';
+import {ComponentMetadata} from 'app/models/component-metadata';
+import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
+import {ModalModel} from 'app/models/modal';
+import {InterfaceModel} from 'app/models/operation';
+import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
 import {ArtifactGroupType} from "../../../../utils/constants";
 import {
     DropdownValue

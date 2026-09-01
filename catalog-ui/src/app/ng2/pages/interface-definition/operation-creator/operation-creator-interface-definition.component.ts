@@ -23,14 +23,9 @@ import {Component, ViewChild} from '@angular/core';
 
 import {TranslateService} from "app/ng2/shared/translator/translate.service";
 import {WorkflowServiceNg2} from 'app/ng2/services/workflow.service';
-import {
-    Capability,
-    InputBEModel,
-    InterfaceModel,
-    OperationModel,
-    OperationParameter,
-    WORKFLOW_ASSOCIATION_OPTIONS
-} from 'app/models';
+import {Capability} from 'app/models/capability';
+import {InterfaceModel, OperationModel, OperationParameter, WORKFLOW_ASSOCIATION_OPTIONS} from 'app/models/operation';
+import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
 
 import {Tabs} from "app/ng2/components/ui/tabs/tabs.component";
 import {
@@ -38,7 +33,7 @@ import {
 } from "app/ng2/components/ui/form-components/dropdown/ui-element-dropdown.component";
 import {IDropDownOption} from 'onap-ui-angular/dist/form-elements/dropdown/dropdown-models';
 import {DropDownComponent} from "onap-ui-angular/dist/components";
-import {DROPDOWN_OPTION_TYPE} from "app/utils";
+import {DROPDOWN_OPTION_TYPE} from 'app/utils/constants';
 import {Subscription} from "rxjs";
 
 export class DropDownOption implements IDropDownOption {

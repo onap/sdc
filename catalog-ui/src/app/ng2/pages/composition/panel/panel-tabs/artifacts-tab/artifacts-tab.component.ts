@@ -1,11 +1,14 @@
 import { Component, Input } from '@angular/core';
 import { Store } from '@ngxs/store';
-import { ArtifactModel, Component as TopologyTemplate, FullComponentInstance, Resource } from 'app/models';
+import {ArtifactModel} from 'app/models/artifacts';
+import {Component as TopologyTemplate} from 'app/models/components/component';
+import {Resource} from 'app/models/components/resource';
+import {FullComponentInstance} from 'app/models/componentsInstances/fullComponentInstance';
 import { WorkspaceService } from 'app/ng2/pages/workspace/workspace.service';
 import { ResourceNamePipe } from 'app/ng2/pipes/resource-name.pipe';
 import { ComponentInstanceServiceNg2 } from 'app/ng2/services/component-instance-services/component-instance.service';
 import { TopologyTemplateService } from 'app/ng2/services/component-services/topology-template.service';
-import { ArtifactType } from 'app/utils';
+import {ArtifactType} from 'app/utils/constants';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs/Observable';
 import { map } from 'rxjs/operators';

@@ -1,7 +1,10 @@
 import {TestBed} from "@angular/core/testing";
 import {WorkspaceService} from "../../../../pages/workspace/workspace.service";
 import { ConnectionWizardService } from "app/ng2/pages/composition/graph/connection-wizard/connection-wizard.service";
-import { ConnectRelationModel, Match, Requirement, Capability } from "app/models";
+import {Capability} from 'app/models/capability';
+import {ConnectRelationModel} from 'app/models/graph/connectRelationModel';
+import {Match} from 'app/models/graph/match-relation';
+import {Requirement} from 'app/models/requirement';
 import { Mock } from "ts-mockery/dist";
 
 describe('Connection Wizard Service', () => {

@@ -1,5 +1,5 @@
 import { Component, forwardRef, Inject, OnInit } from '@angular/core';
-import { Match } from 'app/models';
+import {Match} from 'app/models/graph/match-relation';
 import { Capability } from 'app/models/capability';
 import { Requirement } from 'app/models/requirement';
 import { IStepComponent } from 'app/models/wizard-step';

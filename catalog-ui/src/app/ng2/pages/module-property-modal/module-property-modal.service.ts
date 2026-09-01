@@ -22,7 +22,10 @@ import {Injectable} from '@angular/core';
 import * as _ from 'lodash';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/do';
-import {Component, DisplayModule, PropertyBEModel, PropertyModel} from 'app/models';
+import {Component} from 'app/models/components/component';
+import {DisplayModule} from 'app/models/modules/base-module';
+import {PropertyModel} from 'app/models/properties';
+import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
 import {ComponentInstanceServiceNg2} from 'app/ng2/services/component-instance-services/component-instance.service';
 
 /**

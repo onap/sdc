@@ -23,7 +23,7 @@ import {HierarchyTabComponent} from "./panel/panel-tabs/hierarchy-tab/hierarchy-
 import {ComponentGenericResponse} from "../../../services/responses/component-generic-response";
 import {TopologyTemplateService} from "../../../services/component-services/topology-template.service";
 import {WorkspaceService} from "../workspace.service";
-import {Module} from "app/models";
+import {Module} from 'app/models/modules/base-module';
 import {SdcUiServices} from "onap-ui-angular";
 import {Select} from "@ngxs/store";
 import {WorkspaceState} from "../../../store/states/workspace.state";

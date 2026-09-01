@@ -20,8 +20,10 @@
 
 import * as _ from "lodash";
 import {Component, Input, Output, EventEmitter, ViewChild, ComponentRef} from "@angular/core";
-import { PropertyFEModel, DerivedFEProperty, DerivedPropertyType } from "app/models";
-import { PROPERTY_TYPES } from 'app/utils';
+import {DerivedFEProperty} from 'app/models/properties-inputs/derived-fe-property';
+import {DerivedPropertyType} from 'app/models/properties-inputs/property-be-model';
+import {PropertyFEModel} from 'app/models/properties-inputs/property-fe-model';
+import {PROPERTY_TYPES} from 'app/utils/constants';
 import { DataTypeService } from "../../../../services/data-type.service";
 import { trigger, style, transition, animate } from '@angular/animations';
 import {PropertiesUtils} from "../../../../pages/properties-assignment/services/properties.utils";

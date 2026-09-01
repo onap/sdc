@@ -29,7 +29,7 @@
  * whole breadcrumb bar was missing from the create form.
  */
 import {MenuHandler} from './menu-handler';
-import {Component} from '../models';
+import {Component} from '../models/components/component';
 
 describe('MenuHandler', () => {
     let handler: MenuHandler;

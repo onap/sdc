@@ -19,7 +19,8 @@
  */
 
 import { Injectable } from '@angular/core';
-import { InputBEModel, InputFEModel } from "app/models";
+import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
+import {InputFEModel} from 'app/models/properties-inputs/input-fe-model';
 import { DataTypeService } from "app/ng2/services/data-type.service";
 
 @Injectable()

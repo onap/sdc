@@ -1,6 +1,9 @@
 import {Component} from '@angular/core';
 import {ServiceServiceNg2} from "app/ng2/services/component-services/service.service";
-import {Requirement, RelationshipTypeModel, NodeTypeModel, CapabilityTypeModel} from 'app/models';
+import {CapabilityTypeModel} from 'app/models/capability-types';
+import {NodeTypeModel} from 'app/models/node-types';
+import {RelationshipTypeModel} from 'app/models/relationship-types';
+import {Requirement} from 'app/models/requirement';
 import {TranslateService} from 'app/ng2/shared/translator/translate.service';
 import {DropdownValue} from "app/ng2/components/ui/form-components/dropdown/ui-element-dropdown.component";
 

@@ -22,7 +22,7 @@
 'use strict';
 
 import * as _ from "lodash";
-import {ArtifactType} from './../utils';
+import {ArtifactType} from '../utils/constants';
 import {HeatParameterModel} from "./heat-parameters";
 import {PropertyBEModel} from "./properties-inputs/property-be-model";
 

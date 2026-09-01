@@ -19,7 +19,7 @@
  */
 
 import { Component, EventEmitter, Input, Output } from '@angular/core'
-import { ValidationConfiguration } from "app/models";
+import {ValidationConfiguration} from 'app/models/validation-config';
 import { FormControl, Validators } from '@angular/forms';
 
 export interface UiElementBaseInterface {

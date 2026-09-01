@@ -22,12 +22,12 @@ import { Injectable, Inject } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
-import {Service} from "app/models";
+import {Service} from 'app/models/components/service';
 
 import {SdcConfigToken, ISdcConfig} from "../../config/sdc-config.config";
 import {ForwardingPath} from "app/models/forwarding-path";
 import {ComponentMetadata} from "app/models/component-metadata";
-import {ComponentType} from "app/utils";
+import {ComponentType} from 'app/utils/constants';
 import {Component} from "app/models/components/component";
 import {ComponentGenericResponse} from "app/ng2/services/responses/component-generic-response";
 import {COMPONENT_FIELDS, SERVICE_FIELDS} from "app/utils/constants";

@@ -17,15 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-// Break the circular dep: service-service.spec.ts → app/services barrel → service-service.ts
-// → extends ComponentService. We stub out only what's needed to unblock the import.
-jest.mock('app/services', () => ({
-    AvailableIconsService: class {},
-    ResourceService: class {},
-    ServiceService: class {},
-    DataTypesService: class {},
-}));
-
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {TestBed} from '@angular/core/testing';
 import {ServiceService} from './service-service';

@@ -21,9 +21,22 @@
 'use strict';
 
 import * as _ from "lodash";
-import {AsdcComment, ArtifactModel, ArtifactGroupModel, IFileDownload, PropertyModel, PropertiesGroup, AttributeModel, AttributesGroup, ComponentInstance,
-    InputModel, DisplayModule, Module, IValidate, RelationshipModel, IMainCategory, RequirementsGroup, CapabilitiesGroup, AdditionalInformationModel,
-    Resource, IAppMenu, OperationModel, Service} from "../../models";
+import {AdditionalInformationModel} from '../additional-information';
+import {IAppMenu} from '../app-config';
+import {ArtifactGroupModel, ArtifactModel} from '../artifacts';
+import {AttributeModel, AttributesGroup} from '../attributes';
+import {CapabilitiesGroup} from '../capability';
+import {IMainCategory} from '../category';
+import {AsdcComment} from '../comments';
+import {ComponentInstance} from '../componentsInstances/componentInstance';
+import {IFileDownload} from '../file-download';
+import {RelationshipModel} from '../graph/relationship';
+import {InputModel} from '../inputs';
+import {DisplayModule, Module} from '../modules/base-module';
+import {OperationModel} from '../operation';
+import {PropertiesGroup, PropertyModel} from '../properties';
+import {RequirementsGroup} from '../requirement';
+import {IValidate} from '../validate';
 
 import {IComponentService} from "../../services/components/component-service";
 import {CommonUtils} from "../../utils/common-utils";
@@ -295,11 +308,11 @@ export abstract class Component implements IComponent {
     //------------------------------------------ Help Functions ----------------------------------------------------------------//
 
     public isService = ():boolean => {
-        return this instanceof Service;
+        return false;
     };
 
     public isResource = ():boolean => {
-        return this instanceof Resource;
+        return false;
     };
 
     public getComponentSubType = ():string => {

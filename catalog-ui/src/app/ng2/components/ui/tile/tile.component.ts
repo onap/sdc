@@ -1,5 +1,5 @@
 import {Component, Input, Output, Inject, EventEmitter} from '@angular/core';
-import {Component as ComponentModel} from 'app/models';
+import {Component as ComponentModel} from 'app/models/components/component';
 import {SdcMenuToken, IAppMenu} from "../../../config/sdc-menu.config";
 import {ElementIcon} from "../sdc-element-icon/sdc-element-icon.component";
 import {ComponentType, DEFAULT_MODEL_NAME, Icon, ResourceType} from "../../../../utils/constants";

@@ -20,15 +20,13 @@
 
 import * as _ from "lodash";
 import {Inject, Injectable} from '@angular/core';
-import {
-    DataTypeModel,
-    DataTypesMap,
-    DerivedFEProperty,
-    PropertyBEModel,
-    PropertyFEModel
-} from "app/models";
+import {DataTypeModel} from 'app/models/data-types';
+import {DataTypesMap} from 'app/models/data-types-map';
+import {DerivedFEProperty} from 'app/models/properties-inputs/derived-fe-property';
+import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
+import {PropertyFEModel} from 'app/models/properties-inputs/property-fe-model';
 import {DataTypesService} from "app/services/data-types-service";
-import {PROPERTY_DATA} from "app/utils";
+import {PROPERTY_DATA} from 'app/utils/constants';
 import {DerivedFEAttribute} from "../../models/attributes-outputs/derived-fe-attribute";
 import {ISdcConfig} from "../config/sdc-config.config.factory";
 import {SdcConfigToken} from "../config/sdc-config.config";

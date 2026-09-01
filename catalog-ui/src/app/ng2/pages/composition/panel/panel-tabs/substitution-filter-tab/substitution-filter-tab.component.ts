@@ -19,7 +19,11 @@
 
 import {Component, Input} from '@angular/core';
 import {Store} from '@ngxs/store';
-import {Component as TopologyTemplate, FullComponentInstance, InputBEModel, PropertiesGroup, PropertyBEModel,} from 'app/models';
+import {Component as TopologyTemplate} from 'app/models/components/component';
+import {FullComponentInstance} from 'app/models/componentsInstances/fullComponentInstance';
+import {PropertiesGroup} from 'app/models/properties';
+import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
+import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
 import {SUBSTITUTION_FILTER_EVENTS} from 'app/utils/constants';
 import {ComponentMetadata} from '../../../../../../models/component-metadata';
 import {ServiceInstanceObject} from '../../../../../../models/service-instance-properties-and-interfaces';

@@ -27,21 +27,18 @@ import {Inject, Injectable} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
-import {
-    ArtifactModel,
-    AttributeModel,
-    Capability,
-    Component,
-    FilterPropertiesAssignmentData,
-    IFileDownload,
-    InputBEModel,
-    InstancePropertiesAPIMap,
-    InterfaceModel,
-    OperationModel,
-    PropertyModel,
-    Requirement
-} from "app/models";
-import {API_QUERY_PARAMS, ArtifactGroupType, COMPONENT_FIELDS} from "app/utils";
+import {ArtifactModel} from 'app/models/artifacts';
+import {AttributeModel} from 'app/models/attributes';
+import {Capability} from 'app/models/capability';
+import {Component} from 'app/models/components/component';
+import {IFileDownload} from 'app/models/file-download';
+import {FilterPropertiesAssignmentData} from 'app/models/filter-properties-assignment-data';
+import {InterfaceModel, OperationModel} from 'app/models/operation';
+import {PropertyModel} from 'app/models/properties';
+import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
+import {InstancePropertiesAPIMap} from 'app/models/properties-inputs/property-fe-map';
+import {Requirement} from 'app/models/requirement';
+import {API_QUERY_PARAMS, ArtifactGroupType, COMPONENT_FIELDS} from 'app/utils/constants';
 import {ComponentGenericResponse} from "../responses/component-generic-response";
 import {InstanceBePropertiesMap} from "../../../models/properties-inputs/property-fe-map";
 import {ComponentType, ServerTypeUrl, SERVICE_FIELDS} from "../../../utils/constants";

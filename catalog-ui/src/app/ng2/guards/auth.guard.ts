@@ -25,7 +25,7 @@ import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/switchMap';
-import {IUserProperties} from '../../models';
+import {IUserProperties} from '../../models/user';
 import {Role} from '../../utils/constants';
 import {AuthenticationService} from '../services/authentication.service';
 import {NavigationService} from '../services/navigation.service';

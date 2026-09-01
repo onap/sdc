@@ -18,7 +18,9 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable, Injector } from '@angular/core';
-import { IAppConfigurtaion, Plugins, PluginsConfiguration, ValidationConfiguration, Validations } from 'app/models';
+import {IAppConfigurtaion} from 'app/models/app-config';
+import {Plugins, PluginsConfiguration} from 'app/models/plugins-config';
+import {ValidationConfiguration, Validations} from 'app/models/validation-config';
 import { IApi } from 'app/models/app-config';
 import 'rxjs/add/operator/toPromise';
 import { ISdcConfig, SdcConfigToken } from '../config/sdc-config.config';

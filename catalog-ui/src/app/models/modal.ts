@@ -1,4 +1,4 @@
-import { ButtonModel } from 'app/models';
+import {ButtonModel} from 'app/models/button';
 
 export class ModalModel {
     size: string; 'xl|l|md|sm|xsm'

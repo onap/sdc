@@ -17,7 +17,7 @@
 
 import {Provider, InjectionToken} from "@angular/core";
 import {getSdcMenu} from "./sdc-menu.config.factory";
-import {IAppMenu} from "app/models";
+import {IAppMenu} from 'app/models/app-config';
 
 export { IAppMenu };
 

@@ -1,7 +1,10 @@
 import {Component, Input} from '@angular/core';
-import {PROPERTY_DATA} from "app/utils";
+import {PROPERTY_DATA} from 'app/utils/constants';
 import {DataTypeService} from "app/ng2/services/data-type.service";
-import {OperationModel, OperationParameter, InputBEModel, DataTypeModel, Capability} from 'app/models';
+import {Capability} from 'app/models/capability';
+import {DataTypeModel} from 'app/models/data-types';
+import {OperationModel, OperationParameter} from 'app/models/operation';
+import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
 import {DropdownValue} from "app/ng2/components/ui/form-components/dropdown/ui-element-dropdown.component";
 import {WorkspaceService} from "../../../workspace/workspace.service";
 

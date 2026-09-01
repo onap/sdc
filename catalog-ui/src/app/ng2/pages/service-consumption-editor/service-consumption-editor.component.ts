@@ -15,20 +15,16 @@
  */
 
 import { Component } from '@angular/core';
-import {
-    Capability,
-    InputBEModel,
-    InstanceBePropertiesMap,
-    InstanceFePropertiesMap,
-    InterfaceModel,
-    OperationModel,
-    PropertyBEModel,
-    Service
-} from 'app/models';
+import {Capability} from 'app/models/capability';
+import {Service} from 'app/models/components/service';
+import {InterfaceModel, OperationModel} from 'app/models/operation';
+import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
+import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
+import {InstanceBePropertiesMap, InstanceFePropertiesMap} from 'app/models/properties-inputs/property-fe-map';
 import { ConsumptionInput, ConsumptionInputDetails, ServiceOperation } from 'app/ng2/components/logic/service-consumption/service-consumption.component';
 import { PropertiesUtils } from 'app/ng2/pages/properties-assignment/services/properties.utils';
 import { ServiceServiceNg2 } from 'app/ng2/services/component-services/service.service';
-import { PROPERTY_DATA } from 'app/utils';
+import {PROPERTY_DATA} from 'app/utils/constants';
 import * as _ from 'lodash';
 import { ServiceInstanceObject } from '../../../models/service-instance-properties-and-interfaces';
 import { TopologyTemplateService } from '../../services/component-services/topology-template.service';

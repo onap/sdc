@@ -1,6 +1,7 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { Capability, Match } from 'app/models';
+import {Capability} from 'app/models/capability';
+import {Match} from 'app/models/graph/match-relation';
 import { ConfigureFn, configureTests } from '../../../../../../../jest/test-config.helper';
 import { Requirement } from '../../../../../../models/requirement';
 import { ConnectionWizardService } from '../connection-wizard.service';

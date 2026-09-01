@@ -20,8 +20,9 @@
  */
 import {ChangeDetectionStrategy, Component as NgComponent, Inject, OnInit} from '@angular/core';
 import * as _ from 'lodash';
-import {AvailableIconsService} from 'app/services';
-import {Component, IMainCategory, ISubCategory} from 'app/models';
+import {AvailableIconsService} from 'app/services/available-icons-service';
+import {IMainCategory, ISubCategory} from 'app/models/category';
+import {Component} from 'app/models/components/component';
 import {ResourceType} from 'app/utils/constants';
 
 /**

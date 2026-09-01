@@ -21,7 +21,10 @@
 import { Injectable, Inject } from "@angular/core";
 import { Observable } from "rxjs/Observable";
 import { SdcConfigToken, ISdcConfig } from "../config/sdc-config.config";
-import {Component, DataTypeModel, IApi, IComponentsArray} from "app/models";
+import {IApi} from 'app/models/app-config';
+import {IComponentsArray} from 'app/models/components-array';
+import {Component} from 'app/models/components/component';
+import {DataTypeModel} from 'app/models/data-types';
 import { ComponentFactory } from 'app/utils/component-factory';
 import {ResourceType} from "../../utils/constants";
 import {SharingService} from "./sharing.service";

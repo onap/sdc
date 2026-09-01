@@ -23,15 +23,15 @@
 import {Inject, Injectable} from "@angular/core";
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {DataTypePropertyModel} from "../models/data-type-properties";
-import {
-    ComponentInstance,
-    DataTypeModel,
-    DataTypesMap,
-    IAppConfigurtaion, IFileDownload, InputModel,
-    InputPropertyBase,
-    PropertyModel,
-    SchemaProperty
-} from "../models";
+import {IAppConfigurtaion} from '../models/app-config';
+import {ComponentInstance} from '../models/componentsInstances/componentInstance';
+import {DataTypeModel} from '../models/data-types';
+import {DataTypesMap} from '../models/data-types-map';
+import {IFileDownload} from '../models/file-download';
+import {InputPropertyBase} from '../models/input-property-base';
+import {InputModel} from '../models/inputs';
+import {PropertyModel} from '../models/properties';
+import {SchemaProperty} from '../models/schema-property';
 import {SdcConfigToken} from "../ng2/config/sdc-config.config";
 import {PROPERTY_DATA} from "../utils/constants";
 import {List} from "lodash";

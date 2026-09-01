@@ -20,8 +20,9 @@
 
 import * as _ from "lodash";
 import {Component, EventEmitter, Inject, Input, OnChanges, OnInit, Output} from "@angular/core";
-import {IUserProperties, Plugin, PluginsConfiguration} from "app/models";
-import {MenuItem, MenuItemGroup} from "app/utils";
+import {Plugin, PluginsConfiguration} from 'app/models/plugins-config';
+import {IUserProperties} from 'app/models/user';
+import {MenuItem, MenuItemGroup} from 'app/utils/menu-handler';
 import {AuthenticationService} from "../../../services/authentication.service";
 import {ISdcConfig, SdcConfigToken} from "../../../config/sdc-config.config";
 import {TranslateService} from "../../../shared/translator/translate.service";

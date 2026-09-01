@@ -20,19 +20,19 @@
 
 import {Inject, Injectable} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
-import {
-    ArtifactGroupModel,
-    ArtifactModel,
-    AttributeModel,
-    Capability,
-    Component,
-    ComponentInstance,
-    IFileDownload,
-    PropertyBEModel,
-    PropertyModel,
-    Requirement
-} from "app/models";
-import {CommonUtils, ComponentInstanceFactory, ComponentType, ServerTypeUrl} from "app/utils";
+import 'rxjs/add/operator/map';
+import {ArtifactGroupModel, ArtifactModel} from 'app/models/artifacts';
+import {AttributeModel} from 'app/models/attributes';
+import {Capability} from 'app/models/capability';
+import {Component} from 'app/models/components/component';
+import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
+import {IFileDownload} from 'app/models/file-download';
+import {PropertyModel} from 'app/models/properties';
+import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
+import {Requirement} from 'app/models/requirement';
+import {CommonUtils} from 'app/utils/common-utils';
+import {ComponentInstanceFactory} from 'app/utils/component-instance-factory';
+import {ComponentType, ServerTypeUrl} from 'app/utils/constants';
 import {ISdcConfig, SdcConfigToken} from "../../config/sdc-config.config";
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {InputBEModel} from '../../../models/properties-inputs/input-be-model';

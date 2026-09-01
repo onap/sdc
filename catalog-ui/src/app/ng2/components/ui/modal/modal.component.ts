@@ -24,7 +24,8 @@
 import { Component, ElementRef, HostListener, Input, OnInit, OnDestroy } from '@angular/core';
 import {ViewContainerRef, ViewChild} from '@angular/core';
 import * as $ from 'jquery';
-import { ButtonsModelMap, ModalModel } from 'app/models';
+import {ButtonsModelMap} from 'app/models/button';
+import {ModalModel} from 'app/models/modal';
 import { FocusTrap } from 'app/ng2/shared/accessibility/focus-trap';
 
 let modalIdCounter = 0;

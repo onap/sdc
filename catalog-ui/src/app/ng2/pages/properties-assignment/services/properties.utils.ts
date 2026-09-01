@@ -20,19 +20,15 @@
 
 import * as _ from "lodash";
 import {Injectable} from '@angular/core';
-import {
-    DataTypeModel,
-    DerivedFEProperty,
-    DerivedPropertyType,
-    InputFEModel,
-    InstanceBePropertiesMap,
-    InstanceFePropertiesMap,
-    PropertyBEModel,
-    PropertyFEModel
-} from "app/models";
+import {DataTypeModel} from 'app/models/data-types';
+import {DerivedFEProperty} from 'app/models/properties-inputs/derived-fe-property';
+import {InputFEModel} from 'app/models/properties-inputs/input-fe-model';
+import {DerivedPropertyType, PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
+import {InstanceBePropertiesMap, InstanceFePropertiesMap} from 'app/models/properties-inputs/property-fe-map';
+import {PropertyFEModel} from 'app/models/properties-inputs/property-fe-model';
 import {DataTypeService} from "app/ng2/services/data-type.service";
 import {PropertiesService} from "app/ng2/services/properties.service";
-import {PROPERTY_TYPES} from "app/utils";
+import {PROPERTY_TYPES} from 'app/utils/constants';
 import { SubPropertyToscaFunction } from "app/models/sub-property-tosca-function";
 
 @Injectable()

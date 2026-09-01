@@ -19,7 +19,8 @@
  */
 
 'use strict';
-import { PropertyBEModel, PropertyFEModel } from "../../models";
+import {PropertyBEModel} from './property-be-model';
+import {PropertyFEModel} from './property-fe-model';
 
 export class InstanceBePropertiesMap {
     [instanceId: string]: Array<PropertyBEModel>;

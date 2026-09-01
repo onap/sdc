@@ -19,7 +19,7 @@
  */
 
 import {Injectable} from "@angular/core";
-import {Dictionary} from "app/utils";
+import {Dictionary} from 'app/utils/dictionary/dictionary';
 
 @Injectable()
 export class SharingService {

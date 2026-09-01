@@ -19,19 +19,18 @@
  */
 
 import { Injectable } from '@angular/core';
-import { Component as TopologyTemplate } from 'app/models';
-import {
-    ComponentInstance,
-    CompositionCiNodeVl, Service
-} from 'app/models';
+import {Component as TopologyTemplate} from 'app/models/components/component';
+import {Service} from 'app/models/components/service';
+import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
+import {CompositionCiNodeVl} from 'app/models/graph/nodes/composition-graph-nodes/composition-ci-node-vl';
 import { CompositionCiServicePathLink } from 'app/models/graph/graph-links/composition-graph-links/composition-ci-service-path-link';
 import { WorkspaceService } from 'app/ng2/pages/workspace/workspace.service';
 import { ServiceServiceNg2 } from 'app/ng2/services/component-services/service.service';
 import { TopologyTemplateService } from 'app/ng2/services/component-services/topology-template.service';
 import { ServiceGenericResponse } from 'app/ng2/services/responses/service-generic-response';
 import { QueueServiceUtils } from 'app/ng2/utils/queue-service-utils';
-import { EventListenerService } from 'app/services';
-import { GRAPH_EVENTS } from 'app/utils';
+import {EventListenerService} from 'app/services/event-listener-service';
+import {GRAPH_EVENTS} from 'app/utils/constants';
 import * as _ from 'lodash';
 import { SdcUiServices } from 'onap-ui-angular';
 import { CompositionService } from '../../composition.service';

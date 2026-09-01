@@ -1,4 +1,4 @@
-import {IUserProperties} from 'app/models';
+import {IUserProperties} from 'app/models/user';
 
 export function createMockUser(overrides: Partial<IUserProperties> = {}): IUserProperties {
     return {

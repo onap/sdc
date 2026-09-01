@@ -19,7 +19,10 @@
  */
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import { Component, IApi, Resource, Service } from 'app/models';
+import {IApi} from 'app/models/app-config';
+import {Component} from 'app/models/components/component';
+import {Resource} from 'app/models/components/resource';
+import {Service} from 'app/models/components/service';
 import { ComponentFactory } from 'app/utils/component-factory';
 import { Observable } from 'rxjs';
 import { ISdcConfig, SdcConfigToken } from '../config/sdc-config.config';

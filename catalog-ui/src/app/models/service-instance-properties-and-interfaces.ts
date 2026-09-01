@@ -13,7 +13,9 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import { PropertyModel, InputModel, InterfaceModel} from 'app/models';
+import {InputModel} from 'app/models/inputs';
+import {InterfaceModel} from 'app/models/operation';
+import {PropertyModel} from 'app/models/properties';
 
 export class ServiceInstanceObject {
     id: string;
