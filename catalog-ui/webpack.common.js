@@ -41,7 +41,6 @@ module.exports = function(params) {
                 "./node_modules"
             ],
             alias: {
-                directives: path.join(__dirname, 'app/directives/'),
                 // onap-ui-angular's package.json "main" is dist/index.umd.js, and there is no
                 // index.umd.metadata.json beside it — only dist/index.metadata.json. AOT reads the
                 // resolved file's adjacent metadata, so via the UMD entry every exported NgModule

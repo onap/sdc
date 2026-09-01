@@ -47,7 +47,6 @@ declare module Cy {
     /**
      * See http://js.cytoscape.org/#selectors for details about writing selectors.
      */
-    import ClipExtent = d3.geo.ClipExtent;
     type Selector = string;
 
     /**
