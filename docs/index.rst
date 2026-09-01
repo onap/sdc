@@ -12,6 +12,7 @@ SDC Documentation
    configuration.rst
    consumedapis.rst
    offeredapis.rst
+   assettypes.rst
    models.rst
    delivery.rst
    humaninterfaces.rst

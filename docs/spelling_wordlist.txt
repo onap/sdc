@@ -16,6 +16,8 @@ Cryptographic
 csar
 csars
 Deployable
+DMaaP
+eNB
 env
 Env
 ENV
@@ -26,11 +28,13 @@ feproxy
 forcap
 frontend
 Frontend
+gNB
 Guilin
 http
 impl
 init
 innerType
+instantiation
 isLinted
 isStrictLinted
 janusgraph
