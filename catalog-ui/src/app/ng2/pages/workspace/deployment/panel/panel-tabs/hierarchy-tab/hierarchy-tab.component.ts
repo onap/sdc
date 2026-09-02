@@ -4,12 +4,12 @@ import {ComponentInstance} from 'app/models/componentsInstances/componentInstanc
 import {DisplayModule, Module} from 'app/models/modules/base-module';
 import {PropertyModel} from 'app/models/properties';
 import {TranslateService} from "app/ng2/shared/translator/translate.service";
-import {ComponentType} from "app/utils/constants";
+import {ComponentType} from "app/ng2/utils/constants";
 import {WorkspaceService} from "../../../../workspace.service";
 import {ModulesService} from "../../../../../../services/modules.service";
 import * as _ from "lodash";
-import {ModalsHandler} from "../../../../../../../utils/modals-handler";
-import {ComponentFactory} from "../../../../../../../utils/component-factory";
+import {ModalsHandler} from "../../../../../../utils/modals-handler";
+import {ComponentFactory} from "../../../../../../utils/component-factory";
 import {Select, Store} from "@ngxs/store";
 import { SdcUiServices } from "onap-ui-angular";
 import { EditModuleName } from "../edit-module-name/edit-module-name.component";

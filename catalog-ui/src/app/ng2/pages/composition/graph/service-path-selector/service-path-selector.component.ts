@@ -5,7 +5,7 @@ import {ForwardingPath} from "app/models/forwarding-path";
 import {DropdownValue} from "app/ng2/components/ui/form-components/dropdown/ui-element-dropdown.component";
 import {CompositionService} from "app/ng2/pages/composition/composition.service";
 import {EventListenerService} from "app/ng2/services/event-listener.service";
-import {GRAPH_EVENTS} from "app/utils/constants";
+import {GRAPH_EVENTS} from "app/ng2/utils/constants";
 
 @Component({
     selector: 'service-path-selector',

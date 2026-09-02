@@ -25,8 +25,8 @@ import {Component} from 'app/models/components/component';
 import {DisplayModule} from 'app/models/modules/base-module';
 import {PropertyModel} from 'app/models/properties';
 import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
-import {PROPERTY_TYPES, UNIQUE_GROUP_PROPERTIES_NAME} from 'app/utils/constants';
-import {ValidationUtils} from 'app/utils/validation-utils';
+import {PROPERTY_TYPES, UNIQUE_GROUP_PROPERTIES_NAME} from 'app/ng2/utils/constants';
+import {ValidationUtils} from 'app/ng2/utils/validation-utils';
 import {ModulePropertyModalService} from './module-property-modal.service';
 
 /**

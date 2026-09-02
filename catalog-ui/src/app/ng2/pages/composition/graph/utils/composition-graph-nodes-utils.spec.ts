@@ -10,7 +10,7 @@ import { CompositionCiNodeCp } from '../../../../../models/graph/nodes/compositi
 import { CompositionCiNodeVl } from '../../../../../models/graph/nodes/composition-graph-nodes/composition-ci-node-vl';
 import {EventListenerService} from '../../../../services/event-listener.service';
 import CollectionEdges = Cy.CollectionEdges;
-import { GRAPH_EVENTS } from '../../../../../utils/constants';
+import { GRAPH_EVENTS } from '../../../../utils/constants';
 import { ServiceServiceNg2 } from '../../../../services/component-services/service.service';
 import { TopologyTemplateService } from '../../../../services/component-services/topology-template.service';
 import { ComponentGenericResponse } from '../../../../services/responses/component-generic-response';

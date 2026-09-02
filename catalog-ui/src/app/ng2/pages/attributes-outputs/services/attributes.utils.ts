@@ -21,7 +21,7 @@
 import * as _ from "lodash";
 import { Injectable } from '@angular/core';
 import { DataTypeService } from "app/ng2/services/data-type.service";
-import {PROPERTY_TYPES} from 'app/utils/constants';
+import {PROPERTY_TYPES} from 'app/ng2/utils/constants';
 import { AttributesService } from "app/ng2/services/attributes.service";
 import { InstanceBeAttributesMap, InstanceFeAttributesMap } from "app/models/attributes-outputs/attribute-fe-map";
 import { InstanceBePropertiesMap } from "app/models/properties-inputs/property-fe-map";

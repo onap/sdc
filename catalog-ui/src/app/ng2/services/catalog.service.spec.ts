@@ -5,7 +5,7 @@ import {HttpClientTestingModule, HttpTestingController} from '@angular/common/ht
 import {CatalogService} from './catalog.service';
 import {SdcConfigToken} from '../config/sdc-config.config';
 import {SharingService} from './sharing.service';
-import {ComponentFactory} from 'app/utils/component-factory';
+import {ComponentFactory} from 'app/ng2/utils/component-factory';
 import {DataTypesService} from './data-types.service';
 import {mockSdcConfig} from '../../../jest/mocks/sdc-config.mock';
 import {Observable} from 'rxjs/Observable';

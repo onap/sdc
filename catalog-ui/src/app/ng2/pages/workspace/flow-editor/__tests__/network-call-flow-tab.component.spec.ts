@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 import {of} from 'rxjs';
-import {WorkspaceMode} from 'app/utils/constants';
+import {WorkspaceMode} from 'app/ng2/utils/constants';
 import {NetworkCallFlowTabComponent} from '../network-call-flow-tab.component';
 
 function makeRegistry() {

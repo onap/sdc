@@ -4,7 +4,7 @@ import {PluginsConfiguration} from 'app/models/plugins-config';
 import { Observable } from 'rxjs';
 import { Mock } from 'ts-mockery';
 import { ConfigureFn, configureTests } from '../../../../../jest/test-config.helper';
-import { MenuItem, MenuItemGroup } from '../../../../utils/menu-handler';
+import { MenuItem, MenuItemGroup } from '../../../utils/menu-handler';
 import { SdcConfigToken } from '../../../config/sdc-config.config';
 import { AuthenticationService } from '../../../services/authentication.service';
 import { TranslateModule } from '../../../shared/translator/translate.module';

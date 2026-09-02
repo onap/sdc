@@ -23,8 +23,8 @@ import {CompositionGraphGeneralUtils, RequirementAndCapabilities} from "./compos
 import {CommonGraphUtils} from "../common/common-graph-utils";
 import {EventListenerService} from "../../../../services/event-listener.service";
 import {ResourceNamePipe} from "app/ng2/pipes/resource-name.pipe";
-import {ComponentInstanceFactory} from "app/utils/component-instance-factory";
-import {GRAPH_EVENTS, GraphUIObjects} from "app/utils/constants";
+import {ComponentInstanceFactory} from "app/ng2/utils/component-instance-factory";
+import {GRAPH_EVENTS, GraphUIObjects} from "app/ng2/utils/constants";
 import {TopologyTemplateService} from "app/ng2/services/component-services/topology-template.service";
 import {DndDropEvent} from "ngx-drag-drop/ngx-drag-drop";
 import {SdcUiServices} from "onap-ui-angular"

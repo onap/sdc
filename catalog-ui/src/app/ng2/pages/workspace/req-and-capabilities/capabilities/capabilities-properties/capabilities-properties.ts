@@ -1,7 +1,7 @@
 
 import { ViewChild, Input, OnInit, Component } from "@angular/core";
 import {SdcUiServices} from "onap-ui-angular";
-import { ModalsHandler } from "../../../../../../utils/modals-handler";
+import { ModalsHandler } from "../../../../../utils/modals-handler";
 import { WorkspaceService } from "../../../workspace.service";
 import { PropertyModel } from "../../../../../../models/properties";
 

@@ -24,7 +24,7 @@ import {InputOperationParameter} from '../../../../../../models/interfaceOperati
 import {IDropDownOption} from 'onap-ui-angular/dist/form-elements/dropdown/dropdown-models';
 import {Observable} from 'rxjs/Observable';
 import {AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
-import {PROPERTY_TYPES} from '../../../../../../utils/constants';
+import {PROPERTY_TYPES} from '../../../../../utils/constants';
 import {SchemaProperty, SchemaPropertyGroupModel} from '../../../../../../models/schema-property';
 import {DataTypeModel} from "../../../../../../models/data-types";
 

@@ -4,7 +4,7 @@ import {Component as TopologyTemplate} from 'app/models/components/component';
 import {FullComponentInstance} from 'app/models/componentsInstances/fullComponentInstance';
 import {Requirement, RequirementsGroup} from 'app/models/requirement';
 import { Store } from "@ngxs/store";
-import {GRAPH_EVENTS} from 'app/utils/constants';
+import {GRAPH_EVENTS} from 'app/ng2/utils/constants';
 import { ComponentGenericResponse } from "app/ng2/services/responses/component-generic-response";
 import { TopologyTemplateService } from "app/ng2/services/component-services/topology-template.service";
 import {EventListenerService} from 'app/ng2/services/event-listener.service';

@@ -24,7 +24,7 @@ import {InstanceBePropertiesMap, InstanceFePropertiesMap} from 'app/models/prope
 import { ConsumptionInput, ConsumptionInputDetails, ServiceOperation } from 'app/ng2/components/logic/service-consumption/service-consumption.component';
 import { PropertiesUtils } from 'app/ng2/pages/properties-assignment/services/properties.utils';
 import { ServiceServiceNg2 } from 'app/ng2/services/component-services/service.service';
-import {PROPERTY_DATA} from 'app/utils/constants';
+import {PROPERTY_DATA} from 'app/ng2/utils/constants';
 import * as _ from 'lodash';
 import { ServiceInstanceObject } from '../../../models/service-instance-properties-and-interfaces';
 import { TopologyTemplateService } from '../../services/component-services/topology-template.service';

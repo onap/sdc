@@ -23,7 +23,7 @@
  */
 'use strict';
 import * as _ from "lodash";
-import {ResourceType} from "../../utils/constants";
+import {ResourceType} from "../../ng2/utils/constants";
 import {Component} from "./component";
 import {FileUploadModel} from "../file-upload-model";
 import {IResourceService} from "../../ng2/services/legacy/resource.service";

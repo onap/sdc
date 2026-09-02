@@ -25,7 +25,7 @@ import {IMainCategory, ISubCategory} from 'app/models/category';
 import {CacheService} from 'app/ng2/services/cache.service';
 import {ModalService} from 'app/ng2/services/modal.service';
 import {TranslateService} from 'app/ng2/shared/translator/translate.service';
-import {ValidationUtils} from 'app/utils/validation-utils';
+import {ValidationUtils} from 'app/ng2/utils/validation-utils';
 import {AddCategoryModalComponent} from '../add-category-modal/add-category-modal.component';
 
 @Component({

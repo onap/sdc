@@ -28,9 +28,9 @@ import { InstancePropertiesAPIMap } from 'app/models/properties-inputs/property-
 import { DropdownValue } from 'app/ng2/components/ui/form-components/dropdown/ui-element-dropdown.component';
 import { DataTypeService } from 'app/ng2/services/data-type.service';
 import { ModalService } from 'app/ng2/services/modal.service';
-import {PROPERTY_DATA} from 'app/utils/constants';
+import {PROPERTY_DATA} from 'app/ng2/utils/constants';
 import * as _ from 'lodash';
-import {PROPERTY_TYPES} from '../../../../utils/constants';
+import {PROPERTY_TYPES} from '../../../utils/constants';
 import {WorkspaceService} from "../../workspace/workspace.service";
 
 @Component({

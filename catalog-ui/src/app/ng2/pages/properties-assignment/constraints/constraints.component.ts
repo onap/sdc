@@ -26,7 +26,7 @@ import {
   ValidatorFn,
   Validators
 } from '@angular/forms';
-import { PROPERTY_DATA, PROPERTY_TYPES } from 'app/utils/constants';
+import { PROPERTY_DATA, PROPERTY_TYPES } from 'app/ng2/utils/constants';
 
 @Component({
   selector: 'app-constraints',

@@ -4,7 +4,7 @@ import { EventListenerService } from '../../../services/event-listener.service';
 import { AuthenticationService } from '../../../services/authentication.service';
 import { WorkspaceService } from '../workspace.service';
 import { DistributionService } from './distribution.service';
-import { EVENTS } from '../../../../utils/constants';
+import { EVENTS } from '../../../utils/constants';
 
 @Component({
   selector: 'distribution',

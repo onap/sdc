@@ -19,13 +19,13 @@
  */
 
 import { Injectable } from '@angular/core';
-import {ButtonModel} from '../models/button';
-import {Component} from '../models/components/component';
-import {ModalModel} from '../models/modal';
-import {DisplayModule} from '../models/modules/base-module';
-import {PropertyModel} from '../models/properties';
-import {InputFEModel} from '../models/properties-inputs/input-fe-model';
-import { ComponentMetadata } from '../models/component-metadata';
+import {ButtonModel} from '../../models/button';
+import {Component} from '../../models/components/component';
+import {ModalModel} from '../../models/modal';
+import {DisplayModule} from '../../models/modules/base-module';
+import {PropertyModel} from '../../models/properties';
+import {InputFEModel} from '../../models/properties-inputs/input-fe-model';
+import { ComponentMetadata } from '../../models/component-metadata';
 import { ModalService } from 'app/ng2/services/modal.service';
 import { PropertyFormModalComponent } from 'app/ng2/pages/property-form-modal/property-form-modal.component';
 import { IconsModalComponent } from 'app/ng2/components/modals/icons-modal/icons-modal.component';

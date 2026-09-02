@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 import {of, throwError} from 'rxjs';
-import {WorkspaceMode} from 'app/utils/constants';
+import {WorkspaceMode} from 'app/ng2/utils/constants';
 import {PropertyModel} from 'app/models/properties';
 import {WorkspacePropertiesTabComponent} from '../properties-tab.component';
 

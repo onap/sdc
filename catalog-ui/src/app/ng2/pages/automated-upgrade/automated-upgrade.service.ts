@@ -3,7 +3,7 @@ import { Injectable, ComponentRef } from "@angular/core";
 import { AutomatedUpgradeComponent } from "./automated-upgrade.component";
 import { Component } from "../../../models/components/component";
 import { ComponentServiceNg2 } from "../../services/component-services/component.service";
-import { GeneralStatus, ComponentType } from "../../../utils/constants";
+import { GeneralStatus, ComponentType } from "../../utils/constants";
 import { IDependenciesServerResponse } from "../../services/responses/dependencies-server-response";
 import { AutomatedUpgradeStatusComponent } from "./automated-upgrade-status/automated-upgrade-status.component";
 import { AutomatedUpgradeStatusResponse } from "../../services/responses/automated-upgrade-response";

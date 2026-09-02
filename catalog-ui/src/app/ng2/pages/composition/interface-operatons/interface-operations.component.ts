@@ -47,7 +47,7 @@ import {ComponentInstance} from 'app/models/componentsInstances/componentInstanc
 import {ModalModel} from 'app/models/modal';
 import {InterfaceModel} from 'app/models/operation';
 import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
-import {ArtifactGroupType} from "../../../../utils/constants";
+import {ArtifactGroupType} from "../../../utils/constants";
 import {
     DropdownValue
 } from "../../../components/ui/form-components/dropdown/ui-element-dropdown.component";

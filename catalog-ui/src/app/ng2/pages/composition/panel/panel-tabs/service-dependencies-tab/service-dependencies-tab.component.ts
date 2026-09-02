@@ -27,8 +27,8 @@ import {ComponentInstance} from 'app/models/componentsInstances/componentInstanc
 import {FullComponentInstance} from 'app/models/componentsInstances/fullComponentInstance';
 import {PropertiesGroup, PropertyModel} from 'app/models/properties';
 import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
-import {ResourceType} from 'app/utils/constants';
-import {DEPENDENCY_EVENTS} from 'app/utils/constants';
+import {ResourceType} from 'app/ng2/utils/constants';
+import {DEPENDENCY_EVENTS} from 'app/ng2/utils/constants';
 import {ComponentMetadata} from '../../../../../../models/component-metadata';
 import {ServiceInstanceObject} from '../../../../../../models/service-instance-properties-and-interfaces';
 import {EventListenerService} from '../../../../../services/event-listener.service';

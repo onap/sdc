@@ -22,7 +22,7 @@
  * Created by rc2122 on 5/23/2017.
  */
 import { Injectable } from '@angular/core';
-import {WorkspaceMode, ComponentState, Role} from "../../../utils/constants";
+import {WorkspaceMode, ComponentState, Role} from "../../utils/constants";
 import {Component as ComponentData} from 'app/models/components/component';
 import { CacheService } from "../cache.service";
 

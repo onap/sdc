@@ -18,11 +18,11 @@
  * ============LICENSE_END=========================================================
  */
 
-import { GraphColors, GraphUIObjects} from "app/utils/constants";
+import { GraphColors, GraphUIObjects} from "app/ng2/utils/constants";
 import constant = require("lodash/constant");
-import {ImagesUrl} from "app/utils/constants";
+import {ImagesUrl} from "app/ng2/utils/constants";
 import {getSdcConfig} from "app/ng2/config/sdc-config.config.factory";
-import {CanvasHandleTypes} from 'app/utils/constants';
+import {CanvasHandleTypes} from 'app/ng2/utils/constants';
 /**
  * Created by obarda on 12/18/2016.
  */

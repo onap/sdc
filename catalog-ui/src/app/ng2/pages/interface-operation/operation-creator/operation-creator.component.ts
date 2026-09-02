@@ -13,7 +13,7 @@ import { Tabs } from "app/ng2/components/ui/tabs/tabs.component";
 import { DropdownValue } from "app/ng2/components/ui/form-components/dropdown/ui-element-dropdown.component";
 import { IDropDownOption } from 'onap-ui-angular/dist/form-elements/dropdown/dropdown-models';
 import { DropDownComponent } from "onap-ui-angular/dist/components";
-import { DROPDOWN_OPTION_TYPE } from "app/utils/constants";
+import { DROPDOWN_OPTION_TYPE } from "app/ng2/utils/constants";
 
 export class DropDownOption implements IDropDownOption {
     value: string;

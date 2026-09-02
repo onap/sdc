@@ -46,9 +46,9 @@ import { ComponentGenericResponse } from 'app/ng2/services/responses/component-g
 import { ServiceGenericResponse } from 'app/ng2/services/responses/service-generic-response';
 import { WorkspaceState } from 'app/ng2/store/states/workspace.state';
 import {EventListenerService} from 'app/ng2/services/event-listener.service';
-import {ComponentInstanceFactory} from 'app/utils/component-instance-factory';
-import {EVENTS, SdcElementType} from 'app/utils/constants';
-import { ComponentType, GRAPH_EVENTS, GraphColors, DEPENDENCY_EVENTS , SUBSTITUTION_FILTER_EVENTS} from 'app/utils/constants';
+import {ComponentInstanceFactory} from 'app/ng2/utils/component-instance-factory';
+import {EVENTS, SdcElementType} from 'app/ng2/utils/constants';
+import { ComponentType, GRAPH_EVENTS, GraphColors, DEPENDENCY_EVENTS , SUBSTITUTION_FILTER_EVENTS} from 'app/ng2/utils/constants';
 import * as _ from 'lodash';
 import { DndDropEvent } from 'ngx-drag-drop/ngx-drag-drop';
 import { SdcUiServices } from 'onap-ui-angular';

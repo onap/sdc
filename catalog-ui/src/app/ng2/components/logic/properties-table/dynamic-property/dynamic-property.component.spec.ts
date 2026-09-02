@@ -30,7 +30,7 @@ import { PropertiesUtils } from '../../../../pages/properties-assignment/service
 import { DataTypeService } from '../../../../services/data-type.service';
 import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
 import {PropertyFEModel} from 'app/models/properties-inputs/property-fe-model';
-import {PROPERTY_TYPES} from 'app/utils/constants';
+import {PROPERTY_TYPES} from 'app/ng2/utils/constants';
 import { ContentAfterLastDotPipe } from '../../../../pipes/contentAfterLastDot.pipe';
 import { FilterChildPropertiesPipe } from '../pipes/filterChildProperties.pipe';
 

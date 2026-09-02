@@ -33,7 +33,7 @@ import {OperationModel} from 'app/models/operation';
 import {PropertiesGroup, PropertyModel} from 'app/models/properties';
 import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
 import {RequirementsGroup} from 'app/models/requirement';
-import {CommonUtils} from 'app/utils/common-utils';
+import {CommonUtils} from 'app/ng2/utils/common-utils';
 import {Serializable} from "../utils/serializable";
 import { PolicyInstance } from "app/models/graph/zones/policy-instance";
 import { GroupInstance } from "../../../models/graph/zones/group-instance";

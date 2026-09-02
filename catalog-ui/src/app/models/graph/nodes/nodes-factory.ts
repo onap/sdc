@@ -33,7 +33,7 @@ import {CompositionCiNodeVf} from './composition-graph-nodes/composition-ci-node
 import {CompositionCiNodeVfc} from './composition-graph-nodes/composition-ci-node-vfc';
 import {CompositionCiNodeVl} from './composition-graph-nodes/composition-ci-node-vl';
 import {ModuleNodeBase} from './modules-graph-nodes/module-node-base';
-import {ComponentType, ResourceType} from "../../../utils/constants";
+import {ComponentType, ResourceType} from "../../../ng2/utils/constants";
 import {ImageCreatorService} from "app/ng2/pages/composition/graph/common/image-creator.service";
 import {Injectable} from "@angular/core";
 

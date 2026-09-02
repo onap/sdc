@@ -7,7 +7,7 @@ import {Resource} from 'app/models/components/resource';
 import {Service} from 'app/models/components/service';
 import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
 import {RequirementsGroup} from 'app/models/requirement';
-import {ComponentType} from '../../utils/constants';
+import {ComponentType} from '../../ng2/utils/constants';
 import * as _ from 'lodash';
 
 

@@ -30,7 +30,7 @@ import { TopologyTemplateService } from 'app/ng2/services/component-services/top
 import { ServiceGenericResponse } from 'app/ng2/services/responses/service-generic-response';
 import { QueueServiceUtils } from 'app/ng2/utils/queue-service-utils';
 import {EventListenerService} from 'app/ng2/services/event-listener.service';
-import {GRAPH_EVENTS} from 'app/utils/constants';
+import {GRAPH_EVENTS} from 'app/ng2/utils/constants';
 import * as _ from 'lodash';
 import { SdcUiServices } from 'onap-ui-angular';
 import { CompositionService } from '../../composition.service';

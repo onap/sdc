@@ -34,7 +34,7 @@ import {AddPropertyComponent, PropertyValidationEvent} from "./add-property/add-
 import {SdcUiServices} from "onap-ui-angular/dist";
 import {PropertyModel} from "../../../../models/properties";
 import {SdcUiCommon, SdcUiComponents} from "onap-ui-angular";
-import {ToscaTypeHelper} from "../../../../utils/tosca-type-helper";
+import {ToscaTypeHelper} from "../../../utils/tosca-type-helper";
 
 @Component({
     selector: 'app-type-workspace-properties',

@@ -3,7 +3,7 @@
  */
 import {ZoneInstanceType, ZoneInstance, IZoneInstanceAssignment} from "./zone-instance";
 import {Observable} from "rxjs/Rx";
-import { CANVAS_TAG_MODE } from "app/utils/constants";
+import { CANVAS_TAG_MODE } from "app/ng2/utils/constants";
 
 export class Zone {
     title:string;

@@ -2,7 +2,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture } from '@angular/core/testing';
 import { ConfigureFn, configureTests } from '../../../../../jest/test-config.helper';
 import { AttributeModel } from '../../../../models/attributes';
-import { ValidationUtils } from '../../../../utils/validation-utils';
+import { ValidationUtils } from '../../../utils/validation-utils';
 import { CacheService } from '../../../services/cache.service';
 import { TranslatePipe } from '../../../shared/translator/translate.pipe';
 import { TranslateService } from '../../../shared/translator/translate.service';

@@ -10,7 +10,7 @@ import {ArtifactModel} from "../../../../models/artifacts";
 import {IDropDownOption} from "onap-ui-angular/dist/form-elements/dropdown/dropdown-models";
 import {Subject} from "rxjs";
 import {ArtifactConfigService} from "../../../services/artifact-config.service";
-import {ArtifactType, ComponentType} from "../../../../utils/constants";
+import {ArtifactType, ComponentType} from "../../../utils/constants";
 
 
 describe('artifact form component', () => {

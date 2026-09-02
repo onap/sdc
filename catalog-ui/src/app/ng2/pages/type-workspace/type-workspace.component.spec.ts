@@ -35,7 +35,7 @@ import {CacheService} from "../../services/cache.service";
 import {IAppMenu, SdcMenuToken} from "../../config/sdc-menu.config";
 import {AuthenticationService} from "../../services/authentication.service";
 import {ISdcConfig, SdcConfigToken} from "../../config/sdc-config.config";
-import {States} from "../../../utils/constants";
+import {States} from "../../utils/constants";
 import {IUserProperties} from "../../../models/user";
 import {Observable} from "rxjs/Observable";
 import {TypeWorkspacePropertiesComponent} from "./type-workspace-properties/type-workspace-properties.component";

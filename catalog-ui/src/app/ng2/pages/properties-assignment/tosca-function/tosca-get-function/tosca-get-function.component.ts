@@ -28,7 +28,7 @@ import {PropertyDeclareAPIModel} from 'app/models/properties-inputs/property-dec
 import {TopologyTemplateService} from "../../../../services/component-services/topology-template.service";
 import {WorkspaceService} from "../../../workspace/workspace.service";
 import {PropertiesService} from "../../../../services/properties.service";
-import {PROPERTY_DATA, PROPERTY_TYPES} from "../../../../../utils/constants";
+import {PROPERTY_DATA, PROPERTY_TYPES} from "../../../../utils/constants";
 import {DataTypeService} from "../../../../services/data-type.service";
 import {ToscaGetFunctionType} from "../../../../../models/tosca-get-function-type";
 import {TranslateService} from "../../../../shared/translator/translate.service";
@@ -39,7 +39,7 @@ import {InstanceFeDetails} from "../../../../../models/instance-fe-details";
 import {ToscaGetFunction} from "../../../../../models/tosca-get-function";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {ToscaGetFunctionTypeConverter} from "../../../../../models/tosca-get-function-type-converter";
-import {ResourceType} from 'app/utils/constants';
+import {ResourceType} from 'app/ng2/utils/constants';
 
 @Component({
     selector: 'app-tosca-get-function',

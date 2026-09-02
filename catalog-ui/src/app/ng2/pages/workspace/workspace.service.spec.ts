@@ -1,7 +1,7 @@
 import {TestBed} from '@angular/core/testing';
 import {WorkspaceService} from './workspace.service';
 import {CacheService} from '../../services/cache.service';
-import {ComponentState, ComponentType, Role, WorkspaceMode} from '../../../utils/constants';
+import {ComponentState, ComponentType, Role, WorkspaceMode} from '../../utils/constants';
 import {createMockComponent, createServiceComponent} from '../../../../jest/mocks/workspace-component.mock';
 import {createMockUser} from '../../../../jest/mocks/user-data.mock';
 

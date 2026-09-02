@@ -34,11 +34,11 @@ import { InfoTabComponent } from 'app/ng2/pages/composition/panel/panel-tabs/inf
 import { PolicyTargetsTabComponent } from 'app/ng2/pages/composition/panel/panel-tabs/policy-targets-tab/policy-targets-tab.component';
 import { PropertiesTabComponent } from 'app/ng2/pages/composition/panel/panel-tabs/properties-tab/properties-tab.component';
 import { ReqAndCapabilitiesTabComponent } from 'app/ng2/pages/composition/panel/panel-tabs/req-capabilities-tab/req-capabilities-tab.component';
-import {ComponentType, ResourceType} from 'app/utils/constants';
+import {ComponentType, ResourceType} from 'app/ng2/utils/constants';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { Observable } from 'rxjs/Observable';
-import { ArtifactGroupType, COMPONENT_FIELDS } from '../../../../utils/constants';
+import { ArtifactGroupType, COMPONENT_FIELDS } from '../../../utils/constants';
 import { WorkspaceState } from '../../../store/states/workspace.state';
 import { OnSidebarOpenOrCloseAction } from '../common/store/graph.actions';
 import { CompositionStateModel, GraphState } from '../common/store/graph.state';

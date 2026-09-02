@@ -26,7 +26,7 @@ import 'rxjs/add/observable/of';
 import {PropertyModel} from 'app/models/properties';
 import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
 import {PropertyFEModel} from 'app/models/properties-inputs/property-fe-model';
-import {ValidationUtils} from 'app/utils/validation-utils';
+import {ValidationUtils} from 'app/ng2/utils/validation-utils';
 import {WorkspaceService} from 'app/ng2/pages/workspace/workspace.service';
 import {TranslateModule} from 'app/ng2/shared/translator/translate.module';
 import {TranslateServiceConfigToken} from 'app/ng2/shared/translator/translate.service.config';

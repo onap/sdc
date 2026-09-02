@@ -20,7 +20,7 @@
 import 'rxjs/add/observable/forkJoin';
 import 'rxjs/add/observable/of';
 import {Observable} from 'rxjs/Observable';
-import {WorkspaceMode} from 'app/utils/constants';
+import {WorkspaceMode} from 'app/ng2/utils/constants';
 import {InterfaceOperationComponent} from './interface-operation.page.component';
 
 function makeComponent(overrides: any = {}) {

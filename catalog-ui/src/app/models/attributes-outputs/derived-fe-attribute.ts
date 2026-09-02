@@ -20,7 +20,7 @@
 
 import * as _ from "lodash";
 import {SchemaAttribute, SchemaAttributeGroupModel} from '../schema-attribute';
-import {PROPERTY_TYPES} from 'app/utils/constants';
+import {PROPERTY_TYPES} from 'app/ng2/utils/constants';
 import {UUID} from "angular2-uuid";
 import {AttributeBEModel, DerivedAttributeType} from "./attribute-be-model";
 import {AttributeFEModel} from "./attribute-fe-model";

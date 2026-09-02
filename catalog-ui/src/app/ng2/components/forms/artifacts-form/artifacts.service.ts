@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { SdcUiCommon, SdcUiComponents, SdcUiServices } from 'onap-ui-angular';
 import {ArtifactModel} from '../../../../models/artifacts';
-import { ArtifactGroupType, ArtifactType } from '../../../../utils/constants';
+import { ArtifactGroupType, ArtifactType } from '../../../utils/constants';
 import { TopologyTemplateService } from '../../../services/component-services/topology-template.service';
 import { TranslateService } from '../../../shared/translator/translate.service';
 import { CreateOrUpdateArtifactAction, DeleteArtifactAction } from '../../../store/actions/artifacts.action';

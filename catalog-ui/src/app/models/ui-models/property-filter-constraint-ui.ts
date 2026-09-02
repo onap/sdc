@@ -20,7 +20,7 @@
  */
 
 import {FilterConstraint} from "../filter-constraint";
-import {ConstraintOperatorType} from "../../utils/filter-constraint-helper";
+import {ConstraintOperatorType} from "../../ng2/utils/filter-constraint-helper";
 import {ToscaGetFunction} from "../tosca-get-function";
 import {ToscaFunction} from "../tosca-function";
 

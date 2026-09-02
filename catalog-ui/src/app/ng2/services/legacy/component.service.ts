@@ -37,8 +37,8 @@ import {InstancesInputsPropertiesMap} from 'app/models/instance-inputs-propertie
 import {DisplayModule, Module} from 'app/models/modules/base-module';
 import {PropertyModel} from 'app/models/properties';
 import {IValidate} from 'app/models/validate';
-import {CommonUtils} from 'app/utils/common-utils';
-import {ComponentInstanceFactory} from 'app/utils/component-instance-factory';
+import {CommonUtils} from 'app/ng2/utils/common-utils';
+import {ComponentInstanceFactory} from 'app/ng2/utils/component-instance-factory';
 // Direct imports to avoid loading the services-ng2 barrel which causes a circular dep
 // at module-load time once @Injectable emits type metadata (emitDecoratorMetadata):
 // services-ng2 barrel -> catalog.service -> data-type-catalog-component -> service.ts,

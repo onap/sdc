@@ -24,7 +24,7 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {WorkspaceMenuComponent} from './workspace-menu.component';
 import {CacheService} from "../../../services/cache.service";
-import {States} from "../../../../utils/constants";
+import {States} from "../../../utils/constants";
 import {IAppMenu} from "../../../../models/app-config";
 import {SdcMenuToken} from "../../../config/sdc-menu.config";
 import {TypeWorkspaceService} from "../type-workspace.service";

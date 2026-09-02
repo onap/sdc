@@ -3,12 +3,12 @@ import { WorkspaceService } from "../workspace.service";
 import {ArtifactModel} from '../../../../models/artifacts';
 import { Select, Store } from "@ngxs/store";
 import { WorkspaceState } from "../../../store/states/workspace.state";
-import {ArtifactGroupType} from '../../../../utils/constants';
+import {ArtifactGroupType} from '../../../utils/constants';
 import { GetArtifactsByTypeAction } from "../../../store/actions/artifacts.action";
 import { Observable } from "rxjs/index";
 import { ArtifactsState } from "../../../store/states/artifacts.state";
 import { map } from "rxjs/operators";
-import { ArtifactType, ComponentState, ComponentType } from "app/utils/constants"
+import { ArtifactType, ComponentState, ComponentType } from "app/ng2/utils/constants"
 import { TopologyTemplateService } from "app/ng2/services/component-services/topology-template.service";
 import { SdcUiServices } from "onap-ui-angular";
 import { NotificationSettings } from "onap-ui-angular/dist/notifications/utilities/notification.config";

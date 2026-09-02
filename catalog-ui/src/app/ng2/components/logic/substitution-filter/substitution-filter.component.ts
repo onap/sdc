@@ -32,7 +32,7 @@ import {TopologyTemplateService} from '../../../services/component-services/topo
 import {ToscaFilterConstraintType} from "../../../../models/tosca-filter-constraint-type.enum";
 import {FilterConstraint} from "app/models/filter-constraint";
 import {PropertyFilterConstraintUi} from "../../../../models/ui-models/property-filter-constraint-ui";
-import {FilterConstraintHelper, ConstraintOperatorType} from "../../../../utils/filter-constraint-helper";
+import {FilterConstraintHelper, ConstraintOperatorType} from "../../../utils/filter-constraint-helper";
 
 class I18nTexts {
   static addSubstitutionFilterTxt: string;

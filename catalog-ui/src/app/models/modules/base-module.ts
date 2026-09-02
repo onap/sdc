@@ -28,7 +28,7 @@
 import * as _ from "lodash";
 import {PropertyModel} from "../properties";
 import {ArtifactModel} from "../artifacts";
-import {CommonUtils} from "../../utils/common-utils";
+import {CommonUtils} from "../../ng2/utils/common-utils";
 
 export class Module {
 

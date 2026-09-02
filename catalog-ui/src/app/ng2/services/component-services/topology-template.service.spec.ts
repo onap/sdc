@@ -5,7 +5,7 @@ import {HttpClientTestingModule, HttpTestingController} from '@angular/common/ht
 import {TopologyTemplateService} from './topology-template.service';
 import {SdcConfigToken} from '../../config/sdc-config.config';
 import {mockSdcConfig} from '../../../../jest/mocks/sdc-config.mock';
-import {ComponentType} from '../../../utils/constants';
+import {ComponentType} from '../../utils/constants';
 
 describe('TopologyTemplateService', () => {
     let service: TopologyTemplateService;

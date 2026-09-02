@@ -4,7 +4,7 @@ import {HttpClientTestingModule, HttpTestingController} from '@angular/common/ht
 import {HomeService} from './home.service';
 import {SdcConfigToken} from '../config/sdc-config.config';
 import {SharingService} from './sharing.service';
-import {ComponentFactory} from 'app/utils/component-factory';
+import {ComponentFactory} from 'app/ng2/utils/component-factory';
 import {mockSdcConfig} from '../../../jest/mocks/sdc-config.mock';
 
 describe('HomeService', () => {

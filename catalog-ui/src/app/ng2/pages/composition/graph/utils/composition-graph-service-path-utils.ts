@@ -39,7 +39,7 @@ import {WorkspaceState} from "app/ng2/store/states/workspace.state";
 import {WorkspaceService} from "app/ng2/pages/workspace/workspace.service";
 import {CompositionService} from "../../composition.service";
 import {CommonGraphUtils} from "../common/common-graph-utils";
-import {GRAPH_EVENTS} from "app/utils/constants";
+import {GRAPH_EVENTS} from "app/ng2/utils/constants";
 import {EventListenerService} from "app/ng2/services/event-listener.service";
 
 @Injectable()

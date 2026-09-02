@@ -8,7 +8,7 @@ import {map} from 'rxjs/operators';
 import {GabConfig} from '../../../../models/gab-config';
 import {PathsAndNamesDefinition} from '../../../../models/paths-and-names';
 import {GenericArtifactBrowserComponent} from '../../../components/logic/generic-artifact-browser/generic-artifact-browser.component';
-import {ArtifactGroupType, ArtifactType} from '../../../../utils/constants';
+import {ArtifactGroupType, ArtifactType} from '../../../utils/constants';
 import {ArtifactsService} from '../../../components/forms/artifacts-form/artifacts.service';
 import {PopoverContentComponent} from '../../../components/ui/popover/popover-content.component';
 import {CacheService} from '../../../services/cache.service';

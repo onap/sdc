@@ -17,7 +17,7 @@ import { NgxsModule } from "@ngxs/store";
 import { GraphState } from "app/ng2/pages/composition/common/store/graph.state";
 import { WorkspaceState } from "app/ng2/store/states/workspace.state";
 import { TargetUiObject } from "app/models/ui-models/ui-target-object";
-import {TargetOrMemberType} from 'app/utils/constants';
+import {TargetOrMemberType} from 'app/ng2/utils/constants';
 
 
 

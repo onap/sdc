@@ -3,7 +3,7 @@ import { IDropDownOption } from 'onap-ui-angular/dist/form-elements/dropdown/dro
 import { InputComponent } from 'onap-ui-angular/dist/form-elements/text-elements/input/input.component';
 import { Subject } from 'rxjs/Subject';
 import { AttributeModel } from '../../../../models/attributes';
-import { ValidationUtils } from '../../../../utils/validation-utils';
+import { ValidationUtils } from '../../../utils/validation-utils';
 import { CacheService } from '../../../services/cache.service';
 import { TranslateService } from '../../../shared/translator/translate.service';
 import { AttributeOptions } from './attributes-options';

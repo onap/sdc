@@ -27,7 +27,7 @@
  * returns undefined (no default branch in the switch).
  */
 import {AvailableIconsService} from './available-icons.service';
-import {ComponentType} from '../../utils/constants';
+import {ComponentType} from '../utils/constants';
 
 describe('AvailableIconsService (AngularJS characterization)', () => {
     let service: AvailableIconsService;

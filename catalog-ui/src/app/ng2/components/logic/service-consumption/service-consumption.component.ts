@@ -32,8 +32,8 @@ import { ComponentMetadata } from '../../../../models/component-metadata';
 import { Resource } from '../../../../models/components/resource';
 import { FullComponentInstance } from '../../../../models/componentsInstances/fullComponentInstance';
 import { ServiceInstanceObject } from '../../../../models/service-instance-properties-and-interfaces';
-import { ComponentFactory } from '../../../../utils/component-factory';
-import { ComponentType } from '../../../../utils/constants';
+import { ComponentFactory } from '../../../utils/component-factory';
+import { ComponentType } from '../../../utils/constants';
 import { TopologyTemplateService } from '../../../services/component-services/topology-template.service';
 
 export class ConsumptionInput extends PropertyFEModel{

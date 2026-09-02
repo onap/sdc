@@ -26,7 +26,7 @@ import {DerivedFEProperty} from 'app/models/properties-inputs/derived-fe-propert
 import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
 import {PropertyFEModel} from 'app/models/properties-inputs/property-fe-model';
 import {DataTypesService} from "app/ng2/services/data-types.service";
-import {PROPERTY_DATA} from 'app/utils/constants';
+import {PROPERTY_DATA} from 'app/ng2/utils/constants';
 import {DerivedFEAttribute} from "../../models/attributes-outputs/derived-fe-attribute";
 import {ISdcConfig} from "../config/sdc-config.config.factory";
 import {SdcConfigToken} from "../config/sdc-config.config";

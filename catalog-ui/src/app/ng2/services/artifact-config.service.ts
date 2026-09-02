@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {CacheService} from './cache.service';
-import {ArtifactType} from "../../utils/constants";
+import {ArtifactType} from "../utils/constants";
 
 @Injectable()
 export class ArtifactConfigService {

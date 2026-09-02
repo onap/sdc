@@ -3,7 +3,7 @@ import {ArtifactModel} from 'app/models/artifacts';
 import {IFileDownload} from 'app/models/file-download';
 import {EventListenerService} from 'app/ng2/services/event-listener.service';
 import {CacheService} from 'app/ng2/services/cache.service';
-import {EVENTS} from 'app/utils/constants';
+import {EVENTS} from 'app/ng2/utils/constants';
 import { TopologyTemplateService } from "app/ng2/services/component-services/topology-template.service";
 import { WorkspaceService } from "app/ng2/pages/workspace/workspace.service";
 import { ComponentInstanceServiceNg2 } from "app/ng2/services/component-instance-services/component-instance.service";

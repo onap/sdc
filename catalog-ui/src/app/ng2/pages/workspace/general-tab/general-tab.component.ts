@@ -30,12 +30,12 @@ import {NotificationSettings} from 'onap-ui-angular/dist/notifications/utilities
 import {CacheService} from 'app/ng2/services/cache.service';
 import {EventListenerService} from 'app/ng2/services/event-listener.service';
 import {ValidationConfiguration} from 'app/models/validation-config';
-import {EVENTS, WorkspaceMode, ComponentState, ComponentType, ResourceType, Role, PREVIOUS_CSAR_COMPONENT, instantiationType, DEFAULT_MODEL_NAME, DEFAULT_ICON, CATEGORY_SERVICE_METADATA_KEYS} from 'app/utils/constants';
-import {ServiceCsarReader} from 'app/utils/service-csar-reader';
+import {EVENTS, WorkspaceMode, ComponentState, ComponentType, ResourceType, Role, PREVIOUS_CSAR_COMPONENT, instantiationType, DEFAULT_MODEL_NAME, DEFAULT_ICON, CATEGORY_SERVICE_METADATA_KEYS} from 'app/ng2/utils/constants';
+import {ServiceCsarReader} from 'app/ng2/utils/service-csar-reader';
 // Deep paths, not the `app/utils` barrel: the barrel re-exports the whole utils tree, and pulling it
 // in here ahead of `app/services-ng2` re-orders module evaluation enough to break DI metadata (§TT).
-import {ComponentFactory} from 'app/utils/component-factory';
-import {ModalsHandler} from 'app/utils/modals-handler';
+import {ComponentFactory} from 'app/ng2/utils/component-factory';
+import {ModalsHandler} from 'app/ng2/utils/modals-handler';
 import {ImportVSPService} from '../../../components/modals/onboarding-modal/import-vsp.service';
 import {ElementService} from '../../../services/element.service';
 import {ModelService} from '../../../services/model.service';

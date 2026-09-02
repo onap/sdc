@@ -21,7 +21,7 @@
  */
 
 import * as _ from "lodash";
-import {PROPERTY_DATA, PROPERTY_TYPES} from 'app/utils/constants';
+import {PROPERTY_DATA, PROPERTY_TYPES} from 'app/ng2/utils/constants';
 import {DerivedFEProperty} from 'app/models/properties-inputs/derived-fe-property';
 import {DerivedPropertyType, PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
 import * as jsYaml from 'js-yaml';

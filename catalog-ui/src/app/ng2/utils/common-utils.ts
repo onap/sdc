@@ -19,21 +19,21 @@
  */
 
 import * as _ from "lodash";
-import {AttributeModel} from '../models/attributes';
-import {ResourceInstance} from '../models/componentsInstances/resourceInstance';
-import {Module} from '../models/modules/base-module';
-import {OperationModel} from '../models/operation';
-import {PropertyModel} from '../models/properties';
-import {InputFEModel} from '../models/properties-inputs/input-fe-model';
+import {AttributeModel} from '../../models/attributes';
+import {ResourceInstance} from '../../models/componentsInstances/resourceInstance';
+import {Module} from '../../models/modules/base-module';
+import {OperationModel} from '../../models/operation';
+import {PropertyModel} from '../../models/properties';
+import {InputFEModel} from '../../models/properties-inputs/input-fe-model';
 import {ComponentInstanceFactory} from "./component-instance-factory";
 import {RelationshipModel} from 'app/models/graph/relationship';
 import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
 import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
 import { PolicyInstance } from "app/models/graph/zones/policy-instance";
-import { GroupInstance } from "../models/graph/zones/group-instance";
-import { InterfaceModel } from "../models/operation";
-import {AttributeBEModel} from "../models/attributes-outputs/attribute-be-model";
-import {OutputBEModel} from "../models/attributes-outputs/output-be-model";
+import { GroupInstance } from "../../models/graph/zones/group-instance";
+import { InterfaceModel } from "../../models/operation";
+import {AttributeBEModel} from "../../models/attributes-outputs/attribute-be-model";
+import {OutputBEModel} from "../../models/attributes-outputs/output-be-model";
 
 export class CommonUtils {
 

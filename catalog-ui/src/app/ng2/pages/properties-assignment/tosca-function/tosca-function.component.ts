@@ -33,7 +33,7 @@ import {ToscaGetFunctionValidationEvent} from "./tosca-get-function/tosca-get-fu
 import {ToscaFunction} from "../../../../models/tosca-function";
 import {ToscaConcatFunctionValidationEvent} from "./tosca-concat-function/tosca-concat-function.component";
 import {ToscaCustomFunctionValidationEvent} from "./tosca-custom-function/tosca-custom-function.component";
-import {PROPERTY_TYPES} from "../../../../utils/constants";
+import {PROPERTY_TYPES} from "../../../utils/constants";
 import {YamlFunctionValidationEvent} from "./yaml-function/yaml-function.component";
 import {ToscaConcatFunction} from "../../../../models/tosca-concat-function";
 import {ToscaCustomFunction} from "../../../../models/tosca-custom-function";

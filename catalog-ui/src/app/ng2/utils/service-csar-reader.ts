@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-import {ServiceCsar, ToscaMetaEntry} from '../models/service-csar';
+import {ServiceCsar, ToscaMetaEntry} from '../../models/service-csar';
 import {load} from 'js-yaml';
 import {ComponentType} from "./constants";
 

@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-import {ImagesUrl, GraphUIObjects} from "../../../../utils/constants";
+import {ImagesUrl, GraphUIObjects} from "../../../../ng2/utils/constants";
 import {ComponentInstance} from '../../../componentsInstances/componentInstance';
 import {CompositionCiNodeBase} from './composition-ci-node-base';
 import {ImageCreatorService} from "app/ng2/pages/composition/graph/common/image-creator.service";

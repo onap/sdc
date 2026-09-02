@@ -22,7 +22,7 @@
  * Created by obarda on 6/28/2016.
  */
 import * as _ from "lodash";
-import {GraphUIObjects} from 'app/utils/constants';
+import {GraphUIObjects} from 'app/ng2/utils/constants';
 import {Capability} from 'app/models/capability';
 import {Component} from 'app/models/components/component';
 import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';

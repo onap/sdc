@@ -20,7 +20,7 @@
 
 import * as _ from "lodash";
 import {Component, EventEmitter, Input, Output, ViewChild} from "@angular/core";
-import {PROPERTY_TYPES} from 'app/utils/constants';
+import {PROPERTY_TYPES} from 'app/ng2/utils/constants';
 import {DataTypeService} from "../../../../services/data-type.service";
 import {animate, style, transition, trigger} from '@angular/animations';
 import {IUiElementChangeEvent} from "../../../ui/form-components/ui-element-base.component";

@@ -24,7 +24,7 @@ import {FullComponentInstance} from 'app/models/componentsInstances/fullComponen
 import {PropertiesGroup} from 'app/models/properties';
 import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
 import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
-import {SUBSTITUTION_FILTER_EVENTS} from 'app/utils/constants';
+import {SUBSTITUTION_FILTER_EVENTS} from 'app/ng2/utils/constants';
 import {ComponentMetadata} from '../../../../../../models/component-metadata';
 import {ServiceInstanceObject} from '../../../../../../models/service-instance-properties-and-interfaces';
 import {EventListenerService} from '../../../../../services/event-listener.service';

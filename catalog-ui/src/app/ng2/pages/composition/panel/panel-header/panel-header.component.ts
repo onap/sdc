@@ -31,7 +31,7 @@ import {Requirement} from 'app/models/requirement';
 import { Select } from "@ngxs/store";
 import { Observable } from "rxjs/Observable";
 import { Subscription } from "rxjs";
-import {GRAPH_EVENTS} from "../../../../../utils/constants";
+import {GRAPH_EVENTS} from "../../../../utils/constants";
 import { CompositionService } from "app/ng2/pages/composition/composition.service";
 import {EventListenerService} from "../../../../services/event-listener.service";
 import { ComponentInstanceServiceNg2 } from "app/ng2/services/component-instance-services/component-instance.service";

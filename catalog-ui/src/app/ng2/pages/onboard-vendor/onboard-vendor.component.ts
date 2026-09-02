@@ -29,7 +29,7 @@ import {
 } from '@angular/core';
 import * as _ from 'lodash';
 import {CacheService} from 'app/ng2/services/cache.service';
-import {MenuItem, MenuItemGroup} from 'app/utils/menu-handler';
+import {MenuItem, MenuItemGroup} from 'app/ng2/utils/menu-handler';
 import {SdcConfigToken} from 'app/ng2/config/sdc-config.config';
 import {IUserProperties} from 'app/models/user';
 // Side-effect import: defines the global window.PunchOutRegistry used below. The old AngularJS

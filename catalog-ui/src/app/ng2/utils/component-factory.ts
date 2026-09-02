@@ -25,14 +25,14 @@ import {Injectable} from "@angular/core";
 import {DEFAULT_ICON, ResourceType, ComponentType} from "./constants";
 import {ResourceService} from 'app/ng2/services/legacy/resource.service';
 import {ServiceService} from 'app/ng2/services/legacy/service.service';
-import {CacheService} from "../ng2/services/cache.service";
+import {CacheService} from "../services/cache.service";
 import {IMainCategory, ISubCategory} from 'app/models/category';
 import {Component} from 'app/models/components/component';
 import {Resource} from 'app/models/components/resource';
 import {Service} from 'app/models/components/service';
 import {ICsarComponent} from 'app/models/csar-component';
-import {ComponentServiceNg2} from "../ng2/services/component-services/component.service";
-import {ComponentGenericResponse} from "../ng2/services/responses/component-generic-response";
+import {ComponentServiceNg2} from "../services/component-services/component.service";
+import {ComponentGenericResponse} from "../services/responses/component-generic-response";
 
 
 @Injectable()

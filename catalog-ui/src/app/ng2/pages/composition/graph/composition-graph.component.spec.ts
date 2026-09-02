@@ -29,7 +29,7 @@ import {PoliciesService} from '../../../services/policies.service';
 import {GroupsService} from '../../../services/groups.service';
 import {PolicyInstance} from "../../../../models/graph/zones/policy-instance";
 import {ZoneInstanceType} from "../../../../models/graph/zones/zone-instance";
-import {GRAPH_EVENTS} from "../../../../utils/constants";
+import {GRAPH_EVENTS} from "../../../utils/constants";
 import * as cytoscape from "cytoscape";
 import {ComponentMetadata} from "../../../../models/component-metadata";
 import {Zone} from "../../../../models/graph/zones/zone";

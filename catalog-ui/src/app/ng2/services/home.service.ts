@@ -23,7 +23,7 @@ import {IApi} from 'app/models/app-config';
 import {Component} from 'app/models/components/component';
 import {Resource} from 'app/models/components/resource';
 import {Service} from 'app/models/components/service';
-import { ComponentFactory } from 'app/utils/component-factory';
+import { ComponentFactory } from 'app/ng2/utils/component-factory';
 import { Observable } from 'rxjs';
 import { ISdcConfig, SdcConfigToken } from '../config/sdc-config.config';
 import { SharingService } from './sharing.service';

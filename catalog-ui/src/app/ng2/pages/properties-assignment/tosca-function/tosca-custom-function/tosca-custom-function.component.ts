@@ -26,7 +26,7 @@ import {ToscaFunctionParameter} from "../../../../../models/tosca-function-param
 import {ToscaStringParameter} from "../../../../../models/tosca-string-parameter";
 import {ToscaFunctionType} from "../../../../../models/tosca-function-type.enum";
 import {PropertyBEModel} from "../../../../../models/properties-inputs/property-be-model";
-import {PROPERTY_TYPES} from "../../../../../utils/constants";
+import {PROPERTY_TYPES} from "../../../../utils/constants";
 import {InstanceFeDetails} from "../../../../../models/instance-fe-details";
 import {ToscaFunctionValidationEvent} from "../tosca-function.component";
 import {ToscaFunction} from "../../../../../models/tosca-function";

@@ -7,7 +7,7 @@ import {FullComponentInstance} from 'app/models/componentsInstances/fullComponen
 import {GroupInstance} from 'app/models/graph/zones/group-instance';
 import {PolicyInstance} from 'app/models/graph/zones/policy-instance';
 import {Store} from "@ngxs/store";
-import {EVENTS, GRAPH_EVENTS} from 'app/utils/constants';
+import {EVENTS, GRAPH_EVENTS} from 'app/ng2/utils/constants';
 import {IDropDownOption} from "onap-ui-angular/dist/form-elements/dropdown/dropdown-models";
 import { CompositionPaletteService } from "app/ng2/pages/composition/palette/services/palette.service";
 import { SdcUiCommon, SdcUiComponents, SdcUiServices } from "onap-ui-angular";

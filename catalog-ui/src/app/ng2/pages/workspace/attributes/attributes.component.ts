@@ -6,7 +6,7 @@ import {SdcUiCommon, SdcUiComponents, SdcUiServices} from 'onap-ui-angular';
 import {ModalComponent} from 'onap-ui-angular/dist/modals/modal.component';
 import {AttributeModel} from '../../../../models/attributes';
 import {Resource} from '../../../../models/components/resource';
-import {ModalsHandler} from '../../../../utils/modals-handler';
+import {ModalsHandler} from '../../../utils/modals-handler';
 import {TopologyTemplateService} from '../../../../ng2/services/component-services/topology-template.service';
 import {TranslateService} from '../../../../ng2/shared/translator/translate.service';
 import {WorkspaceState} from '../../../../ng2/store/states/workspace.state';

@@ -22,7 +22,7 @@ import {Pipe, PipeTransform} from "@angular/core";
 import * as _ from 'lodash';
 import {Component} from 'app/models/components/component';
 import {Resource} from 'app/models/components/resource';
-import {ComponentType, DEFAULT_MODEL_NAME, ToscaType} from "app/utils/constants";
+import {ComponentType, DEFAULT_MODEL_NAME, ToscaType} from "app/ng2/utils/constants";
 import {DataTypeCatalogComponent} from "../../models/data-type-catalog-component";
 
 export interface ISearchFilter {

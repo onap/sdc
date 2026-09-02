@@ -19,7 +19,7 @@
  */
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject} from '@angular/core';
 import * as _ from 'lodash';
-import {ArtifactType, ResourceType} from 'app/utils/constants';
+import {ArtifactType, ResourceType} from 'app/ng2/utils/constants';
 import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
 import {CacheService} from 'app/ng2/services/cache.service';
 import {ComponentServiceNg2} from 'app/ng2/services/component-services/component.service';

@@ -22,7 +22,7 @@
  * Created by osonsino on 16/05/2016.
  */
 'use strict';
-import { PROPERTY_DATA } from 'app/utils/constants';
+import { PROPERTY_DATA } from 'app/ng2/utils/constants';
 
 export class SchemaPropertyGroupModel {
     property: SchemaProperty;

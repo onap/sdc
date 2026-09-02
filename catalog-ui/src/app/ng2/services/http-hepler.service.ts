@@ -1,5 +1,5 @@
 import { Injectable, Inject } from "@angular/core";
-import { Dictionary } from "../../utils/dictionary/dictionary";
+import { Dictionary } from "../utils/dictionary";
 import { SharingService } from "../services/sharing.service";
 import { SdcConfigToken, ISdcConfig } from "../config/sdc-config.config";
 

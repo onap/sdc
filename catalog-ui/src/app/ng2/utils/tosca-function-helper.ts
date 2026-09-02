@@ -19,12 +19,12 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {ToscaFunctionType} from "../models/tosca-function-type.enum";
-import {ToscaConcatFunction} from "../models/tosca-concat-function";
-import {ToscaGetFunction} from "../models/tosca-get-function";
-import {YamlFunction} from "../models/yaml-function";
-import {ToscaFunction} from "../models/tosca-function";
-import {ToscaCustomFunction} from "../models/tosca-custom-function";
+import {ToscaFunctionType} from "../../models/tosca-function-type.enum";
+import {ToscaConcatFunction} from "../../models/tosca-concat-function";
+import {ToscaGetFunction} from "../../models/tosca-get-function";
+import {YamlFunction} from "../../models/yaml-function";
+import {ToscaFunction} from "../../models/tosca-function";
+import {ToscaCustomFunction} from "../../models/tosca-custom-function";
 
 export class ToscaFunctionHelper {
 

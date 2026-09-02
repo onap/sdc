@@ -34,9 +34,9 @@ import {EventListenerService} from "./event-listener.service";
 // provider list and this file's spec still name this class, so the forwardRef below guards a cycle
 // that is never constructed. Left verbatim because this change only moves files - the class is a
 // deletion candidate for the dead-code sweep.
-import {ComponentFactory} from "../../utils/component-factory";
+import {ComponentFactory} from "../utils/component-factory";
 import {IAppConfigurtaion} from "app/models/app-config";
-import {ResourceType, ComponentType, EVENTS} from "../../utils/constants";
+import {ResourceType, ComponentType, EVENTS} from "../utils/constants";
 import {ComponentMetadata} from "app/models/component-metadata";
 import {GroupMetadata, GroupTpes} from "app/models/group-metadata";
 import {PolicyMetadata, PolicyTpes} from "app/models/policy-metadata";

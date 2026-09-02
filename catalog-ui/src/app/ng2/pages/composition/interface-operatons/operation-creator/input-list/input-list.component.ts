@@ -24,7 +24,7 @@ import {InputOperationParameter} from "../../../../../../models/interfaceOperati
 import {DataTypeModel} from "../../../../../../models/data-types";
 import {DerivedPropertyType} from "../../../../../../models/properties-inputs/property-be-model";
 import {SubPropertyToscaFunction} from "../../../../../../models/sub-property-tosca-function";
-import {PROPERTY_DATA, PROPERTY_TYPES} from "../../../../../../utils/constants";
+import {PROPERTY_DATA, PROPERTY_TYPES} from "../../../../../utils/constants";
 import {InstanceFeDetails} from "../../../../../../models/instance-fe-details";
 import {ToscaFunction} from "../../../../../../models/tosca-function";
 import {CustomToscaFunction} from "../../../../../../models/default-custom-functions";

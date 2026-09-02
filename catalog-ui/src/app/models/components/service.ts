@@ -27,7 +27,7 @@ import {IServiceService} from "../../ng2/services/legacy/service.service";
 import {ArtifactGroupModel} from '../artifacts';
 import {Distribution, DistributionComponent} from '../distribution';
 import {Component} from './component';
-import {ArtifactGroupType} from "../../utils/constants";
+import {ArtifactGroupType} from "../../ng2/utils/constants";
 import {FileUploadModel} from "../file-upload-model";
 import {ComponentMetadata} from "../component-metadata";
 import {ForwardingPath} from "app/models/forwarding-path";

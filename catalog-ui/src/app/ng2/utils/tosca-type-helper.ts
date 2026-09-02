@@ -19,7 +19,7 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {DerivedPropertyType} from "../models/properties-inputs/property-be-model";
+import {DerivedPropertyType} from "../../models/properties-inputs/property-be-model";
 import {PROPERTY_DATA, PROPERTY_TYPES} from "./constants";
 
 export class ToscaTypeHelper {

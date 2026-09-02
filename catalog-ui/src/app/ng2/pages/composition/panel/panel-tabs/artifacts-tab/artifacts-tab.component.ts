@@ -8,7 +8,7 @@ import { WorkspaceService } from 'app/ng2/pages/workspace/workspace.service';
 import { ResourceNamePipe } from 'app/ng2/pipes/resource-name.pipe';
 import { ComponentInstanceServiceNg2 } from 'app/ng2/services/component-instance-services/component-instance.service';
 import { TopologyTemplateService } from 'app/ng2/services/component-services/topology-template.service';
-import {ArtifactType} from 'app/utils/constants';
+import {ArtifactType} from 'app/ng2/utils/constants';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs/Observable';
 import { map } from 'rxjs/operators';

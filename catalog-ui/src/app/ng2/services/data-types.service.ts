@@ -33,7 +33,7 @@ import {InputModel} from '../../models/inputs';
 import {PropertyModel} from '../../models/properties';
 import {SchemaProperty} from '../../models/schema-property';
 import {SdcConfigToken} from "../config/sdc-config.config";
-import {PROPERTY_DATA} from "../../utils/constants";
+import {PROPERTY_DATA} from "../utils/constants";
 import {List} from "lodash";
 import {Observable} from "rxjs/Observable";
 

@@ -21,7 +21,7 @@
 
 import {Component, Input} from '@angular/core';
 import { UiElementBase, UiElementBaseInterface } from './../ui-element-base.component';
-import {PROPERTY_DATA} from "../../../../../utils/constants";
+import {PROPERTY_DATA} from "../../../../utils/constants";
 
 @Component({
     selector: 'ui-element-range-input',

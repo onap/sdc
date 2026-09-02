@@ -22,7 +22,7 @@
 
 import {Component, Inject, Injector, OnInit} from '@angular/core';
 import {SdcMenuToken, IAppMenu} from "../../config/sdc-menu.config";
-import {MenuItem, MenuItemGroup} from "../../../utils/menu-handler";
+import {MenuItem, MenuItemGroup} from "../../utils/menu-handler";
 import {CacheService} from "../../services/cache.service";
 import {DataTypeModel} from "../../../models/data-types";
 import {DataTypeService} from "../../services/data-type.service";

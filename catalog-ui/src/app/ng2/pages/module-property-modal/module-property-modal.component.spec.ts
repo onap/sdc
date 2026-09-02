@@ -19,7 +19,7 @@
  * ============LICENSE_END=========================================================
  */
 import {ModulePropertyModalComponent} from './module-property-modal.component';
-import {UNIQUE_GROUP_PROPERTIES_NAME} from 'app/utils/constants';
+import {UNIQUE_GROUP_PROPERTIES_NAME} from 'app/ng2/utils/constants';
 
 describe('ModulePropertyModalComponent', () => {
     let comp: ModulePropertyModalComponent;

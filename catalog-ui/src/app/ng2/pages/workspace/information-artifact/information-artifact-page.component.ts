@@ -1,7 +1,7 @@
 import {Component, OnInit, ViewChild} from "@angular/core";
 import {WorkspaceService} from "../workspace.service";
 import * as _ from "lodash";
-import {ArtifactGroupType, ArtifactType} from "../../../../utils/constants";
+import {ArtifactGroupType, ArtifactType} from "../../../utils/constants";
 import {ArtifactsService} from "../../../components/forms/artifacts-form/artifacts.service";
 import {GetArtifactsByTypeAction} from "../../../store/actions/artifacts.action";
 import {Select, Store} from "@ngxs/store";

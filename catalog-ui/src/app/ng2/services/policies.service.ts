@@ -25,7 +25,7 @@ import {PolicyInstance, PolicyTargetsRequest} from '../../models/graph/zones/pol
 import {IZoneInstanceAssignment} from "../../models/graph/zones/zone-instance";
 import {IZoneService} from "../../models/graph/zones/zone";
 import {TargetUiObject} from "../../models/ui-models/ui-target-object";
-import {TargetOrMemberType} from "../../utils/constants";
+import {TargetOrMemberType} from "../utils/constants";
 import { HttpClient } from "@angular/common/http";
 import * as _ from 'lodash';
 

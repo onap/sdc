@@ -23,7 +23,7 @@ import * as _ from 'lodash';
 import {AvailableIconsService} from 'app/ng2/services/available-icons.service';
 import {IMainCategory, ISubCategory} from 'app/models/category';
 import {Component} from 'app/models/components/component';
-import {ResourceType} from 'app/utils/constants';
+import {ResourceType} from 'app/ng2/utils/constants';
 
 /**
  * Angular replacement for the AngularJS IconsModalViewModel (view-models/modals/icons-modal/icons-modal-view.ts).

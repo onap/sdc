@@ -22,11 +22,11 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {PropertyBEModel} from "../../../../../models/properties-inputs/property-be-model";
 import {AbstractControl, FormControl, FormGroup, ValidationErrors, Validators} from "@angular/forms";
-import {PROPERTY_DATA} from "../../../../../utils/constants";
+import {PROPERTY_DATA} from "../../../../utils/constants";
 import {DataTypeService} from "../../../../services/data-type.service";
 import {DataTypeModel} from "../../../../../models/data-types";
 import {Subscription} from "rxjs";
-import {ToscaTypeHelper} from "../../../../../utils/tosca-type-helper";
+import {ToscaTypeHelper} from "../../../../utils/tosca-type-helper";
 import {SchemaProperty, SchemaPropertyGroupModel} from "../../../../../models/schema-property";
 
 @Component({

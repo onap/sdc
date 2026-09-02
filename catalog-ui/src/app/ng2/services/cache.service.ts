@@ -24,7 +24,7 @@ import {Injectable} from "@angular/core";
 // AuthenticationService, which imports this file. Through the barrel that cycle is closed and
 // AuthenticationService's design:paramtypes entry in DataTypeService reflects as undefined,
 // so the app throws "Can't resolve all parameters for DataTypeService" and never bootstraps.
-import {Dictionary} from "../../utils/dictionary/dictionary";
+import {Dictionary} from "../utils/dictionary";
 
 @Injectable()
 export class CacheService {

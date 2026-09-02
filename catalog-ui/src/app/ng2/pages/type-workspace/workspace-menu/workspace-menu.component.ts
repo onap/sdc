@@ -21,7 +21,7 @@
  */
 
 import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
-import {MenuItem, MenuItemGroup} from "../../../../utils/menu-handler";
+import {MenuItem, MenuItemGroup} from "../../../utils/menu-handler";
 import {CacheService} from "../../../services/cache.service";
 import {IAppMenu} from "../../../../models/app-config";
 import {IUserProperties} from "../../../../models/user";

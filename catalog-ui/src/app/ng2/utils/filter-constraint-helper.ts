@@ -19,7 +19,7 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {FilterConstraint} from "../models/filter-constraint";
+import {FilterConstraint} from "../../models/filter-constraint";
 import {ToscaFunctionHelper} from "./tosca-function-helper";
 
 export class FilterConstraintHelper {

@@ -19,7 +19,7 @@
  */
 import {Relationship, RelationshipModel} from '../../relationship';
 import {CommonCiLinkBase, ICommonCiLinkBase} from '../common-ci-link-base';
-import {GraphColors} from "../../../../utils/constants";
+import {GraphColors} from "../../../../ng2/utils/constants";
 
 export interface IModuleCiVlLink extends ICommonCiLinkBase {
 

@@ -28,7 +28,7 @@ import {UiElementInputComponent} from "../form-components/input/ui-element-input
 import {UiElementPopoverInputComponent} from "../form-components/popover-input/ui-element-popover-input.component";
 import {UiElementIntegerInputComponent} from "../form-components/integer-input/ui-element-integer-input.component";
 import {UiElementDropDownComponent, DropdownValue} from "../form-components/dropdown/ui-element-dropdown.component";
-import {PROPERTY_DATA, PROPERTY_TYPES} from "../../../../utils/constants";
+import {PROPERTY_DATA, PROPERTY_TYPES} from "../../../utils/constants";
 import {UiElementValidValuesInputComponent} from "../form-components/valid-values-input/ui-element-valid-values-input.component";
 import {UiElementRangeInputComponent} from "../form-components/range-input/ui-element-range-input.component";
 

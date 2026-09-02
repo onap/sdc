@@ -30,7 +30,7 @@ import {IModalButtonComponent} from 'onap-ui-angular/dist/common';
 import {ModalButtonComponent} from 'onap-ui-angular/dist/modals/modal-button.component';
 import {NotificationSettings} from 'onap-ui-angular/dist/notifications/utilities/notification.config';
 import {ModalComponent} from 'app/ng2/components/ui/modal/modal.component';
-import {ComponentType, ResourceType} from 'app/utils/constants';
+import {ComponentType, ResourceType} from 'app/ng2/utils/constants';
 import {ModalService} from 'app/ng2/services/modal.service';
 import {ArtifactModel} from 'app/models/artifacts';
 import {ButtonModel} from 'app/models/button';
@@ -53,7 +53,7 @@ import {PluginsService} from 'app/ng2/services/plugins.service';
 import {NavigationService} from 'app/ng2/services/navigation.service';
 import { InstanceFeDetails } from 'app/models/instance-fe-details';
 import {WorkspaceService} from 'app/ng2/pages/workspace/workspace.service';
-import {WorkspaceMode} from 'app/utils/constants';
+import {WorkspaceMode} from 'app/ng2/utils/constants';
 
 export class UIOperationModel extends OperationModel {
     isCollapsed: boolean = true;

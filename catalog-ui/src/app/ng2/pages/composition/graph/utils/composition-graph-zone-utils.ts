@@ -3,7 +3,7 @@ import {Point} from 'app/models/graph/point';
 import {PolicyInstance} from 'app/models/graph/zones/policy-instance';
 import {Zone} from 'app/models/graph/zones/zone';
 import {ZoneInstance, ZoneInstanceAssignmentType, ZoneInstanceType} from 'app/models/graph/zones/zone-instance';
-import {CanvasHandleTypes} from 'app/utils/constants';
+import {CanvasHandleTypes} from 'app/ng2/utils/constants';
 import * as $ from 'jquery';
 import {Observable} from "rxjs";
 import {GroupInstance} from "app/models/graph/zones/group-instance";

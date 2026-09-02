@@ -6,8 +6,8 @@ import * as _ from 'lodash';
 import { IDropDownOption } from 'onap-ui-angular/dist/form-elements/dropdown/dropdown-models';
 import { Subject } from 'rxjs/Subject';
 import {ArtifactModel} from '../../../../models/artifacts';
-import {ArtifactType, ComponentType} from '../../../../utils/constants';
-import { Dictionary } from '../../../../utils/dictionary/dictionary';
+import {ArtifactType, ComponentType} from '../../../utils/constants';
+import { Dictionary } from '../../../utils/dictionary';
 import { CacheService } from '../../../services/cache.service';
 import { ArtifactConfigService } from '../../../services/artifact-config.service';
 

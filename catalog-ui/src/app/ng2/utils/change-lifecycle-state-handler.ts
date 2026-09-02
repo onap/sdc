@@ -21,16 +21,16 @@ import { Inject, Injectable } from '@angular/core';
 import { ServiceServiceNg2 } from 'app/ng2/services/component-services/service.service';
 import { EventBusService } from 'app/ng2/services/event-bus.service';
 import { TranslateService } from 'app/ng2/shared/translator/translate.service';
-import {EVENTS} from 'app/utils/constants';
-import {ValidationUtils} from 'app/utils/validation-utils';
+import {EVENTS} from 'app/ng2/utils/constants';
+import {ValidationUtils} from 'app/ng2/utils/validation-utils';
 import { SdcUiCommon, SdcUiComponents, SdcUiServices } from 'onap-ui-angular';
-import {IAppMenu} from '../models/app-config';
-import {Component} from '../models/components/component';
-import {Service} from '../models/components/service';
-import { AsdcComment } from '../models/comments';
-import { CommentModalComponent } from '../ng2/components/modals/comment-modal/comment-modal.component';
-import { SdcMenuToken } from '../ng2/config/sdc-menu.config';
-import { EventListenerService } from '../ng2/services/event-listener.service';
+import {IAppMenu} from '../../models/app-config';
+import {Component} from '../../models/components/component';
+import {Service} from '../../models/components/service';
+import { AsdcComment } from '../../models/comments';
+import { CommentModalComponent } from '../components/modals/comment-modal/comment-modal.component';
+import { SdcMenuToken } from '../config/sdc-menu.config';
+import { EventListenerService } from '../services/event-listener.service';
 import { ComponentFactory } from './component-factory';
 
 @Injectable()

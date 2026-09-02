@@ -18,7 +18,7 @@ import { ComponentInstanceServiceNg2 } from "app/ng2/services/component-instance
 import { DropdownValue } from 'app/ng2/components/ui/form-components/dropdown/ui-element-dropdown.component';
 import { ComponentGenericResponse } from 'app/ng2/services/responses/component-generic-response';
 import { TranslateService } from 'app/ng2/shared/translator/translate.service';
-import {ModalsHandler} from 'app/utils/modals-handler';
+import {ModalsHandler} from 'app/ng2/utils/modals-handler';
 import { SdcUiCommon, SdcUiComponents, SdcUiServices } from 'onap-ui-angular';
 import {SelectedComponentType, TogglePanelLoadingAction} from "../../../common/store/graph.actions";
 

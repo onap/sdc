@@ -29,10 +29,10 @@ import {Plugin, PluginsConfiguration} from 'app/models/plugins-config';
 import {IUserProperties} from 'app/models/user';
 // Deep-imported rather than taken from the `app/utils` barrel — see the comment on that barrel:
 // re-exporting the now-@Injectable handler closed a runtime import cycle through app/models.
-import {ChangeLifecycleStateHandler} from 'app/utils/change-lifecycle-state-handler';
-import {ComponentFactory} from 'app/utils/component-factory';
-import {CHANGE_COMPONENT_CSAR_VERSION_FLAG, ComponentState, EVENTS, ResourceType, Role, States, WorkspaceMode} from 'app/utils/constants';
-import {MenuHandler, MenuItem, MenuItemGroup} from 'app/utils/menu-handler';
+import {ChangeLifecycleStateHandler} from 'app/ng2/utils/change-lifecycle-state-handler';
+import {ComponentFactory} from 'app/ng2/utils/component-factory';
+import {CHANGE_COMPONENT_CSAR_VERSION_FLAG, ComponentState, EVENTS, ResourceType, Role, States, WorkspaceMode} from 'app/ng2/utils/constants';
+import {MenuHandler, MenuItem, MenuItemGroup} from 'app/ng2/utils/menu-handler';
 import {EventListenerService} from 'app/ng2/services/event-listener.service';
 import {ProgressService} from 'app/ng2/services/progress.service';
 import {CacheService} from 'app/ng2/services/cache.service';

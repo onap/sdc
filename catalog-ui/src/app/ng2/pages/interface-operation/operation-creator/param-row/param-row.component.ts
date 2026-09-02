@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {PROPERTY_DATA} from 'app/utils/constants';
+import {PROPERTY_DATA} from 'app/ng2/utils/constants';
 import {DataTypeService} from "app/ng2/services/data-type.service";
 import {Capability} from 'app/models/capability';
 import {DataTypeModel} from 'app/models/data-types';

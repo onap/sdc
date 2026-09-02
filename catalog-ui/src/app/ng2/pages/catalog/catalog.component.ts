@@ -32,7 +32,7 @@ import {ICategoryBase, IMainCategory, ISubCategory} from 'app/models/category';
 import {Component} from 'app/models/components/component';
 import { ResourceNamePipe } from "../../pipes/resource-name.pipe";
 import { EntityFilterPipe, IEntityFilterObject, ISearchFilter} from "../../pipes/entity-filter.pipe";
-import {DEFAULT_MODEL_NAME, States} from "app/utils/constants";
+import {DEFAULT_MODEL_NAME, States} from "app/ng2/utils/constants";
 import {DataTypeCatalogComponent} from "../../../models/data-type-catalog-component";
 
 interface Gui {

@@ -23,12 +23,12 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {DataTypeModel} from '../../../../../../../models/data-types';
 import {SchemaProperty, SchemaPropertyGroupModel} from '../../../../../../../models/schema-property';
 import {PropertyBEModel} from '../../../../../../../models/properties-inputs/property-be-model';
-import {PROPERTY_DATA, PROPERTY_TYPES} from '../../../../../../../utils/constants';
+import {PROPERTY_DATA, PROPERTY_TYPES} from '../../../../../../utils/constants';
 import {ToscaFunction} from '../../../../../../../models/tosca-function';
 import {ToscaFunctionType} from "../../../../../../../models/tosca-function-type.enum";
 import {ToscaFunctionValidationEvent} from "../../../../../properties-assignment/tosca-function/tosca-function.component";
 import {InstanceFeDetails} from "../../../../../../../models/instance-fe-details";
-import {ToscaTypeHelper} from "app/utils/tosca-type-helper";
+import {ToscaTypeHelper} from "app/ng2/utils/tosca-type-helper";
 import {CustomToscaFunction} from "../../../../../../../models/default-custom-functions";
 import {SubPropertyToscaFunction} from "../../../../../../../models/sub-property-tosca-function";
 

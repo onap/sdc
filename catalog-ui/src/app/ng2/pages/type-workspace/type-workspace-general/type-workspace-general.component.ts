@@ -23,9 +23,9 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {DataTypeModel} from "../../../../models/data-types";
-import {DEFAULT_MODEL_NAME} from "app/utils/constants";
+import {DEFAULT_MODEL_NAME} from "app/ng2/utils/constants";
 import {TypeWorkspaceService} from "../type-workspace.service";
-import {ServiceDataTypeReader} from "../../../../utils/service-data-type-reader";
+import {ServiceDataTypeReader} from "../../../utils/service-data-type-reader";
 import {TranslateService} from "../../../shared/translator/translate.service";
 import {SdcUiServices} from "onap-ui-angular/dist";
 import {ModelService} from "../../../services/model.service";

@@ -20,7 +20,7 @@
 
 import {ComponentInstance} from "../../../componentsInstances/componentInstance";
 import {CommonCINodeBase} from "../common-ci-node-base";
-import {GraphUIObjects, ImagesUrl} from 'app/utils/constants';
+import {GraphUIObjects, ImagesUrl} from 'app/ng2/utils/constants';
 import {getSdcConfig} from "app/ng2/config/sdc-config.config.factory";
 import {ResourceNamePipe} from "app/ng2/pipes/resource-name.pipe";
 import {ComponentInstanceNodesStyle} from "app/ng2/pages/composition/graph/common/style/component-instances-nodes-style";

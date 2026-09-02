@@ -24,7 +24,7 @@
  */
 'use strict';
 import {Injectable} from "@angular/core";
-import {ComponentType} from "../../utils/constants";
+import {ComponentType} from "../utils/constants";
 
 interface IAvailableIconsService {
     getIcons(componentType:ComponentType):Array<string>;

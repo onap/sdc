@@ -32,7 +32,7 @@ import {Tab, Tabs} from "../../components/ui/tabs/tabs.component";
 import * as _ from 'lodash';
 import {OutputFEModel} from "../../../models/attributes-outputs/output-fe-model";
 import {OutputBEModel} from "../../../models/attributes-outputs/output-be-model";
-import {EVENTS, ResourceType, WorkspaceMode} from "../../../utils/constants";
+import {EVENTS, ResourceType, WorkspaceMode} from "../../utils/constants";
 import {ComponentModeService} from "../../services/component-services/component-mode.service";
 import {EventListenerService} from 'app/ng2/services/event-listener.service';
 import {HierarchyNavService} from "./services/hierarchy-nav.service";

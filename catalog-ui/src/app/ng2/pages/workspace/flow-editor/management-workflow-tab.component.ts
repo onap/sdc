@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject} from '@angular/core';
-import {ArtifactType} from 'app/utils/constants';
+import {ArtifactType} from 'app/ng2/utils/constants';
 import {CacheService} from 'app/ng2/services/cache.service';
 import {ComponentServiceNg2} from 'app/ng2/services/component-services/component.service';
 import {ComponentGenericResponse} from 'app/ng2/services/responses/component-generic-response';

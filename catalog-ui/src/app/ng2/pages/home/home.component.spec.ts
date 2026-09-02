@@ -13,9 +13,9 @@ import {CacheService} from '../../services/cache.service';
 import {ResourceServiceNg2} from '../../services/component-services/resource.service';
 import {HomeService} from '../../services/home.service';
 import {ModalService} from '../../services/modal.service';
-import {ModalsHandler} from '../../../utils/modals-handler';
+import {ModalsHandler} from '../../utils/modals-handler';
 import {SdcUiServices} from "onap-ui-angular";
-import {ComponentType, ResourceType} from "../../../utils/constants";
+import {ComponentType, ResourceType} from "../../utils/constants";
 import {HomeFilter} from "../../../models/home-filter";
 import {NavigationService} from "../../services/navigation.service";
 

@@ -39,7 +39,7 @@ import {PluginsService} from 'app/ng2/services/plugins.service';
 import {WorkflowServiceNg2} from 'app/ng2/services/workflow.service';
 import {NavigationService} from 'app/ng2/services/navigation.service';
 import {WorkspaceService} from 'app/ng2/pages/workspace/workspace.service';
-import {WorkspaceMode} from 'app/utils/constants';
+import {WorkspaceMode} from 'app/ng2/utils/constants';
 
 import {
     OperationCreatorComponent,

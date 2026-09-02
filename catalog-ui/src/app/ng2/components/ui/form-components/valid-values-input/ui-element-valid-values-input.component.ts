@@ -22,7 +22,7 @@
 import {Component, Output, EventEmitter} from '@angular/core';
 import { UiElementBase, UiElementBaseInterface } from './../ui-element-base.component';
 import {ConstraintTypes} from "../../../../pages/properties-assignment/constraints/constraints.component";
-import {PROPERTY_DATA, PROPERTY_TYPES} from "../../../../../utils/constants";
+import {PROPERTY_DATA, PROPERTY_TYPES} from "../../../../utils/constants";
 
 @Component({
     selector: 'ui-element-valid-values-input',

@@ -39,8 +39,8 @@ import {RequirementsGroup} from '../requirement';
 import {IValidate} from '../validate';
 
 import {IComponentService} from "../../ng2/services/legacy/component.service";
-import {CommonUtils} from "../../utils/common-utils";
-import {ArtifactGroupType} from "../../utils/constants";
+import {CommonUtils} from "../../ng2/utils/common-utils";
+import {ArtifactGroupType} from "../../ng2/utils/constants";
 import {ComponentMetadata} from "../component-metadata";
 import { PolicyInstance } from "app/models/graph/zones/policy-instance";
 import { GroupInstance } from "../graph/zones/group-instance";

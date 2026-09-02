@@ -23,7 +23,7 @@ import {Component, Input, Output, EventEmitter, ViewChild, ComponentRef} from "@
 import {DerivedFEProperty} from 'app/models/properties-inputs/derived-fe-property';
 import {DerivedPropertyType} from 'app/models/properties-inputs/property-be-model';
 import {PropertyFEModel} from 'app/models/properties-inputs/property-fe-model';
-import {PROPERTY_TYPES} from 'app/utils/constants';
+import {PROPERTY_TYPES} from 'app/ng2/utils/constants';
 import { DataTypeService } from "../../../../services/data-type.service";
 import { trigger, style, transition, animate } from '@angular/animations';
 import {PropertiesUtils} from "../../../../pages/properties-assignment/services/properties.utils";

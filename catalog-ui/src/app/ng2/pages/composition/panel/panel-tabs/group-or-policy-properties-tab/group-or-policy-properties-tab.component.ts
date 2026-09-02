@@ -23,7 +23,7 @@ import { Component, Inject, Input} from "@angular/core";
 import { TranslateService } from './../../../../../shared/translator/translate.service';
 import { PolicyInstance } from 'app/models/graph/zones/policy-instance';
 import { PropertyModel } from './../../../../../../models/properties';
-import {ModalsHandler} from 'app/utils/modals-handler';
+import {ModalsHandler} from 'app/ng2/utils/modals-handler';
 import {Component as TopologyTemplate} from 'app/models/components/component';
 import {GroupInstance} from 'app/models/graph/zones/group-instance';
 

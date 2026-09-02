@@ -28,7 +28,7 @@ import {InstanceBePropertiesMap, InstanceFePropertiesMap} from 'app/models/prope
 import {PropertyFEModel} from 'app/models/properties-inputs/property-fe-model';
 import {DataTypeService} from "app/ng2/services/data-type.service";
 import {PropertiesService} from "app/ng2/services/properties.service";
-import {PROPERTY_TYPES} from 'app/utils/constants';
+import {PROPERTY_TYPES} from 'app/ng2/utils/constants';
 import { SubPropertyToscaFunction } from "app/models/sub-property-tosca-function";
 
 @Injectable()

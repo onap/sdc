@@ -20,7 +20,7 @@
 
 import {CompositionCiLinkBase} from "./composition-ci-link-base";
 import {RelationshipModel, Relationship} from "../../relationship";
-import {GraphColors} from "../../../../utils/constants";
+import {GraphColors} from "../../../../ng2/utils/constants";
 
 export class CompositionCiVLink extends CompositionCiLinkBase {
 

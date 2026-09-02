@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 import {OnboardVendorPageComponent} from './onboard-vendor.component';
-import {MenuItemGroup} from 'app/utils/menu-handler';
+import {MenuItemGroup} from 'app/ng2/utils/menu-handler';
 
 function makeRegistry() {
     return {

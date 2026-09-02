@@ -21,7 +21,7 @@ import * as _ from "lodash";
 import {ComponentInstance} from "../../../componentsInstances/componentInstance";
 import {ImageCreatorService} from "app/ng2/pages/composition/graph/common/image-creator.service";
 import {CompositionCiNodeBase} from "./composition-ci-node-base";
-import { ImagesUrl, GraphUIObjects} from "../../../../utils/constants";
+import { ImagesUrl, GraphUIObjects} from "../../../../ng2/utils/constants";
 
 export class CompositionCiNodeVl extends CompositionCiNodeBase {
     private toolTipText:string;

@@ -23,8 +23,8 @@ import {ComponentInstance} from 'app/models/componentsInstances/componentInstanc
 import {CompositionCiLinkBase} from 'app/models/graph/graph-links/composition-graph-links/composition-ci-link-base';
 import {Match} from 'app/models/graph/match-relation';
 import {CompositionCiNodeUcpeCp} from 'app/models/graph/nodes/composition-graph-nodes/composition-ci-node-ucpe-cp';
-import {GraphUIObjects} from 'app/utils/constants';
-import {Dictionary} from 'app/utils/dictionary/dictionary';
+import {GraphUIObjects} from 'app/ng2/utils/constants';
+import {Dictionary} from 'app/ng2/utils/dictionary';
 import {MatchCapabilitiesRequirementsUtils} from "./match-capability-requirement-utils";
 import {CommonGraphUtils} from "../common/common-graph-utils";
 import {Injectable} from "@angular/core";

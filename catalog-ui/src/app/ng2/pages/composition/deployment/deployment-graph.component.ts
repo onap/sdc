@@ -10,7 +10,7 @@ import {ISdcConfig, SdcConfigToken} from "../../../config/sdc-config.config";
 import {Module} from "../../../../models/modules/base-module";
 import {ComponentInstance} from "../../../../models/componentsInstances/componentInstance";
 import {ComponentGenericResponse} from "../../../services/responses/component-generic-response";
-import {ComponentInstanceFactory} from "../../../../utils/component-instance-factory";
+import {ComponentInstanceFactory} from "../../../utils/component-instance-factory";
 import {ModulesNodesStyle} from "../graph/common/style/module-node-style";
 import {ComponentInstanceNodesStyle} from "../graph/common/style/component-instances-nodes-style";
 import {CompositionGraphLinkUtils} from "../graph/utils/composition-graph-links-utils";

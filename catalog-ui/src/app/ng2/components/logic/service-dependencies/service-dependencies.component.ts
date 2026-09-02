@@ -34,7 +34,7 @@ import {ToscaFilterConstraintType} from "../../../../models/tosca-filter-constra
 import {CompositionService} from "../../../pages/composition/composition.service";
 import {FilterConstraint} from "app/models/filter-constraint";
 import {PropertyFilterConstraintUi} from "../../../../models/ui-models/property-filter-constraint-ui";
-import {ConstraintOperatorType, FilterConstraintHelper} from "../../../../utils/filter-constraint-helper";
+import {ConstraintOperatorType, FilterConstraintHelper} from "../../../utils/filter-constraint-helper";
 import {CustomToscaFunction} from "../../../../models/default-custom-functions";
 
 export enum SourceType {

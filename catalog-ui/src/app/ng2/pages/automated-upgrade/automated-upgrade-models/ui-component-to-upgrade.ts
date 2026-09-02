@@ -1,4 +1,4 @@
-import {ComponentState} from "../../../../utils/constants";
+import {ComponentState} from "../../../utils/constants";
 import {IDependenciesServerResponse} from "../../../services/responses/dependencies-server-response";
 import {UiBaseObject} from "../../../../models/ui-models/ui-base-object";
 

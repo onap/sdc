@@ -10,7 +10,7 @@ import { ComponentInstanceServiceNg2 } from '../../../../../services/component-i
 import { TopologyTemplateService } from '../../../../../services/component-services/topology-template.service';
 import { ArtifactsService } from '../../../../../components/forms/artifacts-form/artifacts.service';
 import { ArtifactModel } from '../../../../../../models/artifacts';
-import { ArtifactType } from '../../../../../../utils/constants';
+import { ArtifactType } from '../../../../../utils/constants';
 import { FullComponentInstance } from '../../../../../../models/componentsInstances/fullComponentInstance';
 import { ComponentInstance } from '../../../../../../models/componentsInstances/componentInstance';
 import { Component } from '../../../../../../models/components/component';

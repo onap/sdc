@@ -22,9 +22,9 @@ import {HttpClientTestingModule, HttpTestingController} from '@angular/common/ht
 import {TestBed} from '@angular/core/testing';
 import {LeftPaletteLoaderService} from './composition-left-palette.service';
 import {SdcConfigToken} from '../config/sdc-config.config';
-import {ComponentFactory} from '../../utils/component-factory';
+import {ComponentFactory} from '../utils/component-factory';
 import {EventListenerService} from './event-listener.service';
-import {ComponentType} from '../../utils/constants';
+import {ComponentType} from '../utils/constants';
 
 const sdcConfig = {
     api: {

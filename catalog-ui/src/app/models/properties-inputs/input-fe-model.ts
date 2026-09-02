@@ -21,7 +21,7 @@
 import * as _ from "lodash";
 import { SchemaPropertyGroupModel, SchemaProperty } from "../schema-property";
 import {PropertyFEModel} from './property-fe-model';
-import {PROPERTY_DATA} from "../../utils/constants";
+import {PROPERTY_DATA} from "../../ng2/utils/constants";
 import {InputBEModel} from "./input-be-model";
 import {DerivedPropertyType} from "./property-be-model";
 import { Metadata } from "app/models/metadata";

@@ -5,7 +5,7 @@ import { Action, Selector, State, StateContext } from '@ngxs/store';
 import * as _ from 'lodash';
 import { tap } from 'rxjs/operators';
 import { ArtifactModel } from '../../../models/artifacts';
-import { ArtifactGroupType } from '../../../utils/constants';
+import { ArtifactGroupType } from '../../utils/constants';
 import { TopologyTemplateService } from '../../services/component-services/topology-template.service';
 import { ComponentGenericResponse } from '../../services/responses/component-generic-response';
 import { ServiceGenericResponse } from '../../services/responses/service-generic-response';

@@ -2,7 +2,7 @@ import { Store } from '@ngxs/store';
 import { Observable } from 'rxjs/Rx';
 import { Mock } from 'ts-mockery';
 import { ArtifactModel } from '../../../models/artifacts';
-import { ArtifactGroupType } from '../../../utils/constants';
+import { ArtifactGroupType } from '../../utils/constants';
 import { ComponentInstanceServiceNg2 } from '../../services/component-instance-services/component-instance.service';
 import { GetInstanceArtifactsByTypeAction, UpdateInstanceArtifactAction } from '../actions/instance-artifacts.actions';
 import { InstanceArtifactsState } from './instance-artifacts.state';

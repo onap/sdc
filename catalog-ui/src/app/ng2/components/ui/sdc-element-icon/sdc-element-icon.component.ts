@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from "@angular/core";
-import {ComponentType, SdcElementType, ResourceType} from "../../../../utils/constants";
+import {ComponentType, SdcElementType, ResourceType} from "../../../utils/constants";
 
 
 export class ElementIcon {

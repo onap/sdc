@@ -22,7 +22,7 @@
  */
 'use strict';
 import * as _ from "lodash";
-import {Dictionary} from "../../utils/dictionary/dictionary";
+import {Dictionary} from "../utils/dictionary";
 import {Injectable} from "@angular/core";
 
 

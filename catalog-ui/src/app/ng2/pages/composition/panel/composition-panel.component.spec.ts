@@ -8,7 +8,7 @@ import { Service } from '../../../../models/components/service';
 import { Resource } from '../../../../models/components/resource';
 import { GroupInstance } from '../../../../models/graph/zones/group-instance';
 import { PolicyInstance } from '../../../../models/graph/zones/policy-instance';
-import { ArtifactGroupType } from '../../../../utils/constants';
+import { ArtifactGroupType } from '../../../utils/constants';
 import { WorkspaceState } from '../../../store/states/workspace.state';
 import { CompositionPanelComponent } from './composition-panel.component';
 import { ArtifactsTabComponent } from './panel-tabs/artifacts-tab/artifacts-tab.component';

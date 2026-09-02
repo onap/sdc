@@ -21,7 +21,7 @@
 
 import {Injectable} from '@angular/core';
 import {DataTypeModel} from '../../../models/data-types';
-import {MenuItemGroup} from '../../../utils/menu-handler';
+import {MenuItemGroup} from '../../utils/menu-handler';
 
 /**
  * The shared state the three type-workspace components used to exchange through the inherited

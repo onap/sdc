@@ -19,9 +19,9 @@
  */
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {PropertyModel} from 'app/models/properties';
-import {ModalsHandler} from 'app/utils/modals-handler';
+import {ModalsHandler} from 'app/ng2/utils/modals-handler';
 import {SdcUiCommon, SdcUiComponents, SdcUiServices} from 'onap-ui-angular';
-import {WorkspaceMode} from 'app/utils/constants';
+import {WorkspaceMode} from 'app/ng2/utils/constants';
 import {TranslateService} from 'app/ng2/shared/translator/translate.service';
 import {ComponentServiceNg2} from 'app/ng2/services/component-services/component.service';
 import {ComponentGenericResponse} from 'app/ng2/services/responses/component-generic-response';
