@@ -31,14 +31,14 @@ import {ComponentType} from 'app/utils/constants';
 import {Component} from "app/models/components/component";
 import {ComponentGenericResponse} from "app/services/responses/component-generic-response";
 import {COMPONENT_FIELDS, SERVICE_FIELDS} from "app/utils/constants";
-import {ComponentServiceNg2} from "./component.service";
+import {ComponentService} from "./component.service";
 import {ServicePathMapItem} from "app/models/graph/nodes-and-links-map";
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { OperationModel } from '../../models/operation';
 import { ConsumptionInput } from '../../components/logic/service-consumption/service-consumption.component';
 
 @Injectable()
-export class ServiceServiceNg2 extends ComponentServiceNg2 {
+export class ServiceService extends ComponentService {
 
     protected baseUrl = "";
 

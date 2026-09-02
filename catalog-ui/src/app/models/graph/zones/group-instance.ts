@@ -1,7 +1,7 @@
 import {PropertyModel} from 'app/models/properties';
 import {CommonUtils} from 'app/utils/common-utils';
 import {IZoneInstanceAssignment} from "./zone-instance";
-import {ComponentInstance} from "../../componentsInstances/componentInstance";
+import {ComponentInstance} from "../../components-instances/component-instance";
 import {MemberUiObject} from "../../ui-models/ui-member-object";
 import * as _ from "lodash";
 

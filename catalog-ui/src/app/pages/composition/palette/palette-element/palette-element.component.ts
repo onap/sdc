@@ -22,7 +22,7 @@
  */
 
 import {Component, Input} from "@angular/core";
-import {LeftPaletteComponent} from "app/models/components/displayComponent";
+import {LeftPaletteComponent} from "app/models/components/display-component";
 
 @Component({
     selector: 'palette-element',

@@ -2,7 +2,7 @@ import { SdcUiComponents, SdcUiCommon, SdcUiServices } from "onap-ui-angular";
 import { Injectable, ComponentRef } from "@angular/core";
 import { AutomatedUpgradeComponent } from "./automated-upgrade.component";
 import { Component } from "../../models/components/component";
-import { ComponentServiceNg2 } from "../../services/component-services/component.service";
+import { ComponentService } from "../../services/component-services/component.service";
 import { GeneralStatus, ComponentType } from "../../utils/constants";
 import { IDependenciesServerResponse } from "../../services/responses/dependencies-server-response";
 import { AutomatedUpgradeStatusComponent } from "./automated-upgrade-status/automated-upgrade-status.component";
@@ -29,7 +29,7 @@ export class AutomatedUpgradeService {
     private modalInstance: ComponentRef<SdcUiComponents.ModalComponent>;
 
     constructor(private modalService:SdcUiServices.ModalService,
-                private componentService:ComponentServiceNg2,
+                private componentService:ComponentService,
                 private translateService:TranslateService) {
     }
 

@@ -19,28 +19,28 @@
  */
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {TestBed} from '@angular/core/testing';
-import {ComponentService} from './component.service';
+import {LegacyComponentService} from './component.service';
 import {SdcConfigToken} from '../../config/sdc-config.config';
 import {SharingService} from '../sharing.service';
 import {DataTypesService} from '../data-types.service';
 
 const sdcConfig = {api: {root: 'http://localhost/', component_api_root: 'v1/catalog/'}} as any;
 
-describe('ComponentService', () => {
-    let service: ComponentService;
+describe('LegacyComponentService', () => {
+    let service: LegacyComponentService;
     let httpMock: HttpTestingController;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [HttpClientTestingModule],
             providers: [
-                ComponentService,
+                LegacyComponentService,
                 {provide: SdcConfigToken, useValue: sdcConfig},
                 {provide: SharingService, useValue: {addUuidValue: () => {}}},
                 {provide: DataTypesService, useValue: {loadDataTypesCache: () => {}}},
             ],
         });
-        service = TestBed.get(ComponentService);
+        service = TestBed.get(LegacyComponentService);
         httpMock = TestBed.get(HttpTestingController);
     });
     afterEach(() => httpMock.verify());

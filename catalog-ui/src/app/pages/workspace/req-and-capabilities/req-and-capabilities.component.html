@@ -12,7 +12,7 @@
     </div>
     <sdc-tabs (selectedTab)="selectTab($event)" [tabStyle]="'sdc-table-tab'">
         <sdc-tab [title]="'Requirements('+(requirements.length||'0')+')'" [active]="true" [testId]="'req-tab'">
-            <div #requirmentsContainer></div>
+            <div #requirementsContainer></div>
         </sdc-tab>
         <sdc-tab [title]="'Capabilities('+(capabilities.length||'0')+')'" [active]="false" [testId]="'cap-tab'">
             <div #capabilitiesContainer></div>      

@@ -19,35 +19,35 @@
  */
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {TestBed} from '@angular/core/testing';
-import {ServiceService} from './service.service';
-import {ComponentService} from './component.service';
+import {LegacyServiceService} from './service.service';
+import {LegacyComponentService} from './component.service';
 import {SdcConfigToken} from '../../config/sdc-config.config';
 import {SharingService} from '../sharing.service';
 import {DataTypesService} from '../data-types.service';
 
 const sdcConfig = {api: {root: 'http://localhost/', component_api_root: 'v1/catalog/'}} as any;
 
-describe('ServiceService', () => {
-    let service: ServiceService;
+describe('LegacyServiceService', () => {
+    let service: LegacyServiceService;
     let httpMock: HttpTestingController;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [HttpClientTestingModule],
             providers: [
-                ServiceService,
-                ComponentService,
+                LegacyServiceService,
+                LegacyComponentService,
                 {provide: SdcConfigToken, useValue: sdcConfig},
                 {provide: SharingService, useValue: {addUuidValue: () => {}}},
                 {provide: DataTypesService, useValue: {loadDataTypesCache: () => {}}},
             ],
         });
-        service = TestBed.get(ServiceService);
+        service = TestBed.get(LegacyServiceService);
         httpMock = TestBed.get(HttpTestingController);
     });
     afterEach(() => httpMock.verify());
 
-    // Regression guard (failure-catalog §SS): ServiceService is held as an enumerable field by
+    // Regression guard (failure-catalog §SS): LegacyServiceService is held as an enumerable field by
     // Service model instances, whose toJSON() deep-copies itself. If any injected Angular dep were
     // an ENUMERABLE own property, the copy would traverse its whole object graph into the request
     // body. All three injected deps MUST be non-enumerable.
@@ -93,7 +93,7 @@ describe('ServiceService', () => {
         httpMock.expectOne('http://localhost/v1/catalog/services/svc1').flush({uniqueId: 'svc1'});
     });
 
-    it('createComponentObject is defined as an overriding method on ServiceService', () => {
+    it('createComponentObject is defined as an overriding method on LegacyServiceService', () => {
         // We verify the method override is present; full end-to-end coverage comes from Selenium.
         expect(service.createComponentObject).toBeDefined();
         expect(Object.prototype.hasOwnProperty.call(service, 'createComponentObject')).toBe(true);

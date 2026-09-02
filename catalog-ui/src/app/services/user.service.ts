@@ -24,7 +24,7 @@ import { IUserProperties } from "../models/user";
 
 import {SdcConfigToken, ISdcConfig} from "../config/sdc-config.config";
 import { HttpClient } from "@angular/common/http";
-import { HttpHelperService } from "./http-hepler.service";
+import { HttpHelperService } from "./http-helper.service";
 /**
  * User Service provides CRUD for Users. See authentication service for authentication/login.
  */

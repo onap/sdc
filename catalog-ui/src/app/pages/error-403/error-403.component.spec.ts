@@ -21,7 +21,7 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {Error403PageComponent} from './error-403.component';
-import {CookieService} from 'app/services/legacy/cookie.service';
+import {LegacyCookieService} from 'app/services/legacy/cookie.service';
 import {TranslateModule} from 'app/shared/translator/translate.module';
 import {TranslateServiceConfigToken} from 'app/shared/translator/translate.service.config';
 
@@ -32,7 +32,7 @@ const mockTranslateConfig = {
     defaultLanguage: 'en_US'
 };
 
-const mockCookieService: Partial<CookieService> = {
+const mockCookieService: Partial<LegacyCookieService> = {
     getFirstName: jest.fn(() => 'Jane'),
     getLastName: jest.fn(() => 'Doe'),
     getUserId: jest.fn(() => 'jd123')
@@ -46,7 +46,7 @@ describe('Error403PageComponent', () => {
 
     describe('mailto computation (unit)', () => {
         it('ngOnInit builds mailto from cookie data', () => {
-            const comp = new Error403PageComponent(mockCookieService as CookieService);
+            const comp = new Error403PageComponent(mockCookieService as LegacyCookieService);
             comp.ngOnInit();
             const expectedSubject = encodeURIComponent('SDC Access Request for Jane Doe (jd123)');
             expect(comp.mailto).toBe('dl-asdcaccessrequest@att.com?subject=' + expectedSubject);
@@ -67,7 +67,7 @@ describe('Error403PageComponent', () => {
                 imports: [TranslateModule, HttpClientTestingModule],
                 declarations: [Error403PageComponent],
                 providers: [
-                    {provide: CookieService, useValue: mockCookieService},
+                    {provide: LegacyCookieService, useValue: mockCookieService},
                     {provide: TranslateServiceConfigToken, useValue: mockTranslateConfig}
                 ]
             }).compileComponents();

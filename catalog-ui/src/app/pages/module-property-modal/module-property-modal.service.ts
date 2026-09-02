@@ -26,7 +26,7 @@ import {Component} from 'app/models/components/component';
 import {DisplayModule} from 'app/models/modules/base-module';
 import {PropertyModel} from 'app/models/properties';
 import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
-import {ComponentInstanceServiceNg2} from 'app/services/component-instance-services/component-instance.service';
+import {ComponentInstanceService} from 'app/services/component-instance-services/component-instance.service';
 
 /**
  * BE-call routing for the module/group property modal, ported from the AngularJS
@@ -39,7 +39,7 @@ import {ComponentInstanceServiceNg2} from 'app/services/component-instance-servi
 @Injectable()
 export class ModulePropertyModalService {
 
-    constructor(private componentInstanceService: ComponentInstanceServiceNg2) {
+    constructor(private componentInstanceService: ComponentInstanceService) {
     }
 
     public save(component: Component, selectedModule: DisplayModule, property: PropertyModel): Observable<Array<PropertyBEModel>> {

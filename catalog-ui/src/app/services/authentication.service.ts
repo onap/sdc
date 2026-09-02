@@ -20,7 +20,7 @@
 
 import {Injectable, Inject} from '@angular/core';
 import {IAppConfigurtaion, ICookie} from "../models/app-config";
-import {Cookie2Service} from "./cookie.service";
+import {CookieService} from "./cookie.service";
 import { Observable } from 'rxjs/Observable';
 import {SdcConfigToken, ISdcConfig} from "../config/sdc-config.config";
 import {IUserProperties} from 'app/models/user';
@@ -32,7 +32,7 @@ export class AuthenticationService {
 
     private _loggedinUser:IUserProperties;
 
-    constructor(private cookieService:Cookie2Service, private http: HttpClient, @Inject(SdcConfigToken) private sdcConfig:ISdcConfig, private cacheService: CacheService) {
+    constructor(private cookieService:CookieService, private http: HttpClient, @Inject(SdcConfigToken) private sdcConfig:ISdcConfig, private cacheService: CacheService) {
         this.cookieService = cookieService;
     }
 

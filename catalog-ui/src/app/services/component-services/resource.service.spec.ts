@@ -19,11 +19,11 @@
 
 import {inject, TestBed} from '@angular/core/testing';
 
-import {ResourceServiceNg2} from "./resource.service";
+import {ResourceService} from "./resource.service";
 import {HttpClient} from "@angular/common/http";
 import {ISdcConfig, SdcConfigToken} from "../../config/sdc-config.config";
 
-describe('ResourceServiceNg2', () => {
+describe('ResourceService', () => {
   beforeEach(() => {
     const sdcConfigToken: Partial<ISdcConfig> = {
       'api': {
@@ -35,14 +35,14 @@ describe('ResourceServiceNg2', () => {
       get: jest.fn()
     };
     TestBed.configureTestingModule({
-      providers: [ResourceServiceNg2,
+      providers: [ResourceService,
         {provide: SdcConfigToken, useValue: sdcConfigToken},
         {provide: HttpClient, useValue: httpServiceMock}
       ]
     });
   });
 
-  it('should be created', inject([ResourceServiceNg2], (service: ResourceServiceNg2) => {
+  it('should be created', inject([ResourceService], (service: ResourceService) => {
     expect(service).toBeTruthy();
   }));
 });

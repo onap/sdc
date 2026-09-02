@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {ServiceServiceNg2} from "app/services/component-services/service.service";
+import {ServiceService} from "app/services/component-services/service.service";
 import {CapabilityTypeModel} from 'app/models/capability-types';
 import {NodeTypeModel} from 'app/models/node-types';
 import {RelationshipTypeModel} from 'app/models/relationship-types';
@@ -11,7 +11,7 @@ import {DropdownValue} from "app/components/ui/form-components/dropdown/ui-eleme
     selector: 'requirements-editor',
     templateUrl: 'requirements-editor.component.html',
     styleUrls: ['requirements-editor.component.less'],
-    providers: [ServiceServiceNg2, TranslateService]
+    providers: [ServiceService, TranslateService]
 })
 
 export class RequirementsEditorComponent {

@@ -20,7 +20,7 @@
 import {Component, Input} from '@angular/core';
 import {Store} from '@ngxs/store';
 import {Component as TopologyTemplate} from 'app/models/components/component';
-import {FullComponentInstance} from 'app/models/componentsInstances/fullComponentInstance';
+import {FullComponentInstance} from 'app/models/components-instances/full-component-instance';
 import {PropertiesGroup} from 'app/models/properties';
 import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
 import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';

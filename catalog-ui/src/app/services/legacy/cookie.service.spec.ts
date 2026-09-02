@@ -19,7 +19,7 @@
  */
 
 /**
- * Characterization test for `CookieService` (SDC-4829 Phase 10-12 safety net).
+ * Characterization test for `LegacyCookieService` (SDC-4829 Phase 10-12 safety net).
  *
  * Reads user identity from cookies. Two behaviours matter for the migration:
  *  1. When the WebSeal junction cookie is present, the service builds a prefix
@@ -30,9 +30,9 @@
  * cookie string). Before Phase 11 this was AngularJS's jqLite `$document` (read as `[0].cookie`);
  * the migration to @Injectable switched it to the raw DOCUMENT read as `.cookie`.
  */
-import {CookieService} from './cookie.service';
+import {LegacyCookieService} from './cookie.service';
 
-describe('CookieService (characterization)', () => {
+describe('LegacyCookieService (characterization)', () => {
     const cookieConfig = {
         junctionName: 'junction',
         prefix: 'AMWEBJCT!',
@@ -45,7 +45,7 @@ describe('CookieService (characterization)', () => {
     const makeService = (cookieString: string) => {
         const sdcConfig = {cookie: cookieConfig} as any;
         const doc = {cookie: cookieString} as any;
-        return new CookieService(sdcConfig, doc);
+        return new LegacyCookieService(sdcConfig, doc);
     };
 
     it('reads bare-suffix user cookies when no junction cookie is set', () => {

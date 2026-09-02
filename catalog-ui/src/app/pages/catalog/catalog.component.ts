@@ -27,7 +27,7 @@ import {CatalogService} from 'app/services/catalog.service';
 import { SdcConfigToken, ISdcConfig } from "../../config/sdc-config.config";
 import { SdcMenuToken, IAppMenu } from "../../config/sdc-menu.config";
 import {IConfigStatuses} from 'app/models/app-config';
-import {CatalogSelectorTypes, ICatalogSelector} from 'app/models/catalogSelector';
+import {CatalogSelectorTypes, ICatalogSelector} from 'app/models/catalog-selector';
 import {ICategoryBase, IMainCategory, ISubCategory} from 'app/models/category';
 import {Component} from 'app/models/components/component';
 import { ResourceNamePipe } from "../../pipes/resource-name.pipe";

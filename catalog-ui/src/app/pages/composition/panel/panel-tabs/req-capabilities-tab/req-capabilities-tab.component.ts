@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import {CapabilitiesGroup, Capability} from 'app/models/capability';
 import {Component as TopologyTemplate} from 'app/models/components/component';
-import {FullComponentInstance} from 'app/models/componentsInstances/fullComponentInstance';
+import {FullComponentInstance} from 'app/models/components-instances/full-component-instance';
 import {Requirement, RequirementsGroup} from 'app/models/requirement';
 import { Store } from "@ngxs/store";
 import {GRAPH_EVENTS} from 'app/utils/constants';
@@ -11,7 +11,7 @@ import {EventListenerService} from 'app/services/event-listener.service';
 import { WorkspaceService } from "app/pages/workspace/workspace.service";
 import { CompositionService } from "app/pages/composition/composition.service";
 import {SelectedComponentType, TogglePanelLoadingAction} from "../../../common/store/graph.actions";
-import {ComponentInstanceServiceNg2} from "../../../../../services/component-instance-services/component-instance.service";
+import {ComponentInstanceService} from "../../../../../services/component-instance-services/component-instance.service";
 
 
 export class InstanceCapabilitiesMap {
@@ -47,7 +47,7 @@ export class ReqAndCapabilitiesTabComponent implements OnInit, OnDestroy {
         private workspaceService: WorkspaceService,
         private compositionService: CompositionService,
         private eventListenerService:EventListenerService,
-        private componentInstanceService: ComponentInstanceServiceNg2) { }
+        private componentInstanceService: ComponentInstanceService) { }
 
     ngOnInit(): void {
 

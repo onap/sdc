@@ -8,7 +8,7 @@ import {PropertyModel} from 'app/models/properties';
 import {InstanceFePropertiesMap} from 'app/models/properties-inputs/property-fe-map';
 import {RadioButtonModel} from 'app/models/radio-button';
 import {Dictionary} from "lodash";
-import {ComponentInstanceServiceNg2} from "../../../services/component-instance-services/component-instance.service";
+import {ComponentInstanceService} from "../../../services/component-instance-services/component-instance.service";
 import {PropertiesUtils} from "app/pages/properties-assignment/services/properties.utils";
 import {Requirement} from "../../../models/requirement";
 import {Capability, RequirementCapabilityModel} from "../../../models/capability";
@@ -49,7 +49,7 @@ export class SelectRequirementOrCapabilityComponent implements OnInit {
 
     private _loadingCapabilityProperties: Array<Capability>;
 
-    constructor(private componentInstanceServiceNg2:ComponentInstanceServiceNg2,
+    constructor(private componentInstanceService:ComponentInstanceService,
                 private propertiesUtils:PropertiesUtils,
                 private workspaceService: WorkspaceService) {
         this.selectOptions = [new RadioButtonModel(REQUIREMENT, REQUIREMENT), new RadioButtonModel(CAPABILITY, CAPABILITY)];
@@ -177,7 +177,7 @@ export class SelectRequirementOrCapabilityComponent implements OnInit {
             this.loadingCapabilityProperties = true;
             if (this._loadingCapabilityProperties.indexOf(selectedCapability) == -1) {
                 this._loadingCapabilityProperties.push(selectedCapability);
-                this.componentInstanceServiceNg2.getInstanceCapabilityProperties(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId, this.componentInstanceId, selectedCapability)
+                this.componentInstanceService.getInstanceCapabilityProperties(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId, this.componentInstanceId, selectedCapability)
                     .subscribe((response: Array<PropertyModel>) => {
                         if (this.selectedReqOrCapModel === selectedCapability) {
                             delete this.loadingCapabilityProperties;

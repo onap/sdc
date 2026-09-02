@@ -25,7 +25,7 @@ import {ArtifactGroupModel, ArtifactModel} from 'app/models/artifacts';
 import {AttributeModel} from 'app/models/attributes';
 import {Capability} from 'app/models/capability';
 import {Component} from 'app/models/components/component';
-import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
+import {ComponentInstance} from 'app/models/components-instances/component-instance';
 import {IFileDownload} from 'app/models/file-download';
 import {PropertyModel} from 'app/models/properties';
 import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
@@ -36,12 +36,12 @@ import {ComponentType, ServerTypeUrl} from 'app/utils/constants';
 import {ISdcConfig, SdcConfigToken} from "../../config/sdc-config.config";
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {InputBEModel} from '../../models/properties-inputs/input-be-model';
-import {HttpHelperService} from '../http-hepler.service';
+import {HttpHelperService} from '../http-helper.service';
 import {AttributeBEModel} from "../../models/attributes-outputs/attribute-be-model";
 import {OutputBEModel} from "../../models/attributes-outputs/output-be-model";
 
 @Injectable()
-export class ComponentInstanceServiceNg2 {
+export class ComponentInstanceService {
 
     protected baseUrl;
 
@@ -209,7 +209,7 @@ export class ComponentInstanceServiceNg2 {
     }
 
     // Service group-instance property update: PUT {svcId}/resourceInstance/{ri}/groupInstance/{gi}. Mirrors the
-    // legacy ServiceService.updateGroupInstanceProperties (app/services/legacy/service.service.ts), used by the
+    // legacy LegacyServiceService.updateGroupInstanceProperties (app/services/legacy/service.service.ts), used by the
     // module-property modal for a service (a resource uses updateComponentGroupInstanceProperties above instead).
     updateGroupInstanceProperties(componentType: string, componentId: string, resourceInstanceId: string, groupInstanceId: string, properties: PropertyBEModel[]): Observable<Array<PropertyBEModel>> {
         return this.http.put<Array<PropertyBEModel>>(

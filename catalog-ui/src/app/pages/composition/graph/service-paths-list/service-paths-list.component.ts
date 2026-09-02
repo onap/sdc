@@ -21,7 +21,7 @@
 import * as _ from "lodash";
 import {Component, ComponentRef} from '@angular/core';
 import {ForwardingPath} from "app/models/forwarding-path";
-import {ServiceServiceNg2} from "app/services/component-services/service.service";
+import {ServiceService} from "app/services/component-services/service.service";
 import {ModalService} from "app/services/modal.service";
 import {ModalComponent} from "app/components/ui/modal/modal.component";
 import {CompositionService} from "app/pages/composition/composition.service";
@@ -30,7 +30,7 @@ import {CompositionService} from "app/pages/composition/composition.service";
     selector: 'service-paths-list',
     templateUrl: './service-paths-list.component.html',
     styleUrls:['service-paths-list.component.less'],
-    providers: [ServiceServiceNg2, ModalService]
+    providers: [ServiceService, ModalService]
 })
 export class ServicePathsListComponent {
     modalInstance: ComponentRef<ModalComponent>;
@@ -41,7 +41,7 @@ export class ServicePathsListComponent {
     onEditServicePath: Function;
     isViewOnly: boolean;
 
-    constructor(private serviceService:ServiceServiceNg2,
+    constructor(private serviceService:ServiceService,
                 private compositionService: CompositionService) {
         this.headers = ['Flow Name','Actions'];
     }

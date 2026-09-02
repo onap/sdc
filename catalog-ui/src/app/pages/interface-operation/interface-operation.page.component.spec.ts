@@ -50,12 +50,12 @@ function createComp(opts: any = {}) {
         getCapabilitiesAndRequirements: jest.fn(() => Observable.of({capabilities: {}}))
     };
     const workflowService: any = {getWorkflows: jest.fn(() => Observable.of([]))};
-    const modalServiceNg2: any = {};
+    const modalService: any = {};
     const modalServiceSdcUI: any = {};
 
     const comp = new InterfaceOperationComponent(
         sdcConfig, navigationService, translateService, pluginsService, componentService,
-        workflowService, modalServiceNg2, modalServiceSdcUI, workspaceService);
+        workflowService, modalService, modalServiceSdcUI, workspaceService);
     return {comp, component, workspaceService, componentService};
 }
 

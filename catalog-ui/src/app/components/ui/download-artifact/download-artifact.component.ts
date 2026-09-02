@@ -6,7 +6,7 @@ import {CacheService} from 'app/services/cache.service';
 import {EVENTS} from 'app/utils/constants';
 import { TopologyTemplateService } from "app/services/component-services/topology-template.service";
 import { WorkspaceService } from "app/pages/workspace/workspace.service";
-import { ComponentInstanceServiceNg2 } from "app/services/component-instance-services/component-instance.service";
+import { ComponentInstanceService } from "app/services/component-instance-services/component-instance.service";
 
 @Component({
     selector: 'download-artifact',
@@ -32,7 +32,7 @@ export class DownloadArtifactComponent {
         LOADER_ICON: "spinner"
     }
     constructor(private cacheService:CacheService, private EventListenerService:EventListenerService, private topologyTemplateService:TopologyTemplateService,
-                private componentInstanceService: ComponentInstanceServiceNg2, private workspaceService:WorkspaceService) {
+                private componentInstanceService: ComponentInstanceService, private workspaceService:WorkspaceService) {
         
     }
 

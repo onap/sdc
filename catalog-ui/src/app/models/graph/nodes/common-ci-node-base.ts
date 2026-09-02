@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 import {CommonNodeBase} from "./base-common-node";
-import {ComponentInstance} from "../../componentsInstances/componentInstance";
+import {ComponentInstance} from "../../components-instances/component-instance";
 export abstract class CommonCINodeBase extends CommonNodeBase {
 
     public certified:boolean;

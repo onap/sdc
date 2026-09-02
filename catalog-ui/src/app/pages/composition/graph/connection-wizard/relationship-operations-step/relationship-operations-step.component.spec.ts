@@ -32,7 +32,7 @@ import {UiElementsModule} from "../../../../../components/ui/ui-elements.module"
 import {RouterModule} from "@angular/router";
 import {APP_BASE_HREF} from "@angular/common";
 import {ConnectionWizardService} from "../connection-wizard.service";
-import {ComponentServiceNg2} from "../../../../../services/component-services/component.service";
+import {ComponentService} from "../../../../../services/component-services/component.service";
 import {WorkspaceService} from "../../../../workspace/workspace.service";
 
 describe('RelationshipOperationsStepComponent', () => {
@@ -49,7 +49,7 @@ describe('RelationshipOperationsStepComponent', () => {
         // than out of a route param, so no NavigationService is involved any more.
         {provide: WorkspaceService, useValue: {component: {uniqueId: 'id-1'}}},
         {provide: ConnectionWizardService, useValue: {}},
-        {provide: ComponentServiceNg2, useValue: {}},
+        {provide: ComponentService, useValue: {}},
       ],
       imports: [SdcUiComponentsModule, ReactiveFormsModule, TabModule, UiElementsModule]
 

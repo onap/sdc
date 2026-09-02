@@ -2,7 +2,7 @@ import {NO_ERRORS_SCHEMA} from '@angular/core';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {CompositionService} from 'app/pages/composition/composition.service';
 import {EventListenerService} from '../../../../services/event-listener.service';
-import {ComponentInstanceServiceNg2} from 'app/services/component-instance-services/component-instance.service';
+import {ComponentInstanceService} from 'app/services/component-instance-services/component-instance.service';
 import {WorkspaceService} from 'app/pages/workspace/workspace.service';
 import {GroupsService} from 'app/services/groups.service';
 import {PoliciesService} from 'app/services/policies.service';
@@ -10,8 +10,8 @@ import {CompositionPanelHeaderComponent} from './panel-header.component';
 import {SdcUiServices} from 'onap-ui-angular';
 import {CapabilitiesGroup, Capability} from 'app/models/capability';
 import {Component} from 'app/models/components/component';
-import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
-import {FullComponentInstance} from 'app/models/componentsInstances/fullComponentInstance';
+import {ComponentInstance} from 'app/models/components-instances/component-instance';
+import {FullComponentInstance} from 'app/models/components-instances/full-component-instance';
 import {GroupInstance} from 'app/models/graph/zones/group-instance';
 import {PolicyInstance} from 'app/models/graph/zones/policy-instance';
 import {Requirement, RequirementsGroup} from 'app/models/requirement';
@@ -21,7 +21,7 @@ import 'rxjs/add/observable/throw';
 describe('CompositionPanelHeaderComponent', () => {
     let component: CompositionPanelHeaderComponent;
     let fixture: ComponentFixture<CompositionPanelHeaderComponent>;
-    const componentInstanceServiceNg2Stub = {
+    const componentInstanceServiceStub = {
         updateComponentInstance: jest.fn()
     };
     const valueEditModalInstance = {
@@ -57,8 +57,8 @@ describe('CompositionPanelHeaderComponent', () => {
                     {provide: CompositionService, useValue: compositionServiceStub},
                     {provide: EventListenerService, useValue: eventListenerServiceStub},
                     {
-                        provide: ComponentInstanceServiceNg2,
-                        useValue: componentInstanceServiceNg2Stub
+                        provide: ComponentInstanceService,
+                        useValue: componentInstanceServiceStub
                     },
                     {provide: WorkspaceService, useValue: workspaceServiceStub},
                     {provide: GroupsService, useValue: groupsServiceStub},

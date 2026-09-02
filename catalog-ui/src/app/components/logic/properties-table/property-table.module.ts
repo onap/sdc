@@ -4,7 +4,7 @@ import {DynamicPropertyComponent} from "./dynamic-property/dynamic-property.comp
 import {FormsModule} from "@angular/forms";
 import {UiElementsModule} from "../../ui/ui-elements.module";
 import {CommonModule} from "@angular/common";
-import {FilterChildPropertiesPipe} from "./pipes/filterChildProperties.pipe";
+import {FilterChildPropertiesPipe} from "./pipes/filter-child-properties.pipe";
 import {GlobalPipesModule} from "../../../pipes/global-pipes.module";
 import {PropertiesService} from "../../../services/properties.service";
 import {MultilineEllipsisModule} from "../../../shared/multiline-ellipsis/multiline-ellipsis.module";

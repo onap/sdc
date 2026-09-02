@@ -24,7 +24,7 @@ import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs/Observable';
 import {IMainCategory, ISubCategory} from 'app/models/category';
 import {SdcConfigToken, ISdcConfig} from 'app/config/sdc-config.config';
-import {HttpHelperService} from 'app/services/http-hepler.service';
+import {HttpHelperService} from 'app/services/http-helper.service';
 
 @Injectable()
 export class CategoryManagementService {

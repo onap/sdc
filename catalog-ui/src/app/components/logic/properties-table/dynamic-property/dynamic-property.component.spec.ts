@@ -31,8 +31,8 @@ import { DataTypeService } from '../../../../services/data-type.service';
 import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
 import {PropertyFEModel} from 'app/models/properties-inputs/property-fe-model';
 import {PROPERTY_TYPES} from 'app/utils/constants';
-import { ContentAfterLastDotPipe } from '../../../../pipes/contentAfterLastDot.pipe';
-import { FilterChildPropertiesPipe } from '../pipes/filterChildProperties.pipe';
+import { ContentAfterLastDotPipe } from '../../../../pipes/content-after-last-dot.pipe';
+import { FilterChildPropertiesPipe } from '../pipes/filter-child-properties.pipe';
 
 describe('dynamic-property component', () => {
     let fixture: ComponentFixture<DynamicPropertyComponent>;

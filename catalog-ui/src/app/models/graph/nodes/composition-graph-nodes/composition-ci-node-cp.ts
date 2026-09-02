@@ -19,7 +19,7 @@
  */
 
 import {CompositionCiNodeBase} from "./composition-ci-node-base";
-import {ComponentInstance} from "../../../componentsInstances/componentInstance";
+import {ComponentInstance} from "../../../components-instances/component-instance";
 import {ImageCreatorService} from "app/pages/composition/graph/common/image-creator.service";
 import {getSdcConfig} from "app/config/sdc-config.config.factory";
 import { ImagesUrl, GraphUIObjects} from "../../../../utils/constants";

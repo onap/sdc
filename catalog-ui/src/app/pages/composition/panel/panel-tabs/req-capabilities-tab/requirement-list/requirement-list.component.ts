@@ -4,7 +4,7 @@ import {Relationship, RelationshipModel} from 'app/models/graph/relationship';
 import {Requirement} from 'app/models/requirement';
 import { CompositionService } from "app/pages/composition/composition.service";
 import { ResourceNamePipe } from "app/pipes/resource-name.pipe";
-import { ComponentInstanceServiceNg2 } from "app/services/component-instance-services/component-instance.service";
+import { ComponentInstanceService } from "app/services/component-instance-services/component-instance.service";
 import { WorkspaceService } from "app/pages/workspace/workspace.service";
 import { Store } from "@ngxs/store";
 import {TogglePanelLoadingAction} from "../../../../common/store/graph.actions";
@@ -24,7 +24,7 @@ export class RequirementListComponent  {
     
     constructor(private compositionService: CompositionService,
                 private workspaceService: WorkspaceService,
-                private componentInstanceServiceNg2: ComponentInstanceServiceNg2,
+                private componentInstanceService: ComponentInstanceService,
                 private store:Store,
                 private eventListenerService:EventListenerService) {}
 
@@ -51,7 +51,7 @@ export class RequirementListComponent  {
     onMarkAsExternal(requirement:Requirement) {
        this.store.dispatch(new TogglePanelLoadingAction({isLoading: true}));
        requirement.external = !requirement.external;
-       this.componentInstanceServiceNg2.updateInstanceRequirement(this.workspaceService.metadata.getTypeUrl(), this.workspaceService.metadata.uniqueId, this.component.uniqueId, requirement)
+       this.componentInstanceService.updateInstanceRequirement(this.workspaceService.metadata.getTypeUrl(), this.workspaceService.metadata.uniqueId, this.component.uniqueId, requirement)
            .subscribe(() => {
                this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_COMPONENT_INSTANCE_REQUIREMENT_EXTERNAL_CHANGED, this.component.uniqueId, requirement);
                this.store.dispatch(new TogglePanelLoadingAction({isLoading: false}));

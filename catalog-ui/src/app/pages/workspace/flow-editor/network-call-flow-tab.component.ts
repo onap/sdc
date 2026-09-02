@@ -20,9 +20,9 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject} from '@angular/core';
 import * as _ from 'lodash';
 import {ArtifactType, ResourceType} from 'app/utils/constants';
-import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
+import {ComponentInstance} from 'app/models/components-instances/component-instance';
 import {CacheService} from 'app/services/cache.service';
-import {ComponentServiceNg2} from 'app/services/component-services/component.service';
+import {ComponentService} from 'app/services/component-services/component.service';
 import {ComponentGenericResponse} from 'app/services/responses/component-generic-response';
 import {SdcConfigToken} from 'app/config/sdc-config.config';
 import {WorkspaceService} from '../workspace.service';
@@ -43,7 +43,7 @@ export class NetworkCallFlowTabComponent extends FlowEditorTabBase {
 
     constructor(workspaceService: WorkspaceService,
                 cacheService: CacheService,
-                componentService: ComponentServiceNg2,
+                componentService: ComponentService,
                 cdr: ChangeDetectorRef,
                 el: ElementRef,
                 @Inject(SdcConfigToken) sdcConfig: any) {

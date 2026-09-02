@@ -26,7 +26,7 @@ import {ComponentMetadata} from "../../models/component-metadata";
 import {ComponentLifecycleState} from "../../models/component-lifecycle-state.enum";
 
 @Injectable()
-export class ResourceServiceNg2 {
+export class ResourceService {
 
   private readonly baseUrl: string;
 

@@ -26,7 +26,7 @@ import {ISdcConfig, SdcConfigToken} from '../config/sdc-config.config';
 import 'rxjs/add/operator/toPromise';
 
 @Injectable()
-export class ToscaTypesServiceNg2 {
+export class ToscaTypesService {
 
   protected baseUrl;
 

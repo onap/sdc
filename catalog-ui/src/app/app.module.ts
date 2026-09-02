@@ -30,11 +30,11 @@ import {MenuHandler} from './utils/menu-handler';
 import {ModalsHandler} from './utils/modals-handler';
 import {ConfigService} from './services/config.service';
 import {AuthenticationService} from './services/authentication.service';
-import {Cookie2Service} from './services/cookie.service';
-import {ComponentServiceNg2} from './services/component-services/component.service';
-import {ComponentServiceFactoryNg2} from './services/component-services/component.service.factory';
-import {ServiceServiceNg2} from './services/component-services/service.service';
-import {ComponentInstanceServiceNg2} from './services/component-instance-services/component-instance.service';
+import {CookieService} from './services/cookie.service';
+import {ComponentService} from './services/component-services/component.service';
+import {ComponentServiceFactory} from './services/component-services/component.service.factory';
+import {ServiceService} from './services/component-services/service.service';
+import {ComponentInstanceService} from './services/component-instance-services/component-instance.service';
 import {ModalService} from './services/modal.service';
 import {UiElementsModule} from './components/ui/ui-elements.module';
 import {ConnectionWizardModule} from './pages/composition/graph/connection-wizard/connection-wizard.module';
@@ -71,7 +71,7 @@ import {AdminDashboardModule} from './pages/admin-dashboard/admin-dashboard.modu
 import {PropertyFormModalModule} from './pages/property-form-modal/property-form-modal.module';
 import {IconsModalModule} from './components/modals/icons-modal/icons-modal.module';
 import {ModulePropertyModalModule} from './pages/module-property-modal/module-property-modal.module';
-import {StandaloneStatesModule} from './pages/standalone-states.module';
+import {StandalonePagesModule} from './pages/standalone-pages.module';
 import {ModalsModule} from './components/modals/modals.module';
 import {CacheService} from 'app/services/cache.service';
 import {HomeService} from 'app/services/home.service';
@@ -84,18 +84,18 @@ import {NgxsModule} from '@ngxs/store';
 import {NgxsLoggerPluginModule} from '@ngxs/logger-plugin';
 import {NgxsReduxDevtoolsPluginModule} from '@ngxs/devtools-plugin';
 import {EventListenerService} from './services/event-listener.service';
-import {CookieService} from './services/legacy/cookie.service';
+import {LegacyCookieService} from './services/legacy/cookie.service';
 import {DataTypesService} from './services/data-types.service';
 import {ProgressService} from './services/progress.service';
 import {ValidationUtils} from './utils/validation-utils';
 import {ComponentFactory} from './utils/component-factory';
-import {ComponentService} from './services/legacy/component.service';
-import {ResourceService} from './services/legacy/resource.service';
-import {ServiceService} from './services/legacy/service.service';
+import {LegacyComponentService} from './services/legacy/component.service';
+import {LegacyResourceService} from './services/legacy/resource.service';
+import {LegacyServiceService} from './services/legacy/service.service';
 import {LeftPaletteLoaderService} from './services/composition-left-palette.service';
 import {HttpClientModule} from '@angular/common/http';
 import {httpInterceptorProviders} from './interceptors';
-import {HttpHelperService} from './services/http-hepler.service';
+import {HttpHelperService} from './services/http-helper.service';
 import {ModulesService} from "./services/modules.service";
 import {TranslateService} from 'app/shared/translator/translate.service';
 import {FileUtilsService} from './services/file-utils.service';
@@ -109,9 +109,9 @@ import {DeclareListModule} from './pages/properties-assignment/declare-list/decl
 import {ToscaFunctionModule} from "./pages/properties-assignment/tosca-function/tosca-function.module";
 import {ConstraintsModule} from "./pages/properties-assignment/constraints/constraints.module";
 import {PropertyMetadataModule} from "./pages/properties-assignment/property-metadata/property-metadata.module";
-import {WorkflowServiceNg2} from './services/workflow.service';
-import {ToscaTypesServiceNg2} from "./services/tosca-types.service";
-import {InterfaceOperationHandlerModule} from "./pages/composition/interface-operatons/operation-creator/interface-operation-handler.module";
+import {WorkflowService} from './services/workflow.service';
+import {ToscaTypesService} from "./services/tosca-types.service";
+import {InterfaceOperationHandlerModule} from "./pages/composition/interface-operations/operation-creator/interface-operation-handler.module";
 import {AttributesOutputsModule} from "./pages/attributes-outputs/attributes-outputs.module";
 import {ElementService} from "./services/element.service";
 import {ModelService} from "./services/model.service";
@@ -202,7 +202,7 @@ export function configServiceFactory(config: ConfigService, authService: Authent
     PropertyFormModalModule,
     IconsModalModule,
     ModulePropertyModalModule,
-    StandaloneStatesModule,
+    StandalonePagesModule,
     TypeWorkspaceModule,
     ModalsModule,
     CatalogModule,
@@ -224,32 +224,32 @@ export function configServiceFactory(config: ConfigService, authService: Authent
     CacheService,
     HomeService,
     ArtifactConfigService,
-    ComponentService,
-    ResourceService,
-    ServiceService,
+    LegacyComponentService,
+    LegacyResourceService,
+    LegacyServiceService,
     ComponentFactory,
     LeftPaletteLoaderService,
-    CookieService,
+    LegacyCookieService,
     ProgressService,
     ValidationUtils,
     ModalsHandler,
     MenuHandler,
     ChangeLifecycleStateHandler,
     UserService,
-    Cookie2Service,
+    CookieService,
     ConfigService,
-    ComponentServiceNg2,
-    ComponentServiceFactoryNg2,
+    ComponentService,
+    ComponentServiceFactory,
     ModalService,
     ImportVSPService,
     OnboardingService,
     ElementService,
     ModelService,
     ToscaArtifactService,
-    ServiceServiceNg2,
+    ServiceService,
     AutomatedUpgradeService,
-    WorkflowServiceNg2,
-    ToscaTypesServiceNg2,
+    WorkflowService,
+    ToscaTypesService,
     WorkspaceNg1BridgeService,
     HttpHelperService,
     AuthenticationService,
@@ -259,7 +259,7 @@ export function configServiceFactory(config: ConfigService, authService: Authent
     DynamicComponentService,
     SdcConfig,
     SdcMenu,
-    ComponentInstanceServiceNg2,
+    ComponentInstanceService,
     EventListenerService,
     TranslationServiceConfig,
     TranslateService,

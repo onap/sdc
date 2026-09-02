@@ -19,7 +19,7 @@ import { PolicyTargetsTabComponent } from './panel-tabs/policy-targets-tab/polic
 import { PropertiesTabComponent } from './panel-tabs/properties-tab/properties-tab.component';
 import { ReqAndCapabilitiesTabComponent } from './panel-tabs/req-capabilities-tab/req-capabilities-tab.component';
 import {SubstitutionFilterTabComponent} from "./panel-tabs/substitution-filter-tab/substitution-filter-tab.component";
-import {InterfaceOperationsComponent} from "../interface-operatons/interface-operations.component";
+import {InterfaceOperationsComponent} from "../interface-operations/interface-operations.component";
 
 describe('composition-panel component', () => {
 

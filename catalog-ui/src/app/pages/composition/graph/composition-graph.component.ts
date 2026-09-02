@@ -6,9 +6,9 @@ import { Select, Store } from '@ngxs/store';
 import {ButtonModel} from 'app/models/button';
 import {Capability} from 'app/models/capability';
 import {Component as TopologyTemplate} from 'app/models/components/component';
-import {LeftPaletteComponent} from 'app/models/components/displayComponent';
-import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
-import {ConnectRelationModel} from 'app/models/graph/connectRelationModel';
+import {LeftPaletteComponent} from 'app/models/components/display-component';
+import {ComponentInstance} from 'app/models/components-instances/component-instance';
+import {ConnectRelationModel} from 'app/models/graph/connect-relation-model';
 import {LinkMenu} from 'app/models/graph/link-menu';
 import {Match} from 'app/models/graph/match-relation';
 import {CompositionCiNodeBase} from 'app/models/graph/nodes/composition-graph-nodes/composition-ci-node-base';
@@ -39,7 +39,7 @@ import { FromNodeStepComponent } from 'app/pages/composition/graph/connection-wi
 import { PropertiesStepComponent } from 'app/pages/composition/graph/connection-wizard/properties-step/properties-step.component';
 import { ToNodeStepComponent } from 'app/pages/composition/graph/connection-wizard/to-node-step/to-node-step.component';
 import { WorkspaceService } from 'app/pages/workspace/workspace.service';
-import { ComponentInstanceServiceNg2 } from 'app/services/component-instance-services/component-instance.service';
+import { ComponentInstanceService } from 'app/services/component-instance-services/component-instance.service';
 import { TopologyTemplateService } from 'app/services/component-services/topology-template.service';
 import { ModalService } from 'app/services/modal.service';
 import { ComponentGenericResponse } from 'app/services/responses/component-generic-response';
@@ -108,7 +108,7 @@ export class CompositionGraphComponent implements AfterViewInit {
                 private modalService: ModalService,
                 private compositionGraphPaletteUtils: CompositionGraphPaletteUtils,
                 private topologyTemplateService: TopologyTemplateService,
-                private componentInstanceService: ComponentInstanceServiceNg2,
+                private componentInstanceService: ComponentInstanceService,
                 private matchCapabilitiesRequirementsUtils: MatchCapabilitiesRequirementsUtils,
                 private store: Store,
                 public compositionService: CompositionService,

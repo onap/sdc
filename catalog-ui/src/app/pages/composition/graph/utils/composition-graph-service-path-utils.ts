@@ -20,7 +20,7 @@
 
 import * as _ from "lodash";
 import {CompositionGraphGeneralUtils} from "./composition-graph-general-utils";
-import {ServiceServiceNg2} from 'app/services/component-services/service.service';
+import {ServiceService} from 'app/services/component-services/service.service';
 import {Service} from "app/models/components/service";
 import {ForwardingPath} from "app/models/forwarding-path";
 import {ForwardingPathLink} from "app/models/forwarding-path-link";
@@ -47,7 +47,7 @@ export class ServicePathGraphUtils {
 
     constructor(
         private generalGraphUtils: CompositionGraphGeneralUtils,
-        private serviceService: ServiceServiceNg2,
+        private serviceService: ServiceService,
         private commonGraphUtils: CommonGraphUtils,
         private loaderService: SdcUiServices.LoaderService,
         private queueServiceUtils: QueueServiceUtils,

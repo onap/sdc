@@ -14,7 +14,6 @@ import {ConnectionWizardService} from "app/pages/composition/graph/connection-wi
 import {CompositionGraphPaletteUtils} from "./utils/composition-graph-palette-utils";
 import {QueueServiceUtils} from "app/utils/queue-service-utils";
 import {DndModule} from "ngx-drag-drop";
-import { MenuListNg2Module } from "app/components/downgrade-wrappers/menu-list-ng2/menu-list-ng2.module";
 import { UiElementsModule } from "app/components/ui/ui-elements.module";
 import {ServicePathSelectorModule} from "./service-path-selector/service-path-selector.module";
 import {SdcUiComponentsModule} from "onap-ui-angular";
@@ -27,7 +26,6 @@ import {CompositionGraphLinkUtils, ServicePathGraphUtils} from "./utils";
     imports: [CommonModule,
         ServicePathSelectorModule,
         SdcUiComponentsModule,
-        MenuListNg2Module,
         UiElementsModule,
         ZoneModules,
         CanvasSearchModule,

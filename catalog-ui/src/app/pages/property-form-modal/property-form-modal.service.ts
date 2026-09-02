@@ -26,8 +26,8 @@ import {Component} from 'app/models/components/component';
 import {PropertyModel} from 'app/models/properties';
 import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
 import {InputFEModel} from 'app/models/properties-inputs/input-fe-model';
-import {ComponentServiceNg2} from 'app/services/component-services/component.service';
-import {ComponentInstanceServiceNg2} from 'app/services/component-instance-services/component-instance.service';
+import {ComponentService} from 'app/services/component-services/component.service';
+import {ComponentInstanceService} from 'app/services/component-instance-services/component-instance.service';
 import {TopologyTemplateService} from 'app/services/component-services/topology-template.service';
 import {CompositionService} from 'app/pages/composition/composition.service';
 import {WorkspaceService} from 'app/pages/workspace/workspace.service';
@@ -64,8 +64,8 @@ export interface PropertyFormModalSaveContext {
 @Injectable()
 export class PropertyFormModalService {
 
-    constructor(private componentService: ComponentServiceNg2,
-                private componentInstanceService: ComponentInstanceServiceNg2,
+    constructor(private componentService: ComponentService,
+                private componentInstanceService: ComponentInstanceService,
                 private topologyTemplateService: TopologyTemplateService,
                 private compositionService: CompositionService,
                 private workspaceService: WorkspaceService) {

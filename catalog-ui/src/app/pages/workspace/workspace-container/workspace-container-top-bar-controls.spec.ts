@@ -69,7 +69,7 @@ function createComponent(overrides: any = {}) {
     const eventListenerService: any = {registerObserverCallback: jest.fn(), unRegisterObserver: jest.fn(), notifyObservers: jest.fn()};
     const homeService: any = {getAllComponents: jest.fn()};
     const catalogService: any = {getCatalog: jest.fn()};
-    const componentServiceNg2: any = overrides.componentServiceNg2 || {
+    const componentService: any = overrides.componentService || {
         getDependencies: jest.fn(),
         archiveComponent: jest.fn(),
         restoreComponent: jest.fn(),
@@ -94,7 +94,7 @@ function createComponent(overrides: any = {}) {
     const cdr: any = {detectChanges: jest.fn()};
 
     const comp = new WorkspaceContainerComponent(
-        cacheService, eventListenerService, homeService, catalogService, componentServiceNg2,
+        cacheService, eventListenerService, homeService, catalogService, componentService,
         automatedUpgradeService, eventBusService, modalServiceSdcUI, pluginsService,
         workspaceNg1BridgeService, workspaceService, translateService, navigationService,
         notificationsService, cdr, sdcMenu, componentFactory, menuHandler,
@@ -103,7 +103,7 @@ function createComponent(overrides: any = {}) {
     comp.component = overrides.component || makeComponent();
     comp.role = overrides.role !== undefined ? overrides.role : Role.DESIGNER;
     comp.mode = overrides.mode !== undefined ? overrides.mode : WorkspaceMode.EDIT;
-    return {comp, componentServiceNg2, automatedUpgradeService, modalServiceSdcUI, navigationService,
+    return {comp, componentService, automatedUpgradeService, modalServiceSdcUI, navigationService,
         notificationsService, cacheService, cdr};
 }
 
@@ -205,13 +205,13 @@ describe('top-bar control visibility', () => {
 
 describe('archiveComponent', () => {
     it('archives, drops the archive cache and notifies', () => {
-        const componentServiceNg2: any = {
+        const componentService: any = {
             getDependencies: jest.fn(), restoreComponent: jest.fn(), deleteComponent: jest.fn(),
             archiveComponent: jest.fn(() => Observable.of({}))
         };
-        const {comp, cacheService, notificationsService} = createComponent({componentServiceNg2});
+        const {comp, cacheService, notificationsService} = createComponent({componentService});
         comp.archiveComponent();
-        expect(componentServiceNg2.archiveComponent).toHaveBeenCalledWith('SERVICE', 'comp-1');
+        expect(componentService.archiveComponent).toHaveBeenCalledWith('SERVICE', 'comp-1');
         expect(comp.component.isArchived).toBe(true);
         expect(cacheService.remove).toHaveBeenCalledWith('archiveComponents');
         expect(notificationsService.push).toHaveBeenCalled();
@@ -219,11 +219,11 @@ describe('archiveComponent', () => {
     });
 
     it('clears the loader and leaves the state alone when the request fails', () => {
-        const componentServiceNg2: any = {
+        const componentService: any = {
             getDependencies: jest.fn(), restoreComponent: jest.fn(), deleteComponent: jest.fn(),
             archiveComponent: jest.fn(() => Observable.throw('boom'))
         };
-        const {comp, notificationsService} = createComponent({componentServiceNg2});
+        const {comp, notificationsService} = createComponent({componentService});
         comp.archiveComponent();
         expect(comp.isLoading).toBe(false);
         expect(comp.component.isArchived).toBe(false);
@@ -231,7 +231,7 @@ describe('archiveComponent', () => {
     });
 
     it('returns to the catalog it was opened from', () => {
-        const componentServiceNg2: any = {
+        const componentService: any = {
             getDependencies: jest.fn(), restoreComponent: jest.fn(), deleteComponent: jest.fn(),
             archiveComponent: jest.fn(() => Observable.of({}))
         };
@@ -243,7 +243,7 @@ describe('archiveComponent', () => {
             navigate: jest.fn(),
             reload: jest.fn()
         };
-        const {comp} = createComponent({componentServiceNg2, navigationService});
+        const {comp} = createComponent({componentService, navigationService});
         comp.archiveComponent();
         expect(navigationService.navigate).toHaveBeenCalledWith('catalog');
     });
@@ -251,11 +251,11 @@ describe('archiveComponent', () => {
     // An archive from a workspace entered directly (no previousState) has nowhere to go back to;
     // the AngularJS original navigated nowhere rather than guessing.
     it('navigates nowhere without a previousState', () => {
-        const componentServiceNg2: any = {
+        const componentService: any = {
             getDependencies: jest.fn(), restoreComponent: jest.fn(), deleteComponent: jest.fn(),
             archiveComponent: jest.fn(() => Observable.of({}))
         };
-        const {comp, navigationService} = createComponent({componentServiceNg2});
+        const {comp, navigationService} = createComponent({componentService});
         comp.archiveComponent();
         expect(navigationService.navigate).not.toHaveBeenCalled();
     });
@@ -263,14 +263,14 @@ describe('archiveComponent', () => {
 
 describe('restoreComponent', () => {
     it('restores, flips the flag, drops the cache and reloads', () => {
-        const componentServiceNg2: any = {
+        const componentService: any = {
             getDependencies: jest.fn(), archiveComponent: jest.fn(), deleteComponent: jest.fn(),
             restoreComponent: jest.fn(() => Observable.of({}))
         };
         const {comp, cacheService, notificationsService, navigationService} =
-            createComponent({componentServiceNg2, component: makeComponent({isArchived: true})});
+            createComponent({componentService, component: makeComponent({isArchived: true})});
         comp.restoreComponent();
-        expect(componentServiceNg2.restoreComponent).toHaveBeenCalledWith('SERVICE', 'comp-1');
+        expect(componentService.restoreComponent).toHaveBeenCalledWith('SERVICE', 'comp-1');
         expect(comp.component.isArchived).toBe(false);
         expect(cacheService.remove).toHaveBeenCalledWith('archiveComponents');
         expect(notificationsService.push).toHaveBeenCalled();
@@ -278,11 +278,11 @@ describe('restoreComponent', () => {
     });
 
     it('clears the loader when the request fails', () => {
-        const componentServiceNg2: any = {
+        const componentService: any = {
             getDependencies: jest.fn(), archiveComponent: jest.fn(), deleteComponent: jest.fn(),
             restoreComponent: jest.fn(() => Observable.throw('boom'))
         };
-        const {comp, navigationService} = createComponent({componentServiceNg2, component: makeComponent({isArchived: true})});
+        const {comp, navigationService} = createComponent({componentService, component: makeComponent({isArchived: true})});
         comp.restoreComponent();
         expect(comp.isLoading).toBe(false);
         expect(navigationService.reload).not.toHaveBeenCalled();
@@ -291,12 +291,12 @@ describe('restoreComponent', () => {
 
 describe('deleteArchivedComponent', () => {
     it('confirms before deleting and wires OK to the delete itself', () => {
-        const {comp, modalServiceSdcUI, componentServiceNg2} =
+        const {comp, modalServiceSdcUI, componentService} =
             createComponent({component: makeComponent({isArchived: true})});
         comp.deleteArchivedComponent();
         expect(modalServiceSdcUI.openWarningModal).toHaveBeenCalled();
         // Nothing may be deleted until the user confirms.
-        expect(componentServiceNg2.deleteComponent).not.toHaveBeenCalled();
+        expect(componentService.deleteComponent).not.toHaveBeenCalled();
         const buttons = modalServiceSdcUI.openWarningModal.mock.calls[0][3];
         expect(buttons).toHaveLength(1);
         expect(buttons[0].callback).toBe(comp.handleDeleteArchivedComponent);
@@ -304,7 +304,7 @@ describe('deleteArchivedComponent', () => {
     });
 
     it('deletes, drops the cache, notifies success and leaves for the dashboard', () => {
-        const componentServiceNg2: any = {
+        const componentService: any = {
             getDependencies: jest.fn(), archiveComponent: jest.fn(), restoreComponent: jest.fn(),
             deleteComponent: jest.fn(() => Observable.of({}))
         };
@@ -317,9 +317,9 @@ describe('deleteArchivedComponent', () => {
             reload: jest.fn()
         };
         const {comp, cacheService, notificationsService} =
-            createComponent({componentServiceNg2, navigationService, component: makeComponent({isArchived: true})});
+            createComponent({componentService, navigationService, component: makeComponent({isArchived: true})});
         comp.handleDeleteArchivedComponent();
-        expect(componentServiceNg2.deleteComponent).toHaveBeenCalledWith('SERVICE', 'comp-1');
+        expect(componentService.deleteComponent).toHaveBeenCalledWith('SERVICE', 'comp-1');
         expect(cacheService.remove).toHaveBeenCalledWith('archiveComponents');
         expect(notificationsService.push).toHaveBeenCalled();
         // The deleted component's workspace is gone, so an unrecognised previousState falls back.
@@ -328,12 +328,12 @@ describe('deleteArchivedComponent', () => {
     });
 
     it('notifies an error and stays put when the delete fails', () => {
-        const componentServiceNg2: any = {
+        const componentService: any = {
             getDependencies: jest.fn(), archiveComponent: jest.fn(), restoreComponent: jest.fn(),
             deleteComponent: jest.fn(() => Observable.throw('boom'))
         };
         const {comp, notificationsService, navigationService} =
-            createComponent({componentServiceNg2, component: makeComponent({isArchived: true})});
+            createComponent({componentService, component: makeComponent({isArchived: true})});
         comp.handleDeleteArchivedComponent();
         expect(notificationsService.push).toHaveBeenCalled();
         expect(notificationsService.push.mock.calls[0][0].type).toBe('error');
@@ -345,14 +345,14 @@ describe('deleteArchivedComponent', () => {
 describe('openAutomatedUpgradeModal', () => {
     it('fetches the dependencies first and opens the modal with them', () => {
         const dependencies = [{version: '1.0', dependencies: [{name: 'svc'}]}];
-        const componentServiceNg2: any = {
+        const componentService: any = {
             archiveComponent: jest.fn(), restoreComponent: jest.fn(), deleteComponent: jest.fn(),
             getDependencies: jest.fn(() => Observable.of(dependencies))
         };
         const component = makeComponent({lifecycleState: 'CERTIFIED'});
-        const {comp, automatedUpgradeService} = createComponent({componentServiceNg2, component});
+        const {comp, automatedUpgradeService} = createComponent({componentService, component});
         comp.openAutomatedUpgradeModal();
-        expect(componentServiceNg2.getDependencies).toHaveBeenCalledWith('SERVICE', 'comp-1');
+        expect(componentService.getDependencies).toHaveBeenCalledWith('SERVICE', 'comp-1');
         // The third argument is load-bearing: `true` means "opened from the onboarding update flow"
         // and changes the modal's copy and its post-upgrade navigation.
         expect(automatedUpgradeService.openAutomatedUpgradeModal).toHaveBeenCalledWith(dependencies, component, false);
@@ -368,11 +368,11 @@ describe('hasNoDependencies', () => {
     });
 
     it('goes false once a dependent version comes back', () => {
-        const componentServiceNg2: any = {
+        const componentService: any = {
             archiveComponent: jest.fn(), restoreComponent: jest.fn(), deleteComponent: jest.fn(),
             getDependencies: jest.fn(() => Observable.of([{version: '1.0', dependencies: [{name: 'svc'}]}]))
         };
-        const {comp} = createComponent({componentServiceNg2, component: makeComponent({lifecycleState: 'CERTIFIED'})});
+        const {comp} = createComponent({componentService, component: makeComponent({lifecycleState: 'CERTIFIED'})});
         (comp as any).verifyIfDependenciesExist();
         expect(comp.hasNoDependencies).toBe(false);
     });

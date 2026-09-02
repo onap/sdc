@@ -20,7 +20,7 @@
 
 import * as _ from "lodash";
 import {AttributeModel} from '../models/attributes';
-import {ResourceInstance} from '../models/componentsInstances/resourceInstance';
+import {ResourceInstance} from '../models/components-instances/resource-instance';
 import {Module} from '../models/modules/base-module';
 import {OperationModel} from '../models/operation';
 import {PropertyModel} from '../models/properties';

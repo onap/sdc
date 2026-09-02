@@ -20,7 +20,7 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject} from '@angular/core';
 import {ArtifactType} from 'app/utils/constants';
 import {CacheService} from 'app/services/cache.service';
-import {ComponentServiceNg2} from 'app/services/component-services/component.service';
+import {ComponentService} from 'app/services/component-services/component.service';
 import {ComponentGenericResponse} from 'app/services/responses/component-generic-response';
 import {SdcConfigToken} from 'app/config/sdc-config.config';
 import {WorkspaceService} from '../workspace.service';
@@ -56,7 +56,7 @@ export class ManagementWorkflowTabComponent extends FlowEditorTabBase {
 
     constructor(workspaceService: WorkspaceService,
                 cacheService: CacheService,
-                componentService: ComponentServiceNg2,
+                componentService: ComponentService,
                 cdr: ChangeDetectorRef,
                 el: ElementRef,
                 @Inject(SdcConfigToken) sdcConfig: any) {

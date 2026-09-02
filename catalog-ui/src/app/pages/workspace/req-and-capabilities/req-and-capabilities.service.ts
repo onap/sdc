@@ -6,7 +6,7 @@ import { CapabilityTypeModel } from "../../../models/capability-types";
 import { RelationshipTypeModel } from "../../../models/relationship-types";
 import { NodeTypeModel } from "../../../models/node-types";
 import { WorkspaceService } from "../workspace.service";
-import { ToscaTypesServiceNg2 } from "../../../services/tosca-types.service";
+import { ToscaTypesService } from "../../../services/tosca-types.service";
 
 
 
@@ -26,7 +26,7 @@ export class ReqAndCapabilitiesService {
         private loaderService: SdcUiServices.LoaderService,
         private topologyTemplateService: TopologyTemplateService,
         private store: Store,
-        private toscaTypesServiceNg2: ToscaTypesServiceNg2){}
+        private toscaTypesService: ToscaTypesService){}
 
     public isViewOnly = (): boolean => {
         return this.store.selectSnapshot((state) => state.workspace.isViewOnly);
@@ -40,18 +40,18 @@ export class ReqAndCapabilitiesService {
 
         // -- COMMON for both --
         this.capabilityTypesList = [];
-        let capabilityTypesResult = await this.toscaTypesServiceNg2.fetchCapabilityTypes(this.workspaceService.metadata.model);
+        let capabilityTypesResult = await this.toscaTypesService.fetchCapabilityTypes(this.workspaceService.metadata.model);
         Object.keys(capabilityTypesResult).forEach(key => {this.capabilityTypesList.push(capabilityTypesResult[key])});
         this.capabilityTypesList.sort((capabilityType1, capabilityType2) => capabilityType1.toscaPresentation.type.localeCompare(capabilityType2.toscaPresentation.type));
 
         if (initInputsFor === 'INPUTS_FOR_REQUIREMENTS') {
             this.relationshipTypesList = [];
-            let relationshipTypesResult = await this.toscaTypesServiceNg2.fetchRelationshipTypes(this.workspaceService.metadata.model);
+            let relationshipTypesResult = await this.toscaTypesService.fetchRelationshipTypes(this.workspaceService.metadata.model);
             Object.keys(relationshipTypesResult).forEach(key => {this.relationshipTypesList.push(relationshipTypesResult[key])});
             this.relationshipTypesList.sort((relationship1,relationship2) => relationship1.toscaPresentation.type.localeCompare(relationship2.toscaPresentation.type));
 
             this.nodeTypesList = [];
-            let nodeTypesResult = await this.toscaTypesServiceNg2.fetchNodeTypes(this.workspaceService.metadata.model);
+            let nodeTypesResult = await this.toscaTypesService.fetchNodeTypes(this.workspaceService.metadata.model);
             Object.keys(nodeTypesResult).forEach(key => {this.nodeTypesList.push(nodeTypesResult[key])});
             this.nodeTypesList.sort((node1,node2) => node1.componentMetadataDefinition.componentMetadataDataDefinition.toscaResourceName.localeCompare(node2.componentMetadataDefinition.componentMetadataDataDefinition.toscaResourceName));
         }

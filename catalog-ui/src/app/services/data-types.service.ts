@@ -24,7 +24,7 @@ import {Inject, Injectable} from "@angular/core";
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {DataTypePropertyModel} from "../models/data-type-properties";
 import {IAppConfigurtaion} from '../models/app-config';
-import {ComponentInstance} from '../models/componentsInstances/componentInstance';
+import {ComponentInstance} from '../models/components-instances/component-instance';
 import {DataTypeModel} from '../models/data-types';
 import {DataTypesMap} from '../models/data-types-map';
 import {IFileDownload} from '../models/file-download';

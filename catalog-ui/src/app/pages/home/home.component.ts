@@ -32,7 +32,7 @@ import {ModalService} from "../../services/modal.service";
 import {HomeFilter} from 'app/models/home-filter';
 import {AuthenticationService} from 'app/services/authentication.service';
 import {CacheService} from 'app/services/cache.service';
-import {ResourceServiceNg2} from 'app/services/component-services/resource.service';
+import {ResourceService} from 'app/services/component-services/resource.service';
 import {HomeService} from 'app/services/home.service';
 import {ComponentState, States} from 'app/utils/constants';
 import {ModalsHandler} from 'app/utils/modals-handler';
@@ -82,7 +82,7 @@ export class HomeComponent implements OnInit {
         private modalServiceSdc: ModalService,
         private loaderService: SdcUiServices.LoaderService,
         private importVSPService: ImportVSPService,
-        private resourceService: ResourceServiceNg2
+        private resourceService: ResourceService
     ) { }
 
     ngOnInit(): void {

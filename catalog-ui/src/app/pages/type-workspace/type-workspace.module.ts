@@ -38,7 +38,7 @@ import {SvgIconModule} from "onap-ui-angular/dist/svg-icon/svg-icon.module";
 import {TypeWorkspaceToscaArtifactPageComponent} from "./type-workspace-tosca-artifacts/type-workspace-tosca-artifact-page.component";
 import {ModalService} from "../../services/modal.service";
 import {AddPropertyComponent} from './type-workspace-properties/add-property/add-property.component';
-import {InterfaceOperationHandlerModule} from "../composition/interface-operatons/operation-creator/interface-operation-handler.module";
+import {InterfaceOperationHandlerModule} from "../composition/interface-operations/operation-creator/interface-operation-handler.module";
 import {AutoCompleteModule} from "onap-ui-angular/dist/autocomplete/autocomplete.module";
 import {ConstraintsModule} from "../properties-assignment/constraints/constraints.module";
 

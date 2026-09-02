@@ -34,13 +34,17 @@ interface ICookieService {
 }
 
 /**
- * @deprecated Duplicates Cookie2Service (services/cookie.service.ts) — same five synchronous
+ * @deprecated Duplicates CookieService (services/cookie.service.ts) — same five synchronous
  * getters. Its only consumer is pages/error-403/error-403.component.ts, plus the provider
  * registration in app.module.ts. The two differ only in DOCUMENT injection vs. reading the
  * global document directly; which half survives is SDC-4913's call.
+ *
+ * The file keeps the counterpart's name (`cookie.service.ts`) while the class carries the
+ * `Legacy` prefix: the directory already supplies the qualifier, and keeping the basenames
+ * paired makes the eventual dedup diff a one-directory delete.
  */
 @Injectable()
-export class CookieService implements ICookieService {
+export class LegacyCookieService implements ICookieService {
 
     private cookie:ICookie;
     private cookiePrefix:string;

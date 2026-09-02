@@ -23,7 +23,7 @@
  */
 'use strict';
 import * as _ from "lodash";
-import {IServiceService} from "../../services/legacy/service.service";
+import {ILegacyServiceService} from "../../services/legacy/service.service";
 import {ArtifactGroupModel} from '../artifacts';
 import {Distribution, DistributionComponent} from '../distribution';
 import {Component} from './component';
@@ -35,7 +35,7 @@ import {ForwardingPath} from "app/models/forwarding-path";
 export class Service extends Component {
 
     public serviceApiArtifacts:ArtifactGroupModel;
-    public componentService:IServiceService;
+    public componentService:ILegacyServiceService;
     public ecompGeneratedNaming:boolean;
     public namingPolicy:string;
     public serviceType:string;
@@ -54,7 +54,7 @@ export class Service extends Component {
     public csarPackageType: string;
     public packageId: string;
 
-    constructor(componentService:IServiceService, component?:Service) {
+    constructor(componentService:ILegacyServiceService, component?:Service) {
         super(componentService, component);
         this.ecompGeneratedNaming = true;
         if (component) {

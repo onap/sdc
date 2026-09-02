@@ -36,25 +36,25 @@ import {ISdcConfig, SdcConfigToken} from "../../config/sdc-config.config";
 import {IDependenciesServerResponse} from "../responses/dependencies-server-response";
 import {AutomatedUpgradeGenericResponse} from "../responses/automated-upgrade-response";
 import {IAutomatedUpgradeRequestObj} from "../../pages/automated-upgrade/automated-upgrade.service";
-import {ComponentInstance} from "../../models/componentsInstances/componentInstance";
+import {ComponentInstance} from "../../models/components-instances/component-instance";
 import {CommonUtils} from "../../utils/common-utils";
 import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
 import {BEOperationModel, InterfaceModel} from "../../models/operation";
 import {PropertyBEModel} from "../../models/properties-inputs/property-be-model";
 import {PolicyInstance} from "../../models/graph/zones/policy-instance";
 import {OutputBEModel} from "app/models/attributes-outputs/output-be-model";
-import {HttpHelperService} from '../http-hepler.service';
+import {HttpHelperService} from '../http-helper.service';
 import {
     BEInterfaceOperationModel,
     InterfaceOperationModel
-} from "../../models/interfaceOperation";
+} from "../../models/interface-operation";
 import {FilterConstraint} from "../../models/filter-constraint";
 
 /*
 PLEASE DO NOT USE THIS SERVICE IN ANGULAR2! Use the topology-template.service instead
  */
 @Injectable()
-export class ComponentServiceNg2 {
+export class ComponentService {
 
     protected baseUrl;
 

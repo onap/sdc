@@ -22,7 +22,7 @@ import {Component, OnInit} from '@angular/core';
 import {IStepComponent} from "../../../../../models/wizard-step";
 import {ConnectionWizardService} from "../connection-wizard.service";
 import {Component as IComponent} from "../../../../../models/components/component";
-import {ComponentServiceNg2} from "../../../../../services/component-services/component.service";
+import {ComponentService} from "../../../../../services/component-services/component.service";
 import {Observable} from "rxjs";
 import {Operation} from "../create-interface-operation/model/operation";
 import {WorkspaceService} from "../../../../workspace/workspace.service";
@@ -35,7 +35,7 @@ import {WorkspaceService} from "../../../../workspace/workspace.service";
 export class RelationshipOperationsStepComponent implements OnInit, IStepComponent {
 
   private connectionWizardService: ConnectionWizardService;
-  private componentService: ComponentServiceNg2;
+  private componentService: ComponentService;
   interfaceTypeMap: Map<string, Array<string>>;
   component: IComponent;
   operationList: Array<Operation>;
@@ -44,7 +44,7 @@ export class RelationshipOperationsStepComponent implements OnInit, IStepCompone
 
   constructor(private workspaceService: WorkspaceService,
               connectionWizardService: ConnectionWizardService,
-              componentService: ComponentServiceNg2) {
+              componentService: ComponentService) {
     this.componentService = componentService;
     this.connectionWizardService = connectionWizardService;
     this.interfaceTypeMap = new Map<string, Array<string>>();

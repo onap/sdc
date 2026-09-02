@@ -31,7 +31,7 @@ import { ModalService } from "../../../services/modal.service";
 import { InstanceFeDetails } from "app/models/instance-fe-details";
 import { InstanceFePropertiesMap } from "../../../models/properties-inputs/property-fe-map";
 import { DataTypeService } from "../../../services/data-type.service";
-import { MetadataEntry } from "app/models/metadataEntry";
+import { MetadataEntry } from "app/models/metadata-entry";
 import { DynamicElementComponent } from "../../ui/dynamic-element/dynamic-element.component";
 
 @Component({

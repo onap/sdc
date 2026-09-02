@@ -23,8 +23,8 @@ import {Component, Input, OnInit} from '@angular/core';
 import {Store} from '@ngxs/store';
 import {CapabilitiesGroup, Capability} from 'app/models/capability';
 import {Component as TopologyTemplate} from 'app/models/components/component';
-import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
-import {FullComponentInstance} from 'app/models/componentsInstances/fullComponentInstance';
+import {ComponentInstance} from 'app/models/components-instances/component-instance';
+import {FullComponentInstance} from 'app/models/components-instances/full-component-instance';
 import {PropertiesGroup, PropertyModel} from 'app/models/properties';
 import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
 import {ResourceType} from 'app/utils/constants';
@@ -33,7 +33,7 @@ import {ComponentMetadata} from '../../../../../models/component-metadata';
 import {ServiceInstanceObject} from '../../../../../models/service-instance-properties-and-interfaces';
 import {EventListenerService} from '../../../../../services/event-listener.service';
 import {TopologyTemplateService} from '../../../../../services/component-services/topology-template.service';
-import {ComponentInstanceServiceNg2} from '../../../../../services/component-instance-services/component-instance.service';
+import {ComponentInstanceService} from '../../../../../services/component-instance-services/component-instance.service';
 import {ComponentGenericResponse} from '../../../../../services/responses/component-generic-response';
 import {WorkspaceService} from '../../../../workspace/workspace.service';
 import {SelectedComponentType} from '../../../common/store/graph.actions';
@@ -64,7 +64,7 @@ export class ServiceDependenciesTabComponent implements OnInit {
 
     constructor(private store: Store,
                 private topologyTemplateService: TopologyTemplateService,
-                private componentInstanceServiceNg2: ComponentInstanceServiceNg2,
+                private componentInstanceService: ComponentInstanceService,
                 private workspaceService: WorkspaceService,
                 private compositionService: CompositionService,
                 private eventListenerService: EventListenerService) {
@@ -101,7 +101,7 @@ export class ServiceDependenciesTabComponent implements OnInit {
 
     private initInstancesWithProperties = (): void => {
         if (this.component instanceof FullComponentInstance && this.isInput(this.component.resourceType)) {
-            this.componentInstanceServiceNg2
+            this.componentInstanceService
             .getComponentInstanceInputsByIdAndType(this.metaData.uniqueId, this.metaData.componentType, this.component as ComponentInstance)
             .subscribe(response => {
                 this.selectedInstanceProperties = response;

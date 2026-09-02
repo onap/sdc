@@ -131,7 +131,7 @@ export class PropertyFormModalComponent implements OnInit {
                 private translateService: TranslateService,
                 private dataTypesService: DataTypesService,
                 private modalServiceSdcUI: SdcUiServices.ModalService,
-                private modalServiceNg2: ModalService) {
+                private modalService: ModalService) {
     }
 
     ngOnInit(): void {
@@ -527,7 +527,7 @@ export class PropertyFormModalComponent implements OnInit {
     // Close seam for the delete-success path — delegates to the same ng2 ModalService the ModalsHandler used to
     // open this modal (createCustomModal/closeCurrentModal). Overridable in tests.
     public closeModal(): void {
-        this.modalServiceNg2.closeCurrentModal();
+        this.modalService.closeCurrentModal();
     }
 
     private buildForm(): void {

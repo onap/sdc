@@ -22,7 +22,7 @@ import * as _ from "lodash";
 import { Component, ElementRef, forwardRef, Inject } from '@angular/core';
 import {Link} from './link-row/link.model';
 import {ForwardingPath} from 'app/models/forwarding-path';
-import {ServiceServiceNg2} from "app/services/component-services/service.service";
+import {ServiceService} from "app/services/component-services/service.service";
 import {ForwardingPathLink} from "app/models/forwarding-path-link";
 import {ServicePathMapItem} from "app/models/graph/nodes-and-links-map";
 import {CompositionService} from "app/pages/composition/composition.service";
@@ -31,7 +31,7 @@ import {CompositionService} from "app/pages/composition/composition.service";
     selector: 'service-path-creator',
     templateUrl: './service-path-creator.component.html',
     styleUrls:['./service-path-creator.component.less'],
-    providers: [ServiceServiceNg2]
+    providers: [ServiceService]
 })
 
 export class ServicePathCreatorComponent {
@@ -44,7 +44,7 @@ export class ServicePathCreatorComponent {
     forwardingPath:ForwardingPath;
     //isExtendAllowed:boolean = false;
 
-    constructor(private serviceService: ServiceServiceNg2,
+    constructor(private serviceService: ServiceService,
                 private compositionService: CompositionService) {
         this.forwardingPath = new ForwardingPath();
         this.links = [new Link(new ForwardingPathLink('', '', '', '', '', ''), true, false, true)];

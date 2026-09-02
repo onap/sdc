@@ -25,7 +25,7 @@
 import * as _ from "lodash";
 import {forwardRef, Inject, Injectable} from "@angular/core";
 import {HttpClient, HttpParams} from "@angular/common/http";
-import {LeftPaletteComponent, LeftPaletteMetadataTypes} from "app/models/components/displayComponent";
+import {LeftPaletteComponent, LeftPaletteMetadataTypes} from "app/models/components/display-component";
 import {Component} from "app/models/components/component";
 import {EventListenerService} from "./event-listener.service";
 // Nothing injects LeftPaletteLoaderService. The composition palette is served by

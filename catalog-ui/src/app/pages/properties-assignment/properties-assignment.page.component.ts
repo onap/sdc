@@ -25,7 +25,7 @@ import {PropertiesService} from "../../services/properties.service";
 import {ButtonModel} from 'app/models/button';
 import {Component as ComponentData} from 'app/models/components/component';
 import {Service} from 'app/models/components/service';
-import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
+import {ComponentInstance} from 'app/models/components-instances/component-instance';
 import {FilterPropertiesAssignmentData} from 'app/models/filter-properties-assignment-data';
 import {GroupInstance} from 'app/models/graph/zones/group-instance';
 import {PolicyInstance} from 'app/models/graph/zones/policy-instance';
@@ -40,9 +40,9 @@ import {InstanceBePropertiesMap, InstanceFePropertiesMap, InstancePropertiesAPIM
 import {PropertyFEModel} from 'app/models/properties-inputs/property-fe-model';
 import {SimpleFlatProperty} from 'app/models/properties-inputs/simple-flat-property';
 import {ResourceType} from 'app/utils/constants';
-import {ComponentServiceNg2} from "../../services/component-services/component.service";
+import {ComponentService} from "../../services/component-services/component.service";
 import {TopologyTemplateService} from "../../services/component-services/topology-template.service";
-import {ComponentInstanceServiceNg2} from "../../services/component-instance-services/component-instance.service"
+import {ComponentInstanceService} from "../../services/component-instance-services/component-instance.service"
 import {KeysPipe} from 'app/pipes/keys.pipe';
 import {EVENTS, PROPERTY_TYPES, WorkspaceMode, PROPERTY_DATA} from "../../utils/constants";
 import {EventListenerService} from "app/services/event-listener.service"
@@ -138,8 +138,8 @@ export class PropertiesAssignmentComponent implements UnsavedChangesAware {
                 private hierarchyNavService: HierarchyNavService,
                 private propertiesUtils: PropertiesUtils,
                 private inputsUtils: InputsUtils,
-                private componentServiceNg2: ComponentServiceNg2,
-                private componentInstanceServiceNg2: ComponentInstanceServiceNg2,
+                private componentService: ComponentService,
+                private componentInstanceService: ComponentInstanceService,
                 private propertyCreatorComponent: PropertyCreatorComponent,
                 private workspaceService: WorkspaceService,
                 private notificationsService: SdcUiServices.NotificationsService,
@@ -189,7 +189,7 @@ export class PropertiesAssignmentComponent implements UnsavedChangesAware {
             }
         });
 
-        this.componentServiceNg2
+        this.componentService
         .getComponentResourcePropertiesData(this.component)
         .subscribe(response => {
             this.loadingPolicies = false;
@@ -332,7 +332,7 @@ export class PropertiesAssignmentComponent implements UnsavedChangesAware {
         if (instance instanceof ComponentInstance) {
             let instanceBePropertiesMap: InstanceBePropertiesMap = new InstanceBePropertiesMap();
             if (this.isInput(instance.originType)) {
-                this.componentInstanceServiceNg2
+                this.componentInstanceService
                 .getComponentInstanceInputs(this.component, instance)
                 .subscribe(response => {
                     instanceBePropertiesMap[instance.uniqueId] = response;
@@ -345,7 +345,7 @@ export class PropertiesAssignmentComponent implements UnsavedChangesAware {
             } else if (this.isSelf()) {
                 this.getServiceProperties();
             } else {
-                this.componentInstanceServiceNg2
+                this.componentInstanceService
                 .getComponentInstanceProperties(this.component, instance.uniqueId)
                 .subscribe(response => {
                     instanceBePropertiesMap[instance.uniqueId] = response;
@@ -360,7 +360,7 @@ export class PropertiesAssignmentComponent implements UnsavedChangesAware {
             this.resourceIsReadonly = (instance.componentName === "vnfConfiguration");
         } else if (instance instanceof GroupInstance) {
             let instanceBePropertiesMap: InstanceBePropertiesMap = new InstanceBePropertiesMap();
-            this.componentInstanceServiceNg2
+            this.componentInstanceService
             .getComponentGroupInstanceProperties(this.component, this.selectedInstanceData.uniqueId)
             .subscribe((response) => {
                 instanceBePropertiesMap[instance.uniqueId] = response;
@@ -372,7 +372,7 @@ export class PropertiesAssignmentComponent implements UnsavedChangesAware {
             });
         } else if (instance instanceof PolicyInstance) {
             let instanceBePropertiesMap: InstanceBePropertiesMap = new InstanceBePropertiesMap();
-            this.componentInstanceServiceNg2
+            this.componentInstanceService
             .getComponentPolicyInstanceProperties(this.component.componentType, this.component.uniqueId, this.selectedInstanceData.uniqueId)
             .subscribe((response) => {
                 instanceBePropertiesMap[instance.uniqueId] = response;
@@ -727,7 +727,7 @@ export class PropertiesAssignmentComponent implements UnsavedChangesAware {
         this.enableToscaFunction = false;
         this.checkedToscaCount = 0;
 
-        this.componentInstanceServiceNg2.updateInstanceProperties(this.component.componentType, this.component.uniqueId,
+        this.componentInstanceService.updateInstanceProperties(this.component.componentType, this.component.uniqueId,
             this.selectedInstanceData.uniqueId, [instanceProperty])
         .subscribe(() => {
             this.changeSelectedInstance(this.getSelectedInstance());
@@ -741,7 +741,7 @@ export class PropertiesAssignmentComponent implements UnsavedChangesAware {
 
     updateGroupInstanceProperty(instanceProperty: PropertyBEModel) {
         this.loadingProperties = true;
-        this.componentInstanceServiceNg2.updateComponentGroupInstanceProperties(this.component.componentType, this.component.uniqueId,
+        this.componentInstanceService.updateComponentGroupInstanceProperties(this.component.componentType, this.component.uniqueId,
             this.selectedInstanceData.uniqueId, [instanceProperty])
         .subscribe(() => {
             this.changeSelectedInstance(this.getSelectedInstance());
@@ -755,7 +755,7 @@ export class PropertiesAssignmentComponent implements UnsavedChangesAware {
 
     updatePolicyInstanceProperty(instanceProperty: PropertyBEModel) {
         this.loadingProperties = true;
-        this.componentInstanceServiceNg2.updateComponentPolicyInstanceProperties(this.component.componentType, this.component.uniqueId,
+        this.componentInstanceService.updateComponentPolicyInstanceProperties(this.component.componentType, this.component.uniqueId,
             this.selectedInstanceData.uniqueId, [instanceProperty])
         .subscribe(() => {
             this.changeSelectedInstance(this.getSelectedInstance());
@@ -1095,17 +1095,17 @@ export class PropertiesAssignmentComponent implements UnsavedChangesAware {
                         changedInputsProperties = _.filter(changedProperties, prop => !this.isCapabilityProperty(prop));
                         if (changedInputsProperties.length && changedCapabilitiesProperties.length) {
                             request = Observable.forkJoin(
-                                this.componentInstanceServiceNg2.updateInstanceInputs(this.component, this.selectedInstanceData.uniqueId, changedInputsProperties),
-                                this.componentInstanceServiceNg2.updateInstanceProperties(this.component.componentType, this.component.uniqueId,
+                                this.componentInstanceService.updateInstanceInputs(this.component, this.selectedInstanceData.uniqueId, changedInputsProperties),
+                                this.componentInstanceService.updateInstanceProperties(this.component.componentType, this.component.uniqueId,
                                     this.selectedInstanceData.uniqueId, changedCapabilitiesProperties)
                             );
                         }
                         else if (changedInputsProperties.length) {
-                            request = this.componentInstanceServiceNg2
+                            request = this.componentInstanceService
                                 .updateInstanceInputs(this.component, this.selectedInstanceData.uniqueId, changedInputsProperties);
                         }
                         else if (changedCapabilitiesProperties.length) {
-                            request = this.componentInstanceServiceNg2
+                            request = this.componentInstanceService
                                 .updateInstanceProperties(this.component.componentType, this.component.uniqueId, this.selectedInstanceData.uniqueId, changedCapabilitiesProperties);
                         }
                         handleSuccess = (response) => {
@@ -1122,7 +1122,7 @@ export class PropertiesAssignmentComponent implements UnsavedChangesAware {
                                 return cp;
                             }));
                         } else {
-                            request = this.componentInstanceServiceNg2
+                            request = this.componentInstanceService
                                 .updateInstanceProperties(this.component.componentType, this.component.uniqueId, this.selectedInstanceData.uniqueId, changedProperties);
                         }
                         handleSuccess = (response) => {
@@ -1135,7 +1135,7 @@ export class PropertiesAssignmentComponent implements UnsavedChangesAware {
                         };
                     }
                 } else if (this.selectedInstanceData instanceof GroupInstance) {
-                    request = this.componentInstanceServiceNg2
+                    request = this.componentInstanceService
                         .updateComponentGroupInstanceProperties(this.component.componentType, this.component.uniqueId, this.selectedInstanceData.uniqueId, changedProperties);
                     handleSuccess = (response) => {
                         // reset each changed property with new value and remove it from changed properties list
@@ -1146,7 +1146,7 @@ export class PropertiesAssignmentComponent implements UnsavedChangesAware {
                         resolve(response);
                     };
                 } else if (this.selectedInstanceData instanceof PolicyInstance) {
-                    request = this.componentInstanceServiceNg2
+                    request = this.componentInstanceService
                         .updateComponentPolicyInstanceProperties(this.component.componentType, this.component.uniqueId, this.selectedInstanceData.uniqueId, changedProperties);
                     handleSuccess = (response) => {
                         // reset each changed property with new value and remove it from changed properties list
@@ -1165,7 +1165,7 @@ export class PropertiesAssignmentComponent implements UnsavedChangesAware {
                     inputBE.defaultValue = changedInput.getJSONDefaultValue();
                     return inputBE;
                 });
-                request = this.componentServiceNg2
+                request = this.componentService
                     .updateComponentInputs(this.component, changedInputs);
                 handleSuccess = (response) => {
                     // reset each changed property with new value and remove it from changed properties list
@@ -1201,7 +1201,7 @@ export class PropertiesAssignmentComponent implements UnsavedChangesAware {
 
     reloadInstanceCapabilities = (): void => {
         let currentInstanceIndex = _.findIndex(this.instances, instance => instance.uniqueId == this.selectedInstanceData.uniqueId);
-        this.componentServiceNg2.getComponentResourceInstances(this.component).subscribe(result => {
+        this.componentService.getComponentResourceInstances(this.component).subscribe(result => {
             let instanceCapabilitiesData: CapabilitiesGroup = _.reduce(result.componentInstances, (res, instance) => {
                 if (instance.uniqueId === this.selectedInstanceData.uniqueId) {
                     return instance.capabilities;
@@ -1350,7 +1350,7 @@ export class PropertiesAssignmentComponent implements UnsavedChangesAware {
         console.debug("==>" + this.constructor.name + ": deleteInput");
         let inputToDelete = new InputBEModel(input);
 
-        this.componentServiceNg2
+        this.componentService
             .deleteInput(this.component, inputToDelete)
             .subscribe(response => {
                 this.inputs = this.inputs.filter(input => input.uniqueId !== response.uniqueId);
@@ -1482,7 +1482,7 @@ export class PropertiesAssignmentComponent implements UnsavedChangesAware {
     /*** SEARCH RELATED FUNCTIONS ***/
     searchPropertiesInstances = (filterData:FilterPropertiesAssignmentData) => {
         let instanceBePropertiesMap:InstanceBePropertiesMap;
-        this.componentServiceNg2
+        this.componentService
             .filterComponentInstanceProperties(this.component, filterData)
             .subscribe((response) => {
                 this.processInstancePropertiesResponse(response, false);

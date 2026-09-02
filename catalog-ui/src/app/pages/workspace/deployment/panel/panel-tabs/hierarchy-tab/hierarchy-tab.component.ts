@@ -1,6 +1,6 @@
 import {Component, Input} from "@angular/core";
 import {Component as TopologyTemplate} from 'app/models/components/component';
-import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
+import {ComponentInstance} from 'app/models/components-instances/component-instance';
 import {DisplayModule, Module} from 'app/models/modules/base-module';
 import {PropertyModel} from 'app/models/properties';
 import {TranslateService} from "app/shared/translator/translate.service";

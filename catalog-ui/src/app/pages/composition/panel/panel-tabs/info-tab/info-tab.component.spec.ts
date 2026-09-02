@@ -4,9 +4,9 @@ import { Store } from '@ngxs/store';
 import { CompositionPaletteService } from '../../../palette/services/palette.service';
 import { IAppMenu, SdcMenuToken } from '../../../../../config/sdc-menu.config';
 import { CompositionService } from '../../../composition.service';
-import {ServiceServiceNg2} from '../../../../../services/component-services/service.service';
+import {ServiceService} from '../../../../../services/component-services/service.service';
 import { WorkspaceService } from '../../../../workspace/workspace.service';
-import { ComponentInstanceServiceNg2 } from '../../../../../services/component-instance-services/component-instance.service';
+import { ComponentInstanceService } from '../../../../../services/component-instance-services/component-instance.service';
 import {EventListenerService} from '../../../../../services/event-listener.service';
 import { InfoTabComponent } from './info-tab.component';
 import { ConfigureFn, configureTests } from "../../../../../../jest/test-config.helper";
@@ -17,7 +17,7 @@ import { TranslateService } from "../../../../../shared/translator/translate.ser
 import { SdcUiServices } from "onap-ui-angular";
 import {ComponentMetadata} from '../../../../../models/component-metadata';
 import {Component as TopologyTemplate} from '../../../../../models/components/component';
-import {ComponentInstance} from '../../../../../models/componentsInstances/componentInstance';
+import {ComponentInstance} from '../../../../../models/components-instances/component-instance';
 import {KeyValuePipe} from "../../../../../pipes/key-value.pipe";
 import {TopologyTemplateService} from "../../../../../services/component-services/topology-template.service";
 import {ComponentGenericResponse} from "../../../../../services/responses/component-generic-response";
@@ -64,9 +64,9 @@ describe('InfoTabComponent', () => {
                         { provide: SdcMenuToken, useValue: {} },
                         { provide: CompositionService, useValue: {} },
                         { provide: SdcUiServices.ModalService, useValue: {}},
-                        { provide: ServiceServiceNg2, useValue: {} },
+                        { provide: ServiceService, useValue: {} },
                         { provide: WorkspaceService, useValue: {} },
-                        { provide: ComponentInstanceServiceNg2, useValue: {} },
+                        { provide: ComponentInstanceService, useValue: {} },
                         { provide: EventListenerService, useValue: eventListenerServiceStub },
                         { provide: TopologyTemplateService, useValue: topologyTemplateServiceStub},
                         { provide: TranslateService, useValue: {}}

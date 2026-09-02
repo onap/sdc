@@ -2,7 +2,7 @@ import {PropertyModel} from 'app/models/properties';
 import {CommonUtils} from 'app/utils/common-utils';
 import {IZoneInstanceMethod, IZoneInstanceAssignment} from "./zone-instance";
 import {GroupInstance} from "./group-instance";
-import {ComponentInstance} from "../../componentsInstances/componentInstance";
+import {ComponentInstance} from "../../components-instances/component-instance";
 import {TargetUiObject} from "../../ui-models/ui-target-object";
 import {TargetOrMemberType} from "../../../utils/constants";
 import * as _ from 'lodash';

@@ -25,7 +25,7 @@ import {TranslateModule} from "app/shared/translator/translate.module";
 import { SdcUiComponentsModule } from 'onap-ui-angular';
 import {InterfaceDefinitionComponent} from "./interface-definition.page.component";
 import {HierarchyNavigationModule} from "../../components/logic/hierarchy-navigtion/hierarchy-navigation.module";
-import {InterfaceOperationHandlerModule} from "../composition/interface-operatons/operation-creator/interface-operation-handler.module";
+import {InterfaceOperationHandlerModule} from "../composition/interface-operations/operation-creator/interface-operation-handler.module";
 
 @NgModule({
     declarations: [

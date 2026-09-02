@@ -3,10 +3,10 @@ import { Store } from '@ngxs/store';
 import {ArtifactModel} from 'app/models/artifacts';
 import {Component as TopologyTemplate} from 'app/models/components/component';
 import {Resource} from 'app/models/components/resource';
-import {FullComponentInstance} from 'app/models/componentsInstances/fullComponentInstance';
+import {FullComponentInstance} from 'app/models/components-instances/full-component-instance';
 import { WorkspaceService } from 'app/pages/workspace/workspace.service';
 import { ResourceNamePipe } from 'app/pipes/resource-name.pipe';
-import { ComponentInstanceServiceNg2 } from 'app/services/component-instance-services/component-instance.service';
+import { ComponentInstanceService } from 'app/services/component-instance-services/component-instance.service';
 import { TopologyTemplateService } from 'app/services/component-services/topology-template.service';
 import {ArtifactType} from 'app/utils/constants';
 import * as _ from 'lodash';
@@ -46,7 +46,7 @@ export class ArtifactsTabComponent {
     constructor(private store: Store,
                 private compositionService: CompositionService,
                 private workspaceService: WorkspaceService,
-                private componentInstanceService: ComponentInstanceServiceNg2,
+                private componentInstanceService: ComponentInstanceService,
                 private topologyTemplateService: TopologyTemplateService,
                 private artifactService: ArtifactsService) {
         this.heatToEnv = new Map();

@@ -57,7 +57,7 @@ function createComp(opts: any = {}) {
         getCapabilitiesAndRequirements: jest.fn(() => Observable.of({capabilities: {}})),
         getComponentResourcePropertiesData: jest.fn(() => Observable.of({componentInstances: []}))
     };
-    const modalServiceNg2: any = {};
+    const modalService: any = {};
     const modalServiceSdcUI: any = {};
     const topologyTemplateService: any = {};
     const toscaArtifactService: any = {getToscaArtifacts: jest.fn(() => Observable.of(null))};
@@ -66,7 +66,7 @@ function createComp(opts: any = {}) {
 
     const comp = new InterfaceDefinitionComponent(
         sdcConfig, navigationService, notificationsService, translateService, componentService,
-        modalServiceNg2, modalServiceSdcUI, topologyTemplateService, toscaArtifactService,
+        modalService, modalServiceSdcUI, topologyTemplateService, toscaArtifactService,
         componentService, workflowService, modalServiceSdcUI, pluginsService, workspaceService);
     return {comp, component, workspaceService, componentService};
 }

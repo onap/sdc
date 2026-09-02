@@ -6,7 +6,7 @@ import * as _ from 'lodash';
 import { tap } from 'rxjs/operators';
 import { ArtifactModel } from '../../models/artifacts';
 import { ArtifactGroupType } from '../../utils/constants';
-import { ComponentInstanceServiceNg2 } from '../../services/component-instance-services/component-instance.service';
+import { ComponentInstanceService } from '../../services/component-instance-services/component-instance.service';
 import { ComponentGenericResponse } from '../../services/responses/component-generic-response';
 import {
     CreateInstanceArtifactAction,
@@ -30,7 +30,7 @@ export interface InstanceArtifactsStateModel {
 })
 export class InstanceArtifactsState {
 
-    constructor(private store: Store, protected componentInstanceService: ComponentInstanceServiceNg2) {
+    constructor(private store: Store, protected componentInstanceService: ComponentInstanceService) {
     }
 
     @Selector()

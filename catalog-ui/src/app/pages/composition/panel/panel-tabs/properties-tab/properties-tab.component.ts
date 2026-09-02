@@ -3,18 +3,18 @@ import { Store } from '@ngxs/store';
 import {AttributeModel, AttributesGroup} from 'app/models/attributes';
 import {ComponentMetadata} from 'app/models/component-metadata';
 import {Component as TopologyTemplate} from 'app/models/components/component';
-import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
-import {FullComponentInstance} from 'app/models/componentsInstances/fullComponentInstance';
+import {ComponentInstance} from 'app/models/components-instances/component-instance';
+import {FullComponentInstance} from 'app/models/components-instances/full-component-instance';
 import {InputModel, InputsGroup} from 'app/models/inputs';
 import {PropertiesGroup, PropertyModel} from 'app/models/properties';
 import {DataTypesService} from 'app/services/data-types.service';
 import {ToscaGetFunctionType} from "app/models/tosca-get-function-type";
 import { CompositionService } from 'app/pages/composition/composition.service';
 import { WorkspaceService } from 'app/pages/workspace/workspace.service';
-import { GroupByPipe } from 'app/pipes/groupBy.pipe';
+import { GroupByPipe } from 'app/pipes/group-by.pipe';
 import { ResourceNamePipe } from 'app/pipes/resource-name.pipe';
 import { TopologyTemplateService } from 'app/services/component-services/topology-template.service';
-import { ComponentInstanceServiceNg2 } from "app/services/component-instance-services/component-instance.service";
+import { ComponentInstanceService } from "app/services/component-instance-services/component-instance.service";
 import { DropdownValue } from 'app/components/ui/form-components/dropdown/ui-element-dropdown.component';
 import { ComponentGenericResponse } from 'app/services/responses/component-generic-response';
 import { TranslateService } from 'app/shared/translator/translate.service';
@@ -52,7 +52,7 @@ export class PropertiesTabComponent implements OnInit {
                 private compositionService: CompositionService,
                 private modalsHandler: ModalsHandler,
                 private topologyTemplateService: TopologyTemplateService,
-                private componentInstanceService: ComponentInstanceServiceNg2,
+                private componentInstanceService: ComponentInstanceService,
                 private modalService: SdcUiServices.ModalService,
                 private translateService: TranslateService,
                 private groupByPipe: GroupByPipe) {

@@ -21,7 +21,7 @@
 */
 import {Component, ComponentRef, Inject} from '@angular/core';
 import {Component as IComponent} from 'app/models/components/component';
-import {WorkflowServiceNg2} from 'app/services/workflow.service';
+import {WorkflowService} from 'app/services/workflow.service';
 import {HierarchyDisplayOptions} from "../../components/logic/hierarchy-navigtion/hierarchy-display-options";
 import {ISdcConfig, SdcConfigToken} from "app/config/sdc-config.config";
 import {TranslateService} from "app/shared/translator/translate.service";
@@ -35,17 +35,17 @@ import {ModalService} from 'app/services/modal.service';
 import {ArtifactModel} from 'app/models/artifacts';
 import {ButtonModel} from 'app/models/button';
 import {CapabilitiesGroup} from 'app/models/capability';
-import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
+import {ComponentInstance} from 'app/models/components-instances/component-instance';
 import {ModalModel} from 'app/models/modal';
 import {InterfaceModel, OperationModel, WORKFLOW_ASSOCIATION_OPTIONS} from 'app/models/operation';
 import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
 
-import {ComponentServiceNg2} from 'app/services/component-services/component.service';
+import {ComponentService} from 'app/services/component-services/component.service';
 import {TopologyTemplateService} from "../../services/component-services/topology-template.service";
-import {InterfaceOperationModel} from "../../models/interfaceOperation";
-import {InterfaceOperationHandlerComponent} from "../composition/interface-operatons/operation-creator/interface-operation-handler.component";
+import {InterfaceOperationModel} from "../../models/interface-operation";
+import {InterfaceOperationHandlerComponent} from "../composition/interface-operations/operation-creator/interface-operation-handler.component";
 import {DropdownValue} from "../../components/ui/form-components/dropdown/ui-element-dropdown.component";
-import {ToscaArtifactModel} from "../../models/toscaArtifact";
+import {ToscaArtifactModel} from "../../models/tosca-artifact";
 import {ToscaArtifactService} from "../../services/tosca-artifact.service";
 import {InterfaceOperationComponent} from "../interface-operation/interface-operation.page.component";
 import {Observable} from "rxjs/Observable";
@@ -172,13 +172,13 @@ export class InterfaceDefinitionComponent {
         private navigationService: NavigationService,
         private notificationsService: SdcUiServices.NotificationsService,
         private translateService: TranslateService,
-        private componentServiceNg2: ComponentServiceNg2,
-        private modalServiceNg2: ModalService,
+        private componentService: ComponentService,
+        private modalService: ModalService,
         private modalServiceSdcUI: SdcUiServices.ModalService,
         private topologyTemplateService: TopologyTemplateService,
         private toscaArtifactService: ToscaArtifactService,
-        private ComponentServiceNg2: ComponentServiceNg2,
-        private WorkflowServiceNg2: WorkflowServiceNg2,
+        private ComponentService: ComponentService,
+        private WorkflowService: WorkflowService,
         private ModalServiceSdcUI: SdcUiServices.ModalService,
         private PluginsService: PluginsService,
         private workspaceService: WorkspaceService
@@ -197,11 +197,11 @@ export class InterfaceDefinitionComponent {
         this.interfaces = [];
         this.workflowIsOnline = !_.isUndefined(this.PluginsService.getPluginByStateUrl('workflowDesigner'));
         Observable.forkJoin(
-            this.ComponentServiceNg2.getInterfaceOperations(this.component),
-            this.ComponentServiceNg2.getComponentInputs(this.component),
-            this.ComponentServiceNg2.getInterfaceTypes(this.component),
-            this.ComponentServiceNg2.getCapabilitiesAndRequirements(this.component.componentType, this.component.uniqueId),
-            this.componentServiceNg2.getComponentResourcePropertiesData(this.component)
+            this.ComponentService.getInterfaceOperations(this.component),
+            this.ComponentService.getComponentInputs(this.component),
+            this.ComponentService.getInterfaceTypes(this.component),
+            this.ComponentService.getCapabilitiesAndRequirements(this.component.componentType, this.component.uniqueId),
+            this.componentService.getComponentResourcePropertiesData(this.component)
         ).subscribe((response: any[]) => {
             const callback = (workflows) => {
                 this.isLoading = false;
@@ -229,7 +229,7 @@ export class InterfaceDefinitionComponent {
 
             };
             if (this.enableWorkflowAssociation && this.workflowIsOnline) {
-                this.WorkflowServiceNg2.getWorkflows().subscribe(
+                this.WorkflowService.getWorkflows().subscribe(
                     callback,
                     (err) => {
                         this.workflowIsOnline = false;
@@ -311,7 +311,7 @@ export class InterfaceDefinitionComponent {
     }
 
     private cancelAndCloseModal = () => {
-        return this.modalServiceNg2.closeCurrentModal();
+        return this.modalService.closeCurrentModal();
     }
 
     private disableSaveButton = (): boolean => {
@@ -356,9 +356,9 @@ export class InterfaceDefinitionComponent {
         modalButtons.push(new ButtonModel(this.modalTranslation.CANCEL_BUTTON, 'outline white', this.cancelAndCloseModal));
         const interfaceDataModal: ModalModel =
             new ModalModel('l', this.modalTranslation.EDIT_TITLE, '', modalButtons, 'custom');
-        this.modalInstance = this.modalServiceNg2.createCustomModal(interfaceDataModal);
+        this.modalInstance = this.modalService.createCustomModal(interfaceDataModal);
 
-        this.modalServiceNg2.addDynamicContentToModal(
+        this.modalService.addDynamicContentToModal(
             this.modalInstance,
             InterfaceOperationHandlerComponent,
             {
@@ -380,7 +380,7 @@ export class InterfaceDefinitionComponent {
     }
 
     private updateOperation = (): void => {
-        this.modalServiceNg2.currentModal.instance.dynamicContent.instance.isLoading = true;
+        this.modalService.currentModal.instance.dynamicContent.instance.isLoading = true;
         const interfaceOperationHandlerComponentInstance: InterfaceOperationHandlerComponent = this.modalInstance.instance.dynamicContent.instance;
         const operationToUpdate = this.modalInstance.instance.dynamicContent.instance.operationToUpdate;
         let timeout = null;
@@ -419,14 +419,14 @@ export class InterfaceDefinitionComponent {
                 oldInterf.operations.splice(oldOpIndex, 1);
                 oldInterf.operations.push(new InterfaceOperationModel(newOperation));
             }, () => {
-                this.modalServiceNg2.currentModal.instance.dynamicContent.instance.isLoading = false;
+                this.modalService.currentModal.instance.dynamicContent.instance.isLoading = false;
             }, () => {
                 this.sortInterfaces();
-                this.modalServiceNg2.currentModal.instance.dynamicContent.instance.isLoading = false;
-                this.modalServiceNg2.closeCurrentModal();
+                this.modalService.currentModal.instance.dynamicContent.instance.isLoading = false;
+                this.modalService.closeCurrentModal();
             });
         } else {
-            this.componentServiceNg2.updateComponentInterfaceOperation(this.component.uniqueId, operationToUpdate)
+            this.componentService.updateComponentInterfaceOperation(this.component.uniqueId, operationToUpdate)
             .subscribe((newOperation: InterfaceOperationModel) => {
                 let oldOpIndex;
                 let oldInterf;
@@ -441,17 +441,17 @@ export class InterfaceDefinitionComponent {
                 oldInterf.operations.splice(oldOpIndex, 1);
                 oldInterf.operations.push(new InterfaceOperationModel(newOperation));
             }, () => {
-                this.modalServiceNg2.currentModal.instance.dynamicContent.instance.isLoading = false;
+                this.modalService.currentModal.instance.dynamicContent.instance.isLoading = false;
             }, () => {
                 this.sortInterfaces();
-                this.modalServiceNg2.currentModal.instance.dynamicContent.instance.isLoading = false;
-                this.modalServiceNg2.closeCurrentModal();
+                this.modalService.currentModal.instance.dynamicContent.instance.isLoading = false;
+                this.modalService.closeCurrentModal();
             });
         }
     }
 
     private createOperationCallback(): void {
-        this.modalServiceNg2.currentModal.instance.dynamicContent.instance.isLoading = true;
+        this.modalService.currentModal.instance.dynamicContent.instance.isLoading = true;
         const operationToUpdate = this.modalInstance.instance.dynamicContent.instance.operationToUpdate;
         if (this.component.componentType === ComponentType.SERVICE) {
             this.topologyTemplateService.createComponentInstanceInterfaceOperation(this.component.uniqueId, this.selectedInstanceData.uniqueId, operationToUpdate)
@@ -468,14 +468,14 @@ export class InterfaceDefinitionComponent {
                     this.interfaces.push(uiInterfaceModel);
                 }
             }, () => {
-                this.modalServiceNg2.currentModal.instance.dynamicContent.instance.isLoading = false;
-                this.modalServiceNg2.closeCurrentModal();
+                this.modalService.currentModal.instance.dynamicContent.instance.isLoading = false;
+                this.modalService.closeCurrentModal();
             }, () => {
-                this.modalServiceNg2.currentModal.instance.dynamicContent.instance.isLoading = false;
-                this.modalServiceNg2.closeCurrentModal();
+                this.modalService.currentModal.instance.dynamicContent.instance.isLoading = false;
+                this.modalService.closeCurrentModal();
             });
         } else {
-            this.componentServiceNg2.createComponentInterfaceOperation(this.component.uniqueId, this.component.getTypeUrl(), operationToUpdate)
+            this.componentService.createComponentInterfaceOperation(this.component.uniqueId, this.component.getTypeUrl(), operationToUpdate)
             .subscribe((newOperation: InterfaceOperationModel) => {
                 const foundInterface = this.interfaces.find(value => value.type === newOperation.interfaceType);
                 if (foundInterface) {
@@ -489,11 +489,11 @@ export class InterfaceDefinitionComponent {
                     this.interfaces.push(uiInterfaceModel);
                 }
             }, () => {
-                this.modalServiceNg2.currentModal.instance.dynamicContent.instance.isLoading = false;
-                this.modalServiceNg2.closeCurrentModal();
+                this.modalService.currentModal.instance.dynamicContent.instance.isLoading = false;
+                this.modalService.closeCurrentModal();
             }, () => {
-                this.modalServiceNg2.currentModal.instance.dynamicContent.instance.isLoading = false;
-                this.modalServiceNg2.closeCurrentModal();
+                this.modalService.currentModal.instance.dynamicContent.instance.isLoading = false;
+                this.modalService.closeCurrentModal();
             });
         }
     }
@@ -538,7 +538,7 @@ export class InterfaceDefinitionComponent {
     }
 
     private loadInterfaceTypes() {
-        this.componentServiceNg2.getInterfaceTypes(this.component).subscribe(response => {
+        this.componentService.getInterfaceTypes(this.component).subscribe(response => {
             if (response) {
                 console.info("loadInterfaceTypes ", response);
                 for (const interfaceType in response) {
@@ -589,7 +589,7 @@ export class InterfaceDefinitionComponent {
             size: 'small',
             closeModal: true,
             callback: () => {
-                this.ComponentServiceNg2
+                this.ComponentService
                 .deleteInterfaceOperation(this.component, operation)
                 .subscribe(() => {
                     const curInterf = this.interfaces.find((interf) => interf.type === operation.interfaceType);
@@ -626,7 +626,7 @@ export class InterfaceDefinitionComponent {
     }
 
     private createOperation = (operation: OperationModel): void => {
-        this.ComponentServiceNg2.createInterfaceOperation(this.component, operation).subscribe((response: OperationModel) => {
+        this.ComponentService.createInterfaceOperation(this.component, operation).subscribe((response: OperationModel) => {
             this.openOperation = null;
 
             let curInterf = this.interfaces.find((interf) => interf.type === operation.interfaceType);
@@ -645,9 +645,9 @@ export class InterfaceDefinitionComponent {
             this.sortInterfaces();
 
             if (operation.workflowAssociationType === WORKFLOW_ASSOCIATION_OPTIONS.EXTERNAL && operation.artifactData) {
-                this.ComponentServiceNg2.uploadInterfaceOperationArtifact(this.component, newOpModel, operation).subscribe();
+                this.ComponentService.uploadInterfaceOperationArtifact(this.component, newOpModel, operation).subscribe();
             } else if (response.workflowId && operation.workflowAssociationType === WORKFLOW_ASSOCIATION_OPTIONS.EXISTING) {
-                this.WorkflowServiceNg2.associateWorkflowArtifact(this.component, response).subscribe();
+                this.WorkflowService.associateWorkflowArtifact(this.component, response).subscribe();
             } else if (operation.workflowAssociationType === WORKFLOW_ASSOCIATION_OPTIONS.NEW) {
                 this.navigationService.navigate('workspace.plugins', {path: 'workflowDesigner'});
             }

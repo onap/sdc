@@ -23,8 +23,8 @@ import { Select, Store } from '@ngxs/store';
 import {Component as TopologyTemplate} from 'app/models/components/component';
 import {Resource} from 'app/models/components/resource';
 import {Service} from 'app/models/components/service';
-import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
-import {FullComponentInstance} from 'app/models/componentsInstances/fullComponentInstance';
+import {ComponentInstance} from 'app/models/components-instances/component-instance';
+import {FullComponentInstance} from 'app/models/components-instances/full-component-instance';
 import {GroupInstance} from 'app/models/graph/zones/group-instance';
 import {PolicyInstance} from 'app/models/graph/zones/policy-instance';
 import { ArtifactsTabComponent } from 'app/pages/composition/panel/panel-tabs/artifacts-tab/artifacts-tab.component';
@@ -45,7 +45,7 @@ import { CompositionStateModel, GraphState } from '../common/store/graph.state';
 import { ServiceConsumptionTabComponent } from './panel-tabs/service-consumption-tab/service-consumption-tab.component';
 import { ServiceDependenciesTabComponent } from './panel-tabs/service-dependencies-tab/service-dependencies-tab.component';
 import {SubstitutionFilterTabComponent} from "./panel-tabs/substitution-filter-tab/substitution-filter-tab.component";
-import {InterfaceOperationsComponent} from "../interface-operatons/interface-operations.component";
+import {InterfaceOperationsComponent} from "../interface-operations/interface-operations.component";
 
 const tabs = {
     infoTab: {

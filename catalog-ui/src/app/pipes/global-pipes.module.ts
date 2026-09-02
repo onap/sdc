@@ -19,13 +19,13 @@
  * ============LICENSE_END=========================================================
  */
 
-import {ContentAfterLastDotPipe} from "./contentAfterLastDot.pipe";
-import {SearchFilterPipe} from "./searchFilter.pipe";
+import {ContentAfterLastDotPipe} from "./content-after-last-dot.pipe";
+import {SearchFilterPipe} from "./search-filter.pipe";
 import {KeysPipe} from "./keys.pipe";
-import {GroupByPipe} from "./groupBy.pipe";
+import {GroupByPipe} from "./group-by.pipe";
 import {ResourceNamePipe} from "./resource-name.pipe";
 import {NgModule} from "@angular/core";
-import {SafeUrlSanitizerPipe} from "./safeUrlSanitizer.pipe";
+import {SafeUrlSanitizerPipe} from "./safe-url-sanitizer.pipe";
 import {EntityFilterPipe} from "./entity-filter.pipe";
 import {KeyValuePipe} from "./key-value.pipe";
 import {PropertiesOrderByPipe} from "./properties-order-by.pipe";

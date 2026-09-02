@@ -25,7 +25,7 @@ import {PROPERTY_DATA} from "../../utils/constants";
 import {InputBEModel} from "./input-be-model";
 import {DerivedPropertyType} from "./property-be-model";
 import { Metadata } from "app/models/metadata";
-import { MetadataEntry } from "app/models/metadataEntry";
+import { MetadataEntry } from "app/models/metadata-entry";
 
 export class InputFEModel extends InputBEModel {
     isSimpleType: boolean;
