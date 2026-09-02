@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-import {ComponentInstance} from "../../../componentsInstances/componentInstance";
+import {ComponentInstance} from "../../../components-instances/component-instance";
 import {CommonCINodeBase} from "../common-ci-node-base";
 import {GraphUIObjects, ImagesUrl} from 'app/utils/constants';
 import {getSdcConfig} from "app/config/sdc-config.config.factory";

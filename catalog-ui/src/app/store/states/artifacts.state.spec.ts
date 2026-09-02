@@ -3,7 +3,7 @@ import { Observable } from 'rxjs/Rx';
 import { Mock } from 'ts-mockery';
 import { ArtifactModel } from '../../models/artifacts';
 import { ArtifactGroupType } from '../../utils/constants';
-import { ComponentInstanceServiceNg2 } from '../../services/component-instance-services/component-instance.service';
+import { ComponentInstanceService } from '../../services/component-instance-services/component-instance.service';
 import { GetInstanceArtifactsByTypeAction, UpdateInstanceArtifactAction } from '../actions/instance-artifacts.actions';
 import { InstanceArtifactsState } from './instance-artifacts.state';
 
@@ -38,7 +38,7 @@ describe('Test Artifact State', () => {
         uniqueId: '2', artifactName: 'heat1env', timeout: 33, generatedFromId: '1', artifactDisplayName: 'heat1env-UPDATE', artifactGroupType: ArtifactGroupType.DEPLOYMENT
     });
 
-    const componentInstanceServiceMock: ComponentInstanceServiceNg2 = Mock.of<ComponentInstanceServiceNg2>({
+    const componentInstanceServiceMock: ComponentInstanceService = Mock.of<ComponentInstanceService>({
         updateInstanceArtifact: jest.fn().mockImplementation(() => Observable.of(updatedArtifact)),
         getComponentInstanceArtifactsByGroupType: jest.fn().mockImplementation(() => Observable.of([heat1, updatedArtifact]))
     });

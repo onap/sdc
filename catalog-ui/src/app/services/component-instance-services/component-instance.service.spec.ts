@@ -19,13 +19,13 @@
 
 import {TestBed} from '@angular/core/testing';
 import {ISdcConfig, SdcConfigToken} from "../../config/sdc-config.config";
-import {ComponentInstanceServiceNg2} from "./component-instance.service";
+import {ComponentInstanceService} from "./component-instance.service";
 import {Capability} from "../../models/capability";
 import {HttpClientTestingModule, HttpTestingController} from "@angular/common/http/testing";
 
-describe('ComponentInstanceServiceNg2', () => {
+describe('ComponentInstanceService', () => {
   let httpTestingController: HttpTestingController;
-  let componentInstanceService: ComponentInstanceServiceNg2;
+  let componentInstanceService: ComponentInstanceService;
   let rootApi: string = 'http://localhost/'
   let componentApiRoot: string = 'catalog/'
   beforeEach(() => {
@@ -36,13 +36,13 @@ describe('ComponentInstanceServiceNg2', () => {
       }
     };
     TestBed.configureTestingModule({
-      providers: [ComponentInstanceServiceNg2,
+      providers: [ComponentInstanceService,
         {provide: SdcConfigToken, useValue: sdcConfigToken}
       ],
       imports: [HttpClientTestingModule]
     });
     httpTestingController = TestBed.get(HttpTestingController);
-    componentInstanceService = TestBed.get(ComponentInstanceServiceNg2);
+    componentInstanceService = TestBed.get(ComponentInstanceService);
   });
 
   it('should be created', () => {

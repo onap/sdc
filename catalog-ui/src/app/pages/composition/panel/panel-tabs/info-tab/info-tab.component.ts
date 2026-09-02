@@ -1,9 +1,9 @@
 import { Component, OnInit, Input, Inject, OnDestroy } from '@angular/core';
 import {IMainCategory} from 'app/models/category';
 import {Component as TopologyTemplate} from 'app/models/components/component';
-import {LeftPaletteComponent} from 'app/models/components/displayComponent';
-import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
-import {FullComponentInstance} from 'app/models/componentsInstances/fullComponentInstance';
+import {LeftPaletteComponent} from 'app/models/components/display-component';
+import {ComponentInstance} from 'app/models/components-instances/component-instance';
+import {FullComponentInstance} from 'app/models/components-instances/full-component-instance';
 import {GroupInstance} from 'app/models/graph/zones/group-instance';
 import {PolicyInstance} from 'app/models/graph/zones/policy-instance';
 import {Store} from "@ngxs/store";
@@ -13,9 +13,9 @@ import { CompositionPaletteService } from "app/pages/composition/palette/service
 import { SdcUiCommon, SdcUiComponents, SdcUiServices } from "onap-ui-angular";
 import { SdcMenuToken, IAppMenu } from "app/config/sdc-menu.config";
 import { CompositionService } from "app/pages/composition/composition.service";
-import {ServiceServiceNg2} from 'app/services/component-services/service.service';
+import {ServiceService} from 'app/services/component-services/service.service';
 import { WorkspaceService } from "app/pages/workspace/workspace.service";
-import { ComponentInstanceServiceNg2 } from "app/services/component-instance-services/component-instance.service";
+import { ComponentInstanceService } from "app/services/component-instance-services/component-instance.service";
 import {EventListenerService} from 'app/services/event-listener.service';
 import * as _ from 'lodash';
 import {SelectedComponentType, TogglePanelLoadingAction} from "../../../common/store/graph.actions";
@@ -53,8 +53,8 @@ export class InfoTabComponent implements OnInit, OnDestroy {
                 private compositionService: CompositionService,
                 private workspaceService: WorkspaceService,
                 private modalService: SdcUiServices.ModalService,
-                private componentInstanceService: ComponentInstanceServiceNg2,
-                private serviceService: ServiceServiceNg2,
+                private componentInstanceService: ComponentInstanceService,
+                private serviceService: ServiceService,
                 private eventListenerService: EventListenerService,
                 private topologyTemplateService: TopologyTemplateService,
                 @Inject(SdcMenuToken) public sdcMenu:IAppMenu) {

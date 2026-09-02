@@ -71,8 +71,8 @@ describe('PropertiesAssignmentComponent', () => {
             {} as any,                                            // hierarchyNavService
             propertiesUtilsMock as any,                           // propertiesUtils
             {} as any,                                            // inputsUtils
-            {} as any,                                            // componentServiceNg2
-            {} as any,                                            // componentInstanceServiceNg2
+            {} as any,                                            // componentService
+            {} as any,                                            // componentInstanceService
             {filterDataTypesByModel: jest.fn()} as any,           // propertyCreatorComponent
             {component: {uniqueId: componentUniqueId, model: null}} as any, // workspaceService
             {push: (settings: any) => notifications.push(settings)} as any, // notificationsService

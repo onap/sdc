@@ -30,8 +30,8 @@ import {DndDropEvent} from "ngx-drag-drop/ngx-drag-drop";
 import {SdcUiServices} from "onap-ui-angular"
 import {CapabilitiesGroup} from 'app/models/capability';
 import {Component as TopologyTemplate} from 'app/models/components/component';
-import {LeftPaletteComponent} from 'app/models/components/displayComponent';
-import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
+import {LeftPaletteComponent} from 'app/models/components/display-component';
+import {ComponentInstance} from 'app/models/components-instances/component-instance';
 import {CompositionCiNodeBase} from 'app/models/graph/nodes/composition-graph-nodes/composition-ci-node-base';
 import {Point} from 'app/models/graph/point';
 import {RequirementsGroup} from 'app/models/requirement';

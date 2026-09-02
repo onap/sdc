@@ -19,7 +19,7 @@
 
 import {Component, ComponentRef, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
 import {ButtonModel} from 'app/models/button';
-import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
+import {ComponentInstance} from 'app/models/components-instances/component-instance';
 import {ModalModel} from 'app/models/modal';
 import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
 import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
@@ -84,7 +84,7 @@ export class SubstitutionFilterComponent implements OnInit, OnChanges {
   @Output() loadConstraintListEvent: EventEmitter<any> = new EventEmitter();
   @Output() hasSubstitutionFilter = new EventEmitter<boolean>();
 
-  constructor(private topologyTemplateService: TopologyTemplateService, private modalServiceNg2: ModalService, private translateService: TranslateService) {
+  constructor(private topologyTemplateService: TopologyTemplateService, private modalService: ModalService, private translateService: TranslateService) {
   }
 
   ngOnInit(): void {
@@ -123,11 +123,11 @@ export class SubstitutionFilterComponent implements OnInit, OnChanges {
   }
 
   onAddSubstitutionFilter = (constraintType: string): void => {
-    const cancelButton: ButtonModel = new ButtonModel(I18nTexts.modalCancel, 'outline white', this.modalServiceNg2.closeCurrentModal);
+    const cancelButton: ButtonModel = new ButtonModel(I18nTexts.modalCancel, 'outline white', this.modalService.closeCurrentModal);
     const saveButton: ButtonModel = new ButtonModel(I18nTexts.modalCreate, 'blue', () => this.createSubstitutionFilter(constraintType), this.getDisabled);
     const modalModel: ModalModel = new ModalModel('l', I18nTexts.addSubstitutionFilterTxt, '', [saveButton, cancelButton], 'standard');
-    this.modalInstance = this.modalServiceNg2.createCustomModal(modalModel);
-    this.modalServiceNg2.addDynamicContentToModalAndBindInputs(
+    this.modalInstance = this.modalService.createCustomModal(modalModel);
+    this.modalService.addDynamicContentToModalAndBindInputs(
         this.modalInstance,
         ServiceDependenciesEditorComponent,
         {
@@ -158,16 +158,16 @@ export class SubstitutionFilterComponent implements OnInit, OnChanges {
       console.error(`Failed to Create Substitution Filter on the component with id: ${this.compositeService.uniqueId}`, err);
       this.isLoading = false;
     });
-    this.modalServiceNg2.closeCurrentModal();
+    this.modalService.closeCurrentModal();
   }
 
   onSelectSubstitutionFilter(constraintType: string, index: number) {
-    const cancelButton: ButtonModel = new ButtonModel(I18nTexts.modalCancel, 'outline white', this.modalServiceNg2.closeCurrentModal);
+    const cancelButton: ButtonModel = new ButtonModel(I18nTexts.modalCancel, 'outline white', this.modalService.closeCurrentModal);
     const updateButton: ButtonModel = new ButtonModel(I18nTexts.modalSave, 'blue', () => this.updateSubstitutionFilter(constraintType, index), this.getDisabled);
     const modalModel: ModalModel = new ModalModel('l', I18nTexts.updateSubstitutionFilterTxt, '', [updateButton, cancelButton], 'standard');
-    this.modalInstance = this.modalServiceNg2.createCustomModal(modalModel);
+    this.modalInstance = this.modalService.createCustomModal(modalModel);
     const selectedFilterConstraint = new PropertyFilterConstraintUi(this.constraintProperties[index]);
-    this.modalServiceNg2.addDynamicContentToModalAndBindInputs(
+    this.modalService.addDynamicContentToModalAndBindInputs(
         this.modalInstance,
         ServiceDependenciesEditorComponent,
         {
@@ -200,7 +200,7 @@ export class SubstitutionFilterComponent implements OnInit, OnChanges {
       console.error("Failed to Update Substitution Filter on the component with id: ", this.compositeService.uniqueId, error);
       this.isLoading = false;
     });
-    this.modalServiceNg2.closeCurrentModal();
+    this.modalService.closeCurrentModal();
   }
 
   onDeleteSubstitutionFilter = (constraintType: string, index: number): void => {
@@ -218,7 +218,7 @@ export class SubstitutionFilterComponent implements OnInit, OnChanges {
           this.compositeService.uniqueId, error);
       this.isLoading = false;
     });
-    this.modalServiceNg2.closeCurrentModal();
+    this.modalService.closeCurrentModal();
   }
 
   getDisabled = (): boolean => {
@@ -226,7 +226,7 @@ export class SubstitutionFilterComponent implements OnInit, OnChanges {
   }
 
   openDeleteModal = (constraintType: string, index: number): void => {
-    this.modalServiceNg2.createActionModal(I18nTexts.deleteSubstitutionFilterTxt, I18nTexts.deleteSubstitutionFilterMsg,
+    this.modalService.createActionModal(I18nTexts.deleteSubstitutionFilterTxt, I18nTexts.deleteSubstitutionFilterMsg,
         I18nTexts.modalDelete, () => this.onDeleteSubstitutionFilter(constraintType, index), I18nTexts.modalCancel).instance.open();
   }
 

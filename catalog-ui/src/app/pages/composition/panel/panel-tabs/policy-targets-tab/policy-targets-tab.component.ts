@@ -28,7 +28,7 @@ import * as _ from 'lodash';
 import { SdcUiCommon, SdcUiComponents, SdcUiServices } from 'onap-ui-angular';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { ComponentInstance } from '../../../../../models/componentsInstances/componentInstance';
+import { ComponentInstance } from '../../../../../models/components-instances/component-instance';
 import { PolicyInstance } from '../../../../../models/graph/zones/policy-instance';
 import { TargetUiObject } from '../../../../../models/ui-models/ui-target-object';
 import { TargetOrMemberType } from '../../../../../utils/constants';

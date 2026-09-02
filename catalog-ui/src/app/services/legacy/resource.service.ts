@@ -26,7 +26,7 @@
 import * as _ from "lodash";
 import {Inject, Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
-import {IComponentService, ComponentService} from "./component.service";
+import {ILegacyComponentService, LegacyComponentService} from "./component.service";
 import {IAppConfigurtaion} from '../../models/app-config';
 import {Component} from '../../models/components/component';
 import {Resource} from '../../models/components/resource';
@@ -37,17 +37,21 @@ import {SharingService} from "../sharing.service";
 import {DataTypesService} from "../data-types.service";
 import {SdcConfigToken} from "../../config/sdc-config.config";
 
-export interface IResourceService extends IComponentService {
+export interface ILegacyResourceService extends ILegacyComponentService {
     updateResourceGroupProperties(uniqueId:string, groupId:string, properties:Array<PropertyModel>):Promise<Array<PropertyModel>>
 }
 
 /**
- * @deprecated Superseded by ResourceServiceNg2 (services/component-services/resource.service.ts).
+ * @deprecated Superseded by ResourceService (services/component-services/resource.service.ts).
  * Injected in utils/component-factory.ts and handed to models/components/resource.ts, which calls its
  * promise-based API. Both sites move to the Observable API before this can go. Tracked by SDC-4913.
+ *
+ * The file keeps the counterpart's name (`resource.service.ts`) while the class carries the
+ * `Legacy` prefix: the directory already supplies the qualifier, and keeping the basenames
+ * paired makes the eventual dedup diff a one-directory delete.
  */
 @Injectable()
-export class ResourceService extends ComponentService implements IResourceService {
+export class LegacyResourceService extends LegacyComponentService implements ILegacyResourceService {
 
     constructor(@Inject(SdcConfigToken) sdcConfig: IAppConfigurtaion,
                 http: HttpClient,

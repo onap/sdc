@@ -21,9 +21,9 @@
 import {NO_ERRORS_SCHEMA, SimpleChange} from '@angular/core';
 import {ComponentFixture} from '@angular/core/testing';
 import {ConfigureFn, configureTests} from '../../../../jest/test-config.helper';
-import {ContentAfterLastDotPipe} from '../../../pipes/contentAfterLastDot.pipe';
+import {ContentAfterLastDotPipe} from '../../../pipes/content-after-last-dot.pipe';
 import {KeysPipe} from '../../../pipes/keys.pipe';
-import {SearchFilterPipe} from '../../../pipes/searchFilter.pipe';
+import {SearchFilterPipe} from '../../../pipes/search-filter.pipe';
 import {ModalService} from '../../../services/modal.service';
 import {AttributeRowSelectedEvent, AttributesTableComponent} from './attributes-table.component';
 import {AttributesService} from "../../../services/attributes.service";

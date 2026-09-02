@@ -28,7 +28,7 @@ import {AttributeModel, AttributesGroup} from '../attributes';
 import {CapabilitiesGroup} from '../capability';
 import {IMainCategory} from '../category';
 import {AsdcComment} from '../comments';
-import {ComponentInstance} from '../componentsInstances/componentInstance';
+import {ComponentInstance} from '../components-instances/component-instance';
 import {IFileDownload} from '../file-download';
 import {RelationshipModel} from '../graph/relationship';
 import {InputModel} from '../inputs';
@@ -38,7 +38,7 @@ import {PropertiesGroup, PropertyModel} from '../properties';
 import {RequirementsGroup} from '../requirement';
 import {IValidate} from '../validate';
 
-import {IComponentService} from "../../services/legacy/component.service";
+import {ILegacyComponentService} from "../../services/legacy/component.service";
 import {CommonUtils} from "../../utils/common-utils";
 import {ArtifactGroupType} from "../../utils/constants";
 import {ComponentMetadata} from "../component-metadata";
@@ -129,7 +129,7 @@ export abstract class Component implements IComponent {
     public groupInstances:Array<GroupInstance>
     public modules:Array<Module>;
     //custom properties
-    public componentService:IComponentService;
+    public componentService:ILegacyComponentService;
     public filterTerm:string;
     public iconSprite:string;
     public selectedInstance:ComponentInstance;
@@ -145,7 +145,7 @@ export abstract class Component implements IComponent {
     public derivedFromGenericVersion: string;
     public model: string;
 
-    constructor(componentService:IComponentService, component?:Component) {
+    constructor(componentService:ILegacyComponentService, component?:Component) {
         if (component) {
             this.abstract = component.abstract;
             this.uniqueId = component.uniqueId;

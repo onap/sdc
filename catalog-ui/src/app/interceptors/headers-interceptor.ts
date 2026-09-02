@@ -6,14 +6,14 @@ import 'rxjs/add/observable/defer';
 import 'rxjs/add/operator/finally';
 import { Observable } from 'rxjs/Observable';
 import { ServerErrorResponse } from '../models/server-error-response';
-import { Cookie2Service } from '../services/cookie.service';
-import { HttpHelperService } from '../services/http-hepler.service';
+import { CookieService } from '../services/cookie.service';
+import { HttpHelperService } from '../services/http-helper.service';
 import { TranslateService } from '../shared/translator/translate.service';
 
 @Injectable()
 export class HeadersInterceptor implements HttpInterceptor {
 
-    constructor(private injector: Injector, private cookieService: Cookie2Service, private httpHelperService: HttpHelperService) {}
+    constructor(private injector: Injector, private cookieService: CookieService, private httpHelperService: HttpHelperService) {}
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         // Report every request to Angular's Testability so external test tooling can tell

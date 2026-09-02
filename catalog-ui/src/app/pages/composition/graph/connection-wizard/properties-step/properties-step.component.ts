@@ -9,7 +9,7 @@ import {IStepComponent} from 'app/models/wizard-step';import {ConnectionWizardSe
 import {PropertyFEModel} from "app/models/properties-inputs/property-fe-model";
 import {InstanceFePropertiesMap} from "app/models/properties-inputs/property-fe-map";
 import {PropertiesUtils} from "app/pages/properties-assignment/services/properties.utils";
-import { ComponentInstanceServiceNg2 } from "app/services/component-instance-services/component-instance.service";
+import { ComponentInstanceService } from "app/services/component-instance-services/component-instance.service";
 
 @Component({
     selector: 'properties-step',
@@ -22,7 +22,7 @@ export class PropertiesStepComponent implements IStepComponent{
     capabilityPropertiesMap: InstanceFePropertiesMap;
     savingProperty:boolean = false;
 
-    constructor(@Inject(forwardRef(() => ConnectionWizardService)) public connectWizardService: ConnectionWizardService, private componentInstanceServiceNg2:ComponentInstanceServiceNg2, private propertiesUtils:PropertiesUtils) {
+    constructor(@Inject(forwardRef(() => ConnectionWizardService)) public connectWizardService: ConnectionWizardService, private componentInstanceService:ComponentInstanceService, private propertiesUtils:PropertiesUtils) {
 
         this.capabilityPropertiesMap = this.propertiesUtils.convertPropertiesMapToFEAndCreateChildren({'capability' : connectWizardService.selectedMatch.capability.properties}, false);
     }
@@ -42,7 +42,7 @@ export class PropertiesStepComponent implements IStepComponent{
         if (!property.isDeclared) {
             const propChangedIdx = this.connectWizardService.changedCapabilityProperties.indexOf(property);
             if (property.hasValueObjChanged()) {
-            // if (this.componentInstanceServiceNg2.hasPropertyChanged(property)) {
+            // if (this.componentInstanceService.hasPropertyChanged(property)) {
                 console.log("==>" + this.constructor.name + ": propertyValueChanged " + property);
                 if (propChangedIdx === -1) {
                     this.connectWizardService.changedCapabilityProperties.push(property);

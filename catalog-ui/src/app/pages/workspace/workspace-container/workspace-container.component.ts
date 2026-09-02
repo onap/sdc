@@ -41,7 +41,7 @@ import {NotificationSettings} from 'onap-ui-angular/dist/notifications/utilities
 import {IModalButtonComponent} from 'onap-ui-angular/dist/common';
 import {AutomatedUpgradeService} from '../../automated-upgrade/automated-upgrade.service';
 import {CatalogService} from '../../../services/catalog.service';
-import {ComponentServiceNg2} from '../../../services/component-services/component.service';
+import {ComponentService} from '../../../services/component-services/component.service';
 import {EventBusService} from '../../../services/event-bus.service';
 import {HomeService} from '../../../services/home.service';
 import {PluginsService} from '../../../services/plugins.service';
@@ -111,7 +111,7 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
         private eventListenerService: EventListenerService,
         private homeService: HomeService,
         private catalogService: CatalogService,
-        private componentServiceNg2: ComponentServiceNg2,
+        private componentService: ComponentService,
         private automatedUpgradeService: AutomatedUpgradeService,
         private eventBusService: EventBusService,
         private modalServiceSdcUI: SdcUiServices.ModalService,
@@ -532,7 +532,7 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
 
     private handleCertification(certifyComponent: Component): void {
         if (this.component.getComponentSubType() === ResourceType.VF || this.component.isService()) {
-            this.componentServiceNg2.getDependencies(this.component.componentType, this.component.uniqueId).subscribe((response: IDependenciesServerResponse[]) => {
+            this.componentService.getDependencies(this.component.componentType, this.component.uniqueId).subscribe((response: IDependenciesServerResponse[]) => {
                 this.isLoading = false;
                 const isUpgradeNeeded = response.filter((c) => c.dependencies && c.dependencies.length > 0);
                 if (isUpgradeNeeded.length === 0) {
@@ -580,7 +580,7 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
 
     archiveComponent = (): void => {
         this.isLoading = true;
-        this.componentServiceNg2.archiveComponent(this.component.componentType, this.component.uniqueId).subscribe(() => {
+        this.componentService.archiveComponent(this.component.componentType, this.component.uniqueId).subscribe(() => {
             this.isLoading = false;
             this.navigateToPreviousState();
             this.component.isArchived = true;
@@ -599,7 +599,7 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
 
     restoreComponent = (): void => {
         this.isLoading = true;
-        this.componentServiceNg2.restoreComponent(this.component.componentType, this.component.uniqueId).subscribe(() => {
+        this.componentService.restoreComponent(this.component.componentType, this.component.uniqueId).subscribe(() => {
             this.isLoading = false;
             this.notificationsService.push(new NotificationSettings(
                 'success',
@@ -636,7 +636,7 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
 
     handleDeleteArchivedComponent = (): void => {
         this.isLoading = true;
-        this.componentServiceNg2.deleteComponent(this.component.componentType, this.component.uniqueId).subscribe(() => {
+        this.componentService.deleteComponent(this.component.componentType, this.component.uniqueId).subscribe(() => {
             this.deleteArchiveCache();
             this.notificationsService.push(new NotificationSettings(
                 'success',
@@ -659,7 +659,7 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
 
     openAutomatedUpgradeModal = (): void => {
         this.isLoading = true;
-        this.componentServiceNg2.getDependencies(this.component.componentType, this.component.uniqueId)
+        this.componentService.getDependencies(this.component.componentType, this.component.uniqueId)
             .subscribe((response: IDependenciesServerResponse[]) => {
                 this.isLoading = false;
                 this.automatedUpgradeService.openAutomatedUpgradeModal(response, this.component, false);
@@ -900,7 +900,7 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
         if (this.component.componentType && this.component.uniqueId &&
             this.component.lifecycleState === 'CERTIFIED' &&
             (this.component.isService() || this.component.getComponentSubType() === 'VF')) {
-            this.componentServiceNg2.getDependencies(this.component.componentType, this.component.uniqueId).subscribe((response: IDependenciesServerResponse[]) => {
+            this.componentService.getDependencies(this.component.componentType, this.component.uniqueId).subscribe((response: IDependenciesServerResponse[]) => {
                 const containsDependencies = response.filter((version) => version.dependencies);
                 this.hasNoDependencies = containsDependencies.length === 0;
             });

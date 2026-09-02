@@ -20,7 +20,7 @@ import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { ISdcConfig, SdcConfigToken } from '../config/sdc-config.config';
-import {ToscaArtifactModel} from "../models/toscaArtifact";
+import {ToscaArtifactModel} from "../models/tosca-artifact";
 
 @Injectable()
 export class ToscaArtifactService {

@@ -1,6 +1,6 @@
 import {Injectable} from "@angular/core";
 import 'rxjs/add/observable/forkJoin';
-import {ComponentInstance} from "../../../models/componentsInstances/componentInstance";
+import {ComponentInstance} from "../../../models/components-instances/component-instance";
 import {SelectedComponentType} from "./store/graph.actions";
 import {RelationshipModel} from "../../../models/graph/relationship";
 

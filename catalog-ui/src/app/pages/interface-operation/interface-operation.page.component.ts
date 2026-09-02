@@ -34,9 +34,9 @@ import {CapabilitiesGroup, Capability} from 'app/models/capability';
 import {InterfaceModel, OperationModel, WORKFLOW_ASSOCIATION_OPTIONS} from 'app/models/operation';
 import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
 
-import {ComponentServiceNg2} from 'app/services/component-services/component.service';
+import {ComponentService} from 'app/services/component-services/component.service';
 import {PluginsService} from 'app/services/plugins.service';
-import {WorkflowServiceNg2} from 'app/services/workflow.service';
+import {WorkflowService} from 'app/services/workflow.service';
 import {NavigationService} from 'app/services/navigation.service';
 import {WorkspaceService} from 'app/pages/workspace/workspace.service';
 import {WorkspaceMode} from 'app/utils/constants';
@@ -154,9 +154,9 @@ export class InterfaceOperationComponent {
         private navigationService: NavigationService,
         private TranslateService: TranslateService,
         private PluginsService: PluginsService,
-        private ComponentServiceNg2: ComponentServiceNg2,
-        private WorkflowServiceNg2: WorkflowServiceNg2,
-        private ModalServiceNg2: ModalService,
+        private ComponentService: ComponentService,
+        private WorkflowService: WorkflowService,
+        private modalService: ModalService,
         private ModalServiceSdcUI: SdcUiServices.ModalService,
         private workspaceService: WorkspaceService
     ) {
@@ -173,10 +173,10 @@ export class InterfaceOperationComponent {
         this.isLoading = true;
         this.workflowIsOnline = !_.isUndefined(this.PluginsService.getPluginByStateUrl('workflowDesigner'));
         Observable.forkJoin(
-            this.ComponentServiceNg2.getInterfaceOperations(this.component),
-            this.ComponentServiceNg2.getComponentInputs(this.component),
-            this.ComponentServiceNg2.getInterfaceTypes(this.component),
-            this.ComponentServiceNg2.getCapabilitiesAndRequirements(this.component.componentType, this.component.uniqueId)
+            this.ComponentService.getInterfaceOperations(this.component),
+            this.ComponentService.getComponentInputs(this.component),
+            this.ComponentService.getInterfaceTypes(this.component),
+            this.ComponentService.getCapabilitiesAndRequirements(this.component.componentType, this.component.uniqueId)
         ).subscribe((response: any[]) => {
             const callback = (workflows) => {
                 this.isLoading = false;
@@ -188,7 +188,7 @@ export class InterfaceOperationComponent {
                 this.capabilities = response[3].capabilities;
             };
             if (this.enableWorkflowAssociation && this.workflowIsOnline) {
-                this.WorkflowServiceNg2.getWorkflows().subscribe(
+                this.WorkflowService.getWorkflows().subscribe(
                     callback,
                     (err) => {
                         this.workflowIsOnline = false;
@@ -327,7 +327,7 @@ export class InterfaceOperationComponent {
             size: 'small',
             closeModal: true,
             callback: () => {
-                this.ComponentServiceNg2
+                this.ComponentService
                 .deleteInterfaceOperation(this.component, operation)
                 .subscribe(() => {
                     const curInterf = _.find(this.interfaces, (interf) => interf.type === operation.interfaceType);
@@ -368,7 +368,7 @@ export class InterfaceOperationComponent {
     }
 
     private createOperation = (operation: OperationModel): void => {
-        this.ComponentServiceNg2.createInterfaceOperation(this.component, operation).subscribe((response: OperationModel) => {
+        this.ComponentService.createInterfaceOperation(this.component, operation).subscribe((response: OperationModel) => {
             this.openOperation = null;
 
             let curInterf = _.find(
@@ -390,9 +390,9 @@ export class InterfaceOperationComponent {
             this.sortInterfaces();
 
             if (operation.workflowAssociationType === WORKFLOW_ASSOCIATION_OPTIONS.EXTERNAL && operation.artifactData) {
-                this.ComponentServiceNg2.uploadInterfaceOperationArtifact(this.component, newOpModel, operation).subscribe();
+                this.ComponentService.uploadInterfaceOperationArtifact(this.component, newOpModel, operation).subscribe();
             } else if (response.workflowId && operation.workflowAssociationType === WORKFLOW_ASSOCIATION_OPTIONS.EXISTING) {
-                this.WorkflowServiceNg2.associateWorkflowArtifact(this.component, response).subscribe();
+                this.WorkflowService.associateWorkflowArtifact(this.component, response).subscribe();
             } else if (operation.workflowAssociationType === WORKFLOW_ASSOCIATION_OPTIONS.NEW) {
                 this.navigationService.navigate('workspace.plugins', {path: 'workflowDesigner'});
             }
@@ -400,7 +400,7 @@ export class InterfaceOperationComponent {
     }
 
     private updateOperation = (operation: OperationModel): void => {
-        this.ComponentServiceNg2.updateInterfaceOperation(this.component, operation).subscribe((newOperation: OperationModel) => {
+        this.ComponentService.updateInterfaceOperation(this.component, operation).subscribe((newOperation: OperationModel) => {
             this.openOperation = null;
 
             let oldOpIndex;
@@ -421,9 +421,9 @@ export class InterfaceOperationComponent {
             this.sortInterfaces();
 
             if (operation.workflowAssociationType === WORKFLOW_ASSOCIATION_OPTIONS.EXTERNAL && operation.artifactData) {
-                this.ComponentServiceNg2.uploadInterfaceOperationArtifact(this.component, newOpModel, operation).subscribe();
+                this.ComponentService.uploadInterfaceOperationArtifact(this.component, newOpModel, operation).subscribe();
             } else if (newOperation.workflowId && operation.workflowAssociationType === WORKFLOW_ASSOCIATION_OPTIONS.EXISTING) {
-                this.WorkflowServiceNg2.associateWorkflowArtifact(this.component, newOperation).subscribe();
+                this.WorkflowService.associateWorkflowArtifact(this.component, newOperation).subscribe();
             }
         });
     }

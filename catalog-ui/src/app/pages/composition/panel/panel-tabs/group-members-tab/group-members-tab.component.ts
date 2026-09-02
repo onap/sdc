@@ -29,7 +29,7 @@ import * as _ from 'lodash';
 import { SdcUiCommon, SdcUiComponents, SdcUiServices } from 'onap-ui-angular';
 import { Observable, Subscription } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { ComponentInstance } from '../../../../../models/componentsInstances/componentInstance';
+import { ComponentInstance } from '../../../../../models/components-instances/component-instance';
 import { MemberUiObject } from '../../../../../models/ui-models/ui-member-object';
 import { AddElementsComponent } from '../../../../../components/ui/modal/add-elements/add-elements.component';
 import {GraphState} from "../../../common/store/graph.state";

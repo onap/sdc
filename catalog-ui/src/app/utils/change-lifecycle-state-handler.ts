@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 import { Inject, Injectable } from '@angular/core';
-import { ServiceServiceNg2 } from 'app/services/component-services/service.service';
+import { ServiceService } from 'app/services/component-services/service.service';
 import { EventBusService } from 'app/services/event-bus.service';
 import { TranslateService } from 'app/shared/translator/translate.service';
 import {EVENTS} from 'app/utils/constants';
@@ -39,7 +39,7 @@ export class ChangeLifecycleStateHandler {
     constructor(@Inject(SdcMenuToken) private sdcMenu: IAppMenu,
                 private componentFactory: ComponentFactory,
                 private translateService: TranslateService,
-                private serviceServiceNg2: ServiceServiceNg2,
+                private serviceService: ServiceService,
                 private eventBusService: EventBusService,
                 private modalService: SdcUiServices.ModalService,
                 private validationUtils: ValidationUtils,
@@ -136,7 +136,7 @@ export class ChangeLifecycleStateHandler {
 
     private validateConformanceLevel = (component: Component, data: any, scope: any, onSuccessCallback?: Function, onErrorCallback?: Function) => {
         // Validate conformance level if defined in menu.json
-        this.serviceServiceNg2.validateConformanceLevel(component as Service).subscribe((res: boolean) => {
+        this.serviceService.validateConformanceLevel(component as Service).subscribe((res: boolean) => {
             if (res === true) {
                 // Conformance level is ok - continue
                 this.actualChangeLifecycleState(component, data, scope, onSuccessCallback, onErrorCallback);

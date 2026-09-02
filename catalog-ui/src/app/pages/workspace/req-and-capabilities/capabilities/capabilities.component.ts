@@ -1,7 +1,7 @@
 import {Capability, CapabilityUI} from "../../../../models/capability";
 import { ViewChild, Input, OnInit, Component } from "@angular/core";
 import {SdcUiCommon, SdcUiServices} from "onap-ui-angular";
-import {CapabilitiesEditorComponent} from "./capabilityEditor/capabilities-editor.component";
+import {CapabilitiesEditorComponent} from "./capabilities-editor/capabilities-editor.component";
 import {WorkspaceService} from "../../workspace.service";
 import {TopologyTemplateService} from "../../../../services/component-services/topology-template.service";
 import {ReqAndCapabilitiesService} from "../req-and-capabilities.service";

@@ -1,7 +1,7 @@
 import {TestBed} from '@angular/core/testing';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {AuthenticationService} from './authentication.service';
-import {Cookie2Service} from './cookie.service';
+import {CookieService} from './cookie.service';
 import {CacheService} from './cache.service';
 import {SdcConfigToken} from '../config/sdc-config.config';
 import {mockSdcConfig} from '../../jest/mocks/sdc-config.mock';
@@ -30,7 +30,7 @@ describe('AuthenticationService', () => {
             imports: [HttpClientTestingModule],
             providers: [
                 AuthenticationService,
-                {provide: Cookie2Service, useValue: cookieServiceMock},
+                {provide: CookieService, useValue: cookieServiceMock},
                 {provide: CacheService, useValue: cacheServiceMock},
                 {provide: SdcConfigToken, useValue: mockSdcConfig}
             ]

@@ -23,7 +23,7 @@ import {ModalsHandler} from 'app/utils/modals-handler';
 import {SdcUiCommon, SdcUiComponents, SdcUiServices} from 'onap-ui-angular';
 import {WorkspaceMode} from 'app/utils/constants';
 import {TranslateService} from 'app/shared/translator/translate.service';
-import {ComponentServiceNg2} from 'app/services/component-services/component.service';
+import {ComponentService} from 'app/services/component-services/component.service';
 import {ComponentGenericResponse} from 'app/services/responses/component-generic-response';
 import {WorkspaceService} from '../workspace.service';
 
@@ -82,7 +82,7 @@ export class WorkspacePropertiesTabComponent implements OnInit {
     private mode: WorkspaceMode;
 
     constructor(private workspaceService: WorkspaceService,
-                private componentService: ComponentServiceNg2,
+                private componentService: ComponentService,
                 private modalsHandler: ModalsHandler,
                 private modalService: SdcUiServices.ModalService,
                 private translateService: TranslateService,

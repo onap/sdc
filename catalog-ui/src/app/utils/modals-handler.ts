@@ -40,7 +40,7 @@ export interface IModalsHandler {
 @Injectable()
 export class ModalsHandler implements IModalsHandler {
 
-    constructor(private modalServiceNg2: ModalService) {
+    constructor(private modalService: ModalService) {
     }
 
     openUpdateIconModal = (component: Component): Promise<any> => {
@@ -50,19 +50,19 @@ export class ModalsHandler implements IModalsHandler {
             const okBtn = new ButtonModel('OK', 'blue', () => {
                 const isDirty: boolean = dyn.updateIcon();
                 resolve(isDirty);
-                this.modalServiceNg2.closeCurrentModal();
+                this.modalService.closeCurrentModal();
             });
             const cancelBtn = new ButtonModel('Cancel', 'grey', () => {
                 resolve(undefined);
-                this.modalServiceNg2.closeCurrentModal();
+                this.modalService.closeCurrentModal();
             });
 
-            const modal = this.modalServiceNg2.createCustomModal(
+            const modal = this.modalService.createCustomModal(
                 new ModalModel('l', 'Choose Icon', null, [okBtn, cancelBtn], 'standard'));
             // addDynamicContentToModalAndBindInputs sets instance[key]=value, i.e. instance.component — the field
             // IconsModalComponent reads. (addDynamicContentToModal would set instance.input instead, leaving
             // this.component undefined and crashing initIcons.)
-            this.modalServiceNg2.addDynamicContentToModalAndBindInputs(modal, IconsModalComponent, {component});
+            this.modalService.addDynamicContentToModalAndBindInputs(modal, IconsModalComponent, {component});
             dyn = modal.instance.dynamicContent.instance as IconsModalComponent;
             modal.instance.open();
         });
@@ -98,23 +98,23 @@ export class ModalsHandler implements IModalsHandler {
             const okBtn = new ButtonModel('Save', 'blue', () => {
                 dyn.save().subscribe((saved) => {
                     resolve(saved as any);
-                    this.modalServiceNg2.closeCurrentModal();
+                    this.modalService.closeCurrentModal();
                 });
             }, () => !dyn.isValid());
             const cancelBtn = new ButtonModel('Cancel', 'grey', () => {
                 resolve(undefined);
-                this.modalServiceNg2.closeCurrentModal();
+                this.modalService.closeCurrentModal();
             });
 
-            const modal = this.modalServiceNg2.createCustomModal(
+            const modal = this.modalService.createCustomModal(
                 new ModalModel('l', (isNew ? 'Add' : 'Update') + ' Property', null, [okBtn, cancelBtn], 'standard'));
-            this.modalServiceNg2.addDynamicContentToModal(modal, PropertyFormModalComponent, inputs);
+            this.modalService.addDynamicContentToModal(modal, PropertyFormModalComponent, inputs);
             dyn = modal.instance.dynamicContent.instance as PropertyFormModalComponent;
             // Resolve (so the caller's .then(reloadProperties) runs) and close the modal on an
             // in-modal delete-success. Mirrors the Cancel button; the component invokes this from deleteCurrent().
             dyn.deleteCallback = () => {
                 resolve(undefined);
-                this.modalServiceNg2.closeCurrentModal();
+                this.modalService.closeCurrentModal();
             };
             modal.instance.open();
         });
@@ -148,23 +148,23 @@ export class ModalsHandler implements IModalsHandler {
             const okBtn = new ButtonModel('Save', 'blue', () => {
                 dyn.save().subscribe((saved) => {
                     resolve(saved as any);
-                    this.modalServiceNg2.closeCurrentModal();
+                    this.modalService.closeCurrentModal();
                 });
             }, () => !dyn.isValid());
             const cancelBtn = new ButtonModel('Cancel', 'grey', () => {
                 resolve(undefined);
-                this.modalServiceNg2.closeCurrentModal();
+                this.modalService.closeCurrentModal();
             });
 
-            const modal = this.modalServiceNg2.createCustomModal(
+            const modal = this.modalService.createCustomModal(
                 new ModalModel('l', (isNew ? 'Add' : 'Update') + ' Property', null, [okBtn, cancelBtn], 'standard'));
-            this.modalServiceNg2.addDynamicContentToModal(modal, PropertyFormModalComponent, inputs);
+            this.modalService.addDynamicContentToModal(modal, PropertyFormModalComponent, inputs);
             dyn = modal.instance.dynamicContent.instance as PropertyFormModalComponent;
             // Resolve (so the caller's .then(reloadProperties) runs) and close the modal on an
             // in-modal delete-success. Mirrors the Cancel button; the component invokes this from deleteCurrent().
             dyn.deleteCallback = () => {
                 resolve(undefined);
-                this.modalServiceNg2.closeCurrentModal();
+                this.modalService.closeCurrentModal();
             };
             modal.instance.open();
         });
@@ -177,17 +177,17 @@ export class ModalsHandler implements IModalsHandler {
             const okBtn = new ButtonModel('Save', 'blue', () => {
                 dyn.save().subscribe((saved) => {
                     resolve(saved as any);
-                    this.modalServiceNg2.closeCurrentModal();
+                    this.modalService.closeCurrentModal();
                 });
             }, () => !dyn.isValid());
             const cancelBtn = new ButtonModel('Cancel', 'grey', () => {
                 resolve(undefined);
-                this.modalServiceNg2.closeCurrentModal();
+                this.modalService.closeCurrentModal();
             });
 
-            const modal = this.modalServiceNg2.createCustomModal(
+            const modal = this.modalService.createCustomModal(
                 new ModalModel('l', 'Update Property', null, [okBtn, cancelBtn], 'standard'));
-            this.modalServiceNg2.addDynamicContentToModalAndBindInputs(modal, ModulePropertyModalComponent, {
+            this.modalService.addDynamicContentToModalAndBindInputs(modal, ModulePropertyModalComponent, {
                 input: {property, component, selectedModule, filteredProperties}
             });
             dyn = modal.instance.dynamicContent.instance as ModulePropertyModalComponent;

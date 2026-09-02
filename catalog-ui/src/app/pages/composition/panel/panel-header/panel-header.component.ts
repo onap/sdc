@@ -23,8 +23,8 @@ import { SdcUiComponents, SdcUiCommon, SdcUiServices } from "onap-ui-angular";
 import { EditNameModalComponent } from "app/pages/composition/panel/panel-header/edit-name-modal/edit-name-modal.component";
 import {Capability} from 'app/models/capability';
 import {Component as TopologyTemplate} from 'app/models/components/component';
-import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
-import {FullComponentInstance} from 'app/models/componentsInstances/fullComponentInstance';
+import {ComponentInstance} from 'app/models/components-instances/component-instance';
+import {FullComponentInstance} from 'app/models/components-instances/full-component-instance';
 import {GroupInstance} from 'app/models/graph/zones/group-instance';
 import {PolicyInstance} from 'app/models/graph/zones/policy-instance';
 import {Requirement} from 'app/models/requirement';
@@ -34,7 +34,7 @@ import { Subscription } from "rxjs";
 import {GRAPH_EVENTS} from "../../../../utils/constants";
 import { CompositionService } from "app/pages/composition/composition.service";
 import {EventListenerService} from "../../../../services/event-listener.service";
-import { ComponentInstanceServiceNg2 } from "app/services/component-instance-services/component-instance.service";
+import { ComponentInstanceService } from "app/services/component-instance-services/component-instance.service";
 import { WorkspaceService } from "app/pages/workspace/workspace.service";
 import {GroupsService} from 'app/services/groups.service';
 import {PoliciesService} from 'app/services/policies.service';
@@ -61,7 +61,7 @@ export class CompositionPanelHeaderComponent implements OnInit {
                 private eventListenerService: EventListenerService,
                 private compositionService: CompositionService,
                 private workspaceService: WorkspaceService,
-                private componentInstanceService: ComponentInstanceServiceNg2) { }
+                private componentInstanceService: ComponentInstanceService) { }
 
     private iconClassName: string;
     private valueEditModalInstance: SdcUiComponents.ModalComponent;

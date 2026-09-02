@@ -23,12 +23,12 @@
 'use strict';
 import {ComponentType} from 'app/utils/constants';
 import {Component} from '../models/components/component';
-import {ComponentInstance} from '../models/componentsInstances/componentInstance';
-import {ResourceInstance} from '../models/componentsInstances/resourceInstance';
-import {ServiceInstance} from '../models/componentsInstances/serviceInstance';
-import {ServiceProxyInstance} from '../models/componentsInstances/serviceProxyInstance';
-import {ServiceSubstitutionInstance} from '../models/componentsInstances/serviceSubstitutionInstance';
-import { LeftPaletteComponent } from '../models/components/displayComponent';
+import {ComponentInstance} from '../models/components-instances/component-instance';
+import {ResourceInstance} from '../models/components-instances/resource-instance';
+import {ServiceInstance} from '../models/components-instances/service-instance';
+import {ServiceProxyInstance} from '../models/components-instances/service-proxy-instance';
+import {ServiceSubstitutionInstance} from '../models/components-instances/service-substitution-instance';
+import { LeftPaletteComponent } from '../models/components/display-component';
 
 export class ComponentInstanceFactory {
 

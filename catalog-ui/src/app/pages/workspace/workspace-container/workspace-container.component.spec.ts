@@ -43,7 +43,7 @@ function createComponent(overrides: any = {}) {
     const eventListenerService: any = {registerObserverCallback: jest.fn(), unRegisterObserver: jest.fn(), notifyObservers: jest.fn()};
     const homeService: any = {getAllComponents: jest.fn()};
     const catalogService: any = {getCatalog: jest.fn()};
-    const componentServiceNg2: any = {getDependencies: jest.fn()};
+    const componentService: any = {getDependencies: jest.fn()};
     const automatedUpgradeService: any = {openAutomatedUpgradeModal: jest.fn()};
     const eventBusService: any = {notify: jest.fn()};
     const modalServiceSdcUI: any = {openInfoModal: jest.fn()};
@@ -62,7 +62,7 @@ function createComponent(overrides: any = {}) {
     const cdr: any = {detectChanges: jest.fn()};
 
     const comp = new WorkspaceContainerComponent(
-        cacheService, eventListenerService, homeService, catalogService, componentServiceNg2,
+        cacheService, eventListenerService, homeService, catalogService, componentService,
         automatedUpgradeService, eventBusService, modalServiceSdcUI, pluginsService,
         workspaceNg1BridgeService, workspaceService, translateService, navigationService,
         notificationsService, cdr, sdcMenu, componentFactory, menuHandler,

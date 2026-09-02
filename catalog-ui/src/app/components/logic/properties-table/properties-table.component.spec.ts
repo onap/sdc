@@ -4,10 +4,10 @@ import { ConfigureFn, configureTests } from '../../../../jest/test-config.helper
 import { DerivedFEProperty } from '../../../models/properties-inputs/derived-fe-property';
 import { PropertyBEModel } from '../../../models/properties-inputs/property-be-model';
 import { PropertyFEModel } from '../../../models/properties-inputs/property-fe-model';
-import { ContentAfterLastDotPipe } from '../../../pipes/contentAfterLastDot.pipe';
+import { ContentAfterLastDotPipe } from '../../../pipes/content-after-last-dot.pipe';
 import { KeysPipe } from '../../../pipes/keys.pipe';
 import { PropertiesOrderByPipe } from '../../../pipes/properties-order-by.pipe';
-import { SearchFilterPipe } from '../../../pipes/searchFilter.pipe';
+import { SearchFilterPipe } from '../../../pipes/search-filter.pipe';
 import { ModalService } from '../../../services/modal.service';
 import { PropertiesService } from '../../../services/properties.service';
 import { PropertiesTableComponent, PropertyRowSelectedEvent } from './properties-table.component';

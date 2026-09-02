@@ -29,15 +29,15 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/throw';
 import { of } from 'rxjs';
 import { TranslateService } from '../shared/translator/translate.service';
-import { Cookie2Service } from '../services/cookie.service';
-import { HttpHelperService } from '../services/http-hepler.service';
+import { CookieService } from '../services/cookie.service';
+import { HttpHelperService } from '../services/http-helper.service';
 import { HttpErrorResponse, HttpEvent, HttpResponse, HttpRequest } from '@angular/common/http';
 import { ModelService } from "../services/model.service";
 
 describe('HeadersInterceptor service', () => {
 
     let headerService: HeadersInterceptor;
-    let cookieServiceMock: Partial<Cookie2Service>;
+    let cookieServiceMock: Partial<CookieService>;
     let httpServiceMock: Partial<HttpHelperService>;
 
     beforeEach(
@@ -64,7 +64,7 @@ describe('HeadersInterceptor service', () => {
                     providers: [HeadersInterceptor,
                         { provide: SdcConfigToken },
                         { provide: Injector },
-                        { provide: Cookie2Service, useValue: cookieServiceMock },
+                        { provide: CookieService, useValue: cookieServiceMock },
                         { provide: HttpHelperService, useValue: httpServiceMock },
                         { provide: TranslateService },
                         { provide: ModelService }
@@ -119,7 +119,7 @@ describe('HeadersInterceptor service', () => {
             const injectorMock = {
                 get: (token: any, notFoundValue?: any) => token === Testability ? testabilityMock : notFoundValue
             } as Injector;
-            interceptor = new HeadersInterceptor(injectorMock, cookieServiceMock as Cookie2Service,
+            interceptor = new HeadersInterceptor(injectorMock, cookieServiceMock as CookieService,
                 httpServiceMock as HttpHelperService);
         });
 
@@ -165,7 +165,7 @@ describe('HeadersInterceptor service', () => {
         it('should still issue the request when Testability is unavailable', done => {
             const mockHandler = { handle: jest.fn(() => of(new HttpResponse({ status: 200 }))) };
             const emptyInjector = { get: (token: any, notFoundValue?: any) => notFoundValue } as Injector;
-            const plainInterceptor = new HeadersInterceptor(emptyInjector, cookieServiceMock as Cookie2Service,
+            const plainInterceptor = new HeadersInterceptor(emptyInjector, cookieServiceMock as CookieService,
                 httpServiceMock as HttpHelperService);
 
             plainInterceptor.intercept(new HttpRequest<any>('GET', '/test'), mockHandler).subscribe(response => {

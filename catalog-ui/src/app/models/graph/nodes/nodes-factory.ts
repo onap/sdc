@@ -19,7 +19,7 @@
  */
 'use strict';
 
-import {ComponentInstance} from '../../componentsInstances/componentInstance';
+import {ComponentInstance} from '../../components-instances/component-instance';
 import {Module} from '../../modules/base-module';
 import {CompositionCiNodeBase} from './composition-graph-nodes/composition-ci-node-base';
 import {CompositionCiNodeConfiguration} from './composition-graph-nodes/composition-ci-node-configuration';

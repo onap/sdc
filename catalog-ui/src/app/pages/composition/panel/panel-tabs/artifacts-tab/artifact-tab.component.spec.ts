@@ -6,13 +6,13 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ArtifactsTabComponent } from './artifacts-tab.component';
 import { CompositionService } from '../../../composition.service';
 import { WorkspaceService } from '../../../../workspace/workspace.service';
-import { ComponentInstanceServiceNg2 } from '../../../../../services/component-instance-services/component-instance.service';
+import { ComponentInstanceService } from '../../../../../services/component-instance-services/component-instance.service';
 import { TopologyTemplateService } from '../../../../../services/component-services/topology-template.service';
 import { ArtifactsService } from '../../../../../components/forms/artifacts-form/artifacts.service';
 import { ArtifactModel } from '../../../../../models/artifacts';
 import { ArtifactType } from '../../../../../utils/constants';
-import { FullComponentInstance } from '../../../../../models/componentsInstances/fullComponentInstance';
-import { ComponentInstance } from '../../../../../models/componentsInstances/componentInstance';
+import { FullComponentInstance } from '../../../../../models/components-instances/full-component-instance';
+import { ComponentInstance } from '../../../../../models/components-instances/component-instance';
 import { Component } from '../../../../../models/components/component';
 import { GetInstanceArtifactsByTypeAction } from '../../../../../store/actions/instance-artifacts.actions';
 import { Observable } from 'rxjs';
@@ -23,7 +23,7 @@ describe('artifact-tab component', () => {
     let fixture: ComponentFixture<ArtifactsTabComponent>;
     let compositionMockService: Partial<CompositionService>;
     const workspaceMockService: Partial<WorkspaceService>;
-    const componentInstanceMockService: Partial<ComponentInstanceServiceNg2>;
+    const componentInstanceMockService: Partial<ComponentInstanceService>;
     const topologyTemplateMockService: Partial<TopologyTemplateService>;
     let artifactsServiceMockService: Partial<ArtifactsService>;
     let store: Store;
@@ -48,7 +48,7 @@ describe('artifact-tab component', () => {
                     providers: [
                         {provide: CompositionService, useValue: compositionMockService},
                         {provide: WorkspaceService, useValue: workspaceMockService},
-                        {provide: ComponentInstanceServiceNg2, useValue: componentInstanceMockService},
+                        {provide: ComponentInstanceService, useValue: componentInstanceMockService},
                         {provide: TopologyTemplateService, useValue: topologyTemplateMockService},
                         {provide: ArtifactsService, useValue: artifactsServiceMockService}
                     ],

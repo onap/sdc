@@ -21,11 +21,11 @@
 import { Injectable } from '@angular/core';
 import {Component as TopologyTemplate} from 'app/models/components/component';
 import {Service} from 'app/models/components/service';
-import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
+import {ComponentInstance} from 'app/models/components-instances/component-instance';
 import {CompositionCiNodeVl} from 'app/models/graph/nodes/composition-graph-nodes/composition-ci-node-vl';
 import { CompositionCiServicePathLink } from 'app/models/graph/graph-links/composition-graph-links/composition-ci-service-path-link';
 import { WorkspaceService } from 'app/pages/workspace/workspace.service';
-import { ServiceServiceNg2 } from 'app/services/component-services/service.service';
+import { ServiceService } from 'app/services/component-services/service.service';
 import { TopologyTemplateService } from 'app/services/component-services/topology-template.service';
 import { ServiceGenericResponse } from 'app/services/responses/service-generic-response';
 import { QueueServiceUtils } from 'app/utils/queue-service-utils';
@@ -46,7 +46,7 @@ export class CompositionGraphNodesUtils {
                 private commonGraphUtils: CommonGraphUtils,
                 private eventListenerService: EventListenerService,
                 private queueServiceUtils: QueueServiceUtils,
-                private serviceService: ServiceServiceNg2,
+                private serviceService: ServiceService,
                 private loaderService: SdcUiServices.LoaderService,
                 private compositionService: CompositionService,
                 private topologyTemplateService: TopologyTemplateService,

@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import { LeftPaletteComponent, LeftPaletteMetadataTypes } from 'app/models/components/displayComponent';
+import { LeftPaletteComponent, LeftPaletteMetadataTypes } from 'app/models/components/display-component';
 import { GroupMetadata } from 'app/models/group-metadata';
 import { PolicyMetadata } from 'app/models/policy-metadata';
 import { IComponentMetadata } from 'app/models/component-metadata';

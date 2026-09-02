@@ -22,7 +22,7 @@
 import {Component, ViewChild} from '@angular/core';
 import {ButtonModel} from 'app/models/button';
 import {Component as ComponentData} from 'app/models/components/component';
-import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
+import {ComponentInstance} from 'app/models/components-instances/component-instance';
 import {ModalModel} from 'app/models/modal';
 import {ToscaPresentationData} from 'app/models/tosca-presentation';
 import {SdcUiCommon, SdcUiServices} from 'onap-ui-angular';
@@ -36,8 +36,8 @@ import {EVENTS, ResourceType, WorkspaceMode} from "../../utils/constants";
 import {ComponentModeService} from "../../services/component-services/component-mode.service";
 import {EventListenerService} from 'app/services/event-listener.service';
 import {HierarchyNavService} from "./services/hierarchy-nav.service";
-import {ComponentServiceNg2} from "../../services/component-services/component.service";
-import {ComponentInstanceServiceNg2} from "../../services/component-instance-services/component-instance.service";
+import {ComponentService} from "../../services/component-services/component.service";
+import {ComponentInstanceService} from "../../services/component-instance-services/component-instance.service";
 import {KeysPipe} from "../../pipes/keys.pipe";
 import {
   InstanceAttributesAPIMap,
@@ -119,8 +119,8 @@ export class AttributesOutputsComponent implements UnsavedChangesAware {
     private hierarchyNavService: HierarchyNavService,
     private attributesUtils: AttributesUtils,
     private outputsUtils: OutputsUtils,
-    private componentServiceNg2: ComponentServiceNg2,
-    private componentInstanceServiceNg2: ComponentInstanceServiceNg2,
+    private componentService: ComponentService,
+    private componentInstanceService: ComponentInstanceService,
     private workspaceService: WorkspaceService,
     private notificationsService: SdcUiServices.NotificationsService,
     private componentModeService: ComponentModeService,
@@ -166,7 +166,7 @@ export class AttributesOutputsComponent implements UnsavedChangesAware {
     }, () => {
       this.loadingOutputs = false;
     });
-    this.componentServiceNg2
+    this.componentService
     .getComponentResourceAttributesData(this.component)
     .subscribe(response => {
       this.instances = [];
@@ -260,7 +260,7 @@ export class AttributesOutputsComponent implements UnsavedChangesAware {
     if (instance instanceof ComponentInstance) {
       let instanceBeAttributesMap: InstanceBeAttributesMap | InstanceBePropertiesMap = new InstanceBeAttributesMap();
       if (this.isOutput(instance.originType)) {
-        this.componentInstanceServiceNg2
+        this.componentInstanceService
         .getComponentInstanceOutputs(this.component, instance)
         .subscribe(response => {
           instanceBeAttributesMap[instance.uniqueId] = response;
@@ -277,7 +277,7 @@ export class AttributesOutputsComponent implements UnsavedChangesAware {
       } else if (this.isSelf()) {
         this.getServiceAttributes();
       } else {
-        this.componentInstanceServiceNg2
+        this.componentInstanceService
         .getComponentInstanceAttributes(this.component, instance.uniqueId)
         .subscribe(response => {
           instanceBeAttributesMap = new InstanceBeAttributesMap();
@@ -292,7 +292,7 @@ export class AttributesOutputsComponent implements UnsavedChangesAware {
         }, () => {
           this.loadingAttributes = false;
         });
-        this.componentInstanceServiceNg2
+        this.componentInstanceService
         .getComponentInstanceProperties(this.component, instance.uniqueId)
         .subscribe(response => {
           instanceBeAttributesMap = new InstanceBePropertiesMap();
@@ -553,7 +553,7 @@ export class AttributesOutputsComponent implements UnsavedChangesAware {
               return cp;
             }));
           } else {
-            request = this.componentInstanceServiceNg2
+            request = this.componentInstanceService
             .updateInstanceAttributes(this.component.componentType, this.component.uniqueId, this.selectedInstanceData.uniqueId, changedAttribs);
           }
           handleSuccess = (response) => {
@@ -573,7 +573,7 @@ export class AttributesOutputsComponent implements UnsavedChangesAware {
           outputBE.defaultValue = changedOutput.getJSONDefaultValue();
           return outputBE;
         });
-        request = this.componentServiceNg2.updateComponentOutputs(this.component, changedOutputs);
+        request = this.componentService.updateComponentOutputs(this.component, changedOutputs);
         handleSuccess = (response) => {
           // reset each changed attribute with new value and remove it from changed attributes list
           response.forEach((resOutput) => {
@@ -744,7 +744,7 @@ export class AttributesOutputsComponent implements UnsavedChangesAware {
   deleteOutput = (output: OutputFEModel) => {
     let outputToDelete = new OutputBEModel(output);
 
-    this.componentServiceNg2
+    this.componentService
     .deleteOutput(this.component, outputToDelete)
     .subscribe(response => {
       this.outputs = this.outputs.filter(output => output.uniqueId !== response.uniqueId);

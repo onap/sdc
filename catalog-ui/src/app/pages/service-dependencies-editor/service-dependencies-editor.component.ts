@@ -21,7 +21,7 @@ import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
 import {PropertyFEModel} from 'app/models/properties-inputs/property-fe-model';
 import {SourceType} from 'app/components/logic/service-dependencies/service-dependencies.component';
 import {DropdownValue} from 'app/components/ui/form-components/dropdown/ui-element-dropdown.component';
-import {ServiceServiceNg2} from 'app/services/component-services/service.service';
+import {ServiceService} from 'app/services/component-services/service.service';
 import {PROPERTY_DATA, PROPERTY_TYPES} from 'app/utils/constants';
 import {PropertiesUtils} from '../properties-assignment/services/properties.utils';
 import {ToscaFunctionValidationEvent} from "../properties-assignment/tosca-function/tosca-function.component";
@@ -40,7 +40,7 @@ import {ToscaCustomFunction} from "../../models/tosca-custom-function";
     selector: 'service-dependencies-editor',
     templateUrl: './service-dependencies-editor.component.html',
     styleUrls: ['./service-dependencies-editor.component.less'],
-    providers: [ServiceServiceNg2]
+    providers: [ServiceService]
 })
 export class ServiceDependenciesEditorComponent implements OnInit {
 

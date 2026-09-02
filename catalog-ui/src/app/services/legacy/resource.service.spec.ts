@@ -19,35 +19,35 @@
  */
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {TestBed} from '@angular/core/testing';
-import {ResourceService} from './resource.service';
-import {ComponentService} from './component.service';
+import {LegacyResourceService} from './resource.service';
+import {LegacyComponentService} from './component.service';
 import {SdcConfigToken} from '../../config/sdc-config.config';
 import {SharingService} from '../sharing.service';
 import {DataTypesService} from '../data-types.service';
 
 const sdcConfig = {api: {root: 'http://localhost/', component_api_root: 'v1/catalog/'}} as any;
 
-describe('ResourceService', () => {
-    let service: ResourceService;
+describe('LegacyResourceService', () => {
+    let service: LegacyResourceService;
     let httpMock: HttpTestingController;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [HttpClientTestingModule],
             providers: [
-                ResourceService,
-                ComponentService,
+                LegacyResourceService,
+                LegacyComponentService,
                 {provide: SdcConfigToken, useValue: sdcConfig},
                 {provide: SharingService, useValue: {addUuidValue: () => {}}},
                 {provide: DataTypesService, useValue: {loadDataTypesCache: () => {}}},
             ],
         });
-        service = TestBed.get(ResourceService);
+        service = TestBed.get(LegacyResourceService);
         httpMock = TestBed.get(HttpTestingController);
     });
     afterEach(() => httpMock.verify());
 
-    // Regression guard (failure-catalog §SS): ResourceService is held as an enumerable field by
+    // Regression guard (failure-catalog §SS): LegacyResourceService is held as an enumerable field by
     // Resource model instances, whose toJSON() deep-copies itself. If any injected Angular dep were
     // an ENUMERABLE own property, the copy would traverse its whole object graph into the request
     // body. All three injected deps MUST be non-enumerable.
@@ -72,7 +72,7 @@ describe('ResourceService', () => {
         httpMock.expectOne('http://localhost/v1/catalog/resources/r1').flush({uniqueId: 'r1'});
     });
 
-    it('createComponentObject is defined as an overriding method on ResourceService', () => {
+    it('createComponentObject is defined as an overriding method on LegacyResourceService', () => {
         // We verify the method override is present; full end-to-end coverage comes from Selenium.
         expect(service.createComponentObject).toBeDefined();
         expect(Object.prototype.hasOwnProperty.call(service, 'createComponentObject')).toBe(true);

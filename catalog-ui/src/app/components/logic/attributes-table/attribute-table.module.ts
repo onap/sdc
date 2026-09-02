@@ -24,7 +24,7 @@ import {DynamicAttributeComponent} from "./dynamic-attribute/dynamic-attribute.c
 import {FormsModule} from "@angular/forms";
 import {UiElementsModule} from "../../ui/ui-elements.module";
 import {CommonModule} from "@angular/common";
-import {FilterChildAttributesPipe} from "./pipes/filterChildAttributes.pipe";
+import {FilterChildAttributesPipe} from "./pipes/filter-child-attributes.pipe";
 import {GlobalPipesModule} from "../../../pipes/global-pipes.module";
 import {MultilineEllipsisModule} from "../../../shared/multiline-ellipsis/multiline-ellipsis.module";
 import {AttributesService} from "../../../services/attributes.service";
