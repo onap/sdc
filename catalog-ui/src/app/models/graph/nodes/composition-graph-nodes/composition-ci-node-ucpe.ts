@@ -19,9 +19,9 @@
  */
 
 import {ComponentInstance} from "../../../componentsInstances/componentInstance";
-import {ImageCreatorService} from "app/ng2/pages/composition/graph/common/image-creator.service";
+import {ImageCreatorService} from "app/pages/composition/graph/common/image-creator.service";
 import {CompositionCiNodeBase} from "./composition-ci-node-base";
-import { ImagesUrl} from "../../../../ng2/utils/constants";
+import { ImagesUrl} from "../../../../utils/constants";
 
 export class NodeUcpe extends CompositionCiNodeBase {
     constructor(instance:ComponentInstance,

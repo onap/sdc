@@ -1,4 +1,4 @@
-import { ServerErrors } from '../ng2/utils/constants';
+import { ServerErrors } from '../utils/constants';
 import { ServerErrorResponse } from './server-error-response';
 
 describe('Test Error Response', () => {

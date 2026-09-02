@@ -18,9 +18,9 @@ the recursive rows). The Selenium page objects (`PropertyPopup.java`,
 the edit-property modal. Any mismatch breaks the integration test suite.
 
 All scalar / container ids live in the new Angular modal template
-`catalog-ui/src/app/ng2/pages/property-form-modal/property-form-modal.component.html`
+`catalog-ui/src/app/pages/property-form-modal/property-form-modal.component.html`
 (abbreviated `pfm.component.html` below). All recursive value-editor ids live in
-`catalog-ui/src/app/ng2/components/logic/properties-table/dynamic-property/dynamic-property.component.html`
+`catalog-ui/src/app/components/logic/properties-table/dynamic-property/dynamic-property.component.html`
 (abbreviated `dynamic-property.component.html`).
 
 ### Scalar / container ids (PRESERVED)

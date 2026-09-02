@@ -21,7 +21,7 @@
 import * as _ from "lodash";
 import {Capability} from "../capability";
 import {Requirement} from "../requirement";
-import {Operation} from "../../ng2/pages/composition/graph/connection-wizard/create-interface-operation/model/operation";
+import {Operation} from "../../pages/composition/graph/connection-wizard/create-interface-operation/model/operation";
 
 export class RelationshipModel {
     fromNode:string;

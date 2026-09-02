@@ -1,10 +1,10 @@
 import {PropertyModel} from 'app/models/properties';
-import {CommonUtils} from 'app/ng2/utils/common-utils';
+import {CommonUtils} from 'app/utils/common-utils';
 import {IZoneInstanceMethod, IZoneInstanceAssignment} from "./zone-instance";
 import {GroupInstance} from "./group-instance";
 import {ComponentInstance} from "../../componentsInstances/componentInstance";
 import {TargetUiObject} from "../../ui-models/ui-target-object";
-import {TargetOrMemberType} from "../../../ng2/utils/constants";
+import {TargetOrMemberType} from "../../../utils/constants";
 import * as _ from 'lodash';
 
 /* The request and response should be same model, need to fix in BE */

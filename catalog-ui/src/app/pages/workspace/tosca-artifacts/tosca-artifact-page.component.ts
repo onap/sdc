@@ -1,0 +1,101 @@
+import { Component, Inject, OnInit, ViewChild } from "@angular/core";
+import { WorkspaceService } from "../workspace.service";
+import {ArtifactModel} from '../../../models/artifacts';
+import { Select, Store } from "@ngxs/store";
+import { WorkspaceState } from "../../../store/states/workspace.state";
+import {ArtifactGroupType} from '../../../utils/constants';
+import { GetArtifactsByTypeAction } from "../../../store/actions/artifacts.action";
+import { Observable } from "rxjs/index";
+import { ArtifactsState } from "../../../store/states/artifacts.state";
+import { map } from "rxjs/operators";
+import { ArtifactType, ComponentState, ComponentType } from "app/utils/constants"
+import { TopologyTemplateService } from "app/services/component-services/topology-template.service";
+import { SdcUiServices } from "onap-ui-angular";
+import { NotificationSettings } from "onap-ui-angular/dist/notifications/utilities/notification.config";
+
+@Component({
+    selector: 'tosca-artifact-page',
+
+    templateUrl: './tosca-artifact-page.component.html',
+    styleUrls: ['./tosca-artifact-page.component.less', '../../../../assets/styles/table-style.less']
+})
+export class ToscaArtifactPageComponent implements OnInit {
+
+    @Select(WorkspaceState.isViewOnly) isViewOnly$: boolean;
+    @ViewChild('toscaArtifactsTable') table: any;
+    public toscaArtifacts$: Observable<ArtifactModel[]>;
+    public componentId: string;
+    public componentType:string;
+    public isLoading: boolean = false;
+
+    constructor(
+        private workspaceService: WorkspaceService,
+        private store: Store,
+        private notificationsService: SdcUiServices.NotificationsService,
+        private componentService: TopologyTemplateService) {
+    }
+
+
+    ngOnInit(): void {
+        this.componentId = this.workspaceService.metadata.uniqueId;
+        this.componentType = this.workspaceService.metadata.componentType;
+
+        this.store.dispatch(new GetArtifactsByTypeAction({componentType:this.componentType, componentId:this.componentId, artifactType:ArtifactGroupType.TOSCA}));
+        this.toscaArtifacts$ = this.store.select(ArtifactsState.getArtifactsByType).pipe(map(filterFn => filterFn(ArtifactGroupType.TOSCA)));
+    }
+
+    onActivate(event) {
+        if(event.type === 'click'){
+            this.table.rowDetail.toggleExpandRow(event.row);
+        }
+    }
+
+    getExtension(artifactType: string) {
+        switch (artifactType) {
+            case (ArtifactType.TOSCA.TOSCA_CSAR):
+                return "csar";
+            case (ArtifactType.TOSCA.TOSCA_TEMPLATE):
+                return "yaml,yml";
+        }
+    }
+
+    isService() {
+        return ComponentType.SERVICE === this.componentType;
+    }
+
+    isCheckedOut() {
+        return this.workspaceService.metadata.lifecycleState === ComponentState.NOT_CERTIFIED_CHECKOUT;
+    }
+
+    onFileUpload(file, artifactType) {
+        if (file && file.name) {
+            this.isLoading = true;
+            switch (artifactType) {
+                case (ArtifactType.TOSCA.TOSCA_CSAR):
+                    this.componentService.putServiceToscaModel(this.componentId, this.componentType, file).subscribe((response)=> {
+                        this.notificationsService.push(new NotificationSettings(
+                            'success',
+                            "Service " + response.name + " has been updated",
+                            "Success",
+                            5000));
+                        this.isLoading = false;
+                    }, () => {
+                        this.isLoading = false;
+                    });
+                    break;
+                case (ArtifactType.TOSCA.TOSCA_TEMPLATE):
+                    this.componentService.putServiceToscaTemplate(this.componentId, this.componentType, file).subscribe((response)=> {
+                        this.notificationsService.push(new NotificationSettings(
+                            'success',
+                            "Service " + response.name + " has been updated",
+                            "Success",
+                            5000));
+                        this.isLoading = false;
+                    }, () => {
+                        this.isLoading = false;
+                    });
+                    break;
+            }
+        }
+    }
+}

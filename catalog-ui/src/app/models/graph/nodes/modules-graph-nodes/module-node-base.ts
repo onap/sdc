@@ -21,10 +21,10 @@
  * Created by obarda on 6/29/2016.
  */
 'use strict';
-import {ImagesUrl} from "../../../../ng2/utils/constants";
+import {ImagesUrl} from "../../../../utils/constants";
 import {Module} from "../../../modules/base-module";
 import {CommonNodeBase} from "../base-common-node";
-import {getSdcConfig} from "app/ng2/config/sdc-config.config.factory";
+import {getSdcConfig} from "app/config/sdc-config.config.factory";
 
 export interface IModuleNodeBase {
 }

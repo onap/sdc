@@ -41,7 +41,7 @@ import { initCommonFixtures } from "../common/init";
  *
  * Selector notes (verified against the live Angular templates):
  *   Scalar / container ids — PropertyFormModalComponent
- *   (src/app/ng2/pages/property-form-modal/property-form-modal.component.html):
+ *   (src/app/pages/property-form-modal/property-form-modal.component.html):
  *   - Modal container:        [data-tests-id="sdc-edit-property-container"]
  *   - Save button:            [data-tests-id="Save"]
  *   - "Add Property" button:  [data-tests-id="addGrey"]   (properties table, not the modal)
@@ -50,7 +50,7 @@ import { initCommonFixtures } from "../common/init";
  *   - Property name input:    [data-tests-id="propertyName"]
  *
  *   Recursive value-editor ids — <dynamic-property>
- *   (src/app/ng2/components/logic/properties-table/dynamic-property/dynamic-property.component.html).
+ *   (src/app/components/logic/properties-table/dynamic-property/dynamic-property.component.html).
  *   These are PATH-BASED: the id suffix is `propertyTestsId`, a dotted path built
  *   by getPropertyTestsId() = [rootProperty.name].concat(parentNames).join('.')
  *   (e.g. "map_prop", "map_prop.0", "nested_prop.vlan_range_plan").  There is NO

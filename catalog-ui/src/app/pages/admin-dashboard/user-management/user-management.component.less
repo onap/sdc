@@ -1,0 +1,166 @@
+// Component-scoped LESS for UserManagementComponent.
+// The old user-management.less was a global stylesheet (imported by app.less) and relied on
+// variables/mixins being in global scope; a component-scoped .less must import them explicitly.
+@import '../../../../assets/styles/variables.less';
+@import '../../../../assets/styles/variables-old.less';
+@import '../../../../assets/styles/mixins_old.less';
+
+.sdc-user-management-top-bar {
+    display: flex;
+    width: 100%;
+    label {
+        .i_17;
+    }
+    .sdc-user-management-top-bar-form-input {
+        .b_9;
+        color: @color_b;
+        height: 28px;
+        padding-left: 10px;
+        border-radius: 2px;
+        border: 1px solid @border_color_f;
+    }
+
+    .sdc-user-management-top-bar-search-container {
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        width: 400px;
+
+        label {
+            margin-bottom: 20px;
+        }
+
+        .w-sdc-search-icon {
+            right: 11px;
+            top: 49px;
+        }
+    }
+}
+
+
+.sdc-user-management-table-container-flex {
+    height: 650px;
+    margin-top: 35px;
+    .sdc-user-management-table {
+        width: 100%;
+        border: 1px solid @color_m;
+        .head {
+            .bg_m;
+            .head-row {
+                .c_18;
+                font-weight: bold;
+
+                border-right: 1px solid @border_color_d;
+
+                .sdc-user-management-table-header-sort-arrow {
+                    display: inline-block;
+                    background-color: transparent;
+                    border: none;
+                    .c_9;
+                    width: 0;
+                    height: 0;
+                    float: right;
+                    margin: 8px 8px 0px 0px;
+                    &.up {
+                        border-left: 5px solid transparent;
+                        border-right: 5px solid transparent;
+                        border-bottom: 5px solid;
+                    }
+                    &.down {
+                        border-left: 5px solid transparent;
+                        border-right: 5px solid transparent;
+                        border-top: 5px solid;
+                    }
+                }
+            }
+            .sdc-user-management-table-header:hover {
+                .bg_j;
+            }
+
+        }
+        .body {
+            .scrollbar-container {
+                max-height: 421px;
+            }
+            .b_9;
+
+            .data-row {
+                &:nth-of-type(odd) {
+                    .bg_c;
+                }
+                &.sdc-user-management-table-new-user-row {
+
+                    animation: change 7s step-end both;
+
+                    @keyframes change {
+                        from {
+                            color: @color_z
+                        }
+                        to {
+                            color: @color_b
+                        }
+                    }
+                }
+                div {
+
+                    border-right: 1px solid @border_color_d;
+
+                    &:last-child {
+                        border-right: none;
+                    }
+
+                    .sdc-user-management-table-role-select {
+                        background-color: transparent;
+                        border: 0;
+                        width: 100%;
+
+                    }
+                    .sdc-user-management-table-role-label {
+                        margin-left:4px;
+                    }
+
+                }
+
+            }
+            .data-row:hover {
+                .bg_j;
+            }
+
+        }
+    }
+
+    .sdc-user-management-flex-container {
+        display: flex;
+    }
+
+    .sdc-user-management-flex-item {
+        width:10px;
+        padding: 5px;
+        text-align: center;
+    }
+
+    .sdc-user-management-flex-item:nth-child(1) {
+        flex-grow: 5;
+    }
+
+    .sdc-user-management-flex-item:nth-child(2) {
+        flex-grow: 7;
+    }
+
+    .sdc-user-management-flex-item:nth-child(3) {
+        flex-grow: 4;
+    }
+
+    .sdc-user-management-flex-item:nth-child(4) {
+        flex-grow: 8;
+    }
+
+    .sdc-user-management-flex-item:nth-child(5) {
+        flex-grow: 8;
+    }
+
+    .sdc-user-management-flex-item:nth-child(6) {
+        flex-grow: 8;
+    }
+
+}

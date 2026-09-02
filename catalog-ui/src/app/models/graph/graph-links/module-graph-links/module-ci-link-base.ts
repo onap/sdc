@@ -22,7 +22,7 @@
  */
 import {Relationship, RelationshipModel} from '../../relationship';
 import {CommonCiLinkBase, ICommonCiLinkBase} from '../common-ci-link-base';
-import {GraphColors} from "../../../../ng2/utils/constants";
+import {GraphColors} from "../../../../utils/constants";
 
 export interface IModuleCiLinkBase extends ICommonCiLinkBase {
 

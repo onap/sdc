@@ -1,4 +1,4 @@
-import {ISdcConfig} from 'app/ng2/config/sdc-config.config';
+import {ISdcConfig} from 'app/config/sdc-config.config';
 
 export const mockSdcConfig: ISdcConfig = {
     api: {

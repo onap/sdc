@@ -21,7 +21,7 @@
 import {Requirement} from "../requirement";
 import {Capability} from "../capability";
 import {Relationship, RelationshipModel} from "./relationship";
-import {Operation} from "../../ng2/pages/composition/graph/connection-wizard/create-interface-operation/model/operation";
+import {Operation} from "../../pages/composition/graph/connection-wizard/create-interface-operation/model/operation";
 
 export class Match {
     requirement:Requirement;

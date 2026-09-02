@@ -24,7 +24,7 @@
   "jest": {
     "preset": "jest-preset-angular",
     "collectCoverageFrom": [
-      "<rootDir>/src/app/ng2/**/*.ts",
+      "<rootDir>/src/app/**/*.ts",
       "!**/*.module.ts",
       "!**/index.ts",
       "!**/*.d.ts"

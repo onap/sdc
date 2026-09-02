@@ -21,7 +21,7 @@
 
 import {ArtifactModel} from "./artifacts";
 import {SchemaPropertyGroupModel} from "./schema-property";
-import {PROPERTY_DATA, PROPERTY_TYPES} from "../ng2/utils/constants";
+import {PROPERTY_DATA, PROPERTY_TYPES} from "../utils/constants";
 import {ToscaFunction} from "./tosca-function";
 import {SubPropertyToscaFunction} from "./sub-property-tosca-function";
 

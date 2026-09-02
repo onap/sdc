@@ -1,4 +1,4 @@
-import { IEntityFilterObject, ISearchFilter } from "app/ng2/pipes/entity-filter.pipe";
+import { IEntityFilterObject, ISearchFilter } from "app/pipes/entity-filter.pipe";
 
 export interface IHomeFilterParams {
     'filter.term': string;

@@ -14,7 +14,7 @@
     </parent>
 
     <properties>
-        <sonar.sources>src/app/ng2</sonar.sources>
+        <sonar.sources>src/app</sonar.sources>
     </properties>
 
     <build>

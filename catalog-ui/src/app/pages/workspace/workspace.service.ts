@@ -1,0 +1,94 @@
+/**
+ * Created by ob0695 on 6/5/2018.
+ */
+/*-
+ * ============LICENSE_START=======================================================
+ * SDC
+ * ================================================================================
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
+
+/**
+ * Created by rc2122 on 5/23/2017.
+ */
+import { Injectable } from '@angular/core';
+// ComponentType comes from the concrete module and NOT from the `app/utils` barrel, which re-exports
+// menu-handler and so drags in NavigationService — a cycle, since NavigationService injects this
+// service. The barrel is also the §OO JIT-bootstrap hazard.
+import {ComponentState, ComponentType, Role, WorkspaceMode} from "../../utils/constants";
+import {ComponentMetadata} from 'app/models/component-metadata';
+import {Component as TopologyTemplate} from 'app/models/components/component';
+import {CacheService} from "../../services/cache.service";
+import {IComponentMetadata} from "../../models/component-metadata";
+
+@Injectable()
+export class WorkspaceService {
+
+    public metadata:ComponentMetadata;
+    public component: TopologyTemplate;
+    // Reference to the Angular workspace shell, so the AngularJS shim controller can
+    // delegate the action methods (create / save / changeLifecycleState) that child
+    // tabs invoke via $scope inheritance. Removed in Phase 6b with the shim itself.
+    public containerActions: any;
+    // Form validity reported by the active child tab (e.g. GeneralTabComponent's reactive
+    // form). The shell reads this to enable/disable Create and lifecycle buttons. Replaces
+    // the old AngularJS $scope.setValidState / $scope.isValidForm channel.
+    public isValidForm: boolean = true;
+    // Dirty-state flag for the unsaved-changes prompt. ui-router held this on $state.current.data,
+    // but the Angular Router deep-freezes a Route's `data` (Recognizer.inheritParamsAndData), so a
+    // mutable owner outside the route config is required.
+    public unsavedChanges: boolean = false;
+
+    constructor(private cacheService:CacheService) {
+
+    }
+
+    public setComponent = (component: TopologyTemplate) => {
+        this.component = component;
+        this.unsavedChanges = false;
+        if (component && component.componentMetadata) {
+            this.metadata = component.componentMetadata;
+        }
+    }
+
+    public setComponentMetadata = (metadata: ComponentMetadata) => {
+        this.metadata = metadata;
+    }
+
+    public getMetadataType(): string {
+        switch (this.metadata.componentType) {
+            case ComponentType.SERVICE:
+                return ComponentType.SERVICE;
+            default:
+                return this.metadata.resourceType;
+        }
+    }
+
+    public getComponentMode = (component:TopologyTemplate):WorkspaceMode => {//return if is edit or view for resource or service
+        let mode = WorkspaceMode.VIEW;
+
+        let user = this.cacheService.get("user");
+        if (component.lifecycleState === ComponentState.NOT_CERTIFIED_CHECKOUT &&
+            component.lastUpdaterUserId === user.userId) {
+            if ((component.isService() || component.isResource()) && user.role == Role.DESIGNER) {
+                mode = WorkspaceMode.EDIT;
+            }
+        }
+        return mode;
+    }
+}
+
+  

@@ -20,11 +20,11 @@
 
 import {ComponentInstance} from "../../../componentsInstances/componentInstance";
 import {CommonCINodeBase} from "../common-ci-node-base";
-import {GraphUIObjects, ImagesUrl} from 'app/ng2/utils/constants';
-import {getSdcConfig} from "app/ng2/config/sdc-config.config.factory";
-import {ResourceNamePipe} from "app/ng2/pipes/resource-name.pipe";
-import {ComponentInstanceNodesStyle} from "app/ng2/pages/composition/graph/common/style/component-instances-nodes-style";
-import {ImageCreatorService, ICanvasImage} from "app/ng2/pages/composition/graph/common/image-creator.service";
+import {GraphUIObjects, ImagesUrl} from 'app/utils/constants';
+import {getSdcConfig} from "app/config/sdc-config.config.factory";
+import {ResourceNamePipe} from "app/pipes/resource-name.pipe";
+import {ComponentInstanceNodesStyle} from "app/pages/composition/graph/common/style/component-instances-nodes-style";
+import {ImageCreatorService, ICanvasImage} from "app/pages/composition/graph/common/image-creator.service";
 
 export interface ICompositionCiNodeBase {
 

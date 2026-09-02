@@ -20,7 +20,7 @@
 
 import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
 import {enableProdMode} from '@angular/core';
-import {AppModule} from './app/ng2/app.module';
+import {AppModule} from './app/app.module';
 import {IAppConfigurtaion} from "./app/models/app-config";
 
 declare const __ENV__: string;

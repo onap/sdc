@@ -1,0 +1,499 @@
+/*
+ * Copyright © 2016-2018 European Support Limited
+ * Modification Copyright (C) 2022 Nordix Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
+import {Component, ComponentRef, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
+import {ButtonModel} from 'app/models/button';
+import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
+import {ModalModel} from 'app/models/modal';
+import {PropertyModel} from 'app/models/properties';
+import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
+import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
+import {ModalComponent} from 'app/components/ui/modal/modal.component';
+import {FilterType, ServiceDependenciesEditorComponent} from 'app/pages/service-dependencies-editor/service-dependencies-editor.component';
+import {ModalService} from 'app/services/modal.service';
+import {ComponentGenericResponse} from 'app/services/responses/component-generic-response';
+import {TranslateService} from 'app/shared/translator/translate.service';
+import {ComponentMetadata} from '../../../models/component-metadata';
+import {ServiceInstanceObject} from '../../../models/service-instance-properties-and-interfaces';
+import {TopologyTemplateService} from '../../../services/component-services/topology-template.service';
+import {ToscaFilterConstraintType} from "../../../models/tosca-filter-constraint-type.enum";
+import {CompositionService} from "../../../pages/composition/composition.service";
+import {FilterConstraint} from "app/models/filter-constraint";
+import {PropertyFilterConstraintUi} from "../../../models/ui-models/property-filter-constraint-ui";
+import {ConstraintOperatorType, FilterConstraintHelper} from "../../../utils/filter-constraint-helper";
+import {CustomToscaFunction} from "../../../models/default-custom-functions";
+
+export enum SourceType {
+    STATIC = 'static',
+    SEVERAL = 'several',
+    TOSCA_FUNCTION = 'tosca_function',
+    TOSCA_FUNCTION_LIST = 'tosca_function_list'
+}
+
+class I18nTexts {
+    static removeDirectiveModalTitle: string;
+    static removeDirectiveModalText: string;
+    static updateDirectiveModalTitle: string;
+    static updateDirectiveModalText: string;
+    static modalApprove: string;
+    static modalCancel: string;
+    static modalCreate: string;
+    static modalSave: string;
+    static modalDelete: string;
+    static addNodeFilterTxt: string;
+    static updateNodeFilterTxt: string;
+    static deleteNodeFilterTxt: string;
+    static deleteNodeFilterMsg: string;
+    static validateCapabilitiesTxt: string
+    static validateCapabilitiesMsg: string
+    static validateNodePropertiesTxt: string
+    static validateNodePropertiesMsg: string
+
+    public static translateTexts(translateService) {
+            I18nTexts.removeDirectiveModalTitle = translateService.translate('DIRECTIVES_AND_NODE_FILTER_REMOVE_TITLE');
+            I18nTexts.removeDirectiveModalText = translateService.translate('DIRECTIVES_AND_NODE_FILTER_REMOVE_TEXT');
+            I18nTexts.updateDirectiveModalTitle = translateService.translate('DIRECTIVES_AND_NODE_FILTER_UPDATE_TITLE');
+            I18nTexts.updateDirectiveModalText = translateService.translate('DIRECTIVES_AND_NODE_FILTER_UPDATE_TEXT');
+            I18nTexts.modalApprove = translateService.translate('MODAL_APPROVE');
+            I18nTexts.modalCancel = translateService.translate('MODAL_CANCEL');
+            I18nTexts.modalCreate = translateService.translate('MODAL_CREATE');
+            I18nTexts.modalSave = translateService.translate('MODAL_SAVE');
+            I18nTexts.modalDelete = translateService.translate('MODAL_DELETE');
+            I18nTexts.addNodeFilterTxt = translateService.translate('DIRECTIVES_AND_NODE_FILTER_ADD_NODE_FILTER');
+            I18nTexts.updateNodeFilterTxt = translateService.translate('DIRECTIVES_AND_NODE_FILTER_UPDATE_NODE_FILTER');
+            I18nTexts.deleteNodeFilterTxt = translateService.translate('DIRECTIVES_AND_NODE_FILTER_DELETE_NODE_FILTER');
+            I18nTexts.deleteNodeFilterMsg = translateService.translate('DIRECTIVES_AND_NODE_FILTER_DELETE_NODE_FILTER_MSG');
+            I18nTexts.validateCapabilitiesTxt = translateService.translate('VALIDATE_CAPABILITIES_TXT');
+            I18nTexts.validateCapabilitiesMsg = translateService.translate('VALIDATE_CAPABILITIES_MSG');
+            I18nTexts.validateNodePropertiesTxt = translateService.translate('VALIDATE_NODE_PROPERTIES_TXT');
+            I18nTexts.validateNodePropertiesMsg = translateService.translate('VALIDATE_NODE_PROPERTIES_MSG');
+    }
+}
+
+@Component({
+    selector: 'service-dependencies',
+    templateUrl: './service-dependencies.component.html',
+    styleUrls: ['service-dependencies.component.less'],
+    providers: [ModalService, TranslateService]
+})
+
+export class ServiceDependenciesComponent implements OnInit, OnChanges {
+    modalInstance: ComponentRef<ModalComponent>;
+    isDependent: boolean;
+    isLoading: boolean;
+    parentServiceInputs: InputBEModel[] = [];
+    parentServiceProperties: PropertyBEModel[] = [];
+    constraintProperties: FilterConstraint[] = [];
+    constraintPropertyLabels: string[] = [];
+    constraintCapabilities: PropertyFilterConstraintUi[] = [];
+    constraintCapabilityLabels: string[] = [];
+    operatorTypes: any[];
+    capabilities: string = ToscaFilterConstraintType.CAPABILITIES;
+    properties: string = ToscaFilterConstraintType.PROPERTIES;
+    private componentInstancesConstraints: FilterConstraint[] = [];
+    isEditable: boolean;
+    customToscaFunctions: Array<CustomToscaFunction>;
+
+    @Input() readonly: boolean;
+    @Input() compositeService: ComponentMetadata;
+    @Input() currentServiceInstance: ComponentInstance;
+    @Input() selectedInstanceSiblings: ServiceInstanceObject[];
+    @Input() selectedInstanceConstraints: FilterConstraint[] = [];
+    @Input() selectedInstanceProperties: PropertyBEModel[] = [];
+    @Input() componentInstanceCapabilitiesMap: Map<string, PropertyModel[]>;
+    @Output() updateRulesListEvent: EventEmitter<FilterConstraint[]> = new EventEmitter<FilterConstraint[]>();
+    @Output() updateNodeFilterProperties: EventEmitter<FilterConstraint[]> = new EventEmitter<FilterConstraint[]>();
+    @Output() updateNodeFilterCapabilities: EventEmitter<PropertyFilterConstraintUi[]> = new EventEmitter<PropertyFilterConstraintUi[]>();
+    @Output() loadRulesListEvent:EventEmitter<any> = new EventEmitter();
+    @Output() dependencyStatus = new EventEmitter<boolean>();
+
+    constructor(private topologyTemplateService: TopologyTemplateService,
+                private modalServiceNg2: ModalService,
+                private translateService: TranslateService,
+                private compositionService: CompositionService) {
+    }
+
+    ngOnInit(): void {
+        this.isLoading = false;
+        this.operatorTypes = [
+            {label: FilterConstraintHelper.convertToSymbol(ConstraintOperatorType.GREATER_THAN), value: ConstraintOperatorType.GREATER_THAN},
+            {label: FilterConstraintHelper.convertToSymbol(ConstraintOperatorType.LESS_THAN), value: ConstraintOperatorType.LESS_THAN},
+            {label: FilterConstraintHelper.convertToSymbol(ConstraintOperatorType.EQUAL), value: ConstraintOperatorType.EQUAL},
+            {label: FilterConstraintHelper.convertToSymbol(ConstraintOperatorType.GREATER_OR_EQUAL), value: ConstraintOperatorType.GREATER_OR_EQUAL},
+            {label: FilterConstraintHelper.convertToSymbol(ConstraintOperatorType.LESS_OR_EQUAL), value: ConstraintOperatorType.LESS_OR_EQUAL},
+            {label: FilterConstraintHelper.convertToSymbol(ConstraintOperatorType.LENGTH), value: ConstraintOperatorType.LENGTH},
+            {label: FilterConstraintHelper.convertToSymbol(ConstraintOperatorType.IN_RANGE), value: ConstraintOperatorType.IN_RANGE},
+            {label: FilterConstraintHelper.convertToSymbol(ConstraintOperatorType.MIN_LENGTH), value: ConstraintOperatorType.MIN_LENGTH},
+            {label: FilterConstraintHelper.convertToSymbol(ConstraintOperatorType.MAX_LENGTH), value: ConstraintOperatorType.MAX_LENGTH},
+            {label: FilterConstraintHelper.convertToSymbol(ConstraintOperatorType.PATTERN), value: ConstraintOperatorType.PATTERN}
+        ];
+        this.topologyTemplateService.getComponentInputsWithProperties(this.compositeService.componentType, this.compositeService.uniqueId)
+        .subscribe((result: ComponentGenericResponse) => {
+            this.parentServiceInputs = result.inputs;
+            this.parentServiceProperties = result.properties;
+        });
+        this.initCustomToscaFunctions();
+        this.loadNodeFilter();
+        this.translateService.languageChangedObservable.subscribe((lang) => {
+            I18nTexts.translateTexts(this.translateService);
+        });
+    }
+
+    private initCustomToscaFunctions() {
+        if (!this.customToscaFunctions) {
+            this.customToscaFunctions = [];
+            this.topologyTemplateService.getDefaultCustomFunction().toPromise().then((data) => {
+                for (let customFunction of data) {
+                    this.customToscaFunctions.push(new CustomToscaFunction(customFunction));
+                }
+            });
+        }
+    }
+
+    ngOnChanges(changes): void {
+        if (changes.currentServiceInstance) {
+            this.currentServiceInstance = changes.currentServiceInstance.currentValue;
+            this.isDependent = this.currentServiceInstance.isDependent();
+        }
+        if (changes.selectedInstanceConstraints && changes.selectedInstanceConstraints.currentValue !== changes.selectedInstanceConstraints.previousValue) {
+            this.selectedInstanceConstraints = changes.selectedInstanceConstraints.currentValue;
+            this.loadNodeFilter();
+        }
+    }
+
+    private getActualDirectiveValue = (): string[] => {
+        return this.currentServiceInstance.directives.length > 0 ? this.currentServiceInstance.directives : [];
+    }
+
+    public openRemoveDependencyModal = (): ComponentRef<ModalComponent> => {
+        const actionButton: ButtonModel = new ButtonModel(I18nTexts.modalApprove, 'blue', this.onUncheckDependency);
+        const cancelButton: ButtonModel = new ButtonModel(I18nTexts.modalCancel, 'grey', this.onCloseRemoveDependencyModal);
+        const modalModel: ModalModel = new ModalModel('sm', I18nTexts.removeDirectiveModalTitle,
+            I18nTexts.removeDirectiveModalText, [actionButton, cancelButton]);
+        this.loadNodeFilter();
+        return this.modalServiceNg2.createCustomModal(modalModel);
+    }
+
+    private loadNodeFilter = (): void => {
+        this.topologyTemplateService.getServiceFilterConstraints(this.compositeService.componentType, this.compositeService.uniqueId).subscribe((response) => {
+            if (response.nodeFilterforNode && response.nodeFilterforNode[this.currentServiceInstance.uniqueId]) {
+                this.componentInstancesConstraints = response.nodeFilterforNode;
+                this.constraintProperties = response.nodeFilterforNode[this.currentServiceInstance.uniqueId].properties;
+                this.buildConstraintPropertyLabels();
+                this.constraintCapabilities = response.nodeFilterforNode[this.currentServiceInstance.uniqueId].capabilities;
+                this.buildCapabilityFilterConstraintLabels();
+            }
+        });
+    }
+
+    onUncheckDependency = (): void => {
+        this.modalServiceNg2.closeCurrentModal();
+        this.isLoading = true;
+        const isDepOrig = this.isDependent;
+        const rulesListOrig = this.componentInstancesConstraints;
+        this.currentServiceInstance.unmarkAsDependent(this.getActualDirectiveValue());
+        this.updateComponentInstance(isDepOrig, rulesListOrig);
+    }
+
+    onCloseRemoveDependencyModal = (): void => {
+        this.isDependent = true;
+        this.modalServiceNg2.closeCurrentModal();
+    }
+
+    onAddDirectives(directives: string[]): void {
+        this.isEditable = false;
+        this.setDirectiveValue(directives);
+        const rulesListOrig = this.componentInstancesConstraints;
+        this.constraintProperties = [];
+        this.constraintPropertyLabels = [];
+        this.constraintCapabilities = [];
+        this.constraintCapabilityLabels = [];
+        this.loadNodeFilter();
+        this.updateComponentInstance(this.isDependent, rulesListOrig);
+    }
+
+    private onRemoveDirective(): void {
+        this.openRemoveDependencyModal().instance.open();
+        this.constraintProperties = [];
+        this.constraintPropertyLabels = [];
+        this.constraintCapabilities = [];
+        this.constraintCapabilityLabels = [];
+    }
+
+    private onEditDirectives(): void {
+        this.isEditable = true;
+    }
+
+    private setDirectiveValue(newDirectiveValues: string[]): void {
+        this.currentServiceInstance.setDirectiveValue(newDirectiveValues);
+    }
+
+    updateComponentInstance(isDependentOrigVal: boolean, rulesListOrig: FilterConstraint[]): void {
+        this.isLoading = true;
+        this.topologyTemplateService.updateComponentInstance(this.compositeService.uniqueId,
+                                                             this.compositeService.componentType,
+                                                             this.currentServiceInstance)
+                                                             .subscribe((updatedServiceIns: ComponentInstance) => {
+            const selectedComponentInstance = this.compositionService.getComponentInstances()
+            .find(componentInstance => componentInstance.uniqueId == this.currentServiceInstance.uniqueId);
+            selectedComponentInstance.directives = updatedServiceIns.directives;
+            this.currentServiceInstance = new ComponentInstance(updatedServiceIns);
+            this.isDependent = this.currentServiceInstance.isDependent();
+            this.dependencyStatus.emit(this.isDependent);
+            if (this.isDependent) {
+                this.loadRulesListEvent.emit();
+            }
+            this.isLoading = false;
+        }, (err) => {
+            this.isDependent = isDependentOrigVal;
+            this.componentInstancesConstraints = rulesListOrig;
+            this.isLoading = false;
+            console.error('An error has occurred.', err);
+        });
+    }
+
+    onAddNodeFilter = (): void => {
+        if (!this.selectedInstanceProperties) {
+            this.modalServiceNg2.openAlertModal(I18nTexts.validateNodePropertiesTxt, I18nTexts.validateNodePropertiesMsg);
+        } else {
+            const cancelButton: ButtonModel = new ButtonModel(I18nTexts.modalCancel, 'outline white', this.modalServiceNg2.closeCurrentModal);
+            const saveButton: ButtonModel = new ButtonModel(I18nTexts.modalCreate, 'blue', () => this.createNodeFilter(this.properties), this.getDisabled);
+            const modalModel: ModalModel = new ModalModel('l', I18nTexts.addNodeFilterTxt, '', [saveButton, cancelButton], 'standard');
+            this.modalInstance = this.modalServiceNg2.createCustomModal(modalModel);
+            this.modalServiceNg2.addDynamicContentToModalAndBindInputs(
+                this.modalInstance,
+                ServiceDependenciesEditorComponent,
+                {
+                    'currentServiceName': this.currentServiceInstance.name,
+                    'operatorTypes': this.operatorTypes,
+                    'compositeServiceName': this.compositeService.name,
+                    'parentServiceInputs': this.parentServiceInputs,
+                    'parentServiceProperties': this.parentServiceProperties,
+                    'selectedInstanceProperties': this.selectedInstanceProperties,
+                    'customToscaFunctions': this.customToscaFunctions,
+                    'filterType': FilterType.PROPERTY,
+                }
+            );
+            this.modalInstance.instance.open();
+        }
+    }
+
+    onAddNodeFilterCapabilities = (): void => {
+        if (this.componentInstanceCapabilitiesMap.size == 0) {
+            this.modalServiceNg2.openAlertModal(I18nTexts.validateCapabilitiesTxt, I18nTexts.validateCapabilitiesMsg);
+        } else {
+            const cancelButton: ButtonModel = new ButtonModel(I18nTexts.modalCancel, 'outline white', this.modalServiceNg2.closeCurrentModal);
+            const saveButton: ButtonModel = new ButtonModel(I18nTexts.modalCreate, 'blue', () => this.createNodeFilterCapabilities(this.capabilities), this.getDisabled);
+            const modalModel: ModalModel = new ModalModel('l', I18nTexts.addNodeFilterTxt, '', [saveButton, cancelButton], 'standard');
+            this.modalInstance = this.modalServiceNg2.createCustomModal(modalModel);
+            this.modalServiceNg2.addDynamicContentToModalAndBindInputs(
+                this.modalInstance,
+                ServiceDependenciesEditorComponent,
+                {
+                    'currentServiceName': this.currentServiceInstance.name,
+                    'operatorTypes': this.operatorTypes,
+                    'compositeServiceName': this.compositeService.name,
+                    'parentServiceInputs': this.parentServiceInputs,
+                    'parentServiceProperties': this.parentServiceProperties,
+                    'selectedInstanceProperties': this.selectedInstanceProperties,
+                    'capabilityNameAndPropertiesMap': this.componentInstanceCapabilitiesMap,
+                    'filterType': FilterType.CAPABILITY,
+                }
+            );
+            this.modalInstance.instance.open();
+        }
+    }
+
+    createNodeFilter = (constraintType: string): void => {
+        this.customToscaFunctions = this.modalInstance.instance.dynamicContent.instance.customToscaFunctions;
+        this.isLoading = true;
+        this.topologyTemplateService.createServiceFilterConstraints(
+            this.compositeService.uniqueId,
+            this.currentServiceInstance.uniqueId,
+            new FilterConstraint(this.modalInstance.instance.dynamicContent.instance.currentRule),
+            this.compositeService.componentType,
+            constraintType
+        ).subscribe( (response) => {
+            this.emitEventOnChanges(constraintType, response);
+            this.isLoading = false;
+        }, (err) => {
+            this.isLoading = false;
+        });
+        this.modalServiceNg2.closeCurrentModal();
+    }
+
+    createNodeFilterCapabilities = (constraintType: string): void => {
+        this.isLoading = true;
+        this.topologyTemplateService.createServiceFilterCapabilitiesConstraints(
+            this.compositeService.uniqueId,
+            this.currentServiceInstance.uniqueId,
+            new PropertyFilterConstraintUi(this.modalInstance.instance.dynamicContent.instance.currentRule),
+            this.compositeService.componentType,
+            constraintType
+        ).subscribe( (response) => {
+            this.emitEventOnChanges(constraintType, response);
+            this.isLoading = false;
+        }, (err) => {
+            this.isLoading = false;
+        });
+        this.modalServiceNg2.closeCurrentModal();
+    }
+
+    onSelectNodeFilterCapability(constraintType: string, index: number): void {
+        const cancelButton: ButtonModel = new ButtonModel(I18nTexts.modalCancel, 'outline white', this.modalServiceNg2.closeCurrentModal);
+        const saveButton: ButtonModel = new ButtonModel(I18nTexts.modalSave, 'blue', () => this.updateNodeFilterCapability(constraintType, index), this.getDisabled);
+        const modalModel: ModalModel = new ModalModel('l', I18nTexts.updateNodeFilterTxt, '', [saveButton, cancelButton], 'standard');
+        this.modalInstance = this.modalServiceNg2.createCustomModal(modalModel);
+        const selectedFilterConstraint = new PropertyFilterConstraintUi(this.constraintCapabilities[index]);
+        this.modalServiceNg2.addDynamicContentToModalAndBindInputs(
+            this.modalInstance,
+            ServiceDependenciesEditorComponent,
+            {
+                'filterConstraint': selectedFilterConstraint,
+                'currentServiceName': this.currentServiceInstance.name,
+                'operatorTypes': this.operatorTypes,
+                'compositeServiceName': this.compositeService.name,
+                'parentServiceInputs': this.parentServiceInputs,
+                'parentServiceProperties': this.parentServiceProperties,
+                'selectedInstanceProperties': this.selectedInstanceProperties,
+                'capabilityNameAndPropertiesMap': this.componentInstanceCapabilitiesMap,
+                'filterType': FilterType.CAPABILITY,
+            }
+        );
+        this.modalInstance.instance.open();
+    }
+
+    onSelectNodeFilter(constraintType: string, index: number): void {
+        const cancelButton: ButtonModel = new ButtonModel(I18nTexts.modalCancel, 'outline white', this.modalServiceNg2.closeCurrentModal);
+        const saveButton: ButtonModel = new ButtonModel(I18nTexts.modalSave, 'blue', () => this.updateNodeFilter(constraintType, index), this.getDisabled);
+        const modalModel: ModalModel = new ModalModel('l', I18nTexts.updateNodeFilterTxt, '', [saveButton, cancelButton], 'standard');
+        this.modalInstance = this.modalServiceNg2.createCustomModal(modalModel);
+        const selectedFilterConstraint = new PropertyFilterConstraintUi(this.constraintProperties[index]);
+        this.modalServiceNg2.addDynamicContentToModalAndBindInputs(
+            this.modalInstance,
+            ServiceDependenciesEditorComponent,
+            {
+                'filterConstraint': selectedFilterConstraint,
+                'currentServiceName': this.currentServiceInstance.name,
+                'operatorTypes': this.operatorTypes,
+                'compositeServiceName': this.compositeService.name,
+                'parentServiceInputs': this.parentServiceInputs,
+                'parentServiceProperties': this.parentServiceProperties,
+                'selectedInstanceProperties': this.selectedInstanceProperties,
+                'customToscaFunctions': this.customToscaFunctions,
+                'filterType': FilterType.PROPERTY
+            }
+        );
+
+        this.modalInstance.instance.open();
+    }
+
+    getDisabled = (): boolean =>  {
+        return !this.modalInstance.instance.dynamicContent.instance.checkFormValidForSubmit();
+    }
+
+    updateNodeFilter = (constraintType: string, index: number): void => {
+        this.isLoading = true;
+        this.topologyTemplateService.updateServiceFilterConstraints(
+            this.compositeService.uniqueId,
+            this.currentServiceInstance.uniqueId,
+            new FilterConstraint(this.modalInstance.instance.dynamicContent.instance.currentRule),
+            this.compositeService.componentType,
+            constraintType,
+            index
+        ).subscribe((response) => {
+            this.emitEventOnChanges(constraintType, response);
+            this.isLoading = false;
+        }, (err) => {
+            this.isLoading = false;
+        });
+        this.modalServiceNg2.closeCurrentModal();
+    }
+
+    updateNodeFilterCapability = (constraintType: string, index: number): void => {
+        this.isLoading = true;
+        this.topologyTemplateService.updateServiceFilterCapabilitiesConstraint(
+            this.compositeService.uniqueId,
+            this.currentServiceInstance.uniqueId,
+            new PropertyFilterConstraintUi(this.modalInstance.instance.dynamicContent.instance.currentRule),
+            this.compositeService.componentType,
+            constraintType,
+            index
+        ).subscribe((response) => {
+            this.emitEventOnChanges(constraintType, response);
+            this.isLoading = false;
+        }, (err) => {
+            this.isLoading = false;
+        });
+        this.modalServiceNg2.closeCurrentModal();
+    }
+
+    onDeleteNodeFilter = (constraintType: string, index: number): void => {
+        this.isLoading = true;
+        this.topologyTemplateService.deleteServiceFilterConstraints(
+            this.compositeService.uniqueId,
+            this.currentServiceInstance.uniqueId,
+            index,
+            this.compositeService.componentType,
+            constraintType
+        ).subscribe( (response) => {
+            this.emitEventOnChanges(constraintType, response);
+            this.isLoading = false;
+        }, (err) => {
+            this.isLoading = false;
+        });
+        this.modalServiceNg2.closeCurrentModal();
+    }
+
+    private emitEventOnChanges(constraintType: string, response) {
+        if (this.properties === constraintType) {
+            this.updateNodeFilterProperties.emit(response.properties);
+            this.constraintProperties = response.properties;
+            this.buildConstraintPropertyLabels();
+        } else {
+            this.updateNodeFilterCapabilities.emit(response.capabilities);
+            this.constraintCapabilities = response.capabilities;
+            this.buildCapabilityFilterConstraintLabels();
+        }
+    }
+
+    openDeleteModal = (constraintType: string, index: number): void => {
+        this.modalServiceNg2.createActionModal(I18nTexts.deleteNodeFilterTxt, I18nTexts.deleteNodeFilterMsg,
+            I18nTexts.modalDelete, () => this.onDeleteNodeFilter(constraintType, index), I18nTexts.modalCancel).instance.open();
+    }
+
+    private buildConstraintPropertyLabels(): void {
+        this.constraintPropertyLabels = [];
+        if (!this.constraintProperties) {
+            return;
+        }
+        this.constraintProperties.forEach(
+            constraint => this.constraintPropertyLabels.push(FilterConstraintHelper.buildFilterConstraintLabel(constraint))
+        )
+    }
+
+    private buildCapabilityFilterConstraintLabels(): void {
+        this.constraintCapabilityLabels = [];
+        if (!this.constraintCapabilities) {
+            return;
+        }
+        this.constraintCapabilities.forEach(
+            constraint => this.constraintCapabilityLabels.push(FilterConstraintHelper.buildFilterConstraintLabel(constraint))
+        )
+    }
+
+}

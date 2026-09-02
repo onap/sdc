@@ -20,8 +20,8 @@
 
 import {ComponentInstance} from '../../../componentsInstances/componentInstance';
 import {CompositionCiNodeCp} from './composition-ci-node-cp';
-import {ImageCreatorService} from "app/ng2/pages/composition/graph/common/image-creator.service";
-import { ImagesUrl} from "../../../../ng2/utils/constants";
+import {ImageCreatorService} from "app/pages/composition/graph/common/image-creator.service";
+import { ImagesUrl} from "../../../../utils/constants";
 
 export class CompositionCiNodeUcpeCp extends CompositionCiNodeCp {
 

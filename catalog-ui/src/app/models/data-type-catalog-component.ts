@@ -22,7 +22,7 @@
 'use strict';
 
 import {DataTypeModel} from "./data-types";
-import {Icon, ToscaType} from "../ng2/utils/constants";
+import {Icon, ToscaType} from "../utils/constants";
 import {Service} from "./components/service";
 import {Resource} from "./components/resource";
 import {Model} from "./model";

@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-import {PROPERTY_DATA, PROPERTY_TYPES} from 'app/ng2/utils/constants';
+import {PROPERTY_DATA, PROPERTY_TYPES} from 'app/utils/constants';
 import {ToscaPresentationData} from '../tosca-presentation';
 import {AttributeOutputDetail} from "app/models/attributes-outputs/attribute-output-detail";
 import {SchemaAttribute, SchemaAttributeGroupModel} from "../schema-attribute";

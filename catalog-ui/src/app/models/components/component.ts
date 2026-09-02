@@ -38,9 +38,9 @@ import {PropertiesGroup, PropertyModel} from '../properties';
 import {RequirementsGroup} from '../requirement';
 import {IValidate} from '../validate';
 
-import {IComponentService} from "../../ng2/services/legacy/component.service";
-import {CommonUtils} from "../../ng2/utils/common-utils";
-import {ArtifactGroupType} from "../../ng2/utils/constants";
+import {IComponentService} from "../../services/legacy/component.service";
+import {CommonUtils} from "../../utils/common-utils";
+import {ArtifactGroupType} from "../../utils/constants";
 import {ComponentMetadata} from "../component-metadata";
 import { PolicyInstance } from "app/models/graph/zones/policy-instance";
 import { GroupInstance } from "../graph/zones/group-instance";
@@ -286,7 +286,7 @@ export abstract class Component implements IComponent {
         }
     };
 
-    // Resolves with no value: the sole caller (ng2/pages/workspace/properties-tab) only needs to know
+    // Resolves with no value: the sole caller (pages/workspace/properties-tab) only needs to know
     // the round-trip finished so it can refresh the table.
     public deleteProperty = (propertyId:string):Promise<void> => {
         return new Promise<void>((resolve, reject) => {

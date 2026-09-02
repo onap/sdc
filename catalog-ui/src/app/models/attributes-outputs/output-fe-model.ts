@@ -19,7 +19,7 @@
  */
 
 import * as _ from 'lodash';
-import { PROPERTY_DATA } from '../../ng2/utils/constants';
+import { PROPERTY_DATA } from '../../utils/constants';
 import { DerivedAttributeType } from './attribute-be-model';
 import { AttributeFEModel } from './attribute-fe-model';
 import { OutputBEModel } from './output-be-model';

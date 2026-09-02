@@ -1,0 +1,78 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * SDC
+ * ================================================================================
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications copyright (c) 2026 Deutsche Telekom AG
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
+@import '../../../assets/styles/variables.less';
+
+// Restored from the deleted view-models/forms/property-forms/base-property-form/property-form-base.less.
+// That file was a GLOBAL stylesheet (imported by app.less) styling the AngularJS property-form modal;
+// it went away with the view-model, so these rules have to be re-declared component-scoped here.
+// Only the rules whose selectors still exist in property-form-modal.component.html are carried over
+// (.scrollbar-container and .w-sdc-form-note are gone from the migrated template).
+.sdc-edit-property-container {
+
+    .sdc-modal-top-bar {
+        height: 40px;
+
+        .sdc-modal-top-bar-buttons {
+            float: right;
+
+            > span:not(.delimiter) {
+                vertical-align: middle;
+                // was the .hand mixin from mixins_old.less; inlined so this component-scoped sheet
+                // does not have to pull in that file's ~1000 lines of global utility classes.
+                cursor: pointer;
+
+                // The buttons are sprite icons; the text node is the accessible label only.
+                &.sprite-new {
+                    text-indent: 100%;
+                    white-space: nowrap;
+                    overflow: hidden;
+                }
+
+                &.disabled, &:hover.disabled {
+                    pointer-events: none;
+                }
+            }
+
+            .delete-btn {
+                margin-right: 6px;
+            }
+
+            .left-arrow {
+                margin-right: 8px;
+            }
+
+            .delimiter {
+                height: 20px;
+                width: 1px;
+                background-color: #959595;
+                display: inline-block;
+                vertical-align: middle;
+                margin-right: 10px;
+            }
+        }
+    }
+
+    .default-value-section, .constraints-section {
+        border-top: solid 1px @main_color_a;
+        padding-top: 15px;
+        margin-top: 15px;
+    }
+}

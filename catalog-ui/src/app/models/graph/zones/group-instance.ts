@@ -1,5 +1,5 @@
 import {PropertyModel} from 'app/models/properties';
-import {CommonUtils} from 'app/ng2/utils/common-utils';
+import {CommonUtils} from 'app/utils/common-utils';
 import {IZoneInstanceAssignment} from "./zone-instance";
 import {ComponentInstance} from "../../componentsInstances/componentInstance";
 import {MemberUiObject} from "../../ui-models/ui-member-object";

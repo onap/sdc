@@ -25,7 +25,7 @@
 import {PropertyBEModel} from "./properties-inputs/property-be-model";
 import {AttributeBEModel} from "./attributes-outputs/attribute-be-model";
 import {Model} from "./model";
-import {PROPERTY_DATA} from "../ng2/utils/constants";
+import {PROPERTY_DATA} from "../utils/constants";
 
 export class DataTypeModel {
 

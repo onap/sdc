@@ -21,7 +21,7 @@
  * Created by obarda on 6/29/2016.
  */
 'use strict';
-import {getSdcConfig} from "app/ng2/config/sdc-config.config.factory";
+import {getSdcConfig} from "app/config/sdc-config.config.factory";
 
 export abstract class CommonNodeBase {
 

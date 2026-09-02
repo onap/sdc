@@ -22,7 +22,7 @@
  */
 
 'use strict';
-import { ComponentType, SdcElementType } from '../../ng2/utils/constants';
+import { ComponentType, SdcElementType } from '../../utils/constants';
 import { ComponentMetadata } from '../component-metadata';
 import { PolicyMetadata } from '../policy-metadata';
 import { GroupMetadata } from '../group-metadata';

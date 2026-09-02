@@ -21,8 +21,8 @@
 /**
  * Created by ngordon on 7/27/2017.
  */
-import { ServerErrors } from '../ng2/utils/constants';
-import '../ng2/utils/prototypes';
+import { ServerErrors } from '../utils/constants';
+import '../utils/prototypes';
 
 export class ServerErrorResponse {
 

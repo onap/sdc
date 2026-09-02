@@ -495,7 +495,7 @@ leading `#`, so the `!` was treated as a path segment, the URL became `#/!/catal
 was destroyed and ui-router fell through to `otherwise('dashboard')`. Observed hashchange sequence:
 `/!/catalog` → `!` → `!/dashboard`.
 
-`SdcHashLocationStrategy` (`catalog-ui/src/app/ng2/utils/`) is the fix: it strips a leading `!` in
+`SdcHashLocationStrategy` (`catalog-ui/src/app/utils/`) is the fix: it strips a leading `!` in
 `path()` and re-inserts it in `prepareExternalUrl()`, so the `#!` prefix every bookmark, Cypress
 spec and Selenium URL encodes survives. `gotoCold()` is now a single `page.goto()` — it used to be a
 two-step workaround, and the day it can go back to being one is the day this regressed.

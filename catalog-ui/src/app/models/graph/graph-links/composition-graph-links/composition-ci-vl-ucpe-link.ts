@@ -19,7 +19,7 @@
  */
 import {CompositionCiUcpeLink} from "./composition-ci-ucpe-link";
 import {Relationship, RelationshipModel} from "../../relationship";
-import {GraphColors} from "../../../../ng2/utils/constants";
+import {GraphColors} from "../../../../utils/constants";
 /**
  * Created by obarda on 4/20/2016.
  */

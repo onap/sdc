@@ -20,7 +20,7 @@
 
 import {CapabilitiesGroup} from 'app/models/capability';
 import {RequirementsGroup} from 'app/models/requirement';
-import {ComponentState, ComponentType, ResourceType} from 'app/ng2/utils/constants';
+import {ComponentState, ComponentType, ResourceType} from 'app/utils/constants';
 import { IMainCategory } from './category';
 import { Metadata } from "app/models/metadata";
 import * as _ from 'lodash';
