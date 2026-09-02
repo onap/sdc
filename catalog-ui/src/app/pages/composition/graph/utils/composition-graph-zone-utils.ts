@@ -1,4 +1,4 @@
-import {LeftPaletteMetadataTypes} from 'app/models/components/displayComponent';
+import {LeftPaletteMetadataTypes} from 'app/models/components/display-component';
 import {Point} from 'app/models/graph/point';
 import {PolicyInstance} from 'app/models/graph/zones/policy-instance';
 import {Zone} from 'app/models/graph/zones/zone';

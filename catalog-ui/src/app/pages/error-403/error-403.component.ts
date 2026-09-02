@@ -19,7 +19,7 @@
  */
 
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
-import {CookieService} from 'app/services/legacy/cookie.service';
+import {LegacyCookieService} from 'app/services/legacy/cookie.service';
 
 @Component({
     selector: 'error-403-page',
@@ -34,7 +34,7 @@ export class Error403PageComponent implements OnInit {
 
     mailto: string;
 
-    constructor(private cookieService: CookieService) {}
+    constructor(private cookieService: LegacyCookieService) {}
 
     ngOnInit(): void {
         const firstName = this.cookieService.getFirstName();

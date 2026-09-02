@@ -21,7 +21,7 @@ import {AfterViewInit, ChangeDetectorRef, ElementRef, OnDestroy, OnInit} from '@
 import {UUID} from 'angular2-uuid';
 import {WorkspaceMode} from 'app/utils/constants';
 import {CacheService} from 'app/services/cache.service';
-import {ComponentServiceNg2} from 'app/services/component-services/component.service';
+import {ComponentService} from 'app/services/component-services/component.service';
 import {WorkspaceService} from '../workspace.service';
 import {VendorModel} from './vendor-model';
 // Side-effect import: defines the global window.PunchOutRegistry used below. The old AngularJS
@@ -70,7 +70,7 @@ export abstract class FlowEditorTabBase implements OnInit, AfterViewInit, OnDest
 
     constructor(protected workspaceService: WorkspaceService,
                 protected cacheService: CacheService,
-                protected componentService: ComponentServiceNg2,
+                protected componentService: ComponentService,
                 protected cdr: ChangeDetectorRef,
                 protected el: ElementRef,
                 protected sdcConfig: any) {

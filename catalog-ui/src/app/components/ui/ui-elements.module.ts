@@ -34,8 +34,6 @@ import {CommonModule} from "@angular/common";
 import {FormsModule} from "@angular/forms";
 import {BrowserModule} from "@angular/platform-browser";
 import {MultiStepsWizardModule} from "./multi-steps-wizard/multi-steps-wizard.module";
-import {MenuListModule} from "./menu/menu-list.module";
-import {MenuListNg2Module} from "../downgrade-wrappers/menu-list-ng2/menu-list-ng2.module";
 import {ExpandCollapseComponent} from './expand-collapse/expand-collapse.component';
 import {SdcUiComponentsModule} from "onap-ui-angular";
 import {SdcTileModule} from "./tile/sdc-tile.module";
@@ -76,8 +74,6 @@ import { ModalImportTypeComponent } from './modal-import-type/modal-import-type.
         TabModule,
         TooltipModule,
         MultiStepsWizardModule,
-        MenuListModule,
-        MenuListNg2Module,
         SdcTileModule
     ],
     exports: [
@@ -92,8 +88,6 @@ import { ModalImportTypeComponent } from './modal-import-type/modal-import-type.
         PopoverModule,
         TabModule,
         TooltipModule,
-        MenuListModule,
-        MenuListNg2Module,
         PaletteAnimationComponent,
         ExpandCollapseComponent,
         SdcTileModule,

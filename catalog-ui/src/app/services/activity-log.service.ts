@@ -24,7 +24,7 @@ import { Observable } from 'rxjs/Observable';
 import { Activity } from '../models/activity';
 import { ServerTypeUrl } from '../utils/constants';
 import { ISdcConfig, SdcConfigToken } from '../config/sdc-config.config';
-import { HttpHelperService } from './http-hepler.service';
+import { HttpHelperService } from './http-helper.service';
 
 @Injectable()
 export class ActivityLogService {

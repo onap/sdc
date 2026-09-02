@@ -23,25 +23,25 @@
 import * as _ from "lodash";
 import {Injectable} from "@angular/core";
 import {DEFAULT_ICON, ResourceType, ComponentType} from "./constants";
-import {ResourceService} from 'app/services/legacy/resource.service';
-import {ServiceService} from 'app/services/legacy/service.service';
+import {LegacyResourceService} from 'app/services/legacy/resource.service';
+import {LegacyServiceService} from 'app/services/legacy/service.service';
 import {CacheService} from "../services/cache.service";
 import {IMainCategory, ISubCategory} from 'app/models/category';
 import {Component} from 'app/models/components/component';
 import {Resource} from 'app/models/components/resource';
 import {Service} from 'app/models/components/service';
 import {ICsarComponent} from 'app/models/csar-component';
-import {ComponentServiceNg2} from "../services/component-services/component.service";
+import {ComponentService} from "../services/component-services/component.service";
 import {ComponentGenericResponse} from "../services/responses/component-generic-response";
 
 
 @Injectable()
 export class ComponentFactory {
 
-    constructor(private ResourceService: ResourceService,
-                private ServiceService: ServiceService,
+    constructor(private LegacyResourceService: LegacyResourceService,
+                private LegacyServiceService: LegacyServiceService,
                 private cacheService: CacheService,
-                private ComponentServiceNg2: ComponentServiceNg2) {
+                private ComponentService: ComponentService) {
     }
 
     public createComponent = (component:Component):Component => {
@@ -49,11 +49,11 @@ export class ComponentFactory {
         switch (component.componentType) {
 
             case 'SERVICE':
-                newComponent = new Service(this.ServiceService, <Service> component);
+                newComponent = new Service(this.LegacyServiceService, <Service> component);
                 break;
 
             case 'RESOURCE':
-                newComponent = new Resource(this.ResourceService, <Resource> component);
+                newComponent = new Resource(this.LegacyResourceService, <Resource> component);
                 break;
 
         }
@@ -61,12 +61,12 @@ export class ComponentFactory {
     };
 
     public createService = (service:Service):Service => {
-        let newService:Service = new Service(this.ServiceService, <Service> service);
+        let newService:Service = new Service(this.LegacyServiceService, <Service> service);
         return newService;
     };
 
     public createResource = (resource:Resource):Resource => {
-        let newResource:Resource = new Resource(this.ResourceService, <Resource> resource);
+        let newResource:Resource = new Resource(this.LegacyResourceService, <Resource> resource);
         return newResource;
     };
 
@@ -148,7 +148,7 @@ export class ComponentFactory {
             case ComponentType.SERVICE_PROXY:
             case ComponentType.SERVICE:
             case ComponentType.SERVICE_SUBSTITUTION:
-                newComponent = new Service(this.ServiceService);
+                newComponent = new Service(this.LegacyServiceService);
                 break;
 
             case ComponentType.RESOURCE:
@@ -160,7 +160,7 @@ export class ComponentFactory {
             case ResourceType.PNF:
             case ResourceType.CVFC:
             case ResourceType.CONFIGURATION:
-                newComponent = new Resource(this.ResourceService);
+                newComponent = new Resource(this.LegacyResourceService);
                 if (resourceType){
                     (<Resource> newComponent).resourceType = resourceType;
                 }
@@ -194,7 +194,7 @@ export class ComponentFactory {
         return new Promise<Component>((resolve) => {
             let component = this.createEmptyComponent(componentType);
             component.setUniqueId(componentId);
-            this.ComponentServiceNg2.getComponentMetadata(component.uniqueId, component.componentType).subscribe((response:ComponentGenericResponse) => {
+            this.ComponentService.getComponentMetadata(component.uniqueId, component.componentType).subscribe((response:ComponentGenericResponse) => {
                 component.setComponentMetadata(response.metadata);
                 component.derivedFromGenericType = response.derivedFromGenericType;
                 component.derivedFromGenericVersion = response.derivedFromGenericVersion;

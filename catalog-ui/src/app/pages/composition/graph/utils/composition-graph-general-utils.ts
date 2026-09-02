@@ -19,7 +19,7 @@
  */
 
 import * as _ from "lodash";
-import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
+import {ComponentInstance} from 'app/models/components-instances/component-instance';
 import {CompositionCiLinkBase} from 'app/models/graph/graph-links/composition-graph-links/composition-ci-link-base';
 import {Match} from 'app/models/graph/match-relation';
 import {CompositionCiNodeUcpeCp} from 'app/models/graph/nodes/composition-graph-nodes/composition-ci-node-ucpe-cp';
@@ -29,7 +29,7 @@ import {MatchCapabilitiesRequirementsUtils} from "./match-capability-requirement
 import {CommonGraphUtils} from "../common/common-graph-utils";
 import {Injectable} from "@angular/core";
 import {QueueServiceUtils} from "app/utils/queue-service-utils";
-import {ComponentServiceNg2} from "app/services/component-services/component.service";
+import {ComponentService} from "app/services/component-services/component.service";
 import {RequirementsGroup} from "app/models/requirement";
 import {CapabilitiesGroup} from "app/models/capability";
 import {TopologyTemplateService} from "app/services/component-services/topology-template.service";
@@ -51,7 +51,7 @@ export class CompositionGraphGeneralUtils {
     constructor(private commonGraphUtils: CommonGraphUtils,
                 private matchCapabilitiesRequirementsUtils: MatchCapabilitiesRequirementsUtils,
                 private queueServiceUtils: QueueServiceUtils,
-                private componentService: ComponentServiceNg2,
+                private componentService: ComponentService,
                 private topologyTemplateService: TopologyTemplateService,
                 private compositionService: CompositionService,
                 private workspaceService: WorkspaceService) {

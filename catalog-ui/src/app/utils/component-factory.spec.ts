@@ -25,7 +25,7 @@ describe('ComponentFactory', () => {
     let factory: ComponentFactory;
 
     beforeEach(() => {
-        // ResourceService / ServiceService test doubles. They carry a NON-enumerable http property
+        // LegacyResourceService / LegacyServiceService test doubles. They carry a NON-enumerable http property
         // to mimic the shape produced by Tasks 1 & 2 (§SS fix). The factory itself never reads http,
         // but the double faithfully represents the runtime object it would receive.
         const mkSvc = () => {
@@ -34,10 +34,10 @@ describe('ComponentFactory', () => {
             return s;
         };
         factory = new ComponentFactory(
-            mkSvc(),                        // ResourceService double
-            mkSvc(),                        // ServiceService double
+            mkSvc(),                        // LegacyResourceService double
+            mkSvc(),                        // LegacyServiceService double
             {get: () => []} as any,         // CacheService double
-            {} as any                       // ComponentServiceNg2 double
+            {} as any                       // ComponentService double
         );
     });
 
@@ -60,10 +60,10 @@ describe('ComponentFactory', () => {
     });
 
     // §SS regression guard: ComponentFactory is NOT stored inside a model class's enumerable graph
-    // (unlike ResourceService/ServiceService which ARE held as model.componentService). Therefore
+    // (unlike LegacyResourceService/LegacyServiceService which ARE held as model.componentService). Therefore
     // ComponentFactory's own private fields do NOT need to be non-enumerable — the factory is never
     // traversed by a deep copy of a model. The §SS guarantee here is indirect: the services the factory
-    // HOLDS (ResourceService/ServiceService doubles above) already have non-enumerable http — meaning
+    // HOLDS (LegacyResourceService/LegacyServiceService doubles above) already have non-enumerable http — meaning
     // even IF something deep-copied the factory, it would NOT traverse into service.http.
     //
     // We verify the factory exposes the expected public API surface (all ten methods are present),

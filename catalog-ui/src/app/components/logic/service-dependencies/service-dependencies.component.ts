@@ -17,7 +17,7 @@
 
 import {Component, ComponentRef, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
 import {ButtonModel} from 'app/models/button';
-import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
+import {ComponentInstance} from 'app/models/components-instances/component-instance';
 import {ModalModel} from 'app/models/modal';
 import {PropertyModel} from 'app/models/properties';
 import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
@@ -122,7 +122,7 @@ export class ServiceDependenciesComponent implements OnInit, OnChanges {
     @Output() dependencyStatus = new EventEmitter<boolean>();
 
     constructor(private topologyTemplateService: TopologyTemplateService,
-                private modalServiceNg2: ModalService,
+                private modalService: ModalService,
                 private translateService: TranslateService,
                 private compositionService: CompositionService) {
     }
@@ -185,7 +185,7 @@ export class ServiceDependenciesComponent implements OnInit, OnChanges {
         const modalModel: ModalModel = new ModalModel('sm', I18nTexts.removeDirectiveModalTitle,
             I18nTexts.removeDirectiveModalText, [actionButton, cancelButton]);
         this.loadNodeFilter();
-        return this.modalServiceNg2.createCustomModal(modalModel);
+        return this.modalService.createCustomModal(modalModel);
     }
 
     private loadNodeFilter = (): void => {
@@ -201,7 +201,7 @@ export class ServiceDependenciesComponent implements OnInit, OnChanges {
     }
 
     onUncheckDependency = (): void => {
-        this.modalServiceNg2.closeCurrentModal();
+        this.modalService.closeCurrentModal();
         this.isLoading = true;
         const isDepOrig = this.isDependent;
         const rulesListOrig = this.componentInstancesConstraints;
@@ -211,7 +211,7 @@ export class ServiceDependenciesComponent implements OnInit, OnChanges {
 
     onCloseRemoveDependencyModal = (): void => {
         this.isDependent = true;
-        this.modalServiceNg2.closeCurrentModal();
+        this.modalService.closeCurrentModal();
     }
 
     onAddDirectives(directives: string[]): void {
@@ -268,13 +268,13 @@ export class ServiceDependenciesComponent implements OnInit, OnChanges {
 
     onAddNodeFilter = (): void => {
         if (!this.selectedInstanceProperties) {
-            this.modalServiceNg2.openAlertModal(I18nTexts.validateNodePropertiesTxt, I18nTexts.validateNodePropertiesMsg);
+            this.modalService.openAlertModal(I18nTexts.validateNodePropertiesTxt, I18nTexts.validateNodePropertiesMsg);
         } else {
-            const cancelButton: ButtonModel = new ButtonModel(I18nTexts.modalCancel, 'outline white', this.modalServiceNg2.closeCurrentModal);
+            const cancelButton: ButtonModel = new ButtonModel(I18nTexts.modalCancel, 'outline white', this.modalService.closeCurrentModal);
             const saveButton: ButtonModel = new ButtonModel(I18nTexts.modalCreate, 'blue', () => this.createNodeFilter(this.properties), this.getDisabled);
             const modalModel: ModalModel = new ModalModel('l', I18nTexts.addNodeFilterTxt, '', [saveButton, cancelButton], 'standard');
-            this.modalInstance = this.modalServiceNg2.createCustomModal(modalModel);
-            this.modalServiceNg2.addDynamicContentToModalAndBindInputs(
+            this.modalInstance = this.modalService.createCustomModal(modalModel);
+            this.modalService.addDynamicContentToModalAndBindInputs(
                 this.modalInstance,
                 ServiceDependenciesEditorComponent,
                 {
@@ -294,13 +294,13 @@ export class ServiceDependenciesComponent implements OnInit, OnChanges {
 
     onAddNodeFilterCapabilities = (): void => {
         if (this.componentInstanceCapabilitiesMap.size == 0) {
-            this.modalServiceNg2.openAlertModal(I18nTexts.validateCapabilitiesTxt, I18nTexts.validateCapabilitiesMsg);
+            this.modalService.openAlertModal(I18nTexts.validateCapabilitiesTxt, I18nTexts.validateCapabilitiesMsg);
         } else {
-            const cancelButton: ButtonModel = new ButtonModel(I18nTexts.modalCancel, 'outline white', this.modalServiceNg2.closeCurrentModal);
+            const cancelButton: ButtonModel = new ButtonModel(I18nTexts.modalCancel, 'outline white', this.modalService.closeCurrentModal);
             const saveButton: ButtonModel = new ButtonModel(I18nTexts.modalCreate, 'blue', () => this.createNodeFilterCapabilities(this.capabilities), this.getDisabled);
             const modalModel: ModalModel = new ModalModel('l', I18nTexts.addNodeFilterTxt, '', [saveButton, cancelButton], 'standard');
-            this.modalInstance = this.modalServiceNg2.createCustomModal(modalModel);
-            this.modalServiceNg2.addDynamicContentToModalAndBindInputs(
+            this.modalInstance = this.modalService.createCustomModal(modalModel);
+            this.modalService.addDynamicContentToModalAndBindInputs(
                 this.modalInstance,
                 ServiceDependenciesEditorComponent,
                 {
@@ -333,7 +333,7 @@ export class ServiceDependenciesComponent implements OnInit, OnChanges {
         }, (err) => {
             this.isLoading = false;
         });
-        this.modalServiceNg2.closeCurrentModal();
+        this.modalService.closeCurrentModal();
     }
 
     createNodeFilterCapabilities = (constraintType: string): void => {
@@ -350,16 +350,16 @@ export class ServiceDependenciesComponent implements OnInit, OnChanges {
         }, (err) => {
             this.isLoading = false;
         });
-        this.modalServiceNg2.closeCurrentModal();
+        this.modalService.closeCurrentModal();
     }
 
     onSelectNodeFilterCapability(constraintType: string, index: number): void {
-        const cancelButton: ButtonModel = new ButtonModel(I18nTexts.modalCancel, 'outline white', this.modalServiceNg2.closeCurrentModal);
+        const cancelButton: ButtonModel = new ButtonModel(I18nTexts.modalCancel, 'outline white', this.modalService.closeCurrentModal);
         const saveButton: ButtonModel = new ButtonModel(I18nTexts.modalSave, 'blue', () => this.updateNodeFilterCapability(constraintType, index), this.getDisabled);
         const modalModel: ModalModel = new ModalModel('l', I18nTexts.updateNodeFilterTxt, '', [saveButton, cancelButton], 'standard');
-        this.modalInstance = this.modalServiceNg2.createCustomModal(modalModel);
+        this.modalInstance = this.modalService.createCustomModal(modalModel);
         const selectedFilterConstraint = new PropertyFilterConstraintUi(this.constraintCapabilities[index]);
-        this.modalServiceNg2.addDynamicContentToModalAndBindInputs(
+        this.modalService.addDynamicContentToModalAndBindInputs(
             this.modalInstance,
             ServiceDependenciesEditorComponent,
             {
@@ -378,12 +378,12 @@ export class ServiceDependenciesComponent implements OnInit, OnChanges {
     }
 
     onSelectNodeFilter(constraintType: string, index: number): void {
-        const cancelButton: ButtonModel = new ButtonModel(I18nTexts.modalCancel, 'outline white', this.modalServiceNg2.closeCurrentModal);
+        const cancelButton: ButtonModel = new ButtonModel(I18nTexts.modalCancel, 'outline white', this.modalService.closeCurrentModal);
         const saveButton: ButtonModel = new ButtonModel(I18nTexts.modalSave, 'blue', () => this.updateNodeFilter(constraintType, index), this.getDisabled);
         const modalModel: ModalModel = new ModalModel('l', I18nTexts.updateNodeFilterTxt, '', [saveButton, cancelButton], 'standard');
-        this.modalInstance = this.modalServiceNg2.createCustomModal(modalModel);
+        this.modalInstance = this.modalService.createCustomModal(modalModel);
         const selectedFilterConstraint = new PropertyFilterConstraintUi(this.constraintProperties[index]);
-        this.modalServiceNg2.addDynamicContentToModalAndBindInputs(
+        this.modalService.addDynamicContentToModalAndBindInputs(
             this.modalInstance,
             ServiceDependenciesEditorComponent,
             {
@@ -421,7 +421,7 @@ export class ServiceDependenciesComponent implements OnInit, OnChanges {
         }, (err) => {
             this.isLoading = false;
         });
-        this.modalServiceNg2.closeCurrentModal();
+        this.modalService.closeCurrentModal();
     }
 
     updateNodeFilterCapability = (constraintType: string, index: number): void => {
@@ -439,7 +439,7 @@ export class ServiceDependenciesComponent implements OnInit, OnChanges {
         }, (err) => {
             this.isLoading = false;
         });
-        this.modalServiceNg2.closeCurrentModal();
+        this.modalService.closeCurrentModal();
     }
 
     onDeleteNodeFilter = (constraintType: string, index: number): void => {
@@ -456,7 +456,7 @@ export class ServiceDependenciesComponent implements OnInit, OnChanges {
         }, (err) => {
             this.isLoading = false;
         });
-        this.modalServiceNg2.closeCurrentModal();
+        this.modalService.closeCurrentModal();
     }
 
     private emitEventOnChanges(constraintType: string, response) {
@@ -472,7 +472,7 @@ export class ServiceDependenciesComponent implements OnInit, OnChanges {
     }
 
     openDeleteModal = (constraintType: string, index: number): void => {
-        this.modalServiceNg2.createActionModal(I18nTexts.deleteNodeFilterTxt, I18nTexts.deleteNodeFilterMsg,
+        this.modalService.createActionModal(I18nTexts.deleteNodeFilterTxt, I18nTexts.deleteNodeFilterMsg,
             I18nTexts.modalDelete, () => this.onDeleteNodeFilter(constraintType, index), I18nTexts.modalCancel).instance.open();
     }
 

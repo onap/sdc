@@ -23,7 +23,7 @@ import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
 import {InstanceBePropertiesMap, InstanceFePropertiesMap} from 'app/models/properties-inputs/property-fe-map';
 import { ConsumptionInput, ConsumptionInputDetails, ServiceOperation } from 'app/components/logic/service-consumption/service-consumption.component';
 import { PropertiesUtils } from 'app/pages/properties-assignment/services/properties.utils';
-import { ServiceServiceNg2 } from 'app/services/component-services/service.service';
+import { ServiceService } from 'app/services/component-services/service.service';
 import {PROPERTY_DATA} from 'app/utils/constants';
 import * as _ from 'lodash';
 import { ServiceInstanceObject } from '../../models/service-instance-properties-and-interfaces';

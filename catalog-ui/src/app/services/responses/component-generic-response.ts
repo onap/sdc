@@ -26,7 +26,7 @@ import {ArtifactGroupModel} from 'app/models/artifacts';
 import {AttributeModel, AttributesGroup} from 'app/models/attributes';
 import {CapabilitiesGroup} from 'app/models/capability';
 import {ComponentMetadata} from 'app/models/component-metadata';
-import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
+import {ComponentInstance} from 'app/models/components-instances/component-instance';
 import {RelationshipModel} from 'app/models/graph/relationship';
 import {Module} from 'app/models/modules/base-module';
 import {OperationModel} from 'app/models/operation';

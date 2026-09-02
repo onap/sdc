@@ -4,7 +4,7 @@ import {Component, ViewChild} from '@angular/core';
 import {Subscription} from "rxjs/Subscription";
 
 import {TranslateService} from "app/shared/translator/translate.service";
-import {WorkflowServiceNg2} from 'app/services/workflow.service';
+import {WorkflowService} from 'app/services/workflow.service';
 import {Capability} from 'app/models/capability';
 import {InterfaceModel, OperationModel, OperationParameter, WORKFLOW_ASSOCIATION_OPTIONS} from 'app/models/operation';
 import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
@@ -106,7 +106,7 @@ export class OperationCreatorComponent implements OperationCreatorInput {
     @ViewChild('workflowAssignmentDropdown') workflowAssignmentDropdown: DropDownComponent;
     currentTab: String;
 
-    constructor(private workflowServiceNg2: WorkflowServiceNg2, private translateService: TranslateService) {
+    constructor(private workflowService: WorkflowService, private translateService: TranslateService) {
         this.translateService.languageChangedObservable.subscribe(lang => {
             this.propertyTooltipText = this.translateService.translate("OPERATION_PROPERTY_TOOLTIP_TEXT");
 
@@ -161,10 +161,10 @@ export class OperationCreatorComponent implements OperationCreatorInput {
                     _.filter(
                         this.allWorkflows,
                         (workflow: any) => {
-                            if (workflow.archiving === this.workflowServiceNg2.WF_STATE_ACTIVE) {
+                            if (workflow.archiving === this.workflowService.WF_STATE_ACTIVE) {
                                 return true;
                             }
-                            if (workflow.archiving === this.workflowServiceNg2.WF_STATE_ARCHIVED &&
+                            if (workflow.archiving === this.workflowService.WF_STATE_ARCHIVED &&
                                 workflow.id === this.operation.workflowId) {
                                 this.archivedWorkflowId = workflow.id;
                                 return true;
@@ -340,12 +340,12 @@ export class OperationCreatorComponent implements OperationCreatorInput {
 
         this.isLoading = true;
         this.validityChanged();
-        return this.workflowServiceNg2.getWorkflowVersions(this.operation.workflowId).subscribe((versions: Array<any>) => {
+        return this.workflowService.getWorkflowVersions(this.operation.workflowId).subscribe((versions: Array<any>) => {
             this.isLoading = false;
 
             this.workflowVersions = _.map(
                 _.filter(
-                    versions, version => version.state === this.workflowServiceNg2.VERSION_STATE_CERTIFIED
+                    versions, version => version.state === this.workflowService.VERSION_STATE_CERTIFIED
                 ).sort((a, b) => a.name.localeCompare(b.name)),
                 (version: any) => {
                     if (!this.assignInputParameters[this.operation.workflowId][version.id] && version.id !== selectedVersionId) {

@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 import * as _ from "lodash";
-import {ComponentInstance} from "../../../componentsInstances/componentInstance";
+import {ComponentInstance} from "../../../components-instances/component-instance";
 import {ImageCreatorService} from "app/pages/composition/graph/common/image-creator.service";
 import {CompositionCiNodeBase} from "./composition-ci-node-base";
 import { ImagesUrl, GraphUIObjects} from "../../../../utils/constants";

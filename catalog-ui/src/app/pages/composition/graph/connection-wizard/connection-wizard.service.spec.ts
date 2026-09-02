@@ -2,7 +2,7 @@ import {TestBed} from "@angular/core/testing";
 import {WorkspaceService} from "../../../workspace/workspace.service";
 import { ConnectionWizardService } from "app/pages/composition/graph/connection-wizard/connection-wizard.service";
 import {Capability} from 'app/models/capability';
-import {ConnectRelationModel} from 'app/models/graph/connectRelationModel';
+import {ConnectRelationModel} from 'app/models/graph/connect-relation-model';
 import {Match} from 'app/models/graph/match-relation';
 import {Requirement} from 'app/models/requirement';
 import { Mock } from "ts-mockery/dist";

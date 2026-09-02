@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 import {CompositionCiNodeBase} from "./composition-ci-node-base";
-import {ComponentInstance} from "../../../componentsInstances/componentInstance";
+import {ComponentInstance} from "../../../components-instances/component-instance";
 import {ImageCreatorService} from "app/pages/composition/graph/common/image-creator.service";
 import { ImagesUrl, GraphUIObjects} from "../../../../utils/constants";
 

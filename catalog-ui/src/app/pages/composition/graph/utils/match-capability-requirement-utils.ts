@@ -19,7 +19,7 @@
  */
 import { Injectable } from '@angular/core';
 import {CapabilitiesGroup, Capability} from 'app/models/capability';
-import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
+import {ComponentInstance} from 'app/models/components-instances/component-instance';
 import {CompositionCiLinkBase} from 'app/models/graph/graph-links/composition-graph-links/composition-ci-link-base';
 import {Match} from 'app/models/graph/match-relation';
 import {CompositionCiNodeBase} from 'app/models/graph/nodes/composition-graph-nodes/composition-ci-node-base';

@@ -3,7 +3,7 @@ import { SdcUiServices } from 'onap-ui-angular';
 import { Observable } from 'rxjs/Rx';
 import CollectionNodes = Cy.CollectionNodes;
 import { Mock } from 'ts-mockery';
-import {ComponentInstance} from '../../../../models/componentsInstances/componentInstance';
+import {ComponentInstance} from '../../../../models/components-instances/component-instance';
 import { ComponentMetadata } from '../../../../models/component-metadata';
 import { Resource } from '../../../../models/components/resource';
 import { CompositionCiNodeCp } from '../../../../models/graph/nodes/composition-graph-nodes/composition-ci-node-cp';
@@ -11,7 +11,7 @@ import { CompositionCiNodeVl } from '../../../../models/graph/nodes/composition-
 import {EventListenerService} from '../../../../services/event-listener.service';
 import CollectionEdges = Cy.CollectionEdges;
 import { GRAPH_EVENTS } from '../../../../utils/constants';
-import { ServiceServiceNg2 } from '../../../../services/component-services/service.service';
+import { ServiceService } from '../../../../services/component-services/service.service';
 import { TopologyTemplateService } from '../../../../services/component-services/topology-template.service';
 import { ComponentGenericResponse } from '../../../../services/responses/component-generic-response';
 import { QueueServiceUtils } from '../../../../utils/queue-service-utils';
@@ -52,7 +52,7 @@ describe('composition graph nodes utils', () => {
         collection: jest.fn()
     });
 
-    const serviceServiceMock = Mock.of<ServiceServiceNg2>({
+    const serviceServiceMock = Mock.of<ServiceService>({
         getComponentCompositionData : () => Observable.of(Mock.of<ComponentGenericResponse>())
     });
 
@@ -99,7 +99,7 @@ describe('composition graph nodes utils', () => {
                 {provide: CommonGraphUtils, useValue: {}},
                 {provide: EventListenerService, useValue: eventListenerServiceMock},
                 {provide: QueueServiceUtils, useValue: queueServiceMock},
-                {provide: ServiceServiceNg2, useValue: serviceServiceMock},
+                {provide: ServiceService, useValue: serviceServiceMock},
                 {provide: SdcUiServices.LoaderService, useValue: loaderServiceMock}
             ]
         });

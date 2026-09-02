@@ -26,14 +26,14 @@ import * as _ from "lodash";
 import {ResourceType} from "../../utils/constants";
 import {Component} from "./component";
 import {FileUploadModel} from "../file-upload-model";
-import {IResourceService} from "../../services/legacy/resource.service";
+import {ILegacyResourceService} from "../../services/legacy/resource.service";
 import {ComponentMetadata} from "../component-metadata";
 
 export class Resource extends Component {
 
     public interfaces:any;
     public derivedFrom:Array<string>;
-    public componentService:IResourceService;
+    public componentService:ILegacyResourceService;
     public resourceType:string;
     public payloadData:string;
     public payloadName:string;
@@ -47,7 +47,7 @@ export class Resource extends Component {
     public csarPackageType:string;
     public packageId:string;
 
-    constructor(componentService:IResourceService, component?:Resource) {
+    constructor(componentService:ILegacyResourceService, component?:Resource) {
         super(componentService, component);
         if (component) {
 

@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {ServiceServiceNg2} from "app/services/component-services/service.service";
+import {ServiceService} from "app/services/component-services/service.service";
 import {Capability} from 'app/models/capability';
 import {CapabilityTypeModel} from 'app/models/capability-types';
 import {DropdownValue} from "app/components/ui/form-components/dropdown/ui-element-dropdown.component";
@@ -9,7 +9,7 @@ import {TranslateService} from 'app/shared/translator/translate.service';
     selector: 'capabilities-editor',
     templateUrl: './capabilities-editor.component.html',
     styleUrls: ['./capabilities-editor.component.less'],
-    providers: [ServiceServiceNg2]
+    providers: [ServiceService]
 })
 
 export class CapabilitiesEditorComponent {

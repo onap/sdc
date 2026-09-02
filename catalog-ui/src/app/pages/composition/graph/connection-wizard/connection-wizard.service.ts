@@ -1,5 +1,5 @@
 import * as _ from "lodash";
-import {ConnectRelationModel} from "app/models/graph/connectRelationModel";
+import {ConnectRelationModel} from "app/models/graph/connect-relation-model";
 import {Injectable} from "@angular/core";
 import {Capability} from 'app/models/capability';
 import {Requirement} from 'app/models/requirement';

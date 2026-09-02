@@ -8,7 +8,7 @@ import {NodesFactory} from "../../../models/graph/nodes/nodes-factory";
 import {CommonGraphUtils} from "../graph/common/common-graph-utils";
 import {ISdcConfig, SdcConfigToken} from "../../../config/sdc-config.config";
 import {Module} from "../../../models/modules/base-module";
-import {ComponentInstance} from "../../../models/componentsInstances/componentInstance";
+import {ComponentInstance} from "../../../models/components-instances/component-instance";
 import {ComponentGenericResponse} from "../../../services/responses/component-generic-response";
 import {ComponentInstanceFactory} from "../../../utils/component-instance-factory";
 import {ModulesNodesStyle} from "../graph/common/style/module-node-style";

@@ -23,7 +23,7 @@
 
 import { Component, HostListener } from '@angular/core';
 import { Select } from '@ngxs/store';
-import { LeftPaletteComponent, LeftPaletteMetadataTypes } from 'app/models/components/displayComponent';
+import { LeftPaletteComponent, LeftPaletteMetadataTypes } from 'app/models/components/display-component';
 import { Point } from 'app/models/graph/point';
 import { WorkspaceState } from 'app/store/states/workspace.state';
 import Dictionary = _.Dictionary;

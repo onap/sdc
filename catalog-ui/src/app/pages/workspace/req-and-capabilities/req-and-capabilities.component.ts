@@ -7,12 +7,12 @@ import { TopologyTemplateService } from '../../../services/component-services/to
 import { ComponentGenericResponse } from '../../../services/responses/component-generic-response';
 import { WorkspaceService } from '../workspace.service';
 import { CapabilitiesComponent } from './capabilities/capabilities.component';
-import { RequirmentsComponent } from './requirements/requirments.components';
+import { RequirementsComponent } from './requirements/requirements.component';
 import {ReqAndCapabilitiesService} from "./req-and-capabilities.service";
-import {CapabilitiesEditorComponent} from "./capabilities/capabilityEditor/capabilities-editor.component";
+import {CapabilitiesEditorComponent} from "./capabilities/capabilities-editor/capabilities-editor.component";
 import {ModalComponent} from "onap-ui-angular/dist/modals/modal.component";
 import {EventListenerService} from "../../../services/event-listener.service";
-import {RequirementsEditorComponent} from "./requirements/requirementEditor/requirements-editor.component";
+import {RequirementsEditorComponent} from "./requirements/requirements-editor/requirements-editor.component";
 import {ComponentState} from "../../../utils/constants";
 
 @Component({
@@ -22,7 +22,7 @@ import {ComponentState} from "../../../utils/constants";
 })
 export class ReqAndCapabilitiesComponent implements OnInit {
 
-    @ViewChild('requirmentsContainer', { read: ViewContainerRef }) requirmentsContainer: ViewContainerRef;
+    @ViewChild('requirementsContainer', { read: ViewContainerRef }) requirementsContainer: ViewContainerRef;
     @ViewChild('capabilitiesContainer', { read: ViewContainerRef }) capabilitiesContainer: ViewContainerRef;
     requirements: Requirement[] = [];
     private requirementsUI: RequirementUI[] = [];
@@ -119,7 +119,7 @@ export class ReqAndCapabilitiesComponent implements OnInit {
         if (this.selectTabName === 'REQUIREMENTS') {
             this.notEmptyTable = this.requirementsUI.length !== 0;
             this.instanceRef = this.createDynamicComponentService.
-            insertComponentDynamically(RequirmentsComponent, {requirements: this.requirementsUI}, this.requirmentsContainer);
+            insertComponentDynamically(RequirementsComponent, {requirements: this.requirementsUI}, this.requirementsContainer);
             // TODO - Keep the initInputs, so it will be called only for the first time - no need to wait to thse API's every time that a user switches tab
             await this.reqAndCapabilitiesService.initInputs(this.INPUTS_FOR_REQUIREMENTS);
         } else {

@@ -12,7 +12,7 @@ import 'rxjs/add/observable/of';
 import {NgxsModule, Store} from "@ngxs/store";
 import {ArtifactsState} from "../../../store/states/artifacts.state";
 import {toscaArtifactMock} from "../../../../jest/mocks/artifacts-mock";
-import { ComponentServiceNg2 } from "app/services/component-services/component.service";
+import { ComponentService } from "app/services/component-services/component.service";
 
 describe('tosca artifacts page', () => {
 
@@ -38,7 +38,7 @@ describe('tosca artifacts page', () => {
                     providers: [
                         {provide: WorkspaceService, useValue: workspaceServiceMock},
                         {provide: TopologyTemplateService, useValue: topologyTemplateServiceMock},
-                        {provide: ComponentServiceNg2, useValue: {}},
+                        {provide: ComponentService, useValue: {}},
                         {provide: SdcUiServices.NotificationsService, useValue: {push: jest.fn()}}
                     ],
                 });

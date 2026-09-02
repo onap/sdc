@@ -25,12 +25,12 @@ import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
 import {PropertyFEModel} from 'app/models/properties-inputs/property-fe-model';
 import { ModalComponent } from 'app/components/ui/modal/modal.component';
 import { ServiceConsumptionCreatorComponent } from 'app/pages/service-consumption-editor/service-consumption-editor.component';
-import { ComponentInstanceServiceNg2 } from 'app/services/component-instance-services/component-instance.service';
-import { ComponentServiceNg2 } from 'app/services/component-services/component.service';
+import { ComponentInstanceService } from 'app/services/component-instance-services/component-instance.service';
+import { ComponentService } from 'app/services/component-services/component.service';
 import { ModalService } from 'app/services/modal.service';
 import { ComponentMetadata } from '../../../models/component-metadata';
 import { Resource } from '../../../models/components/resource';
-import { FullComponentInstance } from '../../../models/componentsInstances/fullComponentInstance';
+import { FullComponentInstance } from '../../../models/components-instances/full-component-instance';
 import { ServiceInstanceObject } from '../../../models/service-instance-properties-and-interfaces';
 import { ComponentFactory } from '../../../utils/component-factory';
 import { ComponentType } from '../../../utils/constants';
@@ -141,8 +141,8 @@ export class ServiceConsumptionComponent {
     selectedInstancePropertiesList: PropertyBEModel[] = [];
     selectedInstanceCapabilitisList: Capability[] = [];
 
-    constructor(private modalServiceNg2: ModalService, private topologyTemplateService: TopologyTemplateService,
-                private componentServiceNg2: ComponentServiceNg2, private componentInstanceServiceNg2: ComponentInstanceServiceNg2,
+    constructor(private modalService: ModalService, private topologyTemplateService: TopologyTemplateService,
+                private componentService: ComponentService, private componentInstanceService: ComponentInstanceService,
                 private componentFactory: ComponentFactory) {}
 
     ngOnInit() {
@@ -194,11 +194,11 @@ export class ServiceConsumptionComponent {
         event.stopPropagation();
         if (!this.readonly) {
             this.operationsGroup = currInterface.operationsList;
-            const cancelButton: ButtonModel = new ButtonModel('Cancel', 'outline white', this.modalServiceNg2.closeCurrentModal);
+            const cancelButton: ButtonModel = new ButtonModel('Cancel', 'outline white', this.modalService.closeCurrentModal);
             const saveButton: ButtonModel = new ButtonModel('Save', 'blue', this.createOrUpdateOperationInput, this.getDisabled);
             const modalModel: ModalModel = new ModalModel('l', 'Modify Operation Consumption', '', [saveButton, cancelButton], 'standard');
-            this.modalInstance = this.modalServiceNg2.createCustomModal(modalModel);
-            this.modalServiceNg2.addDynamicContentToModal(
+            this.modalInstance = this.modalService.createCustomModal(modalModel);
+            this.modalService.addDynamicContentToModal(
                 this.modalInstance,
                 ServiceConsumptionCreatorComponent,
                 {
@@ -243,7 +243,7 @@ export class ServiceConsumptionComponent {
         }, (err) => {
             this.isLoading = false;
         });
-        this.modalServiceNg2.closeCurrentModal();
+        this.modalService.closeCurrentModal();
     }
 
     getDisabled = (): boolean =>  {

@@ -92,7 +92,7 @@ function makeWorkspaceService(isService = false, isVfc = false): any {
     };
 }
 
-function makeModalService(): any {
+function makePropertyFormModalService(): any {
     return {
         save: jest.fn((ctx: any) => Observable.of(ctx.property)),
         deleteProperty: jest.fn(() => Observable.of(undefined))
@@ -121,7 +121,7 @@ function makeSdcUiModalService(): any {
 }
 
 // Stand-in for the ng2 ModalService — the modal-close seam used by the delete-success path.
-function makeNg2ModalService(): any {
+function makeModalService(): any {
     return {closeCurrentModal: jest.fn()};
 }
 
@@ -150,7 +150,7 @@ function makeDataTypesService(dataTypes: any = {'tosca.datatypes.Root': {}, 'org
 function createComp(opts: any = {}) {
     const workspaceService = makeWorkspaceService(opts.isService, opts.isVfc);
     const validationUtils = makeValidationUtils();
-    const modalService = opts.modalService || makeModalService();
+    const propertyFormModalService = opts.propertyFormModalService || makePropertyFormModalService();
     const propertiesUtils = opts.propertiesUtils || makePropertiesUtils();
     const cdr = makeCdr();
     const compositionService = opts.compositionService || makeCompositionService(opts.componentInstances || []);
@@ -158,9 +158,9 @@ function createComp(opts: any = {}) {
     const translateService = opts.translateService || makeTranslateService();
     const dataTypesService = opts.dataTypesService || makeDataTypesService(opts.dataTypes);
     const sdcUiModalService = opts.sdcUiModalService || makeSdcUiModalService();
-    const ng2ModalService = opts.ng2ModalService || makeNg2ModalService();
-    const comp = new PropertyFormModalComponent(workspaceService, validationUtils, modalService, propertiesUtils, cdr,
-        compositionService, topologyTemplateService, translateService, dataTypesService, sdcUiModalService, ng2ModalService);
+    const modalService = opts.modalService || makeModalService();
+    const comp = new PropertyFormModalComponent(workspaceService, validationUtils, propertyFormModalService, propertiesUtils, cdr,
+        compositionService, topologyTemplateService, translateService, dataTypesService, sdcUiModalService, modalService);
     comp.input = Object.assign({
         property: 'property' in opts ? opts.property : makeProperty(),
         component: {isService: () => opts.isService},
@@ -171,8 +171,8 @@ function createComp(opts: any = {}) {
         isViewOnly: false,
         inputProperty: null
     }, opts.inputOverrides || {});
-    return {comp, workspaceService, validationUtils, modalService, propertiesUtils, cdr,
-        compositionService, topologyTemplateService, translateService, dataTypesService, sdcUiModalService, ng2ModalService};
+    return {comp, workspaceService, validationUtils, propertyFormModalService, propertiesUtils, cdr,
+        compositionService, topologyTemplateService, translateService, dataTypesService, sdcUiModalService, modalService};
 }
 
 describe('PropertyFormModalComponent', () => {
@@ -373,14 +373,14 @@ describe('PropertyFormModalComponent', () => {
                             useValue: {metadata: {isService: () => false, isVfc: () => false, model: null}}
                         },
                         {provide: ValidationUtils, useValue: makeValidationUtils()},
-                        {provide: PropertyFormModalService, useValue: makeModalService()},
+                        {provide: PropertyFormModalService, useValue: makePropertyFormModalService()},
                         {provide: PropertiesUtils, useValue: makePropertiesUtils()},
                         {provide: CompositionService, useValue: makeCompositionService()},
                         {provide: TopologyTemplateService, useValue: makeTopologyTemplateService()},
                         {provide: TranslateService, useValue: makeTranslateService()},
                         {provide: DataTypesService, useValue: makeDataTypesService()},
                         {provide: SdcUiServices.ModalService, useValue: makeSdcUiModalService()},
-                        {provide: ModalService, useValue: makeNg2ModalService()},
+                        {provide: ModalService, useValue: makeModalService()},
                         {provide: TranslateServiceConfigToken, useValue: mockTranslateConfig}
                     ]
                 }).compileComponents();
@@ -478,10 +478,10 @@ describe('PropertyFormModalComponent', () => {
     describe('save() delegation + ctx assembly', () => {
 
         it('delegates to PropertyFormModalService.save and returns its Observable', (done) => {
-            const {comp, modalService} = createComp({property: makeProperty({name: 'n', type: 'string', value: 'v'})});
+            const {comp, propertyFormModalService} = createComp({property: makeProperty({name: 'n', type: 'string', value: 'v'})});
             comp.ngOnInit();
             comp.save().subscribe((saved) => {
-                expect(modalService.save).toHaveBeenCalledTimes(1);
+                expect(propertyFormModalService.save).toHaveBeenCalledTimes(1);
                 expect(saved).toBeDefined();
                 done();
             });
@@ -489,14 +489,14 @@ describe('PropertyFormModalComponent', () => {
 
         it('builds the ctx from the form + input (owner type, ids, filteredProperties)', () => {
             const filtered = [makeProperty({name: 'n', type: 'string'})];
-            const {comp, modalService} = createComp({
+            const {comp, propertyFormModalService} = createComp({
                 property: makeProperty({name: 'n', type: 'string', value: 'v'}),
                 filteredProperties: undefined,
                 inputOverrides: {filteredProperties: filtered, propertyOwnerType: 'group', propertyOwnerId: 'grp-1', isPropertyValueOwner: true}
             });
             comp.ngOnInit();
             comp.save().subscribe();
-            const ctx = modalService.save.mock.calls[0][0];
+            const ctx = propertyFormModalService.save.mock.calls[0][0];
             expect(ctx.propertyOwnerType).toBe('group');
             expect(ctx.propertyOwnerId).toBe('grp-1');
             expect(ctx.isPropertyValueOwner).toBe(true);
@@ -506,13 +506,13 @@ describe('PropertyFormModalComponent', () => {
         });
 
         it('strips and sanitizes the description before delegating', () => {
-            const {comp, modalService, validationUtils} = createComp({property: makeProperty({name: 'n', type: 'string', description: '  spaced  '})});
+            const {comp, propertyFormModalService, validationUtils} = createComp({property: makeProperty({name: 'n', type: 'string', description: '  spaced  '})});
             validationUtils.stripAndSanitize = jest.fn((d: string) => (d || '').trim());
             comp.ngOnInit();
             comp.form.get('description').setValue('  spaced  ');
             comp.save().subscribe();
             expect(validationUtils.stripAndSanitize).toHaveBeenCalledWith('  spaced  ');
-            const ctx = modalService.save.mock.calls[0][0];
+            const ctx = propertyFormModalService.save.mock.calls[0][0];
             expect(ctx.property.description).toBe('spaced');
         });
 
@@ -520,11 +520,11 @@ describe('PropertyFormModalComponent', () => {
         // <option value="">), but the old VM held null. Serializing type:'' keys the BE datatype cache
         // differently from null/omitted, so the component MUST coerce ''->null before the BE call.
         it('coerces an empty type to null so the property never POSTs type:""', () => {
-            const {comp, modalService} = createComp({property: new PropertyModel()});
+            const {comp, propertyFormModalService} = createComp({property: new PropertyModel()});
             comp.ngOnInit();
             expect(comp.form.get('type').value).toBe(''); // empty-option parity from Task 2
             comp.save().subscribe();
-            const ctx = modalService.save.mock.calls[0][0];
+            const ctx = propertyFormModalService.save.mock.calls[0][0];
             expect(ctx.property.type).toBeNull();
 
             // PropertyModel.toJSON() deep-copies itself and does NOT touch type — so it faithfully
@@ -533,10 +533,10 @@ describe('PropertyFormModalComponent', () => {
         });
 
         it('leaves a real type untouched (no coercion for a populated type)', () => {
-            const {comp, modalService} = createComp({property: makeProperty({name: 'n', type: 'string'})});
+            const {comp, propertyFormModalService} = createComp({property: makeProperty({name: 'n', type: 'string'})});
             comp.ngOnInit();
             comp.save().subscribe();
-            const ctx = modalService.save.mock.calls[0][0];
+            const ctx = propertyFormModalService.save.mock.calls[0][0];
             expect(ctx.property.type).toBe('string');
         });
     });
@@ -632,7 +632,7 @@ describe('PropertyFormModalComponent', () => {
         });
 
         it('save() ships the serialized complex value for a value-owner map property', () => {
-            const {comp, modalService} = createComp({
+            const {comp, propertyFormModalService} = createComp({
                 property: makeProperty({name: 'm', type: 'map', schema: {property: {type: 'string'}} as any, value: '{"a":"1"}'}),
                 inputOverrides: {isPropertyValueOwner: true}
             });
@@ -641,7 +641,7 @@ describe('PropertyFormModalComponent', () => {
             comp.propertyFEModel.valueObjIsValid = true;
             comp.onValueChanged();
             comp.save().subscribe();
-            const ctx = modalService.save.mock.calls[0][0];
+            const ctx = propertyFormModalService.save.mock.calls[0][0];
             expect(ctx.property.value).toBe('{"a":"9"}');
         });
 
@@ -666,7 +666,7 @@ describe('PropertyFormModalComponent', () => {
             }
 
             it('seeds serializedValue/valueObj from the built FEModel so an UNEDITED save ships the original value', () => {
-                const {comp, modalService} = createComp({
+                const {comp, propertyFormModalService} = createComp({
                     property: makeProperty({name: 'm', type: 'map', schema: {property: {type: 'string'}} as any, value: '{"a":"1"}'}),
                     propertiesUtils: makePopulatingPropertiesUtils(),
                     inputOverrides: {isPropertyValueOwner: true}
@@ -678,12 +678,12 @@ describe('PropertyFormModalComponent', () => {
                 expect(comp.valueValid).toBe(true);
                 // The unedited save must therefore ship the ORIGINAL value, not undefined/null.
                 comp.save().subscribe();
-                const ctx = modalService.save.mock.calls[0][0];
+                const ctx = propertyFormModalService.save.mock.calls[0][0];
                 expect(ctx.property.value).toBe('{"a":"1"}');
             });
 
             it('an edit still wins over the init seed (edited save ships the NEW value)', () => {
-                const {comp, modalService} = createComp({
+                const {comp, propertyFormModalService} = createComp({
                     property: makeProperty({name: 'm', type: 'map', schema: {property: {type: 'string'}} as any, value: '{"a":"1"}'}),
                     propertiesUtils: makePopulatingPropertiesUtils(),
                     inputOverrides: {isPropertyValueOwner: true}
@@ -694,12 +694,12 @@ describe('PropertyFormModalComponent', () => {
                 comp.propertyFEModel.valueObjIsValid = true;
                 comp.onValueChanged();
                 comp.save().subscribe();
-                const ctx = modalService.save.mock.calls[0][0];
+                const ctx = propertyFormModalService.save.mock.calls[0][0];
                 expect(ctx.property.value).toBe('{"a":"9"}'); // the edit overrides the seed
             });
 
             it('re-seeds the seam on onSchemaTypeChange so an unedited save ships the reset value', () => {
-                const {comp, modalService} = createComp({
+                const {comp, propertyFormModalService} = createComp({
                     property: makeProperty({name: 'm', type: 'map', schema: {property: {type: 'string'}} as any, value: '{"a":"1"}'}),
                     propertiesUtils: makePopulatingPropertiesUtils(),
                     inputOverrides: {isPropertyValueOwner: true}
@@ -711,7 +711,7 @@ describe('PropertyFormModalComponent', () => {
                 // schema-type change resets the map value to {}; the seam must follow (not stay '{"a":"1"}').
                 expect(comp.serializedValue).toBe('{}');
                 comp.save().subscribe();
-                const ctx = modalService.save.mock.calls[0][0];
+                const ctx = propertyFormModalService.save.mock.calls[0][0];
                 expect(ctx.property.value).toBe('{}');
             });
         });
@@ -946,11 +946,11 @@ describe('PropertyFormModalComponent', () => {
                 makeProperty({uniqueId: 'p1', name: 'first', type: 'string'}),
                 makeProperty({uniqueId: 'p2', name: 'second', type: 'string'})
             ];
-            const {comp, modalService, sdcUiModalService} = createComp({property: filtered[0], inputOverrides: {filteredProperties: filtered}});
+            const {comp, propertyFormModalService, sdcUiModalService} = createComp({property: filtered[0], inputOverrides: {filteredProperties: filtered}});
             comp.ngOnInit();
             // stub the modal-close callback the component passes so we can assert the splice AFTER delete.
             comp.closeModal = jest.fn(() => {
-                expect(modalService.deleteProperty).toHaveBeenCalled();
+                expect(propertyFormModalService.deleteProperty).toHaveBeenCalled();
                 // the deleted row (p1) is gone; only p2 remains.
                 expect(filtered.length).toBe(1);
                 expect(filtered[0].uniqueId).toBe('p2');

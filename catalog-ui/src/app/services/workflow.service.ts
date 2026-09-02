@@ -16,7 +16,7 @@ interface WorkflowInputParameter extends WorkflowOutputParameter {
 }
 
 @Injectable()
-export class WorkflowServiceNg2 {
+export class WorkflowService {
 
     protected baseUrl;
     protected catalogBaseUrl;

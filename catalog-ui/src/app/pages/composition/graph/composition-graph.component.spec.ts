@@ -5,7 +5,7 @@ import 'rxjs/add/observable/of';
 import {ConfigureFn, configureTests} from '../../../../jest/test-config.helper';
 import {CompositionGraphComponent} from "./composition-graph.component";
 import {WorkspaceService} from "../../workspace/workspace.service";
-import {ComponentInstance} from '../../../models/componentsInstances/componentInstance';
+import {ComponentInstance} from '../../../models/components-instances/component-instance';
 import {NodesFactory} from '../../../models/graph/nodes/nodes-factory';
 import {GroupInstance} from '../../../models/graph/zones/group-instance';
 import {ZoneInstance, ZoneInstanceMode} from '../../../models/graph/zones/zone-instance';
@@ -21,7 +21,7 @@ import {ConnectionWizardService} from "./connection-wizard/connection-wizard.ser
 import {CommonGraphUtils} from "./common/common-graph-utils";
 import {CompositionGraphPaletteUtils} from "./utils/composition-graph-palette-utils";
 import {TopologyTemplateService} from "../../../services/component-services/topology-template.service";
-import {ComponentInstanceServiceNg2} from "../../../services/component-instance-services/component-instance.service";
+import {ComponentInstanceService} from "../../../services/component-instance-services/component-instance.service";
 import {CompositionService} from "../composition.service";
 import {ModalService} from '../../../services/modal.service';
 import {Store} from '@ngxs/store';
@@ -114,7 +114,7 @@ describe('composition graph component', () => {
                         {provide: CommonGraphUtils, useValue: {}},
                         {provide: CompositionGraphPaletteUtils, useValue: {}},
                         {provide: TopologyTemplateService, useValue: {}},
-                        {provide: ComponentInstanceServiceNg2, useValue: {}},
+                        {provide: ComponentInstanceService, useValue: {}},
                         {provide: MatchCapabilitiesRequirementsUtils, useValue: {}},
                         {provide: CompositionService, useValue: {}},
                         {provide: SdcUiServices.LoaderService, useValue: {}},

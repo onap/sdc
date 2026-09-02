@@ -28,7 +28,7 @@ import {AttributeModel} from 'app/models/attributes';
 import {AsdcComment} from 'app/models/comments';
 import {Component} from 'app/models/components/component';
 import {Resource} from 'app/models/components/resource';
-import {ComponentInstance} from 'app/models/componentsInstances/componentInstance';
+import {ComponentInstance} from 'app/models/components-instances/component-instance';
 import {IFileDownload} from 'app/models/file-download';
 import {RelationshipModel} from 'app/models/graph/relationship';
 import {InputModel} from 'app/models/inputs';
@@ -48,7 +48,7 @@ import {DataTypesService} from "../data-types.service";
 import {ComponentMetadata} from "../../models/component-metadata";
 import {SdcConfigToken} from "../../config/sdc-config.config";
 
-export interface IComponentService {
+export interface ILegacyComponentService {
 
     getComponent(id:string);
     updateComponent(component:Component):Promise<Component>;
@@ -100,14 +100,18 @@ export interface IComponentService {
 }
 
 /**
- * @deprecated Superseded by ComponentServiceNg2 (services/component-services/component.service.ts).
- * Nothing injects this class directly: it is the base class of the ResourceService and ServiceService
- * beside it, and models/components/component.ts holds its promise-based IComponentService interface.
+ * @deprecated Superseded by ComponentService (services/component-services/component.service.ts).
+ * Nothing injects this class directly: it is the base class of the LegacyResourceService and LegacyServiceService
+ * beside it, and models/components/component.ts holds its promise-based ILegacyComponentService interface.
  * Removing it means moving those call sites to the Observable API. Tracked by SDC-4913. When
  * services/legacy/ is empty, that work is done.
+ *
+ * The file keeps the counterpart's name (`component.service.ts`) while the class carries the
+ * `Legacy` prefix: the directory already supplies the qualifier, and keeping the basenames
+ * paired makes the eventual dedup diff a one-directory delete.
  */
 @Injectable()
-export class ComponentService implements IComponentService {
+export class LegacyComponentService implements ILegacyComponentService {
 
     protected baseUrl: string;
     protected typeName: string = '';   // subclasses set 'resources' / 'services'

@@ -10,7 +10,7 @@ import {TranslateService} from "../../shared/translator/translate.service";
 import {ImportVSPService} from '../../components/modals/onboarding-modal/import-vsp.service';
 import {AuthenticationService} from '../../services/authentication.service';
 import {CacheService} from '../../services/cache.service';
-import {ResourceServiceNg2} from '../../services/component-services/resource.service';
+import {ResourceService} from '../../services/component-services/resource.service';
 import {HomeService} from '../../services/home.service';
 import {ModalService} from '../../services/modal.service';
 import {ModalsHandler} from '../../utils/modals-handler';
@@ -35,7 +35,7 @@ describe('home component', () => {
     let homeFilterMock :Partial<HomeFilter>;
     let foldersMock;
     let loaderServiceMock;
-    let resourceServiceNg2Mock: Partial<ResourceServiceNg2>;
+    let resourceServiceMock: Partial<ResourceService>;
 
 
     beforeEach(
@@ -69,7 +69,7 @@ describe('home component', () => {
                 deactivate: jest.fn()
             };
 
-            resourceServiceNg2Mock = {
+            resourceServiceMock = {
                 checkout: jest.fn()
             };
 
@@ -91,7 +91,7 @@ describe('home component', () => {
                         {provide: ModalService, useValue: modalServiceMock_},
                         {provide: SdcUiServices.LoaderService, useValue: loaderServiceMock},
                         {provide: ImportVSPService, useValue: {}},
-                        {provide: ResourceServiceNg2, useValue: resourceServiceNg2Mock}
+                        {provide: ResourceService, useValue: resourceServiceMock}
                     ],
                 });
             };

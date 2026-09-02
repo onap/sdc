@@ -8,7 +8,7 @@ import {NodesFactory} from "../../../models/graph/nodes/nodes-factory";
 import {CommonGraphUtils} from "../graph/common/common-graph-utils";
 import {groupsMock} from "../../../../jest/mocks/groups.mock";
 import {Module} from "../../../models/modules/base-module";
-import {ComponentInstance} from "../../../models/componentsInstances/componentInstance";
+import {ComponentInstance} from "../../../models/components-instances/component-instance";
 import {componentInstancesMock} from "../../../../jest/mocks/component-instance.mock";
 import {ConfigureFn, configureTests} from "../../../../jest/test-config.helper";
 import {TopologyTemplateService} from "../../../services/component-services/topology-template.service";
