@@ -16,6 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2026 Deutsche Telekom.
+ * ================================================================================
  */
 package org.openecomp.sdc.be.components.distribution.engine;
 
@@ -70,7 +72,8 @@ public class DmaapConsumer {
         DmaapConsumerConfiguration dmaapConsumerParams = ConfigurationManager.getConfigurationManager().getConfiguration()
             .getDmaapConsumerConfiguration();
         String topic = dmaapConsumerParams.getTopic();
-        logger.info("Starting to consume topic {} for DMAAP consumer with the next parameters {}. ", topic, dmaapConsumerParams);
+        logger.info("Starting to consume topic {} for DMAAP consumer", topic);
+        logger.debug("The DmaapConsumerConfiguration is {}", dmaapConsumerParams);
         MRConsumer consumer = dmaapClientFactory.create(dmaapConsumerParams);
         ScheduledExecutorService pollExecutor = executorFactory.createScheduled(topic + "Client");
         ExecutorService notificationExecutor = executorFactory.create(topic + "Consumer", exceptionHandler);
