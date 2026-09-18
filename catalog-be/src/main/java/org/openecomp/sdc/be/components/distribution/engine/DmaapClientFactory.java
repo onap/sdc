@@ -16,6 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2026 Deutsche Telekom.
+ * ================================================================================
  */
 package org.openecomp.sdc.be.components.distribution.engine;
 
@@ -115,7 +117,7 @@ public class DmaapClientFactory {
     }
 
     private Properties buildProducerProperties(DmaapProducerConfiguration parameters) throws GeneralSecurityException, IOException {
-        logger.info("The DmaapProducerConfiguration is {} ", parameters);
+        logger.debug("The DmaapProducerConfiguration is {}", parameters);
         Properties props = new Properties();
         Either<String, String> passkey = SecurityUtil.decrypt(parameters.getCredential().getPassword());
         if (passkey.isRight()) {
