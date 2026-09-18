@@ -81,6 +81,7 @@ import org.openecomp.sdc.be.datatypes.elements.MapListRequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
@@ -220,6 +221,33 @@ class NodeTemplateOperationTest extends ModelTestBase {
 
         result = operation.updateComponentInstanceMetadataOfTopologyTemplate(container, toscaElement, componentInstance);
         assertTrue(result.isLeft());
+    }
+
+    @Test
+    void testAddComponentInstanceToTopologyTemplateReportsInnerFailureAsStatus() {
+        final String id = "id";
+        final TopologyTemplate container = new TopologyTemplate();
+        container.setUniqueId(id);
+        final ToscaElement originToscaElement = new TopologyTemplate();
+        originToscaElement.setResourceType(ResourceTypeEnum.VF);
+        originToscaElement.setMetadataValue(JsonPresentationFields.NAME, id);
+        final ComponentInstance componentInstance = new ComponentInstance();
+        componentInstance.setName(id);
+        componentInstance.setComponentUid(id);
+        componentInstance.setOriginType(OriginTypeEnum.VF);
+        final GraphVertex graphVertex = new GraphVertex();
+        when(janusGraphDao.getVertexById(id, JsonParseFlagEnum.ParseJson)).thenReturn(Either.left(graphVertex));
+
+        final NodeTemplateOperation operationSpy = spy(operation);
+        doReturn(Either.right(StorageOperationStatus.ENTITY_ALREADY_EXISTS)).when(operationSpy)
+            .addComponentInstanceToTopologyTemplate(eq(container), eq(originToscaElement),
+                ArgumentMatchers.any(ComponentInstanceDataDefinition.class), eq(graphVertex), eq(false));
+
+        final Either<ImmutablePair<TopologyTemplate, String>, StorageOperationStatus> result = operationSpy
+            .addComponentInstanceToTopologyTemplate(container, originToscaElement, "1", componentInstance, false, null);
+
+        assertTrue(result.isRight());
+        assertEquals(StorageOperationStatus.ENTITY_ALREADY_EXISTS, result.right().value());
     }
 
     @Test

@@ -16,6 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2026 Deutsche Telekom.
+ * ================================================================================
  */
 
 package org.openecomp.sdc.be.model.jsonjanusgraph.operations;
@@ -197,7 +199,7 @@ public class NodeTemplateOperation extends BaseOperation {
                 if (status == StorageOperationStatus.NOT_FOUND) {
                     status = StorageOperationStatus.INVALID_ID;
                 }
-                result = Either.right(status);
+                return Either.right(status);
             }
             final TopologyTemplate updatedContainer = addComponentInstanceRes.left().value();
             if (componentInstance.getOriginType() == OriginTypeEnum.ServiceProxy

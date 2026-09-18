@@ -116,6 +116,8 @@ class ToscaOperationFacadeTest {
     private static final String SERVICE_MODEL_NAME = "Test_Service";
     private static final String SERVICE_PROXY_INSTANCE0_NAME = "testservice_proxy0";
     private static final String SERVICE_SUBSTITUTION_INSTANCE0_NAME = "testservice0";
+    private static final String DIGIT_HEAVY_RESOURCE_NAME = "ciRes6c3c5d493862";
+    private static final String DIGIT_HEAVY_INSTANCE0_NAME = "cires6c3c5d4938620";
 
     @InjectMocks
     private ToscaOperationFacade testInstance;
@@ -832,6 +834,72 @@ class ToscaOperationFacadeTest {
         List<ComponentInstanceProperty> resultProps = result.left().value().get(COMPONENT_ID);
         assertTrue(resultProps.stream().anyMatch(e -> e.getName().equals(PROPERTY1_NAME)));
         assertTrue(resultProps.stream().anyMatch(e -> e.getName().equals(PROPERTY2_NAME)));
+    }
+
+    @Test
+    void testAddComponentInstanceToTopologyTemplate_counterReadsTrailingDigitsOnly() {
+        final Component containerComponent = new Service();
+        containerComponent.setComponentType(ComponentTypeEnum.SERVICE);
+        final Resource originalComponent = new Resource();
+        originalComponent.setComponentType(ComponentTypeEnum.RESOURCE);
+        originalComponent.setResourceType(ResourceTypeEnum.VF);
+        originalComponent.setName(DIGIT_HEAVY_RESOURCE_NAME);
+        originalComponent.setIcon(ICON_NAME);
+
+        final ComponentInstance componentInstance = new ComponentInstance();
+        componentInstance.setOriginType(OriginTypeEnum.VF);
+
+        final ComponentInstance existingComponentInstance = new ComponentInstance();
+        existingComponentInstance.setNormalizedName(DIGIT_HEAVY_INSTANCE0_NAME);
+        existingComponentInstance.setUniqueId(COMPONENT_ID + "." + DIGIT_HEAVY_INSTANCE0_NAME);
+        containerComponent.setComponentInstances(new ArrayList<>(List.of(existingComponentInstance)));
+
+        mockAddComponentInstanceWithCounter(componentInstance, "1");
+
+        final Either<ImmutablePair<Component, String>, StorageOperationStatus> result =
+            testInstance.addComponentInstanceToTopologyTemplate(containerComponent, originalComponent, componentInstance, false, null);
+
+        assertTrue(result.isLeft());
+        // the counter is the trailing number only -- the nine digits inside the resource name are not part of it
+        verify(nodeTemplateOperationMock, times(1))
+            .addComponentInstanceToTopologyTemplate(any(), any(), eq("1"), eq(componentInstance), eq(false), eq(null));
+    }
+
+    @Test
+    void testAddComponentInstanceToTopologyTemplate_counterWithRegexCharInResourceName() {
+        final Component containerComponent = new Service();
+        containerComponent.setComponentType(ComponentTypeEnum.SERVICE);
+        final Resource originalComponent = new Resource();
+        originalComponent.setComponentType(ComponentTypeEnum.RESOURCE);
+        originalComponent.setResourceType(ResourceTypeEnum.VF);
+        originalComponent.setName("Router+");
+        originalComponent.setIcon(ICON_NAME);
+
+        final ComponentInstance componentInstance = new ComponentInstance();
+        componentInstance.setOriginType(OriginTypeEnum.VF);
+
+        final ComponentInstance existingComponentInstance = new ComponentInstance();
+        existingComponentInstance.setNormalizedName("router+0");
+        existingComponentInstance.setUniqueId(COMPONENT_ID + ".router+0");
+        containerComponent.setComponentInstances(new ArrayList<>(List.of(existingComponentInstance)));
+
+        mockAddComponentInstanceWithCounter(componentInstance, "1");
+
+        final Either<ImmutablePair<Component, String>, StorageOperationStatus> result =
+            testInstance.addComponentInstanceToTopologyTemplate(containerComponent, originalComponent, componentInstance, false, null);
+
+        assertTrue(result.isLeft());
+        verify(nodeTemplateOperationMock, times(1))
+            .addComponentInstanceToTopologyTemplate(any(), any(), eq("1"), eq(componentInstance), eq(false), eq(null));
+    }
+
+    private void mockAddComponentInstanceWithCounter(final ComponentInstance componentInstance, final String expectedCounter) {
+        when(nodeTemplateOperationMock
+            .addComponentInstanceToTopologyTemplate(any(), any(), eq(expectedCounter), eq(componentInstance), eq(false), eq(null)))
+            .thenReturn(Either.left(new ImmutablePair<>(new TopologyTemplate(), COMPONENT_ID)));
+        final TopologyTemplate topologyTemplate = new TopologyTemplate();
+        topologyTemplate.setMetadataValue(JsonPresentationFields.COMPONENT_TYPE, ComponentTypeEnum.SERVICE.name());
+        when(topologyTemplateOperationMock.getToscaElement(any())).thenReturn(Either.left(topologyTemplate));
     }
 
     @Test

@@ -16,6 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2026 Deutsche Telekom.
+ * ================================================================================
  */
 
 package org.openecomp.sdc.be.model.jsonjanusgraph.operations;
@@ -1308,19 +1310,17 @@ public class ToscaOperationFacade {
      * @return max counter of component instance Id's, null if not found
      */
     private Integer getMaxCounterFromNamesAndIds(final Component containerComponent, final String normalizedName) {
-        final Pattern COUNTER_PATTERN = Pattern.compile(normalizedName + "[\\s_:-]?\\d+$");
+        final Pattern counterPattern = Pattern.compile(Pattern.quote(normalizedName) + "[\\s_:-]?(\\d+)$");
         final List<String> countersInNames = containerComponent.getComponentInstances().stream()
             .filter(ci -> ci.getNormalizedName() != null && ci.getNormalizedName().startsWith(normalizedName))
             .filter(ci -> !ci.getNormalizedName().equals(normalizedName))
             .map(ComponentInstance::getNormalizedName)
-            .map(COUNTER_PATTERN::matcher).filter(Matcher::find).map(matcher -> matcher.group(0))
-            .map(nn -> nn.replaceAll("\\D", ""))
+            .map(counterPattern::matcher).filter(Matcher::find).map(matcher -> matcher.group(1))
             .collect(Collectors.toList());
         final List<String> countersInIds = containerComponent.getComponentInstances().stream()
             .filter(ci -> ci.getUniqueId() != null && ci.getUniqueId().contains(normalizedName))
             .map(ComponentInstance::getUniqueId)
-            .map(COUNTER_PATTERN::matcher).filter(Matcher::find).map(matcher -> matcher.group(0))
-            .map(nn -> nn.replaceAll("\\D", ""))
+            .map(counterPattern::matcher).filter(Matcher::find).map(matcher -> matcher.group(1))
             .collect(Collectors.toList());
         final List<String> namesAndIdsList = new ArrayList<>(countersInNames);
         namesAndIdsList.addAll(countersInIds);
