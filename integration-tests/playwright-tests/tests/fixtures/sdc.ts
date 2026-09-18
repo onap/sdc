@@ -465,13 +465,24 @@ export class SdcApi {
 
         const probe = this.url(
             `/catalog/${SdcApi.collectionOf(type)}/${id}/filteredDataByParams?include=metadata`);
-        await expect.poll(
-            async () => (await this.request.get(probe, { headers: this.headers })).status(),
-            {
-                timeout: 30_000,
-                message: `${name} (${id}) was created but never became readable — entering its `
-                    + 'workspace would 404 and bounce to the dashboard',
-            }).toBe(200);
+        let lastStatus = 0;
+        let lastBody = '';
+        try {
+            await expect.poll(async () => {
+                const probeResp = await this.request.get(probe, { headers: this.headers });
+                lastStatus = probeResp.status();
+                lastBody = lastStatus === 200 ? '' : (await probeResp.text()).slice(0, 400);
+                return lastStatus;
+            }, { timeout: 30_000 }).toBe(200);
+        } catch {
+            // expect.poll's own message carries the status code and nothing else, and every way this
+            // read can fail looks the same from a bare 404. The backend names its reason (SVC4063,
+            // SVC4006, …) in the body, so the body is what makes the next occurrence explicable.
+            throw new Error(
+                `${name} (${id}) was created but never became readable within 30s — entering its `
+                + `workspace would ${lastStatus} and bounce to the dashboard. Backend said: `
+                + `${lastBody}`);
+        }
 
         return { id, name, type };
     }

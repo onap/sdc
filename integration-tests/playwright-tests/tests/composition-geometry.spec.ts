@@ -62,6 +62,7 @@ interface Geometry {
     bodyClass: string;
     childView: { left: number; top: number; width: number; height: number } | null;
     sidebarPresent: boolean;
+    /** Class-qualified so a failure names the occluder rather than just saying "DIV". */
     hitAt300x400: string;
 }
 
@@ -77,7 +78,9 @@ async function measure(page): Promise<Geometry> {
                 width: Math.round(r.width), height: Math.round(r.height),
             } : null,
             sidebarPresent: !!document.querySelector(sidebarSel),
-            hitAt300x400: hit ? hit.tagName : 'NONE',
+            hitAt300x400: hit
+                ? hit.tagName.toLowerCase() + (hit.className ? `.${hit.className}` : '')
+                : 'none',
         };
     }, { childViewSel: SEL.workspaceRoutedTab, sidebarSel: LEFT_SIDEBAR });
 }
@@ -145,9 +148,12 @@ test.describe('Composition full-bleed layout', () => {
                 'the workspace sidebar is still mounted on composition — isComposition did not fire')
                 .toBe(false);
 
-            // Geometry alone would pass on a canvas covered by a stale overlay.
-            expect(composition.hitAt300x400,
-                'nothing hit-testable at x=300 inside the reclaimed gutter')
-                .toBe('CANVAS');
+            // Geometry alone would pass on a canvas covered by a stale overlay. Polled, not read
+            // once, because the box reaches full-bleed while `.sdc-loader-global-wrapper` is still
+            // painted over it — the overlay does not move the box, so the poll above cannot see it.
+            // An overlay that never clears still fails, which is the regression this guards.
+            await expect.poll(async () => (await measure(sdcPage)).hitAt300x400,
+                { timeout: 20_000, message: 'nothing hit-testable at x=300 inside the reclaimed gutter' })
+                .toMatch(/^canvas(\.|$)/);
         });
 });
