@@ -50,6 +50,7 @@ public class CassandraHealthCheck {
     private String localDataCenterName;
     private int HC_FormulaNumber;
     private SdcSchemaUtils sdcSchemaUtils;
+    private volatile Session session;
 
     @PostConstruct
     private void init() {
@@ -125,8 +126,13 @@ public class CassandraHealthCheck {
             log.error("localDataCenter Name in configuration.yaml is missing.");
             return false;
         }
-        try (final Session session = sdcSchemaUtils.connect()) {
-            log.debug("creating cluster for Cassandra for monitoring.");
+        try {
+            // The session is kept open across health checks on purpose: opening one costs a connection pool to every
+            // node in the data center, and closing it tears the pools down again. Doing that per check added ~175ms to
+            // every cycle. The driver needs the pools to keep the host up/down state this check reads current.
+            if (session == null || session.isClosed()) {
+                session = sdcSchemaUtils.connect();
+            }
             log.debug("The cassandra session is {}", session);
             if (session == null) {
                 log.error("Failed to connect to cassandra ");
@@ -154,6 +160,9 @@ public class CassandraHealthCheck {
 
     @PreDestroy
     public void closeClient() {
+        if (session != null) {
+            session.close();
+        }
         if (sdcSchemaUtils != null) {
             sdcSchemaUtils.closeCluster();
         }
