@@ -36,7 +36,7 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.amdocs.zusammen</groupId>
+      <groupId>org.onap.sdc.zusammen</groupId>
       <artifactId>zusammen-adaptor-inbound-api</artifactId>
       <version>${zusammen.version}</version>
     </dependency>
@@ -51,7 +51,7 @@
       <version>${lang3.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.amdocs.zusammen</groupId>
+      <groupId>org.onap.sdc.zusammen</groupId>
       <artifactId>zusammen-datatypes</artifactId>
       <version>${zusammen.version}</version>
     </dependency>

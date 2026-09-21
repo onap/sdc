@@ -19,31 +19,31 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.amdocs.zusammen</groupId>
+      <groupId>org.onap.sdc.zusammen</groupId>
       <artifactId>zusammen-commons-utils</artifactId>
-      <version>${zusammen-common-utilities.version}</version>
+      <version>${zusammen.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.amdocs.zusammen</groupId>
+      <groupId>org.onap.sdc.zusammen</groupId>
       <artifactId>zusammen-adaptor-inbound-api</artifactId>
       <version>${zusammen.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.amdocs.zusammen</groupId>
+      <groupId>org.onap.sdc.zusammen</groupId>
       <artifactId>zusammen-adaptor-inbound-impl</artifactId>
       <version>${zusammen.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>com.amdocs.zusammen.plugin</groupId>
+      <groupId>org.onap.sdc.zusammen.plugin</groupId>
       <artifactId>zusammen-collaboration-cassandra-plugin</artifactId>
-      <version>${zusammen-collaboration-store.version}</version>
+      <version>${zusammen.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>com.amdocs.zusammen.plugin</groupId>
+      <groupId>org.onap.sdc.zusammen.plugin</groupId>
       <artifactId>zusammen-search-index-empty-plugin</artifactId>
-      <version>${zusammen-index-store.version}</version>
+      <version>${zusammen.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
