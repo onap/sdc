@@ -11,7 +11,7 @@ def be_consumers_init(be_ip, be_port, header, protocol, tls_cert, tls_key, tls_k
     sdc_be_proxy = SdcBeProxy(be_ip, be_port, header, protocol, tls_cert, tls_key, tls_key_pw, ca_cert)
     if check_backend(sdc_be_proxy, properties.retry_attempts):
         for consumer in consumer_candidate_list:
-            if sdc_be_proxy.check_user(consumer.consumer_name) != 200:
+            if sdc_be_proxy.check_consumer(consumer.consumer_name) != 200:
                 result = sdc_be_proxy.create_consumer(*consumer.get_parameters())
                 if result == 201:
                     print('[INFO]: ' + consumer.consumer_name +

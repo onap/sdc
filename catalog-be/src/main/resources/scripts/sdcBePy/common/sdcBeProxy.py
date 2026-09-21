@@ -26,7 +26,7 @@ class SdcBeProxy:
         return self.con.get('/sdc2/rest/v1/user/jh0003')
 
     def check_user(self, user_name):
-          return self.con.get("/sdc2/rest/v1/user" + user_name)
+        return self.con.get("/sdc2/rest/v1/user/" + user_name)
 
     def create_user(self, first_name, last_name, user_id, email, role):
 
@@ -39,7 +39,7 @@ class SdcBeProxy:
         }))
 
     def check_consumer(self, consumer_name):
-        return self.con.get("/sdc2/rest/v1/consumers" + consumer_name)
+        return self.con.get("/sdc2/rest/v1/consumers/" + consumer_name)
 
     def create_consumer(self, consumer_name, slat, password):
         return self.con.post("/sdc2/rest/v1/consumers", json.dumps({
