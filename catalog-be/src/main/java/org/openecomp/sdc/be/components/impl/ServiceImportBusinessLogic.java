@@ -3282,6 +3282,10 @@ public class ServiceImportBusinessLogic {
                 throw new ComponentException(createArtifactsEither.right().value());
             }
             resource = serviceImportParseLogic.getResourceWithGroups(createArtifactsEither.left().value().getUniqueId());
+            if (!inTransaction) {
+                // CREATED must not be audited or returned before the graph transaction is known to have committed
+                commitOrFail(resource);
+            }
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.CREATED);
             componentsUtils.auditResource(responseFormat, csarInfo.getModifier(), resource, actionEnum);
             ASDCKpiApi.countCreatedResourcesKPI();
@@ -3290,12 +3294,18 @@ public class ServiceImportBusinessLogic {
             serviceImportParseLogic.rollback(inTransaction, resource, createdArtifacts, nodeTypesNewCreatedArtifacts);
             throw e;
         } finally {
-            if (!inTransaction) {
-                janusGraphDao.commit();
-            }
             if (shouldLock) {
                 graphLockOperation.unlockComponentByName(resource.getSystemName(), resource.getUniqueId(), NodeTypeEnum.Resource);
             }
+        }
+    }
+
+    private void commitOrFail(final Resource resource) {
+        final JanusGraphOperationStatus commitStatus = janusGraphDao.commit();
+        if (commitStatus != JanusGraphOperationStatus.OK) {
+            log.error("Failed to commit the creation of resource '{}' (uniqueId '{}'), JanusGraph status '{}'", resource.getName(),
+                resource.getUniqueId(), commitStatus);
+            throw new StorageException(commitStatus, resource.getName());
         }
     }
 

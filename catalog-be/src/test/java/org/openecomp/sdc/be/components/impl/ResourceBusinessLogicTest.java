@@ -1483,6 +1483,41 @@ class ResourceBusinessLogicTest {
     @Test
     void testCreateResourceFromCsarWithModel() throws URISyntaxException, ZipException {
 
+        final Map<String, byte[]> csar = mockCreateResourceFromNonOnapCsar();
+
+        Resource result = bl.createResourceFromCsar(resourceResponse, user, csar, "1234");
+
+        assertEquals("myDomain.myVnf", result.getToscaResourceName());
+        List<String> propIds = result.getProperties().stream().map(prop -> prop.getUniqueId()).collect(Collectors.toList());
+        assertTrue(propIds.contains("myVnf.propInBase"));
+        assertTrue(propIds.contains("myVnf.descriptor_id"));
+        assertTrue(propIds.contains("myVnf.descriptor_version"));
+        assertTrue(propIds.contains("myVnf.flavour_description"));
+        assertTrue(propIds.contains("myVnf.flavour_id"));
+        assertTrue(propIds.contains("myVnf.product_name"));
+        assertTrue(propIds.contains("myVnf.provider"));
+        assertTrue(propIds.contains("myVnf.software_version"));
+        assertTrue(propIds.contains("myVnf.vnfm_info"));
+
+        final List<String> reqsName = new ArrayList<>();
+
+        final List<ComponentInstance> cisWithExtReq = result.getComponentInstances().stream()
+            .filter(instance -> instance.getRequirements().get("tosca.nodes.nfv.VduCp").get(0).isExternal()).collect(Collectors.toList());
+        cisWithExtReq.forEach(instance -> reqsName.add(instance.getRequirements().get("tosca.nodes.nfv.VduCp").get(0).getExternalName()));
+        assertEquals(3, cisWithExtReq.size());
+    }
+
+    @Test
+    void createResourceFromCsarShouldNotReportCreatedWhenGraphCommitFails() throws URISyntaxException, ZipException {
+        final Map<String, byte[]> csar = mockCreateResourceFromNonOnapCsar();
+        when(mockJanusGraphDao.commit()).thenReturn(JanusGraphOperationStatus.GENERAL_ERROR);
+
+        final ByActionStatusComponentException actual = assertThrows(ByActionStatusComponentException.class,
+            () -> bl.createResourceFromCsar(resourceResponse, user, csar, "1234"));
+        assertEquals(ActionStatus.GENERAL_ERROR, actual.getActionStatus());
+    }
+
+    private Map<String, byte[]> mockCreateResourceFromNonOnapCsar() throws URISyntaxException, ZipException {
         final File csarFile = new File(
             ResourceBusinessLogicTest.class.getClassLoader().getResource("csars/nonOnapCsar.csar").toURI());
         final Map<String, byte[]> csar = ZipUtils.readZip(csarFile, false);
@@ -1591,27 +1626,7 @@ class ResourceBusinessLogicTest {
         doAnswer(invocation -> {
             return Either.left(resourceResponse);
         }).when(toscaOperationFacade).getToscaFullElement("myVnf");
-
-        Resource result = bl.createResourceFromCsar(resourceResponse, user, csar, "1234");
-
-        assertEquals("myDomain.myVnf", result.getToscaResourceName());
-        List<String> propIds = result.getProperties().stream().map(prop -> prop.getUniqueId()).collect(Collectors.toList());
-        assertTrue(propIds.contains("myVnf.propInBase"));
-        assertTrue(propIds.contains("myVnf.descriptor_id"));
-        assertTrue(propIds.contains("myVnf.descriptor_version"));
-        assertTrue(propIds.contains("myVnf.flavour_description"));
-        assertTrue(propIds.contains("myVnf.flavour_id"));
-        assertTrue(propIds.contains("myVnf.product_name"));
-        assertTrue(propIds.contains("myVnf.provider"));
-        assertTrue(propIds.contains("myVnf.software_version"));
-        assertTrue(propIds.contains("myVnf.vnfm_info"));
-
-        final List<String> reqsName = new ArrayList<>();
-
-        final List<ComponentInstance> cisWithExtReq = result.getComponentInstances().stream()
-            .filter(instance -> instance.getRequirements().get("tosca.nodes.nfv.VduCp").get(0).isExternal()).collect(Collectors.toList());
-        cisWithExtReq.forEach(instance -> reqsName.add(instance.getRequirements().get("tosca.nodes.nfv.VduCp").get(0).getExternalName()));
-        assertEquals(3, cisWithExtReq.size());
+        return csar;
     }
 
     @Test
