@@ -86,6 +86,7 @@ import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datamodel.api.HighestFilterEnum;
 import org.openecomp.sdc.be.datamodel.utils.ArtifactUtils;
 import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
@@ -1608,6 +1609,10 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             }
             loggerSupportability.log(LoggerSupportabilityActions.CREATE_ARTIFACTS, resource.getComponentMetadataForSupportLog(), StatusCode.COMPLETE,
                 "Finished to add artifacts from yaml: " + resource.getToscaResourceName());
+            if (!inTransaction) {
+                // CREATED must not be audited or returned before the graph transaction is known to have committed
+                commitOrFail(resource);
+            }
             final ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.CREATED);
             componentsUtils.auditResource(responseFormat, csarInfo.getModifier(), resource, actionEnum);
             ASDCKpiApi.countCreatedResourcesKPI();
@@ -1628,12 +1633,19 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             rollback(inTransaction, resource, createdArtifacts, nodeTypesNewCreatedArtifacts);
             throw new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR);
         } finally {
-            if (!inTransaction) {
-                janusGraphDao.commit();
-            }
             if (shouldLock) {
                 graphLockOperation.unlockComponentByName(resource.getSystemName(), resource.getUniqueId(), NodeTypeEnum.Resource);
             }
+        }
+    }
+
+    private void commitOrFail(final Resource resource) {
+        final JanusGraphOperationStatus commitStatus = janusGraphDao.commit();
+        if (commitStatus != JanusGraphOperationStatus.OK) {
+            log.error(EcompLoggerErrorCode.DATA_ERROR, ResourceBusinessLogic.class.getName(),
+                "Failed to commit the creation of resource '{}' (uniqueId '{}'), JanusGraph status '{}'", resource.getName(),
+                resource.getUniqueId(), commitStatus);
+            throw new StorageException(commitStatus, resource.getName());
         }
     }
 
