@@ -26,6 +26,7 @@ import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.servlets.exception.ComponentExceptionMapper;
 import org.openecomp.sdc.be.servlets.exception.DefaultExceptionMapper;
 import org.openecomp.sdc.be.servlets.exception.StorageExceptionMapper;
+import org.openecomp.sdc.be.servlets.exception.WebApplicationExceptionMapper;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.springframework.context.annotation.Bean;
@@ -40,6 +41,9 @@ public class BaseTestConfig {
 
     @Bean
     DefaultExceptionMapper defaultExceptionMapper() {return new DefaultExceptionMapper();}
+
+    @Bean
+    WebApplicationExceptionMapper webApplicationExceptionMapper() {return new WebApplicationExceptionMapper();}
 
     @Bean
     ComponentExceptionMapper componentExceptionMapper() {

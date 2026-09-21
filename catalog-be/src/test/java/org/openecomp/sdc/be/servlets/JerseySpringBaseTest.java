@@ -44,6 +44,7 @@ import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.servlets.exception.ComponentExceptionMapper;
 import org.openecomp.sdc.be.servlets.exception.DefaultExceptionMapper;
 import org.openecomp.sdc.be.servlets.exception.StorageExceptionMapper;
+import org.openecomp.sdc.be.servlets.exception.WebApplicationExceptionMapper;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
@@ -95,6 +96,7 @@ public abstract class JerseySpringBaseTest extends JerseyTest {
             })
             .register(RolesAllowedDynamicFeature.class)
             .register(DefaultExceptionMapper.class)
+            .register(WebApplicationExceptionMapper.class)
             .register(ComponentExceptionMapper.class)
             .register(StorageExceptionMapper.class)
             .register(MultiPartFeature.class)

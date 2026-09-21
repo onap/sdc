@@ -88,6 +88,7 @@ import org.openecomp.sdc.be.model.operations.impl.OperationUtils;
 import org.openecomp.sdc.be.servlets.exception.ComponentExceptionMapper;
 import org.openecomp.sdc.be.servlets.exception.DefaultExceptionMapper;
 import org.openecomp.sdc.be.servlets.exception.StorageExceptionMapper;
+import org.openecomp.sdc.be.servlets.exception.WebApplicationExceptionMapper;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.ConfigurationSource;
@@ -607,6 +608,7 @@ class ExternalRefsServletTest extends JerseyTest {
         forceSet(TestProperties.CONTAINER_PORT, "0");
         return new ResourceConfig(ExternalRefsServlet.class)
             .register(DefaultExceptionMapper.class)
+            .register(WebApplicationExceptionMapper.class)
             .register(ComponentExceptionMapper.class)
             .register(StorageExceptionMapper.class)
             .property("contextConfig", context);
@@ -644,6 +646,11 @@ class ExternalRefsServletTest extends JerseyTest {
         @Bean
         DefaultExceptionMapper defaultExceptionMapper() {
             return new DefaultExceptionMapper();
+        }
+
+        @Bean
+        WebApplicationExceptionMapper webApplicationExceptionMapper() {
+            return new WebApplicationExceptionMapper();
         }
 
         @Bean

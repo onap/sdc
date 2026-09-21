@@ -51,7 +51,11 @@ public class ConsumerOperation implements IConsumerOperation {
             .getNode(GraphPropertiesDictionary.CONSUMER_NAME.getProperty(), consumerName, ConsumerData.class);
         if (getNode.isRight()) {
             JanusGraphOperationStatus status = getNode.right().value();
-            log.error("Error returned after get Consumer Data node {}. status returned is {}", consumerName, status);
+            if (status == JanusGraphOperationStatus.NOT_FOUND) {
+                log.debug("Consumer Data node {} was not found", consumerName);
+            } else {
+                log.error("Error returned after get Consumer Data node {}. status returned is {}", consumerName, status);
+            }
             result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
             return result;
         }
