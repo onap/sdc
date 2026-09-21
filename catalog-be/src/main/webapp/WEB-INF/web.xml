@@ -24,6 +24,7 @@
                 org.openecomp.sdc.be.filters.ComponentsAvailabilityFilter,
                 org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature,
                 org.openecomp.sdc.be.servlets.exception.DefaultExceptionMapper,
+                org.openecomp.sdc.be.servlets.exception.WebApplicationExceptionMapper,
                 org.openecomp.sdc.be.servlets.exception.ComponentExceptionMapper,
                 org.openecomp.sdc.be.servlets.exception.ConstraintViolationExceptionMapper,
                 org.openecomp.sdc.be.servlets.exception.StorageExceptionMapper,
@@ -63,6 +64,7 @@
                 org.openecomp.sdc.be.filters.DataValidatorFilter,
                 org.openecomp.sdc.be.filters.ComponentsAvailabilityFilter,
                 org.openecomp.sdc.be.servlets.exception.DefaultExceptionMapper,
+                org.openecomp.sdc.be.servlets.exception.WebApplicationExceptionMapper,
                 org.openecomp.sdc.be.servlets.exception.ComponentExceptionMapper,
                 org.openecomp.sdc.be.servlets.exception.StorageExceptionMapper,
                 org.openecomp.sdc.be.filters.BasicAuthenticationFilter
