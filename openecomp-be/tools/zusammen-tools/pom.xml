@@ -40,9 +40,9 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.amdocs.zusammen.plugin</groupId>
+            <groupId>org.onap.sdc.zusammen.plugin</groupId>
             <artifactId>zusammen-collaboration-cassandra-plugin</artifactId>
-            <version>${zusammen-collaboration-store.version}</version>
+            <version>${zusammen.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openecomp.sdc</groupId>
@@ -65,9 +65,9 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.amdocs.zusammen.plugin</groupId>
+            <groupId>org.onap.sdc.zusammen.plugin</groupId>
             <artifactId>zusammen-state-store-cassandra-plugin</artifactId>
-            <version>${zusammen-state-store.version}</version>
+            <version>${zusammen.version}</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate.validator</groupId>

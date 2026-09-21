@@ -79,7 +79,7 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>com.amdocs.zusammen</groupId>
+      <groupId>org.onap.sdc.zusammen</groupId>
       <artifactId>zusammen-datatypes</artifactId>
       <version>${zusammen.version}</version>
     </dependency>
