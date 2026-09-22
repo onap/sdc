@@ -1,0 +1,9 @@
+Code-Review+2: Lukasz Rajewski <lukasz.rajewski@t-mobile.pl>
+Verified+1: ONAP Bypass GHA <releng+onap.bypass.gha@linuxfoundation.org>
+Verified+1: ONAP Required GHA <releng+onap.required.gha@linuxfoundation.org>
+Verified+1: ONAP GitHub Actions <collab-it+ecomp-jobbuilder@linuxfoundation.org>
+Submitted-by: Lukasz Rajewski <lukasz.rajewski@t-mobile.pl>
+Submitted-at: Tue, 22 Sep 2026 13:15:29 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/sdc/+/147672
+Project: sdc
+Branch: refs/heads/master
