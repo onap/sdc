@@ -24,6 +24,7 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -65,6 +66,14 @@
                     <groupId>org.functionaljava</groupId>
                     <artifactId>functionaljava</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>com.datastax.cassandra</groupId>
+                    <artifactId>cassandra-driver-mapping</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.powermock</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -74,12 +83,6 @@
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
             <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.groovy</groupId>
-            <artifactId>groovy</artifactId>
-            <version>${groovy.version}</version>
         </dependency>
 
         <dependency>
@@ -116,14 +119,6 @@
             <version>${jersey-bom.version}</version>
             <scope>compile</scope>
         </dependency>
-
-        <dependency>
-            <groupId>org.glassfish.jersey.media</groupId>
-            <artifactId>jersey-media-moxy</artifactId>
-            <version>${jersey-bom.version}</version>
-            <scope>compile</scope>
-        </dependency>
-
 
         <dependency>
             <groupId>org.glassfish.jersey.media</groupId>
@@ -192,18 +187,6 @@
             <artifactId>httpcore</artifactId>
             <version>${httpcore.version}</version>
             <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpmime</artifactId>
-            <version>${httpmime.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.httpcomponents</groupId>
-                    <artifactId>httpcore</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
