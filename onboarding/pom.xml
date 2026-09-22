@@ -72,7 +72,7 @@
         <spring.framework.version>${spring.version}</spring.framework.version>
         <swagger.version>${swagger-core-mvn-plugin.version}</swagger.version>
         <woodstox.version>4.4.1</woodstox.version>
-        <zusammen.version>1.0.3</zusammen.version>
+        <zusammen.version>1.0.4</zusammen.version>
         <build.tools.version>${project.version}</build.tools.version>
     </properties>
 
