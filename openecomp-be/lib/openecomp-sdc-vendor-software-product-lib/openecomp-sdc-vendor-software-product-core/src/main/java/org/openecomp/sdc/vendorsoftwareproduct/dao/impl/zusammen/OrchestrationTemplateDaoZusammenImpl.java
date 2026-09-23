@@ -88,7 +88,8 @@ public class OrchestrationTemplateDaoZusammenImpl implements OrchestrationTempla
             return orchestrationTemplate;
         }
         Optional<Element> orchestrationTemplateElementOpt = zusammenAdaptor
-            .getElementByName(context, elementContext, vspModel.get().getId(), ElementType.OrchestrationTemplate.name());
+            .getElementInfoByName(context, elementContext, vspModel.get().getId(), ElementType.OrchestrationTemplate.name())
+            .flatMap(elementInfo -> zusammenAdaptor.getElementTree(context, elementContext, elementInfo.getId(), 1));
         if (!orchestrationTemplateElementOpt.isPresent()) {
             return orchestrationTemplate;
         } else {
@@ -101,19 +102,16 @@ public class OrchestrationTemplateDaoZusammenImpl implements OrchestrationTempla
             if (subElements.isEmpty()) {
                 return orchestrationTemplate;
             }
-            for (Element element : subElements) {
-                Optional<Element> subElementOpt = zusammenAdaptor.getElement(context, elementContext, element.getElementId().toString());
-                subElementOpt.ifPresent(subElement -> {
-                    if (subElement.getInfo().getName().equals(ElementType.OrchestrationTemplateValidationData.name())) {
-                        orchestrationTemplate.setFileSuffix(subElement.getInfo().getProperty(InfoPropertyName.FILE_SUFFIX.getVal()));
-                        orchestrationTemplate.setFileName(subElement.getInfo().getProperty(InfoPropertyName.FILE_NAME.getVal()));
-                        if (!VspZusammenUtil.hasEmptyData(subElement.getData())) {
-                            orchestrationTemplate.setValidationData(new String(FileUtils.toByteArray(subElement.getData())));
-                        }
-                    } else if (subElement.getInfo().getName().equals(ElementType.OrchestrationTemplateStructure.name())) {
-                        orchestrationTemplate.setFilesDataStructure(new String(FileUtils.toByteArray(subElement.getData())));
+            for (Element subElement : subElements) {
+                if (subElement.getInfo().getName().equals(ElementType.OrchestrationTemplateValidationData.name())) {
+                    orchestrationTemplate.setFileSuffix(subElement.getInfo().getProperty(InfoPropertyName.FILE_SUFFIX.getVal()));
+                    orchestrationTemplate.setFileName(subElement.getInfo().getProperty(InfoPropertyName.FILE_NAME.getVal()));
+                    if (!VspZusammenUtil.hasEmptyData(subElement.getData())) {
+                        orchestrationTemplate.setValidationData(new String(FileUtils.toByteArray(subElement.getData())));
                     }
-                });
+                } else if (subElement.getInfo().getName().equals(ElementType.OrchestrationTemplateStructure.name())) {
+                    orchestrationTemplate.setFilesDataStructure(new String(FileUtils.toByteArray(subElement.getData())));
+                }
             }
         }
         return orchestrationTemplate;

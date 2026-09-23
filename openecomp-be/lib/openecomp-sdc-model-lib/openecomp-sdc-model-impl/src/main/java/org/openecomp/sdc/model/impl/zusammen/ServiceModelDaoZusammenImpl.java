@@ -80,12 +80,15 @@ public class ServiceModelDaoZusammenImpl implements ServiceModelDao<ToscaService
             return null;
         }
         final var serviceModelElementInfo = serviceModelOpt.get();
-        final var serviceModelElementId = serviceModelElementInfo.getId();
-        final Map<String, ServiceTemplate> serviceTemplates = getTemplates(context, elementContext, serviceModelElementId);
+        final Optional<Element> serviceModel = zusammenAdaptor.getElementTree(context, elementContext, serviceModelElementInfo.getId(), 2);
+        if (serviceModel.isEmpty()) {
+            return null;
+        }
+        final Map<String, ServiceTemplate> serviceTemplates = getTemplates(serviceModel.get());
         if (serviceTemplates == null) {
             return null;
         }
-        final FileContentHandler artifacts = getArtifacts(context, elementContext, serviceModelElementId);
+        final FileContentHandler artifacts = getArtifacts(serviceModel.get());
         final String entryDefinitionServiceTemplate = serviceModelElementInfo.getInfo().getProperty(BASE.getName());
         final List<String> modelList = serviceModelElementInfo.getInfo().getProperty(MODELS.getName());
         return new ToscaServiceModel(modelList, artifacts, serviceTemplates, entryDefinitionServiceTemplate);
@@ -181,26 +184,25 @@ public class ServiceModelDaoZusammenImpl implements ServiceModelDao<ToscaService
             .filter(elementInfo -> elementInfo.getInfo() != null && elementType.name().equals(elementInfo.getInfo().getName())).findFirst();
     }
 
-    private Map<String, ServiceTemplate> getTemplates(SessionContext context, ElementContext elementContext, Id serviceModelElementId) {
-        Optional<ElementInfo> templatesElementInfo = zusammenAdaptor
-            .getElementInfoByName(context, elementContext, serviceModelElementId, ElementType.Templates.name());
-        if (templatesElementInfo.isPresent()) {
-            Collection<Element> elements = zusammenAdaptor.listElementData(context, elementContext, templatesElementInfo.get().getId());
-            return elements.stream().collect(Collectors.toMap(element -> element.getInfo().getName(), this::elementToServiceTemplate));
-        }
-        return null;
+    private Map<String, ServiceTemplate> getTemplates(Element serviceModel) {
+        return findChild(serviceModel, ElementType.Templates)
+            .map(templates -> templates.getSubElements().stream()
+                .collect(Collectors.toMap(element -> element.getInfo().getName(), this::elementToServiceTemplate)))
+            .orElse(null);
     }
 
-    private FileContentHandler getArtifacts(SessionContext context, ElementContext elementContext, Id serviceModelElementId) {
-        Optional<ElementInfo> artifactsElement = zusammenAdaptor
-            .getElementInfoByName(context, elementContext, serviceModelElementId, ElementType.Artifacts.name());
-        if (artifactsElement.isPresent()) {
-            Collection<Element> elements = zusammenAdaptor.listElementData(context, elementContext, artifactsElement.get().getId());
+    private FileContentHandler getArtifacts(Element serviceModel) {
+        return findChild(serviceModel, ElementType.Artifacts).map(artifacts -> {
             FileContentHandler fileContentHandler = new FileContentHandler();
-            elements.forEach(element -> fileContentHandler.addFile(element.getInfo().getName(), element.getData()));
+            artifacts.getSubElements().forEach(element -> fileContentHandler.addFile(element.getInfo().getName(), element.getData()));
             return fileContentHandler;
-        }
-        return null;
+        }).orElse(null);
+    }
+
+    private static Optional<Element> findChild(Element parent, ElementType type) {
+        return parent.getSubElements().stream()
+            .filter(element -> element.getInfo() != null && type.name().equals(element.getInfo().getName()))
+            .findFirst();
     }
 
     private ZusammenElement buildServiceModelElement(String entryDefinitionServiceTemplate) {
