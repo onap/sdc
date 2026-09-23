@@ -92,6 +92,12 @@
             <artifactId>janino</artifactId>
             <scope>compile</scope>
         </dependency>
+        <!-- The XML contexts need SpEL at runtime, and the spring-context/spring-webmvc entries below exclude it. -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-expression</artifactId>
+            <version>${spring.framework.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
