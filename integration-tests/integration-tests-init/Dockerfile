@@ -40,7 +40,6 @@ ENV user=onap group=onap
 
 USER onap
 
-# user/group args are inherited from base_sdc-python base image
 COPY --chown=onap:onap scripts /home/onap/scripts
 
 RUN chmod 770 -R /home/onap/scripts && \
