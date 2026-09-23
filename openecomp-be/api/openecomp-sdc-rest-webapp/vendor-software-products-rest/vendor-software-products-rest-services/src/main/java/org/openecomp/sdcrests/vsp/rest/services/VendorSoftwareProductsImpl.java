@@ -211,7 +211,6 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
                 Item item = new MapVspDescriptionDtoToItem().applyMapping(vspRequestDto, Item.class);
                 item.setType(ItemType.vsp.name());
                 item.setOwner(user);
-                item.setTenant(item.getTenant());
                 item.setStatus(ItemStatus.ACTIVE);
                 item.addProperty(VspItemProperty.ONBOARDING_METHOD, onboardingMethod.name());
                 uniqueValueUtil.validateUniqueValue(VENDOR_SOFTWARE_PRODUCT_NAME, item.getName());
@@ -270,12 +269,11 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
         if (keyaccess.multiTenancyCheck()) {
            AccessToken.Access realmAccess = keyaccess.getAccessToken(hreq).getRealmAccess();
             Set<String> realmroles = realmAccess.getRoles();
-            Predicate<Item> itemPredicate = createItemPredicate(versionStatus, itemStatus, user);
             GenericCollectionWrapper<VspDetailsDto> results = new GenericCollectionWrapper<>();
             MapItemToVspDetailsDto mapper = new MapItemToVspDetailsDto();
-            realmroles.stream().forEach(role -> itemManager.list(itemPredicate).stream().sorted((o1, o2) -> o2.getModificationTime().compareTo(o1.getModificationTime()))
-                    .filter(vspItem -> vspItem.getTenant().contains(role))
-                    .forEach(vspItem -> results.add(mapper.applyMapping(vspItem, VspDetailsDto.class))));
+            getVspList(versionStatus, itemStatus, user).stream()
+                    .filter(vspItem -> vspItem.getTenant() != null && realmroles.contains(vspItem.getTenant()))
+                    .forEach(vspItem -> results.add(mapper.applyMapping(vspItem, VspDetailsDto.class)));
             return Response.ok(results).build();
         }
         else {
