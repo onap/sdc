@@ -21,8 +21,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.Element;
@@ -33,6 +36,7 @@ import com.amdocs.zusammen.datatypes.SessionContext;
 import com.amdocs.zusammen.datatypes.item.Action;
 import com.amdocs.zusammen.datatypes.item.ElementContext;
 import com.amdocs.zusammen.datatypes.item.Info;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -113,18 +117,42 @@ public class ZusammenAdaptorImplTest {
     }
 
     @Test
-    public void listElementsWhenTheirParentIdExist() {
-        doReturn(ELEMENTS).when(connector).listElements(CONTEXT, ELEMENT_CONTEXT, ELEMENT_ID);
-
-        List<ZusammenElement> returnedElements =
-                Arrays.asList(new ZusammenElement(), new ZusammenElement(), new ZusammenElement());
-        doReturn(returnedElements.get(0)).when(connector).getElement(CONTEXT, ELEMENT_CONTEXT, ELEMENTS.get(0).getId());
-        doReturn(returnedElements.get(1)).when(connector).getElement(CONTEXT, ELEMENT_CONTEXT, ELEMENTS.get(1).getId());
-        doReturn(returnedElements.get(2)).when(connector).getElement(CONTEXT, ELEMENT_CONTEXT, ELEMENTS.get(2).getId());
+    public void listElementDataReadsTheChildrenInOneTreeRead() {
+        ZusammenElement parent = new ZusammenElement();
+        parent.setElementId(ELEMENT_ID);
+        List<Element> children = Arrays.asList(new ZusammenElement(), new ZusammenElement());
+        parent.setSubElements(children);
+        doReturn(parent).when(connector).getElementTree(CONTEXT, ELEMENT_CONTEXT, ELEMENT_ID, 1);
 
         Collection<Element> elements = zusammenAdaptor.listElementData(CONTEXT, ELEMENT_CONTEXT, ELEMENT_ID);
 
-        assertEquals(returnedElements, elements);
+        assertEquals(children, new ArrayList<>(elements));
+        verify(connector, never()).listElements(any(), any(), any());
+        verify(connector, never()).getElement(any(), any(), any());
+    }
+
+    @Test
+    public void listElementDataOfAMissingParentIsEmpty() {
+        doReturn(null).when(connector).getElementTree(CONTEXT, ELEMENT_CONTEXT, ELEMENT_ID, 1);
+
+        assertTrue(zusammenAdaptor.listElementData(CONTEXT, ELEMENT_CONTEXT, ELEMENT_ID).isEmpty());
+    }
+
+    @Test
+    public void listElementDataOfTheRootStillListsAndGets() {
+        doReturn(ELEMENTS).when(connector).listElements(CONTEXT, ELEMENT_CONTEXT, null);
+        doReturn(new ZusammenElement()).when(connector).getElement(any(), any(), any());
+
+        assertEquals(ELEMENTS.size(), zusammenAdaptor.listElementData(CONTEXT, ELEMENT_CONTEXT, null).size());
+        verify(connector, never()).getElementTree(any(), any(), any(), anyInt());
+    }
+
+    @Test
+    public void getElementTreeWrapsTheConnectorResult() {
+        ZusammenElement tree = new ZusammenElement();
+        doReturn(tree).when(connector).getElementTree(CONTEXT, ELEMENT_CONTEXT, ELEMENT_ID, 2);
+
+        assertEquals(Optional.of(tree), zusammenAdaptor.getElementTree(CONTEXT, ELEMENT_CONTEXT, ELEMENT_ID, 2));
     }
 
     @Test

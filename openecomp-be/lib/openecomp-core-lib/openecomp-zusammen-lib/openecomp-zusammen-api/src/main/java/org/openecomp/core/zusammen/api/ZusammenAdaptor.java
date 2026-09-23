@@ -80,6 +80,8 @@ public interface ZusammenAdaptor {
 
     Optional<Element> getElementByName(SessionContext context, ElementContext elementContext, Id parentElementId, String elementName);
 
+    Optional<Element> getElementTree(SessionContext context, ElementContext elementContext, Id elementId, int depth);
+
     Collection<ElementInfo> listElements(SessionContext context, ElementContext elementContext, Id parentElementId);
 
     Collection<Element> listElementData(SessionContext context, ElementContext elementContext, Id parentElementId);

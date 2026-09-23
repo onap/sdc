@@ -22,7 +22,6 @@ import static org.openecomp.core.zusammen.api.ZusammenUtil.buildStructuralElemen
 import static org.openecomp.core.zusammen.api.ZusammenUtil.createSessionContext;
 
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.Element;
-import com.amdocs.zusammen.adaptor.inbound.api.types.item.ElementInfo;
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.ZusammenElement;
 import com.amdocs.zusammen.datatypes.SessionContext;
 import com.amdocs.zusammen.datatypes.item.Action;
@@ -72,8 +71,7 @@ public class OrchestrationTemplateCandidateDaoZusammenImpl implements Orchestrat
         LOGGER.info("Getting orchestration template for vsp id {}", vspId);
         SessionContext context = createSessionContext();
         ElementContext elementContext = new ElementContext(vspId, version.getId());
-        Optional<Element> candidateElement = zusammenAdaptor
-            .getElementByName(context, elementContext, null, ElementType.OrchestrationTemplateCandidate.name());
+        Optional<Element> candidateElement = getCandidateTree(context, elementContext);
         if (!candidateElement.isPresent() || VspZusammenUtil.hasEmptyData(candidateElement.get().getData()) || candidateElement.get().getSubElements()
             .isEmpty()) {
             LOGGER.info("Orchestration template for vsp id {} does not exist / has empty data", vspId);
@@ -81,9 +79,7 @@ public class OrchestrationTemplateCandidateDaoZusammenImpl implements Orchestrat
         }
         OrchestrationTemplateCandidateData candidate = new OrchestrationTemplateCandidateData();
         candidate.setFilesDataStructure(new String(FileUtils.toByteArray(candidateElement.get().getData())));
-        candidateElement.get().getSubElements().stream()
-            .map(element -> zusammenAdaptor.getElement(context, elementContext, element.getElementId().toString()))
-            .forEach(element -> element.ifPresent(candidateInfoElement -> populateCandidate(candidate, candidateInfoElement, true)));
+        candidateElement.get().getSubElements().forEach(candidateInfoElement -> populateCandidate(candidate, candidateInfoElement, true));
         LOGGER.info("Finished getting orchestration template for vsp id {}", vspId);
         return candidate.getFileSuffix() == null ? Optional.empty() : Optional.of(candidate);
     }
@@ -93,18 +89,20 @@ public class OrchestrationTemplateCandidateDaoZusammenImpl implements Orchestrat
         LOGGER.info("Getting orchestration template info for vsp id {}", vspId);
         SessionContext context = createSessionContext();
         ElementContext elementContext = new ElementContext(vspId, version.getId());
-        Optional<ElementInfo> candidateElement = zusammenAdaptor
-            .getElementInfoByName(context, elementContext, null, ElementType.OrchestrationTemplateCandidate.name());
+        Optional<Element> candidateElement = getCandidateTree(context, elementContext);
         if (!candidateElement.isPresent() || candidateElement.get().getSubElements().isEmpty()) {
             LOGGER.info("Orchestration template info for vsp id {} does not exist", vspId);
             return Optional.empty();
         }
         OrchestrationTemplateCandidateData candidate = new OrchestrationTemplateCandidateData();
-        candidateElement.get().getSubElements().stream()
-            .map(elementInfo -> zusammenAdaptor.getElement(context, elementContext, elementInfo.getId().toString()))
-            .forEach(element -> element.ifPresent(candidateInfoElement -> populateCandidate(candidate, candidateInfoElement, false)));
+        candidateElement.get().getSubElements().forEach(candidateInfoElement -> populateCandidate(candidate, candidateInfoElement, false));
         LOGGER.info("Finished getting orchestration template info for vsp id {}", vspId);
         return candidate.getFileSuffix() == null ? Optional.empty() : Optional.of(candidate);
+    }
+
+    private Optional<Element> getCandidateTree(final SessionContext context, final ElementContext elementContext) {
+        return zusammenAdaptor.getElementInfoByName(context, elementContext, null, ElementType.OrchestrationTemplateCandidate.name())
+            .flatMap(elementInfo -> zusammenAdaptor.getElementTree(context, elementContext, elementInfo.getId(), 1));
     }
 
     private void populateCandidate(final OrchestrationTemplateCandidateData candidate, final Element candidateInfoElement, final boolean fullData) {
