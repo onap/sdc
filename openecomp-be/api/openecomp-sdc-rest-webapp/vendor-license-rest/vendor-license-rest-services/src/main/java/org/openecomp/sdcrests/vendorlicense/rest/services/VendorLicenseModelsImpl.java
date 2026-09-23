@@ -163,9 +163,9 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
         if (keyaccess.multiTenancyCheck()) {
             AccessToken.Access realmAccess = keyaccess.getAccessToken(hreq).getRealmAccess();
             Set<String> realmroles = realmAccess.getRoles();
-            realmroles.stream().forEach(role -> asdcItemManager.list(itemPredicate).stream().sorted((o1, o2) -> o2.getModificationTime().compareTo(o1.getModificationTime()))
-                    .filter(item -> item.getTenant().contains(role))
-                    .forEach(item -> results.add(mapper.applyMapping(item, ItemDto.class))));
+            asdcItemManager.list(itemPredicate).stream().sorted((o1, o2) -> o2.getModificationTime().compareTo(o1.getModificationTime()))
+                    .filter(item -> item.getTenant() != null && realmroles.contains(item.getTenant()))
+                    .forEach(item -> results.add(mapper.applyMapping(item, ItemDto.class)));
             return Response.ok(results).build();
         }
         else

@@ -28,6 +28,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.openecomp.sdc.be.csar.storage.StorageFactory.StorageType.MINIO;
@@ -38,10 +39,12 @@ import static org.openecomp.sdcrests.item.types.ItemAction.RESTORE;
 import io.minio.BucketExistsArgs;
 import io.minio.MinioClient;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.ws.rs.core.Response;
 
 import org.junit.Assert;
@@ -49,8 +52,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Answers;
+import org.keycloak.representations.AccessToken;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -58,6 +63,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.openecomp.sdc.activitylog.ActivityLogManager;
 import org.openecomp.sdc.common.CommonConfigurationManager;
 import org.openecomp.sdc.common.errors.ErrorCodeAndMessage;
+import org.openecomp.sdc.common.util.Multitenancy;
 import org.openecomp.sdc.datatypes.model.ItemType;
 import org.openecomp.sdc.versioning.ItemManager;
 import org.openecomp.sdc.versioning.VersioningManager;
@@ -65,6 +71,8 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.types.Item;
 import org.openecomp.sdc.versioning.types.ItemStatus;
 import org.openecomp.sdcrests.item.types.ItemActionRequestDto;
+import org.openecomp.sdcrests.item.types.ItemDto;
+import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 
 @ExtendWith(MockitoExtension.class)
 class ItemsImplTest {
@@ -282,5 +290,56 @@ class ItemsImplTest {
         roles.add("test_admin");
         roles.add("test_tenant");
         return roles;
+    }
+
+    @Test
+    void listWithMultitenancyReturnsItemsOfTheCallersTenantsNewestFirst() {
+        List<String> ids = listAsTenants(Set.of("tenant-a", "tenant-b"),
+            tenantItem("older", "tenant-a", 1), tenantItem("newer", "tenant-b", 2), tenantItem("other", "tenant-c", 3));
+        assertEquals(List.of("newer", "older"), ids);
+    }
+
+    @Test
+    void listWithMultitenancyDoesNotMatchTenantBySubstring() {
+        assertEquals(List.of(), listAsTenants(Set.of("a"), tenantItem("tnap-item", "tnap", 1)));
+    }
+
+    @Test
+    void listWithMultitenancyHidesItemsWithoutTenant() {
+        List<String> ids = listAsTenants(Set.of("tenant-a"), tenantItem("untenanted", null, 2), tenantItem("tenanted", "tenant-a", 1));
+        assertEquals(List.of("tenanted"), ids);
+    }
+
+    @Test
+    void listWithMultitenancyReturnsItemOnceWhenSeveralRolesMatchIt() {
+        assertEquals(List.of("item"), listAsTenants(Set.of("tenant", "tenant-a"), tenantItem("item", "tenant-a", 1)));
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<String> listAsTenants(Set<String> roles, Item... listed) {
+        items.setManagersProvider(managersProvider);
+        when(managersProvider.getItemManager()).thenReturn(itemManager);
+        when(itemManager.list(any())).thenReturn(List.of(listed));
+        AccessToken token = new AccessToken();
+        token.setRealmAccess(new AccessToken.Access().roles(roles));
+        try (MockedConstruction<Multitenancy> ignored = mockConstruction(Multitenancy.class, (multitenancy, context) -> {
+            when(multitenancy.multiTenancyCheck()).thenReturn(true);
+            when(multitenancy.getAccessToken(any())).thenReturn(token);
+        })) {
+            Response response = items.list(null, null, null, null, null, USER, null);
+            assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+            return ((GenericCollectionWrapper<ItemDto>) response.getEntity()).getResults().stream()
+                .map(ItemDto::getId).collect(Collectors.toList());
+        }
+    }
+
+    private Item tenantItem(String id, String tenant, long modificationTime) {
+        Item tenantItem = new Item();
+        tenantItem.setId(id);
+        tenantItem.setType(ItemType.vlm.name());
+        tenantItem.setStatus(ItemStatus.ACTIVE);
+        tenantItem.setTenant(tenant);
+        tenantItem.setModificationTime(new Date(modificationTime));
+        return tenantItem;
     }
 }
