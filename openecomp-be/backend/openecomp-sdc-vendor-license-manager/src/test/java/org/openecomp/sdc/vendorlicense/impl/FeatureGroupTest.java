@@ -350,8 +350,10 @@ public class FeatureGroupTest {
 
   @Test
   public void deleteFeatureGroupTest() {
+    Version version = new Version(0, 1);
+    version.setId("version_id");
 
-    FeatureGroupEntity existingFG = new FeatureGroupEntity(vlm1_id, VERSION01, fg1_id);
+    FeatureGroupEntity existingFG = new FeatureGroupEntity(vlm1_id, version, fg1_id);
     existingFG.setName("FG_name");
     existingFG.setLicenseKeyGroupIds(new HashSet<String>());
     existingFG.setEntitlementPoolIds(new HashSet<String>());
@@ -359,8 +361,7 @@ public class FeatureGroupTest {
 
     doReturn(existingFG).when(featureGroupDao).get(any());
 
-    doNothing().when(vendorLicenseManagerImpl).deleteUniqueName(VendorLicenseConstants
-        .UniqueValues.FEATURE_GROUP_NAME, vlm1_id, VERSION01.toString(), existingFG.getName());
+    doNothing().when(vendorLicenseManagerImpl).deleteUniqueName(any(), any(), any(), any());
 
     vendorLicenseManagerImpl.deleteFeatureGroup(existingFG);
 
@@ -371,7 +372,7 @@ public class FeatureGroupTest {
     verify(vendorLicenseManagerImpl).removeEntitlementPoolsToFeatureGroupsRef(existingFG
         .getEntitlementPoolIds(), existingFG);
     verify(vendorLicenseManagerImpl).deleteUniqueName(VendorLicenseConstants
-        .UniqueValues.FEATURE_GROUP_NAME, vlm1_id, VERSION01.toString(), existingFG.getName());
+        .UniqueValues.FEATURE_GROUP_NAME, vlm1_id, version.getId(), existingFG.getName());
   }
 
   private FeatureGroupEntity createFeatureGroup(String vendorId, Version version, String id,

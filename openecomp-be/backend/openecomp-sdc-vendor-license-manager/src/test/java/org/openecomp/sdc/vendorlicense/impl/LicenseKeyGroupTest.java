@@ -26,6 +26,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.vendorlicense.VendorLicenseConstants;
 import org.openecomp.sdc.vendorlicense.dao.LicenseKeyGroupDao;
 import org.openecomp.sdc.vendorlicense.dao.LimitDao;
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyGroupEntity;
@@ -433,14 +434,16 @@ public class LicenseKeyGroupTest {
     multiChoiceOrOther.setChoices(opScopeChoices);
     multiChoiceOrOther.setOther("Other");
 
-    LicenseKeyGroupEntity lkg = createLicenseKeyGroup(vlm1_id, VERSION01, lkg1_id, LKG1_NAME,
+    Version version = new Version(0, 1);
+    version.setId("version_id");
+    LicenseKeyGroupEntity lkg = createLicenseKeyGroup(vlm1_id, version, lkg1_id, LKG1_NAME,
         "LKG1 dec", LicenseKeyType.Universal, multiChoiceOrOther);
 
     lkg.setReferencingFeatureGroups(new HashSet<>());
 
     doReturn(lkg).when(licenseKeyGroupDao).get(any());
 
-    doNothing().when(vendorLicenseManagerImpl).deleteChildLimits(vlm1_id, VERSION01, lkg1_id);
+    doNothing().when(vendorLicenseManagerImpl).deleteChildLimits(vlm1_id, version, lkg1_id);
 
     doNothing().when(vendorLicenseManagerImpl).deleteUniqueName(any(), any(),
         any(), any());
@@ -448,6 +451,8 @@ public class LicenseKeyGroupTest {
     vendorLicenseManagerImpl.deleteLicenseKeyGroup(lkg);
 
     verify(licenseKeyGroupDao).delete(lkg);
+    verify(vendorLicenseManagerImpl).deleteUniqueName(VendorLicenseConstants.UniqueValues.LICENSE_KEY_GROUP_NAME,
+        vlm1_id, version.getId(), LKG1_NAME);
 
   }
 

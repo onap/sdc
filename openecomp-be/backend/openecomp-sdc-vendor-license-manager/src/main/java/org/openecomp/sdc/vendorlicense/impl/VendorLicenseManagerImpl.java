@@ -157,7 +157,7 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
         removeFeatureGroupsToLicenseAgreementRef(retrieved.getFeatureGroupIds(), retrieved);
         licenseAgreementDao.delete(retrieved);
         deleteUniqueName(VendorLicenseConstants.UniqueValues.LICENSE_AGREEMENT_NAME, retrieved.getVendorLicenseModelId(),
-            retrieved.getVersion().toString(), retrieved.getName());
+            retrieved.getVersion().getId(), retrieved.getName());
     }
 
     @Override
@@ -213,7 +213,7 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
         }
         featureGroupDao.delete(featureGroup);
         deleteUniqueName(VendorLicenseConstants.UniqueValues.FEATURE_GROUP_NAME, retrieved.getVendorLicenseModelId(),
-            retrieved.getVersion().toString(), retrieved.getName());
+            retrieved.getVersion().getId(), retrieved.getName());
     }
 
     @Override
@@ -303,7 +303,7 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
         deleteChildLimits(entitlementPool.getVendorLicenseModelId(), entitlementPool.getVersion(), entitlementPool.getId());
         entitlementPoolDao.delete(entitlementPool);
         deleteUniqueName(VendorLicenseConstants.UniqueValues.ENTITLEMENT_POOL_NAME, retrieved.getVendorLicenseModelId(),
-            retrieved.getVersion().toString(), retrieved.getName());
+            retrieved.getVersion().getId(), retrieved.getName());
     }
 
     protected void deleteChildLimits(String vlmId, Version version, String epLkgId) {
@@ -359,7 +359,7 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
         deleteChildLimits(licenseKeyGroup.getVendorLicenseModelId(), licenseKeyGroup.getVersion(), licenseKeyGroup.getId());
         licenseKeyGroupDao.delete(licenseKeyGroup);
         deleteUniqueName(VendorLicenseConstants.UniqueValues.LICENSE_KEY_GROUP_NAME, retrieved.getVendorLicenseModelId(),
-            retrieved.getVersion().toString(), retrieved.getName());
+            retrieved.getVersion().getId(), retrieved.getName());
     }
 
     @Override
