@@ -147,6 +147,12 @@ jobs:
       # Maven pulls from artifact CDNs that are impractical to enumerate
       # in the allow-list, and the build shares this job with the scan.
       build_permit_egress_traffic: true
+      # The Angular CLI ships a project template named package.json whose
+      # <% %> placeholders are not JSON. The scanner reports it as a
+      # scanning error, which fails the job. Excluding the one file keeps
+      # every other scanning error fatal.
+      # yamllint disable-line rule:line-length
+      advanced_properties: 'fileExcludes=**/node_modules/@schematics/angular/application/files/package.json'
       # application_id is left unset: the lane derives <owner>-<name>,
       # giving onap-sdc.
       #
