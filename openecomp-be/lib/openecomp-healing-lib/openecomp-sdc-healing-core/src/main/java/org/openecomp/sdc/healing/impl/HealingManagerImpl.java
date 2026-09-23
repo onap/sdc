@@ -160,14 +160,17 @@ public class HealingManagerImpl implements HealingManager {
     private List<String> healPublic(String itemId, Version version, List<Healer> healers, String user) {
         String tenant = SessionContextProviderFactory.getInstance().createInterface().get().getTenant();
         SessionContextProviderFactory.getInstance().createInterface().create(user + HEALING_USER_SUFFIX, tenant);
-        versioningManager.forceSync(itemId, version);
-        List<String> failureMessages = executeHealers(itemId, version, healers);
-        Version publicVersion = versioningManager.get(itemId, version);
-        if (Objects.nonNull(publicVersion.getState()) && publicVersion.getState().isDirty()) {
-            versioningManager.publish(itemId, version, "Healing vsp");
+        try {
+            versioningManager.forceSync(itemId, version);
+            List<String> failureMessages = executeHealers(itemId, version, healers);
+            Version publicVersion = versioningManager.get(itemId, version);
+            if (Objects.nonNull(publicVersion.getState()) && publicVersion.getState().isDirty()) {
+                versioningManager.publish(itemId, version, "Healing vsp");
+            }
+            return failureMessages;
+        } finally {
+            SessionContextProviderFactory.getInstance().createInterface().create(user, tenant);
         }
-        SessionContextProviderFactory.getInstance().createInterface().create(user, tenant);
-        return failureMessages;
     }
 
     private List<String> executeHealers(String itemId, Version version, List<Healer> healers) {
@@ -212,7 +215,7 @@ public class HealingManagerImpl implements HealingManager {
         }
     }
 
-    private Map<String, Collection<String>> getItemHealers(ItemType itemType) {
+    Map<String, Collection<String>> getItemHealers(ItemType itemType) {
         Map healingConfig = FileUtils.readViaInputStream(HEALERS_BY_ENTITY_TYPE_FILE, stream -> JsonUtil.json2Object(stream, Map.class));
         return (Map<String, Collection<String>>) healingConfig.getOrDefault(itemType.name(), Collections.emptyMap());
     }
