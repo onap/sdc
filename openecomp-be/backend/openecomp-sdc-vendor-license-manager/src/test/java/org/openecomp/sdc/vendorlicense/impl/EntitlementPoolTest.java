@@ -26,6 +26,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.vendorlicense.VendorLicenseConstants;
 import org.openecomp.sdc.vendorlicense.dao.EntitlementPoolDao;
 import org.openecomp.sdc.vendorlicense.dao.LimitDao;
 import org.openecomp.sdc.vendorlicense.dao.types.AggregationFunction;
@@ -342,8 +343,10 @@ public class EntitlementPoolTest {
     opScopeChoices.add(OperationalScope.CPU);
     opScopeChoices.add(OperationalScope.Network_Wide);
 
+    Version version = new Version(0, 1);
+    version.setId("version_id");
     EntitlementPoolEntity entitlementPool =
-        createEntitlementPool(vlm1_id, VERSION01, ep1_id, EP1_NAME, "EP2 dec", 70,
+        createEntitlementPool(vlm1_id, version, ep1_id, EP1_NAME, "EP2 dec", 70,
             ThresholdUnit.Absolute, EntitlementPoolType.Unique, EntitlementMetric.Other, "exception metric2", "inc2",
             AggregationFunction.Average, null,
             opScopeChoices, null, EntitlementTime.Other, "time2", "sku2");
@@ -353,7 +356,7 @@ public class EntitlementPoolTest {
 
     doReturn(entitlementPool).when(entitlementPoolDao).get(any());
 
-    doNothing().when(vendorLicenseManagerImpl).deleteChildLimits(vlm1_id, VERSION01, ep1_id);
+    doNothing().when(vendorLicenseManagerImpl).deleteChildLimits(vlm1_id, version, ep1_id);
 
     doNothing().when(vendorLicenseManagerImpl).deleteUniqueName(any(), any(),
         any(), any());
@@ -361,6 +364,8 @@ public class EntitlementPoolTest {
     vendorLicenseManagerImpl.deleteEntitlementPool(entitlementPool);
 
     verify(entitlementPoolDao).delete(entitlementPool);
+    verify(vendorLicenseManagerImpl).deleteUniqueName(VendorLicenseConstants.UniqueValues.ENTITLEMENT_POOL_NAME,
+        vlm1_id, version.getId(), EP1_NAME);
   }
 
   @Test

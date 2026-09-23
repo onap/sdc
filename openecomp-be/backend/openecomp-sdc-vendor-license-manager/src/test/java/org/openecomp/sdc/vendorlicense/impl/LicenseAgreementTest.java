@@ -209,20 +209,23 @@ public class LicenseAgreementTest {
 
   @Test
   public void deleteLicenseAgreementsTest() {
-    LicenseAgreementEntity existingLA = new LicenseAgreementEntity(vlm1_id, VERSION01, la1_id);
+    Version version = new Version(0, 1);
+    version.setId("version_id");
+    LicenseAgreementEntity existingLA = new LicenseAgreementEntity(vlm1_id, version, la1_id);
     existingLA.setName("LA");
     existingLA.setFeatureGroupIds(new HashSet<>());
 
     doReturn(existingLA).when(licenseAgreementDaoMcok).get(any());
 
-    doNothing().when(vendorLicenseManager).deleteUniqueName(VendorLicenseConstants.UniqueValues
-        .LICENSE_AGREEMENT_NAME, vlm1_id, VERSION01.toString(), existingLA.getName());
+    doNothing().when(vendorLicenseManager).deleteUniqueName(any(), any(), any(), any());
 
-    vendorLicenseManager.deleteLicenseAgreement(vlm1_id, VERSION01, la1_id);
+    vendorLicenseManager.deleteLicenseAgreement(vlm1_id, version, la1_id);
 
     verify(licenseAgreementDaoMcok).delete(existingLA);
     verify(vendorLicenseManager).removeFeatureGroupsToLicenseAgreementRef(existingLA
         .getFeatureGroupIds(), existingLA);
+    verify(vendorLicenseManager).deleteUniqueName(VendorLicenseConstants.UniqueValues
+        .LICENSE_AGREEMENT_NAME, vlm1_id, version.getId(), existingLA.getName());
   }
 
   @Test
