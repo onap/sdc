@@ -69,16 +69,26 @@ public class ZusammenAdaptorImpl implements ZusammenAdaptor {
     }
 
     @Override
+    public Optional<Element> getElementTree(SessionContext context, ElementContext elementContext, Id elementId, int depth) {
+        return Optional.ofNullable(connector.getElementTree(context, elementContext, elementId, depth));
+    }
+
+    @Override
     public Collection<ElementInfo> listElements(SessionContext context, ElementContext elementContext, Id parentElementId) {
         return connector.listElements(context, elementContext, parentElementId);
     }
 
     @Override
     public Collection<Element> listElementData(SessionContext context, ElementContext elementContext, Id parentElementId) {
-        Collection<ElementInfo> elementInfoList = connector.listElements(context, elementContext, parentElementId);
-        return elementInfoList == null ? new ArrayList<>()
-            : elementInfoList.stream().map(elementInfo -> connector.getElement(context, elementContext, elementInfo.getId()))
-                .collect(Collectors.toList());
+        if (parentElementId == null) {
+            Collection<ElementInfo> elementInfoList = connector.listElements(context, elementContext, null);
+            return elementInfoList == null ? new ArrayList<>()
+                : elementInfoList.stream().map(elementInfo -> connector.getElement(context, elementContext, elementInfo.getId()))
+                    .collect(Collectors.toList());
+        }
+        return getElementTree(context, elementContext, parentElementId, 1)
+            .map(parent -> new ArrayList<>(parent.getSubElements()))
+            .orElseGet(ArrayList::new);
     }
 
     @Override

@@ -299,6 +299,15 @@ public class ZusammenConnectorImpl implements ZusammenConnector {
     }
 
     @Override
+    public Element getElementTree(SessionContext context, ElementContext elementContext, Id elementId, int depth) {
+        Response<Element> response = elementAdaptorFactory.createInterface(context).getTree(context, elementContext, elementId, depth);
+        if (!response.isSuccessful()) {
+            throw buildGetElementException(elementContext, elementId, response.getReturnCode().toString());
+        }
+        return response.getValue();
+    }
+
+    @Override
     public ElementConflict getElementConflict(SessionContext context, ElementContext elementContext, Id elementId) {
         Response<ElementConflict> response = elementAdaptorFactory.createInterface(context).getConflict(context, elementContext, elementId);
         if (!response.isSuccessful()) {

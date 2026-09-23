@@ -85,6 +85,8 @@ public interface ZusammenConnector {
 
     Element getElement(SessionContext context, ElementContext elementContext, Id elementId);
 
+    Element getElementTree(SessionContext context, ElementContext elementContext, Id elementId, int depth);
+
     ElementConflict getElementConflict(SessionContext context, ElementContext elementContext, Id elementId);
 
     Element saveElement(SessionContext context, ElementContext elementContext, Element element, String message);

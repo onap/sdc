@@ -20,6 +20,10 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.dao;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
+
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.Element;
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.ElementConflict;
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.ElementInfo;
@@ -38,8 +42,10 @@ import com.amdocs.zusammen.datatypes.item.Resolution;
 import com.amdocs.zusammen.datatypes.itemversion.ItemVersionRevisions;
 import com.amdocs.zusammen.datatypes.itemversion.Tag;
 import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -47,6 +53,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.core.utilities.CommonMethods;
@@ -63,7 +70,6 @@ public class ServiceModelDaoFactoryTest {
   private static final String vspId = CommonMethods.nextUuId();
   private static final Version version = Version.valueOf("1.0");
   private static final String baseServiceTemplateName = "baseYaml.yaml";
-  private static String artifact001;
   private static final String tenant = "dox";
 
   @Before
@@ -92,57 +98,73 @@ public class ServiceModelDaoFactoryTest {
   }
 
   @Test
-  public void getServiceModelTest() {
+  public void getServiceModelReadsTheWholeServiceModelInOneTreeRead() {
+    ZusammenAdaptor adaptor = Mockito.mock(ZusammenAdaptor.class);
+    ServiceModelDaoZusammenImpl dao = new ServiceModelDaoZusammenImpl(adaptor);
 
-    ItemVersion itemVersionmock = new ItemVersion();
-    itemVersionmock.setId(new Id());
+    ElementInfo vspModelChild = new ElementInfo();
+    vspModelChild.setId(new Id("service-model"));
+    vspModelChild.setInfo(new Info());
+    vspModelChild.getInfo().setName(ElementType.ServiceModel.name());
+    vspModelChild.getInfo().addProperty("base", "baseElement");
+    Mockito.doReturn(Collections.singletonList(vspModelChild)).when(adaptor)
+        .listElementsByName(any(), any(), isNull(), eq(ElementType.VspModel.name()));
 
-    ElementInfo elementInfo = new ElementInfo();
-    Info info = new Info();
-    info.addProperty("base", "baseElement");
-    elementInfo.setInfo(info);
+    ZusammenElement template = named("MainServiceTemplate.yaml", new YamlUtil().objectToYaml(new ServiceTemplate()));
+    ZusammenElement artifact = named("dataFileName", "artifact-bytes");
+    ZusammenElement serviceModel = named(ElementType.ServiceModel.name(), null);
+    serviceModel.setElementId(new Id("service-model"));
+    serviceModel.addSubElement(structural(ElementType.Templates, template));
+    serviceModel.addSubElement(structural(ElementType.Artifacts, artifact));
+    Mockito.doReturn(Optional.of(serviceModel)).when(adaptor)
+        .getElementTree(any(), any(), eq(new Id("service-model")), eq(2));
 
-    ElementInfo artifactElementInfo = new ElementInfo();
-    artifactElementInfo.setInfo(new Info());
-    artifactElementInfo.getInfo().setName(ElementType.Artifacts.name());
-    ElementInfo templateElementInfo = new ElementInfo();
-    templateElementInfo.setInfo(new Info());
-    templateElementInfo.getInfo().setName(ElementType.Templates.name());
+    ToscaServiceModel model = dao.getServiceModel(vspId, version);
 
-    ElementInfo serviceModelElementInfo = new ElementInfo();
-    serviceModelElementInfo.setInfo(new Info());
-    serviceModelElementInfo.getInfo().setName(ElementType.ServiceModel.name());
-    ZusammenElement element = new ZusammenElement();
-    ServiceTemplate serviceTemplate = new ServiceTemplate();
-    YamlUtil yamlUtil = new YamlUtil();
-    element.setData(new ByteArrayInputStream(yamlUtil.objectToYaml(serviceTemplate).getBytes()));
-    info = new Info();
-    info.setName("dataFileName");
-    element.setInfo(info);
-    ZusammenAdaptorMock zusammenAdaptor = new ZusammenAdaptorMock();
-    ServiceModelDaoZusammenImpl serviceModelDaoZusammen = new ServiceModelDaoZusammenImpl(
-        zusammenAdaptor);
-
-    zusammenAdaptor.setItemVersion(itemVersionmock);
-    zusammenAdaptor.addElementInfo("null" + ElementType.ServiceModel.name(), elementInfo);
-    zusammenAdaptor.addElementInfo("null" + ElementType.Artifacts.name(), artifactElementInfo);
-    zusammenAdaptor.addElementInfo("null" + ElementType.Templates.name(), templateElementInfo);
-    zusammenAdaptor.addElementInfo("null" + ElementType.ServiceModel.name(),
-        serviceModelElementInfo);
-    zusammenAdaptor.addElement(element);
-
-    ToscaServiceModel model =
-        serviceModelDaoZusammen.getServiceModel(vspId, version);
     Assert.assertNotNull(model);
-
-    setArtifact(model);
-    Assert.assertEquals(artifact001,"dataFileName");
-
+    Assert.assertEquals(model.getServiceTemplates().keySet(), Collections.singleton("MainServiceTemplate.yaml"));
+    Assert.assertEquals(model.getArtifactFiles().getFileList(), Collections.singleton("dataFileName"));
+    Assert.assertEquals(model.getEntryDefinitionServiceTemplate(), "baseElement");
+    Mockito.verify(adaptor, Mockito.never()).listElementData(any(), any(), any());
+    Mockito.verify(adaptor, Mockito.never()).getElementInfoByName(any(), any(), any(), any());
   }
 
-  private static void setArtifact(ToscaServiceModel model) {
-    artifact001 =
-        (String) (model).getArtifactFiles().getFileList().toArray()[0];
+  @Test
+  public void getServiceModelReturnsNullWhenTheTreeReadFindsNoElement() {
+    ZusammenAdaptor adaptor = Mockito.mock(ZusammenAdaptor.class);
+    ServiceModelDaoZusammenImpl dao = new ServiceModelDaoZusammenImpl(adaptor);
+
+    ElementInfo vspModelChild = new ElementInfo();
+    vspModelChild.setId(new Id("service-model"));
+    vspModelChild.setInfo(new Info());
+    vspModelChild.getInfo().setName(ElementType.ServiceModel.name());
+    vspModelChild.getInfo().addProperty("base", "baseElement");
+    Mockito.doReturn(Collections.singletonList(vspModelChild)).when(adaptor)
+        .listElementsByName(any(), any(), isNull(), eq(ElementType.VspModel.name()));
+
+    Mockito.doReturn(Optional.empty()).when(adaptor)
+        .getElementTree(any(), any(), eq(new Id("service-model")), eq(2));
+
+    ToscaServiceModel model = dao.getServiceModel(vspId, version);
+
+    Assert.assertNull(model);
+  }
+
+  private static ZusammenElement named(String name, String data) {
+    ZusammenElement element = new ZusammenElement();
+    Info info = new Info();
+    info.setName(name);
+    element.setInfo(info);
+    if (data != null) {
+      element.setData(new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8)));
+    }
+    return element;
+  }
+
+  private static ZusammenElement structural(ElementType type, ZusammenElement child) {
+    ZusammenElement element = named(type.name(), null);
+    element.addSubElement(child);
+    return element;
   }
 
   private ToscaServiceModel getToscaServiceModel() {
@@ -231,6 +253,11 @@ public class ServiceModelDaoFactoryTest {
                                                 ElementContext elementContext,
                                                 Id parentElementId) {
       return null;
+    }
+
+    @Override
+    public Optional<Element> getElementTree(SessionContext context, ElementContext elementContext, Id elementId, int depth) {
+      return Optional.empty();
     }
 
     @Override
