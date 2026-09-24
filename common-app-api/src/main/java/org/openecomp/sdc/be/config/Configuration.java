@@ -115,6 +115,7 @@ public class Configuration extends BasicConfiguration {
     private String heatTranslatorPath;
     private OnboardingConfig onboarding;
     private BasicAuthConfig basicAuth;
+    private MultitenancyConfig multitenancy;
     private CassandrConfig cassandraConfig;
     private SwitchoverDetectorConfig switchoverDetector;
     private ApplicationL1CacheConfig applicationL1Cache;
@@ -347,6 +348,16 @@ public class Configuration extends BasicConfiguration {
         private String userName;
         private String userPass;
         private String excludedUrls;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    public static class MultitenancyConfig {
+
+        private boolean enabled;
+        private String issuer;
+        private String audience;
     }
 
     @Getter

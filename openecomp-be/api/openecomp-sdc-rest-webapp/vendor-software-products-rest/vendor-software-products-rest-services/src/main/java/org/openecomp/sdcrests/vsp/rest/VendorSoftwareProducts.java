@@ -65,7 +65,8 @@ public interface VendorSoftwareProducts extends VspEntities {
     @POST
     @Path("/")
     @Operation(description = "Create a new vendor software product", responses = {@ApiResponse(content = @Content(schema = @Schema(implementation = ItemCreationDto.class)))
-            , @ApiResponse(responseCode = "401", description = "Unauthorized Tenant")})
+            , @ApiResponse(responseCode = "401", description = "Missing or invalid bearer token"),
+            @ApiResponse(responseCode = "403", description = "Tenant not permitted")})
     Response createVsp(@Valid VspRequestDto vspRequestDto, @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user, @Context HttpServletRequest req);
 
     @GET
@@ -119,7 +120,7 @@ public interface VendorSoftwareProducts extends VspEntities {
 
     @GET
     @Path("/validation-vsp")
-    Response getValidationVsp(@NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user, @Context HttpServletRequest hreq) throws Exception;
+    Response getValidationVsp(@NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user) throws Exception;
 
     @PUT
     @Path("/{vspId}/versions/{versionId}/actions")

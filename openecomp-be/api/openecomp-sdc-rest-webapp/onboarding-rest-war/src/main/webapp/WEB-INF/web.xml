@@ -24,17 +24,17 @@
         <listener-class>org.openecomp.server.listeners.OnboardingAppStartupListener</listener-class>
     </listener>
 
-    <!--KEYCLOAK FILTER -->
     <filter>
-        <filter-name>Keycloak Filter</filter-name>
-        <filter-class>org.openecomp.server.filters.MultitenancyKeycloakFilter</filter-class>
+        <filter-name>TenantTokenFilter</filter-name>
+        <filter-class>org.openecomp.server.filters.OnboardingTenantTokenFilter</filter-class>
     </filter>
     <filter-mapping>
-        <filter-name>Keycloak Filter</filter-name>
-        <url-pattern>/keycloak/*</url-pattern>
+        <filter-name>TenantTokenFilter</filter-name>
         <url-pattern>/v1.0/vendor-license-models/*</url-pattern>
+        <!-- Both exact forms, because the UI sends the trailing slash; "/*" would also guard validation-vsp,
+             which is not tenant-aware. -->
         <url-pattern>/v1.0/vendor-software-products</url-pattern>
-        <url-pattern>*/actions</url-pattern>
+        <url-pattern>/v1.0/vendor-software-products/</url-pattern>
         <url-pattern>/v1.0/items/*</url-pattern>
     </filter-mapping>
 

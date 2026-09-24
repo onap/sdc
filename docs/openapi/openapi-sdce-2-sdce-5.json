@@ -5434,10 +5434,10 @@
             "description" : "Invalid content / Missing content"
           },
           "401" : {
-            "description" : "Unauthorized Tenant"
+            "description" : "Missing or invalid bearer token"
           },
           "403" : {
-            "description" : "Restricted operation"
+            "description" : "Restricted operation / Tenant not permitted"
           },
           "409" : {
             "description" : "Resource already exist"
@@ -14132,10 +14132,10 @@
             "description" : "Invalid content / Missing content"
           },
           "401" : {
-            "description" : "Unauthorized Tenant"
+            "description" : "Missing or invalid bearer token"
           },
           "403" : {
-            "description" : "Restricted operation"
+            "description" : "Restricted operation / Tenant not permitted"
           },
           "409" : {
             "description" : "Service already exist"

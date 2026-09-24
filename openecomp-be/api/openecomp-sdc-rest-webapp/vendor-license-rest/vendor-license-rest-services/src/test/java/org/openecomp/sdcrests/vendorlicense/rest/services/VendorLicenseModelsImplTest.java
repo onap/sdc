@@ -24,15 +24,16 @@ package org.openecomp.sdcrests.vendorlicense.rest.services;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.keycloak.representations.AccessToken;
+import org.junit.jupiter.api.io.TempDir;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockedConstruction;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.core.util.UniqueValueUtil;
 import org.openecomp.sdc.activitylog.ActivityLogManager;
 import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.common.util.Multitenancy;
+import org.openecomp.sdc.common.tenant.TenantContext;
+import org.openecomp.sdc.common.tenant.TenantGuard;
 import org.openecomp.sdc.datatypes.model.ItemType;
 import org.openecomp.sdc.itempermissions.PermissionsManager;
 import org.openecomp.sdc.notification.dtos.Event;
@@ -43,30 +44,36 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.versioning.AsdcItemManager;
 import org.openecomp.sdc.versioning.VersioningManager;
+import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionStatus;
 import org.openecomp.sdc.versioning.types.Item;
 import org.openecomp.sdc.versioning.types.ItemStatus;
 import org.openecomp.sdcrests.item.types.ItemDto;
 import org.openecomp.sdcrests.vendorlicense.rest.exception.VendorLicenseModelExceptionSupplier;
+import org.openecomp.sdcrests.vendorlicense.types.VendorLicenseModelRequestDto;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mockConstruction;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.never;
 
 class VendorLicenseModelsImplTest {
 
@@ -231,55 +238,167 @@ class VendorLicenseModelsImplTest {
     }
 
     @Test
-    void listLicenseModelsWithMultitenancyReturnsItemsOfTheCallersTenantsNewestFirst() {
-        List<String> ids = listAsTenants(Set.of("tenant-a", "tenant-b"),
-            tenantItem("older", "tenant-a", 1), tenantItem("newer", "tenant-b", 2), tenantItem("other", "tenant-c", 3));
-        assertEquals(List.of("newer", "older"), ids);
-    }
+    void createLicenseModelRefusesWrongTenantWhenEnabled(@TempDir Path dir) throws IOException {
+        String previousConfig = enableMultitenancy(dir);
+        try {
+            HttpServletRequest hreq = mock(HttpServletRequest.class);
+            when(hreq.getAttribute(TenantContext.ATTRIBUTE)).thenReturn(new TenantContext(List.of("tenant-a")));
 
-    @Test
-    void listLicenseModelsWithMultitenancyDoesNotMatchTenantBySubstring() {
-        assertEquals(List.of(), listAsTenants(Set.of("a"), tenantItem("tnap-item", "tnap", 1)));
-    }
+            Response response = vendorLicenseModels.createLicenseModel(vlmRequest("tenant-b"), "userId", hreq);
 
-    @Test
-    void listLicenseModelsWithMultitenancyHidesItemsWithoutTenant() {
-        List<String> ids = listAsTenants(Set.of("tenant-a"), tenantItem("untenanted", null, 2), tenantItem("tenanted", "tenant-a", 1));
-        assertEquals(List.of("tenanted"), ids);
-    }
-
-    @Test
-    void listLicenseModelsWithMultitenancyReturnsItemOnceWhenSeveralRolesMatchIt() {
-        assertEquals(List.of("item"), listAsTenants(Set.of("tenant", "tenant-a"), tenantItem("item", "tenant-a", 1)));
-    }
-
-    @SuppressWarnings("unchecked")
-    private List<String> listAsTenants(Set<String> roles, Item... listed) {
-        when(asdcItemManager.list(any())).thenReturn(List.of(listed));
-        try (MockedConstruction<Multitenancy> ignored = multitenancyEnabledFor(roles)) {
-            Response response = vendorLicenseModels.listLicenseModels(null, null, "user", null);
-            assertEquals(Status.OK.getStatusCode(), response.getStatus());
-            return ((GenericCollectionWrapper<ItemDto>) response.getEntity()).getResults().stream()
-                .map(ItemDto::getId).collect(Collectors.toList());
+            assertEquals(Status.FORBIDDEN.getStatusCode(), response.getStatus());
+            assertEquals(TenantGuard.TENANT_NOT_PERMITTED, response.getStatusInfo().getReasonPhrase());
+            verify(uniqueValueUtil, never()).validateUniqueValue(any(), any());
+        } finally {
+            restoreConfig(previousConfig);
         }
     }
 
-    private MockedConstruction<Multitenancy> multitenancyEnabledFor(Set<String> roles) {
-        AccessToken token = new AccessToken();
-        token.setRealmAccess(new AccessToken.Access().roles(roles));
-        return mockConstruction(Multitenancy.class, (multitenancy, context) -> {
-            when(multitenancy.multiTenancyCheck()).thenReturn(true);
-            when(multitenancy.getAccessToken(any())).thenReturn(token);
-        });
+    @Test
+    void createLicenseModelStoresTenantWhenEnabled(@TempDir Path dir) throws IOException {
+        String previousConfig = enableMultitenancy(dir);
+        try {
+            HttpServletRequest hreq = mock(HttpServletRequest.class);
+            when(hreq.getAttribute(TenantContext.ATTRIBUTE)).thenReturn(new TenantContext(List.of("tenant-a")));
+            when(asdcItemManager.create(any(Item.class))).thenAnswer(invocation -> invocation.getArgument(0));
+            when(versioningManager.create(any(), any(), any())).thenReturn(new Version("version-id"));
+
+            Response response = vendorLicenseModels.createLicenseModel(vlmRequest("tenant-a"), "userId", hreq);
+
+            assertEquals(Status.OK.getStatusCode(), response.getStatus());
+            ArgumentCaptor<Item> created = ArgumentCaptor.forClass(Item.class);
+            verify(asdcItemManager).create(created.capture());
+            assertEquals("tenant-a", created.getValue().getTenant());
+        } finally {
+            restoreConfig(previousConfig);
+        }
     }
 
-    private Item tenantItem(String id, String tenant, long modificationTime) {
-        Item tenantItem = new Item();
-        tenantItem.setId(id);
-        tenantItem.setType(ItemType.vlm.getName());
-        tenantItem.setStatus(ItemStatus.ACTIVE);
-        tenantItem.setTenant(tenant);
-        tenantItem.setModificationTime(new Date(modificationTime));
-        return tenantItem;
+    @Test
+    @SuppressWarnings("unchecked")
+    void listLicenseModelsFiltersToTheCallersTenantWhenEnabled(@TempDir Path dir) throws IOException {
+        String previousConfig = enableMultitenancy(dir);
+        try {
+            HttpServletRequest hreq = mock(HttpServletRequest.class);
+            when(hreq.getAttribute(TenantContext.ATTRIBUTE)).thenReturn(new TenantContext(List.of("tenant-a")));
+            when(asdcItemManager.list(any())).thenReturn(List.of(
+                vlmItem("no-tenant", null, 1_000), vlmItem("other-tenant", "tenant-b", 2_000), vlmItem("visible", "tenant-a", 3_000)));
+
+            Response response = vendorLicenseModels.listLicenseModels(null, null, "userId", hreq);
+
+            List<ItemDto> results = ((GenericCollectionWrapper<ItemDto>) response.getEntity()).getResults();
+            assertEquals(1, results.size());
+            assertEquals("visible", results.get(0).getName());
+        } finally {
+            restoreConfig(previousConfig);
+        }
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void listLicenseModelsWithMultitenancyDoesNotMatchTenantBySubstring(@TempDir Path dir) throws IOException {
+        String previousConfig = enableMultitenancy(dir);
+        try {
+            HttpServletRequest hreq = mock(HttpServletRequest.class);
+            when(hreq.getAttribute(TenantContext.ATTRIBUTE)).thenReturn(new TenantContext(List.of("a")));
+            when(asdcItemManager.list(any())).thenReturn(List.of(vlmItem("tnap-item", "tnap", 1_000)));
+
+            Response response = vendorLicenseModels.listLicenseModels(null, null, "userId", hreq);
+
+            List<ItemDto> results = ((GenericCollectionWrapper<ItemDto>) response.getEntity()).getResults();
+            assertEquals(0, results.size());
+        } finally {
+            restoreConfig(previousConfig);
+        }
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void listLicenseModelsWithMultitenancyReturnsItemOnceWhenSeveralRolesMatchIt(@TempDir Path dir) throws IOException {
+        String previousConfig = enableMultitenancy(dir);
+        try {
+            HttpServletRequest hreq = mock(HttpServletRequest.class);
+            when(hreq.getAttribute(TenantContext.ATTRIBUTE)).thenReturn(new TenantContext(List.of("tenant", "tenant-a")));
+            when(asdcItemManager.list(any())).thenReturn(List.of(vlmItem("item", "tenant-a", 1_000)));
+
+            Response response = vendorLicenseModels.listLicenseModels(null, null, "userId", hreq);
+
+            List<ItemDto> results = ((GenericCollectionWrapper<ItemDto>) response.getEntity()).getResults();
+            assertEquals(1, results.size());
+        } finally {
+            restoreConfig(previousConfig);
+        }
+    }
+
+    @Test
+    void createLicenseModelDoesNotStoreTenantWhenDisabled() {
+        String previousConfig = System.getProperty("configuration.yaml");
+        System.clearProperty("configuration.yaml");
+        try {
+            when(asdcItemManager.create(any(Item.class))).thenAnswer(invocation -> invocation.getArgument(0));
+            when(versioningManager.create(any(), any(), any())).thenReturn(new Version("version-id"));
+
+            Response response = vendorLicenseModels.createLicenseModel(vlmRequest("tenant-a"), "userId", null);
+
+            assertEquals(Status.OK.getStatusCode(), response.getStatus());
+            ArgumentCaptor<Item> created = ArgumentCaptor.forClass(Item.class);
+            verify(asdcItemManager).create(created.capture());
+            assertNull(created.getValue().getTenant());
+        } finally {
+            restoreConfig(previousConfig);
+        }
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void listLicenseModelsUnfilteredNewestFirstWhenDisabled() {
+        String previousConfig = System.getProperty("configuration.yaml");
+        System.clearProperty("configuration.yaml");
+        try {
+            when(asdcItemManager.list(any())).thenReturn(List.of(vlmItem("older", "tenant-a", 1_000), vlmItem("newer", null, 2_000)));
+
+            Response response = vendorLicenseModels.listLicenseModels(null, null, "userId", null);
+
+            List<ItemDto> results = ((GenericCollectionWrapper<ItemDto>) response.getEntity()).getResults();
+            assertEquals(2, results.size());
+            assertEquals("newer", results.get(0).getName());
+            assertEquals("older", results.get(1).getName());
+        } finally {
+            restoreConfig(previousConfig);
+        }
+    }
+
+    private static String enableMultitenancy(Path dir) throws IOException {
+        String previousConfig = System.getProperty("configuration.yaml");
+        Path config = dir.resolve("configuration.yaml");
+        Files.write(config, "multitenancy:\n    enabled: true\n    issuer: http://unused.invalid/realms/x\n".getBytes(StandardCharsets.UTF_8));
+        System.setProperty("configuration.yaml", config.toString());
+        return previousConfig;
+    }
+
+    private static void restoreConfig(String previousConfig) {
+        if (previousConfig == null) {
+            System.clearProperty("configuration.yaml");
+        } else {
+            System.setProperty("configuration.yaml", previousConfig);
+        }
+    }
+
+    private static VendorLicenseModelRequestDto vlmRequest(String tenant) {
+        VendorLicenseModelRequestDto request = new VendorLicenseModelRequestDto();
+        request.setVendorName("vendor-" + tenant);
+        request.setDescription("description");
+        request.setTenant(tenant);
+        return request;
+    }
+
+    private static Item vlmItem(String name, String tenant, long modified) {
+        Item item = new Item();
+        item.setId(name);
+        item.setName(name);
+        item.setTenant(tenant);
+        item.setStatus(ItemStatus.ACTIVE);
+        item.setModificationTime(new Date(modified));
+        return item;
     }
 }

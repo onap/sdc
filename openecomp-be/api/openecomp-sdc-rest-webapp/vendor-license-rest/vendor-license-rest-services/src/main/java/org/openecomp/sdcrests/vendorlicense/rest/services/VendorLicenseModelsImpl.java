@@ -15,7 +15,6 @@
  */
 package org.openecomp.sdcrests.vendorlicense.rest.services;
 
-import org.keycloak.representations.AccessToken;
 import org.openecomp.core.dao.UniqueValueDaoFactory;
 import org.openecomp.core.util.UniqueValueUtil;
 import org.openecomp.sdc.activitylog.ActivityLogManager;
@@ -23,7 +22,7 @@ import org.openecomp.sdc.activitylog.ActivityLogManagerFactory;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdc.activitylog.dao.type.ActivityType;
 import org.openecomp.sdc.common.errors.Messages;
-import org.openecomp.sdc.common.util.Multitenancy;
+import org.openecomp.sdc.common.tenant.TenantGuard;
 import org.openecomp.sdc.datatypes.model.ItemType;
 import org.openecomp.sdc.healing.factory.HealingManagerFactory;
 import org.openecomp.sdc.itempermissions.PermissionsManager;
@@ -83,7 +82,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -159,83 +157,44 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
         Predicate<Item> itemPredicate = createItemPredicate(versionStatus, itemStatus, user);
         GenericCollectionWrapper<ItemDto> results = new GenericCollectionWrapper<>();
         MapItemToDto mapper = new MapItemToDto();
-        Multitenancy keyaccess= new Multitenancy();
-        if (keyaccess.multiTenancyCheck()) {
-            AccessToken.Access realmAccess = keyaccess.getAccessToken(hreq).getRealmAccess();
-            Set<String> realmroles = realmAccess.getRoles();
-            asdcItemManager.list(itemPredicate).stream().sorted((o1, o2) -> o2.getModificationTime().compareTo(o1.getModificationTime()))
-                    .filter(item -> item.getTenant() != null && realmroles.contains(item.getTenant()))
-                    .forEach(item -> results.add(mapper.applyMapping(item, ItemDto.class)));
-            return Response.ok(results).build();
-        }
-        else
-        {
-            asdcItemManager.list(itemPredicate).stream().sorted((o1, o2) -> o2.getModificationTime().compareTo(o1.getModificationTime()))
-                    .forEach(item -> results.add(mapper.applyMapping(item, ItemDto.class)));
-            return Response.ok(results).build();
-        }
+        List<Item> items = asdcItemManager.list(itemPredicate).stream()
+            .sorted((o1, o2) -> o2.getModificationTime().compareTo(o1.getModificationTime()))
+            .collect(Collectors.toList());
+        TenantGuard.fromConfigurationFileProperty().visible(hreq, items, Item::getTenant)
+            .forEach(item -> results.add(mapper.applyMapping(item, ItemDto.class)));
+        return Response.ok(results).build();
     }
 
     @Override
     public Response createLicenseModel(VendorLicenseModelRequestDto request, String user, HttpServletRequest hreq) {
-        Multitenancy keyaccess= new Multitenancy();
-        if (keyaccess.multiTenancyCheck()) {
-            AccessToken.Access realmAccess = keyaccess.getAccessToken(hreq).getRealmAccess();
-            Set<String> realmroles = realmAccess.getRoles();
-            boolean match = realmroles.contains(request.getTenant());
-            if (match) {
-                Item item = new Item();
-                item.setType(ItemType.vlm.name());
-                item.setOwner(user);
-                item.setStatus(ItemStatus.ACTIVE);
-                item.setName(request.getVendorName());
-                item.setDescription(request.getDescription());
-                item.setTenant(request.getTenant());
-                uniqueValueUtil.validateUniqueValue(VendorLicenseConstants.UniqueValues.VENDOR_NAME, item.getName());
-                item = asdcItemManager.create(item);
-                uniqueValueUtil.createUniqueValue(VendorLicenseConstants.UniqueValues.VENDOR_NAME, item.getName());
-                Version version = versioningManager.create(item.getId(), new Version(), null);
-                VendorLicenseModelEntity vlm = new MapVendorLicenseModelRequestDtoToVendorLicenseModelEntity()
-                        .applyMapping(request, VendorLicenseModelEntity.class);
-                vlm.setId(item.getId());
-                vlm.setVersion(version);
-                vendorLicenseManager.createVendorLicenseModel(vlm);
-                versioningManager.publish(item.getId(), version, "Initial vlm:" + vlm.getVendorName());
-                ItemCreationDto itemCreationDto = new ItemCreationDto();
-                itemCreationDto.setItemId(item.getId());
-                itemCreationDto.setVersion(new MapVersionToDto().applyMapping(version, VersionDto.class));
-                activityLogManager.logActivity(new ActivityLogEntity(vlm.getId(), version, ActivityType.Create, user, true, "", ""));
-                return Response.ok(itemCreationDto).build();
-            }
-            else {
-                LOGGER.error("Unauthorized tenant");
-                return Response.status(401, "Unauthorized tenant").build();
-            }
+        TenantGuard tenants = TenantGuard.fromConfigurationFileProperty();
+        if (!tenants.permits(hreq, request.getTenant())) {
+            return Response.status(Response.Status.FORBIDDEN.getStatusCode(), TenantGuard.TENANT_NOT_PERMITTED).build();
         }
-        else
-        {
-            Item item = new Item();
-            item.setType(ItemType.vlm.name());
-            item.setOwner(user);
-            item.setStatus(ItemStatus.ACTIVE);
-            item.setName(request.getVendorName());
-            item.setDescription(request.getDescription());
-            uniqueValueUtil.validateUniqueValue(VendorLicenseConstants.UniqueValues.VENDOR_NAME, item.getName());
-            item = asdcItemManager.create(item);
-            uniqueValueUtil.createUniqueValue(VendorLicenseConstants.UniqueValues.VENDOR_NAME, item.getName());
-            Version version = versioningManager.create(item.getId(), new Version(), null);
-            VendorLicenseModelEntity vlm = new MapVendorLicenseModelRequestDtoToVendorLicenseModelEntity()
-                    .applyMapping(request, VendorLicenseModelEntity.class);
-            vlm.setId(item.getId());
-            vlm.setVersion(version);
-            vendorLicenseManager.createVendorLicenseModel(vlm);
-            versioningManager.publish(item.getId(), version, "Initial vlm:" + vlm.getVendorName());
-            ItemCreationDto itemCreationDto = new ItemCreationDto();
-            itemCreationDto.setItemId(item.getId());
-            itemCreationDto.setVersion(new MapVersionToDto().applyMapping(version, VersionDto.class));
-            activityLogManager.logActivity(new ActivityLogEntity(vlm.getId(), version, ActivityType.Create, user, true, "", ""));
-            return Response.ok(itemCreationDto).build();
+        Item item = new Item();
+        item.setType(ItemType.vlm.name());
+        item.setOwner(user);
+        item.setStatus(ItemStatus.ACTIVE);
+        item.setName(request.getVendorName());
+        item.setDescription(request.getDescription());
+        if (tenants.isEnabled()) {
+            item.setTenant(request.getTenant());
         }
+        uniqueValueUtil.validateUniqueValue(VendorLicenseConstants.UniqueValues.VENDOR_NAME, item.getName());
+        item = asdcItemManager.create(item);
+        uniqueValueUtil.createUniqueValue(VendorLicenseConstants.UniqueValues.VENDOR_NAME, item.getName());
+        Version version = versioningManager.create(item.getId(), new Version(), null);
+        VendorLicenseModelEntity vlm = new MapVendorLicenseModelRequestDtoToVendorLicenseModelEntity()
+                .applyMapping(request, VendorLicenseModelEntity.class);
+        vlm.setId(item.getId());
+        vlm.setVersion(version);
+        vendorLicenseManager.createVendorLicenseModel(vlm);
+        versioningManager.publish(item.getId(), version, "Initial vlm:" + vlm.getVendorName());
+        ItemCreationDto itemCreationDto = new ItemCreationDto();
+        itemCreationDto.setItemId(item.getId());
+        itemCreationDto.setVersion(new MapVersionToDto().applyMapping(version, VersionDto.class));
+        activityLogManager.logActivity(new ActivityLogEntity(vlm.getId(), version, ActivityType.Create, user, true, "", ""));
+        return Response.ok(itemCreationDto).build();
     }
 
     @Override

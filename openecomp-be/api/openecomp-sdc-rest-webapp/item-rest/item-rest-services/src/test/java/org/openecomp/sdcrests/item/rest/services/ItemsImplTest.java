@@ -22,13 +22,11 @@ package org.openecomp.sdcrests.item.rest.services;
 import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.openecomp.sdc.be.csar.storage.StorageFactory.StorageType.MINIO;
@@ -38,24 +36,23 @@ import static org.openecomp.sdcrests.item.types.ItemAction.RESTORE;
 
 import io.minio.BucketExistsArgs;
 import io.minio.MinioClient;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Answers;
-import org.keycloak.representations.AccessToken;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -63,7 +60,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.openecomp.sdc.activitylog.ActivityLogManager;
 import org.openecomp.sdc.common.CommonConfigurationManager;
 import org.openecomp.sdc.common.errors.ErrorCodeAndMessage;
-import org.openecomp.sdc.common.util.Multitenancy;
+import org.openecomp.sdc.common.tenant.TenantContext;
 import org.openecomp.sdc.datatypes.model.ItemType;
 import org.openecomp.sdc.versioning.ItemManager;
 import org.openecomp.sdc.versioning.VersioningManager;
@@ -85,8 +82,6 @@ class ItemsImplTest {
     private static final String CREDENTIALS = "credentials";
     private static final String TEMP_PATH = "tempPath";
     private static final String UPLOAD_PARTSIZE = "uploadPartSize";
-    private static final boolean MULTITENANCY_ENABLED = true;
-    private static final String TEST_TENANT = "test_tenant";
 
     @Mock
     private ManagersProvider managersProvider;
@@ -106,6 +101,8 @@ class ItemsImplTest {
     private MinioClient.Builder builderMinio;
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     private BucketExistsArgs.Builder builderBucketExistsArgs;
+    @Mock
+    private HttpServletRequest hreq;
 
     @InjectMocks
     private ItemsImpl items;
@@ -210,6 +207,111 @@ class ItemsImplTest {
         assertEquals(response.getStatus(), Response.Status.OK.getStatusCode());
     }
 
+    @Test
+    void listFiltersToTheCallersTenantWhenEnabled(@TempDir Path dir) throws Exception {
+        String previousConfig = enableMultitenancy(dir);
+        try {
+            items.setManagersProvider(managersProvider);
+            when(managersProvider.getItemManager()).thenReturn(itemManager);
+            when(itemManager.list(any())).thenReturn(List.of(
+                tenantedItem("no-tenant", null, 1_000), tenantedItem("other-tenant", "tenant-b", 2_000), tenantedItem("visible", "tenant-a", 3_000)));
+            when(hreq.getAttribute(TenantContext.ATTRIBUTE)).thenReturn(new TenantContext(List.of("tenant-a")));
+
+            Response response = items.list(null, null, null, null, null, USER, hreq);
+
+            List<ItemDto> results = getResults(response);
+            assertEquals(1, results.size());
+            assertEquals("visible", results.get(0).getName());
+        } finally {
+            restoreConfig(previousConfig);
+        }
+    }
+
+    @Test
+    void listWithMultitenancyDoesNotMatchTenantBySubstring(@TempDir Path dir) throws Exception {
+        String previousConfig = enableMultitenancy(dir);
+        try {
+            items.setManagersProvider(managersProvider);
+            when(managersProvider.getItemManager()).thenReturn(itemManager);
+            when(itemManager.list(any())).thenReturn(List.of(tenantedItem("tnap-item", "tnap", 1_000)));
+            when(hreq.getAttribute(TenantContext.ATTRIBUTE)).thenReturn(new TenantContext(List.of("a")));
+
+            Response response = items.list(null, null, null, null, null, USER, hreq);
+
+            assertEquals(0, getResults(response).size());
+        } finally {
+            restoreConfig(previousConfig);
+        }
+    }
+
+    @Test
+    void listWithMultitenancyReturnsItemOnceWhenSeveralRolesMatchIt(@TempDir Path dir) throws Exception {
+        String previousConfig = enableMultitenancy(dir);
+        try {
+            items.setManagersProvider(managersProvider);
+            when(managersProvider.getItemManager()).thenReturn(itemManager);
+            when(itemManager.list(any())).thenReturn(List.of(tenantedItem("item", "tenant-a", 1_000)));
+            when(hreq.getAttribute(TenantContext.ATTRIBUTE)).thenReturn(new TenantContext(List.of("tenant", "tenant-a")));
+
+            Response response = items.list(null, null, null, null, null, USER, hreq);
+
+            assertEquals(1, getResults(response).size());
+        } finally {
+            restoreConfig(previousConfig);
+        }
+    }
+
+    @Test
+    void listUnfilteredNewestFirstWhenDisabled() {
+        String previousConfig = System.getProperty("configuration.yaml");
+        System.clearProperty("configuration.yaml");
+        try {
+            items.setManagersProvider(managersProvider);
+            when(managersProvider.getItemManager()).thenReturn(itemManager);
+            when(itemManager.list(any())).thenReturn(List.of(tenantedItem("older", "tenant-a", 1_000), tenantedItem("newer", null, 2_000)));
+
+            Response response = items.list(null, null, null, null, null, USER, null);
+
+            List<ItemDto> results = getResults(response);
+            assertEquals(2, results.size());
+            assertEquals("newer", results.get(0).getName());
+            assertEquals("older", results.get(1).getName());
+        } finally {
+            restoreConfig(previousConfig);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static List<ItemDto> getResults(Response response) {
+        return ((GenericCollectionWrapper<ItemDto>) response.getEntity()).getResults();
+    }
+
+    private static String enableMultitenancy(Path dir) throws Exception {
+        String previousConfig = System.getProperty("configuration.yaml");
+        Path config = dir.resolve("configuration.yaml");
+        Files.write(config, "multitenancy:\n    enabled: true\n    issuer: http://unused.invalid/realms/x\n".getBytes(StandardCharsets.UTF_8));
+        System.setProperty("configuration.yaml", config.toString());
+        return previousConfig;
+    }
+
+    private static void restoreConfig(String previousConfig) {
+        if (previousConfig == null) {
+            System.clearProperty("configuration.yaml");
+        } else {
+            System.setProperty("configuration.yaml", previousConfig);
+        }
+    }
+
+    private static Item tenantedItem(String name, String tenant, long modified) {
+        Item item = new Item();
+        item.setId(name);
+        item.setName(name);
+        item.setTenant(tenant);
+        item.setStatus(ItemStatus.ACTIVE);
+        item.setModificationTime(new Date(modified));
+        return item;
+    }
+
     private List<Version> getVersions() {
         List<Version> versions = new ArrayList<>();
         versions.add(new Version("1"));
@@ -218,128 +320,4 @@ class ItemsImplTest {
         return versions;
     }
 
-    @Test
-    void getItemList_withMultitenancyValidTenant_ReturnSuccessList() {
-        Assert.assertTrue(MULTITENANCY_ENABLED);
-        Assert.assertNotNull(getTestRoles());
-        items.initActionSideAffectsMap();
-        items.setManagersProvider(managersProvider);
-        when(managersProvider.getItemManager()).thenReturn(itemManager);
-        Response response = items.list(null, null, null, null, null, USER, null);
-        assertEquals(response.getStatus(), Response.Status.OK.getStatusCode());
-        List<Item> expectedItems=new ArrayList<>();
-        List<Item> actualItems=getAllItems();
-        getTestRoles().stream().forEach(role -> getAllItems().stream()
-                .filter(item -> item.getTenant()!=null)
-                .filter(item -> item.getTenant().contains(role))
-                .forEach(item -> expectedItems.add(item)));
-        assertNotSame(expectedItems.size(), actualItems.size());
-    }
-
-
-    @Test
-    void getItemList_withMultitenancyInvalidTenant_ReturnsEmptylList() {
-        Assert.assertTrue(MULTITENANCY_ENABLED);
-
-        Assert.assertNotNull(getTestRoles());
-        String tenant= "invalid tenant";
-        items.initActionSideAffectsMap();
-        items.setManagersProvider(managersProvider);
-        when(managersProvider.getItemManager()).thenReturn(itemManager);
-        Response response = items.list(null, null, null, null, null, USER, null);
-        assertEquals(response.getStatus(), Response.Status.OK.getStatusCode());
-        List<Item> expectedItems=new ArrayList<>();
-        List<Item> actualItems=getAllItems();
-        assertNotNull(tenant);
-        getTestRoles().stream().forEach(role -> getAllItems().stream()
-                .filter(item -> item.getTenant()!=null)
-                .filter(item -> item.getTenant().contains(tenant))
-                .forEach(item -> expectedItems.add(item)));
-        Assert.assertEquals(expectedItems.size(), 0);
-        Assert.assertNotEquals(expectedItems.containsAll(actualItems), actualItems.containsAll(expectedItems));
-    }
-
-
-    private List<Item> getAllItems(){
-        List<Item> items=new ArrayList<>();
-
-        Item itemOne = new Item();
-        itemOne.setType(ItemType.vlm.name());
-        itemOne.setOwner(USER);
-        itemOne.setStatus(ItemStatus.ACTIVE);
-        itemOne.setName("TEST_VENDOR_ONE");
-        itemOne.setDescription("TEST_DESCRIPTION");
-        itemOne.setTenant(TEST_TENANT);
-
-        Item itemTwo = new Item();
-        itemTwo.setType(ItemType.vsp.name());
-        itemTwo.setOwner(USER);
-        itemTwo.setStatus(ItemStatus.ACTIVE);
-        itemTwo.setName("TEST_VSP_ONE");
-        itemTwo.setDescription("TEST_DESCRIPTION");
-        itemTwo.setTenant("admin_tenant");
-
-        items.add(itemOne);
-        items.add(itemTwo);
-        return items;
-    }
-
-
-    private Set<String> getTestRoles(){
-        Set<String> roles = new HashSet<>();
-        roles.add("test_admin");
-        roles.add("test_tenant");
-        return roles;
-    }
-
-    @Test
-    void listWithMultitenancyReturnsItemsOfTheCallersTenantsNewestFirst() {
-        List<String> ids = listAsTenants(Set.of("tenant-a", "tenant-b"),
-            tenantItem("older", "tenant-a", 1), tenantItem("newer", "tenant-b", 2), tenantItem("other", "tenant-c", 3));
-        assertEquals(List.of("newer", "older"), ids);
-    }
-
-    @Test
-    void listWithMultitenancyDoesNotMatchTenantBySubstring() {
-        assertEquals(List.of(), listAsTenants(Set.of("a"), tenantItem("tnap-item", "tnap", 1)));
-    }
-
-    @Test
-    void listWithMultitenancyHidesItemsWithoutTenant() {
-        List<String> ids = listAsTenants(Set.of("tenant-a"), tenantItem("untenanted", null, 2), tenantItem("tenanted", "tenant-a", 1));
-        assertEquals(List.of("tenanted"), ids);
-    }
-
-    @Test
-    void listWithMultitenancyReturnsItemOnceWhenSeveralRolesMatchIt() {
-        assertEquals(List.of("item"), listAsTenants(Set.of("tenant", "tenant-a"), tenantItem("item", "tenant-a", 1)));
-    }
-
-    @SuppressWarnings("unchecked")
-    private List<String> listAsTenants(Set<String> roles, Item... listed) {
-        items.setManagersProvider(managersProvider);
-        when(managersProvider.getItemManager()).thenReturn(itemManager);
-        when(itemManager.list(any())).thenReturn(List.of(listed));
-        AccessToken token = new AccessToken();
-        token.setRealmAccess(new AccessToken.Access().roles(roles));
-        try (MockedConstruction<Multitenancy> ignored = mockConstruction(Multitenancy.class, (multitenancy, context) -> {
-            when(multitenancy.multiTenancyCheck()).thenReturn(true);
-            when(multitenancy.getAccessToken(any())).thenReturn(token);
-        })) {
-            Response response = items.list(null, null, null, null, null, USER, null);
-            assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-            return ((GenericCollectionWrapper<ItemDto>) response.getEntity()).getResults().stream()
-                .map(ItemDto::getId).collect(Collectors.toList());
-        }
-    }
-
-    private Item tenantItem(String id, String tenant, long modificationTime) {
-        Item tenantItem = new Item();
-        tenantItem.setId(id);
-        tenantItem.setType(ItemType.vlm.name());
-        tenantItem.setStatus(ItemStatus.ACTIVE);
-        tenantItem.setTenant(tenant);
-        tenantItem.setModificationTime(new Date(modificationTime));
-        return tenantItem;
-    }
 }

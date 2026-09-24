@@ -24,14 +24,6 @@
     <dependencies>
 
         <dependency>
-            <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-servlet-filter-adapter</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.openecomp.sdc</groupId>
             <artifactId>togglz-rest-services</artifactId>
             <version>${project.version}</version>
@@ -1061,6 +1053,21 @@
                     <forkCount>1C</forkCount>
                     <reuseForks>false</reuseForks>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <executions>
+                    <!-- id matches oparent's own binding of this plugin so the executions merge instead of
+                         running the IT suite twice. -->
+                    <execution>
+                        <id>integration-tests</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <!-- Download Swagger UI webjar. -->

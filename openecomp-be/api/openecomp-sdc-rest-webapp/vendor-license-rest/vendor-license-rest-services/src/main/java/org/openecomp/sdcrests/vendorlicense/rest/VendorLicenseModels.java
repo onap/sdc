@@ -67,7 +67,9 @@ public interface VendorLicenseModels {
 
     @POST
     @Path("/")
-    @Operation(description = "Create vendor license model", responses = @ApiResponse(responseCode = "401", description = "Unauthorized Tenant"))
+    @Operation(description = "Create vendor license model",
+        responses = {@ApiResponse(responseCode = "401", description = "Missing or invalid bearer token"),
+            @ApiResponse(responseCode = "403", description = "Tenant not permitted")})
     Response createLicenseModel(@Valid VendorLicenseModelRequestDto request,
                                 @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(RestConstants.USER_ID_HEADER_PARAM) String user, @Context HttpServletRequest req);
 

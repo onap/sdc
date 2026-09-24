@@ -1524,3 +1524,49 @@ FE-onboarding-configuration.yaml
         beHttpPort: <%= @catalog_port %>
 
 
+
+Multitenancy
+------------
+
+SDC can assign resources, services, vendor license models and vendor software products to tenants. A tenant is a
+realm role in the OpenID Connect issuer. A caller holds the tenants that its access token carries in the
+``realm_access.roles`` claim. Every realm role counts, including provider defaults such as Keycloak's
+``default-roles-<realm>`` and ``offline_access``. Use dedicated roles for tenants, and never set a default role as an
+item's tenant.
+
+Multitenancy is disabled unless it is configured. Add the same section to the SDC backend ``configuration.yaml`` and to
+the onboarding backend ``onboarding_configuration.yaml``:
+
+.. code-block:: yaml
+
+    multitenancy:
+      enabled: true
+      issuer: https://keycloak.example.org/realms/sdc
+      audience: sdc-backend
+
+``issuer`` must be the exact ``iss`` of the access tokens, and must not end in ``/``. SDC reads the signing keys from the
+issuer's ``/.well-known/openid-configuration``. Keycloak 26 is the tested provider. ``audience`` is optional. When it is
+set, tokens must list it in ``aud``. Without it, SDC accepts a token issued by the realm to any client, so set it. The
+onboarding backend reads this section once at start-up, so a change there needs a restart.
+
+While multitenancy is enabled, every request on the guarded paths needs an ``Authorization: Bearer`` access token:
+
+* SDC backend: ``/sdc2/rest/v1/catalog/resources/*``, ``/sdc2/rest/v1/catalog/services/*`` and ``/sdc2/rest/v1/followed``
+* onboarding backend: ``/v1.0/vendor-license-models/*``, ``/v1.0/vendor-software-products`` (list and create) and
+  ``/v1.0/items/*``
+
+The SDC user interfaces do not send access tokens. Enabling multitenancy is therefore meant for API clients, and it
+breaks the design studio on these paths.
+
+The tenant itself is enforced in two places:
+
+* Creating a resource (not a resource import), a service, a vendor license model or a vendor software product for a
+  tenant the caller does not hold, or without a tenant, is answered with ``403``.
+* The followed-items list and the vendor license model, vendor software product and item lists show only the caller's
+  tenants, and hide items without a tenant.
+
+Reads by id, updates, imports and uploads are not tenant-checked.
+
+A missing, expired or otherwise invalid token is answered with ``401``. If the issuer or its keys cannot be reached,
+requests are answered with ``503``. Key refreshes are rate-limited, so this can last up to about 30 seconds after the
+issuer recovers.

@@ -28,8 +28,11 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import fj.data.Either;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,8 +74,10 @@ import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.ArtifactType;
 import org.openecomp.sdc.be.model.BaseType;
+import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.PropertyScope;
 import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.Tag;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.catalog.CatalogComponent;
@@ -175,6 +180,7 @@ class ElementServletTest extends JerseyTest {
         when(beGenericServlet.getElementBL(any())).thenReturn(elementBusinessLogic);
         when(webApplicationContext.getBean(ElementBusinessLogic.class)).thenReturn(elementBusinessLogic);
         when(webApplicationContext.getBean(ComponentsUtils.class)).thenReturn(componentUtils);
+        when(webApplicationContext.getBean(UserBusinessLogic.class)).thenReturn(userAdmin);
         when(beGenericServlet.getComponentsUtils()).thenReturn(componentUtils);
         when(modelBusinessLogic.listModels()).thenReturn(Lists.emptyList());
         Either<User, ActionStatus> designerEither = Either.left(designerUser);
@@ -1205,6 +1211,45 @@ class ElementServletTest extends JerseyTest {
             .get();
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_NO_CONTENT);
+    }
+
+    private static Resource followedResource(String name, String tenant) {
+        Resource followedResource = new Resource();
+        followedResource.setName(name);
+        followedResource.setTenant(tenant);
+        return followedResource;
+    }
+
+    private static Service followedService(String name, String tenant) {
+        Service followedService = new Service();
+        followedService.setName(name);
+        followedService.setTenant(tenant);
+        return followedService;
+    }
+
+    @Test
+    void followedReturnsFullMapInInputOrderWhenMultitenancyIsDisabled() throws Exception {
+        Map<String, List<? extends Component>> followed = new HashMap<>();
+        followed.put("resources", Arrays.asList(followedResource("res-a", "tenant-a"), followedResource("res-b", "tenant-b"),
+            followedResource("res-none", null)));
+        followed.put("services", Arrays.asList(followedService("svc-a", "tenant-a")));
+        when(elementBusinessLogic.getFollowed(designerUser)).thenReturn(Either.left(followed));
+
+        Response response = target()
+            .path("/v1/followed")
+            .request()
+            .accept(MediaType.APPLICATION_JSON)
+            .header(Constants.USER_ID_HEADER, designerUser.getUserId())
+            .get();
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
+        JsonNode body = new ObjectMapper().readTree(response.readEntity(String.class));
+        List<String> resourceNames = new ArrayList<>();
+        body.get("resources").forEach(node -> resourceNames.add(node.get("name").asText()));
+        assertThat(resourceNames).containsExactly("res-a", "res-b", "res-none");
+        List<String> serviceNames = new ArrayList<>();
+        body.get("services").forEach(node -> serviceNames.add(node.get("name").asText()));
+        assertThat(serviceNames).containsExactly("svc-a");
     }
 
 }

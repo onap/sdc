@@ -1,0 +1,13 @@
+{
+  "realm": "other",
+  "enabled": true,
+  "sslRequired": "none",
+  "roles": { "realm": [ { "name": "tenant-a" } ] },
+  "clients": [
+    { "clientId": "sdc-it-client", "enabled": true, "publicClient": true, "directAccessGrantsEnabled": true, "standardFlowEnabled": false }
+  ],
+  "users": [
+    { "username": "mallory", "enabled": true, "emailVerified": true, "firstName": "Mallory", "lastName": "Other", "email": "mallory@example.org",
+      "credentials": [ { "type": "password", "value": "password", "temporary": false } ], "realmRoles": [ "tenant-a" ] }
+  ]
+}

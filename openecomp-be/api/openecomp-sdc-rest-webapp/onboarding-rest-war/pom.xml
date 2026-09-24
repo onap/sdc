@@ -16,14 +16,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-servlet-filter-adapter</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.openecomp.sdc</groupId>
             <artifactId>item-rest-services</artifactId>
             <version>${project.version}</version>

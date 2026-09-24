@@ -166,15 +166,14 @@
     </filter-mapping>
 
     <filter>
-        <filter-name>MultitenancyFilter</filter-name>
-        <filter-class>org.openecomp.sdc.be.filters.MultitenancyFilter</filter-class>
+        <filter-name>TenantTokenFilter</filter-name>
+        <filter-class>org.openecomp.sdc.be.filters.CatalogTenantTokenFilter</filter-class>
     </filter>
     <filter-mapping>
-        <filter-name>MultitenancyFilter</filter-name>
-        <url-pattern>/keycloak/*</url-pattern>
+        <filter-name>TenantTokenFilter</filter-name>
         <url-pattern>/sdc2/rest/v1/catalog/resources/*</url-pattern>
         <url-pattern>/sdc2/rest/v1/catalog/services/*</url-pattern>
-        <url-pattern> /sdc2/rest/v1/followed</url-pattern>
+        <url-pattern>/sdc2/rest/v1/followed</url-pattern>
     </filter-mapping>
 
     <error-page>

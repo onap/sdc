@@ -14,10 +14,6 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.keycloak</groupId>
-      <artifactId>keycloak-core</artifactId>
-    </dependency>
-    <dependency>
       <groupId>com.sun.activation</groupId>
       <artifactId>javax.activation</artifactId>
       <version>1.2.0</version>
@@ -168,7 +164,49 @@
       <artifactId>unique-type-rest-types</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.openecomp.sdc.be</groupId>
+      <artifactId>common-be-tests-utils</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+      <!-- Without these, this nearer path wins mediation for common-app-api's subtree and changes the module's runtime set. -->
+      <exclusions>
+        <exclusion>
+          <groupId>org.openecomp.sdc</groupId>
+          <artifactId>common-app-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <version>${spring.version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <executions>
+          <!-- id matches oparent's own binding of this plugin so the executions merge instead of
+               running the IT suite twice. -->
+          <execution>
+            <id>integration-tests</id>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>

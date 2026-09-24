@@ -1,0 +1,33 @@
+{
+  "realm": "sdc-it",
+  "enabled": true,
+  "sslRequired": "none",
+  "roles": { "realm": [ { "name": "tenant-a" }, { "name": "tenant-b" } ] },
+  "clients": [
+    {
+      "clientId": "sdc-it-client",
+      "enabled": true,
+      "publicClient": true,
+      "directAccessGrantsEnabled": true,
+      "standardFlowEnabled": false,
+      "protocolMappers": [
+        {
+          "name": "sdc-backend-audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "config": { "included.custom.audience": "sdc-backend", "access.token.claim": "true", "id.token.claim": "false" }
+        }
+      ]
+    }
+  ],
+  "users": [
+    { "username": "alice", "enabled": true, "emailVerified": true, "firstName": "Alice", "lastName": "Tenant", "email": "alice@example.org",
+      "credentials": [ { "type": "password", "value": "password", "temporary": false } ], "realmRoles": [ "tenant-a" ] },
+    { "username": "bob", "enabled": true, "emailVerified": true, "firstName": "Bob", "lastName": "Tenant", "email": "bob@example.org",
+      "credentials": [ { "type": "password", "value": "password", "temporary": false } ], "realmRoles": [ "tenant-b" ] },
+    { "username": "carol", "enabled": true, "emailVerified": true, "firstName": "Carol", "lastName": "Tenant", "email": "carol@example.org",
+      "credentials": [ { "type": "password", "value": "password", "temporary": false } ], "realmRoles": [ "tenant-a", "tenant-b" ] },
+    { "username": "dave", "enabled": true, "emailVerified": true, "firstName": "Dave", "lastName": "Tenant", "email": "dave@example.org",
+      "credentials": [ { "type": "password", "value": "password", "temporary": false } ], "realmRoles": [] }
+  ]
+}

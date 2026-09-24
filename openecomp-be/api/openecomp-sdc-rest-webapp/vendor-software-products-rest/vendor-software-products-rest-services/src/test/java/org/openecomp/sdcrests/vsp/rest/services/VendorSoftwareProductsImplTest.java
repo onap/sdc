@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mockConstruction;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -38,25 +38,25 @@ import static org.mockito.MockitoAnnotations.openMocks;
 import static org.openecomp.sdc.common.errors.Messages.DELETE_VSP_FROM_STORAGE_ERROR;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.keycloak.representations.AccessToken;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockedConstruction;
 import org.openecomp.core.util.UniqueValueUtil;
 import org.openecomp.sdc.activitylog.ActivityLogManager;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
@@ -66,12 +66,11 @@ import org.openecomp.sdc.be.csar.storage.StorageFactory;
 import org.openecomp.sdc.common.errors.CatalogRestClientException;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
-import org.openecomp.sdc.common.util.Multitenancy;
+import org.openecomp.sdc.common.tenant.TenantContext;
 import org.openecomp.sdc.datatypes.model.ItemType;
 import org.openecomp.sdc.itempermissions.PermissionsManager;
 import org.openecomp.sdc.notification.services.NotificationPropagationManager;
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductManager;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OnboardingMethod;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.versioning.AsdcItemManager;
 import org.openecomp.sdc.versioning.VersioningManager;
@@ -79,9 +78,9 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionStatus;
 import org.openecomp.sdc.versioning.types.Item;
 import org.openecomp.sdc.versioning.types.ItemStatus;
-import org.openecomp.sdcrests.vsp.rest.CatalogVspClient;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspDetailsDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspRequestDto;
+import org.openecomp.sdcrests.vsp.rest.CatalogVspClient;
 import org.openecomp.sdcrests.vsp.rest.exception.VendorSoftwareProductsExceptionSupplier;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 
@@ -314,6 +313,52 @@ class VendorSoftwareProductsImplTest {
         assertNull(rsp.getEntity());
     }
 
+    @Test
+    void createVspStoresTenantWhenDisabled() {
+        when(itemManager.create(any(Item.class))).thenAnswer(invocation -> {
+            Item created = invocation.getArgument(0);
+            created.setId(vspId);
+            return created;
+        });
+        when(versioningManager.create(any(), any(), any())).thenReturn(new Version("version-id"));
+
+        VspRequestDto dto = new VspRequestDto();
+        dto.setName("vsp-name");
+        dto.setOnboardingMethod("NetworkPackage");
+        dto.setTenant("tenant-a");
+
+        Response response = vendorSoftwareProducts.createVsp(dto, user, null);
+
+        assertEquals(HttpStatus.SC_OK, response.getStatus());
+        ArgumentCaptor<Item> created = ArgumentCaptor.forClass(Item.class);
+        verify(itemManager).create(created.capture());
+        assertEquals("tenant-a", created.getValue().getTenant());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void listVspsUnfilteredWhenDisabled() {
+        Item tenantedItem = new Item();
+        tenantedItem.setId("a");
+        tenantedItem.setName("a");
+        tenantedItem.setType(ItemType.vsp.getName());
+        tenantedItem.setStatus(ItemStatus.ACTIVE);
+        tenantedItem.setTenant("tenant-a");
+        tenantedItem.setModificationTime(new Date(1_000));
+        Item untenantedItem = new Item();
+        untenantedItem.setId("b");
+        untenantedItem.setName("b");
+        untenantedItem.setType(ItemType.vsp.getName());
+        untenantedItem.setStatus(ItemStatus.ACTIVE);
+        untenantedItem.setModificationTime(new Date(2_000));
+        when(itemManager.list(any())).thenReturn(List.of(tenantedItem, untenantedItem));
+
+        Response response = vendorSoftwareProducts.listVsps(null, null, user, null);
+
+        List<VspDetailsDto> results = ((GenericCollectionWrapper<VspDetailsDto>) response.getEntity()).getResults();
+        assertEquals(2, results.size());
+    }
+
     private String getConfigPath(String classpathFile) throws FileNotFoundException {
 
         URL resource = Thread.currentThread().getContextClassLoader().getResource(classpathFile);
@@ -330,65 +375,58 @@ class VendorSoftwareProductsImplTest {
     }
 
     @Test
-    void createVspWithMultitenancyStoresTheRequestedTenant() {
-        VspRequestDto request = new VspRequestDto();
-        request.setName("vsp");
-        request.setTenant("tenant-a");
-        request.setOnboardingMethod(OnboardingMethod.NetworkPackage.name());
-        when(itemManager.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
-        when(versioningManager.create(any(), any(), any())).thenReturn(new Version("1"));
-        try (MockedConstruction<Multitenancy> ignored = multitenancyEnabledFor(Set.of("tenant-a"))) {
-            assertEquals(HttpStatus.SC_OK, vendorSoftwareProducts.createVsp(request, user, null).getStatus());
-        }
-        ArgumentCaptor<Item> created = ArgumentCaptor.forClass(Item.class);
-        verify(itemManager).create(created.capture());
-        assertEquals("tenant-a", created.getValue().getTenant());
-    }
-
-    @Test
-    void listVspsWithMultitenancyReturnsItemsOfTheCallersTenantsNewestFirst() {
-        List<String> ids = listAsTenants(Set.of("tenant-a", "tenant-b"),
-            tenantItem("older", "tenant-a", 1), tenantItem("newer", "tenant-b", 2), tenantItem("other", "tenant-c", 3));
-        assertEquals(List.of("newer", "older"), ids);
-    }
-
-    @Test
-    void listVspsWithMultitenancyDoesNotMatchTenantBySubstring() {
-        assertEquals(List.of(), listAsTenants(Set.of("a"), tenantItem("tnap-item", "tnap", 1)));
-    }
-
-    @Test
-    void listVspsWithMultitenancyHidesItemsWithoutTenant() {
-        List<String> ids = listAsTenants(Set.of("tenant-a"), tenantItem("untenanted", null, 2), tenantItem("tenanted", "tenant-a", 1));
-        assertEquals(List.of("tenanted"), ids);
-    }
-
-    @Test
-    void listVspsWithMultitenancyReturnsItemOnceWhenSeveralRolesMatchIt() {
-        assertEquals(List.of("item"), listAsTenants(Set.of("tenant", "tenant-a"), tenantItem("item", "tenant-a", 1)));
-    }
-
     @SuppressWarnings("unchecked")
-    private List<String> listAsTenants(Set<String> roles, Item... listed) {
-        when(itemManager.list(any())).thenReturn(List.of(listed));
-        try (MockedConstruction<Multitenancy> ignored = multitenancyEnabledFor(roles)) {
-            Response response = vendorSoftwareProducts.listVsps(null, null, user, null);
-            assertEquals(Status.OK.getStatusCode(), response.getStatus());
-            return ((GenericCollectionWrapper<VspDetailsDto>) response.getEntity()).getResults().stream()
-                .map(VspDetailsDto::getId).collect(Collectors.toList());
+    void listVspsWithMultitenancyDoesNotMatchTenantBySubstring(@TempDir Path dir) throws IOException {
+        String previousConfig = enableMultitenancy(dir);
+        try {
+            HttpServletRequest hreq = mock(HttpServletRequest.class);
+            when(hreq.getAttribute(TenantContext.ATTRIBUTE)).thenReturn(new TenantContext(List.of("a")));
+            when(itemManager.list(any())).thenReturn(List.of(tenantItem("tnap-item", "tnap", 1_000)));
+
+            Response response = vendorSoftwareProducts.listVsps(null, null, user, hreq);
+
+            List<VspDetailsDto> results = ((GenericCollectionWrapper<VspDetailsDto>) response.getEntity()).getResults();
+            assertEquals(0, results.size());
+        } finally {
+            restoreConfig(previousConfig);
         }
     }
 
-    private MockedConstruction<Multitenancy> multitenancyEnabledFor(Set<String> roles) {
-        AccessToken token = new AccessToken();
-        token.setRealmAccess(new AccessToken.Access().roles(roles));
-        return mockConstruction(Multitenancy.class, (multitenancy, context) -> {
-            when(multitenancy.multiTenancyCheck()).thenReturn(true);
-            when(multitenancy.getAccessToken(any())).thenReturn(token);
-        });
+    @Test
+    @SuppressWarnings("unchecked")
+    void listVspsWithMultitenancyReturnsItemOnceWhenSeveralRolesMatchIt(@TempDir Path dir) throws IOException {
+        String previousConfig = enableMultitenancy(dir);
+        try {
+            HttpServletRequest hreq = mock(HttpServletRequest.class);
+            when(hreq.getAttribute(TenantContext.ATTRIBUTE)).thenReturn(new TenantContext(List.of("tenant", "tenant-a")));
+            when(itemManager.list(any())).thenReturn(List.of(tenantItem("item", "tenant-a", 1_000)));
+
+            Response response = vendorSoftwareProducts.listVsps(null, null, user, hreq);
+
+            List<VspDetailsDto> results = ((GenericCollectionWrapper<VspDetailsDto>) response.getEntity()).getResults();
+            assertEquals(1, results.size());
+        } finally {
+            restoreConfig(previousConfig);
+        }
     }
 
-    private Item tenantItem(String id, String tenant, long modificationTime) {
+    private static String enableMultitenancy(Path dir) throws IOException {
+        String previousConfig = System.getProperty("configuration.yaml");
+        Path config = dir.resolve("configuration.yaml");
+        Files.write(config, "multitenancy:\n    enabled: true\n    issuer: http://unused.invalid/realms/x\n".getBytes(StandardCharsets.UTF_8));
+        System.setProperty("configuration.yaml", config.toString());
+        return previousConfig;
+    }
+
+    private static void restoreConfig(String previousConfig) {
+        if (previousConfig == null) {
+            System.clearProperty("configuration.yaml");
+        } else {
+            System.setProperty("configuration.yaml", previousConfig);
+        }
+    }
+
+    private static Item tenantItem(String id, String tenant, long modificationTime) {
         Item tenantItem = new Item();
         tenantItem.setId(id);
         tenantItem.setType(ItemType.vsp.getName());

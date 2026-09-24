@@ -40,10 +40,13 @@ isStrictLinted
 janusgraph
 json
 jtosca
+Keycloak
 Kohn
 lifecycle
 logback
 mano
+multitenancy
+Multitenancy
 MURANO
 onap
 onapapi

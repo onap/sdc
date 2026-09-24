@@ -120,6 +120,9 @@ basicAuth:
   userPass: "testPass"
   excludedUrls: ""
 
+multitenancy:
+  enabled: false
+
 cassandraConfig:
     cassandraHosts: [192.168.33.10]
     cassandraPort: 9042
