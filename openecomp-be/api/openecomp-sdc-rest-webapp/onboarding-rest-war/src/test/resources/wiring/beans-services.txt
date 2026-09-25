@@ -1,0 +1,109 @@
+TogglzFeature : org.openecomp.sdcrests.togglz.rest.services.TogglzFeaturesImpl scope=prototype
+actionManager : org.openecomp.sdc.action.impl.ActionManagerImpl
+actions : org.openecomp.sdcrests.action.rest.services.ActionsImpl scope=prototype
+applicationConfigManager : org.openecomp.sdc.applicationconfig.impl.ApplicationConfigManagerImpl
+applicationConfiguration : org.openecomp.sdcrests.applicationconfig.rest.services.ApplicationConfigurationImpl scope=prototype
+componentDependencies : org.openecomp.sdcrests.vsp.rest.services.ComponentDependenciesImpl scope=prototype
+componentMonitoringUploads : org.openecomp.sdcrests.vsp.rest.services.ComponentMonitoringUploadsImpl scope=prototype
+componentProcesses : org.openecomp.sdcrests.vsp.rest.services.ComponentProcessesImpl scope=prototype
+components : org.openecomp.sdcrests.vsp.rest.services.ComponentsImpl scope=prototype
+computes : org.openecomp.sdcrests.vsp.rest.services.ComputeImpl scope=prototype
+conflicts : org.openecomp.sdcrests.conflict.rest.services.ConflictsImpl scope=prototype
+cxf : org.apache.cxf.bus.spring.SpringBus destroy-method=shutdown
+  constructor-arg = true
+deploymentFlavors : org.openecomp.sdcrests.vsp.rest.services.DeploymentFlavorsImpl scope=prototype
+entitlementPoolLimits : org.openecomp.sdcrests.vendorlicense.rest.services.EntitlementPoolLimitsImpl scope=prototype
+entitlementPools : org.openecomp.sdcrests.vendorlicense.rest.services.EntitlementPoolsImpl scope=prototype
+externalTestingManager : org.openecomp.core.externaltesting.impl.ExternalTestingManagerImpl
+externaltesting : org.openecomp.sdcrests.externaltesting.rest.services.ExternalTestingImpl scope=prototype
+featureGroups : org.openecomp.sdcrests.vendorlicense.rest.services.FeatureGroupsImpl scope=prototype
+healthCheck : org.openecomp.sdcrests.health.rest.services.HealthCheckImpl
+images : org.openecomp.sdcrests.vsp.rest.services.ImagesImpl scope=prototype
+itemPermissions : org.openecomp.sdcrests.itempermissions.rest.services.ItemPermissionsImpl
+items : org.openecomp.sdcrests.item.rest.services.ItemsImpl
+jacksonObjectMapper : com.fasterxml.jackson.databind.ObjectMapper
+  property serializationInclusion = NON_NULL
+jsonProvider : com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider
+  property mapper = ref jacksonObjectMapper
+licenseAgreements : org.openecomp.sdcrests.vendorlicense.rest.services.LicenseAgreementsImpl scope=prototype
+licenseKeyGroupLimits : org.openecomp.sdcrests.vendorlicense.rest.services.LicenseKeyGroupLimitsImpl scope=prototype
+licenseKeyGroups : org.openecomp.sdcrests.vendorlicense.rest.services.LicenseKeyGroupsImpl scope=prototype
+micrometerSpringConfig : org.openecomp.sdcrests.config.MicrometerSpringConfig
+networks : org.openecomp.sdcrests.vsp.rest.services.NetworksImpl scope=prototype
+nics : org.openecomp.sdcrests.vsp.rest.services.NicsImpl scope=prototype
+notifications : org.openecomp.sdcrests.notifications.rest.services.impl.NotificationsImpl
+orchestrationTemplateCandidate : org.openecomp.sdcrests.vsp.rest.services.OrchestrationTemplateCandidateImpl scope=prototype
+orchestrationTemplateCandidateUploadManagerImpl : org.openecomp.sdcrests.vsp.rest.services.OrchestrationTemplateCandidateUploadManagerImpl
+org.apache.cxf.bus.spring.BusExtensionPostProcessor : org.apache.cxf.bus.spring.BusExtensionPostProcessor
+org.apache.cxf.bus.spring.BusWiringBeanFactoryPostProcessor : org.apache.cxf.bus.spring.BusWiringBeanFactoryPostProcessor
+org.apache.cxf.bus.spring.Jsr250BeanPostProcessor : org.apache.cxf.bus.spring.Jsr250BeanPostProcessor
+org.springframework.context.annotation.internalAutowiredAnnotationProcessor : org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor
+org.springframework.context.annotation.internalCommonAnnotationProcessor : org.springframework.context.annotation.CommonAnnotationBeanPostProcessor
+org.springframework.context.annotation.internalConfigurationAnnotationProcessor : org.springframework.context.annotation.ConfigurationClassPostProcessor
+org.springframework.context.event.internalEventListenerFactory : org.springframework.context.event.DefaultEventListenerFactory
+org.springframework.context.event.internalEventListenerProcessor : org.springframework.context.event.EventListenerMethodProcessor
+org.springframework.validation.beanvalidation.MethodValidationPostProcessor#0 : org.springframework.validation.beanvalidation.MethodValidationPostProcessor
+  alias org.springframework.validation.beanvalidation.MethodValidationPostProcessor
+outEmptyResponseInterceptor : org.openecomp.server.interceptors.EmptyOutputOutInterceptor
+packageUploadManagerController : org.openecomp.sdcrests.vsp.rest.controllers.OrchestrationTemplateCandidateUploadManagerControllerImpl
+processes : org.openecomp.sdcrests.vsp.rest.services.ProcessesImpl scope=prototype
+prometheusMetricsController : org.openecomp.sdcrests.metrics.impl.PrometheusMetricControllerImpl
+prometheusRegistry : micrometerSpringConfig#prometheusRegistry -> io.micrometer.prometheus.PrometheusMeterRegistry destroy-method=(inferred)
+restContainer : org.apache.cxf.jaxrs.spring.JAXRSServerFactoryBeanDefinitionParser$SpringJAXRSServerFactoryBean init-method=create destroy-method=destroy
+  property address = /
+  property serviceBeans =
+    - ref versions
+    - ref conflicts
+    - ref vendorLicenseModels
+    - ref licenseAgreements
+    - ref featureGroups
+    - ref entitlementPools
+    - ref entitlementPoolLimits
+    - ref licenseKeyGroups
+    - ref licenseKeyGroupLimits
+    - ref vendorSoftwareProducts
+    - ref packageUploadManagerController
+    - ref networks
+    - ref components
+    - ref nics
+    - ref computes
+    - ref processes
+    - ref componentProcesses
+    - ref validation
+    - ref externaltesting
+    - ref actions
+    - ref applicationConfiguration
+    - ref componentMonitoringUploads
+    - ref deploymentFlavors
+    - ref images
+    - ref orchestrationTemplateCandidate
+    - ref vnfPackageRepository
+    - ref componentDependencies
+    - ref healthCheck
+    - ref itemPermissions
+    - ref notifications
+    - ref togglz
+    - ref items
+    - ref uniqueTypes
+    - ref prometheusMetricsController
+  property providers =
+    - ref jsonProvider
+    - bean org.openecomp.sdc.action.errors.ActionExceptionMapper
+    - bean org.openecomp.sdc.common.errors.DefaultExceptionMapper
+    - bean org.openecomp.sdcrests.errors.ZusammenExceptionMapper
+    - bean org.openecomp.sdc.logging.servlet.jaxrs.LoggingRequestFilter
+        property requestIdHeaders = X-ONAP-RequestID,X-RequestID,X-TransactionId,X-ECOMP-RequestID
+        property partnerNameHeaders = USER_ID,X-ONAP-PartnerName,User-Agent
+    - bean org.openecomp.sdc.logging.servlet.jaxrs.LoggingResponseFilter
+  property outInterceptors =
+    - ref outEmptyResponseInterceptor
+togglz : org.openecomp.sdcrests.togglz.rest.services.TogglzFeaturesImpl
+uniqueTypes : org.openecomp.sdcrests.uniquevalue.rest.services.UniqueTypesImpl
+uploadValidationManager : org.openecomp.sdc.validation.impl.UploadValidationManagerImpl
+validation : org.openecomp.sdcrests.validation.rest.services.ValidationImpl scope=prototype
+validator : org.springframework.validation.beanvalidation.LocalValidatorFactoryBean
+vendorLicenseModels : org.openecomp.sdcrests.vendorlicense.rest.services.VendorLicenseModelsImpl scope=prototype
+vendorSoftwareProducts : org.openecomp.sdcrests.vsp.rest.services.VendorSoftwareProductsImpl scope=prototype
+versions : org.openecomp.sdcrests.item.rest.services.VersionsImpl scope=prototype
+vnfPackageRepository : org.openecomp.sdcrests.vsp.rest.services.VnfPackageRepositoryImpl scope=prototype
+vsp-upload-status-record-dao-impl : org.openecomp.sdc.vendorsoftwareproduct.dao.impl.VspUploadStatusRecordDaoIml

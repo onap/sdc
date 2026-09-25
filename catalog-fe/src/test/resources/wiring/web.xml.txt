@@ -1,0 +1,43 @@
+context-param org.eclipse.jetty.servlet.Default.dirAllowed = false
+listener org.openecomp.sdc.fe.listen.FEAppContextListener
+filter AuditLogServletFilter org.onap.logging.filter.base.AuditLogServletFilter async-supported=true
+filter cacheControlFilter org.openecomp.sdc.fe.filters.CacheControlFilter async-supported=true
+filter contentSecurityPolicyHeaderFilter org.openecomp.sdc.fe.filters.ContentSecurityPolicyHeaderFilter async-supported=true
+filter defaultUserIdFilter org.openecomp.sdc.fe.filters.DefaultUserIdFilter async-supported=true
+filter gzipFilter org.openecomp.sdc.fe.filters.GzipFilter async-supported=true
+filter-mapping contentSecurityPolicyHeaderFilter
+  url-pattern /*
+filter-mapping defaultUserIdFilter
+  url-pattern /*
+filter-mapping AuditLogServletFilter
+  url-pattern /*
+filter-mapping gzipFilter
+  url-pattern *.jsgz
+filter-mapping cacheControlFilter
+  url-pattern *.jsgz
+filter-mapping cacheControlFilter
+  url-pattern *.js
+filter-mapping cacheControlFilter
+  url-pattern *.css
+filter-mapping cacheControlFilter
+  url-pattern *.png
+filter-mapping cacheControlFilter
+  url-pattern *.woff
+filter-mapping cacheControlFilter
+  url-pattern *.woff2
+servlet FeProxy org.openecomp.sdc.fe.servlets.FeProxyServlet load-on-startup=1 async-supported=true
+servlet Portal org.openecomp.sdc.fe.servlets.PortalServlet async-supported=true
+servlet ViewStatusMessages ch.qos.logback.classic.ViewStatusMessagesServlet async-supported=true
+servlet jersey org.glassfish.jersey.servlet.ServletContainer load-on-startup=1 async-supported=true
+  init-param com.sun.jersey.api.json.POJOMappingFeature = true
+  init-param jersey.config.server.provider.classnames = org.glassfish.jersey.media.multipart.MultiPartFeature
+  init-param jersey.config.server.provider.packages = org.openecomp.sdc.fe.servlets
+servlet-mapping FeProxy
+  url-pattern /feProxy/*
+servlet-mapping Portal
+  url-pattern /portal
+servlet-mapping ViewStatusMessages
+  url-pattern /lbClassicStatus
+servlet-mapping jersey
+  url-pattern /rest/*
+welcome-file index.html

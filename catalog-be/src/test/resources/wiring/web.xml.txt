@@ -1,0 +1,76 @@
+context-param contextConfigLocation = classpath:application-context.xml
+context-param org.eclipse.jetty.servlet.Default.dirAllowed = false
+context-param org.togglz.core.manager.TogglzConfig = org.openecomp.sdc.be.togglz.TogglzConfiguration
+listener org.openecomp.sdc.be.listen.BEAppContextListener
+listener org.springframework.web.context.ContextLoaderListener
+filter TenantTokenFilter org.openecomp.sdc.be.filters.CatalogTenantTokenFilter
+filter contentSecurityPolicyHeaderFilter org.openecomp.sdc.be.filters.ContentSecurityPolicyHeaderFilter async-supported=true
+filter dataValidatorFilter org.openecomp.sdc.be.filters.DataValidatorFilter
+filter gatewayFilter org.springframework.web.filter.DelegatingFilterProxy
+  init-param targetFilterLifecycle = true
+filter reqValidationFilter org.springframework.web.filter.DelegatingFilterProxy
+  init-param targetFilterLifecycle = true
+filter-mapping contentSecurityPolicyHeaderFilter
+  url-pattern /*
+filter-mapping gatewayFilter
+  url-pattern /sdc2/rest/*
+  url-pattern /sdc/*
+filter-mapping reqValidationFilter
+  url-pattern /sdc2/rest/*
+  url-pattern /sdc/*
+filter-mapping dataValidatorFilter
+  url-pattern /sdc2/rest/*
+  url-pattern /sdc/*
+filter-mapping TenantTokenFilter
+  url-pattern /sdc2/rest/v1/catalog/resources/*
+  url-pattern /sdc2/rest/v1/catalog/services/*
+  url-pattern /sdc2/rest/v1/followed
+servlet ECOMPServlet org.onap.portalsdk.core.onboarding.crossapi.PortalRestAPIProxy load-on-startup=3 async-supported=true
+servlet TogglzConsoleServlet org.togglz.console.TogglzConsoleServlet
+servlet ViewStatusMessages ch.qos.logback.classic.ViewStatusMessagesServlet async-supported=true
+servlet jersey org.glassfish.jersey.servlet.ServletContainer load-on-startup=1
+  init-param exclude_url_endpoints =
+    /api/v3/analytics
+    /api/v3/storeAnalytics
+  init-param jersey.config.server.provider.classnames =
+    org.glassfish.jersey.media.multipart.MultiPartFeature
+    org.openecomp.sdc.be.filters.BasicAuthenticationFilter
+    org.openecomp.sdc.be.filters.BeServletFilter
+    org.openecomp.sdc.be.filters.DataValidatorFilter
+    org.openecomp.sdc.be.filters.ComponentsAvailabilityFilter
+    org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature
+    org.openecomp.sdc.be.servlets.exception.DefaultExceptionMapper
+    org.openecomp.sdc.be.servlets.exception.WebApplicationExceptionMapper
+    org.openecomp.sdc.be.servlets.exception.ComponentExceptionMapper
+    org.openecomp.sdc.be.servlets.exception.ConstraintViolationExceptionMapper
+    org.openecomp.sdc.be.servlets.exception.StorageExceptionMapper
+    org.openecomp.sdc.be.view.MixinModelWriter
+    org.openecomp.sdc.config.ObjectMapperProvider
+  init-param jersey.config.server.provider.packages =
+    io.swagger.v3.jaxrs2.integration.resources
+    org.openecomp.sdc.be.servlets
+servlet jerseyDistribution org.glassfish.jersey.servlet.ServletContainer load-on-startup=1 async-supported=true
+  init-param jersey.config.server.provider.classnames =
+    org.glassfish.jersey.media.multipart.MultiPartFeature
+    org.openecomp.sdc.be.filters.BeServletFilter
+    org.openecomp.sdc.be.filters.DataValidatorFilter
+    org.openecomp.sdc.be.filters.ComponentsAvailabilityFilter
+    org.openecomp.sdc.be.servlets.exception.DefaultExceptionMapper
+    org.openecomp.sdc.be.servlets.exception.WebApplicationExceptionMapper
+    org.openecomp.sdc.be.servlets.exception.ComponentExceptionMapper
+    org.openecomp.sdc.be.servlets.exception.StorageExceptionMapper
+    org.openecomp.sdc.be.filters.BasicAuthenticationFilter
+  init-param jersey.config.server.provider.packages =
+    io.swagger.v3.jaxrs2.integration.resources
+    org.openecomp.sdc.be.distribution.servlet
+    org.openecomp.sdc.be.externalapi.servlet
+servlet-mapping TogglzConsoleServlet
+  url-pattern /catalog/togglz/*
+servlet-mapping ViewStatusMessages
+  url-pattern /lbClassicStatus
+servlet-mapping jersey
+  url-pattern /sdc2/rest/*
+servlet-mapping jerseyDistribution
+  url-pattern /sdc/*
+error-page java.lang.RuntimeException -> /sdc2/rest/v1/catalog/handleException/
+welcome-file swagger-ui/index.html
