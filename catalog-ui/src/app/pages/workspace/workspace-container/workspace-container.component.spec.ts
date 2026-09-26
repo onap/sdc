@@ -164,13 +164,33 @@ describe('updateSelectedMenuItem', () => {
         (comp as any).updateSelectedMenuItem('workspace.composition');
         expect((comp as any).leftBarTabs.selectedIndex).toBe(-1);
     });
+
+    it('selects the deployment menu item', () => {
+        const {comp} = createComponent();
+        (comp as any).leftBarTabs = {menuItems: [{state: 'workspace.general'}, {state: 'workspace.deployment'}]};
+        (comp as any).isDeployment = true;
+        (comp as any).updateSelectedMenuItem('workspace.deployment');
+        expect((comp as any).leftBarTabs.selectedIndex).toBe(1);
+    });
+
+    it('selects the plugin menu item matching the current path', () => {
+        const {comp, navigationService} = createComponent();
+        navigationService.getParam = jest.fn((key: string) => key === 'path' ? 'pluginB' : undefined);
+        (comp as any).leftBarTabs = {menuItems: [
+            {state: 'workspace.general'},
+            {state: 'plugins', params: {path: 'pluginA'}},
+            {state: 'plugins', params: {path: 'pluginB'}}
+        ]};
+        (comp as any).isPlugins = true;
+        (comp as any).updateSelectedMenuItem('workspace.plugins');
+        expect((comp as any).leftBarTabs.selectedIndex).toBe(2);
+    });
 });
 
-// The three flags drive BOTH the *ngIf on the 110px tab-title header and the left-bar deselection,
-// and workspace.less subtracts @tab_title for exactly the same three states. `isPlugins` was
-// declared and assigned NOWHERE (the AngularJS controller set it at workspace-view-model.ts:760;
-// the port kept its two neighbours and dropped it), so plugin tabs rendered a header the old shell
-// suppressed. Asserted per state because the composition check is an indexOf — its state name
+// The three flags drive the *ngIf on the 110px tab-title header, and workspace.less subtracts
+// @tab_title for exactly the same three states. `isPlugins` was declared and assigned NOWHERE (the
+// AngularJS controller set it at workspace-view-model.ts:760; the port kept its two neighbours and
+// dropped it), so plugin tabs rendered a header the old shell suppressed. Asserted per state because the composition check is an indexOf — its state name
 // carries a panel-tab suffix — while the other two are exact comparisons.
 describe('updateFullBleedFlags', () => {
     const flagsFor = (stateName: string) => {
