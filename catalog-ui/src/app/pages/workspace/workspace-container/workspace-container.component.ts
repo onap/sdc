@@ -757,7 +757,7 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * The three full-bleed states: they suppress the tab-title header and deselect the left bar.
+     * The three full-bleed states: they suppress the tab-title header.
      * Kept in ONE place because the two callers (ngOnInit and the onNavigationSuccess handler) must
      * agree — `isPlugins` was previously assigned in neither, so it stayed false forever and plugin
      * tabs grew a title header the AngularJS shell never showed them
@@ -779,10 +779,16 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
     private updateSelectedMenuItem(stateName: string): void {
         if (!this.leftBarTabs) { return; }
         const stateNameShort = stateName.replace('workspace.', '');
-        const selectedItem: MenuItem = _.find(this.leftBarTabs.menuItems,
+        let selectedItem: MenuItem = _.find(this.leftBarTabs.menuItems,
             (item: MenuItem) => this.isMenuState(item, stateNameShort));
+        if (this.isPlugins) {
+            const path = this.navigationService.getParam('path');
+            selectedItem = _.find(this.leftBarTabs.menuItems,
+                (item: MenuItem) => this.isMenuState(item, stateNameShort) && item.params && item.params.path === path)
+                || selectedItem;
+        }
         let selectedIndex = selectedItem ? this.leftBarTabs.menuItems.indexOf(selectedItem) : 0;
-        if (this.isComposition || this.isDeployment || this.isPlugins) {
+        if (this.isComposition) {
             selectedIndex = -1;
         }
         this.leftBarTabs.selectedIndex = selectedIndex;
