@@ -255,13 +255,6 @@
 
     <dependency>
       <groupId>org.glassfish.jersey.media</groupId>
-      <artifactId>jersey-media-moxy</artifactId>
-      <version>${jersey-bom.version}</version>
-      <scope>compile</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.glassfish.jersey.media</groupId>
       <artifactId>jersey-media-multipart</artifactId>
       <version>${jersey-bom.version}</version>
       <scope>compile</scope>
@@ -505,13 +498,6 @@
     </dependency>
 
     <!-- Spring 4 dependencies end -->
-    <!-- JavaConfig need this library -->
-    <dependency>
-      <groupId>cglib</groupId>
-      <artifactId>cglib</artifactId>
-      <version>3.2.4</version>
-      <scope>compile</scope>
-    </dependency>
 
     <dependency>
       <groupId>org.yaml</groupId>
