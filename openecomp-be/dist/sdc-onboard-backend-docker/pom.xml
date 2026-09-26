@@ -19,8 +19,9 @@
         <dependency>
             <groupId>org.openecomp.sdc.onboarding</groupId>
             <artifactId>api-docs</artifactId>
-            <type>war</type>
+            <type>pom</type>
             <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.openecomp.sdc.onboarding</groupId>

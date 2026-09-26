@@ -488,43 +488,6 @@ limitations under the License.
                             </resources>
                         </configuration>
                     </execution>
-                </executions>
-            </plugin>
-
-            <!-- Set executable permissions for the scripts -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <id>set-executable-permissions</id>
-                        <phase>prepare-package</phase>
-                        <configuration>
-                            <target>
-
-
-                                <chmod file="${it.catalog.resource}/resource/portal.properties" perm="755" />
-                                <chmod file="${it.catalog.resource}/resource/key.properties" perm="755" />
-                                <chmod file="${it.catalog.resource}/start.d/http.ini" perm="755" />
-                                <chmod file="${it.catalog.resource}/start.d/https.ini" perm="755" />
-                                <chmod file="${it.catalog.resource}/start.d/ssl.ini" perm="755" />
-
-
-                            </target>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-
-            <!-- Section for Integration tests -->
-            <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <executions>
                     <execution>
                         <id>copy-chef-resources</id>
                         <phase>pre-integration-test</phase>
@@ -701,35 +664,32 @@ limitations under the License.
                 </executions>
             </plugin>
 
-
-
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>wagon-maven-plugin</artifactId>
-                <version>2.0.0</version>
-                <executions>
-                    <execution>
-                        <id>download-gecko</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>download-single</goal>
-                        </goals>
-                        <configuration>
-                            <url>https://github.com</url>
-                            <fromFile>
-                                mozilla/geckodriver/releases/download/v${gecko.driver.version}/geckodriver-v${gecko.driver.version}-linux64.tar.gz
-                            </fromFile>
-                            <toDir>${project.build.directory}/gecko</toDir>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+            <!-- Set executable permissions for the scripts -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <version>${maven-antrun-plugin.version}</version>
                 <executions>
+                    <execution>
+                        <id>set-executable-permissions</id>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <target>
+
+
+                                <chmod file="${it.catalog.resource}/resource/portal.properties" perm="755" />
+                                <chmod file="${it.catalog.resource}/resource/key.properties" perm="755" />
+                                <chmod file="${it.catalog.resource}/start.d/http.ini" perm="755" />
+                                <chmod file="${it.catalog.resource}/start.d/https.ini" perm="755" />
+                                <chmod file="${it.catalog.resource}/start.d/ssl.ini" perm="755" />
+
+
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
                     <execution>
                         <id>set-folder-permission</id>
                         <phase>pre-integration-test</phase>
@@ -775,6 +735,30 @@ limitations under the License.
                                     <target name="BE-configuration"/>
                                 </ant>
                             </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+
+            <!-- Section for Integration tests -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>wagon-maven-plugin</artifactId>
+                <version>2.0.0</version>
+                <executions>
+                    <execution>
+                        <id>download-gecko</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>download-single</goal>
+                        </goals>
+                        <configuration>
+                            <url>https://github.com</url>
+                            <fromFile>
+                                mozilla/geckodriver/releases/download/v${gecko.driver.version}/geckodriver-v${gecko.driver.version}-linux64.tar.gz
+                            </fromFile>
+                            <toDir>${project.build.directory}/gecko</toDir>
                         </configuration>
                     </execution>
                 </executions>
