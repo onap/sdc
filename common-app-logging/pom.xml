@@ -105,11 +105,23 @@
       <groupId>org.onap.logging-analytics</groupId>
       <artifactId>logging-slf4j</artifactId>
       <version>${onap.logging.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.powermock</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.onap.logging-analytics</groupId>
       <artifactId>logging-filter-base</artifactId>
       <version>${onap.logging.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.powermock</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
