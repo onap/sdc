@@ -326,6 +326,14 @@
           <groupId>org.codehaus.groovy</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>groovy-json</artifactId>
+          <groupId>org.codehaus.groovy</groupId>
+        </exclusion>
+        <exclusion>
+          <groupId>io.netty</groupId>
+          <artifactId>netty-all</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>org.apache.thrift</groupId>
           <artifactId>libthrift</artifactId>
         </exclusion>
@@ -617,11 +625,6 @@
       <scope>test</scope>
     </dependency>
     <!-- testing end -->
-
-    <dependency>
-      <groupId>io.netty</groupId>
-      <artifactId>netty-all</artifactId>
-    </dependency>
 
     <dependency>
       <groupId>io.netty</groupId>
