@@ -327,6 +327,14 @@ Modifications copyright (c) 2018 Nokia
           <groupId>org.codehaus.groovy</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>groovy-json</artifactId>
+          <groupId>org.codehaus.groovy</groupId>
+        </exclusion>
+        <exclusion>
+          <groupId>io.netty</groupId>
+          <artifactId>netty-all</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>commons-io</groupId>
           <artifactId>commons-io</artifactId>
         </exclusion>
