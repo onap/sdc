@@ -92,8 +92,6 @@ export abstract class FlowEditorTabBase implements OnInit, AfterViewInit, OnDest
 
     ngAfterViewInit(): void {
         this.viewReady = true;
-        // If the data was already fetched synchronously (cached bundle + cached artifacts), render now
-        // that the host <div> exists.
         this.tryRender();
     }
 
@@ -112,7 +110,7 @@ export abstract class FlowEditorTabBase implements OnInit, AfterViewInit, OnDest
     }
 
     /** Subclass: fetch the artifacts (+ instances for network-call-flow) it needs, then call
-     *  render(this.buildVendorModel()). Guarded so a present artifacts cache skips the fetch. */
+     *  render(this.buildVendorModel()). */
     protected abstract loadAndMount(): void;
 
     /** Subclass: build the VendorModel with its diagram type + participants. */

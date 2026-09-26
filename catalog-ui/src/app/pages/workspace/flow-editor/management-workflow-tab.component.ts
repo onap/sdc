@@ -64,18 +64,14 @@ export class ManagementWorkflowTabComponent extends FlowEditorTabBase {
     }
 
     protected loadAndMount(): void {
-        if (!this.component.artifacts) {
-            this.isLoading = true;
-            this.componentService.getComponentInformationalArtifacts(this.component).subscribe(
-                (response: ComponentGenericResponse) => {
-                    this.component.artifacts = response.artifacts;
-                    this.render(this.buildVendorModel());
-                },
-                () => { this.isLoading = false; this.detectChangesSafe(); }
-            );
-        } else {
-            this.render(this.buildVendorModel());
-        }
+        this.isLoading = true;
+        this.componentService.getComponentInformationalArtifacts(this.component).subscribe(
+            (response: ComponentGenericResponse) => {
+                this.component.artifacts = response.artifacts;
+                this.render(this.buildVendorModel());
+            },
+            () => { this.isLoading = false; this.detectChangesSafe(); }
+        );
     }
 
     protected buildVendorModel(): VendorModel {

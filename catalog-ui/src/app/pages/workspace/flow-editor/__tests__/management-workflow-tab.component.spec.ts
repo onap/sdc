@@ -97,7 +97,7 @@ describe('ManagementWorkflowTabComponent', () => {
             ['Customer', 'CCD', 'Infrastructure', 'MSO', 'SDN-C', 'A&AI', 'APP-C', 'Cloud', 'DCAE', 'ALTS', 'VF']);
     });
 
-    it('fetches informational artifacts only when the component has none cached', () => {
+    it('fetches informational artifacts when the component has none cached', () => {
         const {comp, componentService} = createComp({component: makeComponent({artifacts: undefined})});
         comp.ngOnInit();
         comp.ngAfterViewInit();
@@ -106,12 +106,15 @@ describe('ManagementWorkflowTabComponent', () => {
         expect(registry.render.mock.calls[0][0].options.data.diagramType).toBe('WORKFLOW');
     });
 
-    it('does NOT fetch artifacts when they are already present', () => {
-        const {comp, componentService} = createComp();
+    it('re-fetches artifacts even when they are already cached, and renders the fresh ones', () => {
+        const staleArtifacts = {filteredByType: jest.fn(() => [])};
+        const {comp, componentService} = createComp({component: makeComponent({artifacts: staleArtifacts})});
         comp.ngOnInit();
         comp.ngAfterViewInit();
-        expect(componentService.getComponentInformationalArtifacts).not.toHaveBeenCalled();
+        expect(componentService.getComponentInformationalArtifacts).toHaveBeenCalledTimes(1);
         expect(registry.render).toHaveBeenCalledTimes(1);
+        expect(registry.render.mock.calls[0][0].options.data.artifacts).toEqual(['wf-artifact']);
+        expect(staleArtifacts.filteredByType).not.toHaveBeenCalled();
     });
 
     it('sets readonly=false when the workspace mode is EDIT', () => {

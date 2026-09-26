@@ -103,7 +103,7 @@ describe('NetworkCallFlowTabComponent', () => {
         expect(participants.map((p: any) => p.name)).toEqual(['vf-one', 'vf-two']);
     });
 
-    it('fetches artifacts AND instances only when either is missing', () => {
+    it('fetches artifacts AND instances when either is missing', () => {
         const {comp, componentService} = createComp({component: makeComponent({componentInstances: undefined})});
         comp.ngOnInit();
         comp.ngAfterViewInit();
@@ -112,12 +112,19 @@ describe('NetworkCallFlowTabComponent', () => {
         expect(registry.render.mock.calls[0][0].options.data.diagramType).toBe('NETWORK_CALL_FLOW');
     });
 
-    it('does NOT fetch when artifacts and instances are both present', () => {
-        const {comp, componentService} = createComp();
+    it('re-fetches artifacts and instances even when both are already cached, and renders the fresh ones', () => {
+        const staleArtifacts = {filteredByType: jest.fn(() => [])};
+        const {comp, componentService} = createComp({
+            component: makeComponent({artifacts: staleArtifacts, componentInstances: []})
+        });
         comp.ngOnInit();
         comp.ngAfterViewInit();
-        expect(componentService.getComponentInformationalArtifactsAndInstances).not.toHaveBeenCalled();
+        expect(componentService.getComponentInformationalArtifactsAndInstances).toHaveBeenCalledTimes(1);
         expect(registry.render).toHaveBeenCalledTimes(1);
+        const data = registry.render.mock.calls[0][0].options.data;
+        expect(data.artifacts).toEqual(['ncf-artifact']);
+        expect(data.participants.map((p: any) => p.id)).toEqual(['inst-1', 'inst-3']);
+        expect(staleArtifacts.filteredByType).not.toHaveBeenCalled();
     });
 
     it('renders editable (readonly=false) in EDIT mode', () => {

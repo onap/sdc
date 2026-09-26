@@ -51,19 +51,15 @@ export class NetworkCallFlowTabComponent extends FlowEditorTabBase {
     }
 
     protected loadAndMount(): void {
-        if (!this.component.artifacts || !this.component.componentInstances) {
-            this.isLoading = true;
-            this.componentService.getComponentInformationalArtifactsAndInstances(this.component).subscribe(
-                (response: ComponentGenericResponse) => {
-                    this.component.artifacts = response.artifacts;
-                    this.component.componentInstances = response.componentInstances;
-                    this.render(this.buildVendorModel());
-                },
-                () => { this.isLoading = false; this.detectChangesSafe(); }
-            );
-        } else {
-            this.render(this.buildVendorModel());
-        }
+        this.isLoading = true;
+        this.componentService.getComponentInformationalArtifactsAndInstances(this.component).subscribe(
+            (response: ComponentGenericResponse) => {
+                this.component.artifacts = response.artifacts;
+                this.component.componentInstances = response.componentInstances;
+                this.render(this.buildVendorModel());
+            },
+            () => { this.isLoading = false; this.detectChangesSafe(); }
+        );
     }
 
     protected buildVendorModel(): VendorModel {
