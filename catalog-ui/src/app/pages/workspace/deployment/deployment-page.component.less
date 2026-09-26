@@ -20,5 +20,10 @@
   /deep/ .sdc-tab-content {
     height: 100%;
   }
+  // The routed <deployment-page> host already starts below the action bar (workspace.less), so the
+  // panel-wrapper's 53px offset would drop the toggle onto the hierarchy tab.
+  /deep/ .w-sdc-designer-sidebar-toggle {
+    top: 0;
+  }
 }
 
