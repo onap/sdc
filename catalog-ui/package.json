@@ -138,7 +138,7 @@
     "less": "~3.9.0",
     "lodash": "^4.17.2",
     "ngx-drag-drop": "v2.0.0-rc.4",
-    "onap-ui-angular": "5.5.0",
+    "onap-ui-angular": "5.5.1",
     "perfect-scrollbar": "^0.6.16",
     "qtip2": "^3.0.3",
     "rxjs": "6.2.2",
