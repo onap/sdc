@@ -81,7 +81,7 @@
     "jshint-stylish": "2.2.1",
     "json-loader": "^0.5.4",
     "load-grunt-tasks": "3.5.2",
-    "onap-ui-common": "1.1.0",
+    "onap-ui-common": "1.1.2",
     "postcss-loader": "^0.13.0",
     "postcss-url": "^5.1.2",
     "raw-loader": "^0.5.1",
