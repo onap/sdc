@@ -629,9 +629,7 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
             this.translateService.translate('COMPONENT_VIEW_DELETE_MODAL_TITLE'),
             this.translateService.translate('COMPONENT_VIEW_DELETE_MODAL_TEXT'),
             'alert-modal',
-            // See unsaved-changes-flag.guard.ts: openWarningModal's declared button type
-            // contradicts IModalConfig.buttons upstream.
-            [modalButton] as any as SdcUiComponents.ModalButtonComponent[]);
+            [modalButton]);
     }
 
     handleDeleteArchivedComponent = (): void => {

@@ -76,7 +76,7 @@ export class ChangeLifecycleStateHandler {
         const comment: AsdcComment = new AsdcComment();
         if (data.alertModal) {
             // Show alert dialog if defined in menu.json
-            const onOk: Function = (confirmationText) => {
+            const onOk = (confirmationText?) => {
                 comment.userRemarks = confirmationText;
                 scope.isLoading = true;
                 component.changeLifecycleState(data.url, comment).then(onSuccess, onError);
@@ -84,13 +84,13 @@ export class ChangeLifecycleStateHandler {
 
             const modalTitle = this.sdcMenu.alertMessages[data.alertModal].title;
             const modalMessage = this.sdcMenu.alertMessages[data.alertModal].message.format([component.componentType.toLowerCase()]);
-            const modalButton = {
+            const modalButton: SdcUiCommon.IModalButtonComponent = {
                 testId: 'OK',
                 text: this.sdcMenu.alertMessages.okButton,
                 type: SdcUiCommon.ButtonType.warning,
                 callback: onOk,
                 closeModal: true
-            } as SdcUiComponents.ModalButtonComponent;
+            };
             this.modalService.openWarningModal(modalTitle, modalMessage, 'alert-modal', [modalButton]);
         } else if (data.confirmationModal) {
             // Show confirmation dialog if defined in menu.json
@@ -142,14 +142,14 @@ export class ChangeLifecycleStateHandler {
                 this.actualChangeLifecycleState(component, data, scope, onSuccessCallback, onErrorCallback);
             } else {
                 // Show warning modal
-                const onContinue: Function = () => {
+                const onContinue = () => {
                     this.actualChangeLifecycleState(component, data, scope, onSuccessCallback, onErrorCallback);
                 };
-                const reject: Function = () => {
+                const reject = () => {
                     this.actualChangeLifecycleState(component, data.conformanceLevelModal, scope, onSuccessCallback, onErrorCallback);
                 };
-                const continueButton = {testId: 'Continue', text: 'Continue', type: SdcUiCommon.ButtonType.primary, callback: onContinue, closeModal: true} as SdcUiComponents.ModalButtonComponent;
-                const rejectButton = {testId: 'Reject', text: 'Reject', type: SdcUiCommon.ButtonType.secondary, callback: reject, closeModal: true} as SdcUiComponents.ModalButtonComponent;
+                const continueButton: SdcUiCommon.IModalButtonComponent = {testId: 'Continue', text: 'Continue', type: SdcUiCommon.ButtonType.primary, callback: onContinue, closeModal: true};
+                const rejectButton: SdcUiCommon.IModalButtonComponent = {testId: 'Reject', text: 'Reject', type: SdcUiCommon.ButtonType.secondary, callback: reject, closeModal: true};
                 this.modalService.openInfoModal(
                     this.translateService.translate('CONFORMANCE_LEVEL_MODAL_TITLE'),
                     this.translateService.translate('CONFORMANCE_LEVEL_MODAL_TEXT'),

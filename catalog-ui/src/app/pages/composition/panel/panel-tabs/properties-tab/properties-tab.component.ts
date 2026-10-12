@@ -75,7 +75,7 @@ export class PropertiesTabComponent implements OnInit {
 
     public deleteProperty = (property: PropertyModel): void => {
 
-        const onOk: Function = (): void => {
+        const onOk = (): void => {
             this.store.dispatch(new TogglePanelLoadingAction({isLoading: true}));
             this.topologyTemplateService.deleteProperty(this.component.componentType, this.component.uniqueId, property.uniqueId)
                 .subscribe((response) => {
@@ -89,12 +89,12 @@ export class PropertiesTabComponent implements OnInit {
 
         const title: string = this.translateService.translate('PROPERTY_VIEW_DELETE_MODAL_TITLE');
         const message: string = this.translateService.translate('PROPERTY_VIEW_DELETE_MODAL_TEXT', {name: property.name});
-        const okButton = {
+        const okButton: SdcUiCommon.IModalButtonComponent = {
             testId: 'OK',
             text: 'OK',
             type: SdcUiCommon.ButtonType.info,
             callback: onOk,
-            closeModal: true} as SdcUiComponents.ModalButtonComponent;
+            closeModal: true};
         this.modalService.openInfoModal(title, message, 'delete-modal', [okButton]);
     }
 

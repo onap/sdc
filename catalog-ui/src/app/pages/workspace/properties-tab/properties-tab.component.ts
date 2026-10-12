@@ -199,7 +199,7 @@ export class WorkspacePropertiesTabComponent implements OnInit {
     }
 
     delete(property: PropertyModel): void {
-        const onOk: Function = (): void => {
+        const onOk = (): void => {
             // component.deleteProperty (model method) DELETEs on the BE and removes the property from
             // component.properties on success. Refresh + detectChanges after the round-trip so the
             // table row disappears without a page reload (Selenium ImportDCAE/ImportVFCAsset contract).
@@ -212,13 +212,13 @@ export class WorkspacePropertiesTabComponent implements OnInit {
         };
         const title: string = this.translateService.translate('PROPERTY_VIEW_DELETE_MODAL_TITLE');
         const message: string = this.translateService.translate('PROPERTY_VIEW_DELETE_MODAL_TEXT', {name: property.name});
-        const okButton = {
+        const okButton: SdcUiCommon.IModalButtonComponent = {
             testId: 'OK',
             text: 'OK',
             type: SdcUiCommon.ButtonType.info,
             callback: onOk,
             closeModal: true
-        } as SdcUiComponents.ModalButtonComponent;
+        };
         this.modalService.openInfoModal(title, message, 'delete-modal', [okButton]);
     }
 

@@ -164,7 +164,7 @@ export class ArtifactsService {
             instanceId
         };
 
-        const onOkPressed: Function = () => {
+        const onOkPressed = () => {
             this.serviceLoader.activate();
             this.store.dispatch((instanceId) ? new DeleteInstanceArtifactAction(artifactObject) : new DeleteArtifactAction(artifactObject))
                 .subscribe().add(() => this.serviceLoader.deactivate());
@@ -172,13 +172,13 @@ export class ArtifactsService {
 
         const title = this.translateService.translate('ARTIFACT_VIEW_DELETE_MODAL_TITLE');
         const text = this.translateService.translate('ARTIFACT_VIEW_DELETE_MODAL_TEXT', {name: artifact.artifactDisplayName});
-        const okButton = {
+        const okButton: SdcUiCommon.IModalButtonComponent = {
             testId: 'OK',
             text: 'OK',
             type: SdcUiCommon.ButtonType.warning,
             callback: onOkPressed,
             closeModal: true
-        } as SdcUiComponents.ModalButtonComponent;
+        };
         this.modalService.openWarningModal(title, text, 'delete-information-artifact-modal', [okButton]);
     }
 }

@@ -132,13 +132,13 @@ export class InfoTabComponent implements OnInit, OnDestroy {
 
                         const {title, message} = this.sdcMenu.alertMessages['upgradeInstance'];
                         let pathNames:string = this.getPathNamesVersionChangeModal(pathsToDelete);
-                        let onOk: Function = () => {
+                        let onOk = () => {
                             this.store.dispatch(new TogglePanelLoadingAction({isLoading: true}));
 
                             onUpdate();
                         };
-                        const okButton = {testId: "OK", text: "OK", type: SdcUiCommon.ButtonType.info, callback: onOk, closeModal: true} as SdcUiComponents.ModalButtonComponent;
-                        const cancelButton = {testId: "Cancel", text: "Cancel", type: SdcUiCommon.ButtonType.secondary, callback: <Function>onCancel, closeModal: true} as SdcUiComponents.ModalButtonComponent;
+                        const okButton: SdcUiCommon.IModalButtonComponent = {testId: "OK", text: "OK", type: SdcUiCommon.ButtonType.info, callback: onOk, closeModal: true};
+                        const cancelButton: SdcUiCommon.IModalButtonComponent = {testId: "Cancel", text: "Cancel", type: SdcUiCommon.ButtonType.secondary, callback: () => onCancel(undefined), closeModal: true};
                         const modal = this.modalService.openInfoModal(title, message.format([pathNames]), 'confirm-modal', [okButton, cancelButton]);
                         modal.getCloseButton().onClick(onCancel);
                     } else {

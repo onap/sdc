@@ -32,7 +32,7 @@ import {NavigationService} from "../../services/navigation.service";
 import {HttpErrorResponse} from "@angular/common/http";
 import {ServerErrorResponse} from "../../models/server-error-response";
 import {Observable} from "rxjs/Observable";
-import {SdcUiCommon, SdcUiComponents, SdcUiServices} from "onap-ui-angular/dist";
+import {SdcUiCommon, SdcUiServices} from "onap-ui-angular/dist";
 import {NotificationSettings} from "onap-ui-angular/dist/notifications/utilities/notification.config";
 
 @Component({
@@ -125,17 +125,17 @@ export class TypeWorkspaceComponent implements OnInit {
   private deleteDataType() {
       const modalTitle: string = this.translateService.translate('DELETE_DATA_TYPE_TITLE_CONFIRMATION_TEXT');
       const modalMessage: string = this.translateService.translate('DELETE_DATA_TYPE_MESSAGE_CONFIRMATION_TEXT');;
-      const modalButton = {
+        const modalButton: SdcUiCommon.IModalButtonComponent = {
           testId: 'ok-button',
           text: this.sdcMenu.alertMessages.okButton,
           type: SdcUiCommon.ButtonType.warning,
           callback: this.handleDeleteDataType(),
           closeModal: true
-      } as SdcUiComponents.ModalButtonComponent;
+        };
       this.modalServiceSdcUI.openWarningModal(modalTitle, modalMessage, 'alert-modal', [modalButton]);
   }
 
-  private handleDeleteDataType():Function {
+  private handleDeleteDataType(): () => void {
     return () => {
       this.isLoading = true;
       this.dataTypeService.deleteDataType(this.dataType.uniqueId).subscribe(()=> {

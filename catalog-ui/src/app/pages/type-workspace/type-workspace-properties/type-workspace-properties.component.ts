@@ -223,7 +223,7 @@ export class TypeWorkspacePropertiesComponent implements OnInit {
     }
 
     delete(property: PropertyModel) {
-        let onOk: Function = (): void => {
+        let onOk = (): void => {
             this.dataTypeService.deleteProperty(this.dataType.uniqueId, property.uniqueId).subscribe((response) => {
                 const props = this.properties;
                 props.splice(props.findIndex(p => p.uniqueId === response), 1);
@@ -234,13 +234,13 @@ export class TypeWorkspacePropertiesComponent implements OnInit {
         };
         let title: string = this.translateService.translate("PROPERTY_VIEW_DELETE_MODAL_TITLE");
         let message: string = this.translateService.translate("PROPERTY_VIEW_DELETE_MODAL_TEXT", {'name': property.name});
-        const okButton = {
+        const okButton: SdcUiCommon.IModalButtonComponent = {
             testId: "OK",
             text: "OK",
             type: SdcUiCommon.ButtonType.info,
             callback: onOk,
             closeModal: true
-        } as SdcUiComponents.ModalButtonComponent;
+        };
         this.modalServiceSdcUI.openInfoModal(title, message, 'delete-modal', [okButton]);
     };
 }
