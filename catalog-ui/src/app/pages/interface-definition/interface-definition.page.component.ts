@@ -27,7 +27,6 @@ import {ISdcConfig, SdcConfigToken} from "app/config/sdc-config.config";
 import {TranslateService} from "app/shared/translator/translate.service";
 import {SdcUiCommon, SdcUiServices} from 'onap-ui-angular';
 import {IModalButtonComponent} from 'onap-ui-angular/dist/common';
-import {ModalButtonComponent} from 'onap-ui-angular/dist/modals/modal-button.component';
 import {NotificationSettings} from 'onap-ui-angular/dist/notifications/utilities/notification.config';
 import {ModalComponent} from 'app/components/ui/modal/modal.component';
 import {ComponentType, ResourceType} from 'app/utils/constants';
@@ -618,10 +617,7 @@ export class InterfaceDefinitionComponent {
             this.modalTranslation.DELETE_TITLE,
             this.modalTranslation.deleteText(operation.name),
             'deleteOperationModal',
-            // onap-ui-angular types this parameter as the ModalButtonComponent *class* while
-            // IModalConfig.buttons is IModalButtonComponent[]; the service only ever reads the
-            // config fields, so the declared type is wrong upstream rather than here.
-            [deleteButton, cancelButton] as any as ModalButtonComponent[],
+            [deleteButton, cancelButton],
         );
     }
 

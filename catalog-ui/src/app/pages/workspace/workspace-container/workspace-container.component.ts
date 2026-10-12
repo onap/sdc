@@ -36,7 +36,7 @@ import {MenuHandler, MenuItem, MenuItemGroup} from 'app/utils/menu-handler';
 import {EventListenerService} from 'app/services/event-listener.service';
 import {ProgressService} from 'app/services/progress.service';
 import {CacheService} from 'app/services/cache.service';
-import {SdcUiCommon, SdcUiComponents, SdcUiServices} from 'onap-ui-angular';
+import {SdcUiCommon, SdcUiServices} from 'onap-ui-angular';
 import {NotificationSettings} from 'onap-ui-angular/dist/notifications/utilities/notification.config';
 import {IModalButtonComponent} from 'onap-ui-angular/dist/common';
 import {AutomatedUpgradeService} from '../../automated-upgrade/automated-upgrade.service';
@@ -629,9 +629,7 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
             this.translateService.translate('COMPONENT_VIEW_DELETE_MODAL_TITLE'),
             this.translateService.translate('COMPONENT_VIEW_DELETE_MODAL_TEXT'),
             'alert-modal',
-            // See unsaved-changes-flag.guard.ts: openWarningModal's declared button type
-            // contradicts IModalConfig.buttons upstream.
-            [modalButton] as any as SdcUiComponents.ModalButtonComponent[]);
+            [modalButton]);
     }
 
     handleDeleteArchivedComponent = (): void => {

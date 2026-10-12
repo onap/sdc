@@ -47,7 +47,6 @@ import {
 } from 'app/pages/interface-operation/operation-creator/operation-creator.component';
 import {SdcUiCommon, SdcUiServices} from 'onap-ui-angular';
 import {IModalButtonComponent, IModalConfig} from 'onap-ui-angular/dist/common';
-import {ModalButtonComponent} from 'onap-ui-angular/dist/modals/modal-button.component';
 
 export class UIOperationModel extends OperationModel {
     isCollapsed: boolean = true;
@@ -356,9 +355,7 @@ export class InterfaceOperationComponent {
             this.modalTranslation.DELETE_TITLE,
             this.modalTranslation.deleteText(operation.name),
             'deleteOperationModal',
-            // See the note in interface-definition.page.component.ts: openWarningModal's declared
-            // ModalButtonComponent[] contradicts IModalConfig.buttons upstream.
-            [deleteButton, cancelButton] as any as ModalButtonComponent[],
+            [deleteButton, cancelButton],
         );
     }
 

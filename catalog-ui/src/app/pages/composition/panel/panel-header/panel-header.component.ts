@@ -163,11 +163,11 @@ export class CompositionPanelHeaderComponent implements OnInit {
     private deleteInstance = (): void => {
         let title:string = "Delete Confirmation";
         let message:string = "Are you sure you would like to delete "+ this.selectedComponent.name + "?";
-        const okButton = {testId: "OK", text: "OK", type: SdcUiCommon.ButtonType.warning, callback: this.deleteInstanceConfirmed, closeModal: true} as SdcUiComponents.ModalButtonComponent;
+        const okButton: SdcUiCommon.IModalButtonComponent = {testId: "OK", text: "OK", type: SdcUiCommon.ButtonType.warning, callback: this.deleteInstanceConfirmed, closeModal: true};
         this.modalService.openWarningModal(title, message, "delete-modal", [okButton]);
     };
 
-    private deleteInstanceConfirmed: Function = () => {
+    private deleteInstanceConfirmed = () => {
         if(this.selectedComponent instanceof FullComponentInstance){
             this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_DELETE_COMPONENT_INSTANCE , this.selectedComponent.uniqueId);
         }

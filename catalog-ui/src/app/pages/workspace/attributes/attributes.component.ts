@@ -2,7 +2,7 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {Select} from '@ngxs/store';
 import {IAttributeModel} from 'app/models/attributes';
 import * as _ from 'lodash';
-import {SdcUiCommon, SdcUiComponents, SdcUiServices} from 'onap-ui-angular';
+import {SdcUiCommon, SdcUiServices} from 'onap-ui-angular';
 import {ModalComponent} from 'onap-ui-angular/dist/modals/modal.component';
 import {AttributeModel} from '../../../models/attributes';
 import {Resource} from '../../../models/components/resource';
@@ -158,12 +158,13 @@ export class AttributesComponent implements OnInit {
 
     const title: string = this.translateService.translate('ATTRIBUTE_VIEW_DELETE_MODAL_TITLE');
     const message: string = this.translateService.translate('ATTRIBUTE_VIEW_DELETE_MODAL_TEXT', {name: row.name});
-    const okButton = new SdcUiComponents.ModalButtonComponent();
-    okButton.testId = 'OK';
-    okButton.text = 'OK';
-    okButton.type = SdcUiCommon.ButtonType.info;
-    okButton.closeModal = true;
-    okButton.callback = onOk;
+    const okButton: SdcUiCommon.IModalButtonComponent = {
+      testId: 'OK',
+      text: 'OK',
+      type: SdcUiCommon.ButtonType.info,
+      callback: onOk,
+      closeModal: true
+    };
 
     this.modalService.openInfoModal(title, message, 'delete-modal', [okButton]);
   }

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
-import { SdcUiCommon, SdcUiComponents, SdcUiServices } from 'onap-ui-angular';
+import { SdcUiCommon, SdcUiServices } from 'onap-ui-angular';
 import {ArtifactModel} from '../../../models/artifacts';
 import { ArtifactGroupType, ArtifactType } from '../../../utils/constants';
 import { TopologyTemplateService } from '../../../services/component-services/topology-template.service';
@@ -164,7 +164,7 @@ export class ArtifactsService {
             instanceId
         };
 
-        const onOkPressed: Function = () => {
+        const onOkPressed = () => {
             this.serviceLoader.activate();
             this.store.dispatch((instanceId) ? new DeleteInstanceArtifactAction(artifactObject) : new DeleteArtifactAction(artifactObject))
                 .subscribe().add(() => this.serviceLoader.deactivate());
@@ -172,13 +172,13 @@ export class ArtifactsService {
 
         const title = this.translateService.translate('ARTIFACT_VIEW_DELETE_MODAL_TITLE');
         const text = this.translateService.translate('ARTIFACT_VIEW_DELETE_MODAL_TEXT', {name: artifact.artifactDisplayName});
-        const okButton = {
+        const okButton: SdcUiCommon.IModalButtonComponent = {
             testId: 'OK',
             text: 'OK',
             type: SdcUiCommon.ButtonType.warning,
             callback: onOkPressed,
             closeModal: true
-        } as SdcUiComponents.ModalButtonComponent;
+        };
         this.modalService.openWarningModal(title, text, 'delete-information-artifact-modal', [okButton]);
     }
 }

@@ -19,7 +19,7 @@ import { DropdownValue } from 'app/components/ui/form-components/dropdown/ui-ele
 import { ComponentGenericResponse } from 'app/services/responses/component-generic-response';
 import { TranslateService } from 'app/shared/translator/translate.service';
 import {ModalsHandler} from 'app/utils/modals-handler';
-import { SdcUiCommon, SdcUiComponents, SdcUiServices } from 'onap-ui-angular';
+import { SdcUiCommon, SdcUiServices } from 'onap-ui-angular';
 import {SelectedComponentType, TogglePanelLoadingAction} from "../../../common/store/graph.actions";
 
 @Component({
@@ -75,7 +75,7 @@ export class PropertiesTabComponent implements OnInit {
 
     public deleteProperty = (property: PropertyModel): void => {
 
-        const onOk: Function = (): void => {
+        const onOk = (): void => {
             this.store.dispatch(new TogglePanelLoadingAction({isLoading: true}));
             this.topologyTemplateService.deleteProperty(this.component.componentType, this.component.uniqueId, property.uniqueId)
                 .subscribe((response) => {
@@ -89,12 +89,12 @@ export class PropertiesTabComponent implements OnInit {
 
         const title: string = this.translateService.translate('PROPERTY_VIEW_DELETE_MODAL_TITLE');
         const message: string = this.translateService.translate('PROPERTY_VIEW_DELETE_MODAL_TEXT', {name: property.name});
-        const okButton = {
+        const okButton: SdcUiCommon.IModalButtonComponent = {
             testId: 'OK',
             text: 'OK',
             type: SdcUiCommon.ButtonType.info,
             callback: onOk,
-            closeModal: true} as SdcUiComponents.ModalButtonComponent;
+            closeModal: true};
         this.modalService.openInfoModal(title, message, 'delete-modal', [okButton]);
     }
 

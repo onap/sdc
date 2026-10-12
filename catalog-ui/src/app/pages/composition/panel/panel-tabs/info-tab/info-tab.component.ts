@@ -10,7 +10,7 @@ import {Store} from "@ngxs/store";
 import {EVENTS, GRAPH_EVENTS} from 'app/utils/constants';
 import {IDropDownOption} from "onap-ui-angular/dist/form-elements/dropdown/dropdown-models";
 import { CompositionPaletteService } from "app/pages/composition/palette/services/palette.service";
-import { SdcUiCommon, SdcUiComponents, SdcUiServices } from "onap-ui-angular";
+import { SdcUiCommon, SdcUiServices } from "onap-ui-angular";
 import { SdcMenuToken, IAppMenu } from "app/config/sdc-menu.config";
 import { CompositionService } from "app/pages/composition/composition.service";
 import {ServiceService} from 'app/services/component-services/service.service';
@@ -107,7 +107,7 @@ export class InfoTabComponent implements OnInit, OnDestroy {
         // let service = <Service>this.$scope.currentComponent;
         if(this.component instanceof FullComponentInstance) {
 
-            let onCancel = (error:any) => {
+            let onCancel = (error?:any) => {
                 this.store.dispatch(new TogglePanelLoadingAction({isLoading: false}));
                 if (error) {
                     console.log(error);
@@ -132,13 +132,13 @@ export class InfoTabComponent implements OnInit, OnDestroy {
 
                         const {title, message} = this.sdcMenu.alertMessages['upgradeInstance'];
                         let pathNames:string = this.getPathNamesVersionChangeModal(pathsToDelete);
-                        let onOk: Function = () => {
+                        let onOk = () => {
                             this.store.dispatch(new TogglePanelLoadingAction({isLoading: true}));
 
                             onUpdate();
                         };
-                        const okButton = {testId: "OK", text: "OK", type: SdcUiCommon.ButtonType.info, callback: onOk, closeModal: true} as SdcUiComponents.ModalButtonComponent;
-                        const cancelButton = {testId: "Cancel", text: "Cancel", type: SdcUiCommon.ButtonType.secondary, callback: <Function>onCancel, closeModal: true} as SdcUiComponents.ModalButtonComponent;
+                        const okButton: SdcUiCommon.IModalButtonComponent = {testId: "OK", text: "OK", type: SdcUiCommon.ButtonType.info, callback: onOk, closeModal: true};
+                        const cancelButton: SdcUiCommon.IModalButtonComponent = {testId: "Cancel", text: "Cancel", type: SdcUiCommon.ButtonType.secondary, callback: onCancel, closeModal: true};
                         const modal = this.modalService.openInfoModal(title, message.format([pathNames]), 'confirm-modal', [okButton, cancelButton]);
                         modal.getCloseButton().onClick(onCancel);
                     } else {

@@ -41,7 +41,7 @@ import {ModalService} from 'app/services/modal.service';
 import {TranslateService} from 'app/shared/translator/translate.service';
 import {PropertiesUtils} from 'app/pages/properties-assignment/services/properties.utils';
 import {ToscaFunctionValidationEvent} from 'app/pages/properties-assignment/tosca-function/tosca-function.component';
-import {SdcUiCommon, SdcUiComponents, SdcUiServices} from 'onap-ui-angular';
+import {SdcUiCommon, SdcUiServices} from 'onap-ui-angular';
 import {PropertyFormModalService, PropertyFormModalSaveContext} from './property-form-modal.service';
 
 // Validation patterns registered as AngularJS values in app.ts. They are static (no injected state),
@@ -495,7 +495,7 @@ export class PropertyFormModalComponent implements OnInit {
      */
     public deleteCurrent(): void {
         const property: PropertyModel = this.property;
-        const onOk: Function = (): void => {
+        const onOk = (): void => {
             const metadata = this.workspaceService.metadata;
             this.propertyFormModalService
                 .deleteProperty(metadata.componentType, metadata.uniqueId, property.uniqueId)
@@ -514,13 +514,13 @@ export class PropertyFormModalComponent implements OnInit {
         };
         const title: string = this.translateService.translate('PROPERTY_VIEW_DELETE_MODAL_TITLE');
         const message: string = this.translateService.translate('PROPERTY_VIEW_DELETE_MODAL_TEXT', {name: property.name});
-        const okButton = {
+        const okButton: SdcUiCommon.IModalButtonComponent = {
             testId: 'OK',
             text: 'OK',
             type: SdcUiCommon.ButtonType.info,
             callback: onOk,
             closeModal: true
-        } as SdcUiComponents.ModalButtonComponent;
+        };
         this.modalServiceSdcUI.openInfoModal(title, message, 'delete-modal', [okButton]);
     }
 
