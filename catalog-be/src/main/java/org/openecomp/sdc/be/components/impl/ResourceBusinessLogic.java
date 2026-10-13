@@ -5362,7 +5362,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         if (resourceResultEither.isRight()) {
             if (resourceResultEither.right().value() == StorageOperationStatus.NOT_FOUND) {
                 log.debug("Failed to found resource with id {} ", resourceId);
-                Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_NOT_FOUND, resourceId));
+                return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_NOT_FOUND, resourceId));
             }
             log.debug("failed to get resource by id {} with filters {}", resourceId, dataParamsToReturn);
             return Either.right(
