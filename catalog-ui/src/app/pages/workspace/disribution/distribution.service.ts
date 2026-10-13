@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { tap } from 'rxjs/operators';
-import { Distribution } from '../../../models/distribution';
 import { ISdcConfig, SdcConfigToken } from '../../../config/sdc-config.config';
+import { Distribution } from '../../../models/distribution';
 
 @Injectable()
 export class DistributionService {
@@ -79,7 +79,7 @@ export class DistributionService {
         if (this.getStatusMapForDistributionID(distributionID)) {
             if (componentName) {
                 if (this.getStatusMapForDistributionID(distributionID).filter((component) => component.componentID === componentName).length > 0) {
-                    const artifactsArr = this.getStatusMapForDistributionID(distributionID).filter((component) => component.componentID === componentName)[0]['artifacts']
+                    const artifactsArr = this.getStatusMapForDistributionID(distributionID).filter((component) => component.componentID === componentName)[0]['artifacts'];
                     if (artifactsArr.length > 0) {
                         artifactsArr.forEach((artifact) => {
                             const artifactObj = {
@@ -95,7 +95,7 @@ export class DistributionService {
                 const components = this.getComponentsByDistributionID(distributionID);
                 components.forEach((componentName) => {
                     if (this.getStatusMapForDistributionID(distributionID).filter((component) => component.componentID === componentName).length > 0) {
-                        const artifactsArr = this.getStatusMapForDistributionID(distributionID).filter((component) => component.componentID === componentName)[0]['artifacts']
+                        const artifactsArr = this.getStatusMapForDistributionID(distributionID).filter((component) => component.componentID === componentName)[0]['artifacts'];
                         if (artifactsArr.length > 0) {
                             artifactsArr.forEach((artifact) => {
                                 const artifactObj = {
@@ -147,7 +147,7 @@ export class DistributionService {
         distribution.length = 0;
 
         // Sort the response of statuses from Server, so it will be easy to pop the latest status when it will be required
-        const sortedResponseByTimeStamp = distributionStatusMapResponseFromServer.sort((a, b) => b['timestamp'] - a['timestamp'])
+        const sortedResponseByTimeStamp = distributionStatusMapResponseFromServer.sort((a, b) => b['timestamp'] - a['timestamp']);
 
         sortedResponseByTimeStamp.map((distributionStatus) => {
             const formattedDate = this.formatDate(distributionStatus['timestamp']);
@@ -158,17 +158,15 @@ export class DistributionService {
 
             const detailedArtifactStatus = {
                 componentID: distributionStatus['omfComponentID'],
-                artifactName: distributionStatus['url']? distributionStatus['url'].split('/').pop() : '',
+                artifactName: distributionStatus['url'] ? distributionStatus['url'].split('/').pop() : '',
                 url: distributionStatus['url'],
                 time: distributionStatus['timestamp'],
                 status: distributionStatus['status'],
                 errorReason: distributionStatus['errorReason']
             };
 
-
-
             // Add Component to this.distributionStatusesMap in case not exist.
-            let componentPosition = _.findIndex(distribution, {componentID: detailedArtifactStatus.componentID})
+            let componentPosition = _.findIndex(distribution, {componentID: detailedArtifactStatus.componentID});
 
             if (componentPosition === -1) {
                 this.addComponentIdToDistributionStatusMap(distributionID, detailedArtifactStatus.componentID);
@@ -177,15 +175,13 @@ export class DistributionService {
 
             const component = distribution[componentPosition];
 
-
             // Add Artifact to this.distributionStatusesMap[componentID] in case not exist.
-            let artifactPosition = _.findIndex(component.artifacts, {artifactUrl: detailedArtifactStatus.url})
+            let artifactPosition = _.findIndex(component.artifacts, {artifactUrl: detailedArtifactStatus.url});
 
             if (artifactPosition === -1) {
                 this.addArtifactToComponentId(distributionID, componentPosition, detailedArtifactStatus.artifactName, detailedArtifactStatus.url);
                 artifactPosition = component.artifacts.length - 1;
             }
-
 
             // Add status to relevat artifact in relevent componentID.
             if (detailedArtifactStatus.url) {
@@ -199,7 +195,6 @@ export class DistributionService {
                 // Should update the Component -> status from MSO
                 this.distributionStatusesMap[distributionID][componentPosition].msoStatus = detailedArtifactStatus.status;
             }
-
 
         });
     }

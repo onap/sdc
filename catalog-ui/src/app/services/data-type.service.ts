@@ -18,21 +18,21 @@
  * ============LICENSE_END=========================================================
  */
 
-import * as _ from "lodash";
-import {Inject, Injectable} from '@angular/core';
-import {DataTypeModel} from 'app/models/data-types';
-import {DataTypesMap} from 'app/models/data-types-map';
-import {DerivedFEProperty} from 'app/models/properties-inputs/derived-fe-property';
-import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
-import {PropertyFEModel} from 'app/models/properties-inputs/property-fe-model';
-import {DataTypesService} from "app/services/data-types.service";
-import {PROPERTY_DATA} from 'app/utils/constants';
-import {DerivedFEAttribute} from "../models/attributes-outputs/derived-fe-attribute";
-import {ISdcConfig} from "../config/sdc-config.config.factory";
-import {SdcConfigToken} from "../config/sdc-config.config";
-import {HttpBackend, HttpClient, HttpHeaders} from "@angular/common/http";
-import {Observable} from "rxjs/Observable";
-import {AuthenticationService} from "./authentication.service";
+import { HttpBackend, HttpClient, HttpHeaders } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
+import { DataTypeModel } from 'app/models/data-types';
+import { DataTypesMap } from 'app/models/data-types-map';
+import { DerivedFEProperty } from 'app/models/properties-inputs/derived-fe-property';
+import { PropertyBEModel } from 'app/models/properties-inputs/property-be-model';
+import { PropertyFEModel } from 'app/models/properties-inputs/property-fe-model';
+import { DataTypesService } from 'app/services/data-types.service';
+import { PROPERTY_DATA } from 'app/utils/constants';
+import * as _ from 'lodash';
+import { Observable } from 'rxjs/Observable';
+import { SdcConfigToken } from '../config/sdc-config.config';
+import { ISdcConfig } from '../config/sdc-config.config.factory';
+import { DerivedFEAttribute } from '../models/attributes-outputs/derived-fe-attribute';
+import { AuthenticationService } from './authentication.service';
 
 /** This is a new service for NG2, to eventually replace app/services/data-types.service.ts
  *
@@ -47,9 +47,8 @@ export class DataTypeService {
     private readonly dataTypeUrl: string;
     private readonly dataTypeUploadUrl: string;
 
-
     constructor(private dataTypeService: DataTypesService, private authService: AuthenticationService, private handler: HttpBackend, private httpClient: HttpClient, @Inject(SdcConfigToken) sdcConfig: ISdcConfig) {
-        this.dataTypes = dataTypeService.getAllDataTypes(); //This should eventually be replaced by an NG2 call to the backend instead of utilizing Angular1 downgraded component.
+        this.dataTypes = dataTypeService.getAllDataTypes(); // This should eventually be replaced by an NG2 call to the backend instead of utilizing Angular1 downgraded component.
         this.baseUrl = sdcConfig.api.root + sdcConfig.api.component_api_root;
         this.dataTypeUrl = `${this.baseUrl}data-types`;
         this.dataTypeUploadUrl = `${this.baseUrl}uploadType`;
@@ -58,9 +57,9 @@ export class DataTypeService {
 
     public getDataTypeByModelAndTypeName(modelName: string, typeName: string): DataTypeModel {
         this.dataTypes = this.dataTypeService.getAllDataTypesFromModel(modelName) || {} as DataTypesMap;
-        let dataTypeFound = this.dataTypes[typeName];
+        const dataTypeFound = this.dataTypes[typeName];
         if (!dataTypeFound) {
-            console.log("MISSING Datatype for model " + modelName + " and type: " + typeName);
+            console.log('MISSING Datatype for model ' + modelName + ' and type: ' + typeName);
         }
         return dataTypeFound;
     }
@@ -76,7 +75,7 @@ export class DataTypeService {
         if (!this.dataTypes) {
             this.dataTypes = this.dataTypeService.getAllDataTypes();
         }
-        if (!this.dataTypes[typeName]) console.log("MISSING Datatype: " + typeName);
+        if (!this.dataTypes[typeName]) { console.log('MISSING Datatype: ' + typeName); }
         return this.dataTypes[typeName];
     }
 
@@ -89,13 +88,13 @@ export class DataTypeService {
     }
 
     public findById(id: string): Observable<DataTypeModel> {
-        const url = `${this.dataTypeUrl}/${id}`
+        const url = `${this.dataTypeUrl}/${id}`;
         return this.httpClient.get<DataTypeModel>(url);
     }
 
-    public findAllProperties(id: string): Observable<Array<PropertyBEModel>> {
-        const url = `${this.dataTypeUrl}/${id}/properties`
-        return this.httpClient.get<Array<PropertyBEModel>>(url);
+    public findAllProperties(id: string): Observable<PropertyBEModel[]> {
+        const url = `${this.dataTypeUrl}/${id}/properties`;
+        return this.httpClient.get<PropertyBEModel[]>(url);
     }
 
     public createProperty(id: string, property: PropertyBEModel): Observable<PropertyBEModel> {
@@ -110,8 +109,8 @@ export class DataTypeService {
 
     public deleteProperty(dataTypeId: string, propertyId: string): Observable<Object> {
         const url = `${this.dataTypeUrl}/${dataTypeId}/${propertyId}`;
-        let headers = new HttpHeaders({'USER_ID': this.authService.getLoggedinUser().userId});
-        let options = {headers: headers};
+        const headers = new HttpHeaders({USER_ID: this.authService.getLoggedinUser().userId});
+        const options = {headers};
         return this.httpClient.delete(url, options).map((res: Response) => {
             return propertyId;
         });
@@ -119,8 +118,8 @@ export class DataTypeService {
 
     public deleteDataType(dataTypeId: string): Observable<Object> {
         const url = `${this.dataTypeUrl}/${dataTypeId}`;
-        let headers = new HttpHeaders({'USER_ID': this.authService.getLoggedinUser().userId});
-        let options = {headers: headers};
+        const headers = new HttpHeaders({USER_ID: this.authService.getLoggedinUser().userId});
+        const options = {headers};
         return this.httpClient.delete(url, options).map((res: Response) => {
             return dataTypeId;
         });
@@ -130,10 +129,10 @@ export class DataTypeService {
         const url = `${this.dataTypeUploadUrl}/datatypesyaml`;
         const formData = new FormData();
         formData.append('dataTypesYaml', importingFile);
-        formData.append('model', model != 'SDC AID' ? model : "")
-        formData.append('includeToModelImport', "true");
-        let headers = new HttpHeaders({'USER_ID': this.authService.getLoggedinUser().userId});
-        let options = {headers: headers};
+        formData.append('model', model != 'SDC AID' ? model : '');
+        formData.append('includeToModelImport', 'true');
+        const headers = new HttpHeaders({USER_ID: this.authService.getLoggedinUser().userId});
+        const options = {headers};
 
         return this.httpClient.post<any>(url, formData, options);
     }
@@ -145,45 +144,45 @@ export class DataTypeService {
         return null;
     }
 
-    public getDerivedDataTypeProperties(dataTypeObj: DataTypeModel, propertiesArray: Array<DerivedFEProperty>, parentName: string, toscaPath?: string[]) {
-        //push all child properties to array
+    public getDerivedDataTypeProperties(dataTypeObj: DataTypeModel, propertiesArray: DerivedFEProperty[], parentName: string, toscaPath?: string[]) {
+        // push all child properties to array
         const parentToscaPath = toscaPath != null ? toscaPath.toString() : null;
-        if (!dataTypeObj) return;
+        if (!dataTypeObj) { return; }
         if (dataTypeObj.properties) {
             dataTypeObj.properties.forEach((derivedProperty) => {
                 derivedProperty.parentToscaPath = parentToscaPath != null ? parentToscaPath.split(',') : [];
                 let innerToscaPath = null;
-                if (dataTypeObj.name !== PROPERTY_DATA.OPENECOMP_ROOT || derivedProperty.name !== PROPERTY_DATA.SUPPLEMENTAL_DATA) {//The requirement is to not display the property supplemental_data
-                    const childProperty : DerivedFEProperty = new DerivedFEProperty(derivedProperty, parentName);
+                if (dataTypeObj.name !== PROPERTY_DATA.OPENECOMP_ROOT || derivedProperty.name !== PROPERTY_DATA.SUPPLEMENTAL_DATA) {// The requirement is to not display the property supplemental_data
+                    const childProperty: DerivedFEProperty = new DerivedFEProperty(derivedProperty, parentName);
                     innerToscaPath = childProperty.toscaPath;
                     propertiesArray.push(childProperty);
                 }
 
-                let derivedDataTypeObj: DataTypeModel = this.getDataTypeByTypeName(derivedProperty.type);
+                const derivedDataTypeObj: DataTypeModel = this.getDataTypeByTypeName(derivedProperty.type);
                 if (dataTypeObj && dataTypeObj.properties) {
-                    this.getDerivedDataTypeProperties(derivedDataTypeObj, propertiesArray, parentName + "#" + derivedProperty.name, innerToscaPath);
+                    this.getDerivedDataTypeProperties(derivedDataTypeObj, propertiesArray, parentName + '#' + derivedProperty.name, innerToscaPath);
                 }
             });
         }
-        //recurse parent (derivedFrom), in case one of parents contains properties
+        // recurse parent (derivedFrom), in case one of parents contains properties
         if (dataTypeObj.derivedFrom && PROPERTY_DATA.ROOT_DATA_TYPE !== dataTypeObj.derivedFrom.name) {
             this.getDerivedDataTypeProperties(dataTypeObj.derivedFrom, propertiesArray, parentName);
         }
     }
 
-    public getDerivedDataTypeAttributes(dataTypeObj: DataTypeModel, attributesArray: Array<DerivedFEAttribute>, parentName: string) {
-        //push all child properties to array
-        if (!dataTypeObj) return;
+    public getDerivedDataTypeAttributes(dataTypeObj: DataTypeModel, attributesArray: DerivedFEAttribute[], parentName: string) {
+        // push all child properties to array
+        if (!dataTypeObj) { return; }
         if (dataTypeObj.attributes) {
             dataTypeObj.attributes.forEach((derivedAttribute) => {
-                if (dataTypeObj.name !== PROPERTY_DATA.OPENECOMP_ROOT || derivedAttribute.name !== PROPERTY_DATA.SUPPLEMENTAL_DATA) {//The requirement is to not display the property supplemental_data
+                if (dataTypeObj.name !== PROPERTY_DATA.OPENECOMP_ROOT || derivedAttribute.name !== PROPERTY_DATA.SUPPLEMENTAL_DATA) {// The requirement is to not display the property supplemental_data
                     attributesArray.push(new DerivedFEAttribute(derivedAttribute, parentName));
                 }
-                let derivedDataTypeObj: DataTypeModel = this.getDataTypeByTypeName(derivedAttribute.type);
-                this.getDerivedDataTypeAttributes(derivedDataTypeObj, attributesArray, parentName + "#" + derivedAttribute.name);
+                const derivedDataTypeObj: DataTypeModel = this.getDataTypeByTypeName(derivedAttribute.type);
+                this.getDerivedDataTypeAttributes(derivedDataTypeObj, attributesArray, parentName + '#' + derivedAttribute.name);
             });
         }
-        //recurse parent (derivedFrom), in case one of parents contains properties
+        // recurse parent (derivedFrom), in case one of parents contains properties
         if (dataTypeObj.derivedFrom && PROPERTY_DATA.ROOT_DATA_TYPE !== dataTypeObj.derivedFrom.name) {
             this.getDerivedDataTypeAttributes(dataTypeObj.derivedFrom, attributesArray, parentName);
         }
@@ -194,18 +193,17 @@ export class DataTypeService {
      * Additional custom behavior can be added by adding a function with the given dataType name
      */
     public checkForCustomBehavior = (property: PropertyFEModel) => {
-        let shortTypeName: string = property.type.split('.').pop();
+        const shortTypeName: string = property.type.split('.').pop();
         if (this[shortTypeName]) {
-            this[shortTypeName](property); //execute function for given type, pass property as param
+            this[shortTypeName](property); // execute function for given type, pass property as param
         }
     }
 
     public Naming = (property: PropertyFEModel) => {
-        let generatedNamingVal: boolean = _.get(property.valueObj, 'ecomp_generated_naming', true);
+        const generatedNamingVal: boolean = _.get(property.valueObj, 'ecomp_generated_naming', true);
         property.flattenedChildren.forEach((prop) => {
-            if (prop.name == 'naming_policy') prop.hidden = !generatedNamingVal;
-            if (prop.name == 'instance_name') prop.hidden = generatedNamingVal;
+            if (prop.name == 'naming_policy') { prop.hidden = !generatedNamingVal; }
+            if (prop.name == 'instance_name') { prop.hidden = generatedNamingVal; }
         });
     }
 }
-

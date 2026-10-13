@@ -23,12 +23,12 @@
 
 'use strict';
 import { ComponentType, SdcElementType } from '../../utils/constants';
-import { ComponentMetadata } from '../component-metadata';
-import { PolicyMetadata } from '../policy-metadata';
-import { GroupMetadata } from '../group-metadata';
-import { RequirementsGroup } from '../requirement';
 import { CapabilitiesGroup } from '../capability';
 import { IMainCategory } from '../category';
+import { ComponentMetadata } from '../component-metadata';
+import { GroupMetadata } from '../group-metadata';
+import { PolicyMetadata } from '../policy-metadata';
+import { RequirementsGroup } from '../requirement';
 
 export enum LeftPaletteMetadataTypes {
     Component = 'COMPONENT',
@@ -75,6 +75,10 @@ export class LeftPaletteComponent {
             this.initComponent(item as ComponentMetadata);
             return;
         }
+    }
+
+    public getComponentSubType = (): string => {
+        return this.componentSubType;
     }
 
     private initComponent(component: ComponentMetadata): void {
@@ -129,8 +133,4 @@ export class LeftPaletteComponent {
         this.searchFilterTerms = this.type + ' ' + policy.name + ' ' + policy.version;
         this.isDraggable = false;
     }
-
-    public getComponentSubType = (): string => {
-        return this.componentSubType;
-    };
 }

@@ -1,13 +1,13 @@
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ReactiveFormsModule } from '@angular/forms';
+import { IMainCategory, ISubCategory } from 'app/models/category';
+import { TranslateModule } from 'app/shared/translator/translate.module';
+import { TranslateServiceConfigToken } from 'app/shared/translator/translate.service.config';
 import 'rxjs/add/operator/map';
-import {of} from 'rxjs/observable/of';
-import {ComponentFixture, TestBed} from '@angular/core/testing';
-import {ReactiveFormsModule} from '@angular/forms';
-import {HttpClientTestingModule} from '@angular/common/http/testing';
-import {AddCategoryModalComponent} from './add-category-modal.component';
-import {CategoryManagementService} from '../services/category-management.service';
-import {IMainCategory, ISubCategory} from 'app/models/category';
-import {TranslateModule} from 'app/shared/translator/translate.module';
-import {TranslateServiceConfigToken} from 'app/shared/translator/translate.service.config';
+import { of } from 'rxjs/observable/of';
+import { CategoryManagementService } from '../services/category-management.service';
+import { AddCategoryModalComponent } from './add-category-modal.component';
 
 const NAME_PATTERN = /^[\s\w&\-\+]+$/;
 

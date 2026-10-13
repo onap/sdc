@@ -18,9 +18,9 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-import {ModulePropertyModalService} from './module-property-modal.service';
-import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
+import { Observable } from 'rxjs/Observable';
+import { ModulePropertyModalService } from './module-property-modal.service';
 
 describe('ModulePropertyModalService', () => {
     let service: ModulePropertyModalService;

@@ -19,16 +19,16 @@
  * ============LICENSE_END=========================================================
  */
 
-import {NgModule} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {TranslateModule} from 'app/shared/translator/translate.module';
-import {PropertyTableModule} from 'app/components/logic/properties-table/property-table.module';
-import {ToscaFunctionModule} from '../properties-assignment/tosca-function/tosca-function.module';
-import {ConstraintsModule} from '../properties-assignment/constraints/constraints.module';
-import {PropertyMetadataModule} from '../properties-assignment/property-metadata/property-metadata.module';
-import {PropertyFormModalComponent} from './property-form-modal.component';
-import {PropertyFormModalService} from './property-form-modal.service';
+import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { PropertyTableModule } from 'app/components/logic/properties-table/property-table.module';
+import { TranslateModule } from 'app/shared/translator/translate.module';
+import { ConstraintsModule } from '../properties-assignment/constraints/constraints.module';
+import { PropertyMetadataModule } from '../properties-assignment/property-metadata/property-metadata.module';
+import { ToscaFunctionModule } from '../properties-assignment/tosca-function/tosca-function.module';
+import { PropertyFormModalComponent } from './property-form-modal.component';
+import { PropertyFormModalService } from './property-form-modal.service';
 
 // ValidationUtils is now a pure Angular @Injectable provided at the AppModule root, so the modal
 // resolves it by type from the root injector — the local $injector bridge is no longer needed.

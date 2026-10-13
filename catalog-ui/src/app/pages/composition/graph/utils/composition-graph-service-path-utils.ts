@@ -18,32 +18,33 @@
  * ============LICENSE_END=========================================================
  */
 
-import * as _ from "lodash";
-import {CompositionGraphGeneralUtils} from "./composition-graph-general-utils";
-import {ServiceService} from 'app/services/component-services/service.service';
-import {Service} from "app/models/components/service";
-import {ForwardingPath} from "app/models/forwarding-path";
-import {ForwardingPathLink} from "app/models/forwarding-path-link";
-import {ComponentRef, Injectable} from "@angular/core";
-import {CompositionCiServicePathLink} from "app/models/graph/graph-links/composition-graph-links/composition-ci-service-path-link";
-import {SdcUiServices} from "onap-ui-angular";
-import {QueueServiceUtils} from "app/utils/queue-service-utils";
-import {ServicePathsListComponent} from "app/pages/composition/graph/service-paths-list/service-paths-list.component";
-import {ButtonModel} from 'app/models/button';
-import {ModalModel} from 'app/models/modal';
-import {ServicePathCreatorComponent} from "app/pages/composition/graph/service-path-creator/service-path-creator.component";
-import {ModalService} from "app/services/modal.service";
-import {ModalComponent} from "app/components/ui/modal/modal.component";
-import {Select, Store} from "@ngxs/store";
-import {WorkspaceState} from "app/store/states/workspace.state";
-import {WorkspaceService} from "app/pages/workspace/workspace.service";
-import {CompositionService} from "../../composition.service";
-import {CommonGraphUtils} from "../common/common-graph-utils";
-import {GRAPH_EVENTS} from "app/utils/constants";
-import {EventListenerService} from "app/services/event-listener.service";
+import { ComponentRef, Injectable } from '@angular/core';
+import { Select, Store } from '@ngxs/store';
+import { ModalComponent } from 'app/components/ui/modal/modal.component';
+import { ButtonModel } from 'app/models/button';
+import { Service } from 'app/models/components/service';
+import { ForwardingPath } from 'app/models/forwarding-path';
+import { ForwardingPathLink } from 'app/models/forwarding-path-link';
+import { CompositionCiServicePathLink } from 'app/models/graph/graph-links/composition-graph-links/composition-ci-service-path-link';
+import { ModalModel } from 'app/models/modal';
+import { ServicePathCreatorComponent } from 'app/pages/composition/graph/service-path-creator/service-path-creator.component';
+import { ServicePathsListComponent } from 'app/pages/composition/graph/service-paths-list/service-paths-list.component';
+import { WorkspaceService } from 'app/pages/workspace/workspace.service';
+import { ServiceService } from 'app/services/component-services/service.service';
+import { EventListenerService } from 'app/services/event-listener.service';
+import { ModalService } from 'app/services/modal.service';
+import { WorkspaceState } from 'app/store/states/workspace.state';
+import { GRAPH_EVENTS } from 'app/utils/constants';
+import { QueueServiceUtils } from 'app/utils/queue-service-utils';
+import * as _ from 'lodash';
+import { SdcUiServices } from 'onap-ui-angular';
+import { CompositionService } from '../../composition.service';
+import { CommonGraphUtils } from '../common/common-graph-utils';
+import { CompositionGraphGeneralUtils } from './composition-graph-general-utils';
 
 @Injectable()
 export class ServicePathGraphUtils {
+    private modalInstance: ComponentRef<ModalComponent>;
 
     constructor(
         private generalGraphUtils: CompositionGraphGeneralUtils,
@@ -54,32 +55,27 @@ export class ServicePathGraphUtils {
         private modalService: ModalService,
         private workspaceService: WorkspaceService,
         private compositionService: CompositionService,
-        private store:Store,
+        private store: Store,
         private eventListenerService: EventListenerService
     ) {
     }
-
-    private isViewOnly = (): boolean => {
-        return this.store.selectSnapshot(state => state.workspace.isViewOnly);
-    }
-    private modalInstance: ComponentRef<ModalComponent>;
 
     public deletePathsFromGraph(cy: Cy.Instance) {
         cy.remove(`[type="${CompositionCiServicePathLink.LINK_TYPE}"]`);
     }
 
     public drawPath(cy: Cy.Instance, forwardingPath: ForwardingPath) {
-        let pathElements = forwardingPath.pathElements.listToscaDataDefinition;
+        const pathElements = forwardingPath.pathElements.listToscaDataDefinition;
 
         _.forEach(pathElements, (link: ForwardingPathLink) => {
-            let data: CompositionCiServicePathLink = new CompositionCiServicePathLink(link);
+            const data: CompositionCiServicePathLink = new CompositionCiServicePathLink(link);
             data.source = _.find(
                 this.compositionService.componentInstances,
-                instance => instance.name === data.forwardingPathLink.fromNode
+                (instance) => instance.name === data.forwardingPathLink.fromNode
             ).uniqueId;
             data.target = _.find(
                 this.compositionService.componentInstances,
-                instance => instance.name === data.forwardingPathLink.toNode
+                (instance) => instance.name === data.forwardingPathLink.toNode
             ).uniqueId;
             data.pathId = forwardingPath.uniqueId;
             data.pathName = forwardingPath.name;
@@ -90,32 +86,32 @@ export class ServicePathGraphUtils {
     public createOrUpdateServicePath = (path: any): void => {
         this.loaderService.activate();
 
-        let onSuccess: (response: ForwardingPath) => void = (response: ForwardingPath) => {
+        const onSuccess: (response: ForwardingPath) => void = (response: ForwardingPath) => {
             this.loaderService.deactivate();
             this.compositionService.forwardingPaths[response.uniqueId] = response;
-            this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_SERVICE_PATH_CREATED, response.uniqueId)
+            this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_SERVICE_PATH_CREATED, response.uniqueId);
         };
 
         this.queueServiceUtils.addBlockingUIAction(
             () => this.serviceService.createOrUpdateServicePath(this.workspaceService.metadata.uniqueId, path).subscribe(onSuccess
-            , (error) => {this.loaderService.deactivate()})
+            , (error) => {this.loaderService.deactivate(); })
         );
-    };
+    }
 
     public onCreateServicePath = (): void => {
         // this.showServicePathMenu = false;
-        let cancelButton: ButtonModel = new ButtonModel('Cancel', 'outline white', this.modalService.closeCurrentModal);
-        let saveButton: ButtonModel = new ButtonModel('Create', 'blue', this.createPath, this.getDisabled);
-        let modalModel: ModalModel = new ModalModel('l', 'Create Service Flow', '', [saveButton, cancelButton], 'standard', true);
+        const cancelButton: ButtonModel = new ButtonModel('Cancel', 'outline white', this.modalService.closeCurrentModal);
+        const saveButton: ButtonModel = new ButtonModel('Create', 'blue', this.createPath, this.getDisabled);
+        const modalModel: ModalModel = new ModalModel('l', 'Create Service Flow', '', [saveButton, cancelButton], 'standard', true);
         this.modalInstance = this.modalService.createCustomModal(modalModel);
         this.modalService.addDynamicContentToModal(this.modalInstance, ServicePathCreatorComponent, {serviceId: this.workspaceService.metadata.uniqueId});
         this.modalInstance.instance.open();
-    };
+    }
 
     public onListServicePath = (): void => {
         // this.showServicePathMenu = false;
-        let cancelButton: ButtonModel = new ButtonModel('Close', 'outline white', this.modalService.closeCurrentModal);
-        let modalModel: ModalModel = new ModalModel('md', 'Service Flows List', '', [cancelButton], 'standard', true);
+        const cancelButton: ButtonModel = new ButtonModel('Close', 'outline white', this.modalService.closeCurrentModal);
+        const modalModel: ModalModel = new ModalModel('md', 'Service Flows List', '', [cancelButton], 'standard', true);
         this.modalInstance = this.modalService.createCustomModal(modalModel);
         this.modalService.addDynamicContentToModal(this.modalInstance, ServicePathsListComponent, {
             serviceId: this.workspaceService.metadata.uniqueId,
@@ -124,26 +120,30 @@ export class ServicePathGraphUtils {
             isViewOnly: this.isViewOnly()
         });
         this.modalInstance.instance.open();
-    };
+    }
 
     public onEditServicePath = (id: string): void => {
-        let cancelButton: ButtonModel = new ButtonModel('Cancel', 'outline white', this.modalService.closeCurrentModal);
-        let saveButton: ButtonModel = new ButtonModel('Save', 'blue', this.createPath, this.getDisabled);
-        let modalModel: ModalModel = new ModalModel('l', 'Edit Path', '', [saveButton, cancelButton], 'standard', true);
+        const cancelButton: ButtonModel = new ButtonModel('Cancel', 'outline white', this.modalService.closeCurrentModal);
+        const saveButton: ButtonModel = new ButtonModel('Save', 'blue', this.createPath, this.getDisabled);
+        const modalModel: ModalModel = new ModalModel('l', 'Edit Path', '', [saveButton, cancelButton], 'standard', true);
         this.modalInstance = this.modalService.createCustomModal(modalModel);
         this.modalService.addDynamicContentToModal(this.modalInstance, ServicePathCreatorComponent, {
             serviceId: this.workspaceService.metadata.uniqueId,
             pathId: id
         });
         this.modalInstance.instance.open();
-    };
+    }
 
     public getDisabled = (): boolean => {
         return this.isViewOnly() || !this.modalInstance.instance.dynamicContent.instance.checkFormValidForSubmit();
-    };
+    }
 
     public createPath = (): void => {
         this.createOrUpdateServicePath(this.modalInstance.instance.dynamicContent.instance.createServicePathData());
         this.modalService.closeCurrentModal();
-    };
+    }
+
+    private isViewOnly = (): boolean => {
+        return this.store.selectSnapshot((state) => state.workspace.isViewOnly);
+    }
 }

@@ -17,14 +17,14 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-import {NgModule} from "@angular/core";
-import {GenericArtifactBrowserComponent} from "./generic-artifact-browser.component";
-import {NgxDatatableModule} from "@swimlane/ngx-datatable";
-import {GabService} from "../../../services/gab.service";
-import {BrowserModule} from "@angular/platform-browser";
-import {GenericArtifactBrowserColumnProviderComponent} from "./generic-artifact-browser-column-provider.component";
-import {FormsModule} from "@angular/forms";
-import {UiElementsModule} from "../../ui/ui-elements.module";
+import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { BrowserModule } from '@angular/platform-browser';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { GabService } from '../../../services/gab.service';
+import { UiElementsModule } from '../../ui/ui-elements.module';
+import { GenericArtifactBrowserColumnProviderComponent } from './generic-artifact-browser-column-provider.component';
+import { GenericArtifactBrowserComponent } from './generic-artifact-browser.component';
 
 @NgModule({
     declarations: [
@@ -37,7 +37,7 @@ import {UiElementsModule} from "../../ui/ui-elements.module";
         NgxDatatableModule,
         UiElementsModule
     ],
-    entryComponents: [ //need to add anything that will be dynamically created
+    entryComponents: [ // need to add anything that will be dynamically created
         GenericArtifactBrowserComponent,
         GenericArtifactBrowserColumnProviderComponent
     ],

@@ -1,4 +1,4 @@
-import {WorkspaceService} from '../../workspace.service';
+import { WorkspaceService } from '../../workspace.service';
 
 describe('WorkspaceService - isValidForm', () => {
     it('defaults to true', () => {

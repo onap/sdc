@@ -17,8 +17,8 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-import {OnboardVendorPageComponent} from './onboard-vendor.component';
-import {MenuItemGroup} from 'app/utils/menu-handler';
+import { MenuItemGroup } from 'app/utils/menu-handler';
+import { OnboardVendorPageComponent } from './onboard-vendor.component';
 
 function makeRegistry() {
     return {
@@ -76,7 +76,7 @@ describe('OnboardVendorPageComponent', () => {
     });
 
     // Test 2: handleVendorEvent with 'breadcrumbsupdated' builds topNavMenuModel correctly
-    it("handleVendorEvent('breadcrumbsupdated') builds a MenuItemGroup with correct selectedIndex and menuItems count", () => {
+    it('handleVendorEvent(\'breadcrumbsupdated\') builds a MenuItemGroup with correct selectedIndex and menuItems count', () => {
         const {comp, cdr} = createComp();
         comp.ngOnInit();
         comp.ngAfterViewInit();

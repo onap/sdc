@@ -18,8 +18,8 @@
  * ============LICENSE_END=========================================================
  */
 
-import {Injectable} from '@angular/core';
-import {ActivatedRouteSnapshot, CanDeactivate, Router, RouterStateSnapshot} from '@angular/router';
+import { Injectable } from '@angular/core';
+import { ActivatedRouteSnapshot, CanDeactivate, Router, RouterStateSnapshot } from '@angular/router';
 
 export interface UnsavedChangesAware {
     hasChangedData: boolean;

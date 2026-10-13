@@ -18,36 +18,36 @@
  * ============LICENSE_END=========================================================
  */
 'use strict';
-import {Component as NgComponent, Inject, OnInit} from '@angular/core';
-import {NavigationService} from '../../services/navigation.service';
-import {IConfigRoles} from 'app/models/app-config';
-import {ButtonModel} from 'app/models/button';
-import {ComponentMetadata} from 'app/models/component-metadata';
-import {Component} from 'app/models/components/component';
-import {Resource} from 'app/models/components/resource';
-import {Service} from 'app/models/components/service';
-import {ModalModel} from 'app/models/modal';
-import {IUserProperties} from 'app/models/user';
-import {ModalService} from "../../services/modal.service";
-import {HomeFilter} from 'app/models/home-filter';
-import {AuthenticationService} from 'app/services/authentication.service';
-import {CacheService} from 'app/services/cache.service';
-import {ResourceService} from 'app/services/component-services/resource.service';
-import {HomeService} from 'app/services/home.service';
-import {ComponentState, States} from 'app/utils/constants';
-import {ModalsHandler} from 'app/utils/modals-handler';
-import {SdcUiServices} from 'onap-ui-angular';
-import {CHANGE_COMPONENT_CSAR_VERSION_FLAG, ComponentType, ResourceType} from '../../utils/constants';
-import {ImportVSPService} from '../../components/modals/onboarding-modal/import-vsp.service';
-import {ISdcConfig, SdcConfigToken} from '../../config/sdc-config.config';
-import {IAppMenu, SdcMenuToken} from '../../config/sdc-menu.config';
-import {EntityFilterPipe} from '../../pipes/entity-filter.pipe';
-import {TranslateService} from '../../shared/translator/translate.service';
-import {FoldersItemsMenu, FoldersItemsMenuGroup, FoldersMenu} from './folders';
-import {ImportVSPdata} from "../../components/modals/onboarding-modal/onboarding-modal.component";
-import {DataTypeCatalogComponent} from "../../models/data-type-catalog-component";
-import {ModalImportTypeComponent} from "../../components/ui/modal-import-type/modal-import-type.component";
+import { Component as NgComponent, Inject, OnInit } from '@angular/core';
+import { IConfigRoles } from 'app/models/app-config';
+import { ButtonModel } from 'app/models/button';
+import { ComponentMetadata } from 'app/models/component-metadata';
+import { Component } from 'app/models/components/component';
+import { Resource } from 'app/models/components/resource';
+import { Service } from 'app/models/components/service';
+import { HomeFilter } from 'app/models/home-filter';
+import { ModalModel } from 'app/models/modal';
+import { IUserProperties } from 'app/models/user';
+import { AuthenticationService } from 'app/services/authentication.service';
+import { CacheService } from 'app/services/cache.service';
+import { ResourceService } from 'app/services/component-services/resource.service';
+import { HomeService } from 'app/services/home.service';
+import { ComponentState, States } from 'app/utils/constants';
+import { ModalsHandler } from 'app/utils/modals-handler';
 import * as _ from 'lodash';
+import { SdcUiServices } from 'onap-ui-angular';
+import { ImportVSPService } from '../../components/modals/onboarding-modal/import-vsp.service';
+import { ImportVSPdata } from '../../components/modals/onboarding-modal/onboarding-modal.component';
+import { ModalImportTypeComponent } from '../../components/ui/modal-import-type/modal-import-type.component';
+import { ISdcConfig, SdcConfigToken } from '../../config/sdc-config.config';
+import { IAppMenu, SdcMenuToken } from '../../config/sdc-menu.config';
+import { DataTypeCatalogComponent } from '../../models/data-type-catalog-component';
+import { EntityFilterPipe } from '../../pipes/entity-filter.pipe';
+import { ModalService } from '../../services/modal.service';
+import { NavigationService } from '../../services/navigation.service';
+import { TranslateService } from '../../shared/translator/translate.service';
+import { CHANGE_COMPONENT_CSAR_VERSION_FLAG, ComponentType, ResourceType } from '../../utils/constants';
+import { FoldersItemsMenu, FoldersItemsMenuGroup, FoldersMenu } from './folders';
 
 @NgComponent({
     selector: 'home-page',
@@ -55,6 +55,7 @@ import * as _ from 'lodash';
     styleUrls: ['./home.component.less']
 })
 export class HomeComponent implements OnInit {
+
     public numberOfItemToDisplay: number;
     public homeItems: Component[];
     public homeFilteredItems: Array<Component | DataTypeCatalogComponent>;
@@ -127,22 +128,6 @@ export class HomeComponent implements OnInit {
         });
     }
 
-    private checkoutAndRedirectToWorkspace(importVSPdata: ImportVSPdata) {
-        this.loaderService.activate();
-        this.resourceService.checkout(importVSPdata.previousComponent.uniqueId)
-        .subscribe((componentMetadata: ComponentMetadata) => {
-            this.navigationService.navigate('workspace.general', {
-                id: componentMetadata.uniqueId,
-                componentCsar: importVSPdata.componentCsar,
-                type: importVSPdata.type
-            });
-            this.loaderService.deactivate();
-        }, () => {
-            this.loaderService.deactivate();
-        });
-        return;
-    }
-
     public onImportVf(file: any): void {
         if (file && file.filename) {
             // Check that the file has valid extension.
@@ -182,7 +167,7 @@ export class HomeComponent implements OnInit {
     public onImportService(file: any): void {
         if (file && file.filename) {
             // Check that the file has valid extension.
-            const fileExtension: string = file.filename.split(".").pop();
+            const fileExtension: string = file.filename.split('.').pop();
             if (this.sdcConfig.csarFileExtension.indexOf(fileExtension.toLowerCase()) !== -1) {
                 this.navigationService.navigate('workspace.general', {
                     type: ComponentType.SERVICE.toLowerCase(),
@@ -195,8 +180,7 @@ export class HomeComponent implements OnInit {
                 this.modalService.openWarningModal(title, message, 'error-invalid-csar-ext');
             }
         }
-    };
-
+    }
     public openCreateModal(componentType: string, importedFile: any): void {
         if (importedFile) {
             this.initEntities(true); // Return from import
@@ -302,6 +286,40 @@ export class HomeComponent implements OnInit {
         this.displayActions = display !== undefined ? display : !this.displayActions;
     }
 
+    openModalImportType = () => {
+        const modalTitle = 'Import Type';
+        const modal = this.modalServiceSdc.createCustomModal(new ModalModel(
+            'sm',
+            modalTitle,
+            null,
+            [
+                new ButtonModel('Import', 'blue', () => { this.uploadDataTypeFile(modal.instance.dynamicContent.instance.file); modal.instance.close(); }, () => false),
+                new ButtonModel('Cancel', 'outline grey', () => {
+                    modal.instance.close();
+                }),
+            ],
+            null
+        ));
+        this.modalServiceSdc.addDynamicContentToModal(modal, ModalImportTypeComponent, {});
+        modal.instance.open();
+    }
+
+    private checkoutAndRedirectToWorkspace(importVSPdata: ImportVSPdata) {
+        this.loaderService.activate();
+        this.resourceService.checkout(importVSPdata.previousComponent.uniqueId)
+        .subscribe((componentMetadata: ComponentMetadata) => {
+            this.navigationService.navigate('workspace.general', {
+                id: componentMetadata.uniqueId,
+                componentCsar: importVSPdata.componentCsar,
+                type: importVSPdata.type
+            });
+            this.loaderService.deactivate();
+        }, () => {
+            this.loaderService.deactivate();
+        });
+        return;
+    }
+
     private _getTotalCounts(tmpFolder): number {
         let total: number = 0;
         if (tmpFolder.dist !== undefined) {
@@ -379,11 +397,11 @@ export class HomeComponent implements OnInit {
         this.homeFilteredSlicedItems = this.homeFilteredItems.slice(0, this.numberOfItemToDisplay);
     }
 
-    private makeFilteredItems(homeItems: Array<Component>, filter: HomeFilter) {
+    private makeFilteredItems(homeItems: Component[], filter: HomeFilter) {
         let filteredComponents: Array<Component | DataTypeCatalogComponent> = homeItems;
 
         // filter: exclude all resources of type 'vfcmtType':
-            filteredComponents = filteredComponents.filter((c) =>
+        filteredComponents = filteredComponents.filter((c) =>
                 !c.isResource() || (c as Resource).resourceType.indexOf(this.vfcmtType) === -1);
 
         // common entity filter
@@ -418,34 +436,15 @@ export class HomeComponent implements OnInit {
         this.notificationIconCallback = this.notificationIconCallback.bind(this);
     }
 
-    openModalImportType = () => {
-        let modalTitle = 'Import Type';
-        let modal = this.modalServiceSdc.createCustomModal(new ModalModel(
-            'sm',
-            modalTitle,
-            null,
-            [
-                new ButtonModel('Import', 'blue', () =>
-                { this.uploadDataTypeFile(modal.instance.dynamicContent.instance.file); modal.instance.close();}, () => false),
-                new ButtonModel('Cancel', 'outline grey', () => {
-                    modal.instance.close();
-                }),
-            ],
-            null
-        ));
-        this.modalServiceSdc.addDynamicContentToModal(modal, ModalImportTypeComponent, {});
-        modal.instance.open();
-    }
-
     private uploadDataTypeFile(file: any): void {
         if (file && file.name) {
             // Check that the file has valid extension.
             const fileExtension: string = file.name.split('.').pop();
             if (this.sdcConfig.toscaFileExtension.indexOf(fileExtension.toLowerCase()) !== -1) {
                 this.navigationService.navigate(States.TYPE_WORKSPACE, {
-                    type: "datatype",
-                    subPage: "general",
-                    id: "import",
+                    type: 'datatype',
+                    subPage: 'general',
+                    id: 'import',
                     importedFile: file
                 });
             } else {

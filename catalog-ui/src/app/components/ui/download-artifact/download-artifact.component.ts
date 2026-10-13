@@ -1,12 +1,12 @@
-import { Component, Input } from "@angular/core";
-import {ArtifactModel} from 'app/models/artifacts';
-import {IFileDownload} from 'app/models/file-download';
-import {EventListenerService} from 'app/services/event-listener.service';
-import {CacheService} from 'app/services/cache.service';
-import {EVENTS} from 'app/utils/constants';
-import { TopologyTemplateService } from "app/services/component-services/topology-template.service";
-import { WorkspaceService } from "app/pages/workspace/workspace.service";
-import { ComponentInstanceService } from "app/services/component-instance-services/component-instance.service";
+import { Component, Input } from '@angular/core';
+import { ArtifactModel } from 'app/models/artifacts';
+import { IFileDownload } from 'app/models/file-download';
+import { WorkspaceService } from 'app/pages/workspace/workspace.service';
+import { CacheService } from 'app/services/cache.service';
+import { ComponentInstanceService } from 'app/services/component-instance-services/component-instance.service';
+import { TopologyTemplateService } from 'app/services/component-services/topology-template.service';
+import { EventListenerService } from 'app/services/event-listener.service';
+import { EVENTS } from 'app/utils/constants';
 
 @Component({
     selector: 'download-artifact',
@@ -15,9 +15,9 @@ import { ComponentInstanceService } from "app/services/component-instance-servic
 `
 })
 export class DownloadArtifactComponent {
-    
-    @Input() showLoader:boolean;
-    @Input() artifact:ArtifactModel;
+
+    @Input() showLoader: boolean;
+    @Input() artifact: ArtifactModel;
     @Input() isInstance: boolean;
     @Input() downloadIconClass: string;
     @Input() componentType: string;
@@ -25,47 +25,31 @@ export class DownloadArtifactComponent {
     @Input() testId: string;
     @Input() disabled: boolean;
 
-    public iconType:string;
+    public iconType: string;
 
     private DOWNLOAD_CSS_CLASSES = {
-        DOWNLOAD_ICON: "download-o",
-        LOADER_ICON: "spinner"
-    }
-    constructor(private cacheService:CacheService, private EventListenerService:EventListenerService, private topologyTemplateService:TopologyTemplateService,
-                private componentInstanceService: ComponentInstanceService, private workspaceService:WorkspaceService) {
-        
+        DOWNLOAD_ICON: 'download-o',
+        LOADER_ICON: 'spinner'
+    };
+    constructor(private cacheService: CacheService, private EventListenerService: EventListenerService, private topologyTemplateService: TopologyTemplateService,
+                private componentInstanceService: ComponentInstanceService, private workspaceService: WorkspaceService) {
+
     }
 
-    ngOnInit () {
+    ngOnInit() {
         this.iconType = this.DOWNLOAD_CSS_CLASSES.DOWNLOAD_ICON;
         this.initDownloadLoader();
 
     }
 
-    private initDownloadLoader = ()=> {
-        //if the artifact is in a middle of download progress register form callBack & change icon from download to loader
-        if (this.showLoader && this.cacheService.get(this.artifact.uniqueId)) {
-            this.EventListenerService.registerObserverCallback(EVENTS.DOWNLOAD_ARTIFACT_FINISH_EVENT + this.artifact.uniqueId, this.updateDownloadIcon);
-            window.setTimeout(():void => {
-                if (this.cacheService.get(this.artifact.uniqueId)) {
-                    this.iconType = this.DOWNLOAD_CSS_CLASSES.LOADER_ICON;
-                }
-            }, 1000);
-        }
-    };
-
-    private updateDownloadIcon = () => {
-        this.iconType = this.downloadIconClass || this.DOWNLOAD_CSS_CLASSES.DOWNLOAD_ICON;
-    };
-
     public download = (event) => {
         event.stopPropagation();
-        let onFailed = (response):void => {
+        const onFailed = (response): void => {
             console.info('onFailed', response);
             this.removeDownloadedFileLoader();
         };
 
-        let onSuccess = (data:IFileDownload):void => {
+        const onSuccess = (data: IFileDownload): void => {
             this.downloadFile(data);
             this.removeDownloadedFileLoader();
         };
@@ -77,70 +61,86 @@ export class DownloadArtifactComponent {
         } else {
             this.topologyTemplateService.downloadArtifact(this.componentType, this.componentId, this.artifact.uniqueId).subscribe(onSuccess, onFailed);
         }
-    };
+    }
 
-    private setDownloadedFileLoader = ()=> {
-        if (this.showLoader) {
-            //set in cache service thet the artifact is in download progress
-            this.cacheService.set(this.artifact.uniqueId, true);
-            this.initDownloadLoader();
-        }
-    };
-
-    private removeDownloadedFileLoader = ()=> {
-        if (this.showLoader) {
-            this.cacheService.set(this.artifact.uniqueId, false);
-            this.EventListenerService.notifyObservers(EVENTS.DOWNLOAD_ARTIFACT_FINISH_EVENT + this.artifact.uniqueId);
-        }
-    };
-
-    private downloadFile = (file:IFileDownload):void => {
-        if (file) {
-            let blob = this.base64toBlob(file.base64Contents, '');
-            let fileName = file.artifactName;
-            this.triggerFileDownload(blob, fileName);
-        }
-    };
-
-    public base64toBlob = (base64Data, contentType):any => {
-        let byteCharacters = atob(base64Data);
+    public base64toBlob = (base64Data, contentType): any => {
+        const byteCharacters = atob(base64Data);
         return this.byteCharactersToBlob(byteCharacters, contentType);
-    };
+    }
 
-    public byteCharactersToBlob = (byteCharacters, contentType):any => {
+    public byteCharactersToBlob = (byteCharacters, contentType): any => {
         contentType = contentType || '';
-        let sliceSize = 1024;
-        let bytesLength = byteCharacters.length;
-        let slicesCount = Math.ceil(bytesLength / sliceSize);
-        let byteArrays = new Array(slicesCount);
+        const sliceSize = 1024;
+        const bytesLength = byteCharacters.length;
+        const slicesCount = Math.ceil(bytesLength / sliceSize);
+        const byteArrays = new Array(slicesCount);
 
         for (let sliceIndex = 0; sliceIndex < slicesCount; ++sliceIndex) {
-            let begin = sliceIndex * sliceSize;
-            let end = Math.min(begin + sliceSize, bytesLength);
+            const begin = sliceIndex * sliceSize;
+            const end = Math.min(begin + sliceSize, bytesLength);
 
-            let bytes = new Array(end - begin);
+            const bytes = new Array(end - begin);
             for (let offset = begin, i = 0; offset < end; ++i, ++offset) {
                 bytes[i] = byteCharacters[offset].charCodeAt(0);
             }
             byteArrays[sliceIndex] = new Uint8Array(bytes);
         }
         return new Blob(byteArrays, {type: contentType});
-    };
+    }
 
-    public triggerFileDownload = (blob, fileName):void=> {
-        let url = window.URL.createObjectURL(blob);
-        let downloadLink = document.createElement("a");
+    public triggerFileDownload = (blob, fileName): void => {
+        const url = window.URL.createObjectURL(blob);
+        const downloadLink = document.createElement('a');
 
         downloadLink.setAttribute('href', url);
         downloadLink.setAttribute('download', fileName);
         document.body.appendChild(downloadLink);
 
-        var clickEvent = new MouseEvent("click", {
-            "view": window,
-            "bubbles": true,
-            "cancelable": true
+        const clickEvent = new MouseEvent('click', {
+            view: window,
+            bubbles: true,
+            cancelable: true
         });
         downloadLink.dispatchEvent(clickEvent);
 
+    }
+
+    private initDownloadLoader = () => {
+        // if the artifact is in a middle of download progress register form callBack & change icon from download to loader
+        if (this.showLoader && this.cacheService.get(this.artifact.uniqueId)) {
+            this.EventListenerService.registerObserverCallback(EVENTS.DOWNLOAD_ARTIFACT_FINISH_EVENT + this.artifact.uniqueId, this.updateDownloadIcon);
+            window.setTimeout((): void => {
+                if (this.cacheService.get(this.artifact.uniqueId)) {
+                    this.iconType = this.DOWNLOAD_CSS_CLASSES.LOADER_ICON;
+                }
+            }, 1000);
+        }
+    }
+
+    private updateDownloadIcon = () => {
+        this.iconType = this.downloadIconClass || this.DOWNLOAD_CSS_CLASSES.DOWNLOAD_ICON;
+    }
+
+    private setDownloadedFileLoader = () => {
+        if (this.showLoader) {
+            // set in cache service thet the artifact is in download progress
+            this.cacheService.set(this.artifact.uniqueId, true);
+            this.initDownloadLoader();
+        }
+    }
+
+    private removeDownloadedFileLoader = () => {
+        if (this.showLoader) {
+            this.cacheService.set(this.artifact.uniqueId, false);
+            this.EventListenerService.notifyObservers(EVENTS.DOWNLOAD_ARTIFACT_FINISH_EVENT + this.artifact.uniqueId);
+        }
+    }
+
+    private downloadFile = (file: IFileDownload): void => {
+        if (file) {
+            const blob = this.base64toBlob(file.base64Contents, '');
+            const fileName = file.artifactName;
+            this.triggerFileDownload(blob, fileName);
+        }
     }
 }

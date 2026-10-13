@@ -1,4 +1,4 @@
-import {Component, Input} from "@angular/core";
+import { Component, Input } from '@angular/core';
 
 @Component({
     selector: 'upgrade-line-item',
@@ -8,11 +8,11 @@ import {Component, Input} from "@angular/core";
 
 export class UpgradeLineItemComponent {
 
-    @Input() arrowName:string;
-    @Input() icon:string;
-    @Input() prefix:string;
-    @Input() text:string;
-    
+    @Input() arrowName: string;
+    @Input() icon: string;
+    @Input() prefix: string;
+    @Input() text: string;
+
     constructor() {
 
     }

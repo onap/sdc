@@ -5,10 +5,10 @@ import { SdcUiServices } from 'onap-ui-angular';
 import { ConfigureFn, configureTests } from '../../../../jest/test-config.helper';
 import { ComponentMetadata } from '../../../models/component-metadata';
 import { AuthenticationService } from '../../../services/authentication.service';
+import { EventListenerService } from '../../../services/event-listener.service';
 import { WorkspaceService } from '../workspace.service';
 import { DistributionComponent } from './distribution.component';
 import { DistributionService } from './distribution.service';
-import {EventListenerService} from "../../../services/event-listener.service";
 
 describe('DistributionComponent', () => {
   let fixture: ComponentFixture<DistributionComponent>;
@@ -53,7 +53,7 @@ describe('DistributionComponent', () => {
     eventListenerService = {
       registerObserverCallback: jest.fn(),
       unRegisterObserver: jest.fn()
-    }
+    };
 
     loaderServiceMock = {
       activate: jest.fn(),

@@ -1,5 +1,5 @@
-import {Component, OnChanges, AfterContentInit, ViewChild, ElementRef, Input, Output, SimpleChanges, EventEmitter} from "@angular/core";
-import {WindowRef} from "../../services/window.service";
+import { AfterContentInit, Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { WindowRef } from '../../services/window.service';
 
 @Component({
 	selector: 'multiline-ellipsis',
@@ -27,7 +27,7 @@ export class MultilineEllipsisComponent implements OnChanges, AfterContentInit {
 	}
 
 	public ngOnChanges(changes: SimpleChanges) {
-		this.prepareStyles()
+		this.prepareStyles();
 	}
 
 	public ngAfterContentInit() {
@@ -47,7 +47,7 @@ export class MultilineEllipsisComponent implements OnChanges, AfterContentInit {
         	'max-height': `calc(${this.lines + 1} * ${lineHeight})`
 		};
 		this.stylesDots = {
-        	'top': `calc(${2 * this.lines} * ${lineHeight} - 100%)`
+        	top: `calc(${2 * this.lines} * ${lineHeight} - 100%)`
 		};
 	}
 

@@ -25,19 +25,19 @@
  * Created by rc2122 on 5/23/2017.
  */
 import { Injectable } from '@angular/core';
+import { ComponentMetadata } from 'app/models/component-metadata';
+import { Component as TopologyTemplate } from 'app/models/components/component';
+import { IComponentMetadata } from '../../models/component-metadata';
+import { CacheService } from '../../services/cache.service';
 // ComponentType comes from the concrete module and NOT from the `app/utils` barrel, which re-exports
 // menu-handler and so drags in NavigationService — a cycle, since NavigationService injects this
 // service. The barrel is also the §OO JIT-bootstrap hazard.
-import {ComponentState, ComponentType, Role, WorkspaceMode} from "../../utils/constants";
-import {ComponentMetadata} from 'app/models/component-metadata';
-import {Component as TopologyTemplate} from 'app/models/components/component';
-import {CacheService} from "../../services/cache.service";
-import {IComponentMetadata} from "../../models/component-metadata";
+import { ComponentState, ComponentType, Role, WorkspaceMode } from '../../utils/constants';
 
 @Injectable()
 export class WorkspaceService {
 
-    public metadata:ComponentMetadata;
+    public metadata: ComponentMetadata;
     public component: TopologyTemplate;
     // Reference to the Angular workspace shell, so the AngularJS shim controller can
     // delegate the action methods (create / save / changeLifecycleState) that child
@@ -52,7 +52,7 @@ export class WorkspaceService {
     // mutable owner outside the route config is required.
     public unsavedChanges: boolean = false;
 
-    constructor(private cacheService:CacheService) {
+    constructor(private cacheService: CacheService) {
 
     }
 
@@ -77,10 +77,10 @@ export class WorkspaceService {
         }
     }
 
-    public getComponentMode = (component:TopologyTemplate):WorkspaceMode => {//return if is edit or view for resource or service
+    public getComponentMode = (component: TopologyTemplate): WorkspaceMode => {// return if is edit or view for resource or service
         let mode = WorkspaceMode.VIEW;
 
-        let user = this.cacheService.get("user");
+        const user = this.cacheService.get('user');
         if (component.lifecycleState === ComponentState.NOT_CERTIFIED_CHECKOUT &&
             component.lastUpdaterUserId === user.userId) {
             if ((component.isService() || component.isResource()) && user.role == Role.DESIGNER) {
@@ -90,5 +90,3 @@ export class WorkspaceService {
         return mode;
     }
 }
-
-  

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,9 +18,9 @@
  * ============LICENSE_END=========================================================
  */
 
-import { Component, EventEmitter, Input, Output } from '@angular/core'
-import {ValidationConfiguration} from 'app/models/validation-config';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
+import { ValidationConfiguration } from 'app/models/validation-config';
 
 export interface UiElementBaseInterface {
     onChange();
@@ -48,17 +48,17 @@ export class UiElementBase {
     @Input() type: string;
     @Input() path: string;
     @Input() pattern: any;
-    @Input() readonly:boolean;
+    @Input() readonly: boolean;
 
-    @Input() testId:string;
+    @Input() testId: string;
 
     constructor() {
-        //this.control = new FormControl('', [Validators.required]);
+        // this.control = new FormControl('', [Validators.required]);
         this.control = new FormControl('', []);
 
         this.baseEmitter.subscribe((changeEvent: IUiElementChangeEvent) => {
             this.valueChange.emit(changeEvent.value);
-        })
+        });
     }
 
     onChange() {

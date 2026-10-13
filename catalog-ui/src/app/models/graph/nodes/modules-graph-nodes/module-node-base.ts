@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,19 +21,19 @@
  * Created by obarda on 6/29/2016.
  */
 'use strict';
-import {ImagesUrl} from "../../../../utils/constants";
-import {Module} from "../../../modules/base-module";
-import {CommonNodeBase} from "../base-common-node";
-import {getSdcConfig} from "app/config/sdc-config.config.factory";
+import { getSdcConfig } from 'app/config/sdc-config.config.factory';
+import { ImagesUrl } from '../../../../utils/constants';
+import { Module } from '../../../modules/base-module';
+import { CommonNodeBase } from '../base-common-node';
 
 export interface IModuleNodeBase {
 }
 
 export class ModuleNodeBase extends CommonNodeBase implements IModuleNodeBase {
 
-    module:Module;
+    module: Module;
 
-    constructor(module:Module) {
+    constructor(module: Module) {
         super();
         this.module = module;
         this.init();
@@ -46,7 +46,7 @@ export class ModuleNodeBase extends CommonNodeBase implements IModuleNodeBase {
         this.displayName = this.module.name;
         this.isGroup = true;
         this.img = getSdcConfig().imagesPath + ImagesUrl.MODULE_ICON;
-        this.classes = "module-node";
+        this.classes = 'module-node';
 
     }
 }

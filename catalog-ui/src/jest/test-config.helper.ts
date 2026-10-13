@@ -1,11 +1,11 @@
-import { TestBed } from '@angular/core/testing'
+import { TestBed } from '@angular/core/testing';
 
 type CompilerOptions = Partial<{
   providers: any[]
   useJit: boolean
   preserveWhitespaces: boolean
-}>
-export type ConfigureFn = (testBed: typeof TestBed) => void
+}>;
+export type ConfigureFn = (testBed: typeof TestBed) => void;
 
 export const configureTests = (configure: ConfigureFn, compilerOptions: CompilerOptions = {}) => {
   const compilerConfig: CompilerOptions = {
@@ -17,5 +17,5 @@ export const configureTests = (configure: ConfigureFn, compilerOptions: Compiler
 
   configure(configuredTestBed);
 
-  return configuredTestBed.compileComponents().then(() => configuredTestBed)
+  return configuredTestBed.compileComponents().then(() => configuredTestBed);
 };

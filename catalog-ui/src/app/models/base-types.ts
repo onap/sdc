@@ -17,7 +17,6 @@
 *  ============LICENSE_END=========================================================
 */
 
-
 interface ListBaseTypesResponse {
   baseTypes: BaseTypeResponse[];
   required: boolean;

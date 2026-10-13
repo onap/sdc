@@ -1,10 +1,9 @@
-import {async, ComponentFixture, TestBed} from "@angular/core/testing";
-import {NO_ERRORS_SCHEMA} from "@angular/core";
-import {ToNodeStepComponent} from "./to-node-step.component";
-import {ConnectionWizardService} from "../connection-wizard.service";
-import {ConfigureFn, configureTests} from "../../../../../../jest/test-config.helper";
-import {Match} from "../../../../../models/graph/match-relation";
-
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ConfigureFn, configureTests } from '../../../../../../jest/test-config.helper';
+import { Match } from '../../../../../models/graph/match-relation';
+import { ConnectionWizardService } from '../connection-wizard.service';
+import { ToNodeStepComponent } from './to-node-step.component';
 
 describe('to-node-step component', () => {
 
@@ -21,9 +20,9 @@ describe('to-node-step component', () => {
                 },
                 getOptionalRequirementsByInstanceUniqueId: jest.fn().mockReturnValue(5),
                 getOptionalCapabilitiesByInstanceUniqueId: jest.fn().mockReturnValue(10)
-            }
+            };
 
-            const configure: ConfigureFn = testBed => {
+            const configure: ConfigureFn = (testBed) => {
                 testBed.configureTestingModule({
                     declarations: [ToNodeStepComponent],
                     imports: [],
@@ -34,12 +33,11 @@ describe('to-node-step component', () => {
                 });
             };
 
-            configureTests(configure).then(testBed => {
+            configureTests(configure).then((testBed) => {
                 fixture = testBed.createComponent(ToNodeStepComponent);
             });
         })
     );
-
 
     it('should match current snapshot', () => {
         expect(fixture).toMatchSnapshot();
@@ -47,22 +45,21 @@ describe('to-node-step component', () => {
 
     it('should test the ngOnInit with isFromTo = false', () => {
         const component = TestBed.createComponent(ToNodeStepComponent);
-        let service = TestBed.get(ConnectionWizardService);
+        const service = TestBed.get(ConnectionWizardService);
         service.selectedMatch.isFromTo = false;
         component.componentInstance.ngOnInit();
-        expect(component.componentInstance.displayRequirementsOrCapabilities).toEqual("Requirement");
+        expect(component.componentInstance.displayRequirementsOrCapabilities).toEqual('Requirement');
         expect(connectionWizardServiceMock.getOptionalRequirementsByInstanceUniqueId).toHaveBeenCalledWith(false, connectionWizardServiceMock.selectedMatch.capability);
         expect(component.componentInstance.optionalRequirementsMap).toEqual(5);
         expect(component.componentInstance.optionalCapabilitiesMap).toEqual({});
     });
 
-
     it('should test the ngOnInit with isFromTo = true', () => {
         const component = TestBed.createComponent(ToNodeStepComponent);
-        let service = TestBed.get(ConnectionWizardService);
+        const service = TestBed.get(ConnectionWizardService);
         service.selectedMatch.isFromTo = true;
         component.componentInstance.ngOnInit();
-        expect(component.componentInstance.displayRequirementsOrCapabilities).toEqual("Capability");
+        expect(component.componentInstance.displayRequirementsOrCapabilities).toEqual('Capability');
         expect(connectionWizardServiceMock.getOptionalCapabilitiesByInstanceUniqueId).toHaveBeenCalledWith(true, connectionWizardServiceMock.selectedMatch.requirement);
         expect(component.componentInstance.optionalCapabilitiesMap).toEqual(10);
         expect(component.componentInstance.optionalRequirementsMap).toEqual({});

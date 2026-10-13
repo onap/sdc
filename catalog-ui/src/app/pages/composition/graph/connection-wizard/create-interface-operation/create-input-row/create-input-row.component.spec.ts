@@ -17,13 +17,13 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import {CreateInputRowComponent} from './create-input-row.component';
-import {SdcUiComponentsModule} from "onap-ui-angular/dist";
-import {ReactiveFormsModule} from "@angular/forms";
-import {TranslatePipe} from "../../../../../../shared/translator/translate.pipe";
-import {PropertyAssignment} from "../../../../../../models/properties-inputs/property-assignment";
+import { ReactiveFormsModule } from '@angular/forms';
+import { SdcUiComponentsModule } from 'onap-ui-angular/dist';
+import { PropertyAssignment } from '../../../../../../models/properties-inputs/property-assignment';
+import { TranslatePipe } from '../../../../../../shared/translator/translate.pipe';
+import { CreateInputRowComponent } from './create-input-row.component';
 
 describe('CreateInputRowComponent', () => {
   let component: CreateInputRowComponent;
@@ -59,11 +59,11 @@ describe('CreateInputRowComponent', () => {
     const nameFormControl = component.formGroup.get(nameField);
     expect(nameFormControl.valid).toBeFalsy();
     let validationErrors = nameFormControl.errors || {};
-    expect(validationErrors['required']).toBeTruthy();
+    expect(validationErrors.required).toBeTruthy();
 
     nameFormControl.setValue('');
     validationErrors = nameFormControl.errors || {};
-    expect(validationErrors['required']).toBeTruthy();
+    expect(validationErrors.required).toBeTruthy();
 
     nameFormControl.setValue('a');
     expect(nameFormControl.valid).toBeTruthy();

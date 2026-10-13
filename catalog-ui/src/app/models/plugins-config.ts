@@ -10,11 +10,11 @@ export class Plugin {
 
 export class PluginDisplayOptions {
     displayName: string;
-    displayContext: Array<string>;
-    displayRoles: Array<string>;
+    displayContext: string[];
+    displayRoles: string[];
 }
 
-export type Plugins = Array<Plugin>;
+export type Plugins = Plugin[];
 
 export class PluginsConfiguration {
     static plugins: Plugins;

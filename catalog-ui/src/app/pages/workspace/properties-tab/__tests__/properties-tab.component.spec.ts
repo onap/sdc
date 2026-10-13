@@ -17,10 +17,10 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-import {of, throwError} from 'rxjs';
-import {WorkspaceMode} from 'app/utils/constants';
-import {PropertyModel} from 'app/models/properties';
-import {WorkspacePropertiesTabComponent} from '../properties-tab.component';
+import { PropertyModel } from 'app/models/properties';
+import { WorkspaceMode } from 'app/utils/constants';
+import { of, throwError } from 'rxjs';
+import { WorkspacePropertiesTabComponent } from '../properties-tab.component';
 
 function makeProperty(name: string, overrides: any = {}): PropertyModel {
     return new PropertyModel(Object.assign({
@@ -36,7 +36,7 @@ function makeComponent(properties?: PropertyModel[]): any {
         uniqueId: 'comp-1',
         properties,
         // model deleteProperty: removes from component.properties, resolves a thenable (ng.IPromise-like)
-        deleteProperty: jest.fn(function (this: any, id: string) {
+        deleteProperty: jest.fn(function(this: any, id: string) {
             this.properties = (this.properties || []).filter((p: PropertyModel) => p.uniqueId !== id);
             return Promise.resolve();
         })

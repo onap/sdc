@@ -17,12 +17,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
-import {DatePipe} from '@angular/common';
-import {Subscription} from 'rxjs/Subscription';
-import {IUserProperties} from 'app/models/user';
-import {UserService} from 'app/services/user.service';
-import {TranslateService} from 'app/shared/translator/translate.service';
+import { DatePipe } from '@angular/common';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { IUserProperties } from 'app/models/user';
+import { UserService } from 'app/services/user.service';
+import { TranslateService } from 'app/shared/translator/translate.service';
+import { Subscription } from 'rxjs/Subscription';
 
 interface ITableHeader {
     title: string;
@@ -114,17 +114,6 @@ export class UserManagementComponent implements OnInit, OnDestroy {
         }
     }
 
-    private buildTableHeaders(): void {
-        this.tableHeadersList = [
-            {title: 'First Name', property: 'firstName'},
-            {title: 'Last Name', property: 'lastName'},
-            {title: this.translateService.translate('USER_MANAGEMENT_TABLE_HEADER_USER_ID'), property: 'userId'},
-            {title: 'Email', property: 'email'},
-            {title: 'Role', property: 'role'},
-            {title: 'Last Active', property: 'lastLoginTime'}
-        ];
-    }
-
     sort(by: string): void {
         this.reverse = (this.sortBy === by) ? !this.reverse : false;
         this.sortBy = by;
@@ -142,6 +131,17 @@ export class UserManagementComponent implements OnInit, OnDestroy {
 
     trackByUserId(i: number, user: IUserRow): any {
         return user.userId || i;
+    }
+
+    private buildTableHeaders(): void {
+        this.tableHeadersList = [
+            {title: 'First Name', property: 'firstName'},
+            {title: 'Last Name', property: 'lastName'},
+            {title: this.translateService.translate('USER_MANAGEMENT_TABLE_HEADER_USER_ID'), property: 'userId'},
+            {title: 'Email', property: 'email'},
+            {title: 'Role', property: 'role'},
+            {title: 'Last Active', property: 'lastLoginTime'}
+        ];
     }
 
     private refresh(): void {

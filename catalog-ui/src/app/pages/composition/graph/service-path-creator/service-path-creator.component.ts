@@ -18,31 +18,31 @@
  * ============LICENSE_END=========================================================
  */
 
-import * as _ from "lodash";
 import { Component, ElementRef, forwardRef, Inject } from '@angular/core';
-import {Link} from './link-row/link.model';
-import {ForwardingPath} from 'app/models/forwarding-path';
-import {ServiceService} from "app/services/component-services/service.service";
-import {ForwardingPathLink} from "app/models/forwarding-path-link";
-import {ServicePathMapItem} from "app/models/graph/nodes-and-links-map";
-import {CompositionService} from "app/pages/composition/composition.service";
+import { ForwardingPath } from 'app/models/forwarding-path';
+import { ForwardingPathLink } from 'app/models/forwarding-path-link';
+import { ServicePathMapItem } from 'app/models/graph/nodes-and-links-map';
+import { CompositionService } from 'app/pages/composition/composition.service';
+import { ServiceService } from 'app/services/component-services/service.service';
+import * as _ from 'lodash';
+import { Link } from './link-row/link.model';
 
 @Component({
     selector: 'service-path-creator',
     templateUrl: './service-path-creator.component.html',
-    styleUrls:['./service-path-creator.component.less'],
+    styleUrls: ['./service-path-creator.component.less'],
     providers: [ServiceService]
 })
 
 export class ServicePathCreatorComponent {
 
-    linksMap:Array<ServicePathMapItem>;
-    links:Array<Link> = [];
-    input:any;
-    headers: Array<string> = [];
+    linksMap: ServicePathMapItem[];
+    links: Link[] = [];
+    input: any;
+    headers: string[] = [];
     removeRow: Function;
-    forwardingPath:ForwardingPath;
-    //isExtendAllowed:boolean = false;
+    forwardingPath: ForwardingPath;
+    // isExtendAllowed:boolean = false;
 
     constructor(private serviceService: ServiceService,
                 private compositionService: CompositionService) {
@@ -53,58 +53,41 @@ export class ServicePathCreatorComponent {
             if (this.links.length === 1) {
                 return;
             }
-            this.links.splice(this.links.length-1, 1);
+            this.links.splice(this.links.length - 1, 1);
             this.enableCurrentRow();
         };
     }
 
     ngOnInit() {
-        this.serviceService.getNodesAndLinksMap(this.input.serviceId).subscribe((res:any) => {
+        this.serviceService.getNodesAndLinksMap(this.input.serviceId).subscribe((res: any) => {
             this.linksMap = res;
         });
         this.processExistingPath();
 
     }
 
-    private processExistingPath() {
-        if (this.input.pathId) {
-            let forwardingPath = <ForwardingPath>{...this.compositionService.forwardingPaths[this.input.pathId]};
-            this.forwardingPath.name = forwardingPath.name;
-            this.forwardingPath.destinationPortNumber = forwardingPath.destinationPortNumber;
-            this.forwardingPath.protocol = forwardingPath.protocol;
-            this.forwardingPath.uniqueId = forwardingPath.uniqueId;
-            this.links = [];
-            _.forEach(forwardingPath.pathElements.listToscaDataDefinition, (link:ForwardingPathLink) => {
-                this.links[this.links.length] = new Link(link, false, false, false);
-            });
-            this.links[this.links.length - 1].canEdit = true;
-            this.links[this.links.length - 1].canRemove = true;
-            this.links[0].isFirst = true;
-        }
-    }
-
-    isExtendAllowed():boolean {
-        if (this.links[this.links.length-1].toCP) {
+    isExtendAllowed(): boolean {
+        if (this.links[this.links.length - 1].toCP) {
             return true;
         }
         return false;
     }
 
     enableCurrentRow() {
-        this.links[this.links.length-1].canEdit = true;
+        this.links[this.links.length - 1].canEdit = true;
         if (this.links.length !== 1) {
-            this.links[this.links.length-1].canRemove = true;
+            this.links[this.links.length - 1].canRemove = true;
         }
     }
 
     addRow() {
         this.disableRows();
         this.links[this.links.length] = new Link(
-            new ForwardingPathLink(this.links[this.links.length-1].toNode,
-                this.links[this.links.length-1].toCP,
+            new ForwardingPathLink(this.links[this.links.length - 1].toNode,
+                this.links[this.links.length - 1].toCP,
                 '',
                 '',
-                this.links[this.links.length-1].toCPOriginId,
+                this.links[this.links.length - 1].toCPOriginId,
                 ''
             ),
             true,
@@ -122,7 +105,7 @@ export class ServicePathCreatorComponent {
 
     createPathLinksObject() {
         for (let i = 0 ; i < this.links.length ; i++) {
-            let link = this.links[i];
+            const link = this.links[i];
             this.forwardingPath.addPathLink(link.fromNode, link.fromCP, link.toNode, link.toCP, link.fromCPOriginId, link.toCPOriginId);
         }
     }
@@ -132,18 +115,35 @@ export class ServicePathCreatorComponent {
         return this.forwardingPath;
     }
 
-    checkFormValidForSubmit():boolean {
+    checkFormValidForSubmit(): boolean {
         if (this.forwardingPath.name && this.isPathValid() ) {
             return true;
         }
         return false;
     }
 
-    isPathValid():boolean {
-        let lastLink = this.links[this.links.length -1] ;
+    isPathValid(): boolean {
+        const lastLink = this.links[this.links.length - 1] ;
         if (lastLink.toNode && lastLink.toCP && lastLink.fromNode && lastLink.fromCP) {
             return true;
         }
         return false;
+    }
+
+    private processExistingPath() {
+        if (this.input.pathId) {
+            const forwardingPath = {...this.compositionService.forwardingPaths[this.input.pathId]} as ForwardingPath;
+            this.forwardingPath.name = forwardingPath.name;
+            this.forwardingPath.destinationPortNumber = forwardingPath.destinationPortNumber;
+            this.forwardingPath.protocol = forwardingPath.protocol;
+            this.forwardingPath.uniqueId = forwardingPath.uniqueId;
+            this.links = [];
+            _.forEach(forwardingPath.pathElements.listToscaDataDefinition, (link: ForwardingPathLink) => {
+                this.links[this.links.length] = new Link(link, false, false, false);
+            });
+            this.links[this.links.length - 1].canEdit = true;
+            this.links[this.links.length - 1].canRemove = true;
+            this.links[0].isFirst = true;
+        }
     }
 }

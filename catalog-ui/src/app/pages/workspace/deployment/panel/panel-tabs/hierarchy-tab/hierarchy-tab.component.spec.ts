@@ -1,21 +1,21 @@
-import {async, ComponentFixture} from "@angular/core/testing";
-import {HierarchyTabComponent} from "./hierarchy-tab.component";
-import {ConfigureFn, configureTests} from "../../../../../../../jest/test-config.helper";
-import {NO_ERRORS_SCHEMA} from "@angular/core";
-import {TranslateModule} from "../../../../../../shared/translator/translate.module";
-import {TopologyTemplateService} from "../../../../../../services/component-services/topology-template.service";
-import {WorkspaceService} from "../../../../workspace.service";
-import {ModulesService} from "../../../../../../services/modules.service";
-import {GlobalPipesModule} from "../../../../../../pipes/global-pipes.module";
-import {TranslateService} from "../../../../../../shared/translator/translate.service";
-import {ModalsHandler} from "../../../../../../utils/modals-handler";
-import {ComponentFactory} from "../../../../../../utils/component-factory";
-import {NgxsModule} from "@ngxs/store";
-import {  SdcUiServices } from "onap-ui-angular";
-import {Observable} from "rxjs";
-import {DisplayModule, Module} from "../../../../../../models/modules/base-module";
-import {DeploymentGraphService} from "../../../../../composition/deployment/deployment-graph.service";
-import {ComponentMetadata} from "../../../../../../models/component-metadata";
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { async, ComponentFixture } from '@angular/core/testing';
+import { NgxsModule } from '@ngxs/store';
+import {  SdcUiServices } from 'onap-ui-angular';
+import { Observable } from 'rxjs';
+import { ConfigureFn, configureTests } from '../../../../../../../jest/test-config.helper';
+import { ComponentMetadata } from '../../../../../../models/component-metadata';
+import { DisplayModule, Module } from '../../../../../../models/modules/base-module';
+import { GlobalPipesModule } from '../../../../../../pipes/global-pipes.module';
+import { TopologyTemplateService } from '../../../../../../services/component-services/topology-template.service';
+import { ModulesService } from '../../../../../../services/modules.service';
+import { TranslateModule } from '../../../../../../shared/translator/translate.module';
+import { TranslateService } from '../../../../../../shared/translator/translate.service';
+import { ComponentFactory } from '../../../../../../utils/component-factory';
+import { ModalsHandler } from '../../../../../../utils/modals-handler';
+import { DeploymentGraphService } from '../../../../../composition/deployment/deployment-graph.service';
+import { WorkspaceService } from '../../../../workspace.service';
+import { HierarchyTabComponent } from './hierarchy-tab.component';
 
 describe('HierarchyTabComponent', () => {
 
@@ -25,40 +25,40 @@ describe('HierarchyTabComponent', () => {
     let modulesServiceMock: Partial<ModulesService>;
     let modalsHandlerMock: Partial<ModalsHandler>;
 
-    let editModuleNameInstanceMock = {innerPopoverContent:{instance: { clickButtonEvent: Observable.of("new heat name")}},
+    const editModuleNameInstanceMock = {innerPopoverContent: {instance: { clickButtonEvent: Observable.of('new heat name')}},
         closePopover: jest.fn()};
-    let eventMock  = {x: 1650, y: 350};
-    let moduleMock: Array<Module> = [{name: "NewVf2..base_vepdg..module-0", uniqueId: '1'}];
-    let selectedModuleMock: DisplayModule = {name: "NewVf2..base_vepdg..module-0", vfInstanceName: "NewVf2", moduleName:"module-0",
-                    heatName: "base_vepdg", uniqueId: '1', updateName: jest.fn().mockImplementation(() => {
+    const eventMock  = {x: 1650, y: 350};
+    const moduleMock: Module[] = [{name: 'NewVf2..base_vepdg..module-0', uniqueId: '1'}];
+    const selectedModuleMock: DisplayModule = {name: 'NewVf2..base_vepdg..module-0', vfInstanceName: 'NewVf2', moduleName: 'module-0',
+                    heatName: 'base_vepdg', uniqueId: '1', updateName: jest.fn().mockImplementation(() => {
                     selectedModuleMock.name = selectedModuleMock.vfInstanceName + '..' + selectedModuleMock.heatName + '..' +
-                    selectedModuleMock.moduleName;})}
-    let updateSelectedModuleMock = () => {
-        selectedModuleMock.heatName = "base_vepdg";
-        selectedModuleMock.name = "NewVf2..base_vepdg..module-0";
+                    selectedModuleMock.moduleName; })};
+    const updateSelectedModuleMock = () => {
+        selectedModuleMock.heatName = 'base_vepdg';
+        selectedModuleMock.name = 'NewVf2..base_vepdg..module-0';
         fixture.componentInstance.selectedModule = selectedModuleMock;
         fixture.componentInstance.modules = moduleMock;
-    }
+    };
     beforeEach(
         async(() => {
 
-            workspaceService ={
-                metadata:  <ComponentMetadata> {
+            workspaceService = {
+                metadata:  {
                     name: '',
                     componentType: ''
-                }
-            }
+                } as ComponentMetadata
+            };
             popoverServiceMock = {
-                createPopOverWithInnerComponent: jest.fn().mockImplementation(() => {return editModuleNameInstanceMock})
-            }
+                createPopOverWithInnerComponent: jest.fn().mockImplementation(() => editModuleNameInstanceMock)
+            };
             modulesServiceMock = {
                 updateModuleMetadata: jest.fn().mockReturnValue(Observable.of({}))
-            }
+            };
             modalsHandlerMock = {
                 openEditModulePropertyModal: jest.fn().mockReturnValue(Promise.resolve())
             } as any;
 
-            const configure: ConfigureFn = testBed => {
+            const configure: ConfigureFn = (testBed) => {
                 testBed.configureTestingModule({
                     declarations: [HierarchyTabComponent],
                     schemas: [NO_ERRORS_SCHEMA],
@@ -76,7 +76,7 @@ describe('HierarchyTabComponent', () => {
                 });
             };
 
-            configureTests(configure).then(testBed => {
+            configureTests(configure).then((testBed) => {
                 fixture = testBed.createComponent(HierarchyTabComponent);
             });
         })
@@ -94,7 +94,7 @@ describe('HierarchyTabComponent', () => {
         expect(fixture.componentInstance.selectedModule.name).toEqual('NewVf2..new heat name..module-0');
         expect(fixture.componentInstance.modules[0].name).toEqual('NewVf2..new heat name..module-0');
         expect(fixture.componentInstance.selectedModule.heatName).toEqual('new heat name');
-    })
+    });
     it('Try to update heat name and name and get error from server', () => {
         updateSelectedModuleMock();
         modulesServiceMock.updateModuleMetadata.mockImplementation(() => Observable.throwError({}));
@@ -104,9 +104,9 @@ describe('HierarchyTabComponent', () => {
         expect(fixture.componentInstance.modules[0].name).toEqual('NewVf2..base_vepdg..module-0');
         expect(fixture.componentInstance.selectedModule.heatName).toEqual('base_vepdg');
         expect(fixture.componentInstance.selectedModule.name).toEqual('NewVf2..base_vepdg..module-0');
-    })
+    });
     it('Try to update heat name and name but not find the module with the same uniqueId', () => {
-        selectedModuleMock.uniqueId = '2'
+        selectedModuleMock.uniqueId = '2';
         updateSelectedModuleMock();
         fixture.componentInstance.openEditModuleNamePopup(eventMock);
         expect(fixture.componentInstance.selectedModule.updateName).toHaveBeenCalled();
@@ -114,26 +114,25 @@ describe('HierarchyTabComponent', () => {
         expect(fixture.componentInstance.modules[0].name).toEqual('NewVf2..base_vepdg..module-0');
         expect(fixture.componentInstance.selectedModule.heatName).toEqual('base_vepdg');
         expect(fixture.componentInstance.selectedModule.name).toEqual('NewVf2..base_vepdg..module-0');
-        selectedModuleMock.uniqueId = '1'
-    })
+        selectedModuleMock.uniqueId = '1';
+    });
     it('Open edit  module name popover and change the heat name', () => {
         updateSelectedModuleMock();
         spyOn(fixture.componentInstance, 'updateHeatName');
         spyOn(fixture.componentInstance, 'updateOriginalHeatName');
         fixture.componentInstance.openEditModuleNamePopup(eventMock);
         expect(popoverServiceMock.createPopOverWithInnerComponent).toHaveBeenCalled();
-        expect(fixture.componentInstance.selectedModule.heatName).toEqual("new heat name");
+        expect(fixture.componentInstance.selectedModule.heatName).toEqual('new heat name');
         expect(fixture.componentInstance.updateHeatName).toHaveBeenCalled();
-    })
-
+    });
 
     it('Open edit  module name popover and not change the heat name', () => {
         updateSelectedModuleMock();
         editModuleNameInstanceMock.innerPopoverContent.instance.clickButtonEvent = Observable.of(null);
         fixture.componentInstance.openEditModuleNamePopup(eventMock);
         expect(popoverServiceMock.createPopOverWithInnerComponent).toHaveBeenCalled();
-        expect(fixture.componentInstance.selectedModule.heatName).toEqual("base_vepdg");
-    })
+        expect(fixture.componentInstance.selectedModule.heatName).toEqual('base_vepdg');
+    });
 
     it('openEditPropertyModal sets component metadata and opens the module-property modal with the right args', () => {
         const property: any = {name: 'min_vf_module_instances', value: '1', uniqueId: 'p1'};

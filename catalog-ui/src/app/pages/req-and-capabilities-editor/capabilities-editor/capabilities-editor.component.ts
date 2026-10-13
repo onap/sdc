@@ -1,9 +1,9 @@
-import {Component} from '@angular/core';
-import {ServiceService} from "app/services/component-services/service.service";
-import {Capability} from 'app/models/capability';
-import {CapabilityTypeModel} from 'app/models/capability-types';
-import {DropdownValue} from "app/components/ui/form-components/dropdown/ui-element-dropdown.component";
-import {TranslateService} from 'app/shared/translator/translate.service';
+import { Component } from '@angular/core';
+import { DropdownValue } from 'app/components/ui/form-components/dropdown/ui-element-dropdown.component';
+import { Capability } from 'app/models/capability';
+import { CapabilityTypeModel } from 'app/models/capability-types';
+import { ServiceService } from 'app/services/component-services/service.service';
+import { TranslateService } from 'app/shared/translator/translate.service';
 
 @Component({
     selector: 'capabilities-editor',
@@ -15,12 +15,12 @@ import {TranslateService} from 'app/shared/translator/translate.service';
 export class CapabilitiesEditorComponent {
     input: {
         capability: Capability,
-        capabilityTypesList: Array<CapabilityTypeModel>,
+        capabilityTypesList: CapabilityTypeModel[],
         isReadonly: boolean;
         validityChangedCallback: Function;
     };
     capabilityData: Capability;
-    capabilityTypesMappedList: Array<DropdownValue>;
+    capabilityTypesMappedList: DropdownValue[];
     isUnboundedChecked: boolean;
     isReadonly: boolean;
     translatedUnboundTxt: string;
@@ -32,12 +32,12 @@ export class CapabilitiesEditorComponent {
         this.capabilityData = new Capability(this.input.capability);
         this.translatedUnboundTxt = '';
         this.capabilityData.minOccurrences = this.capabilityData.minOccurrences || 0;
-        this.translateService.languageChangedObservable.subscribe(lang => {
+        this.translateService.languageChangedObservable.subscribe((lang) => {
             this.translatedUnboundTxt = this.translateService.translate('REQ_CAP_OCCURRENCES_UNBOUNDED');
             this.capabilityData.maxOccurrences = this.capabilityData.maxOccurrences || this.translatedUnboundTxt;
             this.isUnboundedChecked = this.capabilityData.maxOccurrences === this.translatedUnboundTxt;
         });
-        this.capabilityTypesMappedList = _.map(this.input.capabilityTypesList, capType => new DropdownValue(capType.toscaPresentation.type, capType.toscaPresentation.type));
+        this.capabilityTypesMappedList = _.map(this.input.capabilityTypesList, (capType) => new DropdownValue(capType.toscaPresentation.type, capType.toscaPresentation.type));
         this.isReadonly = this.input.isReadonly;
         this.validityChanged();
     }
@@ -50,7 +50,7 @@ export class CapabilitiesEditorComponent {
 
     checkFormValidForSubmit() {
         return this.capabilityData.name && this.capabilityData.name.length &&
-            this.capabilityData.type && this.capabilityData.type.length && !_.isEqual(this.capabilityData.minOccurrences, "") && this.capabilityData.minOccurrences >= 0 &&
+            this.capabilityData.type && this.capabilityData.type.length && !_.isEqual(this.capabilityData.minOccurrences, '') && this.capabilityData.minOccurrences >= 0 &&
             (
                 this.isUnboundedChecked ||
                 (this.capabilityData.maxOccurrences && (this.capabilityData.minOccurrences <= parseInt(this.capabilityData.maxOccurrences)))
@@ -60,19 +60,19 @@ export class CapabilitiesEditorComponent {
     onSelectCapabilityType(selectedCapType: DropdownValue) {
         this.capabilityData.type = selectedCapType && selectedCapType.value;
         if (selectedCapType && selectedCapType.value) {
-            let selectedCapabilityTypeObj: CapabilityTypeModel = this.input.capabilityTypesList.find(capType => capType.toscaPresentation.type === selectedCapType.value);
+            const selectedCapabilityTypeObj: CapabilityTypeModel = this.input.capabilityTypesList.find((capType) => capType.toscaPresentation.type === selectedCapType.value);
             this.capabilityData.description = selectedCapabilityTypeObj.toscaPresentation.description;
             this.capabilityData.validSourceTypes = selectedCapabilityTypeObj.toscaPresentation.validTargetTypes;
             this.capabilityData.properties = _.forEach(
                 _.toArray(selectedCapabilityTypeObj.properties),
-                prop => prop.uniqueId = null //a requirement for the BE
+                (prop) => prop.uniqueId = null // a requirement for the BE
             );
         }
         this.validityChanged();
     }
 
     validityChanged = () => {
-        let validState = this.checkFormValidForSubmit();
+        const validState = this.checkFormValidForSubmit();
         this.input.validityChangedCallback(validState);
     }
 }

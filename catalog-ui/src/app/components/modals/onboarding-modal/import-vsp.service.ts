@@ -1,23 +1,22 @@
-import { Injectable } from "@angular/core";
-import {ImportVSPdata, OnboardingModalComponent} from "./onboarding-modal.component";
-import { SdcUiServices, SdcUiCommon } from "onap-ui-angular";
-import { Observable, Subject } from "rxjs";
-import { CacheService } from "../../../services/cache.service";
-
+import { Injectable } from '@angular/core';
+import { SdcUiCommon, SdcUiServices } from 'onap-ui-angular';
+import { Observable, Subject } from 'rxjs';
+import { CacheService } from '../../../services/cache.service';
+import { ImportVSPdata, OnboardingModalComponent } from './onboarding-modal.component';
 
 @Injectable()
 export class ImportVSPService {
 
     constructor(private modalService: SdcUiServices.ModalService,
-                private cacheService:CacheService){
+                private cacheService: CacheService) {
 
     }
-    
+
     openOnboardingModal(csarUUID?: string, csarVersion?: string): Observable<any> {
-        var subject = new Subject<any>();
+        let subject = new Subject<any>();
         const onboardingModalConfig = {
             size: SdcUiCommon.ModalSize.xlarge,
-            title: 'Import VSP',      
+            title: 'Import VSP',
             type: SdcUiCommon.ModalType.custom,
             testId: 'sampleTestIdModal1',
         } as SdcUiCommon.IModalConfig;
@@ -29,9 +28,8 @@ export class ImportVSPService {
                 // (closeModal: (btnName: string) => void); btnName is just the onClose.emit
                 // payload, and every other call site in catalog-ui also passes nothing.
                 onboardingModalInstance.closeModal(undefined);
-            }, (err) =>{}
-        )
+            }, (err) => {}
+        );
         return subject.asObservable();
     }
 }
-   

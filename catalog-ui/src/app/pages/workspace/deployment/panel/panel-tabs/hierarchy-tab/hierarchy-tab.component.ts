@@ -1,21 +1,21 @@
-import {Component, Input} from "@angular/core";
-import {Component as TopologyTemplate} from 'app/models/components/component';
-import {ComponentInstance} from 'app/models/components-instances/component-instance';
-import {DisplayModule, Module} from 'app/models/modules/base-module';
-import {PropertyModel} from 'app/models/properties';
-import {TranslateService} from "app/shared/translator/translate.service";
-import {ComponentType} from "app/utils/constants";
-import {WorkspaceService} from "../../../../workspace.service";
-import {ModulesService} from "../../../../../../services/modules.service";
-import * as _ from "lodash";
-import {ModalsHandler} from "../../../../../../utils/modals-handler";
-import {ComponentFactory} from "../../../../../../utils/component-factory";
-import {Select, Store} from "@ngxs/store";
-import { SdcUiServices } from "onap-ui-angular";
-import { EditModuleName } from "../edit-module-name/edit-module-name.component";
-import {GraphState} from "../../../../../composition/common/store/graph.state";
-import {DeploymentGraphService} from "../../../../../composition/deployment/deployment-graph.service";
-import {OnSidebarOpenOrCloseAction} from "../../../../../composition/common/store/graph.actions";
+import { Component, Input } from '@angular/core';
+import { Select, Store } from '@ngxs/store';
+import { ComponentInstance } from 'app/models/components-instances/component-instance';
+import { Component as TopologyTemplate } from 'app/models/components/component';
+import { DisplayModule, Module } from 'app/models/modules/base-module';
+import { PropertyModel } from 'app/models/properties';
+import { TranslateService } from 'app/shared/translator/translate.service';
+import { ComponentType } from 'app/utils/constants';
+import * as _ from 'lodash';
+import { SdcUiServices } from 'onap-ui-angular';
+import { ModulesService } from '../../../../../../services/modules.service';
+import { ComponentFactory } from '../../../../../../utils/component-factory';
+import { ModalsHandler } from '../../../../../../utils/modals-handler';
+import { OnSidebarOpenOrCloseAction } from '../../../../../composition/common/store/graph.actions';
+import { GraphState } from '../../../../../composition/common/store/graph.state';
+import { DeploymentGraphService } from '../../../../../composition/deployment/deployment-graph.service';
+import { WorkspaceService } from '../../../../workspace.service';
+import { EditModuleName } from '../edit-module-name/edit-module-name.component';
 
 @   Component({
     selector: 'hierarchy-tab',
@@ -24,6 +24,7 @@ import {OnSidebarOpenOrCloseAction} from "../../../../../composition/common/stor
 })
 export class HierarchyTabComponent {
 
+
     @Select(GraphState.withSidebar) withSidebar$: boolean;
     @Input() isViewOnly: boolean;
     public selectedIndex: number;
@@ -31,8 +32,8 @@ export class HierarchyTabComponent {
     public isLoading: boolean;
     public topologyTemplateName: string;
     public topologyTemplateType: string;
-    public modules: Array<Module> = [];
-    public componentInstances: Array<ComponentInstance> = [];
+    public modules: Module[] = [];
+    public componentInstances: ComponentInstance[] = [];
     private editPropertyModalTopologyTemplate: TopologyTemplate;
 
     constructor(private translateService: TranslateService,
@@ -57,13 +58,13 @@ export class HierarchyTabComponent {
 
     onModuleSelected(module: Module, componentInstanceId?: string): void {
 
-        let onSuccess = (module: DisplayModule) => {
-            console.log("Module Loaded: ", module);
+        const onSuccess = (module: DisplayModule) => {
+            console.log('Module Loaded: ', module);
             this.selectedModule = module;
             this.isLoading = false;
         };
 
-        let onFailed = () => {
+        const onFailed = () => {
             this.isLoading = false;
         };
 
@@ -88,13 +89,13 @@ export class HierarchyTabComponent {
 
     updateHeatName(): void {
         this.isLoading = true;
-        let originalName: string = this.selectedModule.name;
-       
+        const originalName: string = this.selectedModule.name;
+
         this.selectedModule.updateName();
-        let moduleIndex: number = _.indexOf(this.modules, _.find(this.modules, (module: Module) => {
+        const moduleIndex: number = _.indexOf(this.modules, _.find(this.modules, (module: Module) => {
             return module.uniqueId === this.selectedModule.uniqueId;
         }));
-        
+
         if (moduleIndex !== -1) {
             this.modules[moduleIndex].name = this.selectedModule.name;
             this.modulesService.updateModuleMetadata(this.topologyTemplateType, this.workspaceService.metadata.uniqueId, this.modules[moduleIndex]).subscribe(() => {
@@ -106,18 +107,28 @@ export class HierarchyTabComponent {
         } else {
                 this.updateOriginalHeatName(originalName, moduleIndex);
         }
-    };
-
-    private updateOriginalHeatName(originalName: string, moduleIndex: number){
-        this.isLoading = false;
-        this.selectedModule.name = originalName;
-        this.selectedModule.heatName = this.selectedModule.name.split('..')[1];
     }
-
     openEditPropertyModal(property: PropertyModel): void {
         this.editPropertyModalTopologyTemplate.setComponentMetadata(this.workspaceService.metadata);
         this.ModalsHandler.openEditModulePropertyModal(property, this.editPropertyModalTopologyTemplate, this.selectedModule, this.selectedModule.properties).then(() => {
         });
+    }
+
+    public openEditModuleNamePopup($event) {
+        const editModuleNameInstance = this.popoverService.createPopOverWithInnerComponent('Edit Module Name', '', {x: $event.x , y: $event.y }, EditModuleName, {selectModule: _.cloneDeep(this.selectedModule)}, 'top');
+        editModuleNameInstance.innerPopoverContent.instance.clickButtonEvent.subscribe((newHeatName) => {
+            if (newHeatName != null) {
+                this.selectedModule.heatName = newHeatName;
+                this.updateHeatName();
+            }
+            editModuleNameInstance.closePopover();
+        });
+    }
+
+    private updateOriginalHeatName(originalName: string, moduleIndex: number) {
+        this.isLoading = false;
+        this.selectedModule.name = originalName;
+        this.selectedModule.heatName = this.selectedModule.name.split('..')[1];
     }
 
     private getKeys(map: Map<any, any>) {
@@ -127,16 +138,5 @@ export class HierarchyTabComponent {
     private toggleSidebarDisplay = () => {
         // this.withSidebar = !this.withSidebar;
         this.store.dispatch(new OnSidebarOpenOrCloseAction());
-    }
-
-    public openEditModuleNamePopup($event) {
-        const editModuleNameInstance = this.popoverService.createPopOverWithInnerComponent('Edit Module Name', '', {x:$event.x , y:$event.y }, EditModuleName, {selectModule: _.cloneDeep(this.selectedModule)}, 'top');
-        editModuleNameInstance.innerPopoverContent.instance.clickButtonEvent.subscribe((newHeatName) => {
-            if(newHeatName != null){
-                this.selectedModule.heatName = newHeatName;
-                this.updateHeatName();
-            }
-            editModuleNameInstance.closePopover();
-        })
     }
 }

@@ -17,13 +17,13 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import {InterfaceOperationListComponent} from './interface-operation-list.component';
-import {UiElementsModule} from "../../../../../../components/ui/ui-elements.module";
-import {SdcUiComponentsModule} from "onap-ui-angular/dist";
-import {TranslatePipe} from "../../../../../../shared/translator/translate.pipe";
-import {TranslateService} from "../../../../../../shared/translator/translate.service";
+import { SdcUiComponentsModule } from 'onap-ui-angular/dist';
+import { UiElementsModule } from '../../../../../../components/ui/ui-elements.module';
+import { TranslatePipe } from '../../../../../../shared/translator/translate.pipe';
+import { TranslateService } from '../../../../../../shared/translator/translate.service';
+import { InterfaceOperationListComponent } from './interface-operation-list.component';
 
 describe('InterfaceOperationListComponent', () => {
   let component: InterfaceOperationListComponent;

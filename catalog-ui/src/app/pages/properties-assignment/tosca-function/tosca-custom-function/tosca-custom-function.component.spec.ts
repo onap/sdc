@@ -19,19 +19,19 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import {ToscaConcatFunctionComponent} from '../tosca-concat-function/tosca-concat-function.component';
-import {ToscaCustomFunctionComponent} from './tosca-custom-function.component';
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {ToscaFunctionComponent} from "../tosca-function.component";
-import {TranslateModule} from "../../../../shared/translator/translate.module";
-import {ToscaGetFunctionComponent} from "../tosca-get-function/tosca-get-function.component";
-import {UiElementsModule} from "../../../../components/ui/ui-elements.module";
-import {YamlFunctionComponent} from "../yaml-function/yaml-function.component";
-import {TopologyTemplateService} from "../../../../services/component-services/topology-template.service";
-import {Observable} from "rxjs/Observable";
-import {defaultCustomFunctionsMock} from "../../../../../jest/mocks/default-custom-tosca-function.mock";
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Observable } from 'rxjs/Observable';
+import { defaultCustomFunctionsMock } from '../../../../../jest/mocks/default-custom-tosca-function.mock';
+import { UiElementsModule } from '../../../../components/ui/ui-elements.module';
+import { TopologyTemplateService } from '../../../../services/component-services/topology-template.service';
+import { TranslateModule } from '../../../../shared/translator/translate.module';
+import { ToscaConcatFunctionComponent } from '../tosca-concat-function/tosca-concat-function.component';
+import { ToscaFunctionComponent } from '../tosca-function.component';
+import { ToscaGetFunctionComponent } from '../tosca-get-function/tosca-get-function.component';
+import { YamlFunctionComponent } from '../yaml-function/yaml-function.component';
+import { ToscaCustomFunctionComponent } from './tosca-custom-function.component';
 
 describe('ToscaCustomFunctionComponent', () => {
     let component: ToscaCustomFunctionComponent;

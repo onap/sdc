@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,8 +27,8 @@
 
 // Used internally by dictionary
 interface IDictionaryPair<K, V> {
-    key:K;
-    value:V;
+    key: K;
+    value: V;
 }
 
 export class Dictionary<K, V> {
@@ -38,23 +38,22 @@ export class Dictionary<K, V> {
      * @type {Object}
      * @private
      */
-    private table:{ [key:string]:IDictionaryPair<K, V> };
-    //: [key: K] will not work since indices can only by strings in javascript and typescript enforces this.
+    private table: { [key: string]: IDictionaryPair<K, V> };
+    // : [key: K] will not work since indices can only by strings in javascript and typescript enforces this.
 
     /**
      * Number of elements in the list.
      * @type {number}
      * @private
      */
-    private nElements:number;
+    private nElements: number;
 
     /**
      * Function used to convert keys to strings.
      * @type {function(Object):string}
      * @private
      */
-    private toStr:(key:K) => string;
-
+    private toStr: (key: K) => string;
 
     /**
      * Creates an empty dictionary.
@@ -74,21 +73,13 @@ export class Dictionary<K, V> {
      * is not appropriate, a custom function which receives a key and returns a
      * unique string must be provided.
      */
-    constructor(toStrFunction?:(key:K) => string) {
+    constructor(toStrFunction?: (key: K) => string) {
         this.table = {};
         this.nElements = 0;
         this.toStr = toStrFunction || this.defaultToString;
     }
 
-
-    /**
-     copy from angular.js  isUndefined
-     */
-    private isUndefined = (value:any):boolean => {
-        return typeof value === 'undefined';
-    }
-
-    defaultToString = (item:any):string => {
+    defaultToString = (item: any): string => {
         return item.toString();
     }
 
@@ -99,14 +90,13 @@ export class Dictionary<K, V> {
      * @return {*} the value to which this dictionary maps the specified key or
      * undefined if the map contains no mapping for this key.
      */
-    getValue = (key:K):V => {
-        let pair:IDictionaryPair<K, V> = this.table[this.toStr(key)];
+    getValue = (key: K): V => {
+        const pair: IDictionaryPair<K, V> = this.table[this.toStr(key)];
         if (this.isUndefined(pair)) {
             return undefined;
         }
         return pair.value;
     }
-
 
     /**
      * Associates the specified value with the specified key in this dictionary.
@@ -118,15 +108,15 @@ export class Dictionary<K, V> {
      * @return {*} previous value associated with the specified key, or undefined if
      * there was no mapping for the key or if the key/value are undefined.
      */
-    setValue = (key:K, value:V):V => {
+    setValue = (key: K, value: V): V => {
 
         if (this.isUndefined(key) || this.isUndefined(value)) {
             return undefined;
         }
 
-        let ret:V;
-        let k = this.toStr(key);
-        let previousElement:IDictionaryPair<K, V> = this.table[k];
+        let ret: V;
+        const k = this.toStr(key);
+        const previousElement: IDictionaryPair<K, V> = this.table[k];
         if (this.isUndefined(previousElement)) {
             this.nElements++;
             ret = undefined;
@@ -134,8 +124,8 @@ export class Dictionary<K, V> {
             ret = previousElement.value;
         }
         this.table[k] = {
-            key: key,
-            value: value
+            key,
+            value
         };
         return ret;
     }
@@ -147,9 +137,9 @@ export class Dictionary<K, V> {
      * @return {*} previous value associated with specified key, or undefined if
      * there was no mapping for key.
      */
-    remove = (key:K):V => {
-        let k = this.toStr(key);
-        let previousElement:IDictionaryPair<K, V> = this.table[k];
+    remove = (key: K): V => {
+        const k = this.toStr(key);
+        const previousElement: IDictionaryPair<K, V> = this.table[k];
         if (!this.isUndefined(previousElement)) {
             delete this.table[k];
             this.nElements--;
@@ -162,11 +152,11 @@ export class Dictionary<K, V> {
      * Returns an array containing all of the keys in this dictionary.
      * @return {Array} an array containing all of the keys in this dictionary.
      */
-    keys = ():K[] => {
-        let array:K[] = [];
-        for (let name in this.table) {
+    keys = (): K[] => {
+        const array: K[] = [];
+        for (const name in this.table) {
             if (this.table.hasOwnProperty(name)) {
-                let pair:IDictionaryPair<K, V> = this.table[name];
+                const pair: IDictionaryPair<K, V> = this.table[name];
                 array.push(pair.key);
             }
         }
@@ -177,11 +167,11 @@ export class Dictionary<K, V> {
      * Returns an array containing all of the values in this dictionary.
      * @return {Array} an array containing all of the values in this dictionary.
      */
-    values = ():V[] => {
-        let array:V[] = [];
-        for (let name in this.table) {
+    values = (): V[] => {
+        const array: V[] = [];
+        for (const name in this.table) {
             if (this.table.hasOwnProperty(name)) {
-                let pair:IDictionaryPair<K, V> = this.table[name];
+                const pair: IDictionaryPair<K, V> = this.table[name];
                 array.push(pair.value);
             }
         }
@@ -195,11 +185,11 @@ export class Dictionary<K, V> {
      * invoked with two arguments: key and value. To break the iteration you can
      * optionally return false.
      */
-    forEach = (callback:(key:K, value:V) => any):void => {
-        for (let name in this.table) {
+    forEach = (callback: (key: K, value: V) => any): void => {
+        for (const name in this.table) {
             if (this.table.hasOwnProperty(name)) {
-                let pair:IDictionaryPair<K, V> = this.table[name];
-                let ret = callback(pair.key, pair.value);
+                const pair: IDictionaryPair<K, V> = this.table[name];
+                const ret = callback(pair.key, pair.value);
                 if (ret === false) {
                     return;
                 }
@@ -214,7 +204,7 @@ export class Dictionary<K, V> {
      * @return {boolean} true if this dictionary contains a mapping for the
      * specified key.
      */
-    containsKey = (key:K):boolean => {
+    containsKey = (key: K): boolean => {
         return !this.isUndefined(this.getValue(key));
     }
 
@@ -232,7 +222,7 @@ export class Dictionary<K, V> {
      * Returns the number of keys in this dictionary.
      * @return {number} the number of key-value mappings in this dictionary.
      */
-    size = ():number => {
+    size = (): number => {
         return this.nElements;
     }
 
@@ -240,16 +230,22 @@ export class Dictionary<K, V> {
      * Returns true if this dictionary contains no mappings.
      * @return {boolean} true if this dictionary contains no mappings.
      */
-    isEmpty = ():boolean => {
+    isEmpty = (): boolean => {
         return this.nElements <= 0;
     }
 
-    toString = ():string => {
-        let toret = "{";
+    toString = (): string => {
+        let toret = '{';
         this.forEach((k, v) => {
-            toret = toret + "\n\t" + k.toString() + " : " + v.toString();
+            toret = toret + '\n\t' + k.toString() + ' : ' + v.toString();
         });
-        return toret + "\n}";
+        return toret + '\n}';
+    }
+
+    /**
+     copy from angular.js  isUndefined
+     */
+    private isUndefined = (value: any): boolean => {
+        return typeof value === 'undefined';
     }
 } // End of dictionary
-

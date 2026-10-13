@@ -18,17 +18,17 @@
  * ============LICENSE_END=========================================================
  */
 
-import {NgModule, CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {SdcUiComponentsModule} from 'onap-ui-angular';
-import {TranslateModule} from 'app/shared/translator/translate.module';
+import { CommonModule } from '@angular/common';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { TranslateModule } from 'app/shared/translator/translate.module';
+import { SdcUiComponentsModule } from 'onap-ui-angular';
 
-import {AdminDashboardComponent} from './admin-dashboard.component';
-import {UserManagementComponent} from './user-management/user-management.component';
-import {CategoryManagementComponent} from './category-management/category-management.component';
-import {AddCategoryModalComponent} from './add-category-modal/add-category-modal.component';
-import {CategoryManagementService} from './services/category-management.service';
+import { AddCategoryModalComponent } from './add-category-modal/add-category-modal.component';
+import { AdminDashboardComponent } from './admin-dashboard.component';
+import { CategoryManagementComponent } from './category-management/category-management.component';
+import { CategoryManagementService } from './services/category-management.service';
+import { UserManagementComponent } from './user-management/user-management.component';
 
 // ValidationUtils is now a pure Angular @Injectable provided at the AppModule root, so
 // CategoryManagementComponent resolves it by type from the root injector — no local $injector bridge needed.

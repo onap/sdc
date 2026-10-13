@@ -20,13 +20,13 @@
 
 import { Component, HostBinding, Input } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
-import {Component as TopologyTemplate} from 'app/models/components/component';
-import {Resource} from 'app/models/components/resource';
-import {Service} from 'app/models/components/service';
-import {ComponentInstance} from 'app/models/components-instances/component-instance';
-import {FullComponentInstance} from 'app/models/components-instances/full-component-instance';
-import {GroupInstance} from 'app/models/graph/zones/group-instance';
-import {PolicyInstance} from 'app/models/graph/zones/policy-instance';
+import { ComponentInstance } from 'app/models/components-instances/component-instance';
+import { FullComponentInstance } from 'app/models/components-instances/full-component-instance';
+import { Component as TopologyTemplate } from 'app/models/components/component';
+import { Resource } from 'app/models/components/resource';
+import { Service } from 'app/models/components/service';
+import { GroupInstance } from 'app/models/graph/zones/group-instance';
+import { PolicyInstance } from 'app/models/graph/zones/policy-instance';
 import { ArtifactsTabComponent } from 'app/pages/composition/panel/panel-tabs/artifacts-tab/artifacts-tab.component';
 import { GroupMembersTabComponent } from 'app/pages/composition/panel/panel-tabs/group-members-tab/group-members-tab.component';
 import { GroupOrPolicyPropertiesTab } from 'app/pages/composition/panel/panel-tabs/group-or-policy-properties-tab/group-or-policy-properties-tab.component';
@@ -34,18 +34,18 @@ import { InfoTabComponent } from 'app/pages/composition/panel/panel-tabs/info-ta
 import { PolicyTargetsTabComponent } from 'app/pages/composition/panel/panel-tabs/policy-targets-tab/policy-targets-tab.component';
 import { PropertiesTabComponent } from 'app/pages/composition/panel/panel-tabs/properties-tab/properties-tab.component';
 import { ReqAndCapabilitiesTabComponent } from 'app/pages/composition/panel/panel-tabs/req-capabilities-tab/req-capabilities-tab.component';
-import {ComponentType, ResourceType} from 'app/utils/constants';
+import { ComponentType, ResourceType } from 'app/utils/constants';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { Observable } from 'rxjs/Observable';
-import { ArtifactGroupType, COMPONENT_FIELDS } from '../../../utils/constants';
 import { WorkspaceState } from '../../../store/states/workspace.state';
+import { ArtifactGroupType, COMPONENT_FIELDS } from '../../../utils/constants';
 import { OnSidebarOpenOrCloseAction } from '../common/store/graph.actions';
 import { CompositionStateModel, GraphState } from '../common/store/graph.state';
+import { InterfaceOperationsComponent } from '../interface-operations/interface-operations.component';
 import { ServiceConsumptionTabComponent } from './panel-tabs/service-consumption-tab/service-consumption-tab.component';
 import { ServiceDependenciesTabComponent } from './panel-tabs/service-dependencies-tab/service-dependencies-tab.component';
-import {SubstitutionFilterTabComponent} from "./panel-tabs/substitution-filter-tab/substitution-filter-tab.component";
-import {InterfaceOperationsComponent} from "../interface-operations/interface-operations.component";
+import { SubstitutionFilterTabComponent } from './panel-tabs/substitution-filter-tab/substitution-filter-tab.component';
 
 const tabs = {
     infoTab: {
@@ -206,9 +206,8 @@ export class CompositionPanelComponent {
         });
     }
 
-
     onRightClick(selectedComponent: any) {
-        console.info("onRightClick", selectedComponent)
+        console.info('onRightClick', selectedComponent);
         return false;
     }
 
@@ -288,7 +287,7 @@ export class CompositionPanelComponent {
     private showSubstitutionFilterTab(component): boolean {
         if ((component.isService() || this.isVF()) && !this.isComponentInstanceSelected()) {
             if (component.isService()) {
-                return (<Service>component).isSubstituteCandidate();
+                return (component as Service).isSubstituteCandidate();
             }
             return true;
         }
@@ -320,7 +319,7 @@ export class CompositionPanelComponent {
     private selectedComponentIsServiceProxyInstance = (): boolean => {
         return this.isComponentInstanceSelected() && this.selectedComponent.isServiceProxy();
     }
-    
+
     private selectedComponentIsServiceSubstitutionInstance = (): boolean => {
         return this.isComponentInstanceSelected() && this.selectedComponent.isServiceSubstitution();
     }

@@ -19,9 +19,9 @@
 
 export class PropertyAssignment {
 
-  name: string
-  value: string
-  type: string
+  name: string;
+  value: string;
+  type: string;
 
   constructor(type?: string) {
     if (type) {

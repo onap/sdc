@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-import {ComponentMetadata} from './component-metadata';
+import { ComponentMetadata } from './component-metadata';
 
 // deserialize() used to do `this.tags = angular.copy(response.tags, this.tags)`. ComponentMetadata has
 // NO constructor, so this.tags was always undefined at that point — and angular.copy treats a falsy

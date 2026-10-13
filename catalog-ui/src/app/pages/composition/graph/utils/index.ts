@@ -8,15 +8,13 @@
 // export * from './composition-graph-service-path-utils';
 // export * from './composition-graph-zone-utils';
 
-
-import {CompositionGraphGeneralUtils} from './composition-graph-general-utils';
-import {CompositionGraphNodesUtils} from './composition-graph-nodes-utils';
-import {MatchCapabilitiesRequirementsUtils} from './match-capability-requirement-utils'
-import {CompositionGraphPaletteUtils} from './composition-graph-palette-utils';
-import {CompositionGraphZoneUtils} from './composition-graph-zone-utils';
-import {ServicePathGraphUtils} from './composition-graph-service-path-utils';
-import {CompositionGraphLinkUtils} from "./composition-graph-links-utils";
-
+import { CompositionGraphGeneralUtils } from './composition-graph-general-utils';
+import { CompositionGraphLinkUtils } from './composition-graph-links-utils';
+import { CompositionGraphNodesUtils } from './composition-graph-nodes-utils';
+import { CompositionGraphPaletteUtils } from './composition-graph-palette-utils';
+import { ServicePathGraphUtils } from './composition-graph-service-path-utils';
+import { CompositionGraphZoneUtils } from './composition-graph-zone-utils';
+import { MatchCapabilitiesRequirementsUtils } from './match-capability-requirement-utils';
 
 export {
     CompositionGraphGeneralUtils,

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,13 +18,13 @@
  * ============LICENSE_END=========================================================
  */
 
-import {ComponentInstance} from "../../../components-instances/component-instance";
-import {CommonCINodeBase} from "../common-ci-node-base";
-import {GraphUIObjects, ImagesUrl} from 'app/utils/constants';
-import {getSdcConfig} from "app/config/sdc-config.config.factory";
-import {ResourceNamePipe} from "app/pipes/resource-name.pipe";
-import {ComponentInstanceNodesStyle} from "app/pages/composition/graph/common/style/component-instances-nodes-style";
-import {ImageCreatorService, ICanvasImage} from "app/pages/composition/graph/common/image-creator.service";
+import { getSdcConfig } from 'app/config/sdc-config.config.factory';
+import { ICanvasImage, ImageCreatorService } from 'app/pages/composition/graph/common/image-creator.service';
+import { ComponentInstanceNodesStyle } from 'app/pages/composition/graph/common/style/component-instances-nodes-style';
+import { ResourceNamePipe } from 'app/pipes/resource-name.pipe';
+import { GraphUIObjects, ImagesUrl } from 'app/utils/constants';
+import { ComponentInstance } from '../../../components-instances/component-instance';
+import { CommonCINodeBase } from '../common-ci-node-base';
 
 export interface ICompositionCiNodeBase {
 
@@ -32,15 +32,65 @@ export interface ICompositionCiNodeBase {
 
 export abstract class CompositionCiNodeBase extends CommonCINodeBase implements ICompositionCiNodeBase {
 
-    public textPosition:string; //need to move to cp UCPE
-    public isUcpe:boolean;
-    public isInsideGroup:boolean;
-    public isUcpePart:boolean;
+    public textPosition: string; // need to move to cp UCPE
+    public isUcpe: boolean;
+    public isInsideGroup: boolean;
+    public isUcpePart: boolean;
 
-    constructor(instance:ComponentInstance,
-                public imageCreator:ImageCreatorService) {
+    constructor(instance: ComponentInstance,
+                public imageCreator: ImageCreatorService) {
         super(instance);
         this.init();
+    }
+
+    public setArchivedImageBgStyle(node: Cy.Collection, nodeMinSize: number): string {
+        const archivedIconWidth: number = GraphUIObjects.HANDLE_SIZE;
+        const nodeWidth: number = node.data('imgWidth') || node.width();
+        const archivedCanvasWidth: number = nodeWidth;
+
+        const x = archivedCanvasWidth - nodeWidth, y = x, width = nodeWidth, height = width;
+        const archiveImage = nodeWidth < 50 ? 'archive_small.png' : 'archive_big.png';
+
+        const canvasImages = [
+            { src: this.imagesPath + this.componentInstance.icon + '.png', x, y, width, height},
+            { src: getSdcConfig().imagesPath + ImagesUrl.RESOURCE_ICONS + archiveImage, x, y, width, height}
+        ];
+
+        // Create the image and update the node background styles
+        this.imageCreator.getMultiLayerBase64Image(canvasImages, archivedCanvasWidth, archivedCanvasWidth).then((img) => this.updateNodeStyles(node, archivedCanvasWidth, img));
+        return this.img; // Return the default img
+    }
+
+    public initUncertifiedImage(node: Cy.Collection, nodeMinSize: number): string {
+        return this.enhanceImage(node, nodeMinSize, this.imagesPath + 'uncertified.png');
+    }
+
+    protected enhanceImage(node: Cy.Collection, nodeMinSize: number, imgUrl: string): string {
+
+        const infoIconWidth: number = GraphUIObjects.HANDLE_SIZE;
+        const nodeWidth: number = node.data('imgWidth') || node.width();
+        // let uncertifiedCanvasWidth: number = nodeWidth;
+        let infoCanvasWidth: number = nodeWidth;
+
+        if (nodeWidth < nodeMinSize) { // uncertified icon will overlap too much of the node, need to expand canvas.
+            infoCanvasWidth = nodeWidth + infoIconWidth / 2; // expand canvas so that only half of the icon overlaps with the node
+        }
+
+        const x = infoCanvasWidth - nodeWidth, y = x, width = nodeWidth, height = width;
+
+        const canvasImages: ICanvasImage[] = [
+            { src: this.imagesPath + this.componentInstance.icon + '.png', x, y, width, height},
+            { src: imgUrl, x: 0, y: 0, width: infoIconWidth, height: infoIconWidth}
+        ];
+
+       // Create the image and update the node background styles
+        this.imageCreator.getMultiLayerBase64Image(canvasImages, infoCanvasWidth, infoCanvasWidth).then((img) => this.updateNodeStyles(node, infoCanvasWidth, img));
+        return this.img; // Return the referance to the image (in Base64 format)
+    }
+
+    protected getDisplayName(): string {
+        const resourceName = ResourceNamePipe.getDisplayName(this.componentInstance.name);
+        return ComponentInstanceNodesStyle.getGraphDisplayName(resourceName);
     }
 
     private init() {
@@ -50,70 +100,17 @@ export abstract class CompositionCiNodeBase extends CommonCINodeBase implements 
         this.isUcpePart = false;
         this.isInsideGroup = false;
     }
-    
-    
-    protected enhanceImage(node:Cy.Collection, nodeMinSize:number, imgUrl: string):string {
 
-        let infoIconWidth:number = GraphUIObjects.HANDLE_SIZE;
-        let nodeWidth:number = node.data('imgWidth') || node.width();
-        // let uncertifiedCanvasWidth: number = nodeWidth;
-        let infoCanvasWidth: number = nodeWidth;
-
-        if (nodeWidth < nodeMinSize) { //uncertified icon will overlap too much of the node, need to expand canvas.
-            infoCanvasWidth = nodeWidth + infoIconWidth/2; //expand canvas so that only half of the icon overlaps with the node
-        }
-
-        const x = infoCanvasWidth - nodeWidth, y = x, width = nodeWidth, height = width;
-
-        const canvasImages:ICanvasImage[] = [
-            { src: this.imagesPath + this.componentInstance.icon + '.png', x, y, width, height},
-            { src: imgUrl, x: 0, y: 0, width: infoIconWidth, height: infoIconWidth}
-        ];
-
-
-       //Create the image and update the node background styles
-        this.imageCreator.getMultiLayerBase64Image(canvasImages, infoCanvasWidth, infoCanvasWidth).then(img => this.updateNodeStyles(node,infoCanvasWidth,img));
-        return this.img; // Return the referance to the image (in Base64 format)
-    }
-
-    
-    public setArchivedImageBgStyle(node:Cy.Collection, nodeMinSize:number):string {        
-        let archivedIconWidth:number = GraphUIObjects.HANDLE_SIZE;
-        let nodeWidth:number = node.data('imgWidth') || node.width();
-        let archivedCanvasWidth: number = nodeWidth;
-
-        const x = archivedCanvasWidth - nodeWidth, y = x, width = nodeWidth, height = width;
-        const archiveImage = nodeWidth < 50? 'archive_small.png':'archive_big.png';
-
-        const canvasImages = [
-            { src: this.imagesPath + this.componentInstance.icon + '.png', x, y, width, height},
-            { src: getSdcConfig().imagesPath + ImagesUrl.RESOURCE_ICONS + archiveImage, x, y, width, height}
-        ];
-
-        //Create the image and update the node background styles
-        this.imageCreator.getMultiLayerBase64Image(canvasImages, archivedCanvasWidth, archivedCanvasWidth).then(img => this.updateNodeStyles(node, archivedCanvasWidth, img));
-        return this.img; // Return the default img
-    }
-
-    public initUncertifiedImage(node:Cy.Collection, nodeMinSize:number):string {
-        return this.enhanceImage(node, nodeMinSize, this.imagesPath + 'uncertified.png');
-    }
-
-    protected getDisplayName():string {
-        let resourceName = ResourceNamePipe.getDisplayName(this.componentInstance.name);
-        return ComponentInstanceNodesStyle.getGraphDisplayName(resourceName);
-    }
-
-    //TODO:: move to Base class ???
-    private updateNodeStyles(node,canvasWidth,imageBase64){     
+    // TODO:: move to Base class ???
+    private updateNodeStyles(node, canvasWidth, imageBase64) {
         this.img = imageBase64;
         node.style({
             'background-image': this.img,
             'background-width': canvasWidth,
             'background-height': canvasWidth,
-            'background-position-x':0,
-            'background-position-y':0
-        });        
+            'background-position-x': 0,
+            'background-position-y': 0
+        });
     }
 
 }

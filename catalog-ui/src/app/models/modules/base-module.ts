@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,30 +25,30 @@
  * Created by obarda on 2/4/2016.
  */
 'use strict';
-import * as _ from "lodash";
-import {PropertyModel} from "../properties";
-import {ArtifactModel} from "../artifacts";
-import {CommonUtils} from "../../utils/common-utils";
+import * as _ from 'lodash';
+import { CommonUtils } from '../../utils/common-utils';
+import { ArtifactModel } from '../artifacts';
+import { PropertyModel } from '../properties';
 
 export class Module {
 
-    public name:string;
-    public groupUUID:string;
-    public invariantUUID:string;
-    public propertyValueCounter:number;
-    public type:string;
-    public typeUid:string;
-    public uniqueId:string;
-    public version:string;
-    public artifacts:Array<string> | Array<ArtifactModel>;
-    public artifactsUuid:Array<string>;
-    public properties:Array<PropertyModel>;
-    public members:Map<string, string>;
-    public customizationUUID:string;
-    public groupInstanceUniqueId:string; // This will only have a value if this is a group instance
+    public name: string;
+    public groupUUID: string;
+    public invariantUUID: string;
+    public propertyValueCounter: number;
+    public type: string;
+    public typeUid: string;
+    public uniqueId: string;
+    public version: string;
+    public artifacts: string[] | ArtifactModel[];
+    public artifactsUuid: string[];
+    public properties: PropertyModel[];
+    public members: Map<string, string>;
+    public customizationUUID: string;
+    public groupInstanceUniqueId: string; // This will only have a value if this is a group instance
 
-    constructor(module?:Module) {
-        if (module) {   
+    constructor(module?: Module) {
+        if (module) {
             this.name = module.name;
             this.groupUUID = module.groupUUID;
             this.invariantUUID = module.invariantUUID;
@@ -71,47 +71,46 @@ export class Module {
 
 export class DisplayModule extends Module {
 
-    isBase:string;
-    artifacts:Array<ArtifactModel>;
+    isBase: string;
+    artifacts: ArtifactModel[];
 
-    //custom properties
-    public vfInstanceName:string;
-    public heatName:string;
-    public moduleName:string;
-    public customizationUUID:string;
+    // custom properties
+    public vfInstanceName: string;
+    public heatName: string;
+    public moduleName: string;
+    public customizationUUID: string;
 
-
-    constructor(displayModule?:DisplayModule) {
+    constructor(displayModule?: DisplayModule) {
         super(displayModule);
 
         this.isBase = displayModule.isBase;
         this.customizationUUID = displayModule.customizationUUID;
         this.initArtifactsForDisplay(displayModule.artifacts);
 
-        //splitting module name for display and edit
-        let splitName:Array<string> = this.name.split('..');
+        // splitting module name for display and edit
+        const splitName: string[] = this.name.split('..');
         this.vfInstanceName = splitName[0];
         this.heatName = splitName[1];
         this.moduleName = splitName[2];
     }
 
-    private initArtifactsForDisplay = (artifacts:Array<ArtifactModel>):void => {
-        this.artifacts = new Array<ArtifactModel>();
-        _.forEach(artifacts, (artifact:ArtifactModel) => {
-            this.artifacts.push(new ArtifactModel(artifact));
-        });
-    };
-
-    public updateName = ():void => {
+    public updateName = (): void => {
         this.name = this.vfInstanceName + '..' + this.heatName + '..' + this.moduleName;
-    };
+    }
 
-    public toJSON = ():any => {
+    public toJSON = (): any => {
         this.vfInstanceName = undefined;
         this.heatName = undefined;
         this.moduleName = undefined;
         this.isBase = undefined;
         this.artifacts = undefined;
         return this;
-    };
+    }
+
+    private initArtifactsForDisplay = (artifacts: ArtifactModel[]): void => {
+        this.artifacts = new Array<ArtifactModel>();
+        _.forEach(artifacts, (artifact: ArtifactModel) => {
+            this.artifacts.push(new ArtifactModel(artifact));
+        });
+    }
 }

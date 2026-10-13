@@ -13,13 +13,12 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -- */
-  
 
-import { Provider } from "@angular/core";
-import { TranslateServiceConfigToken } from "../shared/translator/translate.service.config";
-import { getTranslationServiceConfig } from "./translation.service.config.factory";
+import { Provider } from '@angular/core';
+import { TranslateServiceConfigToken } from '../shared/translator/translate.service.config';
+import { getTranslationServiceConfig } from './translation.service.config.factory';
 
-export const TranslationServiceConfig:Provider = {
+export const TranslationServiceConfig: Provider = {
     provide: TranslateServiceConfigToken,
     useFactory: getTranslationServiceConfig
 };

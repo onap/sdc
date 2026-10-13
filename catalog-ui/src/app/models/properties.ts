@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,16 +19,16 @@
  */
 
 'use strict';
-import * as _ from "lodash";
-import {SchemaPropertyGroupModel, SchemaProperty} from "./schema-property";
-import {InputPropertyBase} from "./input-property-base";
-import {PropertyBEModel} from "./properties-inputs/property-be-model";
+import * as _ from 'lodash';
+import { InputPropertyBase } from './input-property-base';
+import { PropertyBEModel } from './properties-inputs/property-be-model';
+import { SchemaProperty, SchemaPropertyGroupModel } from './schema-property';
 
 export class PropertiesGroup {
-    constructor(propertiesObj?:PropertiesGroup) {
-        _.forEach(propertiesObj, (properties:Array<PropertyModel>, instance) => {
+    constructor(propertiesObj?: PropertiesGroup) {
+        _.forEach(propertiesObj, (properties: PropertyModel[], instance) => {
             this[instance] = [];
-            _.forEach(properties, (property:PropertyModel):void => {
+            _.forEach(properties, (property: PropertyModel): void => {
                 property.resourceInstanceUniqueId = instance;
                 property.readonly = true;
                 this[instance].push(new PropertyModel(property));
@@ -39,59 +39,59 @@ export class PropertiesGroup {
 
 export interface IPropertyModel extends InputPropertyBase {
 
-    //server data
-    //constraints:Array<Object>;
-    source:string;
+    // server data
+    // constraints:Array<Object>;
+    source: string;
 
-    //instance properties
-    valueUniqueUid:string;
-    path:Array<string>;
-    rules:Array<Object>;
-    propertiesName:string;
-    input:any;
+    // instance properties
+    valueUniqueUid: string;
+    path: string[];
+    rules: Object[];
+    propertiesName: string;
+    input: any;
 
-    //custom properties
-    resourceInstanceUniqueId:string;
-    readonly:boolean;
-    simpleType:string;
+    // custom properties
+    resourceInstanceUniqueId: string;
+    readonly: boolean;
+    simpleType: string;
 }
 
 export class PropertyModel extends PropertyBEModel implements IPropertyModel {
-    //server data
-    uniqueId:string;
-    name:string;
-    constraints:Array<Object>;
-    propertyConstraints:Array<string>;
-    defaultValue:string;
-    description:string;
-    password:boolean;
-    required:boolean;
-    type:string;
-    source:string;
-    parentUniqueId:string;
-    schema:SchemaPropertyGroupModel;
-    componentInstanceId:string;
-    parentValue:string;
-    ownerId:string;
+    // server data
+    uniqueId: string;
+    name: string;
+    constraints: Object[];
+    propertyConstraints: string[];
+    defaultValue: string;
+    description: string;
+    password: boolean;
+    required: boolean;
+    type: string;
+    source: string;
+    parentUniqueId: string;
+    schema: SchemaPropertyGroupModel;
+    componentInstanceId: string;
+    parentValue: string;
+    ownerId: string;
 
-    //instance properties
-    value:string;
-    valueUniqueUid:string;
-    path:Array<string>;
-    rules:Array<Object>;
-    propertiesName:string;
-    input:any;
+    // instance properties
+    value: string;
+    valueUniqueUid: string;
+    path: string[];
+    rules: Object[];
+    propertiesName: string;
+    input: any;
 
-    //custom properties
-    resourceInstanceUniqueId:string;
-    readonly:boolean;
-    simpleType:string;
-    filterTerm:string;
-    isAlreadySelected:boolean;
-    addOn:string;
+    // custom properties
+    resourceInstanceUniqueId: string;
+    readonly: boolean;
+    simpleType: string;
+    filterTerm: string;
+    isAlreadySelected: boolean;
+    addOn: string;
     propertyView: boolean = false;
 
-    constructor(property?:PropertyModel) {
+    constructor(property?: PropertyModel) {
         super(property);
         if (property) {
             if (property.propertyConstraints) {
@@ -117,50 +117,50 @@ export class PropertyModel extends PropertyBEModel implements IPropertyModel {
         if (!this.schema || !this.schema.property) {
             this.schema = new SchemaPropertyGroupModel(new SchemaProperty());
         } else {
-            //forcing creating new object, so editing different one than the object in the table
+            // forcing creating new object, so editing different one than the object in the table
             this.schema = new SchemaPropertyGroupModel(new SchemaProperty(this.schema.property));
         }
         if (property && property.uniqueId) {
-            this.filterTerm = this.name + " " + (this.description || "") + " " + this.type.replace("org.openecomp.datatypes.heat.", "");
+            this.filterTerm = this.name + ' ' + (this.description || '') + ' ' + this.type.replace('org.openecomp.datatypes.heat.', '');
             if (this.schema.property && this.schema.property.type) {
-                this.filterTerm += " " + this.schema.property.type.replace("org.openecomp.datatypes.heat.", "");
+                this.filterTerm += ' ' + this.schema.property.type.replace('org.openecomp.datatypes.heat.', '');
             }
         }
     }
 
-    public convertToServerObject:Function = ():string => {
-        let serverObject = {};
-        let mapData = {
-            "type": this.type,
-            "required": this.required || false,
-            "defaultValue": this.defaultValue != "" && this.defaultValue != "[]" && this.defaultValue != "{}" ? this.defaultValue : null,
-            "description": this.description,
-            "constraints": this.constraints,
-            "metadata": this.metadata,
-            "propertyConstraints": this.propertyConstraints,
-            "isPassword": this.password || false,
-            "schema": this.schema,
-            "name": this.name
+    public convertToServerObject: Function = (): string => {
+        const serverObject = {};
+        const mapData = {
+            type: this.type,
+            required: this.required || false,
+            defaultValue: this.defaultValue != '' && this.defaultValue != '[]' && this.defaultValue != '{}' ? this.defaultValue : null,
+            description: this.description,
+            constraints: this.constraints,
+            metadata: this.metadata,
+            propertyConstraints: this.propertyConstraints,
+            isPassword: this.password || false,
+            schema: this.schema,
+            name: this.name
         };
         serverObject[this.name] = mapData;
 
         return JSON.stringify(serverObject);
-    };
+    }
 
-    public toJSON = ():any => {
+    public toJSON = (): any => {
         // if(!this.resourceInstanceUniqueId){
         //     this.value = undefined;
         // }
-        let temp = _.cloneDeep(this);
+        const temp = _.cloneDeep(this);
         temp.readonly = undefined;
         temp.resourceInstanceUniqueId = undefined;
         temp.simpleType = undefined;
-        temp.value = temp.value === "{}" || temp.value === "[]" ? undefined : temp.value;
-        temp.defaultValue = temp.defaultValue === "{}" || temp.defaultValue === "[]" ? undefined : temp.defaultValue;
-        temp.rules = undefined; //don't send rules to server until feature is fully supported
+        temp.value = temp.value === '{}' || temp.value === '[]' ? undefined : temp.value;
+        temp.defaultValue = temp.defaultValue === '{}' || temp.defaultValue === '[]' ? undefined : temp.defaultValue;
+        temp.rules = undefined; // don't send rules to server until feature is fully supported
         temp.isAlreadySelected = undefined;
         temp.addOn = undefined;
         temp.filterTerm = undefined;
         return temp;
-    };
+    }
 }

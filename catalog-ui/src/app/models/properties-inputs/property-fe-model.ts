@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,37 +20,37 @@
  * ============LICENSE_END=========================================================
  */
 
-import * as _ from "lodash";
-import {PROPERTY_DATA, PROPERTY_TYPES} from 'app/utils/constants';
-import {DerivedFEProperty} from 'app/models/properties-inputs/derived-fe-property';
-import {DerivedPropertyType, PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
+import { DerivedFEProperty } from 'app/models/properties-inputs/derived-fe-property';
+import { DerivedPropertyType, PropertyBEModel } from 'app/models/properties-inputs/property-be-model';
+import { PROPERTY_DATA, PROPERTY_TYPES } from 'app/utils/constants';
 import * as jsYaml from 'js-yaml';
-
+import * as _ from 'lodash';
 
 export class PropertyFEModel extends PropertyBEModel {
 
+
     expandedChildPropertyId: string;
-    flattenedChildren:  Array<DerivedFEProperty>;
+    flattenedChildren:  DerivedFEProperty[];
     isDeclared: boolean;
     isDisabled: boolean;
     isSelected: boolean;
-    isSimpleType: boolean; //for convenience only - we can really just check if derivedDataType == derivedPropertyTypes.SIMPLE to know if the prop is simple
+    isSimpleType: boolean; // for convenience only - we can really just check if derivedDataType == derivedPropertyTypes.SIMPLE to know if the prop is simple
     propertiesName: string;
     uniqueId: string;
-    valueObj: any; //this is the only value we relate to in the html templates
+    valueObj: any; // this is the only value we relate to in the html templates
     valueObjValidation: any;
     valueObjIsValid: boolean;
-    valueObjOrig: any; //this is valueObj representation as saved in server
+    valueObjOrig: any; // this is valueObj representation as saved in server
     valueObjIsChanged: boolean;
     derivedDataType: DerivedPropertyType;
     origName: string;
 
-    constructor(property: PropertyBEModel){
+    constructor(property: PropertyBEModel) {
         super(property);
         if (!property) {
             return;
         }
-        this.value = property.value ? property.value : property.defaultValue;//In FE if a property doesn't have value - display the default value
+        this.value = property.value ? property.value : property.defaultValue; // In FE if a property doesn't have value - display the default value
         this.isSimpleType = PROPERTY_DATA.SIMPLE_TYPES.indexOf(this.type) > -1;
         this.setNonDeclared();
         this.derivedDataType = this.getDerivedPropertyType();
@@ -62,8 +62,76 @@ export class PropertyFEModel extends PropertyBEModel {
         this.origName = this.name;
     }
 
+    static stringifyValueObj(valueObj: any, propertyType: PROPERTY_TYPES, propertyDerivedType: DerivedPropertyType): string {
+        // if valueObj is null, return null
+        if (valueObj === null || valueObj === undefined) {
+            return null;
+        }
 
-    public updateValueObj(valueObj:any, isValid:boolean) {
+        // If type is JSON, need to try parsing it before we stringify it so that it appears property in TOSCA - change per Bracha due to AMDOCS
+        // TODO: handle this.derivedDataType == DerivedPropertyType.MAP
+        if (propertyDerivedType == DerivedPropertyType.LIST && propertyType == PROPERTY_TYPES.JSON) {
+            try {
+                return JSON.stringify(valueObj.map((item) => (typeof item == 'string') ? JSON.parse(item) : item));
+            } catch (e) {}
+        }
+
+        // if type is anything but string, then stringify valueObj
+        if ((typeof valueObj) !== 'string') {
+            return JSON.stringify(valueObj);
+        }
+
+        // return trimmed string value
+        return valueObj.trim();
+    }
+
+    static parseValueObj(value: string, propertyType: PROPERTY_TYPES, propertyDerivedType: DerivedPropertyType, isToscaFunction: boolean,
+                         defaultValue?: string): any {
+        if (isToscaFunction) {
+            return jsYaml.load(value);
+        }
+        if (propertyDerivedType === DerivedPropertyType.SIMPLE) {
+            const valueObj = value || defaultValue || null;  // use null for empty value object
+            if (valueObj &&
+                propertyType !== PROPERTY_TYPES.STRING &&
+                propertyType !== PROPERTY_TYPES.TIMESTAMP &&
+                propertyType !== PROPERTY_TYPES.JSON &&
+                PROPERTY_DATA.SCALAR_TYPES.indexOf(propertyType as string) == -1) {
+                return JSON.parse(valueObj);  // the value object contains the real value ans not the value as string
+            }
+            return valueObj;
+        }
+        if (propertyDerivedType == DerivedPropertyType.LIST) {
+            return _.merge([], JSON.parse(defaultValue || '[]'), JSON.parse(value || '[]'));  // value object should be merged value and default value. Value takes higher precedence. Set value object to empty obj if undefined.
+        }
+
+        return _.merge({}, JSON.parse(defaultValue || '{}'), JSON.parse(value || '{}'));  // value object should be merged value and default value. Value takes higher precedence. Set value object to empty obj if undefined.
+    }
+    static cleanValueObj(valueObj: any, unsetEmpty?: boolean): any {
+        // By default - unsetEmpty undefined - will make valueObj cleaned (no null or empty objects, but array will keep null or empty objects).
+        if (valueObj === undefined || valueObj === null || valueObj === '') {
+            return null;
+        }
+        if (valueObj instanceof Array) {
+            const cleanArr = valueObj.map((v) => PropertyFEModel.cleanValueObj(v)).filter((v) => v !== null);
+            valueObj.splice(0, valueObj.length, ...cleanArr);
+        } else if (valueObj instanceof Object) {
+            Object.keys(valueObj).forEach((k) => {
+                // clean each item in the valueObj (by default, unset empty objects)
+                valueObj[k] = PropertyFEModel.cleanValueObj(valueObj[k], unsetEmpty !== undefined ? unsetEmpty : true);
+                if (valueObj[k] === null) {
+                    delete valueObj[k];
+                }
+            });
+            // if unsetEmpty flag is true and valueObj is empty
+            if (unsetEmpty && !Object.keys(valueObj).length) {
+                return null;
+            }
+        }
+        return valueObj;
+    }
+
+    public updateValueObj(valueObj: any, isValid: boolean) {
         this.valueObj = PropertyFEModel.cleanValueObj(valueObj);
         this.valueObjValidation = this.valueObjIsValid = isValid;
         this.valueObjIsChanged = this.hasValueObjChanged();
@@ -104,27 +172,27 @@ export class PropertyFEModel extends PropertyBEModel {
     }
 
     public setNonDeclared = (childPath?: string): void => {
-        if (!childPath) { //un-declaring a child prop
+        if (!childPath) { // un-declaring a child prop
             this.isDeclared = false;
         } else {
-            let childProp: DerivedFEProperty = this.flattenedChildren.find(child => child.propertiesName == childPath);
+            const childProp: DerivedFEProperty = this.flattenedChildren.find((child) => child.propertiesName == childPath);
             childProp.isDeclared = false;
         }
     }
 
-    public setAsDeclared = (childNameToDeclare?:string): void => {
-        if (!childNameToDeclare) { //declaring a child prop
+    public setAsDeclared = (childNameToDeclare?: string): void => {
+        if (!childNameToDeclare) { // declaring a child prop
             this.isSelected = false;
             this.isDeclared = true;
         } else {
-            let childProp: DerivedFEProperty = this.flattenedChildren.find(child => child.propertiesName == childNameToDeclare);
-            if (!childProp) { console.log("ERROR: Unabled to find child: " + childNameToDeclare, this); return; }
+            const childProp: DerivedFEProperty = this.flattenedChildren.find((child) => child.propertiesName == childNameToDeclare);
+            if (!childProp) { console.log('ERROR: Unabled to find child: ' + childNameToDeclare, this); return; }
             childProp.isSelected = false;
             childProp.isDeclared = true;
         }
     }
 
-    //For expand-collapse functionality - used within HTML template
+    // For expand-collapse functionality - used within HTML template
     public updateExpandedChildPropertyId = (childPropertyId: string): void => {
         if (childPropertyId.lastIndexOf('#') > -1) {
             this.expandedChildPropertyId = (this.expandedChildPropertyId == childPropertyId) ? (childPropertyId.substring(0, childPropertyId.lastIndexOf('#'))) : childPropertyId;
@@ -134,11 +202,11 @@ export class PropertyFEModel extends PropertyBEModel {
     }
 
     public getIndexOfChild = (childPropName: string): number => {
-        return this.flattenedChildren.findIndex(prop => prop.propertiesName.indexOf(childPropName) === 0);
+        return this.flattenedChildren.findIndex((prop) => prop.propertiesName.indexOf(childPropName) === 0);
     }
 
-    public getCountOfChildren = (childPropName: string):number => {
-        let matchingChildren:Array<DerivedFEProperty> = this.flattenedChildren.filter(prop => prop.propertiesName.indexOf(childPropName) === 0) || [];
+    public getCountOfChildren = (childPropName: string): number => {
+        const matchingChildren: DerivedFEProperty[] = this.flattenedChildren.filter((prop) => prop.propertiesName.indexOf(childPropName) === 0) || [];
         return matchingChildren.length;
     }
 
@@ -148,7 +216,7 @@ export class PropertyFEModel extends PropertyBEModel {
 
     /* Updates parent valueObj when a child prop's value has changed */
     public childPropUpdated = (childProp: DerivedFEProperty): void => {
-        let parentNames = this.getParentNamesArray(childProp.propertiesName, []);
+        const parentNames = this.getParentNamesArray(childProp.propertiesName, []);
         if (parentNames.length) {
             const childPropName = parentNames.join('.');
             // unset value only if is null and valid, and not in a list
@@ -161,7 +229,7 @@ export class PropertyFEModel extends PropertyBEModel {
                     _.set(this.valueObj, childPropName, null);
                 }
             } else {
-                _.set(this.valueObj, childPropName, childProp.valueObj);        
+                _.set(this.valueObj, childPropName, childProp.valueObj);
             }
             if (childProp.valueObjIsChanged) {
                 _.set(this.valueObjValidation, childPropName, childProp.valueObjIsValid);
@@ -173,7 +241,7 @@ export class PropertyFEModel extends PropertyBEModel {
                 this.valueObjIsChanged = this.hasValueObjChanged();
             }
         }
-    };
+    }
 
     childPropMapKeyUpdated = (childProp: DerivedFEProperty, newMapKey: string, forceValidate: boolean = false) => {
         if (!childProp.isChildOfListOrMap || childProp.derivedDataType !== DerivedPropertyType.MAP) {
@@ -233,100 +301,30 @@ export class PropertyFEModel extends PropertyBEModel {
             this.valueObjIsValid = newMapKeyIsValid && this.calculateValueObjIsValid();
             this.valueObjIsChanged = this.hasValueObjChanged();
         }
-    };
+    }
 
     /* Returns array of individual parents for given prop path, with list/map UUIDs replaced with index/mapkey */
-    public getParentNamesArray = (parentPropName: string, parentNames?: Array<string>, noHashKeys:boolean = false): Array<string> => {
+    public getParentNamesArray = (parentPropName: string, parentNames?: string[], noHashKeys: boolean = false): string[] => {
         parentNames = parentNames || [];
-        if (parentPropName.indexOf("#") == -1) { return parentNames; } //finished recursing parents. return
+        if (parentPropName.indexOf('#') == -1) { return parentNames; } // finished recursing parents. return
 
-        let parentProp: DerivedFEProperty = this.flattenedChildren.find(prop => prop.propertiesName === parentPropName);
+        const parentProp: DerivedFEProperty = this.flattenedChildren.find((prop) => prop.propertiesName === parentPropName);
         let nameToInsert: string = parentProp.name;
 
         if (parentProp.isChildOfListOrMap) {
             if (!noHashKeys && parentProp.derivedDataType == DerivedPropertyType.MAP && !parentProp.mapInlist) {
                 nameToInsert = parentProp.getActualMapKey();
-            } else { //LIST
-                let siblingProps = this.flattenedChildren.filter(prop => prop.parentName == parentProp.parentName).map(prop => prop.propertiesName);
+            } else { // LIST
+                const siblingProps = this.flattenedChildren.filter((prop) => prop.parentName == parentProp.parentName).map((prop) => prop.propertiesName);
                 nameToInsert = siblingProps.indexOf(parentProp.propertiesName).toString();
             }
         }
 
-        parentNames.splice(0, 0, nameToInsert); //add prop name to array
-        return this.getParentNamesArray(parentProp.parentName, parentNames, noHashKeys); //continue recursing
+        parentNames.splice(0, 0, nameToInsert); // add prop name to array
+        return this.getParentNamesArray(parentProp.parentName, parentNames, noHashKeys); // continue recursing
     }
 
     public hasValueObjChanged() {
         return !_.isEqual(this.valueObj, this.valueObjOrig);
-    }
-
-    static stringifyValueObj(valueObj: any, propertyType: PROPERTY_TYPES, propertyDerivedType: DerivedPropertyType): string {
-        // if valueObj is null, return null
-        if (valueObj === null || valueObj === undefined) {
-            return null;
-        }
-
-        //If type is JSON, need to try parsing it before we stringify it so that it appears property in TOSCA - change per Bracha due to AMDOCS
-        //TODO: handle this.derivedDataType == DerivedPropertyType.MAP
-        if (propertyDerivedType == DerivedPropertyType.LIST && propertyType == PROPERTY_TYPES.JSON) {
-            try {
-                return JSON.stringify(valueObj.map(item => (typeof item == 'string') ? JSON.parse(item) : item));
-            } catch (e){}
-        }
-
-        // if type is anything but string, then stringify valueObj
-        if ((typeof valueObj) !== 'string') {
-            return JSON.stringify(valueObj);
-        }
-
-        // return trimmed string value
-        return valueObj.trim();
-    }
-
-    static parseValueObj(value: string, propertyType: PROPERTY_TYPES, propertyDerivedType: DerivedPropertyType, isToscaFunction: boolean,
-                         defaultValue?: string): any {
-        if (isToscaFunction) {
-            return jsYaml.load(value);
-        }
-        if (propertyDerivedType === DerivedPropertyType.SIMPLE) {
-            const valueObj = value || defaultValue || null;  // use null for empty value object
-            if (valueObj &&
-                propertyType !== PROPERTY_TYPES.STRING &&
-                propertyType !== PROPERTY_TYPES.TIMESTAMP &&
-                propertyType !== PROPERTY_TYPES.JSON &&
-                PROPERTY_DATA.SCALAR_TYPES.indexOf(<string>propertyType) == -1) {
-                return JSON.parse(valueObj);  // the value object contains the real value ans not the value as string
-            }
-            return valueObj;
-        }
-        if (propertyDerivedType == DerivedPropertyType.LIST) {
-            return _.merge([], JSON.parse(defaultValue || '[]'), JSON.parse(value || '[]'));  // value object should be merged value and default value. Value takes higher precedence. Set value object to empty obj if undefined.
-        }
-
-        return _.merge({}, JSON.parse(defaultValue || '{}'), JSON.parse(value || '{}'));  // value object should be merged value and default value. Value takes higher precedence. Set value object to empty obj if undefined.
-    };
-
-    static cleanValueObj(valueObj: any, unsetEmpty?: boolean): any {
-        // By default - unsetEmpty undefined - will make valueObj cleaned (no null or empty objects, but array will keep null or empty objects).
-        if (valueObj === undefined || valueObj === null || valueObj === '') {
-            return null;
-        }
-        if (valueObj instanceof Array) {
-            const cleanArr = valueObj.map((v) => PropertyFEModel.cleanValueObj(v)).filter((v) => v !== null);
-            valueObj.splice(0, valueObj.length, ...cleanArr)
-        } else if (valueObj instanceof Object) {
-            Object.keys(valueObj).forEach((k) => {
-                // clean each item in the valueObj (by default, unset empty objects)
-                valueObj[k] = PropertyFEModel.cleanValueObj(valueObj[k], unsetEmpty !== undefined ? unsetEmpty : true);
-                if (valueObj[k] === null) {
-                    delete valueObj[k];
-                }
-            });
-            // if unsetEmpty flag is true and valueObj is empty
-            if (unsetEmpty && !Object.keys(valueObj).length) {
-                return null;
-            }
-        }
-        return valueObj;
     }
 }

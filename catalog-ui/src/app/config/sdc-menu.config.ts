@@ -13,17 +13,16 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -- */
-  
 
-import {Provider, InjectionToken} from "@angular/core";
-import {getSdcMenu} from "./sdc-menu.config.factory";
-import {IAppMenu} from 'app/models/app-config';
+import { InjectionToken, Provider } from '@angular/core';
+import { IAppMenu } from 'app/models/app-config';
+import { getSdcMenu } from './sdc-menu.config.factory';
 
 export { IAppMenu };
 
 export const SdcMenuToken = new InjectionToken('SdcMenuToken');
 
-export const SdcMenu:Provider = {
+export const SdcMenu: Provider = {
     provide: SdcMenuToken,
     useFactory: getSdcMenu
 };

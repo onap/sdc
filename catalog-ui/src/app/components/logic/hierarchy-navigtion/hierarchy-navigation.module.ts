@@ -18,9 +18,9 @@
  * ============LICENSE_END=========================================================
  */
 
-import {NgModule} from '@angular/core'
-import {BrowserModule} from '@angular/platform-browser'
-import {HierarchyNavigationComponent} from "./hierarchy-navigation.component";
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { HierarchyNavigationComponent } from './hierarchy-navigation.component';
 
 @NgModule({
   imports: [BrowserModule],

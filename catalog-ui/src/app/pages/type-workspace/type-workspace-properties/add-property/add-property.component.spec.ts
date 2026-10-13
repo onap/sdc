@@ -19,17 +19,17 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import {AddPropertyComponent} from './add-property.component';
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {TranslateModule} from "../../../../shared/translator/translate.module";
-import {UiElementsModule} from "../../../../components/ui/ui-elements.module";
-import {Component, Input, NO_ERRORS_SCHEMA} from "@angular/core";
-import {DataTypeModel} from "../../../../models/data-types";
-import {SchemaPropertyGroupModel} from "../../../../models/schema-property";
-import {DataTypeService} from "../../../../services/data-type.service";
-import {TranslateService} from "../../../../shared/translator/translate.service";
+import { Component, Input, NO_ERRORS_SCHEMA } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { UiElementsModule } from '../../../../components/ui/ui-elements.module';
+import { DataTypeModel } from '../../../../models/data-types';
+import { SchemaPropertyGroupModel } from '../../../../models/schema-property';
+import { DataTypeService } from '../../../../services/data-type.service';
+import { TranslateModule } from '../../../../shared/translator/translate.module';
+import { TranslateService } from '../../../../shared/translator/translate.service';
+import { AddPropertyComponent } from './add-property.component';
 
 @Component({selector: 'app-input-list-item', template: ''})
 class InputListItemStubComponent {
@@ -48,12 +48,12 @@ class InputListItemStubComponent {
 }
 
 describe('AddPropertyComponent', () => {
-    let dataTypeServiceMock: Partial<DataTypeService> = {
-        findAllDataTypesByModel: jest.fn(args => {
+    const dataTypeServiceMock: Partial<DataTypeService> = {
+        findAllDataTypesByModel: jest.fn((args) => {
             return Promise.resolve(new Map());
         })
     };
-    let translateServiceMock: Partial<TranslateService> = {
+    const translateServiceMock: Partial<TranslateService> = {
         translate: jest.fn((str: string) => {})
     };
     let component: AddPropertyComponent;

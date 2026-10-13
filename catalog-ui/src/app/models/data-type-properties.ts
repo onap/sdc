@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,24 +22,24 @@
  * Created by rcohen on 9/25/2016.
  */
 'use strict';
-import {SchemaPropertyGroupModel} from "./schema-property";
-import {PropertyModel} from "./properties";
+import { PropertyModel } from './properties';
+import { SchemaPropertyGroupModel } from './schema-property';
 
-export class DataTypePropertyModel extends PropertyModel{
-    //custom
-    simpleType:string;
-    valueObjectRef:any;
-    childrenProperties:Array<DataTypePropertyModel>;
-    isAllChildrenLevelsCalculated:boolean;
-    treeNodeId:string;
-    parent:DataTypePropertyModel;
-    expandedChildPropertyId:string;
+export class DataTypePropertyModel extends PropertyModel {
+    // custom
+    simpleType: string;
+    valueObjectRef: any;
+    childrenProperties: DataTypePropertyModel[];
+    isAllChildrenLevelsCalculated: boolean;
+    treeNodeId: string;
+    parent: DataTypePropertyModel;
+    expandedChildPropertyId: string;
 
-    constructor(property?:PropertyModel);
-    constructor(name:string, type:string, treeNodeId:string, parent:DataTypePropertyModel, valueObjectRef:any, schema?:SchemaPropertyGroupModel);
-    constructor(nameOrPropertyObj?:string | PropertyModel, type?:string, treeNodeId?:string, parent?:DataTypePropertyModel, valueObjectRef?:any, schema?:SchemaPropertyGroupModel){
-        super(typeof nameOrPropertyObj === "string" ? null : nameOrPropertyObj);
-        if ( typeof nameOrPropertyObj === "string" ) {
+    constructor(property?: PropertyModel);
+    constructor(name: string, type: string, treeNodeId: string, parent: DataTypePropertyModel, valueObjectRef: any, schema?: SchemaPropertyGroupModel);
+    constructor(nameOrPropertyObj?: string | PropertyModel, type?: string, treeNodeId?: string, parent?: DataTypePropertyModel, valueObjectRef?: any, schema?: SchemaPropertyGroupModel) {
+        super(typeof nameOrPropertyObj === 'string' ? null : nameOrPropertyObj);
+        if ( typeof nameOrPropertyObj === 'string' ) {
             this.name = nameOrPropertyObj;
             this.type = type;
             this.treeNodeId = treeNodeId;
@@ -49,10 +49,10 @@ export class DataTypePropertyModel extends PropertyModel{
         }
     }
 
-    public updateExpandedChildPropertyId = (childPropertyId:string):void =>{
-        if(this.expandedChildPropertyId == childPropertyId){
-            this.expandedChildPropertyId = "";
-        }else{
+    public updateExpandedChildPropertyId = (childPropertyId: string): void => {
+        if (this.expandedChildPropertyId == childPropertyId) {
+            this.expandedChildPropertyId = '';
+        } else {
             this.expandedChildPropertyId = childPropertyId;
         }
     }

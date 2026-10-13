@@ -18,12 +18,12 @@
  * ============LICENSE_END=========================================================
  */
 
-import {CapabilitiesGroup} from 'app/models/capability';
-import {RequirementsGroup} from 'app/models/requirement';
-import {ComponentState, ComponentType, ResourceType} from 'app/utils/constants';
-import { IMainCategory } from './category';
-import { Metadata } from "app/models/metadata";
+import { CapabilitiesGroup } from 'app/models/capability';
+import { Metadata } from 'app/models/metadata';
+import { RequirementsGroup } from 'app/models/requirement';
+import { ComponentState, ComponentType, ResourceType } from 'app/utils/constants';
 import * as _ from 'lodash';
+import { IMainCategory } from './category';
 /**
  * Created by obarda on 4/18/2017.
  */

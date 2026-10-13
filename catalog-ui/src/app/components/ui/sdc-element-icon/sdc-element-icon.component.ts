@@ -1,22 +1,21 @@
-import {Component, Input, OnInit} from "@angular/core";
-import {ComponentType, SdcElementType, ResourceType} from "../../../utils/constants";
-
+import { Component, Input, OnInit } from '@angular/core';
+import { ComponentType, ResourceType, SdcElementType } from '../../../utils/constants';
 
 export class ElementIcon {
     iconName: string;
     color: string;
     backgroundColor: string;
-    type: string
+    type: string;
     shape: string;
     size: string;
 
-    constructor(name?: string, type?:string,  backgroundColor?:string, color?:string, shape?: string, size?:string) {
+    constructor(name?: string, type?: string,  backgroundColor?: string, color?: string, shape?: string, size?: string) {
         this.iconName = name || 'default';
         this.type = type || 'resource_24';
         this.backgroundColor = backgroundColor || 'primary';
-        this.color = color || "white";
-        this.shape = shape || "circle";
-        this.size = size || "x_large";
+        this.color = color || 'white';
+        this.shape = shape || 'circle';
+        this.size = size || 'x_large';
     }
 }
 
@@ -33,39 +32,36 @@ export class SdcElementIconComponent {
 
     public elementIcon;
 
+    ngOnChanges(): void {
+        this.createIconForDisplay();
+    }
+
     private createIconForDisplay = () => {
         switch (this.elementType) {
 
             case ComponentType.SERVICE:
-                this.elementIcon = new ElementIcon(this.iconName, "services_24", "lightBlue");
+                this.elementIcon = new ElementIcon(this.iconName, 'services_24', 'lightBlue');
                 break;
             case ComponentType.SERVICE_PROXY:
             case ComponentType.SERVICE_SUBSTITUTION:
-                this.elementIcon = new ElementIcon(this.iconName, "services_24", "white", "primary");
+                this.elementIcon = new ElementIcon(this.iconName, 'services_24', 'white', 'primary');
                 break;
             case ResourceType.CONFIGURATION:
-                this.elementIcon = new ElementIcon(this.iconName, "resources_24", "purple", "white", 'circle', "medium");
+                this.elementIcon = new ElementIcon(this.iconName, 'resources_24', 'purple', 'white', 'circle', 'medium');
                 break;
             case SdcElementType.GROUP:
-                this.elementIcon = new ElementIcon("group", "resources_24", "blue", 'white', 'rectangle');
+                this.elementIcon = new ElementIcon('group', 'resources_24', 'blue', 'white', 'rectangle');
                 break;
             case SdcElementType.POLICY:
-                this.elementIcon = new ElementIcon("policy", "resources_24", "darkBlue2", 'white', 'rectangle');
+                this.elementIcon = new ElementIcon('policy', 'resources_24', 'darkBlue2', 'white', 'rectangle');
                 break;
             case ResourceType.VFC:
             case ResourceType.CP:
             case ResourceType.VL:
-                this.elementIcon = new ElementIcon(this.iconName, "resources_24", "purple", '', '', 'medium');
+                this.elementIcon = new ElementIcon(this.iconName, 'resources_24', 'purple', '', '', 'medium');
                 break;
             default:
-                this.elementIcon = new ElementIcon(this.iconName, "resources_24", "purple");
+                this.elementIcon = new ElementIcon(this.iconName, 'resources_24', 'purple');
         }
     }
-
-    ngOnChanges():void {
-        this.createIconForDisplay();
-    }
 }
-
-
-

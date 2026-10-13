@@ -19,20 +19,20 @@
 *  ============LICENSE_END=========================================================
 */
 
-import { async, TestBed } from "@angular/core/testing";
-import { ConfigureFn, configureTests } from "../../jest/test-config.helper";
-import { NO_ERRORS_SCHEMA, Testability } from "@angular/core";
-import { HeadersInterceptor } from './headers-interceptor';
-import { SdcConfigToken } from "../config/sdc-config.config";
+import { HttpErrorResponse, HttpEvent, HttpRequest, HttpResponse } from '@angular/common/http';
+import { NO_ERRORS_SCHEMA, Testability } from '@angular/core';
 import { Injector } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/throw';
+import { async, TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
-import { TranslateService } from '../shared/translator/translate.service';
+import 'rxjs/add/observable/throw';
+import { Observable } from 'rxjs/Observable';
+import { ConfigureFn, configureTests } from '../../jest/test-config.helper';
+import { SdcConfigToken } from '../config/sdc-config.config';
 import { CookieService } from '../services/cookie.service';
 import { HttpHelperService } from '../services/http-helper.service';
-import { HttpErrorResponse, HttpEvent, HttpResponse, HttpRequest } from '@angular/common/http';
-import { ModelService } from "../services/model.service";
+import { ModelService } from '../services/model.service';
+import { TranslateService } from '../shared/translator/translate.service';
+import { HeadersInterceptor } from './headers-interceptor';
 
 describe('HeadersInterceptor service', () => {
 
@@ -56,7 +56,7 @@ describe('HeadersInterceptor service', () => {
                 getHeaderMd5: jest.fn()
             };
 
-            const configure: ConfigureFn = testBed => {
+            const configure: ConfigureFn = (testBed) => {
                 testBed.configureTestingModule({
                     declarations: [],
                     imports: [],
@@ -71,7 +71,7 @@ describe('HeadersInterceptor service', () => {
                     ],
                 });
             };
-            configureTests(configure).then(testBed => {
+            configureTests(configure).then((testBed) => {
                 headerService = TestBed.get(HeadersInterceptor);
             });
         })
@@ -81,12 +81,12 @@ describe('HeadersInterceptor service', () => {
         expect(headerService).toBeTruthy();
     });
 
-    it('should set correct request headers', done => {
+    it('should set correct request headers', (done) => {
         const mockHandler = {
             handle: jest.fn(() => of(
                 new HttpResponse({ status: 200 })))
         };
-        headerService.intercept(new HttpRequest<any>('GET', '/test'), mockHandler).subscribe(response => {
+        headerService.intercept(new HttpRequest<any>('GET', '/test'), mockHandler).subscribe((response) => {
             expect(response).toBeTruthy();
             const forwardedRequest = mockHandler.handle.mock.calls[0][0] as HttpRequest<any>;
             expect(forwardedRequest.headers.get('urlSuffix')).toBe('009');
@@ -94,7 +94,7 @@ describe('HeadersInterceptor service', () => {
         });
     });
 
-    it('should throw 500 error with correct message', done => {
+    it('should throw 500 error with correct message', (done) => {
         const mockHandler = {
             handle: jest.fn(() => of(
                 new HttpErrorResponse({ status: 500, error: 'This is a error' })))
@@ -132,7 +132,7 @@ describe('HeadersInterceptor service', () => {
             expect(mockHandler.handle).not.toHaveBeenCalled();
         });
 
-        it('should report a request as pending until it completes', done => {
+        it('should report a request as pending until it completes', (done) => {
             const mockHandler = { handle: jest.fn(() => of(new HttpResponse({ status: 200 }))) };
 
             interceptor.intercept(new HttpRequest<any>('GET', '/test'), mockHandler).subscribe(() => {
@@ -148,7 +148,7 @@ describe('HeadersInterceptor service', () => {
             });
         });
 
-        it('should stop reporting a request as pending when it fails', done => {
+        it('should stop reporting a request as pending when it fails', (done) => {
             const mockHandler = {
                 handle: jest.fn(() => Observable.throw(new HttpErrorResponse({ status: 500 })))
             };
@@ -162,13 +162,13 @@ describe('HeadersInterceptor service', () => {
             });
         });
 
-        it('should still issue the request when Testability is unavailable', done => {
+        it('should still issue the request when Testability is unavailable', (done) => {
             const mockHandler = { handle: jest.fn(() => of(new HttpResponse({ status: 200 }))) };
             const emptyInjector = { get: (token: any, notFoundValue?: any) => notFoundValue } as Injector;
             const plainInterceptor = new HeadersInterceptor(emptyInjector, cookieServiceMock as CookieService,
                 httpServiceMock as HttpHelperService);
 
-            plainInterceptor.intercept(new HttpRequest<any>('GET', '/test'), mockHandler).subscribe(response => {
+            plainInterceptor.intercept(new HttpRequest<any>('GET', '/test'), mockHandler).subscribe((response) => {
                 expect(response).toBeTruthy();
                 done();
             });

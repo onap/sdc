@@ -18,17 +18,17 @@
  * ============LICENSE_END=========================================================
  */
 
-import {ComponentMetadata} from "./component-metadata";
+import { ComponentMetadata } from './component-metadata';
 
 export enum ToscaMetaEntry {
-    ENTRY_DEFINITIONS = "Entry-Definitions"
+    ENTRY_DEFINITIONS = 'Entry-Definitions'
 }
 
 export class ServiceCsar {
 
     entryDefinitionFileName: string;
     interfaceDefinitionFileName: string;
-    substitutionNodeType:string;
+    substitutionNodeType: string;
     toscaMeta: ToscaMeta = new ToscaMeta();
     serviceMetadata: ComponentMetadata = new ComponentMetadata();
     extraServiceMetadata: Map<string, string> = new Map<string, string>();

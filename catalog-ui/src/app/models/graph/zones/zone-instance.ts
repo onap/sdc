@@ -1,8 +1,8 @@
-import {PolicyInstance} from "app/models/graph/zones/policy-instance";
-import {GroupInstance} from "./group-instance";
-import {Component as TopologyTemplate} from 'app/models/components/component';
-import {IUiBaseObject} from "../../ui-models/ui-base-object";
-import { Subject } from "rxjs";
+import { Component as TopologyTemplate } from 'app/models/components/component';
+import { PolicyInstance } from 'app/models/graph/zones/policy-instance';
+import { Subject } from 'rxjs';
+import { IUiBaseObject } from '../../ui-models/ui-base-object';
+import { GroupInstance } from './group-instance';
 
 export enum ZoneInstanceMode {
     NONE,
@@ -23,25 +23,25 @@ export enum ZoneInstanceAssignmentType {
 
 export interface IZoneInstanceMethod {
 
-    getSavedAssignments():Array<IZoneInstanceAssignment>;
-    setSavedAssignments(newAssignments:Array<IZoneInstanceAssignment>):void;
+    getSavedAssignments(): IZoneInstanceAssignment[];
+    setSavedAssignments(newAssignments: IZoneInstanceAssignment[]): void;
 }
 
-export interface IZoneInstanceAssignment extends IUiBaseObject{
-    type: ZoneInstanceAssignmentType
+export interface IZoneInstanceAssignment extends IUiBaseObject {
+    type: ZoneInstanceAssignmentType;
 }
 
 export class ZoneInstance {
 
-    parentComponentType:string;
-    parentComponentID:string;
+    parentComponentType: string;
+    parentComponentID: string;
     instanceData: PolicyInstance | GroupInstance;
-    mode:ZoneInstanceMode;
-    type:ZoneInstanceType;
-    handle:string;
-    assignments:Array<IZoneInstanceAssignment>; //temp assignments visible on the UI; not the saved values on the BE
-    hidden:boolean;
-    forceSave:Subject<Function>;
+    mode: ZoneInstanceMode;
+    type: ZoneInstanceType;
+    handle: string;
+    assignments: IZoneInstanceAssignment[]; // temp assignments visible on the UI; not the saved values on the BE
+    hidden: boolean;
+    forceSave: Subject<Function>;
 
     constructor(instance: PolicyInstance | GroupInstance, topologyTemplateType: string, topologyTemplateId: string) {
 
@@ -61,28 +61,28 @@ export class ZoneInstance {
         this.forceSave = new Subject();
     }
 
-    public isAlreadyAssigned = (nodeId:string):boolean => {
-        let matchingAssignments = this.assignments.filter((assignment) => {
+    public isAlreadyAssigned = (nodeId: string): boolean => {
+        const matchingAssignments = this.assignments.filter((assignment) => {
             return assignment.uniqueId == nodeId;
         });
         return matchingAssignments && matchingAssignments.length > 0;
     }
 
-    public addOrRemoveAssignment = (nodeId:string, nodeType:ZoneInstanceAssignmentType)=> { //change temp assignments, unsaved but visible in UI.
+    public addOrRemoveAssignment = (nodeId: string, nodeType: ZoneInstanceAssignmentType) => { // change temp assignments, unsaved but visible in UI.
 
         if (!this.isAlreadyAssigned(nodeId)) {
-            this.assignments.push(<IZoneInstanceAssignment>{uniqueId: nodeId, type: nodeType});
+            this.assignments.push({uniqueId: nodeId, type: nodeType} as IZoneInstanceAssignment);
         } else {
-            this.assignments = this.assignments.filter(assignment => assignment.uniqueId != nodeId);
+            this.assignments = this.assignments.filter((assignment) => assignment.uniqueId != nodeId);
         }
     }
-    
-    public isZoneAssignmentChanged(oldAssignments:Array<IZoneInstanceAssignment>, newAssignments:Array<IZoneInstanceAssignment>):boolean {
+
+    public isZoneAssignmentChanged(oldAssignments: IZoneInstanceAssignment[], newAssignments: IZoneInstanceAssignment[]): boolean {
         if (oldAssignments.length != newAssignments.length) {
             return true;
         }
-        let difference:Array<IZoneInstanceAssignment> = oldAssignments.filter((oldAssignment) => {
-            return !newAssignments.find(newAssignment => newAssignment.uniqueId == oldAssignment.uniqueId);
+        const difference: IZoneInstanceAssignment[] = oldAssignments.filter((oldAssignment) => {
+            return !newAssignments.find((newAssignment) => newAssignment.uniqueId == oldAssignment.uniqueId);
         });
         if (difference.length) {
             return true;
@@ -91,16 +91,16 @@ export class ZoneInstance {
         return false;
     }
 
-    public updateInstanceData (instanceData:  PolicyInstance | GroupInstance):void {
+    public updateInstanceData(instanceData:  PolicyInstance | GroupInstance): void {
         this.instanceData = instanceData;
         this.assignments = this.instanceData.getSavedAssignments();
     }
 
-    public showHandle = (handleId:string) => {
+    public showHandle = (handleId: string) => {
         this.handle = handleId;
     }
 
-    public hideHandle = ():void => {
+    public hideHandle = (): void => {
         this.handle = null;
     }
 }

@@ -19,42 +19,42 @@
 *  ============LICENSE_END=========================================================
 */
 
-import {Component, ComponentRef, Inject, Input} from '@angular/core';
-import {
-    TopologyTemplateService
-} from '../../../services/component-services/topology-template.service';
-import {TranslateService} from "../../../shared/translator/translate.service";
-import {ModalService} from 'app/services/modal.service';
-import {CompositionService} from "app/pages/composition/composition.service";
-import {ModalComponent} from 'app/components/ui/modal/modal.component';
-import {Component as TopologyTemplate} from "../../../models/components/component";
-import {PluginsService} from "app/services/plugins.service";
-import {SelectedComponentType} from "../common/store/graph.actions";
-import {InstanceFeDetails} from "../../../models/instance-fe-details";
-import {WorkspaceService} from "../../workspace/workspace.service";
+import { Component, ComponentRef, Inject, Input } from '@angular/core';
+import { ModalComponent } from 'app/components/ui/modal/modal.component';
+import { CompositionService } from 'app/pages/composition/composition.service';
+import { ModalService } from 'app/services/modal.service';
+import { PluginsService } from 'app/services/plugins.service';
+import { Component as TopologyTemplate } from '../../../models/components/component';
+import { InstanceFeDetails } from '../../../models/instance-fe-details';
 import {
     ComponentInterfaceDefinitionModel,
     InterfaceOperationModel
-} from "../../../models/interface-operation";
+} from '../../../models/interface-operation';
+import {
+    TopologyTemplateService
+} from '../../../services/component-services/topology-template.service';
+import { TranslateService } from '../../../shared/translator/translate.service';
+import { WorkspaceService } from '../../workspace/workspace.service';
+import { SelectedComponentType } from '../common/store/graph.actions';
 import {
     InterfaceOperationHandlerComponent
-} from "./operation-creator/interface-operation-handler.component";
+} from './operation-creator/interface-operation-handler.component';
 
-import {ArtifactModel} from 'app/models/artifacts';
-import {ButtonModel} from 'app/models/button';
-import {ComponentMetadata} from 'app/models/component-metadata';
-import {ComponentInstance} from 'app/models/components-instances/component-instance';
-import {ModalModel} from 'app/models/modal';
-import {InterfaceModel} from 'app/models/operation';
-import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
-import {ArtifactGroupType} from "../../../utils/constants";
+import { ArtifactModel } from 'app/models/artifacts';
+import { ButtonModel } from 'app/models/button';
+import { ComponentMetadata } from 'app/models/component-metadata';
+import { ComponentInstance } from 'app/models/components-instances/component-instance';
+import { ModalModel } from 'app/models/modal';
+import { InterfaceModel } from 'app/models/operation';
+import { InputBEModel } from 'app/models/properties-inputs/input-be-model';
+import { SdcUiServices } from 'onap-ui-angular';
+import { NotificationSettings } from 'onap-ui-angular/dist/notifications/utilities/notification.config';
 import {
     DropdownValue
-} from "../../../components/ui/form-components/dropdown/ui-element-dropdown.component";
-import {ToscaArtifactService} from "../../../services/tosca-artifact.service";
-import {ToscaArtifactModel} from "../../../models/tosca-artifact";
-import {SdcUiServices} from "onap-ui-angular";
-import {NotificationSettings} from "onap-ui-angular/dist/notifications/utilities/notification.config";
+} from '../../../components/ui/form-components/dropdown/ui-element-dropdown.component';
+import { ToscaArtifactModel } from '../../../models/tosca-artifact';
+import { ToscaArtifactService } from '../../../services/tosca-artifact.service';
+import { ArtifactGroupType } from '../../../utils/constants';
 
 export class UIInterfaceOperationModel extends InterfaceOperationModel {
     isCollapsed: boolean = true;
@@ -95,11 +95,11 @@ class ModalTranslation {
     SAVE_BUTTON: string;
 
     constructor(private translateService: TranslateService) {
-        this.translateService.languageChangedObservable.subscribe(lang => {
+        this.translateService.languageChangedObservable.subscribe((lang) => {
             this.EDIT_TITLE = this.translateService.translate('INTERFACE_EDIT_TITLE');
-            this.CANCEL_BUTTON = this.translateService.translate("INTERFACE_CANCEL_BUTTON");
-            this.CLOSE_BUTTON = this.translateService.translate("INTERFACE_CLOSE_BUTTON");
-            this.SAVE_BUTTON = this.translateService.translate("INTERFACE_SAVE_BUTTON");
+            this.CANCEL_BUTTON = this.translateService.translate('INTERFACE_CANCEL_BUTTON');
+            this.CLOSE_BUTTON = this.translateService.translate('INTERFACE_CLOSE_BUTTON');
+            this.SAVE_BUTTON = this.translateService.translate('INTERFACE_SAVE_BUTTON');
         });
     }
 }
@@ -128,7 +128,7 @@ export class UIInterfaceModel extends ComponentInterfaceDefinitionModel {
 })
 export class InterfaceOperationsComponent {
     interfaces: UIInterfaceModel[];
-    inputs: Array<InputBEModel>;
+    inputs: InputBEModel[];
     isLoading: boolean;
     interfaceTypes: { [interfaceType: string]: string[] };
     topologyTemplate: TopologyTemplate;
@@ -138,8 +138,8 @@ export class InterfaceOperationsComponent {
     modalTranslation: ModalTranslation;
     componentInstancesInterfaces: Map<string, InterfaceModel[]>;
 
-    deploymentArtifactsFilePath: Array<DropdownValue> = [];
-    toscaArtifactTypes: Array<DropdownValue> = [];
+    deploymentArtifactsFilePath: DropdownValue[] = [];
+    toscaArtifactTypes: DropdownValue[] = [];
     componentInstanceMap: Map<string, InstanceFeDetails> = new Map<string, InstanceFeDetails>();
     validImplementationProps: boolean = true;
     validMilestoneActivities: boolean = true;
@@ -150,7 +150,6 @@ export class InterfaceOperationsComponent {
     @Input() enableMenuItems: Function;
     @Input() disableMenuItems: Function;
     @Input() componentType: SelectedComponentType;
-
 
     constructor(
         private translateService: TranslateService,
@@ -169,34 +168,7 @@ export class InterfaceOperationsComponent {
         this.componentMetaData = this.workspaceService.metadata;
         this.loadComponentInstances();
         this.loadDeployedArtifacts();
-        this.loadToscaArtifacts()
-    }
-
-    private loadComponentInstances() {
-        this.isLoading = true;
-        this.topologyTemplateService.getComponentInstances(this.componentMetaData.componentType, this.componentMetaData.uniqueId)
-        .subscribe((response) => {
-            this.componentInstanceSelected = response.componentInstances.find(ci => ci.uniqueId === this.component.uniqueId);
-            this.initComponentInstanceInterfaceOperations();
-            this.isLoading = false;
-        });
-    }
-
-    private initComponentInstanceInterfaceOperations() {
-        this.initInterfaces(this.componentInstanceSelected.interfaces);
-        this.sortInterfaces();
-    }
-
-    private initInterfaces(interfaces: ComponentInterfaceDefinitionModel[]): void {
-        this.interfaces = _.map(interfaces, (interfaceModel) => new UIInterfaceModel(interfaceModel));
-    }
-
-    private sortInterfaces(): void {
-        this.interfaces = _.filter(this.interfaces, (interf) => interf.operations && interf.operations.length > 0); // remove empty interfaces
-        this.interfaces.sort((a, b) => a.type.localeCompare(b.type)); // sort interfaces alphabetically
-        _.forEach(this.interfaces, (interf) => {
-            interf.operations.sort((a, b) => a.name.localeCompare(b.name)); // sort operations alphabetically
-        });
+        this.loadToscaArtifacts();
     }
 
     collapseAll(value: boolean = true): void {
@@ -220,29 +192,6 @@ export class InterfaceOperationsComponent {
         ).length === 0;
     }
 
-    private disableSaveButton = (): boolean => {
-        let disable:boolean = true;
-        if(this.isViewOnly) {
-            return disable;
-        }
-
-        const validMilestoneFilters = this.modalInstance.instance.dynamicContent.instance.validMilestoneFilters;
-        const validMilestoneActivities = this.modalInstance.instance.dynamicContent.instance.validMilestoneActivities;
-        if (!validMilestoneActivities || !validMilestoneFilters) {
-            return disable;
-        }
-        let enableAddArtifactImplementation = this.modalInstance.instance.dynamicContent.instance.enableAddArtifactImplementation;
-        if(enableAddArtifactImplementation) {
-            const validImplementationProps = this.modalInstance.instance.dynamicContent.instance.validImplementationProps;
-            const toscaArtifactTypeSelected = this.modalInstance.instance.dynamicContent.instance.toscaArtifactTypeSelected;
-            const isToscaArtifactType:boolean = !(typeof toscaArtifactTypeSelected == 'undefined' || _.isEmpty(toscaArtifactTypeSelected));
-            disable = !isToscaArtifactType || !validImplementationProps;
-            return disable;
-        }
-        disable = false;
-        return disable;
-    }
-
     onSelectInterfaceOperation(interfaceModel: UIInterfaceModel, operation: InterfaceOperationModel) {
 
         const buttonList = [];
@@ -259,12 +208,12 @@ export class InterfaceOperationsComponent {
         const modalModel: ModalModel = new ModalModel('l', this.modalTranslation.EDIT_TITLE, '', buttonList, 'custom');
         this.modalInstance = this.modalService.createCustomModal(modalModel);
 
-        const componentInstances = this.compositionService.getComponentInstances()
+        const componentInstances = this.compositionService.getComponentInstances();
         if (componentInstances) {
-            componentInstances.forEach(value => {
-                this.componentInstanceMap.set(value.uniqueId, <InstanceFeDetails>{
+            componentInstances.forEach((value) => {
+                this.componentInstanceMap.set(value.uniqueId, {
                     name: value.name
-                });
+                } as InstanceFeDetails);
             });
         }
 
@@ -289,6 +238,90 @@ export class InterfaceOperationsComponent {
         this.modalInstance.instance.open();
     }
 
+    loadDeployedArtifacts() {
+        this.topologyTemplateService.getArtifactsByType(this.componentMetaData.componentType, this.componentMetaData.uniqueId, ArtifactGroupType.DEPLOYMENT)
+        .subscribe((response) => {
+            const artifactsDeployment = response.deploymentArtifacts;
+            if (artifactsDeployment) {
+                const deploymentArtifactsFound = _.values(artifactsDeployment) as ArtifactModel[];
+                deploymentArtifactsFound.forEach((value) => {
+                    this.deploymentArtifactsFilePath.push(new DropdownValue(value, value.artifactType.concat('->').concat(value.artifactName)));
+                });
+            }
+        }, (error) => {
+            this.notificationsService.push(new NotificationSettings(
+                'error',
+                'Failed to Load the Deployed Artifacts:' + error,
+                'Failure',
+                5000));
+        });
+    }
+
+    loadToscaArtifacts() {
+        this.toscaArtifactService.getToscaArtifacts(this.componentMetaData.model).subscribe((response) => {
+            if (response) {
+                const toscaArtifactsFound = _.values(response) as ToscaArtifactModel[];
+                toscaArtifactsFound.forEach((value) => this.toscaArtifactTypes.push(new DropdownValue(value, value.type)));
+            }
+        }, (error) => {
+            this.notificationsService.push(new NotificationSettings(
+                'error',
+                'Failed to Load Tosca Artifacts:' + error,
+                'Failure',
+                5000));
+        });
+    }
+
+    private loadComponentInstances() {
+        this.isLoading = true;
+        this.topologyTemplateService.getComponentInstances(this.componentMetaData.componentType, this.componentMetaData.uniqueId)
+        .subscribe((response) => {
+            this.componentInstanceSelected = response.componentInstances.find((ci) => ci.uniqueId === this.component.uniqueId);
+            this.initComponentInstanceInterfaceOperations();
+            this.isLoading = false;
+        });
+    }
+
+    private initComponentInstanceInterfaceOperations() {
+        this.initInterfaces(this.componentInstanceSelected.interfaces);
+        this.sortInterfaces();
+    }
+
+    private initInterfaces(interfaces: ComponentInterfaceDefinitionModel[]): void {
+        this.interfaces = _.map(interfaces, (interfaceModel) => new UIInterfaceModel(interfaceModel));
+    }
+
+    private sortInterfaces(): void {
+        this.interfaces = _.filter(this.interfaces, (interf) => interf.operations && interf.operations.length > 0); // remove empty interfaces
+        this.interfaces.sort((a, b) => a.type.localeCompare(b.type)); // sort interfaces alphabetically
+        _.forEach(this.interfaces, (interf) => {
+            interf.operations.sort((a, b) => a.name.localeCompare(b.name)); // sort operations alphabetically
+        });
+    }
+
+    private disableSaveButton = (): boolean => {
+        let disable: boolean = true;
+        if (this.isViewOnly) {
+            return disable;
+        }
+
+        const validMilestoneFilters = this.modalInstance.instance.dynamicContent.instance.validMilestoneFilters;
+        const validMilestoneActivities = this.modalInstance.instance.dynamicContent.instance.validMilestoneActivities;
+        if (!validMilestoneActivities || !validMilestoneFilters) {
+            return disable;
+        }
+        const enableAddArtifactImplementation = this.modalInstance.instance.dynamicContent.instance.enableAddArtifactImplementation;
+        if (enableAddArtifactImplementation) {
+            const validImplementationProps = this.modalInstance.instance.dynamicContent.instance.validImplementationProps;
+            const toscaArtifactTypeSelected = this.modalInstance.instance.dynamicContent.instance.toscaArtifactTypeSelected;
+            const isToscaArtifactType: boolean = !(typeof toscaArtifactTypeSelected == 'undefined' || _.isEmpty(toscaArtifactTypeSelected));
+            disable = !isToscaArtifactType || !validImplementationProps;
+            return disable;
+        }
+        disable = false;
+        return disable;
+    }
+
     private cancelAndCloseModal = () => {
         this.loadComponentInstances();
         return this.modalService.closeCurrentModal();
@@ -306,7 +339,7 @@ export class InterfaceOperationsComponent {
         if (!isArtifactChecked) {
             let artifactName = interfaceOperationHandlerComponentInstance.artifactName;
             artifactName = artifactName === undefined ? '' : artifactName;
-            operationUpdated.implementation = new ArtifactModel({'artifactName': artifactName, 'artifactVersion': ''} as ArtifactModel);
+            operationUpdated.implementation = new ArtifactModel({artifactName: artifactName, artifactVersion: ''} as ArtifactModel);
         }
         if (timeout != null) {
             operationUpdated.implementation.timeout = timeout;
@@ -324,40 +357,6 @@ export class InterfaceOperationsComponent {
         }, () => {
             this.modalService.currentModal.instance.dynamicContent.instance.isLoading = false;
             this.modalService.closeCurrentModal();
-        });
-    }
-
-    loadDeployedArtifacts() {
-        this.topologyTemplateService.getArtifactsByType(this.componentMetaData.componentType, this.componentMetaData.uniqueId, ArtifactGroupType.DEPLOYMENT)
-        .subscribe(response => {
-            let artifactsDeployment = response.deploymentArtifacts;
-            if (artifactsDeployment) {
-                let deploymentArtifactsFound = <ArtifactModel[]>_.values(artifactsDeployment)
-                deploymentArtifactsFound.forEach(value => {
-                    this.deploymentArtifactsFilePath.push(new DropdownValue(value, value.artifactType.concat('->').concat(value.artifactName)));
-                });
-            }
-        }, error => {
-            this.notificationsService.push(new NotificationSettings(
-                'error',
-                'Failed to Load the Deployed Artifacts:' + error,
-                'Failure',
-                5000));
-        });
-    }
-
-    loadToscaArtifacts() {
-        this.toscaArtifactService.getToscaArtifacts(this.componentMetaData.model).subscribe(response => {
-            if (response) {
-                let toscaArtifactsFound = <ToscaArtifactModel[]>_.values(response);
-                toscaArtifactsFound.forEach(value => this.toscaArtifactTypes.push(new DropdownValue(value, value.type)));
-            }
-        }, error => {
-            this.notificationsService.push(new NotificationSettings(
-                'error',
-                'Failed to Load Tosca Artifacts:' + error,
-                'Failure',
-                5000));
         });
     }
 

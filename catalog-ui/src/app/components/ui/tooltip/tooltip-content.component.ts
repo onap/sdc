@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,13 +18,13 @@
  * ============LICENSE_END=========================================================
  */
 
-import {Component, AfterViewInit, Input, ElementRef, ChangeDetectorRef} from "@angular/core";
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, Input } from '@angular/core';
 
 @Component
 ({
-    selector: "tooltip-content",
-    templateUrl: "./tooltip-content.component.html",
-    styleUrls: ["./tooltip-content.component.less"]
+    selector: 'tooltip-content',
+    templateUrl: './tooltip-content.component.html',
+    styleUrls: ['./tooltip-content.component.less']
 })
 
 export class TooltipContentComponent implements AfterViewInit {
@@ -35,7 +35,7 @@ export class TooltipContentComponent implements AfterViewInit {
 
     @Input() hostElement: HTMLElement;
     @Input() content: string;
-    @Input() placement: "top"|"bottom"|"left"|"right" = "bottom";
+    @Input() placement: 'top'|'bottom'|'left'|'right' = 'bottom';
     @Input() animation: boolean = true;
 
     // -------------------------------------------------------------------------
@@ -69,7 +69,7 @@ export class TooltipContentComponent implements AfterViewInit {
     // -------------------------------------------------------------------------
 
     show(): void {
-        if(!this.hostElement) {
+        if (!this.hostElement) {
             return;
         }
 
@@ -86,7 +86,7 @@ export class TooltipContentComponent implements AfterViewInit {
         this.top = -100000;
         this.left = -100000;
         this.isIn = true;
-        if(this.animation) {
+        if (this.animation) {
             this.isFade = false;
         }
     }
@@ -96,13 +96,13 @@ export class TooltipContentComponent implements AfterViewInit {
     // -------------------------------------------------------------------------
 
     private positionElement(hostElem: HTMLElement, targetElem: HTMLElement, positionStr: string, appendToBody: boolean = false): {top: number, left: number} {
-        let positionStrParts = positionStr.split("-");
-        let pos0 = positionStrParts[0];
-        let pos1 = positionStrParts[1] || "center";
-        let hostElemPosition = appendToBody ? this.offset(hostElem) : this.position(hostElem);
-        let targetElemWidth = targetElem.offsetWidth;
-        let targetElemHeight = targetElem.offsetHeight;
-        let shiftWidth: any = {
+        const positionStrParts = positionStr.split('-');
+        const pos0 = positionStrParts[0];
+        const pos1 = positionStrParts[1] || 'center';
+        const hostElemPosition = appendToBody ? this.offset(hostElem) : this.position(hostElem);
+        const targetElemWidth = targetElem.offsetWidth;
+        const targetElemHeight = targetElem.offsetHeight;
+        const shiftWidth: any = {
             center(): number {
                 return hostElemPosition.left + hostElemPosition.width / 2 - targetElemWidth / 2;
             },
@@ -114,36 +114,36 @@ export class TooltipContentComponent implements AfterViewInit {
             }
         };
 
-        let shiftHeight: any = {
-            center: function (): number {
+        const shiftHeight: any = {
+            center(): number {
                 return hostElemPosition.top + hostElemPosition.height / 2 - targetElemHeight / 2;
             },
-            top: function (): number {
+            top(): number {
                 return hostElemPosition.top;
             },
-            bottom: function (): number {
+            bottom(): number {
                 return hostElemPosition.top + hostElemPosition.height;
             }
-        }
+        };
 
         let targetElemPosition: {top: number, left: number};
 
         switch (pos0) {
-            case "right":
+            case 'right':
                 targetElemPosition = {
                     top: shiftHeight[pos1](),
                     left: shiftWidth[pos0]()
                 };
                 break;
 
-            case "left":
+            case 'left':
                 targetElemPosition = {
                     top: shiftHeight[pos1](),
                     left: hostElemPosition.left - targetElemWidth
                 };
                 break;
 
-            case "bottom":
+            case 'bottom':
                 targetElemPosition = {
                     top: shiftHeight[pos0](),
                     left: shiftWidth[pos1]()
@@ -161,12 +161,11 @@ export class TooltipContentComponent implements AfterViewInit {
         return targetElemPosition;
     }
 
-
     private position(nativeElem: HTMLElement): {width: number, height: number, top: number, left: number} {
         let offsetParentCBR = {top: 0, left: 0};
         const elemBCR = this.offset(nativeElem);
         const offsetParentElem = this.parentOffsetElem(nativeElem);
-        if(offsetParentElem !== window.document) {
+        if (offsetParentElem !== window.document) {
             offsetParentCBR = this.offset(offsetParentElem);
             offsetParentCBR.top += offsetParentElem.clientTop - offsetParentElem.scrollTop;
             offsetParentCBR.left += offsetParentElem.clientLeft - offsetParentElem.scrollTop;
@@ -182,7 +181,7 @@ export class TooltipContentComponent implements AfterViewInit {
         };
     }
 
-    private offset(nativeElem:any): {width: number, height: number, top: number, left: number} {
+    private offset(nativeElem: any): {width: number, height: number, top: number, left: number} {
         const boundingClientRect = nativeElem.getBoundingClientRect();
         return {
             width: boundingClientRect.width || nativeElem.offsetWidth,
@@ -193,7 +192,7 @@ export class TooltipContentComponent implements AfterViewInit {
     }
 
     private getStyle(nativeElem: HTMLElement, cssProperty: string): string {
-        if(window.getComputedStyle) {
+        if (window.getComputedStyle) {
             return (window.getComputedStyle(nativeElem) as any)[cssProperty];
         }
 
@@ -201,7 +200,7 @@ export class TooltipContentComponent implements AfterViewInit {
     }
 
     private isStaticPositioned(nativeElem: HTMLElement): boolean {
-        return (this.getStyle(nativeElem, "position") || "static") === "static";
+        return (this.getStyle(nativeElem, 'position') || 'static') === 'static';
     }
 
     private parentOffsetElem(nativeElem: HTMLElement): any {

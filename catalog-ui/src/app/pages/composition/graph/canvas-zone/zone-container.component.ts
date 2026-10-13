@@ -1,4 +1,4 @@
-import { Component, Input, Output, ViewEncapsulation, EventEmitter, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { ZoneInstanceType } from 'app/models/graph/zones/zone-instance';
 
 @Component({
@@ -9,14 +9,14 @@ import { ZoneInstanceType } from 'app/models/graph/zones/zone-instance';
 })
 
 export class ZoneContainerComponent implements OnInit {
-    @Input() title:string;
-    @Input() type:ZoneInstanceType;
-    @Input() count:number;   
-    @Input() visible:boolean;
-    @Input() minimized:boolean;
+    @Input() title: string;
+    @Input() type: ZoneInstanceType;
+    @Input() count: number;
+    @Input() visible: boolean;
+    @Input() minimized: boolean;
     @Output() minimize: EventEmitter<any> = new EventEmitter<any>();
     @Output() backgroundClick: EventEmitter<void> = new EventEmitter<void>();
-    class:string;
+    class: string;
 
     constructor() {}
 

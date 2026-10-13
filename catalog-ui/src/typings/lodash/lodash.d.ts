@@ -3,7 +3,6 @@
 // Definitions by: Brian Zengel <https://github.com/bczengel>, Ilya Mochalov <https://github.com/chrootsu>, Stepan Mikhaylyuk <https://github.com/stepancar>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
-
 /**
  ### 4.0.0 Changelog (https://github.com/lodash/lodash/wiki/Changelog)
 
@@ -42,7 +41,6 @@
  - [x] Changed the category of _.bindAll to “Utility”
  - [x] Made _.capitalize uppercase the first character & lowercase the rest
  - [x] Made _.functions return only own method names
-
 
  added 23 array methods:
  - [x] _.concat
@@ -98,7 +96,6 @@
  - [x] _.mergeWith
  - [x] _.omitBy
  - [x] _.pickBy
-
 
  added 8 string methods:
  - [x] _.lowerCase
@@ -238,7 +235,7 @@
 
 declare var _: _.LoDashStatic;
 
-declare module _ {
+declare namespace _ {
     interface LoDashStatic {
         /**
          * Creates a lodash object which wraps the given value to enable intuitive method chaining.
@@ -274,8 +271,8 @@ declare module _ {
         (value: number): LoDashImplicitWrapper<number>;
         (value: string): LoDashImplicitStringWrapper;
         (value: boolean): LoDashImplicitWrapper<boolean>;
-        (value: Array<number>): LoDashImplicitNumberArrayWrapper;
-        <T>(value: Array<T>): LoDashImplicitArrayWrapper<T>;
+        (value: number[]): LoDashImplicitNumberArrayWrapper;
+        <T>(value: T[]): LoDashImplicitArrayWrapper<T>;
         <T extends {}>(value: T): LoDashImplicitObjectWrapper<T>;
         (value: any): LoDashImplicitWrapper<any>;
 
@@ -355,9 +352,7 @@ declare module _ {
          */
         set(key: string, value: any): _.Dictionary<any>;
     }
-    interface MapCacheConstructor {
-        new (): MapCache;
-    }
+    type MapCacheConstructor = new () => MapCache;
 
     interface LoDashWrapperBase<T, TWrapper> { }
 
@@ -405,7 +400,7 @@ declare module _ {
      * Array *
      *********/
 
-        //_.chunk
+        // _.chunk
     interface LoDashStatic {
         /**
          * Creates an array of elements split into groups the length of size. If collection can’t be split evenly, the
@@ -449,7 +444,7 @@ declare module _ {
         chunk<TResult>(size?: number): LoDashExplicitArrayWrapper<TResult[]>;
     }
 
-    //_.compact
+    // _.compact
     interface LoDashStatic {
         /**
          * Creates an array with all falsey values removed. The values false, null, 0, "", undefined, and NaN are
@@ -489,7 +484,7 @@ declare module _ {
         compact<TResult>(): LoDashExplicitArrayWrapper<TResult>;
     }
 
-    //_.concat DUMMY
+    // _.concat DUMMY
     interface LoDashStatic {
         /**
          * Creates a new array concatenating `array` with any additional arrays
@@ -512,10 +507,10 @@ declare module _ {
          * console.log(array);
          * // => [1]
          */
-        concat<T>(array: T[]|List<T>, ...values: (T|T[]|List<T>)[]) : T[];
+        concat<T>(array: T[]|List<T>, ...values: Array<T|T[]|List<T>>): T[];
     }
 
-    //_.difference
+    // _.difference
     interface LoDashStatic {
         /**
          * Creates an array of unique array values not included in the other provided arrays using SameValueZero for
@@ -535,31 +530,31 @@ declare module _ {
         /**
          * @see _.difference
          */
-        difference(...values: (T[]|List<T>)[]): LoDashImplicitArrayWrapper<T>;
+        difference(...values: Array<T[]|List<T>>): LoDashImplicitArrayWrapper<T>;
     }
 
     interface LoDashImplicitObjectWrapper<T> {
         /**
          * @see _.difference
          */
-        difference<TValue>(...values: (TValue[]|List<TValue>)[]): LoDashImplicitArrayWrapper<TValue>;
+        difference<TValue>(...values: Array<TValue[]|List<TValue>>): LoDashImplicitArrayWrapper<TValue>;
     }
 
     interface LoDashExplicitArrayWrapper<T> {
         /**
          * @see _.difference
          */
-        difference(...values: (T[]|List<T>)[]): LoDashExplicitArrayWrapper<T>;
+        difference(...values: Array<T[]|List<T>>): LoDashExplicitArrayWrapper<T>;
     }
 
     interface LoDashExplicitObjectWrapper<T> {
         /**
          * @see _.difference
          */
-        difference<TValue>(...values: (TValue[]|List<TValue>)[]): LoDashExplicitArrayWrapper<TValue>;
+        difference<TValue>(...values: Array<TValue[]|List<TValue>>): LoDashExplicitArrayWrapper<TValue>;
     }
 
-    //_.differenceBy
+    // _.differenceBy
     interface LoDashStatic {
         /**
          * This method is like _.difference except that it accepts iteratee which is invoked for each element of array
@@ -1123,7 +1118,7 @@ declare module _ {
         ): LoDashExplicitArrayWrapper<T>;
     }
 
-    //_.differenceWith DUMMY
+    // _.differenceWith DUMMY
     interface LoDashStatic {
         /**
          * Creates an array of unique `array` values not included in the other
@@ -1147,7 +1142,7 @@ declare module _ {
         ): any[];
     }
 
-    //_.drop
+    // _.drop
     interface LoDashStatic {
         /**
          * Creates a slice of array with n elements dropped from the beginning.
@@ -1187,7 +1182,7 @@ declare module _ {
         drop<T>(n?: number): LoDashExplicitArrayWrapper<T>;
     }
 
-    //_.dropRight
+    // _.dropRight
     interface LoDashStatic {
         /**
          * Creates a slice of array with n elements dropped from the end.
@@ -1230,7 +1225,7 @@ declare module _ {
         dropRight<TResult>(n?: number): LoDashExplicitArrayWrapper<TResult>;
     }
 
-    //_.dropRightWhile
+    // _.dropRightWhile
     interface LoDashStatic {
         /**
          * Creates a slice of array excluding elements dropped from the end. Elements are dropped until predicate
@@ -1364,7 +1359,7 @@ declare module _ {
         ): LoDashExplicitArrayWrapper<TValue>;
     }
 
-    //_.dropWhile
+    // _.dropWhile
     interface LoDashStatic {
         /**
          * Creates a slice of array excluding elements dropped from the beginning. Elements are dropped until predicate
@@ -1498,7 +1493,7 @@ declare module _ {
         ): LoDashExplicitArrayWrapper<TValue>;
     }
 
-    //_.fill
+    // _.fill
     interface LoDashStatic {
         /**
          * Fills elements of array with value from start up to, but not including, end.
@@ -1573,7 +1568,7 @@ declare module _ {
         ): LoDashExplicitObjectWrapper<List<T>>;
     }
 
-    //_.findIndex
+    // _.findIndex
     interface LoDashStatic {
         /**
          * This method is like _.find except that it returns the index of the first element predicate returns truthy
@@ -1722,7 +1717,7 @@ declare module _ {
         ): LoDashExplicitWrapper<number>;
     }
 
-    //_.findLastIndex
+    // _.findLastIndex
     interface LoDashStatic {
         /**
          * This method is like _.findIndex except that it iterates over elements of collection from right to left.
@@ -1870,7 +1865,7 @@ declare module _ {
         ): LoDashExplicitWrapper<number>;
     }
 
-    //_.first
+    // _.first
     interface LoDashStatic {
         /**
          * @see _.head
@@ -1923,7 +1918,7 @@ declare module _ {
     interface RecursiveArray<T> extends Array<T|RecursiveArray<T>> {}
     interface ListOfRecursiveArraysOrValues<T> extends List<T|RecursiveArray<T>> {}
 
-    //_.flatten
+    // _.flatten
     interface LoDashStatic {
         /**
          * Flattens a nested array. If isDeep is true the array is recursively flattened, otherwise it’s only
@@ -1988,7 +1983,7 @@ declare module _ {
         flatten<TResult>(isDeep?: boolean): LoDashExplicitArrayWrapper<TResult>;
     }
 
-    //_.flattenDeep
+    // _.flattenDeep
     interface LoDashStatic {
         /**
          * Recursively flattens a nested array.
@@ -2053,7 +2048,7 @@ declare module _ {
         flattenDepth<T>(array: ListOfRecursiveArraysOrValues<T>, depth?: number): T[];
     }
 
-    //_.fromPairs
+    // _.fromPairs
     interface LoDashStatic {
         /**
          * The inverse of `_.toPairs`; this method returns an object composed
@@ -2081,7 +2076,7 @@ declare module _ {
         ): Dictionary<any>;
     }
 
-    //_.fromPairs DUMMY
+    // _.fromPairs DUMMY
     interface LoDashImplicitArrayWrapper<T> {
         /**
          * @see _.fromPairs
@@ -2089,7 +2084,7 @@ declare module _ {
         fromPairs(): LoDashImplicitObjectWrapper<any>;
     }
 
-    //_.fromPairs DUMMY
+    // _.fromPairs DUMMY
     interface LoDashExplicitArrayWrapper<T> {
         /**
          * @see _.fromPairs
@@ -2097,7 +2092,7 @@ declare module _ {
         fromPairs(): LoDashExplicitObjectWrapper<any>;
     }
 
-    //_.head
+    // _.head
     interface LoDashStatic {
         /**
          * Gets the first element of array.
@@ -2152,7 +2147,7 @@ declare module _ {
         head<T>(): T;
     }
 
-    //_.indexOf
+    // _.indexOf
     interface LoDashStatic {
         /**
          * Gets the index at which the first occurrence of `value` is found in `array`
@@ -2224,7 +2219,7 @@ declare module _ {
         ): LoDashExplicitWrapper<number>;
     }
 
-    //_.intersectionBy DUMMY
+    // _.intersectionBy DUMMY
     interface LoDashStatic {
         /**
          * This method is like `_.intersection` except that it accepts `iteratee`
@@ -2252,7 +2247,7 @@ declare module _ {
         ): any[];
     }
 
-    //_.intersectionWith DUMMY
+    // _.intersectionWith DUMMY
     interface LoDashStatic {
         /**
          * This method is like `_.intersection` except that it accepts `comparator`
@@ -2279,7 +2274,7 @@ declare module _ {
         ): any[];
     }
 
-    //_.join
+    // _.join
     interface LoDashStatic {
         /**
          * Converts all elements in `array` into a string separated by `separator`.
@@ -2336,7 +2331,7 @@ declare module _ {
         join(separator?: string): LoDashExplicitWrapper<string>;
     }
 
-    //_.pullAll DUMMY
+    // _.pullAll DUMMY
     interface LoDashStatic {
         /**
          * This method is like `_.pull` except that it accepts an array of values to remove.
@@ -2363,7 +2358,7 @@ declare module _ {
         ): any[];
     }
 
-    //_.pullAllBy DUMMY
+    // _.pullAllBy DUMMY
     interface LoDashStatic {
         /**
          * This method is like `_.pullAll` except that it accepts `iteratee` which is
@@ -2393,7 +2388,7 @@ declare module _ {
         ): any[];
     }
 
-    //_.reverse DUMMY
+    // _.reverse DUMMY
     interface LoDashStatic {
         /**
          * Reverses `array` so that the first element becomes the last, the second
@@ -2421,7 +2416,7 @@ declare module _ {
         ): any[];
     }
 
-    //_.sortedIndexOf
+    // _.sortedIndexOf
     interface LoDashStatic {
         /**
          * This method is like `_.indexOf` except that it performs a binary
@@ -2480,7 +2475,7 @@ declare module _ {
         ): LoDashExplicitWrapper<number>;
     }
 
-    //_.initial
+    // _.initial
     interface LoDashStatic {
         /**
          * Gets all but the last element of array.
@@ -2519,7 +2514,7 @@ declare module _ {
         initial<T>(): LoDashExplicitArrayWrapper<T>;
     }
 
-    //_.intersection
+    // _.intersection
     interface LoDashStatic {
         /**
          * Creates an array of unique values that are included in all of the provided arrays using SameValueZero for
@@ -2528,38 +2523,38 @@ declare module _ {
          * @param arrays The arrays to inspect.
          * @return Returns the new array of shared values.
          */
-        intersection<T>(...arrays: (T[]|List<T>)[]): T[];
+        intersection<T>(...arrays: Array<T[]|List<T>>): T[];
     }
 
     interface LoDashImplicitArrayWrapper<T> {
         /**
          * @see _.intersection
          */
-        intersection<TResult>(...arrays: (TResult[]|List<TResult>)[]): LoDashImplicitArrayWrapper<TResult>;
+        intersection<TResult>(...arrays: Array<TResult[]|List<TResult>>): LoDashImplicitArrayWrapper<TResult>;
     }
 
     interface LoDashImplicitObjectWrapper<T> {
         /**
          * @see _.intersection
          */
-        intersection<TResult>(...arrays: (TResult[]|List<TResult>)[]): LoDashImplicitArrayWrapper<TResult>;
+        intersection<TResult>(...arrays: Array<TResult[]|List<TResult>>): LoDashImplicitArrayWrapper<TResult>;
     }
 
     interface LoDashExplicitArrayWrapper<T> {
         /**
          * @see _.intersection
          */
-        intersection<TResult>(...arrays: (TResult[]|List<TResult>)[]): LoDashExplicitArrayWrapper<TResult>;
+        intersection<TResult>(...arrays: Array<TResult[]|List<TResult>>): LoDashExplicitArrayWrapper<TResult>;
     }
 
     interface LoDashExplicitObjectWrapper<T> {
         /**
          * @see _.intersection
          */
-        intersection<TResult>(...arrays: (TResult[]|List<TResult>)[]): LoDashExplicitArrayWrapper<TResult>;
+        intersection<TResult>(...arrays: Array<TResult[]|List<TResult>>): LoDashExplicitArrayWrapper<TResult>;
     }
 
-    //_.last
+    // _.last
     interface LoDashStatic {
         /**
          * Gets the last element of array.
@@ -2612,7 +2607,7 @@ declare module _ {
         last<T>(): T;
     }
 
-    //_.lastIndexOf
+    // _.lastIndexOf
     interface LoDashStatic {
         /**
          * This method is like _.indexOf except that it iterates over elements of array from right to left.
@@ -2669,7 +2664,7 @@ declare module _ {
         ): LoDashExplicitWrapper<number>;
     }
 
-    //_.pull
+    // _.pull
     interface LoDashStatic {
         /**
          * Removes all provided values from array using SameValueZero for equality comparisons.
@@ -2722,7 +2717,7 @@ declare module _ {
         pull<TValue>(...values: TValue[]): LoDashExplicitObjectWrapper<List<TValue>>;
     }
 
-    //_.pullAt
+    // _.pullAt
     interface LoDashStatic {
         /**
          * Removes elements from array corresponding to the given indexes and returns an array of the removed elements.
@@ -2736,7 +2731,7 @@ declare module _ {
          */
         pullAt<T>(
             array: List<T>,
-            ...indexes: (number|number[])[]
+            ...indexes: Array<number|number[]>
         ): T[];
     }
 
@@ -2744,31 +2739,31 @@ declare module _ {
         /**
          * @see _.pullAt
          */
-        pullAt(...indexes: (number|number[])[]): LoDashImplicitArrayWrapper<T>;
+        pullAt(...indexes: Array<number|number[]>): LoDashImplicitArrayWrapper<T>;
     }
 
     interface LoDashImplicitObjectWrapper<T> {
         /**
          * @see _.pullAt
          */
-        pullAt<T>(...indexes: (number|number[])[]): LoDashImplicitArrayWrapper<T>;
+        pullAt<T>(...indexes: Array<number|number[]>): LoDashImplicitArrayWrapper<T>;
     }
 
     interface LoDashExplicitArrayWrapper<T> {
         /**
          * @see _.pullAt
          */
-        pullAt(...indexes: (number|number[])[]): LoDashExplicitArrayWrapper<T>;
+        pullAt(...indexes: Array<number|number[]>): LoDashExplicitArrayWrapper<T>;
     }
 
     interface LoDashExplicitObjectWrapper<T> {
         /**
          * @see _.pullAt
          */
-        pullAt<T>(...indexes: (number|number[])[]): LoDashExplicitArrayWrapper<T>;
+        pullAt<T>(...indexes: Array<number|number[]>): LoDashExplicitArrayWrapper<T>;
     }
 
-    //_.remove
+    // _.remove
     interface LoDashStatic {
         /**
          * Removes all elements from array that predicate returns truthy for and returns an array of the removed
@@ -2904,7 +2899,7 @@ declare module _ {
         ): LoDashExplicitArrayWrapper<TResult>;
     }
 
-    //_.tail
+    // _.tail
     interface LoDashStatic {
         /**
          * Gets all but the first element of array.
@@ -2945,7 +2940,7 @@ declare module _ {
         tail<T>(): LoDashExplicitArrayWrapper<T>;
     }
 
-    //_.slice
+    // _.slice
     interface LoDashStatic {
         /**
          * Creates a slice of array from start up to, but not including, end.
@@ -2982,7 +2977,7 @@ declare module _ {
         ): LoDashExplicitArrayWrapper<T>;
     }
 
-    //_.sortedIndex
+    // _.sortedIndex
     interface LoDashStatic {
         /**
          * Uses a binary search to determine the lowest index at which `value` should
@@ -3142,10 +3137,9 @@ declare module _ {
             value: T
         ): LoDashExplicitWrapper<number>;
 
-
     }
 
-    //_.sortedIndexBy
+    // _.sortedIndexBy
     interface LoDashStatic {
         /**
          * This method is like `_.sortedIndex` except that it accepts `iteratee`
@@ -3369,7 +3363,7 @@ declare module _ {
         ): LoDashExplicitWrapper<number>;
     }
 
-    //_.sortedLastIndex
+    // _.sortedLastIndex
     interface LoDashStatic {
         /**
          * This method is like `_.sortedIndex` except that it returns the highest
@@ -3528,7 +3522,7 @@ declare module _ {
         ): LoDashExplicitWrapper<number>;
     }
 
-    //_.sortedLastIndexBy
+    // _.sortedLastIndexBy
     interface LoDashStatic {
         /**
          * This method is like `_.sortedLastIndex` except that it accepts `iteratee`
@@ -3747,7 +3741,7 @@ declare module _ {
         ): LoDashExplicitWrapper<number>;
     }
 
-    //_.sortedLastIndexOf DUMMY
+    // _.sortedLastIndexOf DUMMY
     interface LoDashStatic {
         /**
          * This method is like `_.lastIndexOf` except that it performs a binary
@@ -3770,7 +3764,7 @@ declare module _ {
         ): any[];
     }
 
-    //_.tail
+    // _.tail
     interface LoDashStatic {
         /**
          * @see _.rest
@@ -3806,7 +3800,7 @@ declare module _ {
         tail<T>(): LoDashExplicitArrayWrapper<T>;
     }
 
-    //_.take
+    // _.take
     interface LoDashStatic {
         /**
          * Creates a slice of array with n elements taken from the beginning.
@@ -3849,7 +3843,7 @@ declare module _ {
         take<TResult>(n?: number): LoDashExplicitArrayWrapper<TResult>;
     }
 
-    //_.takeRight
+    // _.takeRight
     interface LoDashStatic {
         /**
          * Creates a slice of array with n elements taken from the end.
@@ -3892,7 +3886,7 @@ declare module _ {
         takeRight<TResult>(n?: number): LoDashExplicitArrayWrapper<TResult>;
     }
 
-    //_.takeRightWhile
+    // _.takeRightWhile
     interface LoDashStatic {
         /**
          * Creates a slice of array with elements taken from the end. Elements are taken until predicate returns
@@ -4026,7 +4020,7 @@ declare module _ {
         ): LoDashExplicitArrayWrapper<TValue>;
     }
 
-    //_.takeWhile
+    // _.takeWhile
     interface LoDashStatic {
         /**
          * Creates a slice of array with elements taken from the beginning. Elements are taken until predicate returns
@@ -4160,7 +4154,7 @@ declare module _ {
         ): LoDashExplicitArrayWrapper<TValue>;
     }
 
-    //_.union
+    // _.union
     interface LoDashStatic {
         /**
          * Creates an array of unique values, in order, from all of the provided arrays using SameValueZero for
@@ -4169,48 +4163,48 @@ declare module _ {
          * @param arrays The arrays to inspect.
          * @return Returns the new array of combined values.
          */
-        union<T>(...arrays: List<T>[]): T[];
+        union<T>(...arrays: Array<List<T>>): T[];
     }
 
     interface LoDashImplicitArrayWrapper<T> {
         /**
          * @see _.union
          */
-        union(...arrays: List<T>[]): LoDashImplicitArrayWrapper<T>;
+        union(...arrays: Array<List<T>>): LoDashImplicitArrayWrapper<T>;
 
         /**
          * @see _.union
          */
-        union<T>(...arrays: List<T>[]): LoDashImplicitArrayWrapper<T>;
+        union<T>(...arrays: Array<List<T>>): LoDashImplicitArrayWrapper<T>;
     }
 
     interface LoDashImplicitObjectWrapper<T> {
         /**
          * @see _.union
          */
-        union<T>(...arrays: List<T>[]): LoDashImplicitArrayWrapper<T>;
+        union<T>(...arrays: Array<List<T>>): LoDashImplicitArrayWrapper<T>;
     }
 
     interface LoDashExplicitArrayWrapper<T> {
         /**
          * @see _.union
          */
-        union(...arrays: List<T>[]): LoDashExplicitArrayWrapper<T>;
+        union(...arrays: Array<List<T>>): LoDashExplicitArrayWrapper<T>;
 
         /**
          * @see _.union
          */
-        union<T>(...arrays: List<T>[]): LoDashExplicitArrayWrapper<T>;
+        union<T>(...arrays: Array<List<T>>): LoDashExplicitArrayWrapper<T>;
     }
 
     interface LoDashExplicitObjectWrapper<T> {
         /**
          * @see _.union
          */
-        union<T>(...arrays: List<T>[]): LoDashExplicitArrayWrapper<T>;
+        union<T>(...arrays: Array<List<T>>): LoDashExplicitArrayWrapper<T>;
     }
 
-    //_.unionBy
+    // _.unionBy
     interface LoDashStatic {
         /**
          * This method is like `_.union` except that it accepts `iteratee` which is
@@ -4723,7 +4717,7 @@ declare module _ {
         ): LoDashExplicitArrayWrapper<T>;
     }
 
-    //_.uniq
+    // _.uniq
     interface LoDashStatic {
         /**
          * Creates a duplicate-free version of an array, using
@@ -4812,7 +4806,7 @@ declare module _ {
         uniq<T, TSort>(): LoDashExplicitArrayWrapper<T>;
     }
 
-    //_.uniqBy
+    // _.uniqBy
     interface LoDashStatic {
         /**
          * This method is like `_.uniq` except that it accepts `iteratee` which is
@@ -5010,7 +5004,7 @@ declare module _ {
         ): LoDashExplicitArrayWrapper<T>;
     }
 
-    //_.sortedUniq
+    // _.sortedUniq
     interface LoDashStatic {
         /**
          * This method is like `_.uniq` except that it's designed and optimized
@@ -5097,7 +5091,7 @@ declare module _ {
         sortedUniq<T, TSort>(): LoDashExplicitArrayWrapper<T>;
     }
 
-    //_.sortedUniqBy
+    // _.sortedUniqBy
     interface LoDashStatic {
         /**
          * This method is like `_.uniqBy` except that it's designed and optimized
@@ -5290,7 +5284,7 @@ declare module _ {
         ): LoDashExplicitArrayWrapper<T>;
     }
 
-    //_.unionWith DUMMY
+    // _.unionWith DUMMY
     interface LoDashStatic {
         /**
          * This method is like `_.union` except that it accepts `comparator` which
@@ -5317,7 +5311,7 @@ declare module _ {
         ): any[];
     }
 
-    //_.uniqWith DUMMY
+    // _.uniqWith DUMMY
     interface LoDashStatic {
         /**
          * This method is like `_.uniq` except that it accepts `comparator` which
@@ -5343,7 +5337,7 @@ declare module _ {
         ): any[];
     }
 
-    //_.unzip
+    // _.unzip
     interface LoDashStatic {
         /**
          * This method is like _.zip except that it accepts an array of grouped elements and creates an array
@@ -5383,7 +5377,7 @@ declare module _ {
         unzip<T>(): LoDashExplicitArrayWrapper<T[]>;
     }
 
-    //_.unzipWith
+    // _.unzipWith
     interface LoDashStatic {
         /**
          * This method is like _.unzip except that it accepts an iteratee to specify how regrouped values should be
@@ -5419,7 +5413,7 @@ declare module _ {
         ): LoDashImplicitArrayWrapper<TResult>;
     }
 
-    //_.without
+    // _.without
     interface LoDashStatic {
         /**
          * Creates an array excluding all provided values using SameValueZero for equality comparisons.
@@ -5462,7 +5456,7 @@ declare module _ {
         without<T>(...values: T[]): LoDashExplicitArrayWrapper<T>;
     }
 
-    //_.xor
+    // _.xor
     interface LoDashStatic {
         /**
          * Creates an array of unique values that is the symmetric difference of the provided arrays.
@@ -5470,38 +5464,38 @@ declare module _ {
          * @param arrays The arrays to inspect.
          * @return Returns the new array of values.
          */
-        xor<T>(...arrays: List<T>[]): T[];
+        xor<T>(...arrays: Array<List<T>>): T[];
     }
 
     interface LoDashImplicitArrayWrapper<T> {
         /**
          * @see _.xor
          */
-        xor(...arrays: List<T>[]): LoDashImplicitArrayWrapper<T>;
+        xor(...arrays: Array<List<T>>): LoDashImplicitArrayWrapper<T>;
     }
 
     interface LoDashImplicitObjectWrapper<T> {
         /**
          * @see _.xor
          */
-        xor<T>(...arrays: List<T>[]): LoDashImplicitArrayWrapper<T>;
+        xor<T>(...arrays: Array<List<T>>): LoDashImplicitArrayWrapper<T>;
     }
 
     interface LoDashExplicitArrayWrapper<T> {
         /**
          * @see _.xor
          */
-        xor(...arrays: List<T>[]): LoDashExplicitArrayWrapper<T>;
+        xor(...arrays: Array<List<T>>): LoDashExplicitArrayWrapper<T>;
     }
 
     interface LoDashExplicitObjectWrapper<T> {
         /**
          * @see _.xor
          */
-        xor<T>(...arrays: List<T>[]): LoDashExplicitArrayWrapper<T>;
+        xor<T>(...arrays: Array<List<T>>): LoDashExplicitArrayWrapper<T>;
     }
 
-    //_.xorBy DUMMY
+    // _.xorBy DUMMY
     interface LoDashStatic {
         /**
          * This method is like `_.xor` except that it accepts `iteratee` which is
@@ -5529,7 +5523,7 @@ declare module _ {
         ): any[];
     }
 
-    //_.xorWith DUMMY
+    // _.xorWith DUMMY
     interface LoDashStatic {
         /**
          * This method is like `_.xor` except that it accepts `comparator` which is
@@ -5556,7 +5550,7 @@ declare module _ {
         ): any[];
     }
 
-    //_.zip
+    // _.zip
     interface LoDashStatic {
         /**
          * Creates an array of grouped elements, the first of which contains the first elements of the given arrays,
@@ -5565,38 +5559,38 @@ declare module _ {
          * @param arrays The arrays to process.
          * @return Returns the new array of grouped elements.
          */
-        zip<T>(...arrays: List<T>[]): T[][];
+        zip<T>(...arrays: Array<List<T>>): T[][];
     }
 
     interface LoDashImplicitArrayWrapper<T> {
         /**
          * @see _.zip
          */
-        zip<T>(...arrays: List<T>[]): _.LoDashImplicitArrayWrapper<T[]>;
+        zip<T>(...arrays: Array<List<T>>): _.LoDashImplicitArrayWrapper<T[]>;
     }
 
     interface LoDashImplicitObjectWrapper<T> {
         /**
          * @see _.zip
          */
-        zip<T>(...arrays: List<T>[]): _.LoDashImplicitArrayWrapper<T[]>;
+        zip<T>(...arrays: Array<List<T>>): _.LoDashImplicitArrayWrapper<T[]>;
     }
 
     interface LoDashExplicitArrayWrapper<T> {
         /**
          * @see _.zip
          */
-        zip<T>(...arrays: List<T>[]): _.LoDashExplicitArrayWrapper<T[]>;
+        zip<T>(...arrays: Array<List<T>>): _.LoDashExplicitArrayWrapper<T[]>;
     }
 
     interface LoDashExplicitObjectWrapper<T> {
         /**
          * @see _.zip
          */
-        zip<T>(...arrays: List<T>[]): _.LoDashExplicitArrayWrapper<T[]>;
+        zip<T>(...arrays: Array<List<T>>): _.LoDashExplicitArrayWrapper<T[]>;
     }
 
-    //_.zipObject
+    // _.zipObject
     interface LoDashStatic {
         /**
          * The inverse of _.pairs; this method returns an object composed from arrays of property names and values.
@@ -5721,7 +5715,7 @@ declare module _ {
         ): _.LoDashExplicitObjectWrapper<_.Dictionary<any>>;
     }
 
-    //_.zipWith
+    // _.zipWith
     interface LoDashStatic {
         /**
          * This method is like _.zip except that it accepts an iteratee to specify how grouped values should be
@@ -5746,7 +5740,7 @@ declare module _ {
      * Chain *
      *********/
 
-        //_.chain
+        // _.chain
     interface LoDashStatic {
         /**
          * Creates a lodash object that wraps value with explicit method chaining enabled.
@@ -5790,7 +5784,7 @@ declare module _ {
         chain(): TWrapper;
     }
 
-    //_.tap
+    // _.tap
     interface LoDashStatic {
         /**
          * This method invokes interceptor and returns value. The interceptor is bound to thisArg and invoked with one
@@ -5826,7 +5820,7 @@ declare module _ {
         ): TWrapper;
     }
 
-    //_.thru
+    // _.thru
     interface LoDashStatic {
         /**
          * This method is like _.tap except that it returns the result of interceptor.
@@ -5911,7 +5905,7 @@ declare module _ {
         ): LoDashExplicitArrayWrapper<TResult>;
     }
 
-    //_.prototype.commit
+    // _.prototype.commit
     interface LoDashImplicitWrapperBase<T, TWrapper> {
         /**
          * Executes the chained sequence and returns the wrapped result.
@@ -5928,7 +5922,7 @@ declare module _ {
         commit(): TWrapper;
     }
 
-    //_.prototype.concat
+    // _.prototype.concat
     interface LoDashImplicitWrapperBase<T, TWrapper> {
         /**
          * Creates a new array joining a wrapped array with any additional arrays and/or values.
@@ -5936,27 +5930,27 @@ declare module _ {
          * @param items
          * @return Returns the new concatenated array.
          */
-        concat<TItem>(...items: Array<TItem|Array<TItem>>): LoDashImplicitArrayWrapper<TItem>;
+        concat<TItem>(...items: Array<TItem|TItem[]>): LoDashImplicitArrayWrapper<TItem>;
 
         /**
          * @see _.concat
          */
-        concat(...items: Array<T|Array<T>>): LoDashImplicitArrayWrapper<T>;
+        concat(...items: Array<T|T[]>): LoDashImplicitArrayWrapper<T>;
     }
 
     interface LoDashExplicitWrapperBase<T, TWrapper> {
         /**
          * @see _.concat
          */
-        concat<TItem>(...items: Array<TItem|Array<TItem>>): LoDashExplicitArrayWrapper<TItem>;
+        concat<TItem>(...items: Array<TItem|TItem[]>): LoDashExplicitArrayWrapper<TItem>;
 
         /**
          * @see _.concat
          */
-        concat(...items: Array<T|Array<T>>): LoDashExplicitArrayWrapper<T>;
+        concat(...items: Array<T|T[]>): LoDashExplicitArrayWrapper<T>;
     }
 
-    //_.prototype.plant
+    // _.prototype.plant
     interface LoDashImplicitWrapperBase<T, TWrapper> {
         /**
          * Creates a clone of the chained sequence planting value as the wrapped value.
@@ -6033,7 +6027,7 @@ declare module _ {
         plant(value: any): LoDashExplicitWrapper<any>;
     }
 
-    //_.prototype.reverse
+    // _.prototype.reverse
     interface LoDashImplicitArrayWrapper<T> {
         /**
          * Reverses the wrapped array so the first element becomes the last, the second element becomes the second to
@@ -6053,7 +6047,7 @@ declare module _ {
         reverse(): LoDashExplicitArrayWrapper<T>;
     }
 
-    //_.prototype.toJSON
+    // _.prototype.toJSON
     interface LoDashWrapperBase<T, TWrapper> {
         /**
          * @see _.value
@@ -6061,7 +6055,7 @@ declare module _ {
         toJSON(): T;
     }
 
-    //_.prototype.toString
+    // _.prototype.toString
     interface LoDashWrapperBase<T, TWrapper> {
         /**
          * Produces the result of coercing the unwrapped value to a string.
@@ -6071,7 +6065,7 @@ declare module _ {
         toString(): string;
     }
 
-    //_.prototype.value
+    // _.prototype.value
     interface LoDashWrapperBase<T, TWrapper> {
         /**
          * Executes the chained sequence to extract the unwrapped value.
@@ -6083,7 +6077,7 @@ declare module _ {
         value(): T;
     }
 
-    //_.valueOf
+    // _.valueOf
     interface LoDashWrapperBase<T, TWrapper> {
         /**
          * @see _.value
@@ -6095,7 +6089,7 @@ declare module _ {
      * Collection *
      **************/
 
-        //_.at
+        // _.at
     interface LoDashStatic {
         /**
          * Creates an array of elements corresponding to the given keys, or indexes, of collection. Keys may be
@@ -6107,7 +6101,7 @@ declare module _ {
          */
         at<T>(
             collection: List<T>|Dictionary<T>,
-            ...props: (number|string|(number|string)[])[]
+            ...props: Array<number|string|Array<number|string>>
         ): T[];
     }
 
@@ -6115,31 +6109,31 @@ declare module _ {
         /**
          * @see _.at
          */
-        at(...props: (number|string|(number|string)[])[]): LoDashImplicitArrayWrapper<T>;
+        at(...props: Array<number|string|Array<number|string>>): LoDashImplicitArrayWrapper<T>;
     }
 
     interface LoDashImplicitObjectWrapper<T> {
         /**
          * @see _.at
          */
-        at<T>(...props: (number|string|(number|string)[])[]): LoDashImplicitArrayWrapper<T>;
+        at<T>(...props: Array<number|string|Array<number|string>>): LoDashImplicitArrayWrapper<T>;
     }
 
     interface LoDashExplicitArrayWrapper<T> {
         /**
          * @see _.at
          */
-        at(...props: (number|string|(number|string)[])[]): LoDashExplicitArrayWrapper<T>;
+        at(...props: Array<number|string|Array<number|string>>): LoDashExplicitArrayWrapper<T>;
     }
 
     interface LoDashExplicitObjectWrapper<T> {
         /**
          * @see _.at
          */
-        at<T>(...props: (number|string|(number|string)[])[]): LoDashExplicitArrayWrapper<T>;
+        at<T>(...props: Array<number|string|Array<number|string>>): LoDashExplicitArrayWrapper<T>;
     }
 
-    //_.countBy
+    // _.countBy
     interface LoDashStatic {
         /**
          * Creates an object composed of keys generated from the results of running each element of collection through
@@ -6317,7 +6311,7 @@ declare module _ {
         ): LoDashExplicitObjectWrapper<Dictionary<number>>;
     }
 
-    //_.each
+    // _.each
     interface LoDashStatic {
         /**
          * @see _.forEach
@@ -6414,7 +6408,7 @@ declare module _ {
         ): LoDashExplicitObjectWrapper<T>;
     }
 
-    //_.eachRight
+    // _.eachRight
     interface LoDashStatic {
         /**
          * @see _.forEachRight
@@ -6511,7 +6505,7 @@ declare module _ {
         ): LoDashExplicitObjectWrapper<T>;
     }
 
-    //_.every
+    // _.every
     interface LoDashStatic {
         /**
          * Checks if predicate returns truthy for all elements of collection. Iteration is stopped once predicate
@@ -6651,7 +6645,7 @@ declare module _ {
         ): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.filter
+    // _.filter
     interface LoDashStatic {
         /**
          * Iterates over elements of collection, returning an array of all elements predicate returns truthy for. The
@@ -6811,7 +6805,7 @@ declare module _ {
         filter<W, T>(predicate: W): LoDashExplicitArrayWrapper<T>;
     }
 
-    //_.find
+    // _.find
     interface LoDashStatic {
         /**
          * Iterates over elements of collection, returning the first element predicate returns truthy for.
@@ -6917,7 +6911,7 @@ declare module _ {
         ): TResult;
     }
 
-    //_.findLast
+    // _.findLast
     interface LoDashStatic {
         /**
          * This method is like _.find except that it iterates over elements of a collection from
@@ -6928,7 +6922,7 @@ declare module _ {
          * @return The found element, else undefined.
          **/
         findLast<T>(
-            collection: Array<T>,
+            collection: T[],
             callback: ListIterator<T, boolean>,
             fromIndex?: number
         ): T;
@@ -6956,7 +6950,7 @@ declare module _ {
          * @param _.pluck style callback
          **/
         findLast<W, T>(
-            collection: Array<T>,
+            collection: T[],
             whereValue: W,
             fromIndex?: number
         ): T;
@@ -6986,7 +6980,7 @@ declare module _ {
          * @param _.where style callback
          **/
         findLast<T>(
-            collection: Array<T>,
+            collection: T[],
             pluckValue: string,
             fromIndex?: number
         ): T;
@@ -7039,7 +7033,7 @@ declare module _ {
         ): T;
     }
 
-    //_.flatMap
+    // _.flatMap
     interface LoDashStatic {
         /**
          * Creates an array of flattened values by running each element in collection through iteratee
@@ -7305,7 +7299,7 @@ declare module _ {
         flatMap<TResult>(): LoDashExplicitArrayWrapper<TResult>;
     }
 
-    //_.forEach
+    // _.forEach
     interface LoDashStatic {
         /**
          * Iterates over elements of collection invoking iteratee for each element. The iteratee is bound to thisArg
@@ -7413,7 +7407,7 @@ declare module _ {
         ): LoDashExplicitObjectWrapper<T>;
     }
 
-    //_.forEachRight
+    // _.forEachRight
     interface LoDashStatic {
         /**
          * This method is like _.forEach except that it iterates over elements of collection from right to left.
@@ -7516,7 +7510,7 @@ declare module _ {
         ): LoDashExplicitObjectWrapper<T>;
     }
 
-    //_.groupBy
+    // _.groupBy
     interface LoDashStatic {
         /**
          * Creates an object composed of keys generated from the results of running each element of collection through
@@ -7752,7 +7746,7 @@ declare module _ {
         ): LoDashExplicitObjectWrapper<Dictionary<T[]>>;
     }
 
-    //_.includes
+    // _.includes
     interface LoDashStatic {
         /**
          * Checks if target is in collection using SameValueZero for equality comparisons. If fromIndex is negative,
@@ -7839,7 +7833,7 @@ declare module _ {
         ): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.keyBy
+    // _.keyBy
     interface LoDashStatic {
         /**
          * Creates an object composed of keys generated from the results of running each element of collection through
@@ -8031,7 +8025,7 @@ declare module _ {
         ): LoDashExplicitObjectWrapper<Dictionary<T>>;
     }
 
-    //_.invoke
+    // _.invoke
     interface LoDashStatic {
         /**
          * Invokes the method at path of object.
@@ -8097,7 +8091,7 @@ declare module _ {
             ...args: any[]): TResult;
     }
 
-    //_.invokeMap
+    // _.invokeMap
     interface LoDashStatic {
         /**
          * Invokes the method named by methodName on each element in the collection returning
@@ -8125,7 +8119,7 @@ declare module _ {
          * @see _.invokeMap
          **/
         invokeMap<TResult>(
-            collection: {}[],
+            collection: Array<{}>,
             methodName: string,
             ...args: any[]): TResult[];
 
@@ -8157,7 +8151,7 @@ declare module _ {
          * @see _.invokeMap
          **/
         invokeMap<TResult>(
-            collection: {}[],
+            collection: Array<{}>,
             method: (...args: any[]) => TResult,
             ...args: any[]): TResult[];
 
@@ -8234,7 +8228,7 @@ declare module _ {
             ...args: any[]): LoDashExplicitArrayWrapper<TResult>;
     }
 
-    //_.map
+    // _.map
     interface LoDashStatic {
         /**
          * Creates an array of values by running each element in collection through iteratee. The iteratee is bound to
@@ -8389,7 +8383,7 @@ declare module _ {
         ): LoDashExplicitArrayWrapper<boolean>;
     }
 
-    //_.partition
+    // _.partition
     interface LoDashStatic {
         /**
          * Creates an array of elements split into two groups, the first of which contains elements predicate returns truthy for,
@@ -8531,7 +8525,7 @@ declare module _ {
             pluckValue: string): LoDashImplicitArrayWrapper<TResult[]>;
     }
 
-    //_.reduce
+    // _.reduce
     interface LoDashStatic {
         /**
          * Reduces a collection to a value which is the accumulated result of running each
@@ -8546,7 +8540,7 @@ declare module _ {
          * @return Returns the accumulated value.
          **/
         reduce<T, TResult>(
-            collection: Array<T>,
+            collection: T[],
             callback: MemoIterator<T, TResult>,
             accumulator: TResult): TResult;
 
@@ -8578,7 +8572,7 @@ declare module _ {
          * @see _.reduce
          **/
         reduce<T, TResult>(
-            collection: Array<T>,
+            collection: T[],
             callback: MemoIterator<T, TResult>): TResult;
 
         /**
@@ -8664,7 +8658,7 @@ declare module _ {
             callback: MemoIterator<T, TResult>): LoDashExplicitWrapper<TResult>;
     }
 
-    //_.reduceRight
+    // _.reduceRight
     interface LoDashStatic {
         /**
          * This method is like _.reduce except that it iterates over elements of a collection from
@@ -8676,7 +8670,7 @@ declare module _ {
          * @return The accumulated value.
          **/
         reduceRight<T, TResult>(
-            collection: Array<T>,
+            collection: T[],
             callback: MemoIterator<T, TResult>,
             accumulator: TResult): TResult;
 
@@ -8700,7 +8694,7 @@ declare module _ {
          * @see _.reduceRight
          **/
         reduceRight<T, TResult>(
-            collection: Array<T>,
+            collection: T[],
             callback: MemoIterator<T, TResult>): TResult;
 
         /**
@@ -8718,7 +8712,7 @@ declare module _ {
             callback: MemoIterator<T, TResult>): TResult;
     }
 
-    //_.reject
+    // _.reject
     interface LoDashStatic {
         /**
          * The opposite of _.filter; this method returns the elements of collection that predicate does not return
@@ -8869,7 +8863,7 @@ declare module _ {
         reject<W, T>(predicate: W): LoDashExplicitArrayWrapper<T>;
     }
 
-    //_.sample
+    // _.sample
     interface LoDashStatic {
         /**
          * Gets a random element from collection.
@@ -8938,7 +8932,7 @@ declare module _ {
         sample<TWrapper>(): TWrapper;
     }
 
-    //_.sampleSize
+    // _.sampleSize
     interface LoDashStatic {
         /**
          * Gets n random elements at unique keys from collection up to the size of collection.
@@ -9023,7 +9017,7 @@ declare module _ {
         ): LoDashExplicitArrayWrapper<T>;
     }
 
-    //_.shuffle
+    // _.shuffle
     interface LoDashStatic {
         /**
          * Creates an array of shuffled values, using a version of the Fisher-Yates shuffle.
@@ -9081,7 +9075,7 @@ declare module _ {
         shuffle<T>(): LoDashExplicitArrayWrapper<T>;
     }
 
-    //_.size
+    // _.size
     interface LoDashStatic {
         /**
          * Gets the size of collection by returning its length for array-like values or the number of own enumerable
@@ -9140,7 +9134,7 @@ declare module _ {
         size(): LoDashExplicitWrapper<number>;
     }
 
-    //_.some
+    // _.some
     interface LoDashStatic {
         /**
          * Checks if predicate returns truthy for any element of collection. Iteration is stopped once predicate
@@ -9186,7 +9180,6 @@ declare module _ {
             collection: List<T>|Dictionary<T>|NumericDictionary<T>,
             predicate?: string|[string, any]
         ): boolean;
-
 
         /**
          * @see _.some
@@ -9313,7 +9306,7 @@ declare module _ {
         ): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.sortBy
+    // _.sortBy
     interface LoDashStatic {
         /**
          * Creates an array of elements, sorted in ascending order by the results of
@@ -9388,15 +9381,15 @@ declare module _ {
          * @see _.sortBy
          */
         sortBy<T>(
-            collection: (Array<T>|List<T>),
-            iteratees: (ListIterator<T, any>|string|Object)[]): T[];
+            collection: (T[]|List<T>),
+            iteratees: Array<ListIterator<T, any>|string|Object>): T[];
 
         /**
          * @see _.sortBy
          */
         sortBy<T>(
-            collection: (Array<T>|List<T>),
-            ...iteratees: (ListIterator<T, boolean>|Object|string)[]): T[];
+            collection: (T[]|List<T>),
+            ...iteratees: Array<ListIterator<T, boolean>|Object|string>): T[];
     }
 
     interface LoDashImplicitArrayWrapper<T> {
@@ -9425,12 +9418,12 @@ declare module _ {
         /**
          * @see _.sortBy
          */
-        sortBy(...iteratees: (ListIterator<T, boolean>|Object|string)[]): LoDashImplicitArrayWrapper<T>;
+        sortBy(...iteratees: Array<ListIterator<T, boolean>|Object|string>): LoDashImplicitArrayWrapper<T>;
 
         /**
          * @see _.sortBy
          **/
-        sortBy(iteratees: (ListIterator<T, any>|string|Object)[]): LoDashImplicitArrayWrapper<T>;
+        sortBy(iteratees: Array<ListIterator<T, any>|string|Object>): LoDashImplicitArrayWrapper<T>;
     }
 
     interface LoDashImplicitObjectWrapper<T> {
@@ -9505,7 +9498,7 @@ declare module _ {
         sortBy<T>(): LoDashExplicitArrayWrapper<T>;
     }
 
-    //_.orderBy
+    // _.orderBy
     interface LoDashStatic {
         /**
          * This method is like `_.sortBy` except that it allows specifying the sort
@@ -9536,8 +9529,8 @@ declare module _ {
          */
         orderBy<W extends Object, T>(
             collection: List<T>,
-            iteratees: ListIterator<T, any>|string|W|(ListIterator<T, any>|string|W)[],
-            orders?: boolean|string|(boolean|string)[]
+            iteratees: ListIterator<T, any>|string|W|Array<ListIterator<T, any>|string|W>,
+            orders?: boolean|string|Array<boolean|string>
         ): T[];
 
         /**
@@ -9545,8 +9538,8 @@ declare module _ {
          */
         orderBy<T>(
             collection: List<T>,
-            iteratees: ListIterator<T, any>|string|Object|(ListIterator<T, any>|string|Object)[],
-            orders?: boolean|string|(boolean|string)[]
+            iteratees: ListIterator<T, any>|string|Object|Array<ListIterator<T, any>|string|Object>,
+            orders?: boolean|string|Array<boolean|string>
         ): T[];
 
         /**
@@ -9554,8 +9547,8 @@ declare module _ {
          */
         orderBy<W extends Object, T>(
             collection: NumericDictionary<T>,
-            iteratees: NumericDictionaryIterator<T, any>|string|W|(NumericDictionaryIterator<T, any>|string|W)[],
-            orders?: boolean|string|(boolean|string)[]
+            iteratees: NumericDictionaryIterator<T, any>|string|W|Array<NumericDictionaryIterator<T, any>|string|W>,
+            orders?: boolean|string|Array<boolean|string>
         ): T[];
 
         /**
@@ -9563,8 +9556,8 @@ declare module _ {
          */
         orderBy<T>(
             collection: NumericDictionary<T>,
-            iteratees: NumericDictionaryIterator<T, any>|string|Object|(NumericDictionaryIterator<T, any>|string|Object)[],
-            orders?: boolean|string|(boolean|string)[]
+            iteratees: NumericDictionaryIterator<T, any>|string|Object|Array<NumericDictionaryIterator<T, any>|string|Object>,
+            orders?: boolean|string|Array<boolean|string>
         ): T[];
 
         /**
@@ -9572,8 +9565,8 @@ declare module _ {
          */
         orderBy<W extends Object, T>(
             collection: Dictionary<T>,
-            iteratees: DictionaryIterator<T, any>|string|W|(DictionaryIterator<T, any>|string|W)[],
-            orders?: boolean|string|(boolean|string)[]
+            iteratees: DictionaryIterator<T, any>|string|W|Array<DictionaryIterator<T, any>|string|W>,
+            orders?: boolean|string|Array<boolean|string>
         ): T[];
 
         /**
@@ -9581,8 +9574,8 @@ declare module _ {
          */
         orderBy<T>(
             collection: Dictionary<T>,
-            iteratees: DictionaryIterator<T, any>|string|Object|(DictionaryIterator<T, any>|string|Object)[],
-            orders?: boolean|string|(boolean|string)[]
+            iteratees: DictionaryIterator<T, any>|string|Object|Array<DictionaryIterator<T, any>|string|Object>,
+            orders?: boolean|string|Array<boolean|string>
         ): T[];
     }
 
@@ -9591,8 +9584,8 @@ declare module _ {
          * @see _.orderBy
          */
         orderBy(
-            iteratees: ListIterator<T, any>|string|(ListIterator<T, any>|string)[],
-            orders?: boolean|string|(boolean|string)[]
+            iteratees: ListIterator<T, any>|string|Array<ListIterator<T, any>|string>,
+            orders?: boolean|string|Array<boolean|string>
         ): LoDashImplicitArrayWrapper<T>;
     }
 
@@ -9601,8 +9594,8 @@ declare module _ {
          * @see _.orderBy
          */
         orderBy<W extends Object>(
-            iteratees: ListIterator<T, any>|string|W|(ListIterator<T, any>|string|W)[],
-            orders?: boolean|string|(boolean|string)[]
+            iteratees: ListIterator<T, any>|string|W|Array<ListIterator<T, any>|string|W>,
+            orders?: boolean|string|Array<boolean|string>
         ): LoDashImplicitArrayWrapper<T>;
     }
 
@@ -9611,48 +9604,48 @@ declare module _ {
          * @see _.orderBy
          */
         orderBy<W extends Object, T>(
-            iteratees: ListIterator<T, any>|string|W|(ListIterator<T, any>|string|W)[],
-            orders?: boolean|string|(boolean|string)[]
+            iteratees: ListIterator<T, any>|string|W|Array<ListIterator<T, any>|string|W>,
+            orders?: boolean|string|Array<boolean|string>
         ): LoDashImplicitArrayWrapper<T>;
 
         /**
          * @see _.orderBy
          */
         orderBy<T>(
-            iteratees: ListIterator<T, any>|string|Object|(ListIterator<T, any>|string|Object)[],
-            orders?: boolean|string|(boolean|string)[]
+            iteratees: ListIterator<T, any>|string|Object|Array<ListIterator<T, any>|string|Object>,
+            orders?: boolean|string|Array<boolean|string>
         ): LoDashImplicitArrayWrapper<T>;
 
         /**
          * @see _.orderBy
          */
         orderBy<W extends Object, T>(
-            iteratees: NumericDictionaryIterator<T, any>|string|W|(NumericDictionaryIterator<T, any>|string|W)[],
-            orders?: boolean|string|(boolean|string)[]
+            iteratees: NumericDictionaryIterator<T, any>|string|W|Array<NumericDictionaryIterator<T, any>|string|W>,
+            orders?: boolean|string|Array<boolean|string>
         ): LoDashImplicitArrayWrapper<T>;
 
         /**
          * @see _.orderBy
          */
         orderBy<T>(
-            iteratees: NumericDictionaryIterator<T, any>|string|Object|(NumericDictionaryIterator<T, any>|string|Object)[],
-            orders?: boolean|string|(boolean|string)[]
+            iteratees: NumericDictionaryIterator<T, any>|string|Object|Array<NumericDictionaryIterator<T, any>|string|Object>,
+            orders?: boolean|string|Array<boolean|string>
         ): LoDashImplicitArrayWrapper<T>;
 
         /**
          * @see _.orderBy
          */
         orderBy<W extends Object, T>(
-            iteratees: DictionaryIterator<T, any>|string|W|(DictionaryIterator<T, any>|string|W)[],
-            orders?: boolean|string|(boolean|string)[]
+            iteratees: DictionaryIterator<T, any>|string|W|Array<DictionaryIterator<T, any>|string|W>,
+            orders?: boolean|string|Array<boolean|string>
         ): LoDashImplicitArrayWrapper<T>;
 
         /**
          * @see _.orderBy
          */
         orderBy<T>(
-            iteratees: DictionaryIterator<T, any>|string|Object|(DictionaryIterator<T, any>|string|Object)[],
-            orders?: boolean|string|(boolean|string)[]
+            iteratees: DictionaryIterator<T, any>|string|Object|Array<DictionaryIterator<T, any>|string|Object>,
+            orders?: boolean|string|Array<boolean|string>
         ): LoDashImplicitArrayWrapper<T>;
     }
 
@@ -9661,8 +9654,8 @@ declare module _ {
          * @see _.orderBy
          */
         orderBy(
-            iteratees: ListIterator<T, any>|string|(ListIterator<T, any>|string)[],
-            orders?: boolean|string|(boolean|string)[]
+            iteratees: ListIterator<T, any>|string|Array<ListIterator<T, any>|string>,
+            orders?: boolean|string|Array<boolean|string>
         ): LoDashExplicitArrayWrapper<T>;
     }
 
@@ -9671,8 +9664,8 @@ declare module _ {
          * @see _.orderBy
          */
         orderBy<W extends Object>(
-            iteratees: ListIterator<T, any>|string|W|(ListIterator<T, any>|string|W)[],
-            orders?: boolean|string|(boolean|string)[]
+            iteratees: ListIterator<T, any>|string|W|Array<ListIterator<T, any>|string|W>,
+            orders?: boolean|string|Array<boolean|string>
         ): LoDashExplicitArrayWrapper<T>;
     }
 
@@ -9681,48 +9674,48 @@ declare module _ {
          * @see _.orderBy
          */
         orderBy<W extends Object, T>(
-            iteratees: ListIterator<T, any>|string|W|(ListIterator<T, any>|string|W)[],
-            orders?: boolean|string|(boolean|string)[]
+            iteratees: ListIterator<T, any>|string|W|Array<ListIterator<T, any>|string|W>,
+            orders?: boolean|string|Array<boolean|string>
         ): LoDashExplicitArrayWrapper<T>;
 
         /**
          * @see _.orderBy
          */
         orderBy<T>(
-            iteratees: ListIterator<T, any>|string|Object|(ListIterator<T, any>|string|Object)[],
-            orders?: boolean|string|(boolean|string)[]
+            iteratees: ListIterator<T, any>|string|Object|Array<ListIterator<T, any>|string|Object>,
+            orders?: boolean|string|Array<boolean|string>
         ): LoDashExplicitArrayWrapper<T>;
 
         /**
          * @see _.orderBy
          */
         orderBy<W extends Object, T>(
-            iteratees: NumericDictionaryIterator<T, any>|string|W|(NumericDictionaryIterator<T, any>|string|W)[],
-            orders?: boolean|string|(boolean|string)[]
+            iteratees: NumericDictionaryIterator<T, any>|string|W|Array<NumericDictionaryIterator<T, any>|string|W>,
+            orders?: boolean|string|Array<boolean|string>
         ): LoDashExplicitArrayWrapper<T>;
 
         /**
          * @see _.orderBy
          */
         orderBy<T>(
-            iteratees: NumericDictionaryIterator<T, any>|string|Object|(NumericDictionaryIterator<T, any>|string|Object)[],
-            orders?: boolean|string|(boolean|string)[]
+            iteratees: NumericDictionaryIterator<T, any>|string|Object|Array<NumericDictionaryIterator<T, any>|string|Object>,
+            orders?: boolean|string|Array<boolean|string>
         ): LoDashExplicitArrayWrapper<T>;
 
         /**
          * @see _.orderBy
          */
         orderBy<W extends Object, T>(
-            iteratees: DictionaryIterator<T, any>|string|W|(DictionaryIterator<T, any>|string|W)[],
-            orders?: boolean|string|(boolean|string)[]
+            iteratees: DictionaryIterator<T, any>|string|W|Array<DictionaryIterator<T, any>|string|W>,
+            orders?: boolean|string|Array<boolean|string>
         ): LoDashExplicitArrayWrapper<T>;
 
         /**
          * @see _.orderBy
          */
         orderBy<T>(
-            iteratees: DictionaryIterator<T, any>|string|Object|(DictionaryIterator<T, any>|string|Object)[],
-            orders?: boolean|string|(boolean|string)[]
+            iteratees: DictionaryIterator<T, any>|string|Object|Array<DictionaryIterator<T, any>|string|Object>,
+            orders?: boolean|string|Array<boolean|string>
         ): LoDashExplicitArrayWrapper<T>;
     }
 
@@ -9730,7 +9723,7 @@ declare module _ {
      * Date *
      ********/
 
-        //_.now
+        // _.now
     interface LoDashStatic {
         /**
          * Gets the number of milliseconds that have elapsed since the Unix epoch (1 January 1970 00:00:00 UTC).
@@ -9758,7 +9751,7 @@ declare module _ {
      * Functions *
      *************/
 
-        //_.after
+        // _.after
     interface LoDashStatic {
         /**
          * The opposite of _.before; this method creates a function that invokes func once it’s called n or more times.
@@ -9787,7 +9780,7 @@ declare module _ {
         after<TFunc extends Function>(func: TFunc): LoDashExplicitObjectWrapper<TFunc>;
     }
 
-    //_.ary
+    // _.ary
     interface LoDashStatic {
         /**
          * Creates a function that accepts up to n arguments ignoring any additional arguments.
@@ -9821,7 +9814,7 @@ declare module _ {
         ary<TResult extends Function>(n?: number): LoDashExplicitObjectWrapper<TResult>;
     }
 
-    //_.before
+    // _.before
     interface LoDashStatic {
         /**
          * Creates a function that invokes func, with the this binding and arguments of the created function, while
@@ -9852,7 +9845,7 @@ declare module _ {
         before<TFunc extends Function>(func: TFunc): LoDashExplicitObjectWrapper<TFunc>;
     }
 
-    //_.bind
+    // _.bind
     interface FunctionBind {
         placeholder: any;
 
@@ -9907,7 +9900,7 @@ declare module _ {
         ): LoDashExplicitObjectWrapper<TResult>;
     }
 
-    //_.bindAll
+    // _.bindAll
     interface LoDashStatic {
         /**
          * Binds methods of an object to the object itself, overwriting the existing method. Method names may be
@@ -9923,7 +9916,7 @@ declare module _ {
          */
         bindAll<T>(
             object: T,
-            ...methodNames: (string|string[])[]
+            ...methodNames: Array<string|string[]>
         ): T;
     }
 
@@ -9931,17 +9924,17 @@ declare module _ {
         /**
          * @see _.bindAll
          */
-        bindAll(...methodNames: (string|string[])[]): LoDashImplicitObjectWrapper<T>;
+        bindAll(...methodNames: Array<string|string[]>): LoDashImplicitObjectWrapper<T>;
     }
 
     interface LoDashExplicitObjectWrapper<T> {
         /**
          * @see _.bindAll
          */
-        bindAll(...methodNames: (string|string[])[]): LoDashExplicitObjectWrapper<T>;
+        bindAll(...methodNames: Array<string|string[]>): LoDashExplicitObjectWrapper<T>;
     }
 
-    //_.bindKey
+    // _.bindKey
     interface FunctionBindKey {
         placeholder: any;
 
@@ -9997,7 +9990,7 @@ declare module _ {
         ): LoDashExplicitObjectWrapper<TResult>;
     }
 
-    //_.createCallback
+    // _.createCallback
     interface LoDashStatic {
         /**
          * Produces a callback bound to an optional thisArg. If func is a property name the created
@@ -10037,7 +10030,7 @@ declare module _ {
             argCount?: number): LoDashImplicitObjectWrapper<() => any>;
     }
 
-    //_.curry
+    // _.curry
     interface LoDashStatic {
         /**
          * Creates a function that accepts one or more arguments of func that when called either invokes func returning
@@ -10139,7 +10132,7 @@ declare module _ {
         curry<TResult extends Function>(arity?: number): LoDashImplicitObjectWrapper<TResult>;
     }
 
-    //_.curryRight
+    // _.curryRight
     interface LoDashStatic {
         /**
          * This method is like _.curry except that arguments are applied to func in the manner of _.partialRight
@@ -10200,7 +10193,7 @@ declare module _ {
         curryRight<TResult extends Function>(arity?: number): LoDashImplicitObjectWrapper<TResult>;
     }
 
-    //_.debounce
+    // _.debounce
     interface DebounceSettings {
         /**
          * Specify invoking on the leading edge of the timeout.
@@ -10266,7 +10259,7 @@ declare module _ {
         ): LoDashExplicitObjectWrapper<T & Cancelable>;
     }
 
-    //_.defer
+    // _.defer
     interface LoDashStatic {
         /**
          * Defers invoking the func until the current call stack has cleared. Any additional arguments are provided to
@@ -10296,7 +10289,7 @@ declare module _ {
         defer(...args: any[]): LoDashExplicitWrapper<number>;
     }
 
-    //_.delay
+    // _.delay
     interface LoDashStatic {
         /**
          * Invokes func after wait milliseconds. Any additional arguments are provided to func when it’s invoked.
@@ -10368,7 +10361,7 @@ declare module _ {
         flip(): LoDashExplicitObjectWrapper<T>;
     }
 
-    //_.flow
+    // _.flow
     interface LoDashStatic {
         /**
          * Creates a function that returns the result of invoking the provided functions with the this binding of the
@@ -10423,7 +10416,7 @@ declare module _ {
         flow<TResult extends Function>(...funcs: Function[]): LoDashExplicitObjectWrapper<TResult>;
     }
 
-    //_.flowRight
+    // _.flowRight
     interface LoDashStatic {
         /**
          * This method is like _.flow except that it creates a function that invokes the provided functions from right
@@ -10449,8 +10442,7 @@ declare module _ {
         flowRight<TResult extends Function>(...funcs: Function[]): LoDashExplicitObjectWrapper<TResult>;
     }
 
-
-    //_.memoize
+    // _.memoize
     interface MemoizedFunction extends Function {
         cache: MapCache;
     }
@@ -10469,7 +10461,7 @@ declare module _ {
         memoize: {
             <T extends Function>(func: T, resolver?: Function): T & MemoizedFunction;
             Cache: MapCacheConstructor;
-        }
+        };
     }
 
     interface LoDashImplicitObjectWrapper<T> {
@@ -10486,7 +10478,7 @@ declare module _ {
         memoize(resolver?: Function): LoDashExplicitObjectWrapper<T & MemoizedFunction>;
     }
 
-    //_.overArgs (was _.modArgs)
+    // _.overArgs (was _.modArgs)
     interface LoDashStatic {
         /**
          * Creates a function that runs each argument through a corresponding transform function.
@@ -10534,7 +10526,7 @@ declare module _ {
         overArgs<TResult extends Function>(transforms: Function[]): LoDashExplicitObjectWrapper<TResult>;
     }
 
-    //_.negate
+    // _.negate
     interface LoDashStatic {
         /**
          * Creates a function that negates the result of the predicate func. The func predicate is invoked with
@@ -10575,7 +10567,7 @@ declare module _ {
         negate<TResult extends Function>(): LoDashExplicitObjectWrapper<TResult>;
     }
 
-    //_.once
+    // _.once
     interface LoDashStatic {
         /**
          * Creates a function that is restricted to invoking func once. Repeat calls to the function return the value
@@ -10601,7 +10593,7 @@ declare module _ {
         once(): LoDashExplicitObjectWrapper<T>;
     }
 
-    //_.partial
+    // _.partial
     interface LoDashStatic {
         /**
          * Creates a function that, when called, invokes func with any additional partial arguments
@@ -10616,21 +10608,11 @@ declare module _ {
 
     type PH = LoDashStatic;
 
-    interface Function0<R> {
-        (): R;
-    }
-    interface Function1<T1, R> {
-        (t1: T1): R;
-    }
-    interface Function2<T1, T2, R> {
-        (t1: T1, t2: T2): R;
-    }
-    interface Function3<T1, T2, T3, R> {
-        (t1: T1, t2: T2, t3: T3): R;
-    }
-    interface Function4<T1, T2, T3, T4, R> {
-        (t1: T1, t2: T2, t3: T3, t4: T4): R;
-    }
+    type Function0<R> = () => R;
+    type Function1<T1, R> = (t1: T1) => R;
+    type Function2<T1, T2, R> = (t1: T1, t2: T2) => R;
+    type Function3<T1, T2, T3, R> = (t1: T1, t2: T2, t3: T3) => R;
+    type Function4<T1, T2, T3, T4, R> = (t1: T1, t2: T2, t3: T3, t4: T4) => R;
 
     interface Partial {
         // arity 0
@@ -10673,7 +10655,7 @@ declare module _ {
         (func: Function, ...args: any[]): Function;
     }
 
-    //_.partialRight
+    // _.partialRight
     interface LoDashStatic {
         /**
          * This method is like _.partial except that partial arguments are appended to those provided
@@ -10682,7 +10664,7 @@ declare module _ {
          * @param args Arguments to be partially applied.
          * @return The new partially applied function.
          **/
-        partialRight: PartialRight
+        partialRight: PartialRight;
     }
 
     interface PartialRight {
@@ -10726,7 +10708,7 @@ declare module _ {
         (func: Function, ...args: any[]): Function;
     }
 
-    //_.rearg
+    // _.rearg
     interface LoDashStatic {
         /**
          * Creates a function that invokes func with arguments arranged according to the specified indexes where the
@@ -10756,7 +10738,7 @@ declare module _ {
         rearg<TResult extends Function>(...indexes: number[]): LoDashImplicitObjectWrapper<TResult>;
     }
 
-    //_.rest
+    // _.rest
     interface LoDashStatic {
         /**
          * Creates a function that invokes func with the this binding of the created function and arguments from start
@@ -10796,7 +10778,7 @@ declare module _ {
         rest<TResult extends Function>(start?: number): LoDashExplicitObjectWrapper<TResult>;
     }
 
-    //_.spread
+    // _.spread
     interface LoDashStatic {
         /**
          * Creates a function that invokes func with the this binding of the created function and an array of arguments
@@ -10829,7 +10811,7 @@ declare module _ {
         spread<T extends Function>(): LoDashExplicitObjectWrapper<T>;
     }
 
-    //_.throttle
+    // _.throttle
     interface ThrottleSettings {
         /**
          * If you'd like to disable the leading-edge call, pass this as false.
@@ -10886,7 +10868,7 @@ declare module _ {
         ): LoDashExplicitObjectWrapper<T & Cancelable>;
     }
 
-    //_.unary
+    // _.unary
     interface LoDashStatic {
         /**
          * Creates a function that accepts up to one argument, ignoring any
@@ -10919,7 +10901,7 @@ declare module _ {
         unary(): LoDashExplicitObjectWrapper<T>;
     }
 
-    //_.wrap
+    // _.wrap
     interface LoDashStatic {
         /**
          * Creates a function that provides value to the wrapper function as its first argument. Any additional
@@ -11028,7 +11010,7 @@ declare module _ {
      * Lang *
      ********/
 
-        //_.castArray
+        // _.castArray
     interface LoDashStatic {
         /**
          * Casts value as an array if it’s not one.
@@ -11081,7 +11063,7 @@ declare module _ {
         castArray(): LoDashExplicitArrayWrapper<T>;
     }
 
-    //_.clone
+    // _.clone
     interface LoDashStatic {
         /**
          * Creates a shallow clone of value.
@@ -11141,7 +11123,7 @@ declare module _ {
         clone(): LoDashExplicitObjectWrapper<T>;
     }
 
-    //_.cloneDeep
+    // _.cloneDeep
     interface LoDashStatic {
         /**
          * This method is like _.clone except that it recursively clones value.
@@ -11194,10 +11176,8 @@ declare module _ {
         cloneDeep(): LoDashExplicitObjectWrapper<T>;
     }
 
-    //_.cloneDeepWith
-    interface CloneDeepWithCustomizer<TValue, TResult> {
-        (value: TValue): TResult;
-    }
+    // _.cloneDeepWith
+    type CloneDeepWithCustomizer<TValue, TResult> = (value: TValue) => TResult;
 
     interface LoDashStatic {
         /**
@@ -11317,10 +11297,8 @@ declare module _ {
         ): LoDashExplicitObjectWrapper<TResult>;
     }
 
-    //_.cloneWith
-    interface CloneWithCustomizer<TValue, TResult> {
-        (value: TValue): TResult;
-    }
+    // _.cloneWith
+    type CloneWithCustomizer<TValue, TResult> = (value: TValue) => TResult;
 
     interface LoDashStatic {
         /**
@@ -11441,7 +11419,7 @@ declare module _ {
         ): LoDashExplicitObjectWrapper<TResult>;
     }
 
-    //_.eq
+    // _.eq
     interface LoDashStatic {
         /**
          * Performs a [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
@@ -11497,7 +11475,7 @@ declare module _ {
         ): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.gt
+    // _.gt
     interface LoDashStatic {
         /**
          * Checks if value is greater than other.
@@ -11526,7 +11504,7 @@ declare module _ {
         gt(other: any): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.gte
+    // _.gte
     interface LoDashStatic {
         /**
          * Checks if value is greater than or equal to other.
@@ -11555,7 +11533,7 @@ declare module _ {
         gte(other: any): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.isArguments
+    // _.isArguments
     interface LoDashStatic {
         /**
          * Checks if value is classified as an arguments object.
@@ -11580,7 +11558,7 @@ declare module _ {
         isArguments(): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.isArray
+    // _.isArray
     interface LoDashStatic {
         /**
          * Checks if value is classified as an Array object.
@@ -11591,21 +11569,21 @@ declare module _ {
         isArray<T>(value?: any): value is T[];
     }
 
-    interface LoDashImplicitWrapperBase<T,TWrapper> {
+    interface LoDashImplicitWrapperBase<T, TWrapper> {
         /**
          * @see _.isArray
          */
         isArray(): boolean;
     }
 
-    interface LoDashExplicitWrapperBase<T,TWrapper> {
+    interface LoDashExplicitWrapperBase<T, TWrapper> {
         /**
          * @see _.isArray
          */
         isArray(): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.isArrayBuffer
+    // _.isArrayBuffer
     interface LoDashStatic {
         /**
          * Checks if value is classified as an ArrayBuffer object.
@@ -11630,7 +11608,7 @@ declare module _ {
         isArrayBuffer(): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.isArrayLike
+    // _.isArrayLike
     interface LoDashStatic {
         /**
          * Checks if `value` is array-like. A value is considered array-like if it's
@@ -11660,21 +11638,21 @@ declare module _ {
         isArrayLike<T>(value?: any): value is T[];
     }
 
-    interface LoDashImplicitWrapperBase<T,TWrapper> {
+    interface LoDashImplicitWrapperBase<T, TWrapper> {
         /**
          * @see _.isArrayLike
          */
         isArrayLike(): boolean;
     }
 
-    interface LoDashExplicitWrapperBase<T,TWrapper> {
+    interface LoDashExplicitWrapperBase<T, TWrapper> {
         /**
          * @see _.isArrayLike
          */
         isArrayLike(): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.isArrayLikeObject
+    // _.isArrayLikeObject
     interface LoDashStatic {
         /**
          * This method is like `_.isArrayLike` except that it also checks if `value`
@@ -11703,21 +11681,21 @@ declare module _ {
         isArrayLikeObject<T>(value?: any): value is T[];
     }
 
-    interface LoDashImplicitWrapperBase<T,TWrapper> {
+    interface LoDashImplicitWrapperBase<T, TWrapper> {
         /**
          * @see _.isArrayLikeObject
          */
         isArrayLikeObject(): boolean;
     }
 
-    interface LoDashExplicitWrapperBase<T,TWrapper> {
+    interface LoDashExplicitWrapperBase<T, TWrapper> {
         /**
          * @see _.isArrayLikeObject
          */
         isArrayLikeObject(): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.isBoolean
+    // _.isBoolean
     interface LoDashStatic {
         /**
          * Checks if value is classified as a boolean primitive or object.
@@ -11742,7 +11720,7 @@ declare module _ {
         isBoolean(): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.isBuffer
+    // _.isBuffer
     interface LoDashStatic {
         /**
          * Checks if value is a buffer.
@@ -11767,7 +11745,7 @@ declare module _ {
         isBuffer(): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.isDate
+    // _.isDate
     interface LoDashStatic {
         /**
          * Checks if value is classified as a Date object.
@@ -11792,7 +11770,7 @@ declare module _ {
         isDate(): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.isElement
+    // _.isElement
     interface LoDashStatic {
         /**
          * Checks if value is a DOM element.
@@ -11817,7 +11795,7 @@ declare module _ {
         isElement(): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.isEmpty
+    // _.isEmpty
     interface LoDashStatic {
         /**
          * Checks if value is empty. A value is considered empty unless it’s an arguments object, array, string, or
@@ -11843,7 +11821,7 @@ declare module _ {
         isEmpty(): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.isEqual
+    // _.isEqual
     interface LoDashStatic {
         /**
          * Performs a deep comparison between two values to determine if they are
@@ -11897,9 +11875,7 @@ declare module _ {
     }
 
     // _.isEqualWith
-    interface IsEqualCustomizer {
-        (value: any, other: any, indexOrKey?: number|string): boolean;
-    }
+    type IsEqualCustomizer = (value: any, other: any, indexOrKey?: number|string) => boolean;
 
     interface LoDashStatic {
         /**
@@ -11960,7 +11936,7 @@ declare module _ {
         ): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.isError
+    // _.isError
     interface LoDashStatic {
         /**
          * Checks if value is an Error, EvalError, RangeError, ReferenceError, SyntaxError, TypeError, or URIError
@@ -11986,7 +11962,7 @@ declare module _ {
         isError(): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.isFinite
+    // _.isFinite
     interface LoDashStatic {
         /**
          * Checks if value is a finite primitive number.
@@ -12013,7 +11989,7 @@ declare module _ {
         isFinite(): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.isFunction
+    // _.isFunction
     interface LoDashStatic {
         /**
          * Checks if value is classified as a Function object.
@@ -12038,7 +12014,7 @@ declare module _ {
         isFunction(): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.isInteger
+    // _.isInteger
     interface LoDashStatic {
         /**
          * Checks if `value` is an integer.
@@ -12081,7 +12057,7 @@ declare module _ {
         isInteger(): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.isLength
+    // _.isLength
     interface LoDashStatic {
         /**
          * Checks if `value` is a valid array-like length.
@@ -12124,7 +12100,7 @@ declare module _ {
         isLength(): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.isMap
+    // _.isMap
     interface LoDashStatic {
         /**
          * Checks if value is classified as a Map object.
@@ -12149,10 +12125,8 @@ declare module _ {
         isMap(): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.isMatch
-    interface isMatchCustomizer {
-        (value: any, other: any, indexOrKey?: number|string): boolean;
-    }
+    // _.isMatch
+    type isMatchCustomizer = (value: any, other: any, indexOrKey?: number|string) => boolean;
 
     interface LoDashStatic {
         /**
@@ -12187,10 +12161,8 @@ declare module _ {
         isMatch(source: Object): boolean;
     }
 
-    //_.isMatchWith
-    interface isMatchWithCustomizer {
-        (value: any, other: any, indexOrKey?: number|string): boolean;
-    }
+    // _.isMatchWith
+    type isMatchWithCustomizer = (value: any, other: any, indexOrKey?: number|string) => boolean;
 
     interface LoDashStatic {
         /**
@@ -12234,7 +12206,7 @@ declare module _ {
         isMatchWith(source: Object, customizer: isMatchWithCustomizer): boolean;
     }
 
-    //_.isNaN
+    // _.isNaN
     interface LoDashStatic {
         /**
          * Checks if value is NaN.
@@ -12261,7 +12233,7 @@ declare module _ {
         isNaN(): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.isNative
+    // _.isNative
     interface LoDashStatic {
         /**
          * Checks if value is a native function.
@@ -12286,7 +12258,7 @@ declare module _ {
         isNative(): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.isNil
+    // _.isNil
     interface LoDashStatic {
         /**
          * Checks if `value` is `null` or `undefined`.
@@ -12324,7 +12296,7 @@ declare module _ {
         isNil(): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.isNull
+    // _.isNull
     interface LoDashStatic {
         /**
          * Checks if value is null.
@@ -12349,7 +12321,7 @@ declare module _ {
         isNull(): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.isNumber
+    // _.isNumber
     interface LoDashStatic {
         /**
          * Checks if value is classified as a Number primitive or object.
@@ -12376,7 +12348,7 @@ declare module _ {
         isNumber(): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.isObject
+    // _.isObject
     interface LoDashStatic {
         /**
          * Checks if value is the language type of Object. (e.g. arrays, functions, objects, regexes, new Number(0),
@@ -12402,7 +12374,7 @@ declare module _ {
         isObject(): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.isObjectLike
+    // _.isObjectLike
     interface LoDashStatic {
         /**
          * Checks if `value` is object-like. A value is object-like if it's not `null`
@@ -12444,7 +12416,7 @@ declare module _ {
         isObjectLike(): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.isPlainObject
+    // _.isPlainObject
     interface LoDashStatic {
         /**
          * Checks if value is a plain object, that is, an object created by the Object constructor or one with a
@@ -12472,7 +12444,7 @@ declare module _ {
         isPlainObject(): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.isRegExp
+    // _.isRegExp
     interface LoDashStatic {
         /**
          * Checks if value is classified as a RegExp object.
@@ -12497,7 +12469,7 @@ declare module _ {
         isRegExp(): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.isSafeInteger
+    // _.isSafeInteger
     interface LoDashStatic {
         /**
          * Checks if `value` is a safe integer. An integer is safe if it's an IEEE-754
@@ -12541,7 +12513,7 @@ declare module _ {
         isSafeInteger(): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.isSet
+    // _.isSet
     interface LoDashStatic {
         /**
          * Checks if value is classified as a Set object.
@@ -12566,7 +12538,7 @@ declare module _ {
         isSet(): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.isString
+    // _.isString
     interface LoDashStatic {
         /**
          * Checks if value is classified as a String primitive or object.
@@ -12591,7 +12563,7 @@ declare module _ {
         isString(): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.isSymbol
+    // _.isSymbol
     interface LoDashStatic {
         /**
          * Checks if `value` is classified as a `Symbol` primitive or object.
@@ -12626,7 +12598,7 @@ declare module _ {
         isSymbol(): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.isTypedArray
+    // _.isTypedArray
     interface LoDashStatic {
         /**
          * Checks if value is classified as a typed array.
@@ -12651,7 +12623,7 @@ declare module _ {
         isTypedArray(): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.isUndefined
+    // _.isUndefined
     interface LoDashStatic {
         /**
          * Checks if value is undefined.
@@ -12676,7 +12648,7 @@ declare module _ {
         isUndefined(): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.isWeakMap
+    // _.isWeakMap
     interface LoDashStatic {
         /**
          * Checks if value is classified as a WeakMap object.
@@ -12701,7 +12673,7 @@ declare module _ {
         isWeakMap(): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.isWeakSet
+    // _.isWeakSet
     interface LoDashStatic {
         /**
          * Checks if value is classified as a WeakSet object.
@@ -12726,7 +12698,7 @@ declare module _ {
         isWeakSet(): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.lt
+    // _.lt
     interface LoDashStatic {
         /**
          * Checks if value is less than other.
@@ -12755,7 +12727,7 @@ declare module _ {
         lt(other: any): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.lte
+    // _.lte
     interface LoDashStatic {
         /**
          * Checks if value is less than or equal to other.
@@ -12784,7 +12756,7 @@ declare module _ {
         lte(other: any): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.toArray
+    // _.toArray
     interface LoDashStatic {
         /**
          * Converts value to an array.
@@ -12847,7 +12819,7 @@ declare module _ {
         toArray<TResult>(): LoDashExplicitArrayWrapper<TResult>;
     }
 
-    //_.toPlainObject
+    // _.toPlainObject
     interface LoDashStatic {
         /**
          * Converts value to a plain object flattening inherited enumerable properties of value to own properties
@@ -12866,7 +12838,7 @@ declare module _ {
         toPlainObject<TResult extends {}>(): LoDashImplicitObjectWrapper<TResult>;
     }
 
-    //_.toInteger
+    // _.toInteger
     interface LoDashStatic {
         /**
          * Converts `value` to an integer.
@@ -12909,7 +12881,7 @@ declare module _ {
         toInteger(): LoDashExplicitWrapper<number>;
     }
 
-    //_.toLength
+    // _.toLength
     interface LoDashStatic {
         /**
          * Converts `value` to an integer suitable for use as the length of an
@@ -12953,7 +12925,7 @@ declare module _ {
         toLength(): LoDashExplicitWrapper<number>;
     }
 
-    //_.toNumber
+    // _.toNumber
     interface LoDashStatic {
         /**
          * Converts `value` to a number.
@@ -12994,7 +12966,7 @@ declare module _ {
         toNumber(): LoDashExplicitWrapper<number>;
     }
 
-    //_.toSafeInteger
+    // _.toSafeInteger
     interface LoDashStatic {
         /**
          * Converts `value` to a safe integer. A safe integer can be compared and
@@ -13036,7 +13008,7 @@ declare module _ {
         toSafeInteger(): LoDashExplicitWrapper<number>;
     }
 
-    //_.toString DUMMY
+    // _.toString DUMMY
     interface LoDashStatic {
         /**
          * Converts `value` to a string if it's not one. An empty string is returned
@@ -13065,7 +13037,7 @@ declare module _ {
      * Math *
      ********/
 
-        //_.add
+        // _.add
     interface LoDashStatic {
         /**
          * Adds two numbers.
@@ -13094,7 +13066,7 @@ declare module _ {
         add(addend: number): LoDashExplicitWrapper<number>;
     }
 
-    //_.ceil
+    // _.ceil
     interface LoDashStatic {
         /**
          * Calculates n rounded up to precision.
@@ -13123,7 +13095,7 @@ declare module _ {
         ceil(precision?: number): LoDashExplicitWrapper<number>;
     }
 
-    //_.floor
+    // _.floor
     interface LoDashStatic {
         /**
          * Calculates n rounded down to precision.
@@ -13152,7 +13124,7 @@ declare module _ {
         floor(precision?: number): LoDashExplicitWrapper<number>;
     }
 
-    //_.max
+    // _.max
     interface LoDashStatic {
         /**
          * Computes the maximum value of `array`. If `array` is empty or falsey
@@ -13183,7 +13155,7 @@ declare module _ {
         max<T>(): T;
     }
 
-    //_.maxBy
+    // _.maxBy
     interface LoDashStatic {
         /**
          * This method is like `_.max` except that it accepts `iteratee` which is
@@ -13283,7 +13255,7 @@ declare module _ {
         ): T;
     }
 
-    //_.mean
+    // _.mean
     interface LoDashStatic {
         /**
          * Computes the mean of the values in `array`.
@@ -13315,7 +13287,7 @@ declare module _ {
         mean(): number;
     }
 
-    //_.min
+    // _.min
     interface LoDashStatic {
         /**
          * Computes the minimum value of `array`. If `array` is empty or falsey
@@ -13346,7 +13318,7 @@ declare module _ {
         min<T>(): T;
     }
 
-    //_.minBy
+    // _.minBy
     interface LoDashStatic {
         /**
          * This method is like `_.min` except that it accepts `iteratee` which is
@@ -13446,7 +13418,7 @@ declare module _ {
         ): T;
     }
 
-    //_.round
+    // _.round
     interface LoDashStatic {
         /**
          * Calculates n rounded to precision.
@@ -13475,7 +13447,7 @@ declare module _ {
         round(precision?: number): LoDashExplicitWrapper<number>;
     }
 
-    //_.sum
+    // _.sum
     interface LoDashStatic {
         /**
          * Computes the sum of the values in `array`.
@@ -13536,7 +13508,7 @@ declare module _ {
         sum(): LoDashExplicitWrapper<number>;
     }
 
-    //_.sumBy
+    // _.sumBy
     interface LoDashStatic {
         /**
          * This method is like `_.sum` except that it accepts `iteratee` which is
@@ -13674,7 +13646,7 @@ declare module _ {
      * Number *
      **********/
 
-        //_.subtract
+        // _.subtract
     interface LoDashStatic {
         /**
          * Subtract two numbers.
@@ -13714,7 +13686,7 @@ declare module _ {
         ): LoDashExplicitWrapper<number>;
     }
 
-    //_.clamp
+    // _.clamp
     interface LoDashStatic {
         /**
          * Clamps `number` within the inclusive `lower` and `upper` bounds.
@@ -13761,7 +13733,7 @@ declare module _ {
         ): LoDashExplicitWrapper<number>;
     }
 
-    //_.inRange
+    // _.inRange
     interface LoDashStatic {
         /**
          * Checks if n is between start and up to but not including, end. If end is not specified it’s set to start
@@ -13777,7 +13749,6 @@ declare module _ {
             start: number,
             end: number
         ): boolean;
-
 
         /**
          * @see _.inRange
@@ -13818,7 +13789,7 @@ declare module _ {
         inRange(end: number): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.random
+    // _.random
     interface LoDashStatic {
         /**
          * Produces a random number between min and max (inclusive). If only one argument is provided a number between
@@ -13884,7 +13855,7 @@ declare module _ {
      * Object *
      **********/
 
-        //_.assign
+        // _.assign
     interface LoDashStatic {
         /**
          * Assigns own enumerable properties of source objects to the destination
@@ -14057,10 +14028,8 @@ declare module _ {
         assign<TResult>(...otherArgs: any[]): LoDashExplicitObjectWrapper<TResult>;
     }
 
-    //_.assignWith
-    interface AssignCustomizer {
-        (objectValue: any, sourceValue: any, key?: string, object?: {}, source?: {}): any;
-    }
+    // _.assignWith
+    type AssignCustomizer = (objectValue: any, sourceValue: any, key?: string, object?: {}, source?: {}) => any;
 
     interface LoDashStatic {
         /**
@@ -14242,7 +14211,7 @@ declare module _ {
         assignWith<TResult>(...otherArgs: any[]): LoDashExplicitObjectWrapper<TResult>;
     }
 
-    //_.assignIn
+    // _.assignIn
     interface LoDashStatic {
         /**
          * This method is like `_.assign` except that it iterates over own and
@@ -14414,10 +14383,8 @@ declare module _ {
         assignIn<TResult>(...otherArgs: any[]): LoDashExplicitObjectWrapper<TResult>;
     }
 
-    //_.assignInWith
-    interface AssignCustomizer {
-        (objectValue: any, sourceValue: any, key?: string, object?: {}, source?: {}): any;
-    }
+    // _.assignInWith
+    type AssignCustomizer = (objectValue: any, sourceValue: any, key?: string, object?: {}, source?: {}) => any;
 
     interface LoDashStatic {
         /**
@@ -14600,7 +14567,7 @@ declare module _ {
         assignInWith<TResult>(...otherArgs: any[]): LoDashExplicitObjectWrapper<TResult>;
     }
 
-    //_.create
+    // _.create
     interface LoDashStatic {
         /**
          * Creates an object that inherits from the given prototype object. If a properties object is provided its own
@@ -14630,8 +14597,7 @@ declare module _ {
         create<U extends Object>(properties?: U): LoDashExplicitObjectWrapper<T & U>;
     }
 
-
-    //_.defaults
+    // _.defaults
     interface LoDashStatic {
         /**
          * Assigns own enumerable properties of source object(s) to the destination object for all destination
@@ -14785,7 +14751,7 @@ declare module _ {
         defaults<TResult>(...sources: any[]): LoDashExplicitObjectWrapper<TResult>;
     }
 
-    //_.defaultsDeep
+    // _.defaultsDeep
     interface LoDashStatic {
         /**
          * This method is like _.defaults except that it recursively assigns default properties.
@@ -14802,7 +14768,7 @@ declare module _ {
         /**
          * @see _.defaultsDeep
          **/
-        defaultsDeep<TResult>(...sources: any[]): LoDashImplicitObjectWrapper<TResult>
+        defaultsDeep<TResult>(...sources: any[]): LoDashImplicitObjectWrapper<TResult>;
     }
 
     // _.extend
@@ -15108,7 +15074,7 @@ declare module _ {
         extendWith<TResult>(...otherArgs: any[]): LoDashExplicitObjectWrapper<TResult>;
     }
 
-    //_.findKey
+    // _.findKey
     interface LoDashStatic {
         /**
          * This method is like _.find except that it returns the key of the first element predicate returns truthy for
@@ -15218,7 +15184,7 @@ declare module _ {
         ): LoDashExplicitWrapper<string>;
     }
 
-    //_.findLastKey
+    // _.findLastKey
     interface LoDashStatic {
         /**
          * This method is like _.findKey except that it iterates over elements of a collection in the opposite order.
@@ -15327,7 +15293,7 @@ declare module _ {
         ): LoDashExplicitWrapper<string>;
     }
 
-    //_.forIn
+    // _.forIn
     interface LoDashStatic {
         /**
          * Iterates over own and inherited enumerable properties of an object invoking iteratee for each property. The
@@ -15371,7 +15337,7 @@ declare module _ {
         ): _.LoDashExplicitObjectWrapper<T>;
     }
 
-    //_.forInRight
+    // _.forInRight
     interface LoDashStatic {
         /**
          * This method is like _.forIn except that it iterates over properties of object in the opposite order.
@@ -15413,7 +15379,7 @@ declare module _ {
         ): _.LoDashExplicitObjectWrapper<T>;
     }
 
-    //_.forOwn
+    // _.forOwn
     interface LoDashStatic {
         /**
          * Iterates over own enumerable properties of an object invoking iteratee for each property. The iteratee is
@@ -15457,7 +15423,7 @@ declare module _ {
         ): _.LoDashExplicitObjectWrapper<T>;
     }
 
-    //_.forOwnRight
+    // _.forOwnRight
     interface LoDashStatic {
         /**
          * This method is like _.forOwn except that it iterates over properties of object in the opposite order.
@@ -15499,7 +15465,7 @@ declare module _ {
         ): _.LoDashExplicitObjectWrapper<T>;
     }
 
-    //_.functions
+    // _.functions
     interface LoDashStatic {
         /**
          * Creates an array of function property names from own enumerable properties
@@ -15539,7 +15505,7 @@ declare module _ {
         functions(): _.LoDashExplicitArrayWrapper<string>;
     }
 
-    //_.functionsIn
+    // _.functionsIn
     interface LoDashStatic {
         /**
          * Creates an array of function property names from own and inherited
@@ -15579,7 +15545,7 @@ declare module _ {
         functionsIn(): _.LoDashExplicitArrayWrapper<string>;
     }
 
-    //_.get
+    // _.get
     interface LoDashStatic {
         /**
          * Gets the property value at path of object. If the resolved value is undefined the defaultValue is used
@@ -15666,7 +15632,7 @@ declare module _ {
         ): TResultWrapper;
     }
 
-    //_.has
+    // _.has
     interface LoDashStatic {
         /**
          * Checks if `path` is a direct property of `object`.
@@ -15714,7 +15680,7 @@ declare module _ {
         has(path: StringRepresentable|StringRepresentable[]): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.hasIn
+    // _.hasIn
     interface LoDashStatic {
         /**
          * Checks if `path` is a direct or inherited property of `object`.
@@ -15761,7 +15727,7 @@ declare module _ {
         hasIn(path: StringRepresentable|StringRepresentable[]): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.invert
+    // _.invert
     interface LoDashStatic {
         /**
          * Creates an object composed of the inverted keys and values of object. If object contains duplicate values,
@@ -15799,10 +15765,8 @@ declare module _ {
         invert<TResult extends {}>(multiValue?: boolean): LoDashExplicitObjectWrapper<TResult>;
     }
 
-    //_.inverBy
-    interface InvertByIterator<T> {
-        (value: T): any;
-    }
+    // _.inverBy
+    type InvertByIterator<T> = (value: T) => any;
 
     interface LoDashStatic {
         /**
@@ -15926,7 +15890,7 @@ declare module _ {
         ): LoDashExplicitObjectWrapper<Dictionary<string[]>>;
     }
 
-    //_.keys
+    // _.keys
     interface LoDashStatic {
         /**
          * Creates an array of the own enumerable property names of object.
@@ -15953,7 +15917,7 @@ declare module _ {
         keys(): LoDashExplicitArrayWrapper<string>;
     }
 
-    //_.keysIn
+    // _.keysIn
     interface LoDashStatic {
         /**
          * Creates an array of the own and inherited enumerable property names of object.
@@ -15980,7 +15944,7 @@ declare module _ {
         keysIn(): LoDashExplicitArrayWrapper<string>;
     }
 
-    //_.mapKeys
+    // _.mapKeys
     interface LoDashStatic {
         /**
          * The opposite of _.mapValues; this method creates an object with the same values as object and keys generated
@@ -16113,7 +16077,7 @@ declare module _ {
         ): LoDashExplicitObjectWrapper<Dictionary<TResult>>;
     }
 
-    //_.mapValues
+    // _.mapValues
     interface LoDashStatic {
         /**
          * Creates an object with the same keys as object and values generated by running each own
@@ -16186,7 +16150,7 @@ declare module _ {
         mapValues<TResult>(where: Dictionary<TResult>): LoDashExplicitObjectWrapper<boolean>;
     }
 
-    //_.merge
+    // _.merge
     interface LoDashStatic {
         /**
          * Recursively merges own and inherited enumerable properties of source
@@ -16343,10 +16307,8 @@ declare module _ {
         ): LoDashExplicitObjectWrapper<TResult>;
     }
 
-    //_.mergeWith
-    interface MergeWithCustomizer {
-        (value: any, srcValue: any, key?: string, object?: Object, source?: Object): any;
-    }
+    // _.mergeWith
+    type MergeWithCustomizer = (value: any, srcValue: any, key?: string, object?: Object, source?: Object) => any;
 
     interface LoDashStatic {
         /**
@@ -16479,7 +16441,7 @@ declare module _ {
         ): LoDashImplicitObjectWrapper<TResult>;
     }
 
-    //_.omit
+    // _.omit
     interface LoDashStatic {
         /**
          * The opposite of `_.pick`; this method creates an object composed of the
@@ -16502,7 +16464,7 @@ declare module _ {
 
         omit<TResult extends {}, T extends {}>(
             object: T,
-            ...predicate: (StringRepresentable|StringRepresentable[])[]
+            ...predicate: Array<StringRepresentable|StringRepresentable[]>
         ): TResult;
     }
 
@@ -16512,7 +16474,7 @@ declare module _ {
          * @see _.omit
          */
         omit<TResult extends {}>(
-            ...predicate: (StringRepresentable|StringRepresentable[])[]
+            ...predicate: Array<StringRepresentable|StringRepresentable[]>
         ): LoDashImplicitObjectWrapper<TResult>;
     }
 
@@ -16522,11 +16484,11 @@ declare module _ {
          * @see _.omit
          */
         omit<TResult extends {}>(
-            ...predicate: (StringRepresentable|StringRepresentable[])[]
+            ...predicate: Array<StringRepresentable|StringRepresentable[]>
         ): LoDashExplicitObjectWrapper<TResult>;
     }
 
-    //_.omitBy
+    // _.omitBy
     interface LoDashStatic {
         /**
          * The opposite of `_.pickBy`; this method creates an object composed of the
@@ -16570,7 +16532,7 @@ declare module _ {
         ): LoDashExplicitObjectWrapper<TResult>;
     }
 
-    //_.pick
+    // _.pick
     interface LoDashStatic {
         /**
          * Creates an object composed of the picked `object` properties.
@@ -16591,7 +16553,7 @@ declare module _ {
          */
         pick<TResult extends {}, T extends {}>(
             object: T,
-            ...predicate: (StringRepresentable|StringRepresentable[])[]
+            ...predicate: Array<StringRepresentable|StringRepresentable[]>
         ): TResult;
     }
 
@@ -16600,7 +16562,7 @@ declare module _ {
          * @see _.pick
          */
         pick<TResult extends {}>(
-            ...predicate: (StringRepresentable|StringRepresentable[])[]
+            ...predicate: Array<StringRepresentable|StringRepresentable[]>
         ): LoDashImplicitObjectWrapper<TResult>;
     }
 
@@ -16609,11 +16571,11 @@ declare module _ {
          * @see _.pick
          */
         pick<TResult extends {}>(
-            ...predicate: (StringRepresentable|StringRepresentable[])[]
+            ...predicate: Array<StringRepresentable|StringRepresentable[]>
         ): LoDashExplicitObjectWrapper<TResult>;
     }
 
-    //_.pickBy
+    // _.pickBy
     interface LoDashStatic {
         /**
          * Creates an object composed of the `object` properties `predicate` returns
@@ -16656,7 +16618,7 @@ declare module _ {
         ): LoDashExplicitObjectWrapper<TResult>;
     }
 
-    //_.result
+    // _.result
     interface LoDashStatic {
         /**
          * This method is like _.get except that if the resolved value is a function it’s invoked with the this binding
@@ -16743,7 +16705,7 @@ declare module _ {
         ): TResultWrapper;
     }
 
-    //_.set
+    // _.set
     interface LoDashStatic {
         /**
          * Sets the value at path of object. If a portion of path doesn’t exist it’s created. Arrays are created for
@@ -16816,10 +16778,8 @@ declare module _ {
         ): LoDashExplicitObjectWrapper<TResult>;
     }
 
-    //_.setWith
-    interface SetWithCustomizer<T> {
-        (nsValue: any, key: string, nsObject: T): any;
-    }
+    // _.setWith
+    type SetWithCustomizer<T> = (nsValue: any, key: string, nsObject: T) => any;
 
     interface LoDashStatic {
         /**
@@ -16901,7 +16861,7 @@ declare module _ {
         ): LoDashExplicitObjectWrapper<TResult>;
     }
 
-    //_.toPairs
+    // _.toPairs
     interface LoDashStatic {
         /**
          * Creates an array of own enumerable key-value pairs for object.
@@ -16928,7 +16888,7 @@ declare module _ {
         toPairs<TResult>(): LoDashExplicitArrayWrapper<TResult[]>;
     }
 
-    //_.toPairsIn
+    // _.toPairsIn
     interface LoDashStatic {
         /**
          * Creates an array of own and inherited enumerable key-value pairs for object.
@@ -16955,7 +16915,7 @@ declare module _ {
         toPairsIn<TResult>(): LoDashExplicitArrayWrapper<TResult[]>;
     }
 
-    //_.transform
+    // _.transform
     interface LoDashStatic {
         /**
          * An alternative to _.reduce; this method transforms object to a new accumulator object which is the result of
@@ -17039,7 +16999,7 @@ declare module _ {
         ): LoDashImplicitArrayWrapper<TResult>;
     }
 
-    //_.unset
+    // _.unset
     interface LoDashStatic {
         /**
          * Removes the property at path of object.
@@ -17070,7 +17030,7 @@ declare module _ {
         unset(path: StringRepresentable|StringRepresentable[]): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.update
+    // _.update
     interface LoDashStatic {
         /**
          * This method is like _.set except that accepts updater to produce the value to set. Use _.updateWith to
@@ -17151,7 +17111,7 @@ declare module _ {
         ): LoDashExplicitObjectWrapper<TResult>;
     }
 
-    //_.values
+    // _.values
     interface LoDashStatic {
         /**
          * Creates an array of the own enumerable property values of object.
@@ -17181,7 +17141,7 @@ declare module _ {
         values<T>(): LoDashExplicitArrayWrapper<T>;
     }
 
-    //_.valuesIn
+    // _.valuesIn
     interface LoDashStatic {
         /**
          * Creates an array of the own and inherited enumerable property values of object.
@@ -17215,7 +17175,7 @@ declare module _ {
      * String *
      **********/
 
-        //_.camelCase
+        // _.camelCase
     interface LoDashStatic {
         /**
          * Converts string to camel case.
@@ -17240,7 +17200,7 @@ declare module _ {
         camelCase(): LoDashExplicitWrapper<string>;
     }
 
-    //_.capitalize
+    // _.capitalize
     interface LoDashStatic {
         /**
          * Converts the first character of string to upper case and the remaining to lower case.
@@ -17265,7 +17225,7 @@ declare module _ {
         capitalize(): LoDashExplicitWrapper<string>;
     }
 
-    //_.deburr
+    // _.deburr
     interface LoDashStatic {
         /**
          * Deburrs string by converting latin-1 supplementary letters to basic latin letters and removing combining
@@ -17291,7 +17251,7 @@ declare module _ {
         deburr(): LoDashExplicitWrapper<string>;
     }
 
-    //_.endsWith
+    // _.endsWith
     interface LoDashStatic {
         /**
          * Checks if string ends with the given target string.
@@ -17390,7 +17350,7 @@ declare module _ {
         escapeRegExp(): LoDashExplicitWrapper<string>;
     }
 
-    //_.kebabCase
+    // _.kebabCase
     interface LoDashStatic {
         /**
          * Converts string to kebab case.
@@ -17415,7 +17375,7 @@ declare module _ {
         kebabCase(): LoDashExplicitWrapper<string>;
     }
 
-    //_.lowerCase
+    // _.lowerCase
     interface LoDashStatic {
         /**
          * Converts `string`, as space separated words, to lower case.
@@ -17440,7 +17400,7 @@ declare module _ {
         lowerCase(): LoDashExplicitWrapper<string>;
     }
 
-    //_.lowerFirst
+    // _.lowerFirst
     interface LoDashStatic {
         /**
          * Converts the first character of `string` to lower case.
@@ -17465,7 +17425,7 @@ declare module _ {
         lowerFirst(): LoDashExplicitWrapper<string>;
     }
 
-    //_.pad
+    // _.pad
     interface LoDashStatic {
         /**
          * Pads string on the left and right sides if it’s shorter than length. Padding characters are truncated if
@@ -17503,7 +17463,7 @@ declare module _ {
         ): LoDashExplicitWrapper<string>;
     }
 
-    //_.padEnd
+    // _.padEnd
     interface LoDashStatic {
         /**
          * Pads string on the right side if it’s shorter than length. Padding characters are truncated if they exceed
@@ -17541,7 +17501,7 @@ declare module _ {
         ): LoDashExplicitWrapper<string>;
     }
 
-    //_.padStart
+    // _.padStart
     interface LoDashStatic {
         /**
          * Pads string on the left side if it’s shorter than length. Padding characters are truncated if they exceed
@@ -17579,7 +17539,7 @@ declare module _ {
         ): LoDashExplicitWrapper<string>;
     }
 
-    //_.parseInt
+    // _.parseInt
     interface LoDashStatic {
         /**
          * Converts string to an integer of the specified radix. If radix is undefined or 0, a radix of 10 is used
@@ -17611,7 +17571,7 @@ declare module _ {
         parseInt(radix?: number): LoDashExplicitWrapper<number>;
     }
 
-    //_.repeat
+    // _.repeat
     interface LoDashStatic {
         /**
          * Repeats the given string n times.
@@ -17640,7 +17600,7 @@ declare module _ {
         repeat(n?: number): LoDashExplicitWrapper<string>;
     }
 
-    //_.replace
+    // _.replace
     interface LoDashStatic {
         /**
          * Replaces matches for pattern in string with replacement.
@@ -17735,7 +17695,7 @@ declare module _ {
         ): LoDashExplicitWrapper<string>;
     }
 
-    //_.snakeCase
+    // _.snakeCase
     interface LoDashStatic {
         /**
          * Converts string to snake case.
@@ -17760,7 +17720,7 @@ declare module _ {
         snakeCase(): LoDashExplicitWrapper<string>;
     }
 
-    //_.split
+    // _.split
     interface LoDashStatic {
         /**
          * Splits string by separator.
@@ -17799,7 +17759,7 @@ declare module _ {
         ): LoDashExplicitArrayWrapper<string>;
     }
 
-    //_.startCase
+    // _.startCase
     interface LoDashStatic {
         /**
          * Converts string to start case.
@@ -17824,7 +17784,7 @@ declare module _ {
         startCase(): LoDashExplicitWrapper<string>;
     }
 
-    //_.startsWith
+    // _.startsWith
     interface LoDashStatic {
         /**
          * Checks if string starts with the given target string.
@@ -17861,7 +17821,7 @@ declare module _ {
         ): LoDashExplicitWrapper<boolean>;
     }
 
-    //_.template
+    // _.template
     interface TemplateOptions extends TemplateSettings {
         /**
          * The sourceURL of the template's compiled source.
@@ -17921,7 +17881,7 @@ declare module _ {
         template(options?: TemplateOptions): LoDashExplicitObjectWrapper<TemplateExecutor>;
     }
 
-    //_.toLower
+    // _.toLower
     interface LoDashStatic {
         /**
          * Converts `string`, as a whole, to lower case.
@@ -17946,7 +17906,7 @@ declare module _ {
         toLower(): LoDashExplicitWrapper<string>;
     }
 
-    //_.toUpper
+    // _.toUpper
     interface LoDashStatic {
         /**
          * Converts `string`, as a whole, to upper case.
@@ -17971,7 +17931,7 @@ declare module _ {
         toUpper(): LoDashExplicitWrapper<string>;
     }
 
-    //_.trim
+    // _.trim
     interface LoDashStatic {
         /**
          * Removes leading and trailing whitespace or specified characters from string.
@@ -18000,7 +17960,7 @@ declare module _ {
         trim(chars?: string): LoDashExplicitWrapper<string>;
     }
 
-    //_.trimEnd
+    // _.trimEnd
     interface LoDashStatic {
         /**
          * Removes trailing whitespace or specified characters from string.
@@ -18029,7 +17989,7 @@ declare module _ {
         trimEnd(chars?: string): LoDashExplicitWrapper<string>;
     }
 
-    //_.trimStart
+    // _.trimStart
     interface LoDashStatic {
         /**
          * Removes leading whitespace or specified characters from string.
@@ -18058,7 +18018,7 @@ declare module _ {
         trimStart(chars?: string): LoDashExplicitWrapper<string>;
     }
 
-    //_.truncate
+    // _.truncate
     interface TruncateOptions {
         /** The maximum string length. */
         length?: number;
@@ -18097,7 +18057,7 @@ declare module _ {
         truncate(options?: TruncateOptions): LoDashExplicitWrapper<string>;
     }
 
-    //_.unescape
+    // _.unescape
     interface LoDashStatic {
         /**
          * The inverse of _.escape; this method converts the HTML entities &amp;, &lt;, &gt;, &quot;, &#39;, and &#96;
@@ -18126,7 +18086,7 @@ declare module _ {
         unescape(): LoDashExplicitWrapper<string>;
     }
 
-    //_.upperCase
+    // _.upperCase
     interface LoDashStatic {
         /**
          * Converts `string`, as space separated words, to upper case.
@@ -18151,7 +18111,7 @@ declare module _ {
         upperCase(): LoDashExplicitWrapper<string>;
     }
 
-    //_.upperFirst
+    // _.upperFirst
     interface LoDashStatic {
         /**
          * Converts the first character of `string` to upper case.
@@ -18176,7 +18136,7 @@ declare module _ {
         upperFirst(): LoDashExplicitWrapper<string>;
     }
 
-    //_.words
+    // _.words
     interface LoDashStatic {
         /**
          * Splits `string` into an array of its words.
@@ -18209,7 +18169,7 @@ declare module _ {
      * Utility *
      ***********/
 
-        //_.attempt
+        // _.attempt
     interface LoDashStatic {
         /**
          * Attempts to invoke func, returning either the result or the caught error object. Any additional arguments
@@ -18235,7 +18195,7 @@ declare module _ {
         attempt<TResult>(...args: any[]): LoDashExplicitObjectWrapper<TResult|Error>;
     }
 
-    //_.constant
+    // _.constant
     interface LoDashStatic {
         /**
          * Creates a function that returns value.
@@ -18260,7 +18220,7 @@ declare module _ {
         constant<TResult>(): LoDashExplicitObjectWrapper<() => TResult>;
     }
 
-    //_.defaultTo
+    // _.defaultTo
     interface LoDashStatic {
         /**
          * Checks `value` to determine whether a default value should be returned in
@@ -18288,7 +18248,7 @@ declare module _ {
         defaultTo<TResult>(value: TResult): LoDashExplicitObjectWrapper<TResult>;
     }
 
-    //_.identity
+    // _.identity
     interface LoDashStatic {
         /**
          * This method returns the first argument provided to it.
@@ -18341,7 +18301,7 @@ declare module _ {
         identity(): LoDashExplicitObjectWrapper<T>;
     }
 
-    //_.iteratee
+    // _.iteratee
     interface LoDashStatic {
         /**
          * Creates a function that invokes `func` with the arguments of the created
@@ -18434,7 +18394,7 @@ declare module _ {
         iteratee<TResult>(): LoDashExplicitObjectWrapper<(...args: any[]) => TResult>;
     }
 
-    //_.matches
+    // _.matches
     interface LoDashStatic {
         /**
          * Creates a function that performs a deep comparison between a given object and source, returning true if the
@@ -18469,7 +18429,7 @@ declare module _ {
         matches<V>(): LoDashExplicitObjectWrapper<(value: V) => boolean>;
     }
 
-    //_.matchesProperty
+    // _.matchesProperty
     interface LoDashStatic {
         /**
          * Creates a function that compares the property value of path on a given object to value.
@@ -18527,7 +18487,7 @@ declare module _ {
         ): LoDashExplicitObjectWrapper<(value: Value) => boolean>;
     }
 
-    //_.method
+    // _.method
     interface LoDashStatic {
         /**
          * Creates a function that invokes the method at path on a given object. Any additional arguments are provided
@@ -18599,7 +18559,7 @@ declare module _ {
         method<TResult>(...args: any[]): LoDashExplicitObjectWrapper<(object: any) => TResult>;
     }
 
-    //_.methodOf
+    // _.methodOf
     interface LoDashStatic {
         /**
          * The opposite of _.method; this method creates a function that invokes the method at a given path on object.
@@ -18641,7 +18601,7 @@ declare module _ {
         ): LoDashExplicitObjectWrapper<(path: StringRepresentable|StringRepresentable[]) => TResult>;
     }
 
-    //_.mixin
+    // _.mixin
     interface MixinOptions {
         chain?: boolean;
     }
@@ -18709,7 +18669,7 @@ declare module _ {
         ): LoDashExplicitObjectWrapper<TResult>;
     }
 
-    //_.noConflict
+    // _.noConflict
     interface LoDashStatic {
         /**
          * Reverts the _ variable to its previous value and returns a reference to the lodash function.
@@ -18733,7 +18693,7 @@ declare module _ {
         noConflict(): LoDashExplicitObjectWrapper<typeof _>;
     }
 
-    //_.noop
+    // _.noop
     interface LoDashStatic {
         /**
          * A no-operation function that returns undefined regardless of the arguments it receives.
@@ -18757,7 +18717,7 @@ declare module _ {
         noop(...args: any[]): _.LoDashExplicitWrapper<void>;
     }
 
-    //_.nthArg
+    // _.nthArg
     interface LoDashStatic {
         /**
          * Creates a function that returns its nth argument.
@@ -18782,7 +18742,7 @@ declare module _ {
         nthArg<TResult extends Function>(): LoDashExplicitObjectWrapper<TResult>;
     }
 
-    //_.over
+    // _.over
     interface LoDashStatic {
         /**
          * Creates a function that invokes iteratees with the arguments provided to the created function and returns
@@ -18791,38 +18751,38 @@ declare module _ {
          * @param iteratees The iteratees to invoke.
          * @return Returns the new function.
          */
-        over<TResult>(...iteratees: (Function|Function[])[]): (...args: any[]) => TResult[];
+        over<TResult>(...iteratees: Array<Function|Function[]>): (...args: any[]) => TResult[];
     }
 
     interface LoDashImplicitArrayWrapper<T> {
         /**
          * @see _.over
          */
-        over<TResult>(...iteratees: (Function|Function[])[]): LoDashImplicitObjectWrapper<(...args: any[]) => TResult[]>;
+        over<TResult>(...iteratees: Array<Function|Function[]>): LoDashImplicitObjectWrapper<(...args: any[]) => TResult[]>;
     }
 
     interface LoDashImplicitObjectWrapper<T> {
         /**
          * @see _.over
          */
-        over<TResult>(...iteratees: (Function|Function[])[]): LoDashImplicitObjectWrapper<(...args: any[]) => TResult[]>;
+        over<TResult>(...iteratees: Array<Function|Function[]>): LoDashImplicitObjectWrapper<(...args: any[]) => TResult[]>;
     }
 
     interface LoDashExplicitArrayWrapper<T> {
         /**
          * @see _.over
          */
-        over<TResult>(...iteratees: (Function|Function[])[]): LoDashExplicitObjectWrapper<(...args: any[]) => TResult[]>;
+        over<TResult>(...iteratees: Array<Function|Function[]>): LoDashExplicitObjectWrapper<(...args: any[]) => TResult[]>;
     }
 
     interface LoDashExplicitObjectWrapper<T> {
         /**
          * @see _.over
          */
-        over<TResult>(...iteratees: (Function|Function[])[]): LoDashExplicitObjectWrapper<(...args: any[]) => TResult[]>;
+        over<TResult>(...iteratees: Array<Function|Function[]>): LoDashExplicitObjectWrapper<(...args: any[]) => TResult[]>;
     }
 
-    //_.overEvery
+    // _.overEvery
     interface LoDashStatic {
         /**
          * Creates a function that checks if all of the predicates return truthy when invoked with the arguments
@@ -18831,38 +18791,38 @@ declare module _ {
          * @param predicates The predicates to check.
          * @return Returns the new function.
          */
-        overEvery(...predicates: (Function|Function[])[]): (...args: any[]) => boolean;
+        overEvery(...predicates: Array<Function|Function[]>): (...args: any[]) => boolean;
     }
 
     interface LoDashImplicitArrayWrapper<T> {
         /**
          * @see _.overEvery
          */
-        overEvery(...predicates: (Function|Function[])[]): LoDashImplicitObjectWrapper<(...args: any[]) => boolean>;
+        overEvery(...predicates: Array<Function|Function[]>): LoDashImplicitObjectWrapper<(...args: any[]) => boolean>;
     }
 
     interface LoDashImplicitObjectWrapper<T> {
         /**
          * @see _.overEvery
          */
-        overEvery(...predicates: (Function|Function[])[]): LoDashImplicitObjectWrapper<(...args: any[]) => boolean>;
+        overEvery(...predicates: Array<Function|Function[]>): LoDashImplicitObjectWrapper<(...args: any[]) => boolean>;
     }
 
     interface LoDashExplicitArrayWrapper<T> {
         /**
          * @see _.overEvery
          */
-        overEvery(...predicates: (Function|Function[])[]): LoDashExplicitObjectWrapper<(...args: any[]) => boolean>;
+        overEvery(...predicates: Array<Function|Function[]>): LoDashExplicitObjectWrapper<(...args: any[]) => boolean>;
     }
 
     interface LoDashExplicitObjectWrapper<T> {
         /**
          * @see _.overEvery
          */
-        overEvery(...predicates: (Function|Function[])[]): LoDashExplicitObjectWrapper<(...args: any[]) => boolean>;
+        overEvery(...predicates: Array<Function|Function[]>): LoDashExplicitObjectWrapper<(...args: any[]) => boolean>;
     }
 
-    //_.overSome
+    // _.overSome
     interface LoDashStatic {
         /**
          * Creates a function that checks if any of the predicates return truthy when invoked with the arguments
@@ -18871,38 +18831,38 @@ declare module _ {
          * @param predicates The predicates to check.
          * @return Returns the new function.
          */
-        overSome(...predicates: (Function|Function[])[]): (...args: any[]) => boolean;
+        overSome(...predicates: Array<Function|Function[]>): (...args: any[]) => boolean;
     }
 
     interface LoDashImplicitArrayWrapper<T> {
         /**
          * @see _.overSome
          */
-        overSome(...predicates: (Function|Function[])[]): LoDashImplicitObjectWrapper<(...args: any[]) => boolean>;
+        overSome(...predicates: Array<Function|Function[]>): LoDashImplicitObjectWrapper<(...args: any[]) => boolean>;
     }
 
     interface LoDashImplicitObjectWrapper<T> {
         /**
          * @see _.overSome
          */
-        overSome(...predicates: (Function|Function[])[]): LoDashImplicitObjectWrapper<(...args: any[]) => boolean>;
+        overSome(...predicates: Array<Function|Function[]>): LoDashImplicitObjectWrapper<(...args: any[]) => boolean>;
     }
 
     interface LoDashExplicitArrayWrapper<T> {
         /**
          * @see _.overSome
          */
-        overSome(...predicates: (Function|Function[])[]): LoDashExplicitObjectWrapper<(...args: any[]) => boolean>;
+        overSome(...predicates: Array<Function|Function[]>): LoDashExplicitObjectWrapper<(...args: any[]) => boolean>;
     }
 
     interface LoDashExplicitObjectWrapper<T> {
         /**
          * @see _.overSome
          */
-        overSome(...predicates: (Function|Function[])[]): LoDashExplicitObjectWrapper<(...args: any[]) => boolean>;
+        overSome(...predicates: Array<Function|Function[]>): LoDashExplicitObjectWrapper<(...args: any[]) => boolean>;
     }
 
-    //_.property
+    // _.property
     interface LoDashStatic {
         /**
          * Creates a function that returns the property value at path on a given object.
@@ -18941,7 +18901,7 @@ declare module _ {
         property<TObj, TResult>(): LoDashExplicitObjectWrapper<(obj: TObj) => TResult>;
     }
 
-    //_.propertyOf
+    // _.propertyOf
     interface LoDashStatic {
         /**
          * The opposite of _.property; this method creates a function that returns the property value at a given path
@@ -18967,7 +18927,7 @@ declare module _ {
         propertyOf(): LoDashExplicitObjectWrapper<(path: string|string[]) => any>;
     }
 
-    //_.range
+    // _.range
     interface LoDashStatic {
         /**
          * Creates an array of numbers (positive and/or negative) progressing from start up to, but not including, end.
@@ -19014,7 +18974,7 @@ declare module _ {
         ): LoDashExplicitArrayWrapper<number>;
     }
 
-    //_.rangeRight
+    // _.rangeRight
     interface LoDashStatic {
         /**
          * This method is like `_.range` except that it populates values in
@@ -19085,7 +19045,7 @@ declare module _ {
         ): LoDashExplicitArrayWrapper<number>;
     }
 
-    //_.runInContext
+    // _.runInContext
     interface LoDashStatic {
         /**
          * Create a new pristine lodash function using the given context object.
@@ -19103,7 +19063,7 @@ declare module _ {
         runInContext(): typeof _;
     }
 
-    //_.times
+    // _.times
     interface LoDashStatic {
         /**
          * Invokes the iteratee function n times, returning an array of the results of each invocation. The iteratee
@@ -19152,7 +19112,7 @@ declare module _ {
         times(): LoDashExplicitArrayWrapper<number>;
     }
 
-    //_.toPath
+    // _.toPath
     interface LoDashStatic {
         /**
          * Converts `value` to a property path array.
@@ -19196,7 +19156,7 @@ declare module _ {
         toPath(): LoDashExplicitWrapper<string[]>;
     }
 
-    //_.uniqueId
+    // _.uniqueId
     interface LoDashStatic {
         /**
          * Generates a unique ID. If prefix is provided the ID is appended to it.
@@ -19221,41 +19181,23 @@ declare module _ {
         uniqueId(): LoDashExplicitWrapper<string>;
     }
 
-    interface ListIterator<T, TResult> {
-        (value: T, index: number, collection: List<T>): TResult;
-    }
+    type ListIterator<T, TResult> = (value: T, index: number, collection: List<T>) => TResult;
 
-    interface DictionaryIterator<T, TResult> {
-        (value: T, key?: string, collection?: Dictionary<T>): TResult;
-    }
+    type DictionaryIterator<T, TResult> = (value: T, key?: string, collection?: Dictionary<T>) => TResult;
 
-    interface NumericDictionaryIterator<T, TResult> {
-        (value: T, key?: number, collection?: Dictionary<T>): TResult;
-    }
+    type NumericDictionaryIterator<T, TResult> = (value: T, key?: number, collection?: Dictionary<T>) => TResult;
 
-    interface ObjectIterator<T, TResult> {
-        (element: T, key?: string, collection?: any): TResult;
-    }
+    type ObjectIterator<T, TResult> = (element: T, key?: string, collection?: any) => TResult;
 
-    interface StringIterator<TResult> {
-        (char: string, index?: number, string?: string): TResult;
-    }
+    type StringIterator<TResult> = (char: string, index?: number, string?: string) => TResult;
 
-    interface MemoVoidIterator<T, TResult> {
-        (prev: TResult, curr: T, indexOrKey?: any, list?: T[]): void;
-    }
-    interface MemoIterator<T, TResult> {
-        (prev: TResult, curr: T, indexOrKey?: any, list?: T[]): TResult;
-    }
+    type MemoVoidIterator<T, TResult> = (prev: TResult, curr: T, indexOrKey?: any, list?: T[]) => void;
+    type MemoIterator<T, TResult> = (prev: TResult, curr: T, indexOrKey?: any, list?: T[]) => TResult;
 
-    interface MemoVoidArrayIterator<T, TResult> {
-        (acc: TResult, curr: T, index?: number, arr?: T[]): void;
-    }
-    interface MemoVoidDictionaryIterator<T, TResult> {
-        (acc: TResult, curr: T, key?: string, dict?: Dictionary<T>): void;
-    }
+    type MemoVoidArrayIterator<T, TResult> = (acc: TResult, curr: T, index?: number, arr?: T[]) => void;
+    type MemoVoidDictionaryIterator<T, TResult> = (acc: TResult, curr: T, key?: string, dict?: Dictionary<T>) => void;
 
-    //interface Collection<T> {}
+    // interface Collection<T> {}
 
     // Common interface between Arrays and jQuery objects
     interface List<T> {
@@ -19283,97 +19225,82 @@ declare module _ {
 
 // Named exports
 
-declare module "lodash/after" {
+declare module 'lodash/after' {
     const after: typeof _.after;
     export = after;
 }
 
-
-declare module "lodash/ary" {
+declare module 'lodash/ary' {
     const ary: typeof _.ary;
     export = ary;
 }
 
-
-declare module "lodash/assign" {
+declare module 'lodash/assign' {
     const assign: typeof _.assign;
     export = assign;
 }
 
-
-declare module "lodash/assignIn" {
+declare module 'lodash/assignIn' {
     const assignIn: typeof _.assignIn;
     export = assignIn;
 }
 
-
-declare module "lodash/assignInWith" {
+declare module 'lodash/assignInWith' {
     const assignInWith: typeof _.assignInWith;
     export = assignInWith;
 }
 
-
-declare module "lodash/assignWith" {
+declare module 'lodash/assignWith' {
     const assignWith: typeof _.assignWith;
     export = assignWith;
 }
 
-
-declare module "lodash/at" {
+declare module 'lodash/at' {
     const at: typeof _.at;
     export = at;
 }
 
-
-declare module "lodash/before" {
+declare module 'lodash/before' {
     const before: typeof _.before;
     export = before;
 }
 
-
-declare module "lodash/bind" {
+declare module 'lodash/bind' {
     const bind: typeof _.bind;
     export = bind;
 }
 
-
-declare module "lodash/bindAll" {
+declare module 'lodash/bindAll' {
     const bindAll: typeof _.bindAll;
     export = bindAll;
 }
 
-
-declare module "lodash/bindKey" {
+declare module 'lodash/bindKey' {
     const bindKey: typeof _.bindKey;
     export = bindKey;
 }
 
-
-declare module "lodash/castArray" {
+declare module 'lodash/castArray' {
     const castArray: typeof _.castArray;
     export = castArray;
 }
 
-
-declare module "lodash/chain" {
+declare module 'lodash/chain' {
     const chain: typeof _.chain;
     export = chain;
 }
 
-
-declare module "lodash/chunk" {
+declare module 'lodash/chunk' {
     const chunk: typeof _.chunk;
     export = chunk;
 }
 
-
-declare module "lodash/compact" {
+declare module 'lodash/compact' {
     const compact: typeof _.compact;
     export = compact;
 }
 
-
-declare module "lodash/concat" {
+declare module 'lodash/concat' {
     const concat: typeof _.concat;
     export = concat;
 }
@@ -19398,121 +19325,102 @@ declare module "lodash/concat" {
  }
  */
 
-declare module "lodash/constant" {
+declare module 'lodash/constant' {
     const constant: typeof _.constant;
     export = constant;
 }
 
-
-declare module "lodash/countBy" {
+declare module 'lodash/countBy' {
     const countBy: typeof _.countBy;
     export = countBy;
 }
 
-
-declare module "lodash/create" {
+declare module 'lodash/create' {
     const create: typeof _.create;
     export = create;
 }
 
-
-declare module "lodash/curry" {
+declare module 'lodash/curry' {
     const curry: typeof _.curry;
     export = curry;
 }
 
-
-declare module "lodash/curryRight" {
+declare module 'lodash/curryRight' {
     const curryRight: typeof _.curryRight;
     export = curryRight;
 }
 
-
-declare module "lodash/debounce" {
+declare module 'lodash/debounce' {
     const debounce: typeof _.debounce;
     export = debounce;
 }
 
-
-declare module "lodash/defaults" {
+declare module 'lodash/defaults' {
     const defaults: typeof _.defaults;
     export = defaults;
 }
 
-
-declare module "lodash/defaultsDeep" {
+declare module 'lodash/defaultsDeep' {
     const defaultsDeep: typeof _.defaultsDeep;
     export = defaultsDeep;
 }
 
-
-declare module "lodash/defer" {
+declare module 'lodash/defer' {
     const defer: typeof _.defer;
     export = defer;
 }
 
-
-declare module "lodash/delay" {
+declare module 'lodash/delay' {
     const delay: typeof _.delay;
     export = delay;
 }
 
-
-declare module "lodash/difference" {
+declare module 'lodash/difference' {
     const difference: typeof _.difference;
     export = difference;
 }
 
-
-declare module "lodash/differenceBy" {
+declare module 'lodash/differenceBy' {
     const differenceBy: typeof _.differenceBy;
     export = differenceBy;
 }
 
-
-declare module "lodash/differenceWith" {
+declare module 'lodash/differenceWith' {
     const differenceWith: typeof _.differenceWith;
     export = differenceWith;
 }
 
-
-declare module "lodash/drop" {
+declare module 'lodash/drop' {
     const drop: typeof _.drop;
     export = drop;
 }
 
-
-declare module "lodash/dropRight" {
+declare module 'lodash/dropRight' {
     const dropRight: typeof _.dropRight;
     export = dropRight;
 }
 
-
-declare module "lodash/dropRightWhile" {
+declare module 'lodash/dropRightWhile' {
     const dropRightWhile: typeof _.dropRightWhile;
     export = dropRightWhile;
 }
 
-
-declare module "lodash/dropWhile" {
+declare module 'lodash/dropWhile' {
     const dropWhile: typeof _.dropWhile;
     export = dropWhile;
 }
 
-
-declare module "lodash/fill" {
+declare module 'lodash/fill' {
     const fill: typeof _.fill;
     export = fill;
 }
 
-
-declare module "lodash/filter" {
+declare module 'lodash/filter' {
     const filter: typeof _.filter;
     export = filter;
 }
 
-
-declare module "lodash/flatMap" {
+declare module 'lodash/flatMap' {
     const flatMap: typeof _.flatMap;
     export = flatMap;
 }
@@ -19536,311 +19444,262 @@ declare module "lodash/flatMap" {
  }
  */
 
-declare module "lodash/flatten" {
+declare module 'lodash/flatten' {
     const flatten: typeof _.flatten;
     export = flatten;
 }
 
-
-declare module "lodash/flattenDeep" {
+declare module 'lodash/flattenDeep' {
     const flattenDeep: typeof _.flattenDeep;
     export = flattenDeep;
 }
 
-declare module "lodash/flattenDepth" {
+declare module 'lodash/flattenDepth' {
     const flattenDepth: typeof _.flattenDepth;
     export = flattenDepth;
 }
 
-declare module "lodash/flip" {
+declare module 'lodash/flip' {
     const flip: typeof _.flip;
     export = flip;
 }
 
-
-declare module "lodash/flow" {
+declare module 'lodash/flow' {
     const flow: typeof _.flow;
     export = flow;
 }
 
-
-declare module "lodash/flowRight" {
+declare module 'lodash/flowRight' {
     const flowRight: typeof _.flowRight;
     export = flowRight;
 }
 
-
-declare module "lodash/fromPairs" {
+declare module 'lodash/fromPairs' {
     const fromPairs: typeof _.fromPairs;
     export = fromPairs;
 }
 
-
-declare module "lodash/functions" {
+declare module 'lodash/functions' {
     const functions: typeof _.functions;
     export = functions;
 }
 
-
-declare module "lodash/functionsIn" {
+declare module 'lodash/functionsIn' {
     const functionsIn: typeof _.functionsIn;
     export = functionsIn;
 }
 
-
-declare module "lodash/groupBy" {
+declare module 'lodash/groupBy' {
     const groupBy: typeof _.groupBy;
     export = groupBy;
 }
 
-
-declare module "lodash/initial" {
+declare module 'lodash/initial' {
     const initial: typeof _.initial;
     export = initial;
 }
 
-
-declare module "lodash/intersection" {
+declare module 'lodash/intersection' {
     const intersection: typeof _.intersection;
     export = intersection;
 }
 
-
-declare module "lodash/intersectionBy" {
+declare module 'lodash/intersectionBy' {
     const intersectionBy: typeof _.intersectionBy;
     export = intersectionBy;
 }
 
-
-declare module "lodash/intersectionWith" {
+declare module 'lodash/intersectionWith' {
     const intersectionWith: typeof _.intersectionWith;
     export = intersectionWith;
 }
 
-
-declare module "lodash/invert" {
+declare module 'lodash/invert' {
     const invert: typeof _.invert;
     export = invert;
 }
 
-
-declare module "lodash/invertBy" {
+declare module 'lodash/invertBy' {
     const invertBy: typeof _.invertBy;
     export = invertBy;
 }
 
-
-declare module "lodash/invokeMap" {
+declare module 'lodash/invokeMap' {
     const invokeMap: typeof _.invokeMap;
     export = invokeMap;
 }
 
-
-declare module "lodash/iteratee" {
+declare module 'lodash/iteratee' {
     const iteratee: typeof _.iteratee;
     export = iteratee;
 }
 
-
-declare module "lodash/keyBy" {
+declare module 'lodash/keyBy' {
     const keyBy: typeof _.keyBy;
     export = keyBy;
 }
 
-
-declare module "lodash/keys" {
+declare module 'lodash/keys' {
     const keys: typeof _.keys;
     export = keys;
 }
 
-
-declare module "lodash/keysIn" {
+declare module 'lodash/keysIn' {
     const keysIn: typeof _.keysIn;
     export = keysIn;
 }
 
-
-declare module "lodash/map" {
+declare module 'lodash/map' {
     const map: typeof _.map;
     export = map;
 }
 
-
-declare module "lodash/mapKeys" {
+declare module 'lodash/mapKeys' {
     const mapKeys: typeof _.mapKeys;
     export = mapKeys;
 }
 
-
-declare module "lodash/mapValues" {
+declare module 'lodash/mapValues' {
     const mapValues: typeof _.mapValues;
     export = mapValues;
 }
 
-
-declare module "lodash/matches" {
+declare module 'lodash/matches' {
     const matches: typeof _.matches;
     export = matches;
 }
 
-
-declare module "lodash/matchesProperty" {
+declare module 'lodash/matchesProperty' {
     const matchesProperty: typeof _.matchesProperty;
     export = matchesProperty;
 }
 
-
-declare module "lodash/memoize" {
+declare module 'lodash/memoize' {
     const memoize: typeof _.memoize;
     export = memoize;
 }
 
-
-declare module "lodash/merge" {
+declare module 'lodash/merge' {
     const merge: typeof _.merge;
     export = merge;
 }
 
-
-declare module "lodash/mergeWith" {
+declare module 'lodash/mergeWith' {
     const mergeWith: typeof _.mergeWith;
     export = mergeWith;
 }
 
-
-declare module "lodash/method" {
+declare module 'lodash/method' {
     const method: typeof _.method;
     export = method;
 }
 
-
-declare module "lodash/methodOf" {
+declare module 'lodash/methodOf' {
     const methodOf: typeof _.methodOf;
     export = methodOf;
 }
 
-
-declare module "lodash/mixin" {
+declare module 'lodash/mixin' {
     const mixin: typeof _.mixin;
     export = mixin;
 }
 
-
-declare module "lodash/negate" {
+declare module 'lodash/negate' {
     const negate: typeof _.negate;
     export = negate;
 }
 
-
-declare module "lodash/nthArg" {
+declare module 'lodash/nthArg' {
     const nthArg: typeof _.nthArg;
     export = nthArg;
 }
 
-
-declare module "lodash/omit" {
+declare module 'lodash/omit' {
     const omit: typeof _.omit;
     export = omit;
 }
 
-
-declare module "lodash/omitBy" {
+declare module 'lodash/omitBy' {
     const omitBy: typeof _.omitBy;
     export = omitBy;
 }
 
-
-declare module "lodash/once" {
+declare module 'lodash/once' {
     const once: typeof _.once;
     export = once;
 }
 
-
-declare module "lodash/orderBy" {
+declare module 'lodash/orderBy' {
     const orderBy: typeof _.orderBy;
     export = orderBy;
 }
 
-
-declare module "lodash/over" {
+declare module 'lodash/over' {
     const over: typeof _.over;
     export = over;
 }
 
-
-declare module "lodash/overArgs" {
+declare module 'lodash/overArgs' {
     const overArgs: typeof _.overArgs;
     export = overArgs;
 }
 
-
-declare module "lodash/overEvery" {
+declare module 'lodash/overEvery' {
     const overEvery: typeof _.overEvery;
     export = overEvery;
 }
 
-
-declare module "lodash/overSome" {
+declare module 'lodash/overSome' {
     const overSome: typeof _.overSome;
     export = overSome;
 }
 
-
-declare module "lodash/partial" {
+declare module 'lodash/partial' {
     const partial: typeof _.partial;
     export = partial;
 }
 
-
-declare module "lodash/partialRight" {
+declare module 'lodash/partialRight' {
     const partialRight: typeof _.partialRight;
     export = partialRight;
 }
 
-
-declare module "lodash/partition" {
+declare module 'lodash/partition' {
     const partition: typeof _.partition;
     export = partition;
 }
 
-
-declare module "lodash/pick" {
+declare module 'lodash/pick' {
     const pick: typeof _.pick;
     export = pick;
 }
 
-
-declare module "lodash/pickBy" {
+declare module 'lodash/pickBy' {
     const pickBy: typeof _.pickBy;
     export = pickBy;
 }
 
-
-declare module "lodash/property" {
+declare module 'lodash/property' {
     const property: typeof _.property;
     export = property;
 }
 
-
-declare module "lodash/propertyOf" {
+declare module 'lodash/propertyOf' {
     const propertyOf: typeof _.propertyOf;
     export = propertyOf;
 }
 
-
-declare module "lodash/pull" {
+declare module 'lodash/pull' {
     const pull: typeof _.pull;
     export = pull;
 }
 
-
-declare module "lodash/pullAll" {
+declare module 'lodash/pullAll' {
     const pullAll: typeof _.pullAll;
     export = pullAll;
 }
 
-
-declare module "lodash/pullAllBy" {
+declare module 'lodash/pullAllBy' {
     const pullAllBy: typeof _.pullAllBy;
     export = pullAllBy;
 }
@@ -19855,259 +19714,217 @@ declare module "lodash/pullAllBy" {
  }
  */
 
-declare module "lodash/pullAt" {
+declare module 'lodash/pullAt' {
     const pullAt: typeof _.pullAt;
     export = pullAt;
 }
 
-
-declare module "lodash/range" {
+declare module 'lodash/range' {
     const range: typeof _.range;
     export = range;
 }
 
-
-declare module "lodash/rangeRight" {
+declare module 'lodash/rangeRight' {
     const rangeRight: typeof _.rangeRight;
     export = rangeRight;
 }
 
-
-declare module "lodash/rearg" {
+declare module 'lodash/rearg' {
     const rearg: typeof _.rearg;
     export = rearg;
 }
 
-
-declare module "lodash/reject" {
+declare module 'lodash/reject' {
     const reject: typeof _.reject;
     export = reject;
 }
 
-
-declare module "lodash/remove" {
+declare module 'lodash/remove' {
     const remove: typeof _.remove;
     export = remove;
 }
 
-
-declare module "lodash/rest" {
+declare module 'lodash/rest' {
     const rest: typeof _.rest;
     export = rest;
 }
 
-
-declare module "lodash/reverse" {
+declare module 'lodash/reverse' {
     const reverse: typeof _.reverse;
     export = reverse;
 }
 
-
-declare module "lodash/sampleSize" {
+declare module 'lodash/sampleSize' {
     const sampleSize: typeof _.sampleSize;
     export = sampleSize;
 }
 
-
-declare module "lodash/set" {
+declare module 'lodash/set' {
     const set: typeof _.set;
     export = set;
 }
 
-
-declare module "lodash/setWith" {
+declare module 'lodash/setWith' {
     const setWith: typeof _.setWith;
     export = setWith;
 }
 
-
-declare module "lodash/shuffle" {
+declare module 'lodash/shuffle' {
     const shuffle: typeof _.shuffle;
     export = shuffle;
 }
 
-
-declare module "lodash/slice" {
+declare module 'lodash/slice' {
     const slice: typeof _.slice;
     export = slice;
 }
 
-
-declare module "lodash/sortBy" {
+declare module 'lodash/sortBy' {
     const sortBy: typeof _.sortBy;
     export = sortBy;
 }
 
-
-declare module "lodash/sortedUniq" {
+declare module 'lodash/sortedUniq' {
     const sortedUniq: typeof _.sortedUniq;
     export = sortedUniq;
 }
 
-
-declare module "lodash/sortedUniqBy" {
+declare module 'lodash/sortedUniqBy' {
     const sortedUniqBy: typeof _.sortedUniqBy;
     export = sortedUniqBy;
 }
 
-
-declare module "lodash/split" {
+declare module 'lodash/split' {
     const split: typeof _.split;
     export = split;
 }
 
-
-declare module "lodash/spread" {
+declare module 'lodash/spread' {
     const spread: typeof _.spread;
     export = spread;
 }
 
-
-declare module "lodash/tail" {
+declare module 'lodash/tail' {
     const tail: typeof _.tail;
     export = tail;
 }
 
-
-declare module "lodash/take" {
+declare module 'lodash/take' {
     const take: typeof _.take;
     export = take;
 }
 
-
-declare module "lodash/takeRight" {
+declare module 'lodash/takeRight' {
     const takeRight: typeof _.takeRight;
     export = takeRight;
 }
 
-
-declare module "lodash/takeRightWhile" {
+declare module 'lodash/takeRightWhile' {
     const takeRightWhile: typeof _.takeRightWhile;
     export = takeRightWhile;
 }
 
-
-declare module "lodash/takeWhile" {
+declare module 'lodash/takeWhile' {
     const takeWhile: typeof _.takeWhile;
     export = takeWhile;
 }
 
-
-declare module "lodash/tap" {
+declare module 'lodash/tap' {
     const tap: typeof _.tap;
     export = tap;
 }
 
-
-declare module "lodash/throttle" {
+declare module 'lodash/throttle' {
     const throttle: typeof _.throttle;
     export = throttle;
 }
 
-
-declare module "lodash/thru" {
+declare module 'lodash/thru' {
     const thru: typeof _.thru;
     export = thru;
 }
 
-
-declare module "lodash/toArray" {
+declare module 'lodash/toArray' {
     const toArray: typeof _.toArray;
     export = toArray;
 }
 
-
-declare module "lodash/toPairs" {
+declare module 'lodash/toPairs' {
     const toPairs: typeof _.toPairs;
     export = toPairs;
 }
 
-
-declare module "lodash/toPairsIn" {
+declare module 'lodash/toPairsIn' {
     const toPairsIn: typeof _.toPairsIn;
     export = toPairsIn;
 }
 
-
-declare module "lodash/toPath" {
+declare module 'lodash/toPath' {
     const toPath: typeof _.toPath;
     export = toPath;
 }
 
-
-declare module "lodash/toPlainObject" {
+declare module 'lodash/toPlainObject' {
     const toPlainObject: typeof _.toPlainObject;
     export = toPlainObject;
 }
 
-
-declare module "lodash/transform" {
+declare module 'lodash/transform' {
     const transform: typeof _.transform;
     export = transform;
 }
 
-
-declare module "lodash/unary" {
+declare module 'lodash/unary' {
     const unary: typeof _.unary;
     export = unary;
 }
 
-
-declare module "lodash/union" {
+declare module 'lodash/union' {
     const union: typeof _.union;
     export = union;
 }
 
-
-declare module "lodash/unionBy" {
+declare module 'lodash/unionBy' {
     const unionBy: typeof _.unionBy;
     export = unionBy;
 }
 
-
-declare module "lodash/unionWith" {
+declare module 'lodash/unionWith' {
     const unionWith: typeof _.unionWith;
     export = unionWith;
 }
 
-
-declare module "lodash/uniq" {
+declare module 'lodash/uniq' {
     const uniq: typeof _.uniq;
     export = uniq;
 }
 
-
-declare module "lodash/uniqBy" {
+declare module 'lodash/uniqBy' {
     const uniqBy: typeof _.uniqBy;
     export = uniqBy;
 }
 
-
-declare module "lodash/uniqWith" {
+declare module 'lodash/uniqWith' {
     const uniqWith: typeof _.uniqWith;
     export = uniqWith;
 }
 
-
-declare module "lodash/unset" {
+declare module 'lodash/unset' {
     const unset: typeof _.unset;
     export = unset;
 }
 
-
-declare module "lodash/unzip" {
+declare module 'lodash/unzip' {
     const unzip: typeof _.unzip;
     export = unzip;
 }
 
-
-declare module "lodash/unzipWith" {
+declare module 'lodash/unzipWith' {
     const unzipWith: typeof _.unzipWith;
     export = unzipWith;
 }
 
-
-declare module "lodash/update" {
+declare module 'lodash/update' {
     const update: typeof _.update;
     export = update;
 }
@@ -20122,61 +19939,52 @@ declare module "lodash/update" {
  }
  */
 
-declare module "lodash/values" {
+declare module 'lodash/values' {
     const values: typeof _.values;
     export = values;
 }
 
-
-declare module "lodash/valuesIn" {
+declare module 'lodash/valuesIn' {
     const valuesIn: typeof _.valuesIn;
     export = valuesIn;
 }
 
-
-declare module "lodash/without" {
+declare module 'lodash/without' {
     const without: typeof _.without;
     export = without;
 }
 
-
-declare module "lodash/words" {
+declare module 'lodash/words' {
     const words: typeof _.words;
     export = words;
 }
 
-
-declare module "lodash/wrap" {
+declare module 'lodash/wrap' {
     const wrap: typeof _.wrap;
     export = wrap;
 }
 
-
-declare module "lodash/xor" {
+declare module 'lodash/xor' {
     const xor: typeof _.xor;
     export = xor;
 }
 
-
-declare module "lodash/xorBy" {
+declare module 'lodash/xorBy' {
     const xorBy: typeof _.xorBy;
     export = xorBy;
 }
 
-
-declare module "lodash/xorWith" {
+declare module 'lodash/xorWith' {
     const xorWith: typeof _.xorWith;
     export = xorWith;
 }
 
-
-declare module "lodash/zip" {
+declare module 'lodash/zip' {
     const zip: typeof _.zip;
     export = zip;
 }
 
-
-declare module "lodash/zipObject" {
+declare module 'lodash/zipObject' {
     const zipObject: typeof _.zipObject;
     export = zipObject;
 }
@@ -20191,8 +19999,7 @@ declare module "lodash/zipObject" {
  }
  */
 
-
-declare module "lodash/zipWith" {
+declare module 'lodash/zipWith' {
     const zipWith: typeof _.zipWith;
     export = zipWith;
 }
@@ -20216,80 +20023,67 @@ declare module "lodash/zipWith" {
  }
  */
 
-
-declare module "lodash/extend" {
+declare module 'lodash/extend' {
     const extend: typeof _.extend;
     export = extend;
 }
 
-
-declare module "lodash/extendWith" {
+declare module 'lodash/extendWith' {
     const extendWith: typeof _.extendWith;
     export = extendWith;
 }
 
-
-declare module "lodash/add" {
+declare module 'lodash/add' {
     const add: typeof _.add;
     export = add;
 }
 
-
-declare module "lodash/attempt" {
+declare module 'lodash/attempt' {
     const attempt: typeof _.attempt;
     export = attempt;
 }
 
-
-declare module "lodash/camelCase" {
+declare module 'lodash/camelCase' {
     const camelCase: typeof _.camelCase;
     export = camelCase;
 }
 
-
-declare module "lodash/capitalize" {
+declare module 'lodash/capitalize' {
     const capitalize: typeof _.capitalize;
     export = capitalize;
 }
 
-
-declare module "lodash/ceil" {
+declare module 'lodash/ceil' {
     const ceil: typeof _.ceil;
     export = ceil;
 }
 
-
-declare module "lodash/clamp" {
+declare module 'lodash/clamp' {
     const clamp: typeof _.clamp;
     export = clamp;
 }
 
-
-declare module "lodash/clone" {
+declare module 'lodash/clone' {
     const clone: typeof _.clone;
     export = clone;
 }
 
-
-declare module "lodash/cloneDeep" {
+declare module 'lodash/cloneDeep' {
     const cloneDeep: typeof _.cloneDeep;
     export = cloneDeep;
 }
 
-
-declare module "lodash/cloneDeepWith" {
+declare module 'lodash/cloneDeepWith' {
     const cloneDeepWith: typeof _.cloneDeepWith;
     export = cloneDeepWith;
 }
 
-
-declare module "lodash/cloneWith" {
+declare module 'lodash/cloneWith' {
     const cloneWith: typeof _.cloneWith;
     export = cloneWith;
 }
 
-
-declare module "lodash/deburr" {
+declare module 'lodash/deburr' {
     const deburr: typeof _.deburr;
     export = deburr;
 }
@@ -20304,463 +20098,387 @@ declare module "lodash/deburr" {
  }
  */
 
-declare module "lodash/endsWith" {
+declare module 'lodash/endsWith' {
     const endsWith: typeof _.endsWith;
     export = endsWith;
 }
 
-
-declare module "lodash/eq" {
+declare module 'lodash/eq' {
     const eq: typeof _.eq;
     export = eq;
 }
 
-
-declare module "lodash/escape" {
+declare module 'lodash/escape' {
     const escape: typeof _.escape;
     export = escape;
 }
 
-
-declare module "lodash/escapeRegExp" {
+declare module 'lodash/escapeRegExp' {
     const escapeRegExp: typeof _.escapeRegExp;
     export = escapeRegExp;
 }
 
-
-declare module "lodash/every" {
+declare module 'lodash/every' {
     const every: typeof _.every;
     export = every;
 }
 
-
-declare module "lodash/find" {
+declare module 'lodash/find' {
     const find: typeof _.find;
     export = find;
 }
 
-
-declare module "lodash/findIndex" {
+declare module 'lodash/findIndex' {
     const findIndex: typeof _.findIndex;
     export = findIndex;
 }
 
-
-declare module "lodash/findKey" {
+declare module 'lodash/findKey' {
     const findKey: typeof _.findKey;
     export = findKey;
 }
 
-
-declare module "lodash/findLast" {
+declare module 'lodash/findLast' {
     const findLast: typeof _.findLast;
     export = findLast;
 }
 
-
-declare module "lodash/findLastIndex" {
+declare module 'lodash/findLastIndex' {
     const findLastIndex: typeof _.findLastIndex;
     export = findLastIndex;
 }
 
-
-declare module "lodash/findLastKey" {
+declare module 'lodash/findLastKey' {
     const findLastKey: typeof _.findLastKey;
     export = findLastKey;
 }
 
-
-declare module "lodash/floor" {
+declare module 'lodash/floor' {
     const floor: typeof _.floor;
     export = floor;
 }
 
-
-declare module "lodash/forEach" {
+declare module 'lodash/forEach' {
     const forEach: typeof _.forEach;
     export = forEach;
 }
 
-
-declare module "lodash/forEachRight" {
+declare module 'lodash/forEachRight' {
     const forEachRight: typeof _.forEachRight;
     export = forEachRight;
 }
 
-
-declare module "lodash/forIn" {
+declare module 'lodash/forIn' {
     const forIn: typeof _.forIn;
     export = forIn;
 }
 
-
-declare module "lodash/forInRight" {
+declare module 'lodash/forInRight' {
     const forInRight: typeof _.forInRight;
     export = forInRight;
 }
 
-
-declare module "lodash/forOwn" {
+declare module 'lodash/forOwn' {
     const forOwn: typeof _.forOwn;
     export = forOwn;
 }
 
-
-declare module "lodash/forOwnRight" {
+declare module 'lodash/forOwnRight' {
     const forOwnRight: typeof _.forOwnRight;
     export = forOwnRight;
 }
 
-
-declare module "lodash/get" {
+declare module 'lodash/get' {
     const get: typeof _.get;
     export = get;
 }
 
-
-declare module "lodash/gt" {
+declare module 'lodash/gt' {
     const gt: typeof _.gt;
     export = gt;
 }
 
-
-declare module "lodash/gte" {
+declare module 'lodash/gte' {
     const gte: typeof _.gte;
     export = gte;
 }
 
-
-declare module "lodash/has" {
+declare module 'lodash/has' {
     const has: typeof _.has;
     export = has;
 }
 
-
-declare module "lodash/hasIn" {
+declare module 'lodash/hasIn' {
     const hasIn: typeof _.hasIn;
     export = hasIn;
 }
 
-
-declare module "lodash/head" {
+declare module 'lodash/head' {
     const head: typeof _.head;
     export = head;
 }
 
-
-declare module "lodash/identity" {
+declare module 'lodash/identity' {
     const identity: typeof _.identity;
     export = identity;
 }
 
-
-declare module "lodash/includes" {
+declare module 'lodash/includes' {
     const includes: typeof _.includes;
     export = includes;
 }
 
-
-declare module "lodash/indexOf" {
+declare module 'lodash/indexOf' {
     const indexOf: typeof _.indexOf;
     export = indexOf;
 }
 
-
-declare module "lodash/inRange" {
+declare module 'lodash/inRange' {
     const inRange: typeof _.inRange;
     export = inRange;
 }
 
-
-declare module "lodash/invoke" {
+declare module 'lodash/invoke' {
     const invoke: typeof _.invoke;
     export = invoke;
 }
 
-
-declare module "lodash/isArguments" {
+declare module 'lodash/isArguments' {
     const isArguments: typeof _.isArguments;
     export = isArguments;
 }
 
-
-declare module "lodash/isArray" {
+declare module 'lodash/isArray' {
     const isArray: typeof _.isArray;
     export = isArray;
 }
 
-
-declare module "lodash/isArrayBuffer" {
+declare module 'lodash/isArrayBuffer' {
     const isArrayBuffer: typeof _.isArrayBuffer;
     export = isArrayBuffer;
 }
 
-
-declare module "lodash/isArrayLike" {
+declare module 'lodash/isArrayLike' {
     const isArrayLike: typeof _.isArrayLike;
     export = isArrayLike;
 }
 
-
-declare module "lodash/isArrayLikeObject" {
+declare module 'lodash/isArrayLikeObject' {
     const isArrayLikeObject: typeof _.isArrayLikeObject;
     export = isArrayLikeObject;
 }
 
-
-declare module "lodash/isBoolean" {
+declare module 'lodash/isBoolean' {
     const isBoolean: typeof _.isBoolean;
     export = isBoolean;
 }
 
-
-declare module "lodash/isBuffer" {
+declare module 'lodash/isBuffer' {
     const isBuffer: typeof _.isBuffer;
     export = isBuffer;
 }
 
-
-declare module "lodash/isDate" {
+declare module 'lodash/isDate' {
     const isDate: typeof _.isDate;
     export = isDate;
 }
 
-
-declare module "lodash/isElement" {
+declare module 'lodash/isElement' {
     const isElement: typeof _.isElement;
     export = isElement;
 }
 
-
-declare module "lodash/isEmpty" {
+declare module 'lodash/isEmpty' {
     const isEmpty: typeof _.isEmpty;
     export = isEmpty;
 }
 
-
-declare module "lodash/isEqual" {
+declare module 'lodash/isEqual' {
     const isEqual: typeof _.isEqual;
     export = isEqual;
 }
 
-
-declare module "lodash/isEqualWith" {
+declare module 'lodash/isEqualWith' {
     const isEqualWith: typeof _.isEqualWith;
     export = isEqualWith;
 }
 
-
-declare module "lodash/isError" {
+declare module 'lodash/isError' {
     const isError: typeof _.isError;
     export = isError;
 }
 
-
-declare module "lodash/isFinite" {
+declare module 'lodash/isFinite' {
     const isFinite: typeof _.isFinite;
     export = isFinite;
 }
 
-
-declare module "lodash/isFunction" {
+declare module 'lodash/isFunction' {
     const isFunction: typeof _.isFunction;
     export = isFunction;
 }
 
-
-declare module "lodash/isInteger" {
+declare module 'lodash/isInteger' {
     const isInteger: typeof _.isInteger;
     export = isInteger;
 }
 
-
-declare module "lodash/isLength" {
+declare module 'lodash/isLength' {
     const isLength: typeof _.isLength;
     export = isLength;
 }
 
-
-declare module "lodash/isMap" {
+declare module 'lodash/isMap' {
     const isMap: typeof _.isMap;
     export = isMap;
 }
 
-
-declare module "lodash/isMatch" {
+declare module 'lodash/isMatch' {
     const isMatch: typeof _.isMatch;
     export = isMatch;
 }
 
-
-declare module "lodash/isMatchWith" {
+declare module 'lodash/isMatchWith' {
     const isMatchWith: typeof _.isMatchWith;
     export = isMatchWith;
 }
 
-
-declare module "lodash/isNaN" {
+declare module 'lodash/isNaN' {
     const isNaN: typeof _.isNaN;
     export = isNaN;
 }
 
-
-declare module "lodash/isNative" {
+declare module 'lodash/isNative' {
     const isNative: typeof _.isNative;
     export = isNative;
 }
 
-
-declare module "lodash/isNil" {
+declare module 'lodash/isNil' {
     const isNil: typeof _.isNil;
     export = isNil;
 }
 
-
-declare module "lodash/isNull" {
+declare module 'lodash/isNull' {
     const isNull: typeof _.isNull;
     export = isNull;
 }
 
-
-declare module "lodash/isNumber" {
+declare module 'lodash/isNumber' {
     const isNumber: typeof _.isNumber;
     export = isNumber;
 }
 
-
-declare module "lodash/isObject" {
+declare module 'lodash/isObject' {
     const isObject: typeof _.isObject;
     export = isObject;
 }
 
-
-declare module "lodash/isObjectLike" {
+declare module 'lodash/isObjectLike' {
     const isObjectLike: typeof _.isObjectLike;
     export = isObjectLike;
 }
 
-
-declare module "lodash/isPlainObject" {
+declare module 'lodash/isPlainObject' {
     const isPlainObject: typeof _.isPlainObject;
     export = isPlainObject;
 }
 
-
-declare module "lodash/isRegExp" {
+declare module 'lodash/isRegExp' {
     const isRegExp: typeof _.isRegExp;
     export = isRegExp;
 }
 
-
-declare module "lodash/isSafeInteger" {
+declare module 'lodash/isSafeInteger' {
     const isSafeInteger: typeof _.isSafeInteger;
     export = isSafeInteger;
 }
 
-
-declare module "lodash/isSet" {
+declare module 'lodash/isSet' {
     const isSet: typeof _.isSet;
     export = isSet;
 }
 
-
-declare module "lodash/isString" {
+declare module 'lodash/isString' {
     const isString: typeof _.isString;
     export = isString;
 }
 
-
-declare module "lodash/isSymbol" {
+declare module 'lodash/isSymbol' {
     const isSymbol: typeof _.isSymbol;
     export = isSymbol;
 }
 
-
-declare module "lodash/isTypedArray" {
+declare module 'lodash/isTypedArray' {
     const isTypedArray: typeof _.isTypedArray;
     export = isTypedArray;
 }
 
-
-declare module "lodash/isUndefined" {
+declare module 'lodash/isUndefined' {
     const isUndefined: typeof _.isUndefined;
     export = isUndefined;
 }
 
-
-declare module "lodash/isWeakMap" {
+declare module 'lodash/isWeakMap' {
     const isWeakMap: typeof _.isWeakMap;
     export = isWeakMap;
 }
 
-
-declare module "lodash/isWeakSet" {
+declare module 'lodash/isWeakSet' {
     const isWeakSet: typeof _.isWeakSet;
     export = isWeakSet;
 }
 
-
-declare module "lodash/join" {
+declare module 'lodash/join' {
     const join: typeof _.join;
     export = join;
 }
 
-
-declare module "lodash/kebabCase" {
+declare module 'lodash/kebabCase' {
     const kebabCase: typeof _.kebabCase;
     export = kebabCase;
 }
 
-
-declare module "lodash/last" {
+declare module 'lodash/last' {
     const last: typeof _.last;
     export = last;
 }
 
-
-declare module "lodash/lastIndexOf" {
+declare module 'lodash/lastIndexOf' {
     const lastIndexOf: typeof _.lastIndexOf;
     export = lastIndexOf;
 }
 
-
-declare module "lodash/lowerCase" {
+declare module 'lodash/lowerCase' {
     const lowerCase: typeof _.lowerCase;
     export = lowerCase;
 }
 
-
-declare module "lodash/lowerFirst" {
+declare module 'lodash/lowerFirst' {
     const lowerFirst: typeof _.lowerFirst;
     export = lowerFirst;
 }
 
-
-declare module "lodash/lt" {
+declare module 'lodash/lt' {
     const lt: typeof _.lt;
     export = lt;
 }
 
-
-declare module "lodash/lte" {
+declare module 'lodash/lte' {
     const lte: typeof _.lte;
     export = lte;
 }
 
-
-declare module "lodash/max" {
+declare module 'lodash/max' {
     const max: typeof _.max;
     export = max;
 }
 
-
-declare module "lodash/maxBy" {
+declare module 'lodash/maxBy' {
     const maxBy: typeof _.maxBy;
     export = maxBy;
 }
 
-
-declare module "lodash/mean" {
+declare module 'lodash/mean' {
     const mean: typeof _.mean;
     export = mean;
 }
@@ -20775,13 +20493,12 @@ declare module "lodash/mean" {
  }
  */
 
-declare module "lodash/min" {
+declare module 'lodash/min' {
     const min: typeof _.min;
     export = min;
 }
 
-
-declare module "lodash/minBy" {
+declare module 'lodash/minBy' {
     const minBy: typeof _.minBy;
     export = minBy;
 }
@@ -20806,310 +20523,261 @@ declare module "lodash/minBy" {
  }
  */
 
-declare module "lodash/noConflict" {
+declare module 'lodash/noConflict' {
     const noConflict: typeof _.noConflict;
     export = noConflict;
 }
 
-
-declare module "lodash/noop" {
+declare module 'lodash/noop' {
     const noop: typeof _.noop;
     export = noop;
 }
 
-
-declare module "lodash/now" {
+declare module 'lodash/now' {
     const now: typeof _.now;
     export = now;
 }
 
-
-declare module "lodash/pad" {
+declare module 'lodash/pad' {
     const pad: typeof _.pad;
     export = pad;
 }
 
-
-declare module "lodash/padEnd" {
+declare module 'lodash/padEnd' {
     const padEnd: typeof _.padEnd;
     export = padEnd;
 }
 
-
-declare module "lodash/padStart" {
+declare module 'lodash/padStart' {
     const padStart: typeof _.padStart;
     export = padStart;
 }
 
-
-declare module "lodash/parseInt" {
+declare module 'lodash/parseInt' {
     const parseInt: typeof _.parseInt;
     export = parseInt;
 }
 
-
-declare module "lodash/random" {
+declare module 'lodash/random' {
     const random: typeof _.random;
     export = random;
 }
 
-
-declare module "lodash/reduce" {
+declare module 'lodash/reduce' {
     const reduce: typeof _.reduce;
     export = reduce;
 }
 
-
-declare module "lodash/reduceRight" {
+declare module 'lodash/reduceRight' {
     const reduceRight: typeof _.reduceRight;
     export = reduceRight;
 }
 
-
-declare module "lodash/repeat" {
+declare module 'lodash/repeat' {
     const repeat: typeof _.repeat;
     export = repeat;
 }
 
-
-declare module "lodash/replace" {
+declare module 'lodash/replace' {
     const replace: typeof _.replace;
     export = replace;
 }
 
-
-declare module "lodash/result" {
+declare module 'lodash/result' {
     const result: typeof _.result;
     export = result;
 }
 
-
-declare module "lodash/round" {
+declare module 'lodash/round' {
     const round: typeof _.round;
     export = round;
 }
 
-
-declare module "lodash/runInContext" {
+declare module 'lodash/runInContext' {
     const runInContext: typeof _.runInContext;
     export = runInContext;
 }
 
-
-declare module "lodash/sample" {
+declare module 'lodash/sample' {
     const sample: typeof _.sample;
     export = sample;
 }
 
-
-declare module "lodash/size" {
+declare module 'lodash/size' {
     const size: typeof _.size;
     export = size;
 }
 
-
-declare module "lodash/snakeCase" {
+declare module 'lodash/snakeCase' {
     const snakeCase: typeof _.snakeCase;
     export = snakeCase;
 }
 
-
-declare module "lodash/some" {
+declare module 'lodash/some' {
     const some: typeof _.some;
     export = some;
 }
 
-
-declare module "lodash/sortedIndex" {
+declare module 'lodash/sortedIndex' {
     const sortedIndex: typeof _.sortedIndex;
     export = sortedIndex;
 }
 
-
-declare module "lodash/sortedIndexBy" {
+declare module 'lodash/sortedIndexBy' {
     const sortedIndexBy: typeof _.sortedIndexBy;
     export = sortedIndexBy;
 }
 
-
-declare module "lodash/sortedIndexOf" {
+declare module 'lodash/sortedIndexOf' {
     const sortedIndexOf: typeof _.sortedIndexOf;
     export = sortedIndexOf;
 }
 
-
-declare module "lodash/sortedLastIndex" {
+declare module 'lodash/sortedLastIndex' {
     const sortedLastIndex: typeof _.sortedLastIndex;
     export = sortedLastIndex;
 }
 
-
-declare module "lodash/sortedLastIndexBy" {
+declare module 'lodash/sortedLastIndexBy' {
     const sortedLastIndexBy: typeof _.sortedLastIndexBy;
     export = sortedLastIndexBy;
 }
 
-
-declare module "lodash/sortedLastIndexOf" {
+declare module 'lodash/sortedLastIndexOf' {
     const sortedLastIndexOf: typeof _.sortedLastIndexOf;
     export = sortedLastIndexOf;
 }
 
-
-declare module "lodash/startCase" {
+declare module 'lodash/startCase' {
     const startCase: typeof _.startCase;
     export = startCase;
 }
 
-
-declare module "lodash/startsWith" {
+declare module 'lodash/startsWith' {
     const startsWith: typeof _.startsWith;
     export = startsWith;
 }
 
-
-declare module "lodash/subtract" {
+declare module 'lodash/subtract' {
     const subtract: typeof _.subtract;
     export = subtract;
 }
 
-
-declare module "lodash/sum" {
+declare module 'lodash/sum' {
     const sum: typeof _.sum;
     export = sum;
 }
 
-
-declare module "lodash/sumBy" {
+declare module 'lodash/sumBy' {
     const sumBy: typeof _.sumBy;
     export = sumBy;
 }
 
-
-declare module "lodash/template" {
+declare module 'lodash/template' {
     const template: typeof _.template;
     export = template;
 }
 
-
-declare module "lodash/times" {
+declare module 'lodash/times' {
     const times: typeof _.times;
     export = times;
 }
 
-
-declare module "lodash/toInteger" {
+declare module 'lodash/toInteger' {
     const toInteger: typeof _.toInteger;
     export = toInteger;
 }
 
-
-declare module "lodash/toLength" {
+declare module 'lodash/toLength' {
     const toLength: typeof _.toLength;
     export = toLength;
 }
 
-
-declare module "lodash/toLower" {
+declare module 'lodash/toLower' {
     const toLower: typeof _.toLower;
     export = toLower;
 }
 
-
-declare module "lodash/toNumber" {
+declare module 'lodash/toNumber' {
     const toNumber: typeof _.toNumber;
     export = toNumber;
 }
 
-
-declare module "lodash/toSafeInteger" {
+declare module 'lodash/toSafeInteger' {
     const toSafeInteger: typeof _.toSafeInteger;
     export = toSafeInteger;
 }
 
-
-declare module "lodash/toString" {
+declare module 'lodash/toString' {
     const toString: typeof _.toString;
     export = toString;
 }
 
-
-declare module "lodash/toUpper" {
+declare module 'lodash/toUpper' {
     const toUpper: typeof _.toUpper;
     export = toUpper;
 }
 
-
-declare module "lodash/trim" {
+declare module 'lodash/trim' {
     const trim: typeof _.trim;
     export = trim;
 }
 
-
-declare module "lodash/trimEnd" {
+declare module 'lodash/trimEnd' {
     const trimEnd: typeof _.trimEnd;
     export = trimEnd;
 }
 
-
-declare module "lodash/trimStart" {
+declare module 'lodash/trimStart' {
     const trimStart: typeof _.trimStart;
     export = trimStart;
 }
 
-
-declare module "lodash/truncate" {
+declare module 'lodash/truncate' {
     const truncate: typeof _.truncate;
     export = truncate;
 }
 
-
-declare module "lodash/unescape" {
+declare module 'lodash/unescape' {
     const unescape: typeof _.unescape;
     export = unescape;
 }
 
-
-declare module "lodash/uniqueId" {
+declare module 'lodash/uniqueId' {
     const uniqueId: typeof _.uniqueId;
     export = uniqueId;
 }
 
-
-declare module "lodash/upperCase" {
+declare module 'lodash/upperCase' {
     const upperCase: typeof _.upperCase;
     export = upperCase;
 }
 
-
-declare module "lodash/upperFirst" {
+declare module 'lodash/upperFirst' {
     const upperFirst: typeof _.upperFirst;
     export = upperFirst;
 }
 
-
-declare module "lodash/each" {
+declare module 'lodash/each' {
     const each: typeof _.each;
     export = each;
 }
 
-
-declare module "lodash/eachRight" {
+declare module 'lodash/eachRight' {
     const eachRight: typeof _.eachRight;
     export = eachRight;
 }
 
-
-declare module "lodash/first" {
+declare module 'lodash/first' {
     const first: typeof _.first;
     export = first;
 }
 
-declare module "lodash/fp" {
+declare module 'lodash/fp' {
     export = _;
 }
 
-declare module "lodash" {
+declare module 'lodash' {
     export = _;
 }
 
@@ -21119,98 +20787,82 @@ declare module "lodash" {
  *                                               *
  *************************************************/
 
-
-declare module "lodash.after" {
+declare module 'lodash.after' {
     const after: typeof _.after;
     export = after;
 }
 
-
-declare module "lodash.ary" {
+declare module 'lodash.ary' {
     const ary: typeof _.ary;
     export = ary;
 }
 
-
-declare module "lodash.assign" {
+declare module 'lodash.assign' {
     const assign: typeof _.assign;
     export = assign;
 }
 
-
-declare module "lodash.assignIn" {
+declare module 'lodash.assignIn' {
     const assignIn: typeof _.assignIn;
     export = assignIn;
 }
 
-
-declare module "lodash.assignInWith" {
+declare module 'lodash.assignInWith' {
     const assignInWith: typeof _.assignInWith;
     export = assignInWith;
 }
 
-
-declare module "lodash.assignWith" {
+declare module 'lodash.assignWith' {
     const assignWith: typeof _.assignWith;
     export = assignWith;
 }
 
-
-declare module "lodash.at" {
+declare module 'lodash.at' {
     const at: typeof _.at;
     export = at;
 }
 
-
-declare module "lodash.before" {
+declare module 'lodash.before' {
     const before: typeof _.before;
     export = before;
 }
 
-
-declare module "lodash.bind" {
+declare module 'lodash.bind' {
     const bind: typeof _.bind;
     export = bind;
 }
 
-
-declare module "lodash.bindAll" {
+declare module 'lodash.bindAll' {
     const bindAll: typeof _.bindAll;
     export = bindAll;
 }
 
-
-declare module "lodash.bindKey" {
+declare module 'lodash.bindKey' {
     const bindKey: typeof _.bindKey;
     export = bindKey;
 }
 
-
-declare module "lodash.castArray" {
+declare module 'lodash.castArray' {
     const castArray: typeof _.castArray;
     export = castArray;
 }
 
-
-declare module "lodash.chain" {
+declare module 'lodash.chain' {
     const chain: typeof _.chain;
     export = chain;
 }
 
-
-declare module "lodash.chunk" {
+declare module 'lodash.chunk' {
     const chunk: typeof _.chunk;
     export = chunk;
 }
 
-
-declare module "lodash.compact" {
+declare module 'lodash.compact' {
     const compact: typeof _.compact;
     export = compact;
 }
 
-
-declare module "lodash.concat" {
+declare module 'lodash.concat' {
     const concat: typeof _.concat;
     export = concat;
 }
@@ -21235,121 +20887,102 @@ declare module "lodash.concat" {
  }
  */
 
-declare module "lodash.constant" {
+declare module 'lodash.constant' {
     const constant: typeof _.constant;
     export = constant;
 }
 
-
-declare module "lodash.countBy" {
+declare module 'lodash.countBy' {
     const countBy: typeof _.countBy;
     export = countBy;
 }
 
-
-declare module "lodash.create" {
+declare module 'lodash.create' {
     const create: typeof _.create;
     export = create;
 }
 
-
-declare module "lodash.curry" {
+declare module 'lodash.curry' {
     const curry: typeof _.curry;
     export = curry;
 }
 
-
-declare module "lodash.curryRight" {
+declare module 'lodash.curryRight' {
     const curryRight: typeof _.curryRight;
     export = curryRight;
 }
 
-
-declare module "lodash.debounce" {
+declare module 'lodash.debounce' {
     const debounce: typeof _.debounce;
     export = debounce;
 }
 
-
-declare module "lodash.defaults" {
+declare module 'lodash.defaults' {
     const defaults: typeof _.defaults;
     export = defaults;
 }
 
-
-declare module "lodash.defaultsDeep" {
+declare module 'lodash.defaultsDeep' {
     const defaultsDeep: typeof _.defaultsDeep;
     export = defaultsDeep;
 }
 
-
-declare module "lodash.defer" {
+declare module 'lodash.defer' {
     const defer: typeof _.defer;
     export = defer;
 }
 
-
-declare module "lodash.delay" {
+declare module 'lodash.delay' {
     const delay: typeof _.delay;
     export = delay;
 }
 
-
-declare module "lodash.difference" {
+declare module 'lodash.difference' {
     const difference: typeof _.difference;
     export = difference;
 }
 
-
-declare module "lodash.differenceBy" {
+declare module 'lodash.differenceBy' {
     const differenceBy: typeof _.differenceBy;
     export = differenceBy;
 }
 
-
-declare module "lodash.differenceWith" {
+declare module 'lodash.differenceWith' {
     const differenceWith: typeof _.differenceWith;
     export = differenceWith;
 }
 
-
-declare module "lodash.drop" {
+declare module 'lodash.drop' {
     const drop: typeof _.drop;
     export = drop;
 }
 
-
-declare module "lodash.dropRight" {
+declare module 'lodash.dropRight' {
     const dropRight: typeof _.dropRight;
     export = dropRight;
 }
 
-
-declare module "lodash.dropRightWhile" {
+declare module 'lodash.dropRightWhile' {
     const dropRightWhile: typeof _.dropRightWhile;
     export = dropRightWhile;
 }
 
-
-declare module "lodash.dropWhile" {
+declare module 'lodash.dropWhile' {
     const dropWhile: typeof _.dropWhile;
     export = dropWhile;
 }
 
-
-declare module "lodash.fill" {
+declare module 'lodash.fill' {
     const fill: typeof _.fill;
     export = fill;
 }
 
-
-declare module "lodash.filter" {
+declare module 'lodash.filter' {
     const filter: typeof _.filter;
     export = filter;
 }
 
-
-declare module "lodash.flatMap" {
+declare module 'lodash.flatMap' {
     const flatMap: typeof _.flatMap;
     export = flatMap;
 }
@@ -21373,311 +21006,262 @@ declare module "lodash.flatMap" {
  }
  */
 
-declare module "lodash.flatten" {
+declare module 'lodash.flatten' {
     const flatten: typeof _.flatten;
     export = flatten;
 }
 
-
-declare module "lodash.flattenDeep" {
+declare module 'lodash.flattenDeep' {
     const flattenDeep: typeof _.flattenDeep;
     export = flattenDeep;
 }
 
-declare module "lodash.flattenDepth" {
+declare module 'lodash.flattenDepth' {
     const flattenDepth: typeof _.flattenDepth;
     export = flattenDepth;
 }
 
-declare module "lodash.flip" {
+declare module 'lodash.flip' {
     const flip: typeof _.flip;
     export = flip;
 }
 
-
-declare module "lodash.flow" {
+declare module 'lodash.flow' {
     const flow: typeof _.flow;
     export = flow;
 }
 
-
-declare module "lodash.flowRight" {
+declare module 'lodash.flowRight' {
     const flowRight: typeof _.flowRight;
     export = flowRight;
 }
 
-
-declare module "lodash.fromPairs" {
+declare module 'lodash.fromPairs' {
     const fromPairs: typeof _.fromPairs;
     export = fromPairs;
 }
 
-
-declare module "lodash.functions" {
+declare module 'lodash.functions' {
     const functions: typeof _.functions;
     export = functions;
 }
 
-
-declare module "lodash.functionsIn" {
+declare module 'lodash.functionsIn' {
     const functionsIn: typeof _.functionsIn;
     export = functionsIn;
 }
 
-
-declare module "lodash.groupBy" {
+declare module 'lodash.groupBy' {
     const groupBy: typeof _.groupBy;
     export = groupBy;
 }
 
-
-declare module "lodash.initial" {
+declare module 'lodash.initial' {
     const initial: typeof _.initial;
     export = initial;
 }
 
-
-declare module "lodash.intersection" {
+declare module 'lodash.intersection' {
     const intersection: typeof _.intersection;
     export = intersection;
 }
 
-
-declare module "lodash.intersectionBy" {
+declare module 'lodash.intersectionBy' {
     const intersectionBy: typeof _.intersectionBy;
     export = intersectionBy;
 }
 
-
-declare module "lodash.intersectionWith" {
+declare module 'lodash.intersectionWith' {
     const intersectionWith: typeof _.intersectionWith;
     export = intersectionWith;
 }
 
-
-declare module "lodash.invert" {
+declare module 'lodash.invert' {
     const invert: typeof _.invert;
     export = invert;
 }
 
-
-declare module "lodash.invertBy" {
+declare module 'lodash.invertBy' {
     const invertBy: typeof _.invertBy;
     export = invertBy;
 }
 
-
-declare module "lodash.invokeMap" {
+declare module 'lodash.invokeMap' {
     const invokeMap: typeof _.invokeMap;
     export = invokeMap;
 }
 
-
-declare module "lodash.iteratee" {
+declare module 'lodash.iteratee' {
     const iteratee: typeof _.iteratee;
     export = iteratee;
 }
 
-
-declare module "lodash.keyBy" {
+declare module 'lodash.keyBy' {
     const keyBy: typeof _.keyBy;
     export = keyBy;
 }
 
-
-declare module "lodash.keys" {
+declare module 'lodash.keys' {
     const keys: typeof _.keys;
     export = keys;
 }
 
-
-declare module "lodash.keysIn" {
+declare module 'lodash.keysIn' {
     const keysIn: typeof _.keysIn;
     export = keysIn;
 }
 
-
-declare module "lodash.map" {
+declare module 'lodash.map' {
     const map: typeof _.map;
     export = map;
 }
 
-
-declare module "lodash.mapKeys" {
+declare module 'lodash.mapKeys' {
     const mapKeys: typeof _.mapKeys;
     export = mapKeys;
 }
 
-
-declare module "lodash.mapValues" {
+declare module 'lodash.mapValues' {
     const mapValues: typeof _.mapValues;
     export = mapValues;
 }
 
-
-declare module "lodash.matches" {
+declare module 'lodash.matches' {
     const matches: typeof _.matches;
     export = matches;
 }
 
-
-declare module "lodash.matchesProperty" {
+declare module 'lodash.matchesProperty' {
     const matchesProperty: typeof _.matchesProperty;
     export = matchesProperty;
 }
 
-
-declare module "lodash.memoize" {
+declare module 'lodash.memoize' {
     const memoize: typeof _.memoize;
     export = memoize;
 }
 
-
-declare module "lodash.merge" {
+declare module 'lodash.merge' {
     const merge: typeof _.merge;
     export = merge;
 }
 
-
-declare module "lodash.mergeWith" {
+declare module 'lodash.mergeWith' {
     const mergeWith: typeof _.mergeWith;
     export = mergeWith;
 }
 
-
-declare module "lodash.method" {
+declare module 'lodash.method' {
     const method: typeof _.method;
     export = method;
 }
 
-
-declare module "lodash.methodOf" {
+declare module 'lodash.methodOf' {
     const methodOf: typeof _.methodOf;
     export = methodOf;
 }
 
-
-declare module "lodash.mixin" {
+declare module 'lodash.mixin' {
     const mixin: typeof _.mixin;
     export = mixin;
 }
 
-
-declare module "lodash.negate" {
+declare module 'lodash.negate' {
     const negate: typeof _.negate;
     export = negate;
 }
 
-
-declare module "lodash.nthArg" {
+declare module 'lodash.nthArg' {
     const nthArg: typeof _.nthArg;
     export = nthArg;
 }
 
-
-declare module "lodash.omit" {
+declare module 'lodash.omit' {
     const omit: typeof _.omit;
     export = omit;
 }
 
-
-declare module "lodash.omitBy" {
+declare module 'lodash.omitBy' {
     const omitBy: typeof _.omitBy;
     export = omitBy;
 }
 
-
-declare module "lodash.once" {
+declare module 'lodash.once' {
     const once: typeof _.once;
     export = once;
 }
 
-
-declare module "lodash.orderBy" {
+declare module 'lodash.orderBy' {
     const orderBy: typeof _.orderBy;
     export = orderBy;
 }
 
-
-declare module "lodash.over" {
+declare module 'lodash.over' {
     const over: typeof _.over;
     export = over;
 }
 
-
-declare module "lodash.overArgs" {
+declare module 'lodash.overArgs' {
     const overArgs: typeof _.overArgs;
     export = overArgs;
 }
 
-
-declare module "lodash.overEvery" {
+declare module 'lodash.overEvery' {
     const overEvery: typeof _.overEvery;
     export = overEvery;
 }
 
-
-declare module "lodash.overSome" {
+declare module 'lodash.overSome' {
     const overSome: typeof _.overSome;
     export = overSome;
 }
 
-
-declare module "lodash.partial" {
+declare module 'lodash.partial' {
     const partial: typeof _.partial;
     export = partial;
 }
 
-
-declare module "lodash.partialRight" {
+declare module 'lodash.partialRight' {
     const partialRight: typeof _.partialRight;
     export = partialRight;
 }
 
-
-declare module "lodash.partition" {
+declare module 'lodash.partition' {
     const partition: typeof _.partition;
     export = partition;
 }
 
-
-declare module "lodash.pick" {
+declare module 'lodash.pick' {
     const pick: typeof _.pick;
     export = pick;
 }
 
-
-declare module "lodash.pickBy" {
+declare module 'lodash.pickBy' {
     const pickBy: typeof _.pickBy;
     export = pickBy;
 }
 
-
-declare module "lodash.property" {
+declare module 'lodash.property' {
     const property: typeof _.property;
     export = property;
 }
 
-
-declare module "lodash.propertyOf" {
+declare module 'lodash.propertyOf' {
     const propertyOf: typeof _.propertyOf;
     export = propertyOf;
 }
 
-
-declare module "lodash.pull" {
+declare module 'lodash.pull' {
     const pull: typeof _.pull;
     export = pull;
 }
 
-
-declare module "lodash.pullAll" {
+declare module 'lodash.pullAll' {
     const pullAll: typeof _.pullAll;
     export = pullAll;
 }
 
-
-declare module "lodash.pullAllBy" {
+declare module 'lodash.pullAllBy' {
     const pullAllBy: typeof _.pullAllBy;
     export = pullAllBy;
 }
@@ -21692,259 +21276,217 @@ declare module "lodash.pullAllBy" {
  }
  */
 
-declare module "lodash.pullAt" {
+declare module 'lodash.pullAt' {
     const pullAt: typeof _.pullAt;
     export = pullAt;
 }
 
-
-declare module "lodash.range" {
+declare module 'lodash.range' {
     const range: typeof _.range;
     export = range;
 }
 
-
-declare module "lodash.rangeRight" {
+declare module 'lodash.rangeRight' {
     const rangeRight: typeof _.rangeRight;
     export = rangeRight;
 }
 
-
-declare module "lodash.rearg" {
+declare module 'lodash.rearg' {
     const rearg: typeof _.rearg;
     export = rearg;
 }
 
-
-declare module "lodash.reject" {
+declare module 'lodash.reject' {
     const reject: typeof _.reject;
     export = reject;
 }
 
-
-declare module "lodash.remove" {
+declare module 'lodash.remove' {
     const remove: typeof _.remove;
     export = remove;
 }
 
-
-declare module "lodash.rest" {
+declare module 'lodash.rest' {
     const rest: typeof _.rest;
     export = rest;
 }
 
-
-declare module "lodash.reverse" {
+declare module 'lodash.reverse' {
     const reverse: typeof _.reverse;
     export = reverse;
 }
 
-
-declare module "lodash.sampleSize" {
+declare module 'lodash.sampleSize' {
     const sampleSize: typeof _.sampleSize;
     export = sampleSize;
 }
 
-
-declare module "lodash.set" {
+declare module 'lodash.set' {
     const set: typeof _.set;
     export = set;
 }
 
-
-declare module "lodash.setWith" {
+declare module 'lodash.setWith' {
     const setWith: typeof _.setWith;
     export = setWith;
 }
 
-
-declare module "lodash.shuffle" {
+declare module 'lodash.shuffle' {
     const shuffle: typeof _.shuffle;
     export = shuffle;
 }
 
-
-declare module "lodash.slice" {
+declare module 'lodash.slice' {
     const slice: typeof _.slice;
     export = slice;
 }
 
-
-declare module "lodash.sortBy" {
+declare module 'lodash.sortBy' {
     const sortBy: typeof _.sortBy;
     export = sortBy;
 }
 
-
-declare module "lodash.sortedUniq" {
+declare module 'lodash.sortedUniq' {
     const sortedUniq: typeof _.sortedUniq;
     export = sortedUniq;
 }
 
-
-declare module "lodash.sortedUniqBy" {
+declare module 'lodash.sortedUniqBy' {
     const sortedUniqBy: typeof _.sortedUniqBy;
     export = sortedUniqBy;
 }
 
-
-declare module "lodash.split" {
+declare module 'lodash.split' {
     const split: typeof _.split;
     export = split;
 }
 
-
-declare module "lodash.spread" {
+declare module 'lodash.spread' {
     const spread: typeof _.spread;
     export = spread;
 }
 
-
-declare module "lodash.tail" {
+declare module 'lodash.tail' {
     const tail: typeof _.tail;
     export = tail;
 }
 
-
-declare module "lodash.take" {
+declare module 'lodash.take' {
     const take: typeof _.take;
     export = take;
 }
 
-
-declare module "lodash.takeRight" {
+declare module 'lodash.takeRight' {
     const takeRight: typeof _.takeRight;
     export = takeRight;
 }
 
-
-declare module "lodash.takeRightWhile" {
+declare module 'lodash.takeRightWhile' {
     const takeRightWhile: typeof _.takeRightWhile;
     export = takeRightWhile;
 }
 
-
-declare module "lodash.takeWhile" {
+declare module 'lodash.takeWhile' {
     const takeWhile: typeof _.takeWhile;
     export = takeWhile;
 }
 
-
-declare module "lodash.tap" {
+declare module 'lodash.tap' {
     const tap: typeof _.tap;
     export = tap;
 }
 
-
-declare module "lodash.throttle" {
+declare module 'lodash.throttle' {
     const throttle: typeof _.throttle;
     export = throttle;
 }
 
-
-declare module "lodash.thru" {
+declare module 'lodash.thru' {
     const thru: typeof _.thru;
     export = thru;
 }
 
-
-declare module "lodash.toArray" {
+declare module 'lodash.toArray' {
     const toArray: typeof _.toArray;
     export = toArray;
 }
 
-
-declare module "lodash.toPairs" {
+declare module 'lodash.toPairs' {
     const toPairs: typeof _.toPairs;
     export = toPairs;
 }
 
-
-declare module "lodash.toPairsIn" {
+declare module 'lodash.toPairsIn' {
     const toPairsIn: typeof _.toPairsIn;
     export = toPairsIn;
 }
 
-
-declare module "lodash.toPath" {
+declare module 'lodash.toPath' {
     const toPath: typeof _.toPath;
     export = toPath;
 }
 
-
-declare module "lodash.toPlainObject" {
+declare module 'lodash.toPlainObject' {
     const toPlainObject: typeof _.toPlainObject;
     export = toPlainObject;
 }
 
-
-declare module "lodash.transform" {
+declare module 'lodash.transform' {
     const transform: typeof _.transform;
     export = transform;
 }
 
-
-declare module "lodash.unary" {
+declare module 'lodash.unary' {
     const unary: typeof _.unary;
     export = unary;
 }
 
-
-declare module "lodash.union" {
+declare module 'lodash.union' {
     const union: typeof _.union;
     export = union;
 }
 
-
-declare module "lodash.unionBy" {
+declare module 'lodash.unionBy' {
     const unionBy: typeof _.unionBy;
     export = unionBy;
 }
 
-
-declare module "lodash.unionWith" {
+declare module 'lodash.unionWith' {
     const unionWith: typeof _.unionWith;
     export = unionWith;
 }
 
-
-declare module "lodash.uniq" {
+declare module 'lodash.uniq' {
     const uniq: typeof _.uniq;
     export = uniq;
 }
 
-
-declare module "lodash.uniqBy" {
+declare module 'lodash.uniqBy' {
     const uniqBy: typeof _.uniqBy;
     export = uniqBy;
 }
 
-
-declare module "lodash.uniqWith" {
+declare module 'lodash.uniqWith' {
     const uniqWith: typeof _.uniqWith;
     export = uniqWith;
 }
 
-
-declare module "lodash.unset" {
+declare module 'lodash.unset' {
     const unset: typeof _.unset;
     export = unset;
 }
 
-
-declare module "lodash.unzip" {
+declare module 'lodash.unzip' {
     const unzip: typeof _.unzip;
     export = unzip;
 }
 
-
-declare module "lodash.unzipWith" {
+declare module 'lodash.unzipWith' {
     const unzipWith: typeof _.unzipWith;
     export = unzipWith;
 }
 
-
-declare module "lodash.update" {
+declare module 'lodash.update' {
     const update: typeof _.update;
     export = update;
 }
@@ -21959,61 +21501,52 @@ declare module "lodash.update" {
  }
  */
 
-declare module "lodash.values" {
+declare module 'lodash.values' {
     const values: typeof _.values;
     export = values;
 }
 
-
-declare module "lodash.valuesIn" {
+declare module 'lodash.valuesIn' {
     const valuesIn: typeof _.valuesIn;
     export = valuesIn;
 }
 
-
-declare module "lodash.without" {
+declare module 'lodash.without' {
     const without: typeof _.without;
     export = without;
 }
 
-
-declare module "lodash.words" {
+declare module 'lodash.words' {
     const words: typeof _.words;
     export = words;
 }
 
-
-declare module "lodash.wrap" {
+declare module 'lodash.wrap' {
     const wrap: typeof _.wrap;
     export = wrap;
 }
 
-
-declare module "lodash.xor" {
+declare module 'lodash.xor' {
     const xor: typeof _.xor;
     export = xor;
 }
 
-
-declare module "lodash.xorBy" {
+declare module 'lodash.xorBy' {
     const xorBy: typeof _.xorBy;
     export = xorBy;
 }
 
-
-declare module "lodash.xorWith" {
+declare module 'lodash.xorWith' {
     const xorWith: typeof _.xorWith;
     export = xorWith;
 }
 
-
-declare module "lodash.zip" {
+declare module 'lodash.zip' {
     const zip: typeof _.zip;
     export = zip;
 }
 
-
-declare module "lodash.zipObject" {
+declare module 'lodash.zipObject' {
     const zipObject: typeof _.zipObject;
     export = zipObject;
 }
@@ -22028,8 +21561,7 @@ declare module "lodash.zipObject" {
  }
  */
 
-
-declare module "lodash.zipWith" {
+declare module 'lodash.zipWith' {
     const zipWith: typeof _.zipWith;
     export = zipWith;
 }
@@ -22053,80 +21585,67 @@ declare module "lodash.zipWith" {
  }
  */
 
-
-declare module "lodash.extend" {
+declare module 'lodash.extend' {
     const extend: typeof _.extend;
     export = extend;
 }
 
-
-declare module "lodash.extendWith" {
+declare module 'lodash.extendWith' {
     const extendWith: typeof _.extendWith;
     export = extendWith;
 }
 
-
-declare module "lodash.add" {
+declare module 'lodash.add' {
     const add: typeof _.add;
     export = add;
 }
 
-
-declare module "lodash.attempt" {
+declare module 'lodash.attempt' {
     const attempt: typeof _.attempt;
     export = attempt;
 }
 
-
-declare module "lodash.camelCase" {
+declare module 'lodash.camelCase' {
     const camelCase: typeof _.camelCase;
     export = camelCase;
 }
 
-
-declare module "lodash.capitalize" {
+declare module 'lodash.capitalize' {
     const capitalize: typeof _.capitalize;
     export = capitalize;
 }
 
-
-declare module "lodash.ceil" {
+declare module 'lodash.ceil' {
     const ceil: typeof _.ceil;
     export = ceil;
 }
 
-
-declare module "lodash.clamp" {
+declare module 'lodash.clamp' {
     const clamp: typeof _.clamp;
     export = clamp;
 }
 
-
-declare module "lodash.clone" {
+declare module 'lodash.clone' {
     const clone: typeof _.clone;
     export = clone;
 }
 
-
-declare module "lodash.cloneDeep" {
+declare module 'lodash.cloneDeep' {
     const cloneDeep: typeof _.cloneDeep;
     export = cloneDeep;
 }
 
-
-declare module "lodash.cloneDeepWith" {
+declare module 'lodash.cloneDeepWith' {
     const cloneDeepWith: typeof _.cloneDeepWith;
     export = cloneDeepWith;
 }
 
-
-declare module "lodash.cloneWith" {
+declare module 'lodash.cloneWith' {
     const cloneWith: typeof _.cloneWith;
     export = cloneWith;
 }
 
-
-declare module "lodash.deburr" {
+declare module 'lodash.deburr' {
     const deburr: typeof _.deburr;
     export = deburr;
 }
@@ -22141,463 +21660,387 @@ declare module "lodash.deburr" {
  }
  */
 
-declare module "lodash.endsWith" {
+declare module 'lodash.endsWith' {
     const endsWith: typeof _.endsWith;
     export = endsWith;
 }
 
-
-declare module "lodash.eq" {
+declare module 'lodash.eq' {
     const eq: typeof _.eq;
     export = eq;
 }
 
-
-declare module "lodash.escape" {
+declare module 'lodash.escape' {
     const escape: typeof _.escape;
     export = escape;
 }
 
-
-declare module "lodash.escapeRegExp" {
+declare module 'lodash.escapeRegExp' {
     const escapeRegExp: typeof _.escapeRegExp;
     export = escapeRegExp;
 }
 
-
-declare module "lodash.every" {
+declare module 'lodash.every' {
     const every: typeof _.every;
     export = every;
 }
 
-
-declare module "lodash.find" {
+declare module 'lodash.find' {
     const find: typeof _.find;
     export = find;
 }
 
-
-declare module "lodash.findIndex" {
+declare module 'lodash.findIndex' {
     const findIndex: typeof _.findIndex;
     export = findIndex;
 }
 
-
-declare module "lodash.findKey" {
+declare module 'lodash.findKey' {
     const findKey: typeof _.findKey;
     export = findKey;
 }
 
-
-declare module "lodash.findLast" {
+declare module 'lodash.findLast' {
     const findLast: typeof _.findLast;
     export = findLast;
 }
 
-
-declare module "lodash.findLastIndex" {
+declare module 'lodash.findLastIndex' {
     const findLastIndex: typeof _.findLastIndex;
     export = findLastIndex;
 }
 
-
-declare module "lodash.findLastKey" {
+declare module 'lodash.findLastKey' {
     const findLastKey: typeof _.findLastKey;
     export = findLastKey;
 }
 
-
-declare module "lodash.floor" {
+declare module 'lodash.floor' {
     const floor: typeof _.floor;
     export = floor;
 }
 
-
-declare module "lodash.forEach" {
+declare module 'lodash.forEach' {
     const forEach: typeof _.forEach;
     export = forEach;
 }
 
-
-declare module "lodash.forEachRight" {
+declare module 'lodash.forEachRight' {
     const forEachRight: typeof _.forEachRight;
     export = forEachRight;
 }
 
-
-declare module "lodash.forIn" {
+declare module 'lodash.forIn' {
     const forIn: typeof _.forIn;
     export = forIn;
 }
 
-
-declare module "lodash.forInRight" {
+declare module 'lodash.forInRight' {
     const forInRight: typeof _.forInRight;
     export = forInRight;
 }
 
-
-declare module "lodash.forOwn" {
+declare module 'lodash.forOwn' {
     const forOwn: typeof _.forOwn;
     export = forOwn;
 }
 
-
-declare module "lodash.forOwnRight" {
+declare module 'lodash.forOwnRight' {
     const forOwnRight: typeof _.forOwnRight;
     export = forOwnRight;
 }
 
-
-declare module "lodash.get" {
+declare module 'lodash.get' {
     const get: typeof _.get;
     export = get;
 }
 
-
-declare module "lodash.gt" {
+declare module 'lodash.gt' {
     const gt: typeof _.gt;
     export = gt;
 }
 
-
-declare module "lodash.gte" {
+declare module 'lodash.gte' {
     const gte: typeof _.gte;
     export = gte;
 }
 
-
-declare module "lodash.has" {
+declare module 'lodash.has' {
     const has: typeof _.has;
     export = has;
 }
 
-
-declare module "lodash.hasIn" {
+declare module 'lodash.hasIn' {
     const hasIn: typeof _.hasIn;
     export = hasIn;
 }
 
-
-declare module "lodash.head" {
+declare module 'lodash.head' {
     const head: typeof _.head;
     export = head;
 }
 
-
-declare module "lodash.identity" {
+declare module 'lodash.identity' {
     const identity: typeof _.identity;
     export = identity;
 }
 
-
-declare module "lodash.includes" {
+declare module 'lodash.includes' {
     const includes: typeof _.includes;
     export = includes;
 }
 
-
-declare module "lodash.indexOf" {
+declare module 'lodash.indexOf' {
     const indexOf: typeof _.indexOf;
     export = indexOf;
 }
 
-
-declare module "lodash.inRange" {
+declare module 'lodash.inRange' {
     const inRange: typeof _.inRange;
     export = inRange;
 }
 
-
-declare module "lodash.invoke" {
+declare module 'lodash.invoke' {
     const invoke: typeof _.invoke;
     export = invoke;
 }
 
-
-declare module "lodash.isArguments" {
+declare module 'lodash.isArguments' {
     const isArguments: typeof _.isArguments;
     export = isArguments;
 }
 
-
-declare module "lodash.isArray" {
+declare module 'lodash.isArray' {
     const isArray: typeof _.isArray;
     export = isArray;
 }
 
-
-declare module "lodash.isArrayBuffer" {
+declare module 'lodash.isArrayBuffer' {
     const isArrayBuffer: typeof _.isArrayBuffer;
     export = isArrayBuffer;
 }
 
-
-declare module "lodash.isArrayLike" {
+declare module 'lodash.isArrayLike' {
     const isArrayLike: typeof _.isArrayLike;
     export = isArrayLike;
 }
 
-
-declare module "lodash.isArrayLikeObject" {
+declare module 'lodash.isArrayLikeObject' {
     const isArrayLikeObject: typeof _.isArrayLikeObject;
     export = isArrayLikeObject;
 }
 
-
-declare module "lodash.isBoolean" {
+declare module 'lodash.isBoolean' {
     const isBoolean: typeof _.isBoolean;
     export = isBoolean;
 }
 
-
-declare module "lodash.isBuffer" {
+declare module 'lodash.isBuffer' {
     const isBuffer: typeof _.isBuffer;
     export = isBuffer;
 }
 
-
-declare module "lodash.isDate" {
+declare module 'lodash.isDate' {
     const isDate: typeof _.isDate;
     export = isDate;
 }
 
-
-declare module "lodash.isElement" {
+declare module 'lodash.isElement' {
     const isElement: typeof _.isElement;
     export = isElement;
 }
 
-
-declare module "lodash.isEmpty" {
+declare module 'lodash.isEmpty' {
     const isEmpty: typeof _.isEmpty;
     export = isEmpty;
 }
 
-
-declare module "lodash.isEqual" {
+declare module 'lodash.isEqual' {
     const isEqual: typeof _.isEqual;
     export = isEqual;
 }
 
-
-declare module "lodash.isEqualWith" {
+declare module 'lodash.isEqualWith' {
     const isEqualWith: typeof _.isEqualWith;
     export = isEqualWith;
 }
 
-
-declare module "lodash.isError" {
+declare module 'lodash.isError' {
     const isError: typeof _.isError;
     export = isError;
 }
 
-
-declare module "lodash.isFinite" {
+declare module 'lodash.isFinite' {
     const isFinite: typeof _.isFinite;
     export = isFinite;
 }
 
-
-declare module "lodash.isFunction" {
+declare module 'lodash.isFunction' {
     const isFunction: typeof _.isFunction;
     export = isFunction;
 }
 
-
-declare module "lodash.isInteger" {
+declare module 'lodash.isInteger' {
     const isInteger: typeof _.isInteger;
     export = isInteger;
 }
 
-
-declare module "lodash.isLength" {
+declare module 'lodash.isLength' {
     const isLength: typeof _.isLength;
     export = isLength;
 }
 
-
-declare module "lodash.isMap" {
+declare module 'lodash.isMap' {
     const isMap: typeof _.isMap;
     export = isMap;
 }
 
-
-declare module "lodash.isMatch" {
+declare module 'lodash.isMatch' {
     const isMatch: typeof _.isMatch;
     export = isMatch;
 }
 
-
-declare module "lodash.isMatchWith" {
+declare module 'lodash.isMatchWith' {
     const isMatchWith: typeof _.isMatchWith;
     export = isMatchWith;
 }
 
-
-declare module "lodash.isNaN" {
+declare module 'lodash.isNaN' {
     const isNaN: typeof _.isNaN;
     export = isNaN;
 }
 
-
-declare module "lodash.isNative" {
+declare module 'lodash.isNative' {
     const isNative: typeof _.isNative;
     export = isNative;
 }
 
-
-declare module "lodash.isNil" {
+declare module 'lodash.isNil' {
     const isNil: typeof _.isNil;
     export = isNil;
 }
 
-
-declare module "lodash.isNull" {
+declare module 'lodash.isNull' {
     const isNull: typeof _.isNull;
     export = isNull;
 }
 
-
-declare module "lodash.isNumber" {
+declare module 'lodash.isNumber' {
     const isNumber: typeof _.isNumber;
     export = isNumber;
 }
 
-
-declare module "lodash.isObject" {
+declare module 'lodash.isObject' {
     const isObject: typeof _.isObject;
     export = isObject;
 }
 
-
-declare module "lodash.isObjectLike" {
+declare module 'lodash.isObjectLike' {
     const isObjectLike: typeof _.isObjectLike;
     export = isObjectLike;
 }
 
-
-declare module "lodash.isPlainObject" {
+declare module 'lodash.isPlainObject' {
     const isPlainObject: typeof _.isPlainObject;
     export = isPlainObject;
 }
 
-
-declare module "lodash.isRegExp" {
+declare module 'lodash.isRegExp' {
     const isRegExp: typeof _.isRegExp;
     export = isRegExp;
 }
 
-
-declare module "lodash.isSafeInteger" {
+declare module 'lodash.isSafeInteger' {
     const isSafeInteger: typeof _.isSafeInteger;
     export = isSafeInteger;
 }
 
-
-declare module "lodash.isSet" {
+declare module 'lodash.isSet' {
     const isSet: typeof _.isSet;
     export = isSet;
 }
 
-
-declare module "lodash.isString" {
+declare module 'lodash.isString' {
     const isString: typeof _.isString;
     export = isString;
 }
 
-
-declare module "lodash.isSymbol" {
+declare module 'lodash.isSymbol' {
     const isSymbol: typeof _.isSymbol;
     export = isSymbol;
 }
 
-
-declare module "lodash.isTypedArray" {
+declare module 'lodash.isTypedArray' {
     const isTypedArray: typeof _.isTypedArray;
     export = isTypedArray;
 }
 
-
-declare module "lodash.isUndefined" {
+declare module 'lodash.isUndefined' {
     const isUndefined: typeof _.isUndefined;
     export = isUndefined;
 }
 
-
-declare module "lodash.isWeakMap" {
+declare module 'lodash.isWeakMap' {
     const isWeakMap: typeof _.isWeakMap;
     export = isWeakMap;
 }
 
-
-declare module "lodash.isWeakSet" {
+declare module 'lodash.isWeakSet' {
     const isWeakSet: typeof _.isWeakSet;
     export = isWeakSet;
 }
 
-
-declare module "lodash.join" {
+declare module 'lodash.join' {
     const join: typeof _.join;
     export = join;
 }
 
-
-declare module "lodash.kebabCase" {
+declare module 'lodash.kebabCase' {
     const kebabCase: typeof _.kebabCase;
     export = kebabCase;
 }
 
-
-declare module "lodash.last" {
+declare module 'lodash.last' {
     const last: typeof _.last;
     export = last;
 }
 
-
-declare module "lodash.lastIndexOf" {
+declare module 'lodash.lastIndexOf' {
     const lastIndexOf: typeof _.lastIndexOf;
     export = lastIndexOf;
 }
 
-
-declare module "lodash.lowerCase" {
+declare module 'lodash.lowerCase' {
     const lowerCase: typeof _.lowerCase;
     export = lowerCase;
 }
 
-
-declare module "lodash.lowerFirst" {
+declare module 'lodash.lowerFirst' {
     const lowerFirst: typeof _.lowerFirst;
     export = lowerFirst;
 }
 
-
-declare module "lodash.lt" {
+declare module 'lodash.lt' {
     const lt: typeof _.lt;
     export = lt;
 }
 
-
-declare module "lodash.lte" {
+declare module 'lodash.lte' {
     const lte: typeof _.lte;
     export = lte;
 }
 
-
-declare module "lodash.max" {
+declare module 'lodash.max' {
     const max: typeof _.max;
     export = max;
 }
 
-
-declare module "lodash.maxBy" {
+declare module 'lodash.maxBy' {
     const maxBy: typeof _.maxBy;
     export = maxBy;
 }
 
-
-declare module "lodash.mean" {
+declare module 'lodash.mean' {
     const mean: typeof _.mean;
     export = mean;
 }
@@ -22612,13 +22055,12 @@ declare module "lodash.mean" {
  }
  */
 
-declare module "lodash.min" {
+declare module 'lodash.min' {
     const min: typeof _.min;
     export = min;
 }
 
-
-declare module "lodash.minBy" {
+declare module 'lodash.minBy' {
     const minBy: typeof _.minBy;
     export = minBy;
 }
@@ -22643,301 +22085,252 @@ declare module "lodash.minBy" {
  }
  */
 
-declare module "lodash.noConflict" {
+declare module 'lodash.noConflict' {
     const noConflict: typeof _.noConflict;
     export = noConflict;
 }
 
-
-declare module "lodash.noop" {
+declare module 'lodash.noop' {
     const noop: typeof _.noop;
     export = noop;
 }
 
-
-declare module "lodash.now" {
+declare module 'lodash.now' {
     const now: typeof _.now;
     export = now;
 }
 
-
-declare module "lodash.pad" {
+declare module 'lodash.pad' {
     const pad: typeof _.pad;
     export = pad;
 }
 
-
-declare module "lodash.padEnd" {
+declare module 'lodash.padEnd' {
     const padEnd: typeof _.padEnd;
     export = padEnd;
 }
 
-
-declare module "lodash.padStart" {
+declare module 'lodash.padStart' {
     const padStart: typeof _.padStart;
     export = padStart;
 }
 
-
-declare module "lodash.parseInt" {
+declare module 'lodash.parseInt' {
     const parseInt: typeof _.parseInt;
     export = parseInt;
 }
 
-
-declare module "lodash.random" {
+declare module 'lodash.random' {
     const random: typeof _.random;
     export = random;
 }
 
-
-declare module "lodash.reduce" {
+declare module 'lodash.reduce' {
     const reduce: typeof _.reduce;
     export = reduce;
 }
 
-
-declare module "lodash.reduceRight" {
+declare module 'lodash.reduceRight' {
     const reduceRight: typeof _.reduceRight;
     export = reduceRight;
 }
 
-
-declare module "lodash.repeat" {
+declare module 'lodash.repeat' {
     const repeat: typeof _.repeat;
     export = repeat;
 }
 
-
-declare module "lodash.replace" {
+declare module 'lodash.replace' {
     const replace: typeof _.replace;
     export = replace;
 }
 
-
-declare module "lodash.result" {
+declare module 'lodash.result' {
     const result: typeof _.result;
     export = result;
 }
 
-
-declare module "lodash.round" {
+declare module 'lodash.round' {
     const round: typeof _.round;
     export = round;
 }
 
-
-declare module "lodash.runInContext" {
+declare module 'lodash.runInContext' {
     const runInContext: typeof _.runInContext;
     export = runInContext;
 }
 
-
-declare module "lodash.sample" {
+declare module 'lodash.sample' {
     const sample: typeof _.sample;
     export = sample;
 }
 
-
-declare module "lodash.size" {
+declare module 'lodash.size' {
     const size: typeof _.size;
     export = size;
 }
 
-
-declare module "lodash.snakeCase" {
+declare module 'lodash.snakeCase' {
     const snakeCase: typeof _.snakeCase;
     export = snakeCase;
 }
 
-
-declare module "lodash.some" {
+declare module 'lodash.some' {
     const some: typeof _.some;
     export = some;
 }
 
-
-declare module "lodash.sortedIndex" {
+declare module 'lodash.sortedIndex' {
     const sortedIndex: typeof _.sortedIndex;
     export = sortedIndex;
 }
 
-
-declare module "lodash.sortedIndexBy" {
+declare module 'lodash.sortedIndexBy' {
     const sortedIndexBy: typeof _.sortedIndexBy;
     export = sortedIndexBy;
 }
 
-
-declare module "lodash.sortedIndexOf" {
+declare module 'lodash.sortedIndexOf' {
     const sortedIndexOf: typeof _.sortedIndexOf;
     export = sortedIndexOf;
 }
 
-
-declare module "lodash.sortedLastIndex" {
+declare module 'lodash.sortedLastIndex' {
     const sortedLastIndex: typeof _.sortedLastIndex;
     export = sortedLastIndex;
 }
 
-
-declare module "lodash.sortedLastIndexBy" {
+declare module 'lodash.sortedLastIndexBy' {
     const sortedLastIndexBy: typeof _.sortedLastIndexBy;
     export = sortedLastIndexBy;
 }
 
-
-declare module "lodash.sortedLastIndexOf" {
+declare module 'lodash.sortedLastIndexOf' {
     const sortedLastIndexOf: typeof _.sortedLastIndexOf;
     export = sortedLastIndexOf;
 }
 
-
-declare module "lodash.startCase" {
+declare module 'lodash.startCase' {
     const startCase: typeof _.startCase;
     export = startCase;
 }
 
-
-declare module "lodash.startsWith" {
+declare module 'lodash.startsWith' {
     const startsWith: typeof _.startsWith;
     export = startsWith;
 }
 
-
-declare module "lodash.subtract" {
+declare module 'lodash.subtract' {
     const subtract: typeof _.subtract;
     export = subtract;
 }
 
-
-declare module "lodash.sum" {
+declare module 'lodash.sum' {
     const sum: typeof _.sum;
     export = sum;
 }
 
-
-declare module "lodash.sumBy" {
+declare module 'lodash.sumBy' {
     const sumBy: typeof _.sumBy;
     export = sumBy;
 }
 
-
-declare module "lodash.template" {
+declare module 'lodash.template' {
     const template: typeof _.template;
     export = template;
 }
 
-
-declare module "lodash.times" {
+declare module 'lodash.times' {
     const times: typeof _.times;
     export = times;
 }
 
-
-declare module "lodash.toInteger" {
+declare module 'lodash.toInteger' {
     const toInteger: typeof _.toInteger;
     export = toInteger;
 }
 
-
-declare module "lodash.toLength" {
+declare module 'lodash.toLength' {
     const toLength: typeof _.toLength;
     export = toLength;
 }
 
-
-declare module "lodash.toLower" {
+declare module 'lodash.toLower' {
     const toLower: typeof _.toLower;
     export = toLower;
 }
 
-
-declare module "lodash.toNumber" {
+declare module 'lodash.toNumber' {
     const toNumber: typeof _.toNumber;
     export = toNumber;
 }
 
-
-declare module "lodash.toSafeInteger" {
+declare module 'lodash.toSafeInteger' {
     const toSafeInteger: typeof _.toSafeInteger;
     export = toSafeInteger;
 }
 
-
-declare module "lodash.toString" {
+declare module 'lodash.toString' {
     const toString: typeof _.toString;
     export = toString;
 }
 
-
-declare module "lodash.toUpper" {
+declare module 'lodash.toUpper' {
     const toUpper: typeof _.toUpper;
     export = toUpper;
 }
 
-
-declare module "lodash.trim" {
+declare module 'lodash.trim' {
     const trim: typeof _.trim;
     export = trim;
 }
 
-
-declare module "lodash.trimEnd" {
+declare module 'lodash.trimEnd' {
     const trimEnd: typeof _.trimEnd;
     export = trimEnd;
 }
 
-
-declare module "lodash.trimStart" {
+declare module 'lodash.trimStart' {
     const trimStart: typeof _.trimStart;
     export = trimStart;
 }
 
-
-declare module "lodash.truncate" {
+declare module 'lodash.truncate' {
     const truncate: typeof _.truncate;
     export = truncate;
 }
 
-
-declare module "lodash.unescape" {
+declare module 'lodash.unescape' {
     const unescape: typeof _.unescape;
     export = unescape;
 }
 
-
-declare module "lodash.uniqueId" {
+declare module 'lodash.uniqueId' {
     const uniqueId: typeof _.uniqueId;
     export = uniqueId;
 }
 
-
-declare module "lodash.upperCase" {
+declare module 'lodash.upperCase' {
     const upperCase: typeof _.upperCase;
     export = upperCase;
 }
 
-
-declare module "lodash.upperFirst" {
+declare module 'lodash.upperFirst' {
     const upperFirst: typeof _.upperFirst;
     export = upperFirst;
 }
 
-
-declare module "lodash.each" {
+declare module 'lodash.each' {
     const each: typeof _.each;
     export = each;
 }
 
-
-declare module "lodash.eachRight" {
+declare module 'lodash.eachRight' {
     const eachRight: typeof _.eachRight;
     export = eachRight;
 }
 
-
-declare module "lodash.first" {
+declare module 'lodash.first' {
     const first: typeof _.first;
     export = first;
 }
@@ -22946,4 +22339,4 @@ declare module "lodash.first" {
 interface Set<T> {}
 interface Map<K, V> {}
 interface WeakSet<T> {}
-//interface WeakMap<K extends object, V> {}
+// interface WeakMap<K extends object, V> {}

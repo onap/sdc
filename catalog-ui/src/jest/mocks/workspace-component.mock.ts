@@ -1,4 +1,4 @@
-import {ComponentState, ComponentType, WorkspaceMode} from 'app/utils/constants';
+import { ComponentState, ComponentType, WorkspaceMode } from 'app/utils/constants';
 
 export function createMockComponent(overrides: any = {}): any {
     return {

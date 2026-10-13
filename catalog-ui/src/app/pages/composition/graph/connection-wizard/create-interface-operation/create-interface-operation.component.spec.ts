@@ -17,18 +17,18 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import {CreateInterfaceOperationComponent} from './create-interface-operation.component';
-import {SdcUiComponentsModule} from "onap-ui-angular/dist";
-import {CreateInputRowComponent} from "./create-input-row/create-input-row.component";
-import {FormControl, ReactiveFormsModule} from "@angular/forms";
-import {TabModule} from "../../../../../components/ui/tabs/tabs.module";
-import {UiElementsModule} from "../../../../../components/ui/ui-elements.module";
-import {TranslateService} from "../../../../../shared/translator/translate.service";
-import {TranslatePipe} from "../../../../../shared/translator/translate.pipe";
-import {Operation} from "./model/operation";
-import {PropertyAssignment} from "../../../../../models/properties-inputs/property-assignment";
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { SdcUiComponentsModule } from 'onap-ui-angular/dist';
+import { TabModule } from '../../../../../components/ui/tabs/tabs.module';
+import { UiElementsModule } from '../../../../../components/ui/ui-elements.module';
+import { PropertyAssignment } from '../../../../../models/properties-inputs/property-assignment';
+import { TranslatePipe } from '../../../../../shared/translator/translate.pipe';
+import { TranslateService } from '../../../../../shared/translator/translate.service';
+import { CreateInputRowComponent } from './create-input-row/create-input-row.component';
+import { CreateInterfaceOperationComponent } from './create-interface-operation.component';
+import { Operation } from './model/operation';
 
 describe('CreateInterfaceOperationComponent', () => {
   let component: CreateInterfaceOperationComponent;
@@ -52,7 +52,7 @@ describe('CreateInterfaceOperationComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(CreateInterfaceOperationComponent);
     component = fixture.componentInstance;
-    component.interfaceTypeMap = new Map<string, Array<string>>();
+    component.interfaceTypeMap = new Map<string, string[]>();
   });
 
   it('should create', () => {
@@ -86,7 +86,7 @@ describe('CreateInterfaceOperationComponent', () => {
   });
 
   it('test loadInterfaceOptions on init', () => {
-    const interfaceTypeMap = new Map<string, Array<string>>();
+    const interfaceTypeMap = new Map<string, string[]>();
     interfaceTypeMap.set('interface3', new Array<string>());
     interfaceTypeMap.set('interface4', new Array<string>());
     interfaceTypeMap.set('interface2', new Array<string>());
@@ -105,7 +105,7 @@ describe('CreateInterfaceOperationComponent', () => {
   });
 
   it('test loadOperationOptions on init', () => {
-    const interfaceTypeMap = new Map<string, Array<string>>();
+    const interfaceTypeMap = new Map<string, string[]>();
     const interface1Operations = new Array<string>('interface1Operation3',
         'interface1Operation1', 'interface1Operation2', 'interface1Operation4');
     interfaceTypeMap.set('interface1', interface1Operations);
@@ -114,7 +114,7 @@ describe('CreateInterfaceOperationComponent', () => {
       value: 'interface1',
       type: null,
       label: 'interface1',
-    }
+    };
     component.ngOnInit();
     expect(component.operationOptions.length).toBe(4);
     expect(component.operationOptions[0].label).toBe('interface1Operation1');
@@ -128,7 +128,7 @@ describe('CreateInterfaceOperationComponent', () => {
   });
 
   it('test onSelectInterfaceType', () => {
-    const interfaceTypeMap = new Map<string, Array<string>>();
+    const interfaceTypeMap = new Map<string, string[]>();
     interfaceTypeMap.set('interface1', new Array<string>('', '', '', ''));
     interfaceTypeMap.set('interface2', new Array<string>());
     component.interfaceTypeMap = interfaceTypeMap;
@@ -137,7 +137,7 @@ describe('CreateInterfaceOperationComponent', () => {
       value: 'interface1',
       type: null,
       label: 'interface1',
-    }
+    };
     component.onSelectInterfaceType(selectedInterfaceType);
     expect(component.selectedInterfaceType).toBe(selectedInterfaceType);
     expect(component.interfaceTypeFormCtrl.value).toBe(selectedInterfaceType.value);
@@ -151,7 +151,7 @@ describe('CreateInterfaceOperationComponent', () => {
       value: 'operation1',
       type: null,
       label: 'operation1',
-    }
+    };
     component.onSelectOperation(selectedOperationType);
     expect(component.selectedOperation).toBe(selectedOperationType);
     expect(component.operationTypeFormCtrl.value).toBe(selectedOperationType.value);
@@ -185,7 +185,7 @@ describe('CreateInterfaceOperationComponent', () => {
     const input1 = new PropertyAssignment('string');
     input1.name = 'input1';
     input1.value = 'input1Value';
-    inputs.push(input1)
+    inputs.push(input1);
     component.inputs = inputs;
     let operation: Operation = null;
     component.addOperation.subscribe((operation1) => {
@@ -219,15 +219,15 @@ describe('CreateInterfaceOperationComponent', () => {
     component.inputs = new Array<PropertyAssignment>(input1, input2, input3);
     component.onDeleteInput(input2);
     expect(component.inputs.length).toBe(2);
-    expect(component.inputs.find(input => input.name === input2.name)).toBeFalsy();
+    expect(component.inputs.find((input) => input.name === input2.name)).toBeFalsy();
   });
 
   function assertRequiredFormCtrl(formControl: FormControl, valueToSet: any): void {
     expect(formControl.valid).toBeFalsy();
-    let validationErrors = formControl.errors || {};
-    expect(validationErrors['required']).toBeTruthy();
+    const validationErrors = formControl.errors || {};
+    expect(validationErrors.required).toBeTruthy();
     formControl.setValue('');
-    expect(validationErrors['required']).toBeTruthy();
+    expect(validationErrors.required).toBeTruthy();
     formControl.setValue(valueToSet);
     expect(formControl.valid).toBeTruthy();
   }

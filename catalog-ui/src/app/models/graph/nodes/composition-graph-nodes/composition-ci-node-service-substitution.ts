@@ -17,28 +17,35 @@
  *  ============LICENSE_END=========================================================
  */
 
-import { ImagesUrl, GraphUIObjects} from "../../../../utils/constants";
-import {ComponentInstance} from '../../../components-instances/component-instance';
-import {CompositionCiNodeBase} from './composition-ci-node-base';
-import {ImageCreatorService} from "app/pages/composition/graph/common/image-creator.service";
+import { ImageCreatorService } from 'app/pages/composition/graph/common/image-creator.service';
+import { GraphUIObjects, ImagesUrl } from '../../../../utils/constants';
+import { ComponentInstance } from '../../../components-instances/component-instance';
+import { CompositionCiNodeBase } from './composition-ci-node-base';
 export class CompositionCiNodeServiceSubstitution extends CompositionCiNodeBase {
     private isDependent: boolean;
     private originalImg: string;
 
-    constructor(instance:ComponentInstance,
-                imageCreator:ImageCreatorService) {
+    constructor(instance: ComponentInstance,
+                imageCreator: ImageCreatorService) {
         super(instance, imageCreator);
-        this.isDependent =instance.isDependent();
+        this.isDependent = instance.isDependent();
         this.initService();
     }
+    public initUncertifiedDependentImage(node: Cy.Collection, nodeMinSize: number): string {
+        return this.enhanceImage(node, nodeMinSize, this.imagesPath + 'uncertified_dependent.png');
+    }
 
-    private initService():void {
+    public initDependentImage(node: Cy.Collection, nodeMinSize: number): string {
+        return this.enhanceImage(node, nodeMinSize, this.imagesPath + 'dependent.png');
+    }
+
+    private initService(): void {
         this.imagesPath = this.imagesPath + ImagesUrl.SERVICE_PROXY_ICONS;
         this.img = this.imagesPath + this.componentInstance.icon + '.png';
         this.originalImg = this.img;
         this.imgWidth = GraphUIObjects.DEFAULT_RESOURCE_WIDTH;
         this.classes = 'service-node';
-        if(this.archived){
+        if (this.archived) {
             this.classes = this.classes + ' archived';
             return;
         }
@@ -49,12 +56,5 @@ export class CompositionCiNodeServiceSubstitution extends CompositionCiNodeBase 
             this.classes = this.classes + ' not-certified';
         }
 
-    }
-    public initUncertifiedDependentImage(node:Cy.Collection, nodeMinSize:number):string {
-        return this.enhanceImage(node, nodeMinSize, this.imagesPath + 'uncertified_dependent.png');
-    }
-
-    public initDependentImage(node:Cy.Collection, nodeMinSize:number):string {
-        return this.enhanceImage(node, nodeMinSize, this.imagesPath + 'dependent.png');
     }
 }

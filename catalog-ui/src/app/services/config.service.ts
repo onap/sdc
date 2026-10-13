@@ -18,10 +18,10 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable, Injector } from '@angular/core';
-import {IAppConfigurtaion} from 'app/models/app-config';
-import {Plugins, PluginsConfiguration} from 'app/models/plugins-config';
-import {ValidationConfiguration, Validations} from 'app/models/validation-config';
+import { IAppConfigurtaion } from 'app/models/app-config';
 import { IApi } from 'app/models/app-config';
+import { Plugins, PluginsConfiguration } from 'app/models/plugins-config';
+import { ValidationConfiguration, Validations } from 'app/models/validation-config';
 import 'rxjs/add/operator/toPromise';
 import { ISdcConfig, SdcConfigToken } from '../config/sdc-config.config';
 import { CacheService } from './cache.service';

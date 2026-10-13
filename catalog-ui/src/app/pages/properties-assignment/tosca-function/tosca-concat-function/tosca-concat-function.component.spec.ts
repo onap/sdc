@@ -19,16 +19,16 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import {ToscaConcatFunctionComponent} from './tosca-concat-function.component';
-import {ToscaCustomFunctionComponent} from '../tosca-custom-function/tosca-custom-function.component';
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {ToscaFunctionComponent} from "../tosca-function.component";
-import {TranslateModule} from "../../../../shared/translator/translate.module";
-import {ToscaGetFunctionComponent} from "../tosca-get-function/tosca-get-function.component";
-import {UiElementsModule} from "../../../../components/ui/ui-elements.module";
-import {YamlFunctionComponent} from "../yaml-function/yaml-function.component";
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { UiElementsModule } from '../../../../components/ui/ui-elements.module';
+import { TranslateModule } from '../../../../shared/translator/translate.module';
+import { ToscaCustomFunctionComponent } from '../tosca-custom-function/tosca-custom-function.component';
+import { ToscaFunctionComponent } from '../tosca-function.component';
+import { ToscaGetFunctionComponent } from '../tosca-get-function/tosca-get-function.component';
+import { YamlFunctionComponent } from '../yaml-function/yaml-function.component';
+import { ToscaConcatFunctionComponent } from './tosca-concat-function.component';
 
 describe('ToscaConcatFunctionComponent', () => {
     let component: ToscaConcatFunctionComponent;

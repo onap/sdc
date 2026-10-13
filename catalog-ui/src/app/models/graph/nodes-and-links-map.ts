@@ -3,5 +3,5 @@ export class ServicePathMapItem {
 }
 
 export class MapItemData {
-    constructor(public name:string, public id: string,  public ownerId?: string, public options?: Array<ServicePathMapItem>) {}
+    constructor(public name: string, public id: string,  public ownerId?: string, public options?: ServicePathMapItem[]) {}
 }

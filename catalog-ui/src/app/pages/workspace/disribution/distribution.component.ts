@@ -1,10 +1,10 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { SdcUiCommon, SdcUiServices } from 'onap-ui-angular';
-import { EventListenerService } from '../../../services/event-listener.service';
 import { AuthenticationService } from '../../../services/authentication.service';
+import { EventListenerService } from '../../../services/event-listener.service';
+import { EVENTS } from '../../../utils/constants';
 import { WorkspaceService } from '../workspace.service';
 import { DistributionService } from './distribution.service';
-import { EVENTS } from '../../../utils/constants';
 
 @Component({
   selector: 'distribution',
@@ -20,8 +20,8 @@ export class DistributionComponent implements OnInit {
   @Input() rowDistributionID: string;
   public componentUuid: string;
   public distributions = [];
-  private expanded: any = {};
   public serviceHasDistibutions: boolean = false;
+  private expanded: any = {};
   private readonly uniqueId: string;
   private  userRole: string;
 
@@ -33,8 +33,6 @@ export class DistributionComponent implements OnInit {
     this.componentUuid = this.workspaceService.metadata.uuid;
     this.uniqueId = this.workspaceService.metadata.uniqueId;
   }
-
-
 
   async ngOnInit() {
     this.userRole = this.authService.getLoggedinUser().role;
@@ -96,7 +94,7 @@ export class DistributionComponent implements OnInit {
         if (self.expanded[row.distributionID]) {
             self.expandRow(row, false);
         }
-    })
+    });
   }
 
   private updateFilter(event) {

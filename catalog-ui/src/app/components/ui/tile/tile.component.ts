@@ -1,9 +1,9 @@
-import {Component, Input, Output, Inject, EventEmitter} from '@angular/core';
-import {Component as ComponentModel} from 'app/models/components/component';
-import {SdcMenuToken, IAppMenu} from "../../../config/sdc-menu.config";
-import {ElementIcon} from "../sdc-element-icon/sdc-element-icon.component";
-import {ComponentType, DEFAULT_MODEL_NAME, Icon, ResourceType} from "../../../utils/constants";
-import {DataTypeCatalogComponent} from "../../../models/data-type-catalog-component";
+import { Component, EventEmitter, Inject, Input, Output } from '@angular/core';
+import { Component as ComponentModel } from 'app/models/components/component';
+import { IAppMenu, SdcMenuToken } from '../../../config/sdc-menu.config';
+import { DataTypeCatalogComponent } from '../../../models/data-type-catalog-component';
+import { ComponentType, DEFAULT_MODEL_NAME, Icon, ResourceType } from '../../../utils/constants';
+import { ElementIcon } from '../sdc-element-icon/sdc-element-icon.component';
 
 @Component({
     selector: 'ui-tile',

@@ -19,12 +19,12 @@
 *  ============LICENSE_END=========================================================
 */
 
-import { TestBed } from "@angular/core/testing";
+import { TestBed } from '@angular/core/testing';
+import { Component } from 'app/models/components/component';
+import { DataTypeCatalogComponent } from '../models/data-type-catalog-component';
 import { EntityFilterPipe } from './entity-filter.pipe';
 import { IEntityFilterObject } from './entity-filter.pipe';
-import {Component} from 'app/models/components/component';
 import { ISearchFilter } from './entity-filter.pipe';
-import {DataTypeCatalogComponent} from "../models/data-type-catalog-component";
 
 describe('EntityFilterPipe', () => {
     let entityFilterPipe: EntityFilterPipe;
@@ -43,7 +43,7 @@ describe('EntityFilterPipe', () => {
     });
 
     it('Transform method should filter objects by type matching with selectedComponentTypes', () => {
-        let componentList: Array<Component | DataTypeCatalogComponent> = [];
+        const componentList: Array<Component | DataTypeCatalogComponent> = [];
 
         const mockComponent1 = {
             componentType: 'SERVICE',
@@ -69,7 +69,7 @@ describe('EntityFilterPipe', () => {
             selectedResourceSubTypes: ['subComponent'],
             selectedToscaTypes: ['toscaSubComponent']
         };
-        let response: Array<Component | DataTypeCatalogComponent> = entityFilterPipe.transform(componentList, entityFilterMock);
+        const response: Array<Component | DataTypeCatalogComponent> = entityFilterPipe.transform(componentList, entityFilterMock);
         expect(response).toHaveLength(3);
         expect(response[0]).toEqual(mockComponent1);
         expect(response[1]).toEqual(mockComponent2);
@@ -77,7 +77,7 @@ describe('EntityFilterPipe', () => {
     });
 
     it('Transform method should filter objects by categories & subcategories matching with selectedCategoriesModel', () => {
-        let componentList: Array<Component> = [];
+        const componentList: Component[] = [];
         const mockComponent = {
             componentType: 'newtesttype',
             categoryNormalizedName: 'categoryname',
@@ -107,7 +107,7 @@ describe('EntityFilterPipe', () => {
         entityFilterMock = {
             selectedCategoriesModel: ['categoryname.subcategoryname', 'resourceNewCategory.name', 'serviceNewCategory.name']
         };
-        let response: Array<Component | DataTypeCatalogComponent> = entityFilterPipe.transform(componentList, entityFilterMock);
+        const response: Array<Component | DataTypeCatalogComponent> = entityFilterPipe.transform(componentList, entityFilterMock);
         expect(response).toHaveLength(3);
         expect(response[0]).toEqual(mockComponent);
         expect(response[1]).toEqual(mockComponent2);
@@ -115,7 +115,7 @@ describe('EntityFilterPipe', () => {
     });
 
     it('Transform method should filter objects by statuses matching with selectedStatuses', () => {
-        let componentList: Array<Component> = [];
+        const componentList: Component[] = [];
         const mockComponent = {
             lifecycleState: 'lifecyclestatus'
         } as Partial<Component> as Component;
@@ -135,14 +135,14 @@ describe('EntityFilterPipe', () => {
         entityFilterMock = {
             selectedStatuses: ['lifecyclestatus', 'DISTRIBUTED']
         };
-        let response: Array<Component | DataTypeCatalogComponent> = entityFilterPipe.transform(componentList, entityFilterMock);
+        const response: Array<Component | DataTypeCatalogComponent> = entityFilterPipe.transform(componentList, entityFilterMock);
         expect(response).toHaveLength(2);
         expect(response[0]).toEqual(mockComponent);
         expect(response[1]).toEqual(mockComponent2);
     });
 
     it('Transform method should filter objects by statuses and distributed matching with selected distributed', () => {
-        let componentList: Array<Component> = [];
+        const componentList: Component[] = [];
         const mockComponent = {
             distributionStatus: 'diststatus'
         } as Partial<Component> as Component;
@@ -156,13 +156,13 @@ describe('EntityFilterPipe', () => {
         entityFilterMock = {
             distributed: ['diststatus', 'localstatus']
         };
-        let response: Array<Component | DataTypeCatalogComponent> = entityFilterPipe.transform(componentList, entityFilterMock);
+        const response: Array<Component | DataTypeCatalogComponent> = entityFilterPipe.transform(componentList, entityFilterMock);
         expect(response).toHaveLength(1);
         expect(response[0]).toEqual(mockComponent);
     });
 
     it('Transform method should filter objects by model matching with selectedModels', () => {
-        let componentList: Array<Component> = [];
+        const componentList: Component[] = [];
         const mockComponent = {
             model: 'testModel'
         } as Partial<Component> as Component;
@@ -181,23 +181,23 @@ describe('EntityFilterPipe', () => {
         entityFilterMock = {
             selectedModels: ['testModel', 'localTest', 'SDC AID']
         };
-        let response: Array<Component | DataTypeCatalogComponent> = entityFilterPipe.transform(componentList, entityFilterMock);
+        const response: Array<Component | DataTypeCatalogComponent> = entityFilterPipe.transform(componentList, entityFilterMock);
         expect(response).toHaveLength(2);
         expect(response[0]).toEqual(mockComponent);
         expect(response[1]).toEqual(mockComponent2);
     });
 
     it('Transform method should filter objects by custom search matching with given keys', () => {
-        let componentList: Array<Component> = [];
+        const componentList: Component[] = [];
         const mockComponentObj = Object.create(Component.prototype);
-        const mockComponent = Object.assign(mockComponentObj,{
+        const mockComponent = Object.assign(mockComponentObj, {
             distributionStatus: 'distributionStatus',
             model: 'testModel'
         });
         componentList.push(mockComponent);
 
         const mockComponentObj1 = Object.create(Component.prototype);
-        const mockComponent1 = Object.assign(mockComponentObj1,{
+        const mockComponent1 = Object.assign(mockComponentObj1, {
             distributionStatus: 'testDiststatus',
             model: 'mockModel'
         });
@@ -205,11 +205,11 @@ describe('EntityFilterPipe', () => {
 
         const searchFilter: ISearchFilter = {
             distributionStatus: 'distributionStatus'
-        }
+        };
         entityFilterMock = {
             search: searchFilter
         };
-        let response: Array<Component | DataTypeCatalogComponent> = entityFilterPipe.transform(componentList, entityFilterMock);
+        const response: Array<Component | DataTypeCatalogComponent> = entityFilterPipe.transform(componentList, entityFilterMock);
         expect(response).toHaveLength(1);
         expect(response[0]).toEqual(mockComponent);
     });

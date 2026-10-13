@@ -19,11 +19,11 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {PropertySource} from "./property-source";
-import {ToscaGetFunctionType} from "./tosca-get-function-type";
-import {ToscaFunction} from "./tosca-function";
-import {ToscaFunctionType} from "./tosca-function-type.enum";
-import {ToscaFunctionParameter} from "./tosca-function-parameter";
+import { PropertySource } from './property-source';
+import { ToscaFunction } from './tosca-function';
+import { ToscaFunctionParameter } from './tosca-function-parameter';
+import { ToscaFunctionType } from './tosca-function-type.enum';
+import { ToscaGetFunctionType } from './tosca-get-function-type';
 
 export class ToscaGetFunction implements ToscaFunction, ToscaFunctionParameter {
     type: ToscaFunctionType;
@@ -33,9 +33,9 @@ export class ToscaGetFunction implements ToscaFunction, ToscaFunctionParameter {
     sourceUniqueId: string;
     sourceName: string;
     functionType: ToscaGetFunctionType;
-    propertyPathFromSource: Array<string>;
+    propertyPathFromSource: string[];
     value: any;
-    toscaIndexList: Array<string>;
+    toscaIndexList: string[];
 
     constructor(toscaGetFunction?: ToscaGetFunction) {
         if (!toscaGetFunction) {

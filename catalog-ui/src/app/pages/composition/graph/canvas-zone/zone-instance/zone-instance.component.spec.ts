@@ -1,26 +1,26 @@
-import { ComponentFixture, TestBed, async } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { SimpleChanges } from '@angular/core';
-import { PoliciesService } from 'app/services/policies.service';
-import { GroupsService } from 'app/services/groups.service';
-import {EventListenerService} from 'app/services/event-listener.service';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Store } from '@ngxs/store';
+import { PolicyInstance } from 'app/models/graph/zones/policy-instance';
+import { IZoneInstanceAssignment, ZoneInstance, ZoneInstanceAssignmentType, ZoneInstanceMode, ZoneInstanceType } from 'app/models/graph/zones/zone-instance';
 import { CompositionService } from 'app/pages/composition/composition.service';
-import { ZoneInstanceComponent } from './zone-instance.component';
-import {IZoneInstanceAssignment, ZoneInstance, ZoneInstanceAssignmentType, ZoneInstanceMode, ZoneInstanceType} from 'app/models/graph/zones/zone-instance';
-import { PolicyInstance } from "app/models/graph/zones/policy-instance";
-import { Subject, of } from 'rxjs';
+import { EventListenerService } from 'app/services/event-listener.service';
+import { GroupsService } from 'app/services/groups.service';
+import { PoliciesService } from 'app/services/policies.service';
+import { of, Subject } from 'rxjs';
 import { _throw } from 'rxjs/observable/throw';
+import { ZoneInstanceComponent } from './zone-instance.component';
 
 describe('ZoneInstanceComponent', () => {
   let component: ZoneInstanceComponent;
   let fixture: ComponentFixture<ZoneInstanceComponent>;
 
-  let createPolicyInstance = () => {
-    let policy = new PolicyInstance();
+  const createPolicyInstance = () => {
+    const policy = new PolicyInstance();
     policy.targets = {COMPONENT_INSTANCES: [], GROUPS: []};
     return new ZoneInstance(policy, '', '');
-  }
+  };
 
   beforeEach(() => {
     const policiesServiceStub = {updateZoneInstanceAssignments : jest.fn()};
@@ -45,37 +45,36 @@ describe('ZoneInstanceComponent', () => {
   });
 
   it('can load instance',  async((done) => {
-    component.zoneInstance = <ZoneInstance>{type : ZoneInstanceType.POLICY, instanceData: {name: 'test policy'}, assignments: []};
+    component.zoneInstance = ({type : ZoneInstanceType.POLICY, instanceData: {name: 'test policy'}, assignments: []} as ZoneInstance);
     component.forceSave = new Subject<Function>();
     fixture.detectChanges();
     expect(component).toBeTruthy();
   }));
-  
 
-  it('if another instance is already tagging, i cannot change my mode', ()=> {
-    component.zoneInstance = <ZoneInstance>{ mode: ZoneInstanceMode.NONE };
+  it('if another instance is already tagging, i cannot change my mode', () => {
+    component.zoneInstance = ({ mode: ZoneInstanceMode.NONE } as ZoneInstance);
     component.isActive = false;
     component.activeInstanceMode = ZoneInstanceMode.TAG;
     component.setMode(ZoneInstanceMode.SELECTED);
     expect(component.zoneInstance.mode).toBe(ZoneInstanceMode.NONE);
   });
-  
-  it('if i am active(selected) and NOT in tag mode, I can set another mode', ()=> {
+
+  it('if i am active(selected) and NOT in tag mode, I can set another mode', () => {
     component.isActive = true;
-    component.zoneInstance = <ZoneInstance>{ mode: ZoneInstanceMode.SELECTED };
+    component.zoneInstance = ({ mode: ZoneInstanceMode.SELECTED } as ZoneInstance);
     jest.spyOn(component.modeChange, 'emit');
     component.setMode(ZoneInstanceMode.NONE);
     expect(component.modeChange.emit).toHaveBeenCalledWith({instance: component.zoneInstance, newMode: ZoneInstanceMode.NONE });
   });
 
-  it('if i am active and in tag mode and i try to set mode other than tag, I am not allowed', ()=> {
+  it('if i am active and in tag mode and i try to set mode other than tag, I am not allowed', () => {
     component.isActive = true;
-    component.zoneInstance = <ZoneInstance>{ mode: ZoneInstanceMode.TAG };
+    component.zoneInstance = ({ mode: ZoneInstanceMode.TAG } as ZoneInstance);
     component.setMode(ZoneInstanceMode.SELECTED);
     expect(component.zoneInstance.mode).toBe(ZoneInstanceMode.TAG);
   });
 
-  it('if i am active and in tag mode and click tag again and no changes, does NOT call save, but DOES turn tagging off', ()=> {
+  it('if i am active and in tag mode and click tag again and no changes, does NOT call save, but DOES turn tagging off', () => {
     component.isActive = true;
     component.zoneInstance = createPolicyInstance();
     component.zoneService = component.policiesService;
@@ -89,12 +88,12 @@ describe('ZoneInstanceComponent', () => {
     expect(component.modeChange.emit).toHaveBeenCalledWith({instance: component.zoneInstance, newMode: ZoneInstanceMode.NONE });
 
   });
-  it('if i am active and in tag mode and click tag again and HAVE changes, calls save AND turns tagging off', ()=> {
+  it('if i am active and in tag mode and click tag again and HAVE changes, calls save AND turns tagging off', () => {
     component.isActive = true;
     component.zoneInstance = createPolicyInstance();
     component.zoneService = component.policiesService;
     component.zoneInstance.mode = ZoneInstanceMode.TAG;
-    component.zoneInstance.assignments.push(<IZoneInstanceAssignment>{uniqueId: '123', type: ZoneInstanceAssignmentType.COMPONENT_INSTANCES});
+    component.zoneInstance.assignments.push({uniqueId: '123', type: ZoneInstanceAssignmentType.COMPONENT_INSTANCES} as IZoneInstanceAssignment);
     jest.spyOn(component.zoneService, 'updateZoneInstanceAssignments').mockReturnValue(of(true));
     jest.spyOn(component.modeChange, 'emit');
 
@@ -104,12 +103,12 @@ describe('ZoneInstanceComponent', () => {
     expect(component.modeChange.emit).toHaveBeenCalledWith({instance: component.zoneInstance, newMode: ZoneInstanceMode.NONE });
   });
 
-  it('on save error, temporary assignment list is reverted to saved assignments', ()=> {
+  it('on save error, temporary assignment list is reverted to saved assignments', () => {
     component.isActive = true;
     component.zoneInstance = createPolicyInstance();
     component.zoneService = component.policiesService;
     component.zoneInstance.mode = ZoneInstanceMode.TAG;
-    component.zoneInstance.assignments.push(<IZoneInstanceAssignment>{uniqueId: '123', type: ZoneInstanceAssignmentType.COMPONENT_INSTANCES});
+    component.zoneInstance.assignments.push({uniqueId: '123', type: ZoneInstanceAssignmentType.COMPONENT_INSTANCES} as IZoneInstanceAssignment);
     jest.spyOn(component.zoneService, 'updateZoneInstanceAssignments').mockReturnValue(_throw({status: 404}));
 
     component.setMode(ZoneInstanceMode.TAG);
@@ -117,12 +116,12 @@ describe('ZoneInstanceComponent', () => {
     expect(component.zoneInstance.assignments.length).toEqual(0);
   });
 
-  it('on save success, all changes are saved to zoneInstance.savedAssignments', ()=> {
+  it('on save success, all changes are saved to zoneInstance.savedAssignments', () => {
     component.isActive = true;
     component.zoneInstance = createPolicyInstance();
     component.zoneService = component.policiesService;
     component.zoneInstance.mode = ZoneInstanceMode.TAG;
-    component.zoneInstance.assignments.push(<IZoneInstanceAssignment>{uniqueId: '123', type: ZoneInstanceAssignmentType.COMPONENT_INSTANCES});
+    component.zoneInstance.assignments.push({uniqueId: '123', type: ZoneInstanceAssignmentType.COMPONENT_INSTANCES} as IZoneInstanceAssignment);
     jest.spyOn(component.zoneService, 'updateZoneInstanceAssignments').mockReturnValue(of(true));
 
     component.setMode(ZoneInstanceMode.TAG);

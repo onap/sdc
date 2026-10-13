@@ -21,24 +21,24 @@
 
 'use strict';
 
-import {DataTypeModel} from "./data-types";
-import {Icon, ToscaType} from "../utils/constants";
-import {Service} from "./components/service";
-import {Resource} from "./components/resource";
-import {Model} from "./model";
+import { Icon, ToscaType } from '../utils/constants';
+import { Resource } from './components/resource';
+import { Service } from './components/service';
+import { DataTypeModel } from './data-types';
+import { Model } from './model';
 
 export class DataTypeCatalogComponent {
 
-    public name:string;
-    public uniqueId:string;
-    public uuid:string;
-    public version:string;
-    public model:Model;
-    public componentType:string;
-    public icon:string;
-    public iconSprite:string;
-    public lastUpdateDate:string;
-    public filterTerm:string;
+    public name: string;
+    public uniqueId: string;
+    public uuid: string;
+    public version: string;
+    public model: Model;
+    public componentType: string;
+    public icon: string;
+    public iconSprite: string;
+    public lastUpdateDate: string;
+    public filterTerm: string;
 
     constructor(dataTypeCatalogComponent?: DataTypeModel) {
         this.name = dataTypeCatalogComponent.name;
@@ -55,16 +55,15 @@ export class DataTypeCatalogComponent {
         this.filterTerm = dataTypeCatalogComponent.name;
     }
 
-    public isService = ():boolean => {
+    public isService = (): boolean => {
         return this instanceof Service;
     }
 
-    public isResource = ():boolean => {
+    public isResource = (): boolean => {
         return this instanceof Resource;
     }
 
-    public getComponentSubType= ():string => {
+    public getComponentSubType = (): string => {
         return this.componentType;
     }
 }
-

@@ -20,25 +20,24 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-import { Component, ElementRef, forwardRef, Inject, Input, ViewChild, ViewContainerRef, ComponentRef} from "@angular/core";
-import {trigger, state, style, transition, animate} from '@angular/animations';
-import {StepModel} from 'app/models/wizard-step';
-import {ModalService} from "../../../services/modal.service";
-import {ModalComponent} from "../modal/modal.component";
-import {WizardHeaderBaseComponent} from "./multi-steps-wizard-header-base.component";
-
+import { animate, state, style, transition, trigger } from '@angular/animations';
+import { Component, ComponentRef, ElementRef, forwardRef, Inject, Input, ViewChild, ViewContainerRef } from '@angular/core';
+import { StepModel } from 'app/models/wizard-step';
+import { ModalService } from '../../../services/modal.service';
+import { ModalComponent } from '../modal/modal.component';
+import { WizardHeaderBaseComponent } from './multi-steps-wizard-header-base.component';
 
 @Component({
     selector: 'multi-steps-wizard',
     templateUrl: './multi-steps-wizard.component.html',
-    styleUrls: ['../modal/modal.component.less','./multi-steps-wizard.component.less'],
+    styleUrls: ['../modal/modal.component.less', './multi-steps-wizard.component.less'],
     animations: [
         trigger('displayLineAnimation', [
             state('true', style({
                 width: '100%',
             })),
             state('false', style({
-                width:'0px',
+                width: '0px',
             })),
             transition('* => *', animate('500ms')),
         ]),
@@ -46,28 +45,28 @@ import {WizardHeaderBaseComponent} from "./multi-steps-wizard-header-base.compon
 })
 export class MultiStepsWizardComponent extends ModalComponent {
 
-    @Input() steps:Array<StepModel>;
+    @Input() steps: StepModel[];
     @Input() callback: Function;
-    @Input() data:any;
+    @Input() data: any;
     @Input() dynamicHeader: ComponentRef<WizardHeaderBaseComponent>;
 
     @ViewChild('dynamicHeaderContainer', { read: ViewContainerRef }) dynamicHeaderContainer: ViewContainerRef;
+
+    currentStepIndex: number = 0;
     constructor(@Inject(forwardRef(() => ModalService)) public modalService: ModalService, el: ElementRef ) {
         super(el);
     }
 
-    currentStepIndex:number = 0;
-
-    nextStep = ():void => {
-        if(this.currentStepIndex + 1 < this.steps.length){
+    nextStep = (): void => {
+        if (this.currentStepIndex + 1 < this.steps.length) {
             this.currentStepIndex++;
             this.modalService.addDynamicContentToModal(this.modalService.currentModal, this.steps[this.currentStepIndex].component);
             this.dynamicHeader.instance.currentStepIndex = this.currentStepIndex;
         }
     }
 
-    prevStep = ():void => {
-        if(this.currentStepIndex > 0){
+    prevStep = (): void => {
+        if (this.currentStepIndex > 0) {
             this.currentStepIndex--;
             this.modalService.addDynamicContentToModal(this.modalService.currentModal, this.steps[this.currentStepIndex].component);
             this.dynamicHeader.instance.currentStepIndex = this.currentStepIndex;

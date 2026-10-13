@@ -23,9 +23,9 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { FormElementsModule } from 'app/components/ui/form-components/form-elements.module';
 import { UiElementsModule } from 'app/components/ui/ui-elements.module';
+import { SdcUiComponentsModule } from 'onap-ui-angular';
 import { TranslateModule } from '../../../shared/translator/translate.module';
 import { DeclareListComponent } from './declare-list.component';
-import { SdcUiComponentsModule } from 'onap-ui-angular';
 
 @NgModule({
     declarations: [

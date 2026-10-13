@@ -1,5 +1,5 @@
-import {ForwardingPathLink} from './forwarding-path-link';
+import { ForwardingPathLink } from './forwarding-path-link';
 export class PathElements {
-    public listToscaDataDefinition:Array<ForwardingPathLink> = [];
+    public listToscaDataDefinition: ForwardingPathLink[] = [];
     public ownerId: string;
 }

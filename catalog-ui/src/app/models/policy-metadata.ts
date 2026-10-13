@@ -1,7 +1,7 @@
 export class PolicyMetadata {
     public uniqueId: string;
-    public name:string;
-    public icon:string;
+    public name: string;
+    public icon: string;
     public type: string;
     public version: string;
     public description: string;
@@ -10,7 +10,7 @@ export class PolicyMetadata {
     public highestVersion: boolean;
     public empty: boolean;
 
-    deserialize (response): PolicyMetadata {
+    deserialize(response): PolicyMetadata {
         this.uniqueId = response.uniqueId;
         this.type = response.type;
         this.name = response.name;
@@ -27,11 +27,11 @@ export class PolicyMetadata {
 }
 
 export interface PolicyTpes {
-    policyTypes: Array<PolicyMetadata>;
+    policyTypes: PolicyMetadata[];
     excludeMapping: ExcludedPolicyTypes;
 }
 
 export interface ExcludedPolicyTypes {
     componentType: string;
-    excludedPolicyTypes: Array<string>;
+    excludedPolicyTypes: string[];
 }

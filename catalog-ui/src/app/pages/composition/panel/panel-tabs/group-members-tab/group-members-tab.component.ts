@@ -24,17 +24,17 @@ import { GroupInstance } from 'app/models/graph/zones/group-instance';
 import { CompositionService } from 'app/pages/composition/composition.service';
 import { WorkspaceService } from 'app/pages/workspace/workspace.service';
 import { EventListenerService } from 'app/services/event-listener.service';
-import {GRAPH_EVENTS} from 'app/utils/constants';
+import { GRAPH_EVENTS } from 'app/utils/constants';
 import * as _ from 'lodash';
 import { SdcUiCommon, SdcUiComponents, SdcUiServices } from 'onap-ui-angular';
 import { Observable, Subscription } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { AddElementsComponent } from '../../../../../components/ui/modal/add-elements/add-elements.component';
 import { ComponentInstance } from '../../../../../models/components-instances/component-instance';
 import { MemberUiObject } from '../../../../../models/ui-models/ui-member-object';
-import { AddElementsComponent } from '../../../../../components/ui/modal/add-elements/add-elements.component';
-import {GraphState} from "../../../common/store/graph.state";
 import { GroupsService } from '../../../../../services/groups.service';
 import { TranslateService } from '../../../../../shared/translator/translate.service';
+import { GraphState } from '../../../common/store/graph.state';
 
 @Component({
     selector: 'group-members-tab',

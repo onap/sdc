@@ -1,11 +1,11 @@
-import {Injectable} from '@angular/core';
-import {CacheService} from './cache.service';
-import {ArtifactType} from "../utils/constants";
+import { Injectable } from '@angular/core';
+import { ArtifactType } from '../utils/constants';
+import { CacheService } from './cache.service';
 
 @Injectable()
 export class ArtifactConfigService {
 
-  artifactConfigList:Array<object>;
+  artifactConfigList: object[];
 
   constructor(private cacheService: CacheService) {
     const uiConfiguration = cacheService.get('UIConfiguration');
@@ -16,27 +16,26 @@ export class ArtifactConfigService {
     return this.artifactConfigList;
   }
 
-  public findAllBy(artifactType?:ArtifactType, componentType?:string, resourceType?:string):Array<object> {
-    return this.artifactConfigList.filter((artifactConfig:any) => {
+  public findAllBy(artifactType?: ArtifactType, componentType?: string, resourceType?: string): object[] {
+    return this.artifactConfigList.filter((artifactConfig: any) => {
       let hasCategory = true;
       if (artifactType) {
-        hasCategory = artifactConfig.categories && artifactConfig.categories.some(value => value == artifactType);
+        hasCategory = artifactConfig.categories && artifactConfig.categories.some((value) => value == artifactType);
       }
       let hasComponentType = true;
       if (componentType) {
-        hasComponentType = artifactConfig.componentTypes && artifactConfig.componentTypes.some(value => value == componentType);
+        hasComponentType = artifactConfig.componentTypes && artifactConfig.componentTypes.some((value) => value == componentType);
       }
       let hasResourceType = true;
-      //resourceTypes are not restrictive, if it was not configured all resources are accepted.
+      // resourceTypes are not restrictive, if it was not configured all resources are accepted.
       if (resourceType && artifactConfig.resourceTypes) {
-        hasResourceType = artifactConfig.resourceTypes.some(value => value == resourceType);
+        hasResourceType = artifactConfig.resourceTypes.some((value) => value == resourceType);
       }
       return hasCategory && hasComponentType && hasResourceType;
     });
   }
 
-
-  public findAllTypeBy(artifactType?:ArtifactType, componentType?:string, resourceType?:string):Array<string> {
+  public findAllTypeBy(artifactType?: ArtifactType, componentType?: string, resourceType?: string): string[] {
     const artifactConfigList = this.findAllBy(artifactType, componentType, resourceType);
     if (artifactConfigList) {
       return artifactConfigList.map((element: any) => {

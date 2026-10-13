@@ -18,35 +18,35 @@
 *  SPDX-License-Identifier: Apache-2.0
 *  ============LICENSE_END=========================================================
 */
-import {Component, EventEmitter, Output, ViewChild} from '@angular/core';
+import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import {UIInterfaceModel} from "../interface-operations.component";
+import { TopologyTemplateService } from 'app/services/component-services/topology-template.service';
+import { IDropDownOption } from 'onap-ui-angular/dist/form-elements/dropdown/dropdown-models';
+import { DropDownComponent } from 'onap-ui-angular/dist/form-elements/dropdown/dropdown.component';
+import { Observable } from 'rxjs/Observable';
+import { DropdownValue } from '../../../../components/ui/form-components/dropdown/ui-element-dropdown.component';
+import { ArtifactModel } from '../../../../models/artifacts';
+import { DataTypeModel } from '../../../../models/data-types';
+import { CustomToscaFunction } from '../../../../models/default-custom-functions';
+import { InstanceFeDetails } from '../../../../models/instance-fe-details';
 import {
     ActivityParameter,
+    FilterParameter,
     IActivityParameterList,
     IFilterParameterList,
     InputOperationParameter,
     InterfaceOperationModel,
     IOperationParamsList,
-    FilterParameter,
     Milestone,
     MilestoneEnum
-} from "../../../../models/interface-operation";
-import {TranslateService} from "../../../../shared/translator/translate.service";
-import {DropdownValue} from "../../../../components/ui/form-components/dropdown/ui-element-dropdown.component";
-import {ArtifactModel} from "../../../../models/artifacts";
-import {PropertyBEModel} from "../../../../models/properties-inputs/property-be-model";
-import {PropertyParamRowComponent} from "./property-param-row/property-param-row.component";
-import {PropertyFEModel} from "../../../../models/properties-inputs/property-fe-model";
-import {IDropDownOption} from 'onap-ui-angular/dist/form-elements/dropdown/dropdown-models';
-import {ComponentService} from "../../../../services/component-services/component.service";
-import {DropDownComponent} from "onap-ui-angular/dist/form-elements/dropdown/dropdown.component";
-import {DataTypeService} from "../../../../services/data-type.service";
-import {Observable} from "rxjs/Observable";
-import {DataTypeModel} from "../../../../models/data-types";
-import {InstanceFeDetails} from "../../../../models/instance-fe-details";
-import {TopologyTemplateService} from "app/services/component-services/topology-template.service";
-import {CustomToscaFunction} from "../../../../models/default-custom-functions";
+} from '../../../../models/interface-operation';
+import { PropertyBEModel } from '../../../../models/properties-inputs/property-be-model';
+import { PropertyFEModel } from '../../../../models/properties-inputs/property-fe-model';
+import { ComponentService } from '../../../../services/component-services/component.service';
+import { DataTypeService } from '../../../../services/data-type.service';
+import { TranslateService } from '../../../../shared/translator/translate.service';
+import { UIInterfaceModel } from '../interface-operations.component';
+import { PropertyParamRowComponent } from './property-param-row/property-param-row.component';
 
 @Component({
     selector: 'operation-handler',
@@ -61,7 +61,7 @@ export class InterfaceOperationHandlerComponent {
 
     input: {
         componentInstanceMap: Map<string, InstanceFeDetails>;
-        toscaArtifactTypes: Array<DropdownValue>;
+        toscaArtifactTypes: DropdownValue[];
         selectedInterface: UIInterfaceModel;
         selectedInterfaceOperation: InterfaceOperationModel;
         validityChangedCallback: Function;
@@ -80,27 +80,27 @@ export class InterfaceOperationHandlerComponent {
     artifactName: string;
     interfaceOperationName: string;
     operationToUpdate: InterfaceOperationModel;
-    inputs: Array<InputOperationParameter> = [];
-    properties: Array<PropertyParamRowComponent> = [];
+    inputs: InputOperationParameter[] = [];
+    properties: PropertyParamRowComponent[] = [];
     isLoading: boolean = false;
     isViewOnly: boolean;
     isEdit: boolean;
     validImplementationProps: boolean;
     validMilestoneActivities: boolean;
     validMilestoneFilters: boolean;
-    interfaceTypes: Array<DropdownValue> = [];
-    interfaceTypeOptions: Array<DropDownOption> = [];
+    interfaceTypes: DropdownValue[] = [];
+    interfaceTypeOptions: DropDownOption[] = [];
     selectedInterfaceType: DropDownOption = undefined;
-    interfaceOperationMap: Map<string, Array<string>> = new Map<string, Array<string>>();
-    interfaceOperationOptions: Array<DropDownOption> = [];
+    interfaceOperationMap: Map<string, string[]> = new Map<string, string[]>();
+    interfaceOperationOptions: DropDownOption[] = [];
     selectedInterfaceOperation: DropDownOption = undefined;
     modelName: string;
     toscaArtifactTypeSelected: string;
-    toscaArtifactTypeProperties: Array<PropertyBEModel> = [];
-    artifactTypeProperties: Array<InputOperationParameter> = [];
-    toscaArtifactTypes: Array<DropdownValue> = [];
+    toscaArtifactTypeProperties: PropertyBEModel[] = [];
+    artifactTypeProperties: InputOperationParameter[] = [];
+    toscaArtifactTypes: DropdownValue[] = [];
     componentInstanceMap: Map<string, InstanceFeDetails>;
-    customToscaFunctions: Array<CustomToscaFunction>;
+    customToscaFunctions: CustomToscaFunction[];
     enableAddArtifactImplementation: boolean;
     propertyValueValid: boolean = true;
     showActivities: boolean = false;
@@ -110,7 +110,7 @@ export class InterfaceOperationHandlerComponent {
     invalidMilestones: string[] = [];
     activeTab: string;
     milestones = Object.keys(MilestoneEnum)
-            .map(key => MilestoneEnum[key]);
+            .map((key) => MilestoneEnum[key]);
 
     constructor(private dataTypeService: DataTypeService,
                 private componentService: ComponentService,
@@ -132,18 +132,18 @@ export class InterfaceOperationHandlerComponent {
         this.timeoutType.setValue('sec');
         if (this.operationToUpdate.implementation && this.operationToUpdate.implementation.timeout != null) {
             this.timeoutValue.setValue(this.operationToUpdate.implementation.timeout);
-            let timeout = this.timeoutValue.value / 3600;
+            const timeout = this.timeoutValue.value / 3600;
             if (Number.isInteger(timeout)) {
                 if (timeout > 23 && Number.isInteger(timeout / 24)) {
                     this.timeoutValue.setValue(timeout / 24);
-                    this.timeoutType.setValue("day");
+                    this.timeoutType.setValue('day');
                 } else {
                     this.timeoutValue.setValue(timeout);
-                    this.timeoutType.setValue("hour");
+                    this.timeoutType.setValue('hour');
                 }
             } else if (Number.isInteger(timeout / 24)) {
                 this.timeoutValue.setValue(timeout / 24);
-                this.timeoutType.setValue("day");
+                this.timeoutType.setValue('day');
             }
         }
         if (!this.operationToUpdate.milestones) {
@@ -154,59 +154,15 @@ export class InterfaceOperationHandlerComponent {
         this.removeImplementationQuote();
         this.loadInterfaceOperationImplementation();
 
-        this.dataTypeMap$ = new Observable<Map<string, DataTypeModel>>(subscriber => {
+        this.dataTypeMap$ = new Observable<Map<string, DataTypeModel>>((subscriber) => {
             this.dataTypeService.findAllDataTypesByModel(this.modelName)
             .then((dataTypesMap: Map<string, DataTypeModel>) => {
                 subscriber.next(dataTypesMap);
-                this.showActivities = dataTypesMap.has("tosca.dataTypes.tmf.milestoneJeopardyData");
+                this.showActivities = dataTypesMap.has('tosca.dataTypes.tmf.milestoneJeopardyData');
             });
         });
-        this.dataTypeMap$.subscribe(value => {
+        this.dataTypeMap$.subscribe((value) => {
             this.dataTypeMap = value;
-        });
-    }
-
-    private initInputs() {
-        if (!this.operationToUpdate.inputs) {
-            this.operationToUpdate.inputs = new class implements IOperationParamsList {
-                listToscaDataDefinition: Array<InputOperationParameter> = [];
-            }
-        }
-
-        this.inputs = Array.from(this.operationToUpdate.inputs.listToscaDataDefinition);
-        this.removeImplementationQuote();
-        this.loadInterfaceOperationImplementation();
-        this.loadInterfaceType();
-    }
-
-    private initCustomToscaFunctions() {
-        this.customToscaFunctions = [];
-        this.topologyTemplateService.getDefaultCustomFunction().toPromise().then((data) => {
-            if (data) {
-                for (let customFunction of data) {
-                    this.customToscaFunctions.push(new CustomToscaFunction(customFunction));
-                }
-            }
-        });
-    }
-
-    private loadInterfaceType() {
-        this.componentService.getInterfaceTypesByModel(this.modelName)
-        .subscribe(response => {
-            if (response) {
-                this.interfaceOperationMap = new Map<string, Array<string>>();
-                for (const interfaceType of Object.keys(response).sort()) {
-                    const operationList = response[interfaceType];
-                    operationList.sort();
-                    this.interfaceOperationMap.set(interfaceType, operationList);
-                    const operationDropDownOption: DropDownOption = new DropDownOption(interfaceType);
-                    this.interfaceTypeOptions.push(operationDropDownOption);
-                    if (this.interfaceType == interfaceType) {
-                        this.selectedInterfaceType = operationDropDownOption;
-                    }
-                }
-                this.loadInterfaceTypeOperations();
-            }
         });
     }
 
@@ -215,11 +171,11 @@ export class InterfaceOperationHandlerComponent {
         const interfaceOperationList = this.interfaceOperationMap.get(this.interfaceType);
 
         if (interfaceOperationList) {
-            interfaceOperationList.forEach(operationName => {
+            interfaceOperationList.forEach((operationName) => {
                 const operationOption = new DropDownOption(operationName, operationName);
                 this.interfaceOperationOptions.push(operationOption);
                 if (this.operationToUpdate.name == operationName) {
-                    this.selectedInterfaceOperation = operationOption
+                    this.selectedInterfaceOperation = operationOption;
                 }
             });
         }
@@ -227,24 +183,13 @@ export class InterfaceOperationHandlerComponent {
         this.interfaceOperationDropDown.allOptions = this.interfaceOperationOptions;
     }
 
-    private loadInterfaceOperationImplementation() {
-        this.toscaArtifactTypes = this.input.toscaArtifactTypes;
-        if (this.operationToUpdate.implementation) {
-            this.artifactVersion = this.operationToUpdate.implementation.artifactVersion;
-            this.artifactName = this.operationToUpdate.implementation.artifactName;
-            this.toscaArtifactTypeProperties = this.operationToUpdate.implementation.properties;
-        }
-        this.artifactTypeProperties = this.convertArtifactsPropertiesToInput();
-        this.getArtifactTypesSelected();
-    }
-
     onDescriptionChange = (value: any): void => {
         this.operationToUpdate.description = value;
     }
 
     onURIChange(value: string | undefined) {
-        if(!this.operationToUpdate.implementation){
-            let artifact = new ArtifactModel();
+        if (!this.operationToUpdate.implementation) {
+            const artifact = new ArtifactModel();
             this.operationToUpdate.implementation = artifact;
         }
         this.operationToUpdate.implementation.artifactName = value ? value : '';
@@ -272,8 +217,8 @@ export class InterfaceOperationHandlerComponent {
 
     onSelectToscaArtifactType(type: IDropDownOption) {
         if (type) {
-            let toscaArtifactType = type.value;
-            let artifact = new ArtifactModel();
+            const toscaArtifactType = type.value;
+            const artifact = new ArtifactModel();
             artifact.artifactName = this.operationToUpdate.implementation.artifactName;
             artifact.artifactVersion = this.operationToUpdate.implementation.artifactVersion;
             artifact.artifactType = toscaArtifactType.type;
@@ -300,12 +245,12 @@ export class InterfaceOperationHandlerComponent {
     }
 
     onRemoveInput = (inputParam: InputOperationParameter): void => {
-        let index = this.inputs.indexOf(inputParam);
+        const index = this.inputs.indexOf(inputParam);
         this.inputs.splice(index, 1);
     }
 
     timeoutConversion = (): void => {
-        let timeout = this.timeoutValue.value;
+        const timeout = this.timeoutValue.value;
         if (timeout != null) {
             if (this.timeoutType.value == null || this.timeoutType.value == 'sec') {
                 this.operationToUpdate.implementation.timeout = timeout;
@@ -316,34 +261,6 @@ export class InterfaceOperationHandlerComponent {
             } else if (this.timeoutType.value == 'day') {
                 this.operationToUpdate.implementation.timeout = (timeout * 24) * 3600;
             }
-        }
-    }
-
-    private removeImplementationQuote(): void {
-        if (this.operationToUpdate.implementation) {
-            if (!this.operationToUpdate.implementation
-                || !this.operationToUpdate.implementation.artifactName) {
-                return;
-            }
-
-            let implementation = this.operationToUpdate.implementation.artifactName.trim();
-
-            if (implementation.startsWith("'") && implementation.endsWith("'")) {
-                this.operationToUpdate.implementation.artifactName = implementation.slice(1, -1);
-            }
-        }
-    }
-
-    private getArtifactTypesSelected() {
-        if (this.operationToUpdate.implementation && this.operationToUpdate.implementation.artifactType) {
-            this.artifactName =
-                this.artifactName ? this.artifactName : this.operationToUpdate.implementation.artifactName;
-            this.toscaArtifactTypeSelected = this.operationToUpdate.implementation.artifactType;
-            this.artifactVersion =
-                this.artifactVersion ? this.artifactVersion : this.operationToUpdate.implementation.artifactVersion;
-            this.toscaArtifactTypeProperties = this.operationToUpdate.implementation.properties;
-            this.artifactTypeProperties = this.convertArtifactsPropertiesToInput();
-            this.enableAddArtifactImplementation = true;
         }
     }
 
@@ -359,7 +276,7 @@ export class InterfaceOperationHandlerComponent {
         if (changedInput.value instanceof Object) {
             changedInput.value = JSON.stringify(changedInput.value);
         }
-        const inputOperationParameter = this.inputs.find(value => value.name == changedInput.name);
+        const inputOperationParameter = this.inputs.find((value) => value.name == changedInput.name);
         inputOperationParameter.toscaFunction = null;
         inputOperationParameter.value = changedInput.value;
         inputOperationParameter.subPropertyToscaFunctions = changedInput.subPropertyToscaFunctions;
@@ -370,7 +287,7 @@ export class InterfaceOperationHandlerComponent {
     }
 
     onArtifactPropertyValueChange(changedProperty: InputOperationParameter) {
-        const property = this.toscaArtifactTypeProperties.find(artifactProperty => artifactProperty.name == changedProperty.name);
+        const property = this.toscaArtifactTypeProperties.find((artifactProperty) => artifactProperty.name == changedProperty.name);
         if (changedProperty.value instanceof Object) {
             changedProperty.value = JSON.stringify(changedProperty.value);
         }
@@ -387,16 +304,6 @@ export class InterfaceOperationHandlerComponent {
     }
 
     /**
-     * Handles the add input event.
-     * @param input the input to add
-     * @private
-     */
-    private addInput(input: InputOperationParameter) {
-        this.operationToUpdate.inputs.listToscaDataDefinition.push(input);
-        this.inputs = Array.from(this.operationToUpdate.inputs.listToscaDataDefinition);
-    }
-
-    /**
      * Return a list with current input names.
      */
     collectInputNames() {
@@ -409,7 +316,7 @@ export class InterfaceOperationHandlerComponent {
      */
     onInputDelete(inputName: string) {
         const currentInputs = this.operationToUpdate.inputs.listToscaDataDefinition;
-        const input1 = currentInputs.find(value => value.name === inputName);
+        const input1 = currentInputs.find((value) => value.name === inputName);
         const indexOfInput = currentInputs.indexOf(input1);
         if (indexOfInput === -1) {
             console.error(`Could not delete input '${inputName}'. Input not found.`);
@@ -417,24 +324,6 @@ export class InterfaceOperationHandlerComponent {
         }
         currentInputs.splice(currentInputs.indexOf(input1), 1);
         this.inputs = Array.from(currentInputs);
-    }
-
-    private convertArtifactsPropertiesToInput(): Array<InputOperationParameter> {
-        if (!this.toscaArtifactTypeProperties) {
-            return [];
-        }
-        const inputList: Array<InputOperationParameter> = [];
-        this.toscaArtifactTypeProperties.forEach(property => {
-            const input = new InputOperationParameter();
-            input.name = property.name;
-            input.type = property.type;
-            input.schema = property.schema;
-            input.toscaDefaultValue = property.defaultValue;
-            input.value = property.value;
-            input.toscaFunction = property.toscaFunction;
-            inputList.push(input);
-        });
-        return inputList;
     }
 
     onSelectInterface(dropDownOption: DropDownOption) {
@@ -454,22 +343,9 @@ export class InterfaceOperationHandlerComponent {
         }
     }
 
-    private setInterfaceType(dropDownOption: DropDownOption) {
-        this.selectedInterfaceType = dropDownOption ? dropDownOption : undefined;
-        this.interfaceType = dropDownOption ? dropDownOption.value : undefined;
-        this.operationToUpdate.interfaceType = dropDownOption ? dropDownOption.value : undefined;
-        this.operationToUpdate.interfaceId = dropDownOption ? dropDownOption.value : undefined;
-    }
-
-    private setInterfaceOperation(dropDownOption: DropDownOption) {
-        this.operationToUpdate.name = dropDownOption ? dropDownOption.value : undefined;
-        this.operationToUpdate.operationType = dropDownOption ? dropDownOption.value : undefined;
-        this.selectedInterfaceOperation = dropDownOption ? dropDownOption : undefined;
-    }
-
     getExistingFilters(key: string) {
         if (this.operationToUpdate.milestones[key] && this.operationToUpdate.milestones[key].filters) {
-            return this.operationToUpdate.milestones[key].filters
+            return this.operationToUpdate.milestones[key].filters;
         }
         return undefined;
     }
@@ -486,11 +362,11 @@ export class InterfaceOperationHandlerComponent {
                 operationMilestone = new Milestone();
             }
             operationMilestone.filters = new class implements IFilterParameterList {
-                listToscaDataDefinition: Array<FilterParameter> = [];
-            }
-            let milestoneFilters = $event.filters;
-            for (let filter of milestoneFilters) {
-                let filterParameter = new FilterParameter();
+                listToscaDataDefinition: FilterParameter[] = [];
+            };
+            const milestoneFilters = $event.filters;
+            for (const filter of milestoneFilters) {
+                const filterParameter = new FilterParameter();
                 filterParameter.constraint = filter.constraint;
                 filterParameter.name = filter.name;
                 filterParameter.filterValue = filter.filterValue;
@@ -514,7 +390,7 @@ export class InterfaceOperationHandlerComponent {
             && this.operationToUpdate.milestones[key].activities.listToscaDataDefinition
             && this.operationToUpdate.milestones[key].activities.listToscaDataDefinition.length > 0
         ) {
-            return this.operationToUpdate.milestones[key].activities
+            return this.operationToUpdate.milestones[key].activities;
         }
         return undefined;
     }
@@ -531,11 +407,11 @@ export class InterfaceOperationHandlerComponent {
                 operationMilestone = new Milestone();
             }
             operationMilestone.activities = new class implements IActivityParameterList {
-                listToscaDataDefinition: Array<ActivityParameter> = [];
-            }
-            let milestoneActivities = $event.activities;
-            for (let activity of milestoneActivities) {
-                let activityParameter = new ActivityParameter();
+                listToscaDataDefinition: ActivityParameter[] = [];
+            };
+            const milestoneActivities = $event.activities;
+            for (const activity of milestoneActivities) {
+                const activityParameter = new ActivityParameter();
                 activityParameter.type = activity.type;
                 activityParameter.workflow = activity.workflow;
                 activityParameter.inputs = activity.inputs;
@@ -564,9 +440,133 @@ export class InterfaceOperationHandlerComponent {
 
     isInvalidActivity(title: string) {
         if (this.invalidMilestones.indexOf(title) > -1) {
-            return "#cf2a2a";
+            return '#cf2a2a';
         }
       }
+
+    private initInputs() {
+        if (!this.operationToUpdate.inputs) {
+            this.operationToUpdate.inputs = new class implements IOperationParamsList {
+                listToscaDataDefinition: InputOperationParameter[] = [];
+            };
+        }
+
+        this.inputs = Array.from(this.operationToUpdate.inputs.listToscaDataDefinition);
+        this.removeImplementationQuote();
+        this.loadInterfaceOperationImplementation();
+        this.loadInterfaceType();
+    }
+
+    private initCustomToscaFunctions() {
+        this.customToscaFunctions = [];
+        this.topologyTemplateService.getDefaultCustomFunction().toPromise().then((data) => {
+            if (data) {
+                for (const customFunction of data) {
+                    this.customToscaFunctions.push(new CustomToscaFunction(customFunction));
+                }
+            }
+        });
+    }
+
+    private loadInterfaceType() {
+        this.componentService.getInterfaceTypesByModel(this.modelName)
+        .subscribe((response) => {
+            if (response) {
+                this.interfaceOperationMap = new Map<string, string[]>();
+                for (const interfaceType of Object.keys(response).sort()) {
+                    const operationList = response[interfaceType];
+                    operationList.sort();
+                    this.interfaceOperationMap.set(interfaceType, operationList);
+                    const operationDropDownOption: DropDownOption = new DropDownOption(interfaceType);
+                    this.interfaceTypeOptions.push(operationDropDownOption);
+                    if (this.interfaceType == interfaceType) {
+                        this.selectedInterfaceType = operationDropDownOption;
+                    }
+                }
+                this.loadInterfaceTypeOperations();
+            }
+        });
+    }
+
+    private loadInterfaceOperationImplementation() {
+        this.toscaArtifactTypes = this.input.toscaArtifactTypes;
+        if (this.operationToUpdate.implementation) {
+            this.artifactVersion = this.operationToUpdate.implementation.artifactVersion;
+            this.artifactName = this.operationToUpdate.implementation.artifactName;
+            this.toscaArtifactTypeProperties = this.operationToUpdate.implementation.properties;
+        }
+        this.artifactTypeProperties = this.convertArtifactsPropertiesToInput();
+        this.getArtifactTypesSelected();
+    }
+
+    private removeImplementationQuote(): void {
+        if (this.operationToUpdate.implementation) {
+            if (!this.operationToUpdate.implementation
+                || !this.operationToUpdate.implementation.artifactName) {
+                return;
+            }
+
+            const implementation = this.operationToUpdate.implementation.artifactName.trim();
+
+            if (implementation.startsWith('\'') && implementation.endsWith('\'')) {
+                this.operationToUpdate.implementation.artifactName = implementation.slice(1, -1);
+            }
+        }
+    }
+
+    private getArtifactTypesSelected() {
+        if (this.operationToUpdate.implementation && this.operationToUpdate.implementation.artifactType) {
+            this.artifactName =
+                this.artifactName ? this.artifactName : this.operationToUpdate.implementation.artifactName;
+            this.toscaArtifactTypeSelected = this.operationToUpdate.implementation.artifactType;
+            this.artifactVersion =
+                this.artifactVersion ? this.artifactVersion : this.operationToUpdate.implementation.artifactVersion;
+            this.toscaArtifactTypeProperties = this.operationToUpdate.implementation.properties;
+            this.artifactTypeProperties = this.convertArtifactsPropertiesToInput();
+            this.enableAddArtifactImplementation = true;
+        }
+    }
+
+    /**
+     * Handles the add input event.
+     * @param input the input to add
+     * @private
+     */
+    private addInput(input: InputOperationParameter) {
+        this.operationToUpdate.inputs.listToscaDataDefinition.push(input);
+        this.inputs = Array.from(this.operationToUpdate.inputs.listToscaDataDefinition);
+    }
+
+    private convertArtifactsPropertiesToInput(): InputOperationParameter[] {
+        if (!this.toscaArtifactTypeProperties) {
+            return [];
+        }
+        const inputList: InputOperationParameter[] = [];
+        this.toscaArtifactTypeProperties.forEach((property) => {
+            const input = new InputOperationParameter();
+            input.name = property.name;
+            input.type = property.type;
+            input.schema = property.schema;
+            input.toscaDefaultValue = property.defaultValue;
+            input.value = property.value;
+            input.toscaFunction = property.toscaFunction;
+            inputList.push(input);
+        });
+        return inputList;
+    }
+
+    private setInterfaceType(dropDownOption: DropDownOption) {
+        this.selectedInterfaceType = dropDownOption ? dropDownOption : undefined;
+        this.interfaceType = dropDownOption ? dropDownOption.value : undefined;
+        this.operationToUpdate.interfaceType = dropDownOption ? dropDownOption.value : undefined;
+        this.operationToUpdate.interfaceId = dropDownOption ? dropDownOption.value : undefined;
+    }
+
+    private setInterfaceOperation(dropDownOption: DropDownOption) {
+        this.operationToUpdate.name = dropDownOption ? dropDownOption.value : undefined;
+        this.operationToUpdate.operationType = dropDownOption ? dropDownOption.value : undefined;
+        this.selectedInterfaceOperation = dropDownOption ? dropDownOption : undefined;
+    }
 }
 
 class DropDownOption implements IDropDownOption {

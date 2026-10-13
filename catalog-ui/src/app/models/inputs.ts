@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,16 +22,16 @@
  * Created by obarda on 8/24/2016.
  */
 'use strict';
-import {PropertyModel} from "./properties";
-import {InputPropertyBase} from "./input-property-base";
-import {SchemaPropertyGroupModel} from "./schema-property";
 import * as _ from 'lodash';
+import { InputPropertyBase } from './input-property-base';
+import { PropertyModel } from './properties';
+import { SchemaPropertyGroupModel } from './schema-property';
 
 export class InputsGroup {
     constructor(inputsObj?: InputsGroup) {
-        _.forEach(inputsObj, (inputs:Array<InputModel>, instance) => {
+        _.forEach(inputsObj, (inputs: InputModel[], instance) => {
             this[instance] = [];
-            _.forEach(inputs, (input:InputModel):void => {
+            _.forEach(inputs, (input: InputModel): void => {
                 this[instance].push(new InputModel(input));
             });
         });
@@ -39,44 +39,44 @@ export class InputsGroup {
 }
 
 export interface IInputModel extends InputPropertyBase {
-    //server data
-    definition:boolean;
-    value:string;
-    componentInstanceName:string;
-    //costom properties
-    isNew:boolean;
-    properties:Array<PropertyModel>;
-    inputs:Array<InputModel>;
-    filterTerm:string;
+    // server data
+    definition: boolean;
+    value: string;
+    componentInstanceName: string;
+    // costom properties
+    isNew: boolean;
+    properties: PropertyModel[];
+    inputs: InputModel[];
+    filterTerm: string;
 
 }
 export class InputModel implements IInputModel {
 
-    //server data
-    uniqueId:string;
-    name:string;
-    type:string;
-    password:boolean;
-    required:boolean;
-    definition:boolean;
-    parentUniqueId:string;
-    description:string;
-    componentInstanceName:string;
-    componentInstanceId:string;
-    schema:SchemaPropertyGroupModel;
-    defaultValue:string;
-    value:string;
+    // server data
+    uniqueId: string;
+    name: string;
+    type: string;
+    password: boolean;
+    required: boolean;
+    definition: boolean;
+    parentUniqueId: string;
+    description: string;
+    componentInstanceName: string;
+    componentInstanceId: string;
+    schema: SchemaPropertyGroupModel;
+    defaultValue: string;
+    value: string;
     toscaDefaultValue?: string;
 
-    //costom properties
-    isNew:boolean;
-    isDeleteDisabled:boolean;
-    properties:Array<PropertyModel>;
-    inputs:Array<InputModel>;
-    isAlreadySelected:boolean;
-    filterTerm:string;
+    // costom properties
+    isNew: boolean;
+    isDeleteDisabled: boolean;
+    properties: PropertyModel[];
+    inputs: InputModel[];
+    isAlreadySelected: boolean;
+    filterTerm: string;
 
-    constructor(input:InputModel) {
+    constructor(input: InputModel) {
 
         if (input) {
             this.uniqueId = input.uniqueId;
@@ -100,8 +100,8 @@ export class InputModel implements IInputModel {
         }
     }
 
-    public toJSON = ():any => {
-        let input = _.cloneDeep(this);
+    public toJSON = (): any => {
+        const input = _.cloneDeep(this);
         input.isNew = undefined;
         input.isDeleteDisabled = undefined;
         input.properties = undefined;
@@ -109,6 +109,5 @@ export class InputModel implements IInputModel {
         input.isAlreadySelected = undefined;
         input.filterTerm = undefined;
         return input;
-    };
+    }
 }
-

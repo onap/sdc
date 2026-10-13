@@ -18,13 +18,13 @@
  * ============LICENSE_END=========================================================
  */
 
-import { InjectionToken } from "@angular/core";
+import { InjectionToken } from '@angular/core';
 
 export const TranslateServiceConfigToken = new InjectionToken('TranslateServiceConfigToken');
 
 export interface ITranslateServiceConfig {
-    filePrefix:string;
-    fileSuffix:string;
-    allowedLanguages:string[];
-    defaultLanguage:string;
+    filePrefix: string;
+    fileSuffix: string;
+    allowedLanguages: string[];
+    defaultLanguage: string;
 }

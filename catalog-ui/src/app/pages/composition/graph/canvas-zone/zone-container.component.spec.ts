@@ -1,28 +1,26 @@
-import {async, ComponentFixture} from '@angular/core/testing';
-import {By} from '@angular/platform-browser';
-import {ConfigureFn, configureTests} from '../../../../../jest/test-config.helper';
+import { async, ComponentFixture } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import 'jest-dom/extend-expect';
-import {ZoneInstanceType} from '../../../../models/graph/zones/zone-instance';
-import {ZoneContainerComponent} from './zone-container.component';
-
+import { ConfigureFn, configureTests } from '../../../../../jest/test-config.helper';
+import { ZoneInstanceType } from '../../../../models/graph/zones/zone-instance';
+import { ZoneContainerComponent } from './zone-container.component';
 
 describe('ZoneContainerComponent', () => {
     let fixture: ComponentFixture<ZoneContainerComponent>;
 
     beforeEach(
         async(() => {
-            const configure: ConfigureFn = testBed => {
+            const configure: ConfigureFn = (testBed) => {
                 testBed.configureTestingModule({
                     declarations: [ZoneContainerComponent]
                 });
             };
 
-            configureTests(configure).then(testBed => {
+            configureTests(configure).then((testBed) => {
                 fixture = testBed.createComponent(ZoneContainerComponent);
             });
         })
     );
-
 
     it('should match current snapshot of palette element component', () => {
         expect(fixture).toMatchSnapshot();

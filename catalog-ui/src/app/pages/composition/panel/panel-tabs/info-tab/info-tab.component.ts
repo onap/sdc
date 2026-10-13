@@ -1,26 +1,26 @@
-import { Component, OnInit, Input, Inject, OnDestroy } from '@angular/core';
-import {IMainCategory} from 'app/models/category';
-import {Component as TopologyTemplate} from 'app/models/components/component';
-import {LeftPaletteComponent} from 'app/models/components/display-component';
-import {ComponentInstance} from 'app/models/components-instances/component-instance';
-import {FullComponentInstance} from 'app/models/components-instances/full-component-instance';
-import {GroupInstance} from 'app/models/graph/zones/group-instance';
-import {PolicyInstance} from 'app/models/graph/zones/policy-instance';
-import {Store} from "@ngxs/store";
-import {EVENTS, GRAPH_EVENTS} from 'app/utils/constants';
-import {IDropDownOption} from "onap-ui-angular/dist/form-elements/dropdown/dropdown-models";
-import { CompositionPaletteService } from "app/pages/composition/palette/services/palette.service";
-import { SdcUiCommon, SdcUiServices } from "onap-ui-angular";
-import { SdcMenuToken, IAppMenu } from "app/config/sdc-menu.config";
-import { CompositionService } from "app/pages/composition/composition.service";
-import {ServiceService} from 'app/services/component-services/service.service';
-import { WorkspaceService } from "app/pages/workspace/workspace.service";
-import { ComponentInstanceService } from "app/services/component-instance-services/component-instance.service";
-import {EventListenerService} from 'app/services/event-listener.service';
+import { Component, Inject, Input, OnDestroy, OnInit } from '@angular/core';
+import { Store } from '@ngxs/store';
+import { IAppMenu, SdcMenuToken } from 'app/config/sdc-menu.config';
+import { IMainCategory } from 'app/models/category';
+import { ComponentInstance } from 'app/models/components-instances/component-instance';
+import { FullComponentInstance } from 'app/models/components-instances/full-component-instance';
+import { Component as TopologyTemplate } from 'app/models/components/component';
+import { LeftPaletteComponent } from 'app/models/components/display-component';
+import { GroupInstance } from 'app/models/graph/zones/group-instance';
+import { PolicyInstance } from 'app/models/graph/zones/policy-instance';
+import { CompositionService } from 'app/pages/composition/composition.service';
+import { CompositionPaletteService } from 'app/pages/composition/palette/services/palette.service';
+import { WorkspaceService } from 'app/pages/workspace/workspace.service';
+import { ComponentInstanceService } from 'app/services/component-instance-services/component-instance.service';
+import { ServiceService } from 'app/services/component-services/service.service';
+import { EventListenerService } from 'app/services/event-listener.service';
+import { EVENTS, GRAPH_EVENTS } from 'app/utils/constants';
 import * as _ from 'lodash';
-import {SelectedComponentType, TogglePanelLoadingAction} from "../../../common/store/graph.actions";
+import { SdcUiCommon, SdcUiServices } from 'onap-ui-angular';
+import { IDropDownOption } from 'onap-ui-angular/dist/form-elements/dropdown/dropdown-models';
 import Dictionary = _.Dictionary;
-import {TopologyTemplateService} from "../../../../../services/component-services/topology-template.service";
+import { TopologyTemplateService } from '../../../../../services/component-services/topology-template.service';
+import { SelectedComponentType, TogglePanelLoadingAction } from '../../../common/store/graph.actions';
 
 @Component({
     selector: 'panel-info-tab',
@@ -29,14 +29,6 @@ import {TopologyTemplateService} from "../../../../../services/component-service
     // providers: [SdcUiServices.ModalService]
 })
 export class InfoTabComponent implements OnInit, OnDestroy {
-
-    @Input() isViewOnly: boolean;
-    @Input() componentType: SelectedComponentType;
-    @Input() component: TopologyTemplate | PolicyInstance | GroupInstance | ComponentInstance;
-    public versions: IDropDownOption[];
-    private leftPalletElements: LeftPaletteComponent[];
-    private isDisabledFlag: boolean;
-    public isComponentSelectedFlag: boolean;
 
     /**
      * The tab renders whichever fields the selected entity happens to carry, and `component` is a
@@ -48,6 +40,14 @@ export class InfoTabComponent implements OnInit, OnDestroy {
         return this.component;
     }
 
+    @Input() isViewOnly: boolean;
+    @Input() componentType: SelectedComponentType;
+    @Input() component: TopologyTemplate | PolicyInstance | GroupInstance | ComponentInstance;
+    public versions: IDropDownOption[];
+    public isComponentSelectedFlag: boolean;
+    private leftPalletElements: LeftPaletteComponent[];
+    private isDisabledFlag: boolean;
+
     constructor(private store: Store,
                 private compositionPaletteService: CompositionPaletteService,
                 private compositionService: CompositionService,
@@ -57,7 +57,7 @@ export class InfoTabComponent implements OnInit, OnDestroy {
                 private serviceService: ServiceService,
                 private eventListenerService: EventListenerService,
                 private topologyTemplateService: TopologyTemplateService,
-                @Inject(SdcMenuToken) public sdcMenu:IAppMenu) {
+                @Inject(SdcMenuToken) public sdcMenu: IAppMenu) {
     }
 
     ngOnInit() {
@@ -85,8 +85,42 @@ export class InfoTabComponent implements OnInit, OnDestroy {
         return retValArr;
     }
 
-    public isComponentInstanceSelected () {
+    public isComponentInstanceSelected() {
         return this.componentType === SelectedComponentType.COMPONENT_INSTANCE;
+    }
+
+    initEditResourceVersion = (component, leftPaletteComponents): void => {
+        if (this.component instanceof ComponentInstance) {
+            this.versions = [];
+            this.topologyTemplateService.getComponentMetadata(component.getComponentUid(), component.originType)
+            .subscribe((response) => {
+                const allVersions = response.metadata.allVersions;
+                const sorted: any = _.sortBy(_.toPairs(allVersions), (item) => {
+                    return item[0] !== 'undefined' && this.versioning(item[0]);
+                });
+                _.forEach(sorted, (item) => {
+                    this.versions.push({label: item[0], value: item[1]});
+                });
+
+                const highestVersion = _.last(sorted)[0];
+
+                if (parseFloat(highestVersion) % 1) { // if highest is minor, make sure it is the latest checked in -
+                    const latestVersionComponent: LeftPaletteComponent = _.maxBy(
+                        _.filter(leftPaletteComponents, (leftPaletteComponent: LeftPaletteComponent) => { // latest checked in
+                            return (leftPaletteComponent.systemName === component.systemName || leftPaletteComponent.uuid === component.uuid);
+                        })
+                        , (component) => {
+                            return component.version;
+                        });
+
+                    const latestVersion: string = latestVersionComponent ? latestVersionComponent.version : highestVersion;
+
+                    if (latestVersion && highestVersion != latestVersion) { // highest is checked out - remove from options
+                        this.versions = this.versions.filter((version) => version.label != highestVersion);
+                    }
+                }
+            });
+        }
     }
 
     private getCategoryDisplayNameOrName = (mainCategory: IMainCategory): string => {
@@ -94,28 +128,28 @@ export class InfoTabComponent implements OnInit, OnDestroy {
     }
 
     private versioning: Function = (versionNumber: string): string => {
-        let version: Array<string> = versionNumber && versionNumber.split('.');
+        const version: string[] = versionNumber && versionNumber.split('.');
         return '00000000'.slice(version[0].length) + version[0] + '.' + '00000000'.slice(version[1].length) + version[1];
-    };
+    }
 
     private onChangeVersion = (versionDropdown) => {
-        let newVersionValue = versionDropdown.value;
-        versionDropdown.value = (<FullComponentInstance>this.component).getComponentUid();
+        const newVersionValue = versionDropdown.value;
+        versionDropdown.value = (this.component as FullComponentInstance).getComponentUid();
 
         this.store.dispatch(new TogglePanelLoadingAction({isLoading: true}));
 
         // let service = <Service>this.$scope.currentComponent;
-        if(this.component instanceof FullComponentInstance) {
+        if (this.component instanceof FullComponentInstance) {
 
-            let onCancel = (error?:any) => {
+            const onCancel = (error?: any) => {
                 this.store.dispatch(new TogglePanelLoadingAction({isLoading: false}));
                 if (error) {
                     console.log(error);
                 }
             };
 
-            let onUpdate = () => {
-                //this function will update the instance version than the function call getComponent to update the current component and return the new instance version
+            const onUpdate = () => {
+                // this function will update the instance version than the function call getComponent to update the current component and return the new instance version
                 this.componentInstanceService.changeResourceInstanceVersion(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId, this.component.uniqueId, newVersionValue)
                 .subscribe((component) => {
                     this.store.dispatch(new TogglePanelLoadingAction({isLoading: false}));
@@ -125,20 +159,19 @@ export class InfoTabComponent implements OnInit, OnDestroy {
 
             if (this.component.isService() || this.component.isServiceProxy() || this.component.isServiceSubstitution()) {
                 this.serviceService.checkComponentInstanceVersionChange(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId,
-                    this.component.uniqueId, newVersionValue).subscribe((pathsToDelete:string[]) => {
+                    this.component.uniqueId, newVersionValue).subscribe((pathsToDelete: string[]) => {
                     if (pathsToDelete && pathsToDelete.length) {
                         this.store.dispatch(new TogglePanelLoadingAction({isLoading: false}));
 
-
-                        const {title, message} = this.sdcMenu.alertMessages['upgradeInstance'];
-                        let pathNames:string = this.getPathNamesVersionChangeModal(pathsToDelete);
-                        let onOk = () => {
+                        const {title, message} = this.sdcMenu.alertMessages.upgradeInstance;
+                        const pathNames: string = this.getPathNamesVersionChangeModal(pathsToDelete);
+                        const onOk = () => {
                             this.store.dispatch(new TogglePanelLoadingAction({isLoading: true}));
 
                             onUpdate();
                         };
-                        const okButton: SdcUiCommon.IModalButtonComponent = {testId: "OK", text: "OK", type: SdcUiCommon.ButtonType.info, callback: onOk, closeModal: true};
-                        const cancelButton: SdcUiCommon.IModalButtonComponent = {testId: "Cancel", text: "Cancel", type: SdcUiCommon.ButtonType.secondary, callback: onCancel, closeModal: true};
+                        const okButton: SdcUiCommon.IModalButtonComponent = {testId: 'OK', text: 'OK', type: SdcUiCommon.ButtonType.info, callback: onOk, closeModal: true};
+                        const cancelButton: SdcUiCommon.IModalButtonComponent = {testId: 'Cancel', text: 'Cancel', type: SdcUiCommon.ButtonType.secondary, callback: onCancel, closeModal: true};
                         const modal = this.modalService.openInfoModal(title, message.format([pathNames]), 'confirm-modal', [okButton, cancelButton]);
                         modal.getCloseButton().onClick(onCancel);
                     } else {
@@ -149,55 +182,20 @@ export class InfoTabComponent implements OnInit, OnDestroy {
                 onUpdate();
             }
         }
-    };
+    }
 
-    private getPathNamesVersionChangeModal = (pathsToDelete:string[]):string => {
-        const relatedPaths = _.filter(this.compositionService.forwardingPaths, path =>
-            _.find(pathsToDelete, id =>
+    private getPathNamesVersionChangeModal = (pathsToDelete: string[]): string => {
+        const relatedPaths = _.filter(this.compositionService.forwardingPaths, (path) =>
+            _.find(pathsToDelete, (id) =>
                 path.uniqueId === id
             )
-        ).map(path => path.name);
+        ).map((path) => path.name);
         const pathNames = _.join(relatedPaths, ', ') || 'none';
         return pathNames;
-    };
-
-
-    initEditResourceVersion = (component, leftPaletteComponents): void => {
-        if (this.component instanceof ComponentInstance) {
-            this.versions = [];
-            this.topologyTemplateService.getComponentMetadata(component.getComponentUid(), component.originType)
-            .subscribe((response) => {
-                const allVersions = response.metadata.allVersions;
-                let sorted: any = _.sortBy(_.toPairs(allVersions), (item) => {
-                    return item[0] !== "undefined" && this.versioning(item[0]);
-                });
-                _.forEach(sorted, (item) => {
-                    this.versions.push({label: item[0], value: item[1]});
-                });
-
-                let highestVersion = _.last(sorted)[0];
-
-                if (parseFloat(highestVersion) % 1) { //if highest is minor, make sure it is the latest checked in -
-                    let latestVersionComponent: LeftPaletteComponent = _.maxBy(
-                        _.filter(leftPaletteComponents, (leftPaletteComponent: LeftPaletteComponent) => { //latest checked in
-                            return (leftPaletteComponent.systemName === component.systemName || leftPaletteComponent.uuid === component.uuid);
-                        })
-                        , (component) => {
-                            return component.version
-                        });
-
-                    let latestVersion: string = latestVersionComponent ? latestVersionComponent.version : highestVersion;
-
-                    if (latestVersion && highestVersion != latestVersion) { //highest is checked out - remove from options
-                        this.versions = this.versions.filter(version => version.label != highestVersion);
-                    }
-                }
-            });
-        }
     }
 
     private isDisabled() {
-        return this.isViewOnly || this.component['archived'] || this.component['resourceType'] === 'CVFC'
+        return this.isViewOnly || this.component.archived || this.component.resourceType === 'CVFC';
     }
 
-};
+}

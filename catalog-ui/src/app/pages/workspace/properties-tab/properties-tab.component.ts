@@ -17,15 +17,15 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
-import {PropertyModel} from 'app/models/properties';
-import {ModalsHandler} from 'app/utils/modals-handler';
-import {SdcUiCommon, SdcUiServices} from 'onap-ui-angular';
-import {WorkspaceMode} from 'app/utils/constants';
-import {TranslateService} from 'app/shared/translator/translate.service';
-import {ComponentService} from 'app/services/component-services/component.service';
-import {ComponentGenericResponse} from 'app/services/responses/component-generic-response';
-import {WorkspaceService} from '../workspace.service';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { PropertyModel } from 'app/models/properties';
+import { ComponentService } from 'app/services/component-services/component.service';
+import { ComponentGenericResponse } from 'app/services/responses/component-generic-response';
+import { TranslateService } from 'app/shared/translator/translate.service';
+import { WorkspaceMode } from 'app/utils/constants';
+import { ModalsHandler } from 'app/utils/modals-handler';
+import { SdcUiCommon, SdcUiServices } from 'onap-ui-angular';
+import { WorkspaceService } from '../workspace.service';
 
 interface ITableHeader {
     title: string;
@@ -60,6 +60,12 @@ interface ITableHeader {
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WorkspacePropertiesTabComponent implements OnInit {
+
+    // ---- Display helpers ----
+
+    get propertiesCount(): number {
+        return (this.component && this.component.properties && this.component.properties.length) || 0;
+    }
 
     component: any;
     isLoading: boolean = false;
@@ -112,52 +118,6 @@ export class WorkspacePropertiesTabComponent implements OnInit {
         } else {
             this.refresh();
         }
-    }
-
-    /**
-     * Recompute the displayed list from component.properties applying the current sort + free-text
-     * filter. Replaces the AngularJS template's `orderBy:sortBy:reverse | filter:{filterTerm}` — done
-     * in TS (and only when something changes) so OnPush is not fed a new array every CD cycle.
-     */
-    private refresh(): void {
-        const all: PropertyModel[] = (this.component && this.component.properties) || [];
-        let rows = all.slice();
-        const term = (this.filterTerms || '').toLowerCase();
-        if (term) {
-            rows = rows.filter((p) => (p.filterTerm || '').toLowerCase().indexOf(term) !== -1);
-        }
-        rows.sort((a, b) => {
-            const av = this.readPath(a, this.sortBy);
-            const bv = this.readPath(b, this.sortBy);
-            const cmp = ('' + (av === undefined || av === null ? '' : av))
-                .localeCompare('' + (bv === undefined || bv === null ? '' : bv));
-            return this.reverse ? -cmp : cmp;
-        });
-        this.filteredProperties = rows;
-        this.detectChangesSafe();
-    }
-
-    /**
-     * Re-fetch the component's properties from the backend and rebuild the displayed list. Used after
-     * the AngularJS edit modal closes, because that modal persists via the BE but does not update
-     * component.properties in place (see addOrUpdateProperty). Authoritative and cheap.
-     */
-    private reloadProperties(): void {
-        this.componentService.getComponentProperties(this.component).subscribe(
-            (response: ComponentGenericResponse) => {
-                this.component.properties = response.properties;
-                this.refresh();
-            },
-            () => {
-                // GET failed — keep the current list rather than blanking it
-                this.detectChangesSafe();
-            }
-        );
-    }
-
-    /** Read a possibly-nested property path (e.g. 'schema.property.type') off a row for sorting. */
-    private readPath(obj: any, path: string): any {
-        return path.split('.').reduce((acc, key) => (acc === undefined || acc === null ? acc : acc[key]), obj);
     }
 
     onFilterChange(): void {
@@ -222,12 +182,6 @@ export class WorkspacePropertiesTabComponent implements OnInit {
         this.modalService.openInfoModal(title, message, 'delete-modal', [okButton]);
     }
 
-    // ---- Display helpers ----
-
-    get propertiesCount(): number {
-        return (this.component && this.component.properties && this.component.properties.length) || 0;
-    }
-
     /** Strip the heat-datatype prefix for display, matching the old template's inline .replace(). */
     stripHeatPrefix(value: string): string {
         return (value || '').replace('org.openecomp.datatypes.heat.', '');
@@ -245,6 +199,52 @@ export class WorkspacePropertiesTabComponent implements OnInit {
 
     isDisableMode(): boolean {
         return this.mode === WorkspaceMode.VIEW;
+    }
+
+    /**
+     * Recompute the displayed list from component.properties applying the current sort + free-text
+     * filter. Replaces the AngularJS template's `orderBy:sortBy:reverse | filter:{filterTerm}` — done
+     * in TS (and only when something changes) so OnPush is not fed a new array every CD cycle.
+     */
+    private refresh(): void {
+        const all: PropertyModel[] = (this.component && this.component.properties) || [];
+        let rows = all.slice();
+        const term = (this.filterTerms || '').toLowerCase();
+        if (term) {
+            rows = rows.filter((p) => (p.filterTerm || '').toLowerCase().indexOf(term) !== -1);
+        }
+        rows.sort((a, b) => {
+            const av = this.readPath(a, this.sortBy);
+            const bv = this.readPath(b, this.sortBy);
+            const cmp = ('' + (av === undefined || av === null ? '' : av))
+                .localeCompare('' + (bv === undefined || bv === null ? '' : bv));
+            return this.reverse ? -cmp : cmp;
+        });
+        this.filteredProperties = rows;
+        this.detectChangesSafe();
+    }
+
+    /**
+     * Re-fetch the component's properties from the backend and rebuild the displayed list. Used after
+     * the AngularJS edit modal closes, because that modal persists via the BE but does not update
+     * component.properties in place (see addOrUpdateProperty). Authoritative and cheap.
+     */
+    private reloadProperties(): void {
+        this.componentService.getComponentProperties(this.component).subscribe(
+            (response: ComponentGenericResponse) => {
+                this.component.properties = response.properties;
+                this.refresh();
+            },
+            () => {
+                // GET failed — keep the current list rather than blanking it
+                this.detectChangesSafe();
+            }
+        );
+    }
+
+    /** Read a possibly-nested property path (e.g. 'schema.property.type') off a row for sorting. */
+    private readPath(obj: any, path: string): any {
+        return path.split('.').reduce((acc, key) => (acc === undefined || acc === null ? acc : acc[key]), obj);
     }
 
     private detectChangesSafe(): void {

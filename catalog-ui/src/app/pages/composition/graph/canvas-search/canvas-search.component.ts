@@ -1,7 +1,7 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {AutoCompleteComponent} from "onap-ui-angular/dist/autocomplete/autocomplete.component";
-import {AutocompletePipe} from 'onap-ui-angular/dist/autocomplete/autocomplete.pipe';
+import { HttpClient } from '@angular/common/http';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { AutoCompleteComponent } from 'onap-ui-angular/dist/autocomplete/autocomplete.component';
+import { AutocompletePipe } from 'onap-ui-angular/dist/autocomplete/autocomplete.pipe';
 
 @Component({
     selector: 'canvas-search',
@@ -25,7 +25,7 @@ export class CanvasSearchComponent extends AutoCompleteComponent {
         };
     }
 
-    public onSearchClicked = (searchText:string)=> {
+    public onSearchClicked = (searchText: string) => {
         this.searchButtonClicked.emit(searchText);
     }
 

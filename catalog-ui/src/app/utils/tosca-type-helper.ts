@@ -19,14 +19,10 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {DerivedPropertyType} from "../models/properties-inputs/property-be-model";
-import {PROPERTY_DATA, PROPERTY_TYPES} from "./constants";
+import { DerivedPropertyType } from '../models/properties-inputs/property-be-model';
+import { PROPERTY_DATA, PROPERTY_TYPES } from './constants';
 
 export class ToscaTypeHelper {
-
-    private ToscaTypeHelper() {
-        //not designed to be instantiated
-    }
 
     public static getType(typeName: string): DerivedPropertyType {
         if (PROPERTY_DATA.SIMPLE_TYPES.indexOf(typeName) > -1) {
@@ -73,6 +69,10 @@ export class ToscaTypeHelper {
 
     public static isTypeRange(typeName: string): boolean {
         return typeName === PROPERTY_TYPES.RANGE;
+    }
+
+    private ToscaTypeHelper() {
+        // not designed to be instantiated
     }
 
 }

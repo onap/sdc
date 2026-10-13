@@ -18,13 +18,13 @@
  * ============LICENSE_END=========================================================
  */
 
-import {NgModule, CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {TranslateModule} from 'app/shared/translator/translate.module';
-import {LayoutModule} from 'app/components/layout/layout.module';
+import { CommonModule } from '@angular/common';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import { LayoutModule } from 'app/components/layout/layout.module';
+import { TranslateModule } from 'app/shared/translator/translate.module';
 
-import {Error403PageComponent} from './error-403/error-403.component';
-import {OnboardVendorPageComponent} from './onboard-vendor/onboard-vendor.component';
+import { Error403PageComponent } from './error-403/error-403.component';
+import { OnboardVendorPageComponent } from './onboard-vendor/onboard-vendor.component';
 
 /**
  * Declares the two page components routed to by the 'error-403' and

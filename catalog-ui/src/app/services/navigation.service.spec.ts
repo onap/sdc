@@ -18,9 +18,9 @@
  * ============LICENSE_END=========================================================
  */
 
-import {NavigationEnd, NavigationStart} from '@angular/router';
-import {Subject} from 'rxjs/Subject';
-import {NavigationService} from './navigation.service';
+import { NavigationEnd, NavigationStart } from '@angular/router';
+import { Subject } from 'rxjs/Subject';
+import { NavigationService } from './navigation.service';
 
 /**
  * A route snapshot chain, root-first, as `ActivatedRoute.snapshot` + `.firstChild` expose it.
@@ -323,7 +323,7 @@ describe('NavigationService', () => {
             ]);
             service = new NavigationService(router, route, workspaceService);
             expect(service.getParams()).toEqual({
-                'filter.term': 'vfw', previousState: 'catalog', id: 'abc', type: 'service', panelTab: 'details'
+                'filter.term': 'vfw', "previousState": 'catalog', "id": 'abc', "type": 'service', "panelTab": 'details'
             });
             expect(service.getParam('id')).toBe('abc');
             expect(service.getParam('filter.term')).toBe('vfw');

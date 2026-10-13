@@ -1,19 +1,19 @@
-import {Component, ElementRef, Inject, OnInit} from "@angular/core";
-import {DeploymentGraphService} from "./deployment-graph.service";
+import { Component, ElementRef, Inject, OnInit } from '@angular/core';
 import '@bardit/cytoscape-expand-collapse';
-import * as _ from "lodash";
-import {TopologyTemplateService} from "../../../services/component-services/topology-template.service";
-import {WorkspaceService} from "../../workspace/workspace.service";
-import {NodesFactory} from "../../../models/graph/nodes/nodes-factory";
-import {CommonGraphUtils} from "../graph/common/common-graph-utils";
-import {ISdcConfig, SdcConfigToken} from "../../../config/sdc-config.config";
-import {Module} from "../../../models/modules/base-module";
-import {ComponentInstance} from "../../../models/components-instances/component-instance";
-import {ComponentGenericResponse} from "../../../services/responses/component-generic-response";
-import {ComponentInstanceFactory} from "../../../utils/component-instance-factory";
-import {ModulesNodesStyle} from "../graph/common/style/module-node-style";
-import {ComponentInstanceNodesStyle} from "../graph/common/style/component-instances-nodes-style";
-import {CompositionGraphLinkUtils} from "../graph/utils/composition-graph-links-utils";
+import * as _ from 'lodash';
+import { ISdcConfig, SdcConfigToken } from '../../../config/sdc-config.config';
+import { ComponentInstance } from '../../../models/components-instances/component-instance';
+import { NodesFactory } from '../../../models/graph/nodes/nodes-factory';
+import { Module } from '../../../models/modules/base-module';
+import { TopologyTemplateService } from '../../../services/component-services/topology-template.service';
+import { ComponentGenericResponse } from '../../../services/responses/component-generic-response';
+import { ComponentInstanceFactory } from '../../../utils/component-instance-factory';
+import { WorkspaceService } from '../../workspace/workspace.service';
+import { CommonGraphUtils } from '../graph/common/common-graph-utils';
+import { ComponentInstanceNodesStyle } from '../graph/common/style/component-instances-nodes-style';
+import { ModulesNodesStyle } from '../graph/common/style/module-node-style';
+import { CompositionGraphLinkUtils } from '../graph/utils/composition-graph-links-utils';
+import { DeploymentGraphService } from './deployment-graph.service';
 
 @Component({
     selector: 'deployment-graph',
@@ -22,6 +22,8 @@ import {CompositionGraphLinkUtils} from "../graph/utils/composition-graph-links-
 })
 
 export class DeploymentGraphComponent implements OnInit {
+
+    public _cy: Cy.Instance;
     constructor(private elRef: ElementRef,
                 private topologyTemplateService: TopologyTemplateService,
                 private workspaceService: WorkspaceService,
@@ -33,8 +35,6 @@ export class DeploymentGraphComponent implements OnInit {
 
     }
 
-    public _cy: Cy.Instance;
-
     ngOnInit(): void {
         this.topologyTemplateService.getDeploymentGraphData(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId).subscribe((response: ComponentGenericResponse) => {
             this.deploymentService.componentInstances = response.componentInstances;
@@ -44,19 +44,19 @@ export class DeploymentGraphComponent implements OnInit {
         });
     }
 
-    public findInstanceModule = (groupsArray: Array<Module>, componentInstanceId: string): string => {
-        let parentGroup: Module = _.find(groupsArray, (group: Module) => {
+    public findInstanceModule = (groupsArray: Module[], componentInstanceId: string): string => {
+        const parentGroup: Module = _.find(groupsArray, (group: Module) => {
             return _.find(_.values(group.members), (member: string) => {
                 return member === componentInstanceId;
             });
         });
-        return parentGroup ? parentGroup.uniqueId : "";
-    };
+        return parentGroup ? parentGroup.uniqueId : '';
+    }
 
     public initGraphModules = () => {
         if (this.deploymentService.modules) { // Init module nodes
             _.each(this.deploymentService.modules, (groupModule: Module) => {
-                let moduleNode = this.nodeFactory.createModuleNode(groupModule);
+                const moduleNode = this.nodeFactory.createModuleNode(groupModule);
                 this.commonGraphUtils.addNodeToGraph(this._cy, moduleNode);
             });
         }
@@ -64,7 +64,7 @@ export class DeploymentGraphComponent implements OnInit {
 
     public initGraphComponentInstances = () => {
         _.each(this.deploymentService.componentInstances, (instance: ComponentInstance) => { // Init component instance nodes
-            let componentInstanceNode = this.nodeFactory.createNode(instance);
+            const componentInstanceNode = this.nodeFactory.createNode(instance);
             componentInstanceNode.parent = this.findInstanceModule(this.deploymentService.modules, instance.uniqueId);
             if (componentInstanceNode.parent) { // we are not drawing instances that are not a part of a module
                 this.commonGraphUtils.addComponentInstanceNodeToGraph(this._cy, componentInstanceNode);
@@ -77,24 +77,24 @@ export class DeploymentGraphComponent implements OnInit {
         // so we must add an empty dummy child node
         _.each(this._cy.nodes('[?isGroup]'), (moduleNode: Cy.CollectionFirstNode) => {
             if (!moduleNode.isParent()) {
-                let dummyInstance = ComponentInstanceFactory.createEmptyComponentInstance();
-                let componentInstanceNode = this.nodeFactory.createNode(dummyInstance);
+                const dummyInstance = ComponentInstanceFactory.createEmptyComponentInstance();
+                const componentInstanceNode = this.nodeFactory.createNode(dummyInstance);
                 componentInstanceNode.parent = moduleNode.id();
-                let dummyNode = this.commonGraphUtils.addNodeToGraph(this._cy, componentInstanceNode, moduleNode.position());
+                const dummyNode = this.commonGraphUtils.addNodeToGraph(this._cy, componentInstanceNode, moduleNode.position());
                 dummyNode.addClass('dummy-node');
             }
-        })
+        });
     }
 
     public initGraphNodes = (): void => {
         this.initGraphModules();
         this.initGraphComponentInstances();
         this.handleEmptyModule();
-    };
+    }
 
     private loadGraph = () => {
 
-        let graphEl = this.elRef.nativeElement.querySelector('.sdc-deployment-graph-wrapper');
+        const graphEl = this.elRef.nativeElement.querySelector('.sdc-deployment-graph-wrapper');
         this._cy = cytoscape({
             container: graphEl,
             style: ComponentInstanceNodesStyle.getCompositionGraphStyle().concat(ModulesNodesStyle.getModuleGraphStyle()),
@@ -103,10 +103,10 @@ export class DeploymentGraphComponent implements OnInit {
 
         });
 
-        //adding expand collapse extension
+        // adding expand collapse extension
         this._cy.expandCollapse({
             layoutBy: {
-                name: "grid",
+                name: 'grid',
                 animate: true,
                 randomize: false,
                 fit: true
@@ -120,8 +120,8 @@ export class DeploymentGraphComponent implements OnInit {
             cueOffset: -20
         });
 
-        this.initGraphNodes(); //creating instances nodes
+        this.initGraphNodes(); // creating instances nodes
         this.commonGraphLinkUtils.initGraphLinks(this._cy, this.deploymentService.componentInstancesRelations);
         this._cy.collapseAll();
-    };
+    }
 }

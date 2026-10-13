@@ -19,7 +19,6 @@
  * Modifications Copyright (C) 2026 Deutsche Telekom AG.
  */
 
-
 import { Pipe, PipeTransform } from '@angular/core';
 import * as _ from 'lodash';
 
@@ -49,7 +48,7 @@ export class ResourceNamePipe implements PipeTransform {
      * this helper directly (MenuHandler builds a breadcrumb label for a component that has no name
      * yet in create mode), so the guard cannot live in `transform` alone.
      */
-    public static getDisplayName (value:string): string {
+    public static getDisplayName(value: string): string {
         if (!value) {
             return value;
         }
@@ -59,7 +58,7 @@ export class ResourceNamePipe implements PipeTransform {
         return shortName.charAt(0).toUpperCase() + shortName.slice(1);
     }
 
-    transform(value) : any {
+    transform(value): any {
         if (value) {
            return ResourceNamePipe.getDisplayName(value);
         }

@@ -19,18 +19,18 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {DataTypeModel} from '../../../../../../models/data-types';
-import {SchemaProperty, SchemaPropertyGroupModel} from '../../../../../../models/schema-property';
-import {PropertyBEModel} from '../../../../../../models/properties-inputs/property-be-model';
-import {PROPERTY_DATA, PROPERTY_TYPES} from '../../../../../../utils/constants';
-import {ToscaFunction} from '../../../../../../models/tosca-function';
-import {ToscaFunctionType} from "../../../../../../models/tosca-function-type.enum";
-import {ToscaFunctionValidationEvent} from "../../../../../properties-assignment/tosca-function/tosca-function.component";
-import {InstanceFeDetails} from "../../../../../../models/instance-fe-details";
-import {ToscaTypeHelper} from "app/utils/tosca-type-helper";
-import {CustomToscaFunction} from "../../../../../../models/default-custom-functions";
-import {SubPropertyToscaFunction} from "../../../../../../models/sub-property-tosca-function";
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ToscaTypeHelper } from 'app/utils/tosca-type-helper';
+import { DataTypeModel } from '../../../../../../models/data-types';
+import { CustomToscaFunction } from '../../../../../../models/default-custom-functions';
+import { InstanceFeDetails } from '../../../../../../models/instance-fe-details';
+import { PropertyBEModel } from '../../../../../../models/properties-inputs/property-be-model';
+import { SchemaProperty, SchemaPropertyGroupModel } from '../../../../../../models/schema-property';
+import { SubPropertyToscaFunction } from '../../../../../../models/sub-property-tosca-function';
+import { ToscaFunction } from '../../../../../../models/tosca-function';
+import { ToscaFunctionType } from '../../../../../../models/tosca-function-type.enum';
+import { PROPERTY_DATA, PROPERTY_TYPES } from '../../../../../../utils/constants';
+import { ToscaFunctionValidationEvent } from '../../../../../properties-assignment/tosca-function/tosca-function.component';
 
 @Component({
   selector: 'app-input-list-item',
@@ -55,7 +55,7 @@ export class InputListItemComponent implements OnInit {
   @Input() allowDeletion: boolean = false;
   @Input() toscaFunction: ToscaFunction;
   @Input() componentInstanceMap: Map<string, InstanceFeDetails> = new Map();
-  @Input() customToscaFunctions: Array<CustomToscaFunction> = [];
+  @Input() customToscaFunctions: CustomToscaFunction[] = [];
   @Output('onValueChange') onValueChangeEvent: EventEmitter<any> = new EventEmitter<any>();
   @Output('onDelete') onDeleteEvent: EventEmitter<string> = new EventEmitter<string>();
   @Output('onChildListItemDelete') onChildListItemDeleteEvent: EventEmitter<number> = new EventEmitter<number>();
@@ -69,7 +69,7 @@ export class InputListItemComponent implements OnInit {
       this.nestingLevel = 0;
     }
     if (this.type.properties) {
-      this.type.properties.forEach(property => {
+      this.type.properties.forEach((property) => {
         this.initEmptyPropertyInValueObjRef(property);
       });
     }
@@ -100,22 +100,10 @@ export class InputListItemComponent implements OnInit {
     }
   }
 
-  private initEmptyPropertyInValueObjRef(property: PropertyBEModel) {
-    if (this.valueObjRef[property.name] == undefined) {
-      if (this.isTypeComplex(property.type) || this.isTypeMap(property.type)) {
-        this.valueObjRef[property.name] = {};
-      } else if (this.isTypeList(property.type) || this.isTypeRange(property.type)) {
-        this.valueObjRef[property.name] = [];
-      } else {
-        this.valueObjRef[property.name] = null;
-      }
-    }
-  }
-
   getToscaFunction(key: any): any {
     if (this.subPropertyToscaFunctions) {
-      for (let subPropertyToscaFunction of this.subPropertyToscaFunctions) {
-        let found = subPropertyToscaFunction.subPropertyPath ? subPropertyToscaFunction.subPropertyPath.find(value => value === key) : false;
+      for (const subPropertyToscaFunction of this.subPropertyToscaFunctions) {
+        const found = subPropertyToscaFunction.subPropertyPath ? subPropertyToscaFunction.subPropertyPath.find((value) => value === key) : false;
         if (found) {
           return subPropertyToscaFunction.toscaFunction;
         }
@@ -191,13 +179,13 @@ export class InputListItemComponent implements OnInit {
     return this.dataTypeMap.get(type);
   }
 
-  onValueTypeChange () {
+  onValueTypeChange() {
     if ( !this.isToscaFunction ) {
       this.onValueChange(this.valueObjRef);
     }
   }
 
-  onToscaFunctionValidityChange(validationEvent: ToscaFunctionValidationEvent):void {
+  onToscaFunctionValidityChange(validationEvent: ToscaFunctionValidationEvent): void {
     if (validationEvent.isValid) {
       this.emitValueChangeEvent(validationEvent.toscaFunction, true);
       return;
@@ -226,15 +214,6 @@ export class InputListItemComponent implements OnInit {
     this.emitValueChangeEvent(this.valueObjRef);
   }
 
-  private emitValueChangeEvent(value: any, isToscaFunction=false) {
-    let emitValue = {
-      name: this.name,
-      value: value,
-      isToscaFunction:isToscaFunction
-    };
-    this.onValueChangeEvent.emit(emitValue);
-  }
-
   isRoot(): boolean {
     return this.nestingLevel === 0;
   }
@@ -249,10 +228,10 @@ export class InputListItemComponent implements OnInit {
 
   resolveType(): string {
     if (this.isTypeList(this.type.name)) {
-      return `list of value type ${this.schema.property.type}`
+      return `list of value type ${this.schema.property.type}`;
     }
     if (this.isTypeMap(this.type.name)) {
-      return `map of 'string' keys and '${this.schema.property.type}' values`
+      return `map of 'string' keys and '${this.schema.property.type}' values`;
     }
     return this.type.name;
   }
@@ -296,7 +275,7 @@ export class InputListItemComponent implements OnInit {
   }
 
   onMapKeyDelete(key: string) {
-    delete this.valueObjRef[key]
+    delete this.valueObjRef[key];
     this.emitValueChangeEvent(this.valueObjRef);
   }
 
@@ -323,7 +302,7 @@ export class InputListItemComponent implements OnInit {
   }
 
   getSimpleValueInputType() {
-    if (this.isTypeNumber(this.type.name)){
+    if (this.isTypeNumber(this.type.name)) {
       return 'number';
     }
     return 'text';
@@ -334,9 +313,30 @@ export class InputListItemComponent implements OnInit {
     if (this.schema.property.type === PROPERTY_TYPES.MAP || this.schema.property.type === PROPERTY_TYPES.LIST) {
       schemaProperty.type = PROPERTY_TYPES.STRING;
     } else {
-      schemaProperty.type = this.schema.property.type
+      schemaProperty.type = this.schema.property.type;
     }
     return new SchemaPropertyGroupModel(schemaProperty);
+  }
+
+  private initEmptyPropertyInValueObjRef(property: PropertyBEModel) {
+    if (this.valueObjRef[property.name] == undefined) {
+      if (this.isTypeComplex(property.type) || this.isTypeMap(property.type)) {
+        this.valueObjRef[property.name] = {};
+      } else if (this.isTypeList(property.type) || this.isTypeRange(property.type)) {
+        this.valueObjRef[property.name] = [];
+      } else {
+        this.valueObjRef[property.name] = null;
+      }
+    }
+  }
+
+  private emitValueChangeEvent(value: any, isToscaFunction= false) {
+    const emitValue = {
+      name: this.name,
+      value,
+      isToscaFunction
+    };
+    this.onValueChangeEvent.emit(emitValue);
   }
 
   private parseBoolean(value: any) {

@@ -17,7 +17,7 @@
  *  ============LICENSE_END=========================================================
  */
 
-import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import {
   AbstractControl,
   FormArray,
@@ -26,15 +26,15 @@ import {
   ValidatorFn,
   Validators
 } from '@angular/forms';
+import { CustomToscaFunction } from '../../../../../models/default-custom-functions';
+import { InstanceFeDetails } from '../../../../../models/instance-fe-details';
 import {
   FilterParameter,
   IFilterParameterList
 } from '../../../../../models/interface-operation';
-import { InstanceFeDetails } from '../../../../../models/instance-fe-details';
-import { ConstraintTypes, ConstraintTypesMapping } from '../../../../properties-assignment/constraints/constraints.component';
-import {CustomToscaFunction } from '../../../../../models/default-custom-functions';
-import { ToscaFunction } from '../../../../../models/tosca-function';
 import { PropertyBEModel } from '../../../../../models/properties-inputs/property-be-model';
+import { ToscaFunction } from '../../../../../models/tosca-function';
+import { ConstraintTypes, ConstraintTypesMapping } from '../../../../properties-assignment/constraints/constraints.component';
 import { ToscaFunctionValidationEvent } from '../../../../properties-assignment/tosca-function/tosca-function.component';
 
 @Component({
@@ -44,7 +44,7 @@ import { ToscaFunctionValidationEvent } from '../../../../properties-assignment/
 })
 export class FiltersListComponent implements OnInit {
 
-  @Input() customToscaFunctions: Array<CustomToscaFunction> = [];
+  @Input() customToscaFunctions: CustomToscaFunction[] = [];
   @Input() componentInstanceMap: Map<string, InstanceFeDetails> = new Map();
   @Input() activitiesExist: boolean;
   @Input() existingFilters: IFilterParameterList;
@@ -58,7 +58,7 @@ export class FiltersListComponent implements OnInit {
   filterFormArray: FormArray = new FormArray([]);
   filterForm: FormGroup = new FormGroup (
     {
-      'filterFormList': this.filterFormArray
+      filterFormList: this.filterFormArray
     }
   );
   validationMessages = {
@@ -67,11 +67,11 @@ export class FiltersListComponent implements OnInit {
     ]
   };
 
-  ngOnInit () {
+  ngOnInit() {
     this.operatorTypes = Object.keys(ConstraintTypes).map((key) => ConstraintTypes[key]);
   }
 
-  ngOnChanges (changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges) {
     this.filterForm.valueChanges.subscribe(() => {
       this.emitOnFilterChange();
     });
@@ -85,60 +85,31 @@ export class FiltersListComponent implements OnInit {
       this.filterFormArray = new FormArray([]);
       this. filterForm = new FormGroup (
         {
-          'filterFormList': this.filterFormArray
+          filterFormList: this.filterFormArray
         }
       );
     }
   }
 
-  private initFilters () {
-    if (this.existingFilters && this.existingFilters.listToscaDataDefinition && this.existingFilters.listToscaDataDefinition.length > 0) {
-      this.existingFilters.listToscaDataDefinition.forEach(val => {
-        this.filters.push(val);
-        this.filterFormArray.push(
-          new FormControl(val, [Validators.required, this.formControlValidator()])
-        );
-      })
-    }
-  }
-
-  private emitOnFilterChange (): void {
-    this.filtersChangeEvent.emit({
-      filters: this.filters,
-      valid: this.filterForm.valid
-    });
-  }
-
-  addFilter () {
-    let filterParameter: FilterParameter = {
+  addFilter() {
+    const filterParameter: FilterParameter = {
       name: null,
       constraint: null,
       filterValue: null
-    }
+    };
     this.filters.push(filterParameter);
     this.filterFormArray.push(
       new FormControl(filterParameter, [Validators.required, this.formControlValidator()])
     );
   }
 
-  private formControlValidator (): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const filter = control.value;
-
-      if (!filter || !filter.name || !filter.constraint || !filter.filterValue) {
-        return {required:true};
-      }
-      return null;
-    }
-  }
-
-  removeFromFilters (index: number) {
+  removeFromFilters(index: number) {
     this.filters.splice(index, 1);
     this.filterFormArray.removeAt(index);
   }
 
-  onFilterConstraintChange (type: string, index: number) {
-    let filter = this.filterFormArray.controls[index].value;
+  onFilterConstraintChange(type: string, index: number) {
+    const filter = this.filterFormArray.controls[index].value;
     filter.constraint = type;
     if (ConstraintTypes.valid_values == type || ConstraintTypes.in_range == type) {
       filter.filterValue = [];
@@ -148,19 +119,19 @@ export class FiltersListComponent implements OnInit {
     this.filterFormArray.controls[index].setValue(filter);
   }
 
-  onFilterValueChange (value: any, index: number) {
-    let filter = this.filterFormArray.controls[index].value;
+  onFilterValueChange(value: any, index: number) {
+    const filter = this.filterFormArray.controls[index].value;
     filter.filterValue = value;
     this.filterFormArray.controls[index].setValue(filter);
   }
 
-  onFilterNameChange (value: any, index: number) {
-    let filter = this.filterFormArray.controls[index].value;
+  onFilterNameChange(value: any, index: number) {
+    const filter = this.filterFormArray.controls[index].value;
     filter.name = value;
     this.filterFormArray.controls[index].setValue(filter);
   }
 
-  getInRangeValue (index: number, valueIndex: number): string {
+  getInRangeValue(index: number, valueIndex: number): string {
     const value = this.filters[index].filterValue;
 
     if (!value || !value[valueIndex]) {
@@ -170,8 +141,8 @@ export class FiltersListComponent implements OnInit {
     return value[valueIndex];
   }
 
-  onChangeConstrainValueIndex (index: number, newValue: any, valueIndex: number) {
-    let filter = this.filterFormArray.controls[index].value;
+  onChangeConstrainValueIndex(index: number, newValue: any, valueIndex: number) {
+    const filter = this.filterFormArray.controls[index].value;
     if (!filter.filterValue) {
       filter.filterValue = [];
     }
@@ -179,29 +150,29 @@ export class FiltersListComponent implements OnInit {
     this.filterFormArray.controls[index].setValue(filter);
   }
 
-  constraintValuesArray (index: number) {
-    let filters = this.filterForm.get('filterFormList') as FormArray;
+  constraintValuesArray(index: number) {
+    const filters = this.filterForm.get('filterFormList') as FormArray;
     return filters.at(index).value.filterValue;
   }
 
-  addToList (filterIndex: number) {
+  addToList(filterIndex: number) {
     this.constraintValuesArray(filterIndex).push('');
   }
 
-  removeFromList (filterIndex: number, valueIndex: number) {
+  removeFromList(filterIndex: number, valueIndex: number) {
     this.constraintValuesArray(filterIndex).splice(valueIndex, 1);
   }
 
-  onValueTypeChange (value: string, index: number) {
+  onValueTypeChange(value: string, index: number) {
     if (value === 'true') {
-      let filter = this.filterFormArray.controls[index].value;
+      const filter = this.filterFormArray.controls[index].value;
       if (!filter.toscaFunction) {
         filter.toscaFunction = {} as ToscaFunction;
       }
       filter.filterValue = '';
       this.filterFormArray.controls[index].setValue(filter);
     } else {
-      let filter = this.filterFormArray.controls[index].value;
+      const filter = this.filterFormArray.controls[index].value;
       filter.toscaFunction = undefined;
       this.filterFormArray.controls[index].setValue(filter);
       if (this.isAProperty.has(index)) {
@@ -212,8 +183,8 @@ export class FiltersListComponent implements OnInit {
 
   getAsProperty(index: number) {
     if (!this.isAProperty.has(index)) {
-      let filter = this.filterFormArray.controls[index].value;
-      let property = new PropertyBEModel();
+      const filter = this.filterFormArray.controls[index].value;
+      const property = new PropertyBEModel();
       property.type = 'any';
       property.toscaFunction = filter.toscaFunction;
       property.value = filter.filterValue;
@@ -223,9 +194,9 @@ export class FiltersListComponent implements OnInit {
     return this.isAProperty.get(index);
   }
 
-  onToscaFunctionValidityChange(validationEvent: ToscaFunctionValidationEvent, index: number):void {
+  onToscaFunctionValidityChange(validationEvent: ToscaFunctionValidationEvent, index: number): void {
     if (validationEvent.isValid) {
-      let filter = this.filterFormArray.controls[index].value;
+      const filter = this.filterFormArray.controls[index].value;
       filter.toscaFunction = validationEvent.toscaFunction;
       filter.filterValue = validationEvent.toscaFunction.buildValueString();
       this.filterFormArray.controls[index].setValue(filter);
@@ -233,9 +204,38 @@ export class FiltersListComponent implements OnInit {
   }
 
   isToscaFunction(index: number): boolean {
-    let filter = this.filterFormArray.controls[index].value;
-    let toscaFunction = filter.toscaFunction;
+    const filter = this.filterFormArray.controls[index].value;
+    const toscaFunction = filter.toscaFunction;
     return toscaFunction;
+  }
+
+  private initFilters() {
+    if (this.existingFilters && this.existingFilters.listToscaDataDefinition && this.existingFilters.listToscaDataDefinition.length > 0) {
+      this.existingFilters.listToscaDataDefinition.forEach((val) => {
+        this.filters.push(val);
+        this.filterFormArray.push(
+          new FormControl(val, [Validators.required, this.formControlValidator()])
+        );
+      });
+    }
+  }
+
+  private emitOnFilterChange(): void {
+    this.filtersChangeEvent.emit({
+      filters: this.filters,
+      valid: this.filterForm.valid
+    });
+  }
+
+  private formControlValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const filter = control.value;
+
+      if (!filter || !filter.name || !filter.constraint || !filter.filterValue) {
+        return {required: true};
+      }
+      return null;
+    };
   }
 
 }

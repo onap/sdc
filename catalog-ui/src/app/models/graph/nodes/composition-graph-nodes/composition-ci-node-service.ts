@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,24 +18,24 @@
  * ============LICENSE_END=========================================================
  */
 
-import { ImagesUrl, GraphUIObjects} from "../../../../utils/constants";
-import {ComponentInstance} from '../../../components-instances/component-instance';
-import {CompositionCiNodeBase} from './composition-ci-node-base';
-import {ImageCreatorService} from "app/pages/composition/graph/common/image-creator.service";
+import { ImageCreatorService } from 'app/pages/composition/graph/common/image-creator.service';
+import { GraphUIObjects, ImagesUrl } from '../../../../utils/constants';
+import { ComponentInstance } from '../../../components-instances/component-instance';
+import { CompositionCiNodeBase } from './composition-ci-node-base';
 export class CompositionCiNodeService extends CompositionCiNodeBase {
 
-    constructor(instance:ComponentInstance,
-                imageCreator:ImageCreatorService) {
+    constructor(instance: ComponentInstance,
+                imageCreator: ImageCreatorService) {
         super(instance, imageCreator);
         this.initService();
     }
 
-    private initService():void {
+    private initService(): void {
         this.imagesPath = this.imagesPath + ImagesUrl.SERVICE_ICONS;
         this.img = this.imagesPath + ImagesUrl.SERVICE_ICONS + this.componentInstance.icon + '.png';
         this.imgWidth = GraphUIObjects.DEFAULT_RESOURCE_WIDTH;
         this.classes = 'service-node';
-        if(this.archived){
+        if (this.archived) {
             this.classes = this.classes + ' archived';
             return;
         }

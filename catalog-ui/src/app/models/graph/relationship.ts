@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,23 +18,23 @@
  * ============LICENSE_END=========================================================
  */
 'use strict';
-import * as _ from "lodash";
-import {Capability} from "../capability";
-import {Requirement} from "../requirement";
-import {Operation} from "../../pages/composition/graph/connection-wizard/create-interface-operation/model/operation";
+import * as _ from 'lodash';
+import { Operation } from '../../pages/composition/graph/connection-wizard/create-interface-operation/model/operation';
+import { Capability } from '../capability';
+import { Requirement } from '../requirement';
 
 export class RelationshipModel {
-    fromNode:string;
-    toNode:string;
-    relationships:Array<Relationship>;
+    fromNode: string;
+    toNode: string;
+    relationships: Relationship[];
 
-    constructor(relationshipModel?:RelationshipModel, singleRelationship?:Relationship) {
+    constructor(relationshipModel?: RelationshipModel, singleRelationship?: Relationship) {
         if (relationshipModel) {
             this.fromNode = relationshipModel.fromNode;
             this.toNode = relationshipModel.toNode;
             this.relationships = [];
             if (relationshipModel.relationships && !singleRelationship) {
-                _.forEach(relationshipModel.relationships, (relation:Relationship):void => {
+                _.forEach(relationshipModel.relationships, (relation: Relationship): void => {
                     this.relationships.push(new Relationship(relation));
                 });
             } else if (singleRelationship) {
@@ -43,7 +43,7 @@ export class RelationshipModel {
         }
     }
 
-    public setRelationshipModelParams(fromNode:string, toNode:string, relationships:Array<Relationship>) {
+    public setRelationshipModelParams(fromNode: string, toNode: string, relationships: Relationship[]) {
         this.fromNode = fromNode;
         this.toNode = toNode;
         this.relationships = relationships;
@@ -51,9 +51,9 @@ export class RelationshipModel {
 }
 
 export class RelationType {
-    type:string;
+    type: string;
 
-    constructor(type?:string) {
+    constructor(type?: string) {
         if (type) {
             this.type = type;
         }
@@ -61,16 +61,16 @@ export class RelationType {
 }
 
 export class RelationshipType {
-    id:string;
-    capability:string;
-    capabilityOwnerId:string;
-    capabilityUid:string;
-    relationship:RelationType;
-    requirement:string;
-    requirementOwnerId:string;
-    requirementUid:string;
+    id: string;
+    capability: string;
+    capabilityOwnerId: string;
+    capabilityUid: string;
+    relationship: RelationType;
+    requirement: string;
+    requirementOwnerId: string;
+    requirementUid: string;
 
-    constructor(relationship?:RelationshipType) {
+    constructor(relationship?: RelationshipType) {
         if (relationship) {
             this.id = relationship.id;
             this.capability = relationship.capability;
@@ -85,7 +85,7 @@ export class RelationshipType {
         }
     }
 
-    public setRelationProperties = (capability?:Capability, requirement?:Requirement)=> {
+    public setRelationProperties = (capability?: Capability, requirement?: Requirement) => {
         if (capability) {
             this.capability = capability.name;
             this.capabilityOwnerId = capability.ownerId;
@@ -97,23 +97,23 @@ export class RelationshipType {
             this.requirementOwnerId = requirement.ownerId;
             this.requirementUid = requirement.uniqueId;
         }
-    };
+    }
 }
 
 export class Relationship {
     relation: RelationshipType;
     capability?: Capability;
     requirement?: Requirement;
-    operations?:Array<Operation>;
+    operations?: Operation[];
 
-    constructor(fullRelationship?:Relationship) {
+    constructor(fullRelationship?: Relationship) {
         if (fullRelationship) {
             this.relation = new RelationshipType(fullRelationship.relation);
             this.capability = fullRelationship.capability && new Capability(fullRelationship.capability);
             this.requirement = fullRelationship.requirement && new Requirement(fullRelationship.requirement);
             if (fullRelationship.operations) {
                 this.operations = new Array<Operation>();
-                fullRelationship.operations.forEach(operation => {
+                fullRelationship.operations.forEach((operation) => {
                     this.operations.push(new Operation(operation));
                 });
             }
@@ -122,14 +122,14 @@ export class Relationship {
         }
     }
 
-    public setRelationProperties(capability?:Capability, requirement?:Requirement) {
+    public setRelationProperties(capability?: Capability, requirement?: Requirement) {
         this.relation.setRelationProperties(capability, requirement);
         this.capability = capability;
         this.requirement = requirement;
     }
 
-    public toJSON = ():any => {
-        let temp = _.cloneDeep(this);
+    public toJSON = (): any => {
+        const temp = _.cloneDeep(this);
         temp.capability = undefined;
         temp.requirement = undefined;
         return temp;

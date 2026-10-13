@@ -5,11 +5,11 @@ import { Component, Input } from '@angular/core';
 import * as _ from 'lodash';
 import { IDropDownOption } from 'onap-ui-angular/dist/form-elements/dropdown/dropdown-models';
 import { Subject } from 'rxjs/Subject';
-import {ArtifactModel} from '../../../models/artifacts';
-import {ArtifactType, ComponentType} from '../../../utils/constants';
-import { Dictionary } from '../../../utils/dictionary';
-import { CacheService } from '../../../services/cache.service';
+import { ArtifactModel } from '../../../models/artifacts';
 import { ArtifactConfigService } from '../../../services/artifact-config.service';
+import { CacheService } from '../../../services/cache.service';
+import { ArtifactType, ComponentType } from '../../../utils/constants';
+import { Dictionary } from '../../../utils/dictionary';
 
 @Component({
     selector: 'artifact-form',
@@ -48,12 +48,12 @@ export class ArtifactFormComponent {
     // the chosen type, so browsing must not depend on the Type having been picked first.
     public isFileBrowseDisabled = (): boolean => {
         return !!this.isViewOnly;
-    };
+    }
 
     public onTypeChange = (selectedFileType: IDropDownOption) => {
         this.artifact.artifactType = selectedFileType.value;
         this.verifyTypeAndFileWereFilled();
-    };
+    }
 
     public onUploadFile = (file) => {
         if (file) {
@@ -64,7 +64,35 @@ export class ArtifactFormComponent {
             this.artifact.artifactName = null;
         }
         this.verifyTypeAndFileWereFilled();
-    };
+    }
+
+    // Verify that the Type and the Name (file) are filled in the Modal
+    // For Description and Label - I used this.descriptionIsValid:boolean & this.labelIsValid:boolean as part of the sdc-validation Element
+    public verifyTypeAndFileWereFilled = () => {
+        if (this.artifact.artifactType === 'DEPLOYMENT' || !this.artifact.mandatory && this.artifact.artifactGroupType !== 'SERVICE_API') {
+            // In case of all fields are required:
+            // File, Description, Type and Label
+            if (this.artifact.artifactType && this.artifact.artifactName && this.descriptionIsValid && this.labelIsValid) {
+                this.onValidationChange.next(true);
+            } else {
+                this.onValidationChange.next(false);
+            }
+        } else {
+            // In case of like Information Artifact
+            // Only file and description are required
+            if (this.descriptionIsValid && this.artifact.artifactName) {
+                this.onValidationChange.next(true);
+            } else {
+                this.onValidationChange.next(false);
+            }
+        }
+    }
+
+    // sdc-validation for Description
+    public onDescriptionChange = (isValid: boolean): void => {
+        this.descriptionIsValid = isValid;
+        this.onValidationChange.next(isValid) && this.verifyTypeAndFileWereFilled();
+    }
 
     private initArtifactTypes = (): void => {
         let artifactTypesList: string[];
@@ -93,39 +121,11 @@ export class ArtifactFormComponent {
             return artifactType.value === this.artifact.artifactType;
         });
 
-    };
-
-    // Verify that the Type and the Name (file) are filled in the Modal
-    // For Description and Label - I used this.descriptionIsValid:boolean & this.labelIsValid:boolean as part of the sdc-validation Element
-    public verifyTypeAndFileWereFilled = () => {
-        if (this.artifact.artifactType === 'DEPLOYMENT' || !this.artifact.mandatory && this.artifact.artifactGroupType !== 'SERVICE_API') {
-            // In case of all fields are required:
-            // File, Description, Type and Label
-            if (this.artifact.artifactType && this.artifact.artifactName && this.descriptionIsValid && this.labelIsValid) {
-                this.onValidationChange.next(true);
-            } else {
-                this.onValidationChange.next(false);
-            }
-        } else {
-            // In case of like Information Artifact
-            // Only file and description are required
-            if (this.descriptionIsValid && this.artifact.artifactName) {
-                this.onValidationChange.next(true);
-            } else {
-                this.onValidationChange.next(false);
-            }
-        }
-    };
-
-    // sdc-validation for Description
-    public onDescriptionChange = (isValid: boolean): void => {
-        this.descriptionIsValid = isValid;
-        this.onValidationChange.next(isValid) && this.verifyTypeAndFileWereFilled();
-    };
+    }
 
     // sdc-validation for Label
     private onLabelChange = (isValid: boolean): void => {
         this.labelIsValid = isValid;
         this.onValidationChange.next(isValid) && this.verifyTypeAndFileWereFilled();
-    };
+    }
 }

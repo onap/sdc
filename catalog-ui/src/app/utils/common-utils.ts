@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,30 +18,30 @@
  * ============LICENSE_END=========================================================
  */
 
-import * as _ from "lodash";
-import {AttributeModel} from '../models/attributes';
-import {ResourceInstance} from '../models/components-instances/resource-instance';
-import {Module} from '../models/modules/base-module';
-import {OperationModel} from '../models/operation';
-import {PropertyModel} from '../models/properties';
-import {InputFEModel} from '../models/properties-inputs/input-fe-model';
-import {ComponentInstanceFactory} from "./component-instance-factory";
-import {RelationshipModel} from 'app/models/graph/relationship';
-import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
-import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
-import { PolicyInstance } from "app/models/graph/zones/policy-instance";
-import { GroupInstance } from "../models/graph/zones/group-instance";
-import { InterfaceModel } from "../models/operation";
-import {AttributeBEModel} from "../models/attributes-outputs/attribute-be-model";
-import {OutputBEModel} from "../models/attributes-outputs/output-be-model";
+import { RelationshipModel } from 'app/models/graph/relationship';
+import { PolicyInstance } from 'app/models/graph/zones/policy-instance';
+import { InputBEModel } from 'app/models/properties-inputs/input-be-model';
+import { PropertyBEModel } from 'app/models/properties-inputs/property-be-model';
+import * as _ from 'lodash';
+import { AttributeModel } from '../models/attributes';
+import { AttributeBEModel } from '../models/attributes-outputs/attribute-be-model';
+import { OutputBEModel } from '../models/attributes-outputs/output-be-model';
+import { ResourceInstance } from '../models/components-instances/resource-instance';
+import { GroupInstance } from '../models/graph/zones/group-instance';
+import { Module } from '../models/modules/base-module';
+import { OperationModel } from '../models/operation';
+import { InterfaceModel } from '../models/operation';
+import { PropertyModel } from '../models/properties';
+import { InputFEModel } from '../models/properties-inputs/input-fe-model';
+import { ComponentInstanceFactory } from './component-instance-factory';
 
 export class CommonUtils {
 
-    static initProperties(propertiesObj:Array<PropertyModel>, uniqueId?:string):Array<PropertyModel> {
+    static initProperties(propertiesObj: PropertyModel[], uniqueId?: string): PropertyModel[] {
 
-        let properties = new Array<PropertyModel>();
+        const properties = new Array<PropertyModel>();
         if (propertiesObj) {
-            propertiesObj.forEach((property:PropertyModel):void => {
+            propertiesObj.forEach((property: PropertyModel): void => {
                 if (uniqueId) {
                     property.readonly = property.parentUniqueId != uniqueId;
                 }
@@ -49,13 +49,13 @@ export class CommonUtils {
             });
         }
         return properties;
-    };
+    }
 
-    static initAttributes(attributesObj:Array<AttributeModel>, uniqueId?:string):Array<AttributeModel> {
+    static initAttributes(attributesObj: AttributeModel[], uniqueId?: string): AttributeModel[] {
 
-        let attributes = new Array<AttributeModel>();
+        const attributes = new Array<AttributeModel>();
         if (attributesObj) {
-            attributesObj.forEach((attribute:AttributeModel):void => {
+            attributesObj.forEach((attribute: AttributeModel): void => {
                 if (uniqueId) {
                     attribute.readonly = attribute.parentUniqueId != uniqueId;
                 }
@@ -63,111 +63,111 @@ export class CommonUtils {
             });
         }
         return attributes;
-    };
+    }
 
-    static initComponentInstances(componentInstanceObj:Array<ResourceInstance>):Array<ResourceInstance> {
+    static initComponentInstances(componentInstanceObj: ResourceInstance[]): ResourceInstance[] {
 
-        let componentInstances = new Array<ResourceInstance>();
+        const componentInstances = new Array<ResourceInstance>();
         if (componentInstanceObj) {
-            componentInstanceObj.forEach((instance:ResourceInstance):void => {
+            componentInstanceObj.forEach((instance: ResourceInstance): void => {
                 componentInstances.push(ComponentInstanceFactory.createComponentInstance(instance));
             });
         }
         return componentInstances;
-    };
+    }
 
-    static initModules(moduleArrayObj:Array<Module>):Array<Module> {
+    static initModules(moduleArrayObj: Module[]): Module[] {
 
-        let modules = new Array<Module>();
+        const modules = new Array<Module>();
 
         if (moduleArrayObj) {
-            moduleArrayObj.forEach((module:Module):void => {
-                if (module.type === "org.openecomp.groups.VfModule") {
+            moduleArrayObj.forEach((module: Module): void => {
+                if (module.type === 'org.openecomp.groups.VfModule') {
                     modules.push(new Module(module));
                 }
             });
         }
         return modules;
-    };
+    }
 
-    static initInputs(inputsObj: Array<InputBEModel>): Array<InputBEModel> {
+    static initInputs(inputsObj: InputBEModel[]): InputBEModel[] {
 
-        let inputs = new Array<InputBEModel>();
+        const inputs = new Array<InputBEModel>();
 
-        if(inputsObj) {
-            inputsObj.forEach((input: InputBEModel):void => {
+        if (inputsObj) {
+            inputsObj.forEach((input: InputBEModel): void => {
                 inputs.push(new InputBEModel(input));
-            })
+            });
         }
 
         return inputs;
     }
 
-    static initOutputs(outputsObj: Array<OutputBEModel>): Array<OutputBEModel> {
+    static initOutputs(outputsObj: OutputBEModel[]): OutputBEModel[] {
 
-        let outputs = new Array<OutputBEModel>();
+        const outputs = new Array<OutputBEModel>();
 
-        if(outputsObj) {
-            outputsObj.forEach((output: OutputBEModel):void => {
+        if (outputsObj) {
+            outputsObj.forEach((output: OutputBEModel): void => {
                 outputs.push(new OutputBEModel(output));
-            })
+            });
         }
 
         return outputs;
     }
 
-    static initBeProperties(propertiesObj: Array<PropertyBEModel>): Array<PropertyBEModel> {
+    static initBeProperties(propertiesObj: PropertyBEModel[]): PropertyBEModel[] {
 
-        let properties = new Array<PropertyBEModel>();
+        const properties = new Array<PropertyBEModel>();
 
         if (propertiesObj) {
             propertiesObj.forEach((property: PropertyBEModel): void => {
                 properties.push(new PropertyBEModel(property));
-            })
+            });
         }
 
         return properties;
     }
 
-    static initBeAttributes(attributesObj: Array<AttributeBEModel>): Array<AttributeBEModel> {
+    static initBeAttributes(attributesObj: AttributeBEModel[]): AttributeBEModel[] {
 
-        let attributes = new Array<AttributeBEModel>();
+        const attributes = new Array<AttributeBEModel>();
 
         if (attributesObj) {
             attributesObj.forEach((attribute: AttributeBEModel): void => {
                 attributes.push(new AttributeBEModel(attribute));
-            })
+            });
         }
 
         return attributes;
     }
 
-    static initComponentInstanceRelations = (componentInstanceRelationsObj:Array<RelationshipModel>):Array<RelationshipModel> => {
+    static initComponentInstanceRelations = (componentInstanceRelationsObj: RelationshipModel[]): RelationshipModel[] => {
         if (componentInstanceRelationsObj) {
-             let componentInstancesRelations: Array<RelationshipModel> = [];
-            componentInstanceRelationsObj.forEach((instanceRelation:RelationshipModel):void => {
+             const componentInstancesRelations: RelationshipModel[] = [];
+             componentInstanceRelationsObj.forEach((instanceRelation: RelationshipModel): void => {
                 componentInstancesRelations.push(new RelationshipModel(instanceRelation));
             });
-            return componentInstancesRelations;
+             return componentInstancesRelations;
         }
-    };
+    }
 
-    static initPolicies = (policiesObj: Array<PolicyInstance>):Array<PolicyInstance> => {
-        let policies = new Array<PolicyInstance>();
+    static initPolicies = (policiesObj: PolicyInstance[]): PolicyInstance[] => {
+        const policies = new Array<PolicyInstance>();
 
         if (policiesObj) {
             policiesObj.forEach((policy: PolicyInstance): void => {
                 policies.push(new PolicyInstance(policy));
-            })
+            });
         }
 
         return policies;
     }
-    static initGroups = (groupsObj: Array<GroupInstance>):Array<GroupInstance> => {
-        let groups = new Array<GroupInstance>();
+    static initGroups = (groupsObj: GroupInstance[]): GroupInstance[] => {
+        const groups = new Array<GroupInstance>();
 
-        if(groupsObj) {
-            groupsObj.forEach((group: GroupInstance):void => {
+        if (groupsObj) {
+            groupsObj.forEach((group: GroupInstance): void => {
                 groups.push(new GroupInstance(group));
             });
         }
@@ -175,7 +175,7 @@ export class CommonUtils {
         return groups;
     }
 
-    static initInterfaces(interfaces: Array<InterfaceModel>): Array<InterfaceModel> {
+    static initInterfaces(interfaces: InterfaceModel[]): InterfaceModel[] {
 
         return _.map(interfaces, (interf: InterfaceModel) => {
 
@@ -206,8 +206,8 @@ export class CommonUtils {
 
         });
     }
-    
-    static initInterfaceOperations(interfaces: Array<InterfaceModel>): Array<OperationModel> {
+
+    static initInterfaceOperations(interfaces: InterfaceModel[]): OperationModel[] {
 
         return _.reduce(interfaces, (acc, interf: InterfaceModel) => {
 
@@ -235,4 +235,3 @@ export class CommonUtils {
     }
 
 }
-

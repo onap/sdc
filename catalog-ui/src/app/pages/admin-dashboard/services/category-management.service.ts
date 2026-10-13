@@ -19,12 +19,12 @@
  * ============LICENSE_END=========================================================
  */
 
-import {Injectable, Inject} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {Observable} from 'rxjs/Observable';
-import {IMainCategory, ISubCategory} from 'app/models/category';
-import {SdcConfigToken, ISdcConfig} from 'app/config/sdc-config.config';
-import {HttpHelperService} from 'app/services/http-helper.service';
+import { HttpClient } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
+import { ISdcConfig, SdcConfigToken } from 'app/config/sdc-config.config';
+import { IMainCategory, ISubCategory } from 'app/models/category';
+import { HttpHelperService } from 'app/services/http-helper.service';
+import { Observable } from 'rxjs/Observable';
 
 @Injectable()
 export class CategoryManagementService {
@@ -41,7 +41,7 @@ export class CategoryManagementService {
             this.sdcConfig.api.POST_category,
             {types: type + 's'}
         );
-        return this.http.post(url, category).map(resp => <IMainCategory>resp);
+        return this.http.post(url, category).map((resp) => resp as IMainCategory);
     }
 
     /**
@@ -51,8 +51,8 @@ export class CategoryManagementService {
     public createSubCategory(type: string, categoryId: string, subCategory: {name: string}): Observable<ISubCategory> {
         const url = this.sdcConfig.api.root + HttpHelperService.replaceUrlParams(
             this.sdcConfig.api.POST_subcategory,
-            {types: type + 's', categoryId: categoryId}
+            {types: type + 's', categoryId}
         );
-        return this.http.post(url, subCategory).map(resp => <ISubCategory>resp);
+        return this.http.post(url, subCategory).map((resp) => resp as ISubCategory);
     }
 }

@@ -1,9 +1,9 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from "@angular/core";
-import {URLSearchParams} from '@angular/http';
-import {Plugin} from 'app/models/plugins-config';
-import {EventBusService} from "../../../services/event-bus.service";
-import {NavigationService} from "../../../services/navigation.service";
-import {PluginsService} from "../../../services/plugins.service";
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { URLSearchParams } from '@angular/http';
+import { Plugin } from 'app/models/plugins-config';
+import { EventBusService } from '../../../services/event-bus.service';
+import { NavigationService } from '../../../services/navigation.service';
+import { PluginsService } from '../../../services/plugins.service';
 
 @Component({
     selector: 'plugin-frame',
@@ -17,10 +17,10 @@ export class PluginFrameComponent implements OnInit, OnDestroy {
     @Input() queryParams: Object;
     @Output() onLoadingDone: EventEmitter<void> = new EventEmitter<void>();
     pluginUrl: string;
+    isPluginCheckDone: boolean;
     private urlSearchParams: URLSearchParams;
     private isClosed: boolean;
     private isReady: boolean;
-    isPluginCheckDone: boolean;
     private stateChangeStartUnregister: Function;
 
     constructor(private eventBusService: EventBusService,
@@ -41,7 +41,7 @@ export class PluginFrameComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        this.pluginsService.isPluginOnline(this.plugin.pluginId).subscribe(isPluginOnline => {
+        this.pluginsService.isPluginOnline(this.plugin.pluginId).subscribe((isPluginOnline) => {
             this.plugin.isOnline = isPluginOnline;
             this.isPluginCheckDone = true;
 
@@ -67,12 +67,12 @@ export class PluginFrameComponent implements OnInit, OnDestroy {
             this.pluginUrl += this.urlSearchParams.toString();
         }
 
-        let readyEvent = (eventData) => {
+        const readyEvent = (eventData) => {
             if (eventData.originId === this.plugin.pluginId) {
-                if (eventData.type == "READY") {
+                if (eventData.type == 'READY') {
                     this.isReady = true;
                     this.onLoadingDone.emit();
-                    this.eventBusService.off(readyEvent)
+                    this.eventBusService.off(readyEvent);
                 }
             }
         };
@@ -86,12 +86,12 @@ export class PluginFrameComponent implements OnInit, OnDestroy {
             if ((event.fromState !== event.toState) || (event.fromState === event.toState) && (event.toParams.path !== event.fromParams.path)) {
                 if (!this.isReady) {
                     this.onLoadingDone.emit();
-                    this.eventBusService.off(readyEvent)
+                    this.eventBusService.off(readyEvent);
                 }
                 if (this.eventBusService.NoWindowOutEvents.indexOf(this.eventBusService.lastEventNotified) == -1) {
                     if (!this.isClosed) {
                         event.preventDefault();
-                        this.eventBusService.notify("WINDOW_OUT").subscribe(() => {
+                        this.eventBusService.notify('WINDOW_OUT').subscribe(() => {
                             this.isClosed = true;
                             this.eventBusService.unregister(this.plugin.pluginId);
 

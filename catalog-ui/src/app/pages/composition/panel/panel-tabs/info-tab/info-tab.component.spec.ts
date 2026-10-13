@@ -1,40 +1,39 @@
-import { async, ComponentFixture} from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { async, ComponentFixture } from '@angular/core/testing';
 import { Store } from '@ngxs/store';
-import { CompositionPaletteService } from '../../../palette/services/palette.service';
+import { SdcUiServices } from 'onap-ui-angular';
+import { Observable } from 'rxjs';
+import { leftPaletteElements } from '../../../../../../jest/mocks/left-paeltte-elements.mock';
+import { serviceMetadata } from '../../../../../../jest/mocks/service-metadata.mock';
+import { ConfigureFn, configureTests } from '../../../../../../jest/test-config.helper';
 import { IAppMenu, SdcMenuToken } from '../../../../../config/sdc-menu.config';
-import { CompositionService } from '../../../composition.service';
-import {ServiceService} from '../../../../../services/component-services/service.service';
-import { WorkspaceService } from '../../../../workspace/workspace.service';
+import { ComponentMetadata } from '../../../../../models/component-metadata';
+import { ComponentInstance } from '../../../../../models/components-instances/component-instance';
+import { Component as TopologyTemplate } from '../../../../../models/components/component';
+import { KeyValuePipe } from '../../../../../pipes/key-value.pipe';
 import { ComponentInstanceService } from '../../../../../services/component-instance-services/component-instance.service';
-import {EventListenerService} from '../../../../../services/event-listener.service';
+import { ServiceService } from '../../../../../services/component-services/service.service';
+import { TopologyTemplateService } from '../../../../../services/component-services/topology-template.service';
+import { EventListenerService } from '../../../../../services/event-listener.service';
+import { ComponentGenericResponse } from '../../../../../services/responses/component-generic-response';
+import { TranslatePipe } from '../../../../../shared/translator/translate.pipe';
+import { TranslateService } from '../../../../../shared/translator/translate.service';
+import { WorkspaceService } from '../../../../workspace/workspace.service';
+import { CompositionService } from '../../../composition.service';
+import { CompositionPaletteService } from '../../../palette/services/palette.service';
 import { InfoTabComponent } from './info-tab.component';
-import { ConfigureFn, configureTests } from "../../../../../../jest/test-config.helper";
-import { Observable } from "rxjs";
-import { leftPaletteElements } from "../../../../../../jest/mocks/left-paeltte-elements.mock";
-import { TranslatePipe } from "../../../../../shared/translator/translate.pipe";
-import { TranslateService } from "../../../../../shared/translator/translate.service";
-import { SdcUiServices } from "onap-ui-angular";
-import {ComponentMetadata} from '../../../../../models/component-metadata';
-import {Component as TopologyTemplate} from '../../../../../models/components/component';
-import {ComponentInstance} from '../../../../../models/components-instances/component-instance';
-import {KeyValuePipe} from "../../../../../pipes/key-value.pipe";
-import {TopologyTemplateService} from "../../../../../services/component-services/topology-template.service";
-import {ComponentGenericResponse} from "../../../../../services/responses/component-generic-response";
-import {serviceMetadata} from "../../../../../../jest/mocks/service-metadata.mock";
-
 
 describe('InfoTabComponent', () => {
     // let comp: InfoTabComponent;
     let fixture: ComponentFixture<InfoTabComponent>;
 
     // let eventServiceMock: Partial<EventListenerService>;
-    let storeStub:Partial<Store>;
-    let compositionPaletteServiceStub:Partial<CompositionPaletteService>;
-    let iAppMenuStub:Partial<IAppMenu>;
-    let eventListenerServiceStub:Partial<EventListenerService>;
-    let topologyTemplateServiceStub:Partial<TopologyTemplateService>;
-    let componentGenericResponseStub:Partial<ComponentGenericResponse>;
+    let storeStub: Partial<Store>;
+    let compositionPaletteServiceStub: Partial<CompositionPaletteService>;
+    let iAppMenuStub: Partial<IAppMenu>;
+    let eventListenerServiceStub: Partial<EventListenerService>;
+    let topologyTemplateServiceStub: Partial<TopologyTemplateService>;
+    let componentGenericResponseStub: Partial<ComponentGenericResponse>;
 
     beforeEach(
         async(() => {
@@ -42,18 +41,18 @@ describe('InfoTabComponent', () => {
             iAppMenuStub = {};
             eventListenerServiceStub = {
                 notifyObservers: jest.fn()
-            }
+            };
             compositionPaletteServiceStub = {
-                getLeftPaletteElements:  jest.fn().mockImplementation(()=>  Observable.of(leftPaletteElements))
-            }
+                getLeftPaletteElements:  jest.fn().mockImplementation(() =>  Observable.of(leftPaletteElements))
+            };
             componentGenericResponseStub = {
               metadata: new ComponentMetadata()
-            }
+            };
             componentGenericResponseStub.metadata.allVersions = serviceMetadata.allVersions;
             topologyTemplateServiceStub = {
                 getComponentMetadata: jest.fn().mockImplementation(() => Observable.of(componentGenericResponseStub))
-            }
-            const configure: ConfigureFn = testBed => {
+            };
+            const configure: ConfigureFn = (testBed) => {
                 testBed.configureTestingModule({
                     imports: [ ],
                     declarations: [ InfoTabComponent, TranslatePipe, KeyValuePipe ],
@@ -74,14 +73,13 @@ describe('InfoTabComponent', () => {
                 });
             };
 
-            configureTests(configure).then(testBed => {
+            configureTests(configure).then((testBed) => {
                 fixture = testBed.createComponent(InfoTabComponent);
-                let comp = fixture.componentInstance;
+                const comp = fixture.componentInstance;
 
             });
         })
     );
-
 
     it('can load instance', () => {
         expect(fixture).toMatchSnapshot();
@@ -89,16 +87,15 @@ describe('InfoTabComponent', () => {
 
     describe('Version dropdown', () => {
         it('is undefined for topologyTemplate', () => {
-            fixture.componentInstance.component = <TopologyTemplate>{};
+            fixture.componentInstance.component = ({} as TopologyTemplate);
             fixture.componentInstance.initEditResourceVersion(fixture.componentInstance.component, fixture.componentInstance.flatLeftPaletteElementsFromService(leftPaletteElements));
             expect(fixture.componentInstance.versions).toBe(undefined);
         });
         it('does not contain the highest minor version if it is checked out', () => {
             fixture.componentInstance.component = new ComponentInstance();
-            fixture.componentInstance.component.allVersions =
-            {'1.0': "9c829122-af05-4bc9-b537-5d84f4c8ae25", '1.1': "930d56cb-868d-4e35-bd0f-e737d2fdb171"};
-            fixture.componentInstance.component.version = "1.0";
-            fixture.componentInstance.component.uuid = "a8cf015e-e4e5-4d4b-a01e-8624e8d36095";
+            fixture.componentInstance.component.allVersions = {'1.0': '9c829122-af05-4bc9-b537-5d84f4c8ae25', '1.1': '930d56cb-868d-4e35-bd0f-e737d2fdb171'};
+            fixture.componentInstance.component.version = '1.0';
+            fixture.componentInstance.component.uuid = 'a8cf015e-e4e5-4d4b-a01e-8624e8d36095';
             fixture.componentInstance.initEditResourceVersion(fixture.componentInstance.component, fixture.componentInstance.flatLeftPaletteElementsFromService(leftPaletteElements));
             expect(fixture.componentInstance.versions).toHaveLength(1);
         });

@@ -4,12 +4,12 @@
 /**
  * Created by rc2122 on 9/4/2017.
  */
-import {Component, Inject, forwardRef} from '@angular/core';
-import {IStepComponent} from 'app/models/wizard-step';import {ConnectionWizardService} from "../connection-wizard.service";
-import {PropertyFEModel} from "app/models/properties-inputs/property-fe-model";
-import {InstanceFePropertiesMap} from "app/models/properties-inputs/property-fe-map";
-import {PropertiesUtils} from "app/pages/properties-assignment/services/properties.utils";
-import { ComponentInstanceService } from "app/services/component-instance-services/component-instance.service";
+import { Component, Inject, forwardRef } from '@angular/core';
+import { IStepComponent } from 'app/models/wizard-step'; import { ConnectionWizardService } from '../connection-wizard.service';
+import { InstanceFePropertiesMap } from 'app/models/properties-inputs/property-fe-map';
+import { PropertyFEModel } from 'app/models/properties-inputs/property-fe-model';
+import { PropertiesUtils } from 'app/pages/properties-assignment/services/properties.utils';
+import { ComponentInstanceService } from 'app/services/component-instance-services/component-instance.service';
 
 @Component({
     selector: 'properties-step',
@@ -17,14 +17,14 @@ import { ComponentInstanceService } from "app/services/component-instance-servic
     styleUrls: ['./properties-step.component.less']
 })
 
-export class PropertiesStepComponent implements IStepComponent{
+export class PropertiesStepComponent implements IStepComponent {
 
     capabilityPropertiesMap: InstanceFePropertiesMap;
-    savingProperty:boolean = false;
+    savingProperty: boolean = false;
 
-    constructor(@Inject(forwardRef(() => ConnectionWizardService)) public connectWizardService: ConnectionWizardService, private componentInstanceService:ComponentInstanceService, private propertiesUtils:PropertiesUtils) {
+    constructor(@Inject(forwardRef(() => ConnectionWizardService)) public connectWizardService: ConnectionWizardService, private componentInstanceService: ComponentInstanceService, private propertiesUtils: PropertiesUtils) {
 
-        this.capabilityPropertiesMap = this.propertiesUtils.convertPropertiesMapToFEAndCreateChildren({'capability' : connectWizardService.selectedMatch.capability.properties}, false);
+        this.capabilityPropertiesMap = this.propertiesUtils.convertPropertiesMapToFEAndCreateChildren({capability : connectWizardService.selectedMatch.capability.properties}, false);
     }
 
     ngOnInit() {
@@ -32,36 +32,35 @@ export class PropertiesStepComponent implements IStepComponent{
     }
 
     onPropertySelectedUpdate = ($event) => {
-        console.log("==>" + 'PROPERTY VALUE SELECTED');
+        console.log('==>' + 'PROPERTY VALUE SELECTED');
         // this.selectedFlatProperty = $event;
         // let parentProperty:PropertyFEModel = this.propertiesService.getParentPropertyFEModelFromPath(this.instanceFePropertiesMap[this.selectedFlatProperty.instanceName], this.selectedFlatProperty.path);
         // parentProperty.expandedChildPropertyId = this.selectedFlatProperty.path;
-    };
+    }
 
     propertyValueChanged = (property: PropertyFEModel) => {
         if (!property.isDeclared) {
             const propChangedIdx = this.connectWizardService.changedCapabilityProperties.indexOf(property);
             if (property.hasValueObjChanged()) {
             // if (this.componentInstanceService.hasPropertyChanged(property)) {
-                console.log("==>" + this.constructor.name + ": propertyValueChanged " + property);
+                console.log('==>' + this.constructor.name + ': propertyValueChanged ' + property);
                 if (propChangedIdx === -1) {
                     this.connectWizardService.changedCapabilityProperties.push(property);
                 }
-            }
-            else {
+            } else {
                 if (propChangedIdx !== -1) {
-                    console.log("==>" + this.constructor.name + ": propertyValueChanged (reset to original) " + property);
+                    console.log('==>' + this.constructor.name + ': propertyValueChanged (reset to original) ' + property);
                     this.connectWizardService.changedCapabilityProperties.splice(propChangedIdx, 1);
                 }
             }
         }
-    };
+    }
 
-    preventNext = ():boolean => {
+    preventNext = (): boolean => {
         return false;
     }
 
-    preventBack = ():boolean => {
+    preventBack = (): boolean => {
         return this.savingProperty;
     }
 }

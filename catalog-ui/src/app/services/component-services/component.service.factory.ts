@@ -18,12 +18,11 @@
  * ============LICENSE_END=========================================================
  */
 
-
-import {Injectable} from "@angular/core";
-import {Component} from 'app/models/components/component';
-import {ComponentService} from "./component.service";
-import {ServiceService} from "./service.service";
-import {CacheService} from "../cache.service";
+import { Injectable } from '@angular/core';
+import { Component } from 'app/models/components/component';
+import { CacheService } from '../cache.service';
+import { ComponentService } from './component.service';
+import { ServiceService } from './service.service';
 
 @Injectable()
 export class ComponentServiceFactory {
@@ -31,11 +30,11 @@ export class ComponentServiceFactory {
     componentService: ComponentService;
     serviceService: ServiceService;
 
-    constructor(componentService: ComponentService, serviceService: ServiceService, private cacheService:CacheService) {
+    constructor(componentService: ComponentService, serviceService: ServiceService, private cacheService: CacheService) {
         this.serviceService = serviceService;
         this.componentService = componentService;
     }
-    getComponentService(component: Component):ComponentService {
+    getComponentService(component: Component): ComponentService {
         if (component.isService()) {
             return this.serviceService;
         }

@@ -1,15 +1,15 @@
 
 import { Component } from '@angular/core';
-import {DataTypesMap} from 'app/models/data-types-map';
-import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
-import {ValidationConfiguration} from 'app/models/validation-config';
 import { DropdownValue } from 'app/components/ui/form-components/dropdown/ui-element-dropdown.component';
+import { DataTypesMap } from 'app/models/data-types-map';
+import { PropertyBEModel } from 'app/models/properties-inputs/property-be-model';
+import { ValidationConfiguration } from 'app/models/validation-config';
 import { DataTypeService } from 'app/services/data-type.service';
-import {PROPERTY_DATA} from 'app/utils/constants';
+import { PROPERTY_DATA } from 'app/utils/constants';
 import * as _ from 'lodash';
-import {PROPERTY_TYPES} from '../../../utils/constants';
-import {Validation} from "../../../models/validation-config";
-import {WorkspaceService} from "../../workspace/workspace.service";
+import { Validation } from '../../../models/validation-config';
+import { PROPERTY_TYPES } from '../../../utils/constants';
+import { WorkspaceService } from '../../workspace/workspace.service';
 
 @Component({
     selector: 'property-creator',
@@ -19,7 +19,7 @@ import {WorkspaceService} from "../../workspace/workspace.service";
 
 export class PropertyCreatorComponent {
 
-    validation:Validation;
+    validation: Validation;
     // Bound by [pattern] on the description textarea. validation.json holds pattern STRINGS
     // (validation-config.ts mistypes them as RegExp) and Angular's PatternValidator takes either.
     // The guard is load-bearing: ConfigService.loadValidationConfiguration()'s error path never
@@ -50,13 +50,13 @@ export class PropertyCreatorComponent {
     }
 
     onTypeChange(): void {
-        this.propertyModel.schema.property.type='';
+        this.propertyModel.schema.property.type = '';
         const typeList =  this.typesProperties;
-        if(this.propertyModel.type === PROPERTY_TYPES.MAP){
-            this.typesSchemaProperties = typeList.filter(dropdownObject => (dropdownObject.label != 'list' && dropdownObject.label != 'map'));
+        if (this.propertyModel.type === PROPERTY_TYPES.MAP) {
+            this.typesSchemaProperties = typeList.filter((dropdownObject) => (dropdownObject.label != 'list' && dropdownObject.label != 'map'));
         }
-        if(this.propertyModel.type === PROPERTY_TYPES.LIST){
-            this.typesSchemaProperties = typeList.filter(dropdownObject => dropdownObject.label != 'list');
+        if (this.propertyModel.type === PROPERTY_TYPES.LIST) {
+            this.typesSchemaProperties = typeList.filter((dropdownObject) => dropdownObject.label != 'list');
         }
     }
 
@@ -96,7 +96,7 @@ export class PropertyCreatorComponent {
         this.typesProperties = _.map(PROPERTY_DATA.TYPES,
             (type: string) => new DropdownValue(type, type)
         );
-        const typesSimpleProperties = this.typesProperties.filter(dropdownObject => dropdownObject.label != 'list');
+        const typesSimpleProperties = this.typesProperties.filter((dropdownObject) => dropdownObject.label != 'list');
         const nonPrimitiveTypesValues = _.map(nonPrimitiveTypes,
             (type: string) => new DropdownValue(type,
                 type.replace('org.openecomp.datatypes.heat.', ''))

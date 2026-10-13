@@ -19,13 +19,13 @@
  * ============LICENSE_END=========================================================
  */
 
-import {Component, EventEmitter, Inject, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
-import {DerivedFEProperty} from 'app/models/properties-inputs/derived-fe-property';
-import {InstanceFePropertiesMap} from 'app/models/properties-inputs/property-fe-map';
-import {PropertyFEModel} from 'app/models/properties-inputs/property-fe-model';
+import { Component, EventEmitter, Inject, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { DerivedFEProperty } from 'app/models/properties-inputs/derived-fe-property';
+import { InstanceFePropertiesMap } from 'app/models/properties-inputs/property-fe-map';
+import { PropertyFEModel } from 'app/models/properties-inputs/property-fe-model';
 import { InstanceFeDetails } from '../../../models/instance-fe-details';
-import { PropertiesService } from '../../../services/properties.service';
 import { ModalService } from '../../../services/modal.service';
+import { PropertiesService } from '../../../services/properties.service';
 @Component({
     selector: 'properties-table',
     templateUrl: './properties-table.component.html',
@@ -42,17 +42,14 @@ export class PropertiesTableComponent implements OnChanges {
     @Input() isLoading: boolean;
     @Input() hasDeclareOption: boolean;
     @Input() hidePropertyType: boolean;
-    @Input() showDelete:boolean;
-    @Input() disablePropertyValue:boolean;
+    @Input() showDelete: boolean;
+    @Input() disablePropertyValue: boolean;
     @Output('propertyChanged') emitter: EventEmitter<PropertyFEModel> = new EventEmitter<PropertyFEModel>();
     @Output() selectPropertyRow: EventEmitter<PropertyRowSelectedEvent> = new EventEmitter<PropertyRowSelectedEvent>();
     @Output() updateCheckedPropertyCount: EventEmitter<boolean> = new EventEmitter<boolean>(); // only for hasDeclareOption
-    @Output() updateCheckedChildPropertyCount: EventEmitter<boolean> = new EventEmitter<boolean>();//only for hasDeclareListOption
+    @Output() updateCheckedChildPropertyCount: EventEmitter<boolean> = new EventEmitter<boolean>(); // only for hasDeclareListOption
     @Output() togggleToscaBtn: EventEmitter<boolean> = new EventEmitter<boolean>();
     @Output() deleteProperty: EventEmitter<PropertyFEModel> = new EventEmitter<PropertyFEModel>();
-    private selectedPropertyToDelete: PropertyFEModel;
-
-
 
     sortBy: String;
     reverse: boolean;
@@ -61,6 +58,7 @@ export class PropertiesTableComponent implements OnChanges {
 
     readonly ascUpperLettersFirst = 1;
     readonly descLowerLettersFirst = -1;
+    private selectedPropertyToDelete: PropertyFEModel;
 
     constructor(private propertiesService: PropertiesService, private modalService: ModalService) {
     }
@@ -107,25 +105,24 @@ export class PropertiesTableComponent implements OnChanges {
         this.updateCheckedPropertyCount.emit(isChecked);
 
         if (childPropName) {
-            let isCount: boolean = (isChecked)? true : false ;
+            const isCount: boolean = (isChecked) ? true : false ;
             this.updateCheckedChildPropertyCount.emit(isCount);
         }
     }
 
     toggleToscaFunction = (prop: DerivedFEProperty) => {
         this.togggleToscaBtn.emit(prop.isSelected);
-    };
-
+    }
 
     onDeleteProperty = () => {
         this.deleteProperty.emit(this.selectedPropertyToDelete);
         this.modalService.closeCurrentModal();
-    };
+    }
 
-    openDeleteModal = (property:PropertyFEModel) => {
+    openDeleteModal = (property: PropertyFEModel) => {
         this.selectedPropertyToDelete = property;
-        this.modalService.createActionModal("Delete Property", "Are you sure you want to delete this property?",
-            "Delete", this.onDeleteProperty, "Close").instance.open();
+        this.modalService.createActionModal('Delete Property', 'Are you sure you want to delete this property?',
+            'Delete', this.onDeleteProperty, 'Close').instance.open();
     }
 
 }

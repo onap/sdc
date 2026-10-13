@@ -21,8 +21,8 @@ import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
+import { map } from 'rxjs/operators';
 import { ISdcConfig, SdcConfigToken } from '../config/sdc-config.config';
-import {map} from "rxjs/operators";
 
 @Injectable()
 export class ElementService {
@@ -34,9 +34,8 @@ export class ElementService {
     }
 
     getCategoryBaseTypes(categoryName: string, modelName: string): Observable<ListBaseTypesResponse> {
-	    let modelQueryParam: string = modelName ? '?model=' + modelName : '';
-        return this.http.get<ListBaseTypesResponse>(this.baseUrl + "/v1/category/services/" + categoryName + "/baseTypes" + modelQueryParam);
+	    const modelQueryParam: string = modelName ? '?model=' + modelName : '';
+     return this.http.get<ListBaseTypesResponse>(this.baseUrl + '/v1/category/services/' + categoryName + '/baseTypes' + modelQueryParam);
     }
 
 }
-

@@ -17,18 +17,18 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-import {AfterViewInit, ChangeDetectorRef, ElementRef, OnDestroy, OnInit} from '@angular/core';
-import {UUID} from 'angular2-uuid';
-import {WorkspaceMode} from 'app/utils/constants';
-import {CacheService} from 'app/services/cache.service';
-import {ComponentService} from 'app/services/component-services/component.service';
-import {WorkspaceService} from '../workspace.service';
-import {VendorModel} from './vendor-model';
+import { AfterViewInit, ChangeDetectorRef, ElementRef, OnDestroy, OnInit } from '@angular/core';
+import { UUID } from 'angular2-uuid';
+import { CacheService } from 'app/services/cache.service';
+import { ComponentService } from 'app/services/component-services/component.service';
+import { WorkspaceMode } from 'app/utils/constants';
 // Side-effect import: defines the global window.PunchOutRegistry used below. The old AngularJS
 // <punch-out> directive carried the only require() of this bundle; it was removed with the
 // directive layer, so this consumer must load it itself (the IIFE self-guards, so importing it
 // from more than one site is idempotent).
 import '../../../../third-party/PunchOutRegistry.js';
+import { WorkspaceService } from '../workspace.service';
+import { VendorModel } from './vendor-model';
 
 declare const window: any;
 
@@ -60,6 +60,17 @@ const HOST_SELECTOR = '.flow-editor-punch-out-host';
  */
 export abstract class FlowEditorTabBase implements OnInit, AfterViewInit, OnDestroy {
 
+    /** VIEW (or CREATE) → the flows editor is read-only; only an active EDIT checkout is editable.
+     *  Mirrors the old $scope.isViewMode() that fed VendorModel.readonly. */
+    protected get readonly(): boolean {
+        return this.workspaceService.getComponentMode(this.component) !== WorkspaceMode.EDIT;
+    }
+
+    protected get userId(): string {
+        const user = this.cacheService.get('user') || {};
+        return user.userId;
+    }
+
     isLoading: boolean = true;
     protected component: any;
 
@@ -84,7 +95,7 @@ export abstract class FlowEditorTabBase implements OnInit, AfterViewInit, OnDest
         }
         // Lazy-load the onboarding punch-out bundle (registers the "sequence-diagram" factory), then
         // fetch the tab's data and build the model. Mirrors the old view-models' constructor.
-        window['PunchOutRegistry'].loadOnBoarding(() => {
+        window.PunchOutRegistry.loadOnBoarding(() => {
             if (this.destroyed) { return; }
             this.loadAndMount();
         });
@@ -102,7 +113,7 @@ export abstract class FlowEditorTabBase implements OnInit, AfterViewInit, OnDest
             // The registry logs an error if unmount is called before a render resolved — guard so a
             // half-initialised tab does not throw on teardown.
             try {
-                window['PunchOutRegistry'].unmount(host);
+                window.PunchOutRegistry.unmount(host);
             } catch (e) {
                 // no-op: nothing was mounted yet
             }
@@ -125,6 +136,19 @@ export abstract class FlowEditorTabBase implements OnInit, AfterViewInit, OnDest
         this.detectChangesSafe();
     }
 
+    /** The request id the punch-out sends as X-ECOMP-RequestID. Was the AngularJS `uuid4` service
+     *  (resolved through $injector); angular2-uuid is the Angular equivalent already used by
+     *  models/properties-inputs/derived-fe-property.ts and models/attributes-outputs/derived-fe-attribute.ts. */
+    protected generateRequestId(): string {
+        return UUID.UUID();
+    }
+
+    protected detectChangesSafe(): void {
+        if (!(this.cdr as any).destroyed) {
+            this.cdr.detectChanges();
+        }
+    }
+
     private tryRender(): void {
         if (this.destroyed || this.mounted || !this.viewReady || !this.pendingModel) { return; }
         const host = this.getHost();
@@ -141,7 +165,7 @@ export abstract class FlowEditorTabBase implements OnInit, AfterViewInit, OnDest
             // The host consumes no events from the flows editor, so this is intentionally a no-op.
             onEvent: () => { /* no-op */ }
         };
-        window['PunchOutRegistry'].render(props, host);
+        window.PunchOutRegistry.render(props, host);
         this.mounted = true;
     }
 
@@ -161,29 +185,5 @@ export abstract class FlowEditorTabBase implements OnInit, AfterViewInit, OnDest
             userLastName: {name: cookie.userLastName, value: user.lastName},
             userEmail: {name: cookie.userEmail, value: user.email}
         };
-    }
-
-    /** VIEW (or CREATE) → the flows editor is read-only; only an active EDIT checkout is editable.
-     *  Mirrors the old $scope.isViewMode() that fed VendorModel.readonly. */
-    protected get readonly(): boolean {
-        return this.workspaceService.getComponentMode(this.component) !== WorkspaceMode.EDIT;
-    }
-
-    protected get userId(): string {
-        const user = this.cacheService.get('user') || {};
-        return user.userId;
-    }
-
-    /** The request id the punch-out sends as X-ECOMP-RequestID. Was the AngularJS `uuid4` service
-     *  (resolved through $injector); angular2-uuid is the Angular equivalent already used by
-     *  models/properties-inputs/derived-fe-property.ts and models/attributes-outputs/derived-fe-attribute.ts. */
-    protected generateRequestId(): string {
-        return UUID.UUID();
-    }
-
-    protected detectChangesSafe(): void {
-        if (!(this.cdr as any).destroyed) {
-            this.cdr.detectChanges();
-        }
     }
 }

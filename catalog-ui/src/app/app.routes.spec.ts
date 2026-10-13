@@ -18,11 +18,11 @@
  * ============LICENSE_END=========================================================
  */
 
-import {APP_BASE_HREF, Location} from '@angular/common';
-import {Component} from '@angular/core';
-import {fakeAsync, TestBed, tick} from '@angular/core/testing';
-import {ActivatedRouteSnapshot, Router, RouterModule, RouterStateSnapshot, Routes} from '@angular/router';
-import {routes} from './app.routes';
+import { APP_BASE_HREF, Location } from '@angular/common';
+import { Component } from '@angular/core';
+import { fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ActivatedRouteSnapshot, Router, RouterModule, RouterStateSnapshot, Routes } from '@angular/router';
+import { routes } from './app.routes';
 
 @Component({selector: 'app-routes-host', template: '<router-outlet></router-outlet>'})
 class HostComponent {

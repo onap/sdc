@@ -14,27 +14,27 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {Component, Input, OnInit} from '@angular/core';
-import {PropertyModel} from 'app/models/properties';
-import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
-import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
-import {PropertyFEModel} from 'app/models/properties-inputs/property-fe-model';
-import {SourceType} from 'app/components/logic/service-dependencies/service-dependencies.component';
-import {DropdownValue} from 'app/components/ui/form-components/dropdown/ui-element-dropdown.component';
-import {ServiceService} from 'app/services/component-services/service.service';
-import {PROPERTY_DATA, PROPERTY_TYPES} from 'app/utils/constants';
-import {PropertiesUtils} from '../properties-assignment/services/properties.utils';
-import {ToscaFunctionValidationEvent} from "../properties-assignment/tosca-function/tosca-function.component";
-import {InstanceFeDetails} from "../../models/instance-fe-details";
-import {CompositionService} from "../composition/composition.service";
-import {ToscaGetFunction} from "../../models/tosca-get-function";
-import {PropertyFilterConstraintUi} from "../../models/ui-models/property-filter-constraint-ui";
-import {ConstraintOperatorType, FilterConstraintHelper} from "../../utils/filter-constraint-helper";
-import {ToscaFunctionHelper} from "../../utils/tosca-function-helper";
-import {TopologyTemplateService} from "app/services/component-services/topology-template.service";
-import {CustomToscaFunction} from "../../models/default-custom-functions";
-import {ToscaFunction} from "../../models/tosca-function";
-import {ToscaCustomFunction} from "../../models/tosca-custom-function";
+import { Component, Input, OnInit } from '@angular/core';
+import { SourceType } from 'app/components/logic/service-dependencies/service-dependencies.component';
+import { DropdownValue } from 'app/components/ui/form-components/dropdown/ui-element-dropdown.component';
+import { PropertyModel } from 'app/models/properties';
+import { InputBEModel } from 'app/models/properties-inputs/input-be-model';
+import { PropertyBEModel } from 'app/models/properties-inputs/property-be-model';
+import { PropertyFEModel } from 'app/models/properties-inputs/property-fe-model';
+import { ServiceService } from 'app/services/component-services/service.service';
+import { TopologyTemplateService } from 'app/services/component-services/topology-template.service';
+import { PROPERTY_DATA, PROPERTY_TYPES } from 'app/utils/constants';
+import { CustomToscaFunction } from '../../models/default-custom-functions';
+import { InstanceFeDetails } from '../../models/instance-fe-details';
+import { ToscaCustomFunction } from '../../models/tosca-custom-function';
+import { ToscaFunction } from '../../models/tosca-function';
+import { ToscaGetFunction } from '../../models/tosca-get-function';
+import { PropertyFilterConstraintUi } from '../../models/ui-models/property-filter-constraint-ui';
+import { ConstraintOperatorType, FilterConstraintHelper } from '../../utils/filter-constraint-helper';
+import { ToscaFunctionHelper } from '../../utils/tosca-function-helper';
+import { CompositionService } from '../composition/composition.service';
+import { PropertiesUtils } from '../properties-assignment/services/properties.utils';
+import { ToscaFunctionValidationEvent } from '../properties-assignment/tosca-function/tosca-function.component';
 
 @Component({
     selector: 'service-dependencies-editor',
@@ -76,11 +76,11 @@ export class ServiceDependenciesEditorComponent implements OnInit {
     @Input() capabilityNameAndPropertiesMap: Map<string, PropertyModel[]>;
     @Input() filterType: FilterType;
     @Input() filterConstraint: PropertyFilterConstraintUi;
-  @Input() customToscaFunctions: Array<CustomToscaFunction>;
-    //output
+  @Input() customToscaFunctions: CustomToscaFunction[];
+    // output
     currentRule: PropertyFilterConstraintUi;
 
-    FILTER_TYPE_CAPABILITY: FilterType = FilterType.CAPABILITY
+    FILTER_TYPE_CAPABILITY: FilterType = FilterType.CAPABILITY;
 
     listAllowedOperators: ConstraintOperatorType[] = [
         ConstraintOperatorType.EQUAL,
@@ -122,10 +122,10 @@ export class ServiceDependenciesEditorComponent implements OnInit {
 
     ngOnInit(): void {
         if (this.compositionService.componentInstances) {
-            this.compositionService.componentInstances.forEach(value => {
-                this.componentInstanceMap.set(value.uniqueId, <InstanceFeDetails>{
+            this.compositionService.componentInstances.forEach((value) => {
+                this.componentInstanceMap.set(value.uniqueId, {
                     name: value.name
-                });
+                } as InstanceFeDetails);
             });
         }
         this.initCustomToscaFunctions();
@@ -136,131 +136,6 @@ export class ServiceDependenciesEditorComponent implements OnInit {
         this.initPropertyDropdown();
         this.syncRuleData();
         this.generateRangeToscaFunctionList();
-    }
-
-    private initCustomToscaFunctions() {
-      if (!this.customToscaFunctions) {
-          this.customToscaFunctions = [];
-          this.topologyTemplateService.getDefaultCustomFunction().toPromise().then((data) => {
-              for (let customFunction of data) {
-                  this.customToscaFunctions.push(new CustomToscaFunction(customFunction));
-              }
-          });
-      }
- }
-
-    private initCapabilityDropdown(): void {
-        if (this.filterType == FilterType.CAPABILITY) {
-            this.capabilityDropdownList = [
-                new DropdownValue(undefined, 'Select'),
-                ...Array.from(this.capabilityNameAndPropertiesMap.keys()).map(capabilityName => new DropdownValue(capabilityName, capabilityName))
-            ];
-        }
-    }
-
-    private initPropertyDropdown(): void {
-        let propertyList: PropertyBEModel[] = [];
-        if (this.filterType == FilterType.CAPABILITY) {
-            if (this.currentRule.capabilityName) {
-                propertyList = this.capabilityNameAndPropertiesMap.get(this.currentRule.capabilityName);
-            }
-        } else {
-            propertyList = this.selectedInstanceProperties;
-        }
-        let selectLabel;
-        if (this.filterType == FilterType.CAPABILITY) {
-            selectLabel = this.currentRule.capabilityName ? 'Select' : 'Select a Capability';
-        } else {
-            selectLabel = 'Select';
-        }
-        this.servicePropertyDropdownList = [new DropdownValue(undefined, selectLabel), ...propertyList.map(prop => new DropdownValue(prop.name, prop.name)).sort((prop1, prop2) => prop1.value.localeCompare(prop2.value))];
-    }
-
-    private initConstraintOperatorOptions(): void {
-        if (!this.selectedProperty) {
-            this.operatorTypes = [this.setOperatorDropdownValue(undefined)];
-            return;
-        }
-        const operatorList: DropdownValue[] = [];
-        switch (true) {
-            case this.selectedProperty.type === PROPERTY_TYPES.RANGE:
-                if (this.currentRule.constraintOperator !== ConstraintOperatorType.IN_RANGE) {
-                    this.currentRule.constraintOperator = ConstraintOperatorType.IN_RANGE;
-                }
-                this.operatorTypes = [this.setOperatorDropdownValue(ConstraintOperatorType.IN_RANGE)];
-                break;
-            case this.selectedProperty.type === PROPERTY_TYPES.STRING:
-                this.allowedOperators.forEach(constraintOperatorType =>
-                    operatorList.push(this.setOperatorDropdownValue(constraintOperatorType))
-                );
-                this.operatorTypes = operatorList;
-                break;
-            case  this.selectedProperty.type != PROPERTY_TYPES.STRING &&
-            ((PROPERTY_DATA.SIMPLE_TYPES_COMPARABLE.indexOf(this.selectedProperty.type) > -1) ||
-                (PROPERTY_DATA.COMPARABLE_TYPES.indexOf(this.selectedProperty.type) > -1)):
-                this.comparableAllowedOperators.forEach(constraintOperatorType =>
-                    operatorList.push(this.setOperatorDropdownValue(constraintOperatorType))
-                );
-                this.operatorTypes = operatorList;
-                break;
-            case this.selectedProperty.type === PROPERTY_TYPES.LIST:
-                this.listAllowedOperators.forEach(constraintOperatorType =>
-                    operatorList.push(this.setOperatorDropdownValue(constraintOperatorType))
-                );
-                this.operatorTypes = operatorList;
-                break;
-            default:
-                if (this.currentRule.constraintOperator !== ConstraintOperatorType.EQUAL) {
-                    this.currentRule.constraintOperator = ConstraintOperatorType.EQUAL;
-                }
-                this.operatorTypes = [this.setOperatorDropdownValue(ConstraintOperatorType.EQUAL)];
-                break;
-        }
-    }
-
-    private setOperatorDropdownValue(constraintOperatorType: ConstraintOperatorType) {
-        if (constraintOperatorType === undefined) {
-            return new DropdownValue(undefined, 'Select a Property');
-        }
-        return new DropdownValue(constraintOperatorType, FilterConstraintHelper.convertToSymbol(constraintOperatorType));
-    }
-
-    private initSelectedSourceType(): void {
-        if (!this.currentRule.sourceType || this.currentRule.sourceType === SourceType.STATIC
-            || (this.currentRule.sourceType === SourceType.SEVERAL && !ToscaFunctionHelper.convertObjectToToscaFunction(this.currentRule.value[0]))) {
-            this.selectedSourceType = SourceType.STATIC;
-        } else {
-            if (!this.isValidValuesOperator() && !this.isRangeType() && !this.isInRangeOperator()) {
-                this.selectedSourceType = SourceType.TOSCA_FUNCTION;
-            } else {
-                this.selectedSourceType = SourceType.TOSCA_FUNCTION_LIST;
-            }
-        }
-    }
-
-    private initCurrentRule(): void {
-        if (this.filterConstraint) {
-            this.currentRule = new PropertyFilterConstraintUi(this.filterConstraint);
-        } else {
-            this.currentRule = new PropertyFilterConstraintUi({
-                sourceName: SourceType.STATIC,
-                sourceType: SourceType.STATIC,
-                constraintOperator: ConstraintOperatorType.EQUAL,
-                value: undefined,
-                originalType: undefined
-            });
-        }
-        let propertyList: PropertyBEModel[] = [];
-        if (this.filterType == FilterType.CAPABILITY) {
-            if (this.currentRule.capabilityName) {
-                propertyList = this.capabilityNameAndPropertiesMap.get(this.currentRule.capabilityName);
-            }
-        } else {
-            propertyList = this.selectedInstanceProperties;
-        }
-        if (this.filterConstraint) {
-            this.filterConstraint.originalType = propertyList.find(prop => prop.name == this.filterConstraint.servicePropertyName).type;
-        }
     }
 
     onCapabilityChange(): void {
@@ -300,10 +175,10 @@ export class ServiceDependenciesEditorComponent implements OnInit {
         let newProperty;
         if (this.filterType === FilterType.CAPABILITY) {
             const currentProperty = this.capabilityNameAndPropertiesMap.get(this.currentRule.capabilityName)
-                .find(property => property.name === this.currentRule.servicePropertyName);
+                .find((property) => property.name === this.currentRule.servicePropertyName);
             newProperty = new PropertyFEModel(currentProperty);
         } else {
-            newProperty = new PropertyFEModel(this.selectedInstanceProperties.find(property => property.name === this.currentRule.servicePropertyName));
+            newProperty = new PropertyFEModel(this.selectedInstanceProperties.find((property) => property.name === this.currentRule.servicePropertyName));
         }
         newProperty.value = undefined;
         newProperty.toscaFunction = undefined;
@@ -317,14 +192,13 @@ export class ServiceDependenciesEditorComponent implements OnInit {
             if (typeof this.currentRule.value[0] === 'object') {
                 this.rangeToscaFunctionList = [];
                 this.validValuesToscaFunctionList = [];
-                this.currentRule.value.forEach(val => {
+                this.currentRule.value.forEach((val) => {
                     this.rangeToscaFunctionList.push(ToscaFunctionHelper.convertObjectToToscaFunction(val));
                     this.validValuesToscaFunctionList.push(ToscaFunctionHelper.convertObjectToToscaFunction(val));
                 });
                 newProperty.toscaFunction = this.currentRule.value;
                 newProperty.value = this.currentRule.value;
-            }
-            else {
+            } else {
                 this.validValuesToscaFunctionList = this.currentRule.value;
                 this.rangeToscaFunctionList = this.currentRule.value;
                 newProperty.toscaFunction = this.currentRule.value;
@@ -347,10 +221,10 @@ export class ServiceDependenciesEditorComponent implements OnInit {
         let newProperty;
         if (this.filterType === FilterType.CAPABILITY) {
             const currentProperty = this.capabilityNameAndPropertiesMap.get(this.currentRule.capabilityName)
-                .find(property => property.name === this.currentRule.servicePropertyName);
+                .find((property) => property.name === this.currentRule.servicePropertyName);
             newProperty = new PropertyFEModel(currentProperty);
         } else {
-            newProperty = new PropertyFEModel(this.selectedInstanceProperties.find(property => property.name === this.currentRule.servicePropertyName));
+            newProperty = new PropertyFEModel(this.selectedInstanceProperties.find((property) => property.name === this.currentRule.servicePropertyName));
         }
         newProperty.value = undefined;
         newProperty.toscaFunction = undefined;
@@ -361,15 +235,15 @@ export class ServiceDependenciesEditorComponent implements OnInit {
     }
 
     isStaticSource(): boolean {
-        return this.selectedSourceType === SourceType.STATIC
+        return this.selectedSourceType === SourceType.STATIC;
     }
 
     isToscaFunctionSource(): boolean {
-        return this.selectedSourceType === SourceType.TOSCA_FUNCTION
+        return this.selectedSourceType === SourceType.TOSCA_FUNCTION;
     }
 
     isToscaFunctionListSource(): boolean {
-        return this.selectedSourceType === SourceType.TOSCA_FUNCTION_LIST
+        return this.selectedSourceType === SourceType.TOSCA_FUNCTION_LIST;
     }
 
     isComplexListMapType(): boolean {
@@ -404,8 +278,7 @@ export class ServiceDependenciesEditorComponent implements OnInit {
                 this.currentRule.sourceType = SourceType.TOSCA_FUNCTION_LIST;
                 if (validationEvent.toscaFunction instanceof ToscaGetFunction) {
                     this.currentRule.sourceName = SourceType.TOSCA_FUNCTION_LIST;
-                }
-                else if (validationEvent.toscaFunction instanceof ToscaCustomFunction) {
+                } else if (validationEvent.toscaFunction instanceof ToscaCustomFunction) {
                     this.currentRule.sourceName = SourceType.TOSCA_FUNCTION_LIST;
                     this.currentRule.sourceType = SourceType.TOSCA_FUNCTION_LIST;
                 }
@@ -414,7 +287,7 @@ export class ServiceDependenciesEditorComponent implements OnInit {
                     this.overridingType = PROPERTY_TYPES.INTEGER;
                 }
                 this.currentRule.value = validationEvent.toscaFunction;
-                this.currentRule.sourceType = validationEvent.toscaFunction.type
+                this.currentRule.sourceType = validationEvent.toscaFunction.type;
                 if (validationEvent.toscaFunction instanceof ToscaGetFunction) {
                     this.currentRule.sourceName = validationEvent.toscaFunction.sourceName;
                 }
@@ -474,12 +347,6 @@ export class ServiceDependenciesEditorComponent implements OnInit {
         this.updateSelectedProperty();
     }
 
-    private resetSelectedProperty(): void {
-        this.currentRule.servicePropertyName = undefined;
-        this.selectedProperty = undefined;
-        this.onPropertyChange();
-    }
-
     addToList() {
         if (!this.validValuesToscaFunctionList) {
             this.validValuesToscaFunctionList = new Array();
@@ -509,9 +376,140 @@ export class ServiceDependenciesEditorComponent implements OnInit {
         }
     }
 
+    private initCustomToscaFunctions() {
+      if (!this.customToscaFunctions) {
+          this.customToscaFunctions = [];
+          this.topologyTemplateService.getDefaultCustomFunction().toPromise().then((data) => {
+              for (const customFunction of data) {
+                  this.customToscaFunctions.push(new CustomToscaFunction(customFunction));
+              }
+          });
+      }
+ }
+
+    private initCapabilityDropdown(): void {
+        if (this.filterType == FilterType.CAPABILITY) {
+            this.capabilityDropdownList = [
+                new DropdownValue(undefined, 'Select'),
+                ...Array.from(this.capabilityNameAndPropertiesMap.keys()).map((capabilityName) => new DropdownValue(capabilityName, capabilityName))
+            ];
+        }
+    }
+
+    private initPropertyDropdown(): void {
+        let propertyList: PropertyBEModel[] = [];
+        if (this.filterType == FilterType.CAPABILITY) {
+            if (this.currentRule.capabilityName) {
+                propertyList = this.capabilityNameAndPropertiesMap.get(this.currentRule.capabilityName);
+            }
+        } else {
+            propertyList = this.selectedInstanceProperties;
+        }
+        let selectLabel;
+        if (this.filterType == FilterType.CAPABILITY) {
+            selectLabel = this.currentRule.capabilityName ? 'Select' : 'Select a Capability';
+        } else {
+            selectLabel = 'Select';
+        }
+        this.servicePropertyDropdownList = [new DropdownValue(undefined, selectLabel), ...propertyList.map((prop) => new DropdownValue(prop.name, prop.name)).sort((prop1, prop2) => prop1.value.localeCompare(prop2.value))];
+    }
+
+    private initConstraintOperatorOptions(): void {
+        if (!this.selectedProperty) {
+            this.operatorTypes = [this.setOperatorDropdownValue(undefined)];
+            return;
+        }
+        const operatorList: DropdownValue[] = [];
+        switch (true) {
+            case this.selectedProperty.type === PROPERTY_TYPES.RANGE:
+                if (this.currentRule.constraintOperator !== ConstraintOperatorType.IN_RANGE) {
+                    this.currentRule.constraintOperator = ConstraintOperatorType.IN_RANGE;
+                }
+                this.operatorTypes = [this.setOperatorDropdownValue(ConstraintOperatorType.IN_RANGE)];
+                break;
+            case this.selectedProperty.type === PROPERTY_TYPES.STRING:
+                this.allowedOperators.forEach((constraintOperatorType) =>
+                    operatorList.push(this.setOperatorDropdownValue(constraintOperatorType))
+                );
+                this.operatorTypes = operatorList;
+                break;
+            case  this.selectedProperty.type != PROPERTY_TYPES.STRING &&
+            ((PROPERTY_DATA.SIMPLE_TYPES_COMPARABLE.indexOf(this.selectedProperty.type) > -1) ||
+                (PROPERTY_DATA.COMPARABLE_TYPES.indexOf(this.selectedProperty.type) > -1)):
+                this.comparableAllowedOperators.forEach((constraintOperatorType) =>
+                    operatorList.push(this.setOperatorDropdownValue(constraintOperatorType))
+                );
+                this.operatorTypes = operatorList;
+                break;
+            case this.selectedProperty.type === PROPERTY_TYPES.LIST:
+                this.listAllowedOperators.forEach((constraintOperatorType) =>
+                    operatorList.push(this.setOperatorDropdownValue(constraintOperatorType))
+                );
+                this.operatorTypes = operatorList;
+                break;
+            default:
+                if (this.currentRule.constraintOperator !== ConstraintOperatorType.EQUAL) {
+                    this.currentRule.constraintOperator = ConstraintOperatorType.EQUAL;
+                }
+                this.operatorTypes = [this.setOperatorDropdownValue(ConstraintOperatorType.EQUAL)];
+                break;
+        }
+    }
+
+    private setOperatorDropdownValue(constraintOperatorType: ConstraintOperatorType) {
+        if (constraintOperatorType === undefined) {
+            return new DropdownValue(undefined, 'Select a Property');
+        }
+        return new DropdownValue(constraintOperatorType, FilterConstraintHelper.convertToSymbol(constraintOperatorType));
+    }
+
+    private initSelectedSourceType(): void {
+        if (!this.currentRule.sourceType || this.currentRule.sourceType === SourceType.STATIC
+            || (this.currentRule.sourceType === SourceType.SEVERAL && !ToscaFunctionHelper.convertObjectToToscaFunction(this.currentRule.value[0]))) {
+            this.selectedSourceType = SourceType.STATIC;
+        } else {
+            if (!this.isValidValuesOperator() && !this.isRangeType() && !this.isInRangeOperator()) {
+                this.selectedSourceType = SourceType.TOSCA_FUNCTION;
+            } else {
+                this.selectedSourceType = SourceType.TOSCA_FUNCTION_LIST;
+            }
+        }
+    }
+
+    private initCurrentRule(): void {
+        if (this.filterConstraint) {
+            this.currentRule = new PropertyFilterConstraintUi(this.filterConstraint);
+        } else {
+            this.currentRule = new PropertyFilterConstraintUi({
+                sourceName: SourceType.STATIC,
+                sourceType: SourceType.STATIC,
+                constraintOperator: ConstraintOperatorType.EQUAL,
+                value: undefined,
+                originalType: undefined
+            });
+        }
+        let propertyList: PropertyBEModel[] = [];
+        if (this.filterType == FilterType.CAPABILITY) {
+            if (this.currentRule.capabilityName) {
+                propertyList = this.capabilityNameAndPropertiesMap.get(this.currentRule.capabilityName);
+            }
+        } else {
+            propertyList = this.selectedInstanceProperties;
+        }
+        if (this.filterConstraint) {
+            this.filterConstraint.originalType = propertyList.find((prop) => prop.name == this.filterConstraint.servicePropertyName).type;
+        }
+    }
+
+    private resetSelectedProperty(): void {
+        this.currentRule.servicePropertyName = undefined;
+        this.selectedProperty = undefined;
+        this.onPropertyChange();
+    }
+
     private doesArrayContainsEmptyValues(arr) {
         for (const element of arr) {
-            if (element === undefined) return true;
+            if (element === undefined) { return true; }
         }
         return false;
     }

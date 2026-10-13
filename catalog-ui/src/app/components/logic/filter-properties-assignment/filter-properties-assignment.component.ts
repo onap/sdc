@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,12 +21,12 @@
 /**
  * Created by rc2122 on 5/16/2017.
  */
-import * as _ from "lodash";
-import {Component, Input, Output, EventEmitter, ViewChild} from '@angular/core';
-import {ButtonModel, ButtonsModelMap} from 'app/models/button';
-import {FilterPropertiesAssignmentData} from 'app/models/filter-properties-assignment-data';
-import * as sdcConfig from "../../../../../configurations/dev"
-import {PopoverComponent} from "../../ui/popover/popover.component";
+import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { ButtonModel, ButtonsModelMap } from 'app/models/button';
+import { FilterPropertiesAssignmentData } from 'app/models/filter-properties-assignment-data';
+import * as _ from 'lodash';
+import * as sdcConfig from '../../../../../configurations/dev';
+import { PopoverComponent } from '../../ui/popover/popover.component';
 
 @Component({
     selector: 'filter-properties-assignment',
@@ -37,16 +37,16 @@ import {PopoverComponent} from "../../ui/popover/popover.component";
 export class FilterPropertiesAssignmentComponent {
     @Input() componentType: string;
     @Output() searchProperties: EventEmitter<FilterPropertiesAssignmentData> = new EventEmitter<FilterPropertiesAssignmentData>();
-    footerButtons:ButtonsModelMap = {};
-    typesOptions:Array<string>;//All optional types
-    selectedTypes:Object = {};
-    allSelected:boolean = false;//if all option selected
-    filterData:FilterPropertiesAssignmentData = new FilterPropertiesAssignmentData();
+    footerButtons: ButtonsModelMap = {};
+    typesOptions: string[]; // All optional types
+    selectedTypes: Object = {};
+    allSelected: boolean = false; // if all option selected
+    filterData: FilterPropertiesAssignmentData = new FilterPropertiesAssignmentData();
     @ViewChild('filterPopover') filterPopover: PopoverComponent;
 
     ngOnInit() {
-        this.footerButtons['Apply'] = new ButtonModel('Apply', 'blue', this.search, this.someTypesSelectedAndThereIsPropertyName);
-        this.footerButtons['Close'] = new ButtonModel('Close', 'grey', this.close);
+        this.footerButtons.Apply = new ButtonModel('Apply', 'blue', this.search, this.someTypesSelectedAndThereIsPropertyName);
+        this.footerButtons.Close = new ButtonModel('Close', 'grey', this.close);
         this.componentType = this.componentType.toLocaleLowerCase();
         this.typesOptions = sdcConfig.resourceTypesFilter[this.componentType];
     }
@@ -57,17 +57,17 @@ export class FilterPropertiesAssignmentComponent {
         });
     }
 
-    onTypeSelected = (type:string) => {
-        if(!this.selectedTypes[type]){
-            this.allSelected = false;//unselected 'All'
+    onTypeSelected = (type: string) => {
+        if (!this.selectedTypes[type]) {
+            this.allSelected = false; // unselected 'All'
         }
-    };
+    }
 
     search = () => {
         console.log('search props');
         this.filterData.selectedTypes = [];
         _.forEach(sdcConfig.resourceTypesFilter[this.componentType], (type) => {
-            if(this.selectedTypes[type]){
+            if (this.selectedTypes[type]) {
                 this.filterData.selectedTypes.push(type);
             }
         });
@@ -79,18 +79,18 @@ export class FilterPropertiesAssignmentComponent {
         this.filterPopover.hide();
     }
 
-    someTypesSelectedAndThereIsPropertyName = ():boolean => {
-        if( _.find(Object.keys(this.selectedTypes),(key) => {
+    someTypesSelectedAndThereIsPropertyName = (): boolean => {
+        if ( _.find(Object.keys(this.selectedTypes), (key) => {
             return this.selectedTypes[key];
-        }) && this.filterData.propertyName ){
-            return null
+        }) && this.filterData.propertyName ) {
+            return null;
         }
         return true;
     }
 
-    clearAll = ():void => {
-        this.filterData.propertyName = "";
-        _.forEach(this.selectedTypes,(value, key) => {
+    clearAll = (): void => {
+        this.filterData.propertyName = '';
+        _.forEach(this.selectedTypes, (value, key) => {
             this.selectedTypes[key] = false;
         });
         this.allSelected = false;

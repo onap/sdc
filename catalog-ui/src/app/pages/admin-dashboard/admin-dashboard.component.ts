@@ -18,11 +18,11 @@
  * ============LICENSE_END=========================================================
  */
 
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit} from '@angular/core';
-import {Subscription} from 'rxjs/Subscription';
-import {CacheService} from 'app/services/cache.service';
-import {SdcConfigToken, ISdcConfig} from 'app/config/sdc-config.config';
-import {TranslateService} from 'app/shared/translator/translate.service';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { ISdcConfig, SdcConfigToken } from 'app/config/sdc-config.config';
+import { CacheService } from 'app/services/cache.service';
+import { TranslateService } from 'app/shared/translator/translate.service';
+import { Subscription } from 'rxjs/Subscription';
 
 /**
  * Admin Dashboard container component. Replaces the AngularJS AdminDashboardViewModel.

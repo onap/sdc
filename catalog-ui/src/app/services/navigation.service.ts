@@ -18,10 +18,10 @@
  * ============LICENSE_END=========================================================
  */
 
-import {Injectable} from '@angular/core';
-import {ActivatedRoute, ActivatedRouteSnapshot, NavigationEnd, NavigationStart, Router} from '@angular/router';
-import {Subscription} from 'rxjs/Subscription';
-import {WorkspaceService} from '../pages/workspace/workspace.service';
+import { Injectable } from '@angular/core';
+import { ActivatedRoute, ActivatedRouteSnapshot, NavigationEnd, NavigationStart, Router } from '@angular/router';
+import { Subscription } from 'rxjs/Subscription';
+import { WorkspaceService } from '../pages/workspace/workspace.service';
 
 export interface NavigationOptions {
     location?: boolean | 'replace';

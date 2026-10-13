@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 (window as any)._ = _;
 
-import {EventBusService} from './event-bus.service';
+import { EventBusService } from './event-bus.service';
 
 describe('EventBusService', () => {
     let service: EventBusService;

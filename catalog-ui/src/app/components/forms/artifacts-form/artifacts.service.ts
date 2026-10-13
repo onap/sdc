@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { SdcUiCommon, SdcUiServices } from 'onap-ui-angular';
-import {ArtifactModel} from '../../../models/artifacts';
-import { ArtifactGroupType, ArtifactType } from '../../../utils/constants';
+import { ArtifactModel } from '../../../models/artifacts';
 import { TopologyTemplateService } from '../../../services/component-services/topology-template.service';
+import { ModalService } from '../../../services/modal.service';
 import { TranslateService } from '../../../shared/translator/translate.service';
 import { CreateOrUpdateArtifactAction, DeleteArtifactAction } from '../../../store/actions/artifacts.action';
+import { ArtifactGroupType, ArtifactType } from '../../../utils/constants';
 import { EnvParamsComponent } from '../env-params/env-params.component';
 import { ArtifactFormComponent } from './artifact-form.component';
-import { ModalService } from "../../../services/modal.service";
 
 import {
     CreateInstanceArtifactAction,
@@ -90,7 +90,7 @@ export class ArtifactsService {
             artifactType,
             instanceId,
             componentType,
-            resourceType: resourceType,
+            resourceType,
             isViewOnly
         });
 

@@ -1,19 +1,19 @@
-import {Injectable} from '@angular/core';
-import {BasePubSub, IPubSubEvent} from "sdc-pubsub";
+import { Injectable } from '@angular/core';
+import { BasePubSub, IPubSubEvent } from 'sdc-pubsub';
 
 @Injectable()
 export class EventBusService extends BasePubSub {
 
-    NoWindowOutEvents: Array<string>;
+    NoWindowOutEvents: string[];
 
     constructor() {
-        super("sdc-hub");
-        this.NoWindowOutEvents = ["CHECK_IN", "SUBMIT_FOR_TESTING", "UNDO_CHECK_OUT"];
+        super('sdc-hub');
+        this.NoWindowOutEvents = ['CHECK_IN', 'SUBMIT_FOR_TESTING', 'UNDO_CHECK_OUT'];
     }
 
     public unregister(pluginId: string) {
         const unregisterData = {
-            pluginId: pluginId
+            pluginId
         };
 
         this.notify('PLUGIN_CLOSE', unregisterData).subscribe(() => {
@@ -22,24 +22,24 @@ export class EventBusService extends BasePubSub {
     }
 
     public disableNavigation(isDisable: boolean) {
-        let iframes = document.getElementsByClassName("plugin-iframe");
+        const iframes = document.getElementsByClassName('plugin-iframe');
 
         if (isDisable) {
             _.forEach(iframes, (iframeElement: HTMLElement) => {
                 iframeElement.style.zIndex = '1300';
             });
-            let disableDiv = document.createElement('div');
-            disableDiv.style.cssText = "position: fixed;\n" +
-                "z-index: 1029;\n" +
-                "background: rgba(0,0,0,0.5);\n" +
-                "width: 100%;\n" +
-                "height: 100%;\n" +
-                "top: 0;\n" +
-                "left: 0;";
-            disableDiv.setAttribute("class", "disable-navigation-div");
+            const disableDiv = document.createElement('div');
+            disableDiv.style.cssText = 'position: fixed;\n' +
+                'z-index: 1029;\n' +
+                'background: rgba(0,0,0,0.5);\n' +
+                'width: 100%;\n' +
+                'height: 100%;\n' +
+                'top: 0;\n' +
+                'left: 0;';
+            disableDiv.setAttribute('class', 'disable-navigation-div');
             document.body.appendChild(disableDiv);
         } else {
-            document.getElementsByClassName("disable-navigation-div")[0].remove();
+            document.getElementsByClassName('disable-navigation-div')[0].remove();
 
             _.forEach(iframes, (iframeElement: HTMLElement) => {
                 iframeElement.style.zIndex = '';
@@ -61,7 +61,7 @@ export class EventBusService extends BasePubSub {
         const origSubscribe = super.notify(eventType, eventData).subscribe;
 
         return {
-            subscribe: function (callbackFn) {
+            subscribe: function(callbackFn) {
                 origSubscribe(() => {
                     if (doDisable) {
                         this.disableNavigation(false);

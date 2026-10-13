@@ -20,39 +20,39 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import {TypeWorkspacePropertiesComponent} from './type-workspace-properties.component';
-import {FormsModule} from "@angular/forms";
-import {TranslateModule} from "../../../shared/translator/translate.module";
-import {TranslateService} from "../../../shared/translator/translate.service";
-import {DataTypeService} from "../../../services/data-type.service";
-import {Observable} from "rxjs/Observable";
-import {DataTypeModel} from "../../../models/data-types";
-import {Component, ViewChild} from "@angular/core";
-import {PropertyBEModel} from "../../../models/properties-inputs/property-be-model";
-import {ModalService} from "../../../services/modal.service";
-import {SdcUiServices} from "onap-ui-angular/dist";
+import { Component, ViewChild } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { SdcUiServices } from 'onap-ui-angular/dist';
+import { Observable } from 'rxjs/Observable';
+import { DataTypeModel } from '../../../models/data-types';
+import { PropertyBEModel } from '../../../models/properties-inputs/property-be-model';
+import { DataTypeService } from '../../../services/data-type.service';
+import { ModalService } from '../../../services/modal.service';
+import { TranslateModule } from '../../../shared/translator/translate.module';
+import { TranslateService } from '../../../shared/translator/translate.service';
+import { TypeWorkspacePropertiesComponent } from './type-workspace-properties.component';
 
 describe('TypeWorkspacePropertiesComponent', () => {
-    const messages = require("../../../../assets/languages/en_US.json");
-    let modalService: Partial<ModalService> = {};
+    const messages = require('../../../../assets/languages/en_US.json');
+    const modalService: Partial<ModalService> = {};
     let testHostComponent: TestHostComponent;
     let testHostFixture: ComponentFixture<TestHostComponent>;
-    let dataTypeServiceMock: Partial<DataTypeService> = {
+    const dataTypeServiceMock: Partial<DataTypeService> = {
         findAllProperties: jest.fn( (dataTypeId) => {
             if (dataTypeId === 'dataTypeId') {
                 const property1 = new PropertyBEModel();
-                property1.name = 'property1'
-                property1.type = 'string'
+                property1.name = 'property1';
+                property1.type = 'string';
                 return Observable.of([property1]);
             }
             return Observable.of([]);
         })
     };
 
-    let translateServiceMock: Partial<TranslateService> = {
-        'translate': jest.fn( (translateKey: string) => {
+    const translateServiceMock: Partial<TranslateService> = {
+        translate: jest.fn( (translateKey: string) => {
             return messages[translateKey];
         })
     };

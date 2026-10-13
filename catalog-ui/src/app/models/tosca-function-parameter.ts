@@ -19,7 +19,7 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {ToscaFunctionType} from "./tosca-function-type.enum";
+import { ToscaFunctionType } from './tosca-function-type.enum';
 
 export interface ToscaFunctionParameter {
     type: ToscaFunctionType;

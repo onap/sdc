@@ -31,7 +31,7 @@
  * order, in the same string — so no real name ever matched and the pipe only capitalized. The
  * "strips ... " cases below are the regression tests for that fix.
  */
-import {ResourceNamePipe} from './resource-name.pipe';
+import { ResourceNamePipe } from './resource-name.pipe';
 
 describe('ResourceNamePipe', () => {
     let pipe: ResourceNamePipe;

@@ -1,25 +1,24 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
-import {CapabilitiesGroup, Capability} from 'app/models/capability';
-import {Component as TopologyTemplate} from 'app/models/components/component';
-import {FullComponentInstance} from 'app/models/components-instances/full-component-instance';
-import {Requirement, RequirementsGroup} from 'app/models/requirement';
-import { Store } from "@ngxs/store";
-import {GRAPH_EVENTS} from 'app/utils/constants';
-import { ComponentGenericResponse } from "app/services/responses/component-generic-response";
-import { TopologyTemplateService } from "app/services/component-services/topology-template.service";
-import {EventListenerService} from 'app/services/event-listener.service';
-import { WorkspaceService } from "app/pages/workspace/workspace.service";
-import { CompositionService } from "app/pages/composition/composition.service";
-import {SelectedComponentType, TogglePanelLoadingAction} from "../../../common/store/graph.actions";
-import {ComponentInstanceService} from "../../../../../services/component-instance-services/component-instance.service";
-
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Store } from '@ngxs/store';
+import { CapabilitiesGroup, Capability } from 'app/models/capability';
+import { FullComponentInstance } from 'app/models/components-instances/full-component-instance';
+import { Component as TopologyTemplate } from 'app/models/components/component';
+import { Requirement, RequirementsGroup } from 'app/models/requirement';
+import { CompositionService } from 'app/pages/composition/composition.service';
+import { WorkspaceService } from 'app/pages/workspace/workspace.service';
+import { TopologyTemplateService } from 'app/services/component-services/topology-template.service';
+import { EventListenerService } from 'app/services/event-listener.service';
+import { ComponentGenericResponse } from 'app/services/responses/component-generic-response';
+import { GRAPH_EVENTS } from 'app/utils/constants';
+import { ComponentInstanceService } from '../../../../../services/component-instance-services/component-instance.service';
+import { SelectedComponentType, TogglePanelLoadingAction } from '../../../common/store/graph.actions';
 
 export class InstanceCapabilitiesMap {
-    [key:string]:Array<Capability>;
+    [key: string]: Capability[];
 }
 
 export class InstanceRequirementsMap {
-    [key:string]:Array<Requirement>;
+    [key: string]: Requirement[];
 }
 
 @Component({
@@ -30,24 +29,23 @@ export class InstanceRequirementsMap {
 export class ReqAndCapabilitiesTabComponent implements OnInit, OnDestroy {
 
     isComponentInstanceSelected: boolean;
-    capabilities:Array<Capability>;
-    requirements:Array<Requirement>;
-    capabilitiesInstancesMap:InstanceCapabilitiesMap;
-    requirementsInstancesMap:InstanceRequirementsMap;
+    capabilities: Capability[];
+    requirements: Requirement[];
+    capabilitiesInstancesMap: InstanceCapabilitiesMap;
+    requirementsInstancesMap: InstanceRequirementsMap;
     objectKeys = Object.keys;
-    
+
     @Input() isViewOnly: boolean;
     @Input() componentType: SelectedComponentType;
     @Input() component: TopologyTemplate | FullComponentInstance;
     @Input() input: any;
 
-
     constructor(private store: Store,
-        private topologyTemplateService:TopologyTemplateService,
-        private workspaceService: WorkspaceService,
-        private compositionService: CompositionService,
-        private eventListenerService:EventListenerService,
-        private componentInstanceService: ComponentInstanceService) { }
+                private topologyTemplateService: TopologyTemplateService,
+                private workspaceService: WorkspaceService,
+                private compositionService: CompositionService,
+                private eventListenerService: EventListenerService,
+                private componentInstanceService: ComponentInstanceService) { }
 
     ngOnInit(): void {
 
@@ -57,16 +55,9 @@ export class ReqAndCapabilitiesTabComponent implements OnInit, OnDestroy {
         this.capabilities = [];
         this.initEvents();
         this.initRequirementsAndCapabilities();
-        
+
      }
 
-     private initEvents = ():void => {
-        this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_NODE_SELECTED, this.initRequirementsAndCapabilities);
-        this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_GRAPH_BACKGROUND_CLICKED, this.updateRequirementCapabilities);
-        this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_CREATE_COMPONENT_INSTANCE,  this.updateRequirementCapabilities);
-        this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_DELETE_COMPONENT_INSTANCE,  this.updateRequirementCapabilities);
-    }
-    
      ngOnDestroy(): void {
         this.eventListenerService.unRegisterObserver(GRAPH_EVENTS.ON_NODE_SELECTED, this.initRequirementsAndCapabilities);
         this.eventListenerService.unRegisterObserver(GRAPH_EVENTS.ON_GRAPH_BACKGROUND_CLICKED, this.updateRequirementCapabilities);
@@ -74,8 +65,8 @@ export class ReqAndCapabilitiesTabComponent implements OnInit, OnDestroy {
         this.eventListenerService.unRegisterObserver(GRAPH_EVENTS.ON_DELETE_COMPONENT_INSTANCE, this.updateRequirementCapabilities);
      }
 
-     public isCurrentDisplayComponentIsComplex = ():boolean => {
-        
+     public isCurrentDisplayComponentIsComplex = (): boolean => {
+
         if (this.component instanceof FullComponentInstance) {
             if (this.component.originType === 'VF') {
                 return true;
@@ -86,10 +77,34 @@ export class ReqAndCapabilitiesTabComponent implements OnInit, OnDestroy {
         }
     }
 
+    onMarkCapabilityAsExternal(capability: Capability) {
+        this.store.dispatch(new TogglePanelLoadingAction({isLoading: true}));
+        capability.external = !capability.external;
+        const componentId = this.workspaceService.metadata.uniqueId;
+        const componentInstanceId = this.component.uniqueId;
+        this.componentInstanceService
+        .updateInstanceCapability(this.workspaceService.metadata.getTypeUrl(), componentId, componentInstanceId, capability)
+        .subscribe(() => {
+            this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_COMPONENT_INSTANCE_CAPABILITY_EXTERNAL_CHANGED, componentInstanceId, capability);
+            this.store.dispatch(new TogglePanelLoadingAction({isLoading: false}));
+        } , (error) => {
+            console.error('An error has occurred while setting capability \'' + capability.name + '\' external', error);
+            capability.external = !capability.external;
+            this.store.dispatch(new TogglePanelLoadingAction({isLoading: false}));
+        });
+    }
+
+     private initEvents = (): void => {
+        this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_NODE_SELECTED, this.initRequirementsAndCapabilities);
+        this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_GRAPH_BACKGROUND_CLICKED, this.updateRequirementCapabilities);
+        this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_CREATE_COMPONENT_INSTANCE,  this.updateRequirementCapabilities);
+        this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_DELETE_COMPONENT_INSTANCE,  this.updateRequirementCapabilities);
+    }
+
     private loadComplexComponentData = () => {
         this.store.dispatch(new TogglePanelLoadingAction({isLoading: true}));
 
-        this.topologyTemplateService.getCapabilitiesAndRequirements(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId).subscribe((response:ComponentGenericResponse) => {
+        this.topologyTemplateService.getCapabilitiesAndRequirements(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId).subscribe((response: ComponentGenericResponse) => {
             this.workspaceService.metadata.capabilities = response.capabilities;
             this.workspaceService.metadata.requirements = response.requirements;
             this.setScopeCapabilitiesRequirements(response.capabilities, response.requirements);
@@ -98,31 +113,29 @@ export class ReqAndCapabilitiesTabComponent implements OnInit, OnDestroy {
         }, (error) => { this.store.dispatch(new TogglePanelLoadingAction({isLoading: false})); });
     }
 
-
-    private extractValuesFromMap = (map:CapabilitiesGroup | RequirementsGroup):Array<any> => {
+    private extractValuesFromMap = (map: CapabilitiesGroup | RequirementsGroup): any[] => {
         let values = [];
-        _.forEach(map, (capabilitiesOrRequirements:Array<Capability> | Array<Requirement>, key) => {
-                values = values.concat(capabilitiesOrRequirements)
+        _.forEach(map, (capabilitiesOrRequirements: Capability[] | Requirement[], key) => {
+                values = values.concat(capabilitiesOrRequirements);
             }
         );
         return values;
     }
 
-    private setScopeCapabilitiesRequirements = (capabilities:CapabilitiesGroup, requirements:RequirementsGroup) => {
+    private setScopeCapabilitiesRequirements = (capabilities: CapabilitiesGroup, requirements: RequirementsGroup) => {
         this.capabilities = this.extractValuesFromMap(capabilities);
         this.requirements = this.extractValuesFromMap(requirements);
     }
 
-
-    private initInstancesMap = ():void => {
+    private initInstancesMap = (): void => {
 
         this.capabilitiesInstancesMap = new InstanceCapabilitiesMap();
-        let capabilityList: Array<Capability> = this.capabilities;
+        let capabilityList: Capability[] = this.capabilities;
         if (capabilityList) {
             if (!this.isComponentInstanceSelected) {
-                capabilityList = capabilityList.filter(value => value.external);
+                capabilityList = capabilityList.filter((value) => value.external);
             }
-            capabilityList.forEach(capability => {
+            capabilityList.forEach((capability) => {
                 if (this.capabilitiesInstancesMap[capability.ownerName]) {
                     this.capabilitiesInstancesMap[capability.ownerName] = this.capabilitiesInstancesMap[capability.ownerName].concat(capability);
                 } else {
@@ -132,8 +145,8 @@ export class ReqAndCapabilitiesTabComponent implements OnInit, OnDestroy {
         }
 
         this.requirementsInstancesMap = new InstanceRequirementsMap();
-        _.forEach(this.requirements, (requirement:Requirement) => {
-	        if(this.isComponentInstanceSelected || requirement.external){
+        _.forEach(this.requirements, (requirement: Requirement) => {
+	        if (this.isComponentInstanceSelected || requirement.external) {
 	            if (this.requirementsInstancesMap[requirement.ownerName]) {
 	                this.requirementsInstancesMap[requirement.ownerName] = this.requirementsInstancesMap[requirement.ownerName].concat(requirement);
 	            } else {
@@ -148,7 +161,7 @@ export class ReqAndCapabilitiesTabComponent implements OnInit, OnDestroy {
         // if instance selected, we take the requirement and capabilities of the instance - always exist because we load them with the graph
         if (this.component instanceof FullComponentInstance) {
             const selectedComponentInstance = this.compositionService.getComponentInstances()
-            .find(componentInstance => componentInstance.uniqueId == this.component.uniqueId);
+            .find((componentInstance) => componentInstance.uniqueId == this.component.uniqueId);
             this.component.capabilities = selectedComponentInstance.capabilities;
             this.component.requirements = selectedComponentInstance.requirements;
             this.store.dispatch(new TogglePanelLoadingAction({isLoading: false}));
@@ -174,23 +187,4 @@ export class ReqAndCapabilitiesTabComponent implements OnInit, OnDestroy {
             this.loadComplexComponentData();
         }
     }
-
-
-    onMarkCapabilityAsExternal(capability: Capability) {
-        this.store.dispatch(new TogglePanelLoadingAction({isLoading: true}));
-        capability.external = !capability.external;
-        const componentId = this.workspaceService.metadata.uniqueId;
-        const componentInstanceId = this.component.uniqueId;
-        this.componentInstanceService
-        .updateInstanceCapability(this.workspaceService.metadata.getTypeUrl(), componentId, componentInstanceId, capability)
-        .subscribe(() => {
-            this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_COMPONENT_INSTANCE_CAPABILITY_EXTERNAL_CHANGED, componentInstanceId, capability);
-            this.store.dispatch(new TogglePanelLoadingAction({isLoading: false}));
-        } , (error) => {
-            console.error("An error has occurred while setting capability '" + capability.name + "' external", error);
-            capability.external = !capability.external;
-            this.store.dispatch(new TogglePanelLoadingAction({isLoading: false}));
-        });
-    }
 }
-

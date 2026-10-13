@@ -19,7 +19,7 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {ToscaFunction} from "./tosca-function";
+import { ToscaFunction } from './tosca-function';
 
 export class SubPropertyToscaFunction {
     toscaFunction: ToscaFunction;

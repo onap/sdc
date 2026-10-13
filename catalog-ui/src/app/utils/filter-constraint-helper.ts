@@ -19,8 +19,8 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {FilterConstraint} from "../models/filter-constraint";
-import {ToscaFunctionHelper} from "./tosca-function-helper";
+import { FilterConstraint } from '../models/filter-constraint';
+import { ToscaFunctionHelper } from './tosca-function-helper';
 
 export class FilterConstraintHelper {
 
@@ -29,7 +29,7 @@ export class FilterConstraintHelper {
         if (ToscaFunctionHelper.isValueToscaFunction(constraint.value)) {
             const toscaFunction = ToscaFunctionHelper.convertObjectToToscaFunction(constraint.value);
             if (toscaFunction) {
-		        value = toscaFunction.value === undefined || toscaFunction.value == null ? toscaFunction.buildValueString() : toscaFunction.value
+		        value = toscaFunction.value === undefined || toscaFunction.value == null ? toscaFunction.buildValueString() : toscaFunction.value;
             } else {
                 value = JSON.stringify(constraint.value, null, 4);
             }
@@ -73,4 +73,3 @@ export enum ConstraintOperatorType {
     MAX_LENGTH = 'max_length',
     PATTERN = 'pattern'
 }
-

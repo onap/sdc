@@ -19,12 +19,12 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {ToscaFunctionType} from "../models/tosca-function-type.enum";
-import {ToscaConcatFunction} from "../models/tosca-concat-function";
-import {ToscaGetFunction} from "../models/tosca-get-function";
-import {YamlFunction} from "../models/yaml-function";
-import {ToscaFunction} from "../models/tosca-function";
-import {ToscaCustomFunction} from "../models/tosca-custom-function";
+import { ToscaConcatFunction } from '../models/tosca-concat-function';
+import { ToscaCustomFunction } from '../models/tosca-custom-function';
+import { ToscaFunction } from '../models/tosca-function';
+import { ToscaFunctionType } from '../models/tosca-function-type.enum';
+import { ToscaGetFunction } from '../models/tosca-get-function';
+import { YamlFunction } from '../models/yaml-function';
 
 export class ToscaFunctionHelper {
 
@@ -45,7 +45,7 @@ export class ToscaFunctionHelper {
             case ToscaFunctionType.CUSTOM:
                 return new ToscaCustomFunction(value);
             case ToscaFunctionType.STRING:
-                return <ToscaFunction> {
+                return {
                     type: ToscaFunctionType.STRING,
                     value: value.value,
                     buildValueString(): string {
@@ -54,14 +54,14 @@ export class ToscaFunctionHelper {
                     buildValueObject(): Object {
                         return this.value;
                     }
-                };
+                } as ToscaFunction;
             default:
                 return undefined;
         }
     }
 
     public static isValueToscaFunction(value: any): boolean {
-        return value instanceof Object && 'type' in value && (<any>Object).values(ToscaFunctionType).includes(value.type);
+        return value instanceof Object && 'type' in value && (Object as any).values(ToscaFunctionType).includes(value.type);
     }
 
 }

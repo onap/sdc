@@ -18,8 +18,8 @@
  * ============LICENSE_END=========================================================
  */
 
-import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
-import {LegacyCookieService} from 'app/services/legacy/cookie.service';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { LegacyCookieService } from 'app/services/legacy/cookie.service';
 
 @Component({
     selector: 'error-403-page',

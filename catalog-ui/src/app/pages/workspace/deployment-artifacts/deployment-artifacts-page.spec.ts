@@ -7,16 +7,16 @@ import { SdcUiServices } from 'onap-ui-angular';
 import { Observable } from 'rxjs/Observable';
 import { deploymentArtifactMock } from '../../../../jest/mocks/artifacts-mock';
 import { ConfigureFn, configureTests } from '../../../../jest/test-config.helper';
-import { ComponentMetadata } from '../../../models/component-metadata';
 import { ArtifactsService } from '../../../components/forms/artifacts-form/artifacts.service';
+import { ComponentMetadata } from '../../../models/component-metadata';
 import { CacheService } from '../../../services/cache.service';
 import { TopologyTemplateService } from '../../../services/component-services/topology-template.service';
+import { ModalService } from '../../../services/modal.service';
 import { TranslateModule } from '../../../shared/translator/translate.module';
 import { TranslateService } from '../../../shared/translator/translate.service';
 import { ArtifactsState } from '../../../store/states/artifacts.state';
 import { WorkspaceService } from '../workspace.service';
 import { DeploymentArtifactsPageComponent } from './deployment-artifacts-page.component';
-import {ModalService} from "../../../services/modal.service";
 
 describe('deployment artifacts page', () => {
 
@@ -33,16 +33,16 @@ describe('deployment artifacts page', () => {
                 getArtifactsByType: jest.fn().mockImplementation((componentType, id, artifactType) => Observable.of(deploymentArtifactMock))
             };
             workspaceServiceMock = {
-                metadata: <ComponentMetadata>{
+                metadata: {
                     uniqueId: 'service_unique_id',
                     componentType: 'SERVICE'
-                }
-            }
+                } as ComponentMetadata
+            };
 
             loaderServiceMock = {
                 activate: jest.fn(),
                 deactivate: jest.fn()
-            }
+            };
             const configure: ConfigureFn = (testBed) => {
                 testBed.configureTestingModule({
                     declarations: [DeploymentArtifactsPageComponent],
@@ -77,7 +77,7 @@ describe('deployment artifacts page', () => {
         fixture.componentInstance.ngOnInit();
         fixture.componentInstance.deploymentArtifacts$.subscribe((artifacts) => {
             expect(artifacts.length).toEqual(8);
-        })
+        });
         store.selectOnce((state) => state.artifacts.deploymentArtifacts).subscribe((artifacts) => {
             expect(artifacts.length).toEqual(8);
         });

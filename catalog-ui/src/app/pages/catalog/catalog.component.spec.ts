@@ -1,45 +1,39 @@
 
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
-import {ConfigureFn, configureTests} from "../../../jest/test-config.helper";
-import {NO_ERRORS_SCHEMA} from "@angular/core";
-import {CacheService} from '../../services/cache.service';
-import {CatalogComponent} from "./catalog.component";
-import {  SdcUiServices } from "onap-ui-angular";
-import { SdcConfigToken } from "../../config/sdc-config.config";
-import { SdcMenuToken} from "../../config/sdc-menu.config";
-import { ResourceNamePipe } from "../../pipes/resource-name.pipe";
-import { CatalogService } from "../../services/catalog.service";
-import {TranslatePipe} from "../../shared/translator/translate.pipe";
-import {TranslateService} from "../../shared/translator/translate.service";
-import {Observable} from "rxjs";
-import {LoaderService} from "onap-ui-angular/dist/loader/loader.service";
-import {categoriesElements} from "../../../jest/mocks/categories.mock";
-import {sdcMenu} from "../../../jest/mocks/sdc-menu.mock";
-import {IEntityFilterObject} from "../../pipes/entity-filter.pipe";
-import {NavigationService} from "../../services/navigation.service";
-
-
-
-
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {  SdcUiServices } from 'onap-ui-angular';
+import { LoaderService } from 'onap-ui-angular/dist/loader/loader.service';
+import { Observable } from 'rxjs';
+import { categoriesElements } from '../../../jest/mocks/categories.mock';
+import { sdcMenu } from '../../../jest/mocks/sdc-menu.mock';
+import { ConfigureFn, configureTests } from '../../../jest/test-config.helper';
+import { SdcConfigToken } from '../../config/sdc-config.config';
+import { SdcMenuToken } from '../../config/sdc-menu.config';
+import { IEntityFilterObject } from '../../pipes/entity-filter.pipe';
+import { ResourceNamePipe } from '../../pipes/resource-name.pipe';
+import { CacheService } from '../../services/cache.service';
+import { CatalogService } from '../../services/catalog.service';
+import { NavigationService } from '../../services/navigation.service';
+import { TranslatePipe } from '../../shared/translator/translate.pipe';
+import { TranslateService } from '../../shared/translator/translate.service';
+import { CatalogComponent } from './catalog.component';
 
 describe('catalog component', () => {
 
     let fixture: ComponentFixture<CatalogComponent>;
 
-    //Data variables
+    // Data variables
     let catalogSelectorItemsMock;
     let checkListModelMock;
     let filterParamsMock;
     let checkboxesFilterMock;
     let checkboxesFilterKeysMock;
 
-
-    //Service variables
+    // Service variables
     let stateServiceMock;
     let cacheServiceMock: Partial<CacheService>;
     let loaderServiceMock: Partial<LoaderService>;
     let catalogServiceMock: Partial<CatalogService>;
-
 
     beforeEach(
 
@@ -59,59 +53,59 @@ describe('catalog component', () => {
             ];
             checkListModelMock = {
                 checkboxes: [
-                    {label: "VF", disabled: false, isChecked: false, testId: "checkbox-vf", value: "Resource.VF"},
-                    {label: "VFC", disabled: false, isChecked: false, testId: "checkbox-vfc", value: "Resource.VFC",
-                        subLevelChecklist: {checkboxes:[{label: "VFD", disabled: false, isChecked: false, testId: "checkbox-vfd", value: "Resource.VFD"}],
-                        selectedValues: ["Resource.VFD"]}
+                    {label: 'VF', disabled: false, isChecked: false, testId: 'checkbox-vf', value: 'Resource.VF'},
+                    {label: 'VFC', disabled: false, isChecked: false, testId: 'checkbox-vfc', value: 'Resource.VFC',
+                        subLevelChecklist: {checkboxes: [{label: 'VFD', disabled: false, isChecked: false, testId: 'checkbox-vfd', value: 'Resource.VFD'}],
+                        selectedValues: ['Resource.VFD']}
                         },
-                    {label: "CR", disabled: false, isChecked: false, testId: "checkbox-cr", value: "Resource.CR",
-                        subLevelChecklist: { checkboxes:[{label: "VF", disabled: false, isChecked: false, testId: "checkbox-vf", value: "Resource.VF"}],
+                    {label: 'CR', disabled: false, isChecked: false, testId: 'checkbox-cr', value: 'Resource.CR',
+                        subLevelChecklist: { checkboxes: [{label: 'VF', disabled: false, isChecked: false, testId: 'checkbox-vf', value: 'Resource.VF'}],
                         selectedValues: []}
                     }],
-                selectedValues: ["Resource.VF"]
-            }
+                selectedValues: ['Resource.VF']
+            };
             filterParamsMock = {
                 active: true,
-                categories: ["resourceNewCategory.allotted resource.allotted resource", "resourceNewCategory.allotted resource.contrail route", "resourceNewCategory.application l4+.application server"],
-                components: ["Resource.VF", "Resource.VFC"],
-                order:  ["lastUpdateDate", true],
-                statuses: ["inDesign"],
-                models: ["test"],
-                term: "Vf"
-            }
+                categories: ['resourceNewCategory.allotted resource.allotted resource', 'resourceNewCategory.allotted resource.contrail route', 'resourceNewCategory.application l4+.application server'],
+                components: ['Resource.VF', 'Resource.VFC'],
+                order:  ['lastUpdateDate', true],
+                statuses: ['inDesign'],
+                models: ['test'],
+                term: 'Vf'
+            };
             checkboxesFilterMock = {
-                selectedCategoriesModel: ["serviceNewCategory.network l4+", "resourceNewCategory.allotted resource.allotted resource"],
-                selectedComponentTypes: ["Resource.VF", "Resource.VFC"],
-                selectedResourceSubTypes: ["VF", "VFC"],
-                selectedStatuses: ["NOT_CERTIFIED_CHECKOUT", "NOT_CERTIFIED_CHECKIN"],
-                selectedModels: ["test"]
+                selectedCategoriesModel: ['serviceNewCategory.network l4+', 'resourceNewCategory.allotted resource.allotted resource'],
+                selectedComponentTypes: ['Resource.VF', 'Resource.VFC'],
+                selectedResourceSubTypes: ['VF', 'VFC'],
+                selectedStatuses: ['NOT_CERTIFIED_CHECKOUT', 'NOT_CERTIFIED_CHECKIN'],
+                selectedModels: ['test']
             };
             checkboxesFilterKeysMock = {
-                categories:{_main: ["serviceNewCategory.network l4+"]},
-                componentTypes: { Resource: ["Resource.VF", "Resource.VFC"], _main: ["Resource.VFC"]},
-                statuses: {_main: ["inDesign"]},
-                models: {_main: ["test"]}
-            }
+                categories: {_main: ['serviceNewCategory.network l4+']},
+                componentTypes: { Resource: ['Resource.VF', 'Resource.VFC'], _main: ['Resource.VFC']},
+                statuses: {_main: ['inDesign']},
+                models: {_main: ['test']}
+            };
 
             stateServiceMock = {
                 go: jest.fn(),
                 current: jest.fn()
             };
             cacheServiceMock = {
-                get: jest.fn().mockImplementation(()=> categoriesElements),
+                get: jest.fn().mockImplementation(() => categoriesElements),
                 set: jest.fn(),
-                contains: jest.fn().mockImplementation(()=> true)
+                contains: jest.fn().mockImplementation(() => true)
             };
             loaderServiceMock = {
                 activate: jest.fn(),
                 deactivate: jest.fn()
             };
             catalogServiceMock = {
-                //TODO create mock function of archive
-                getCatalog: jest.fn().mockImplementation(()=>  Observable.of(categoriesElements)),
-                getArchiveCatalog: jest.fn().mockImplementation(()=>  Observable.of(categoriesElements))
+                // TODO create mock function of archive
+                getCatalog: jest.fn().mockImplementation(() =>  Observable.of(categoriesElements)),
+                getArchiveCatalog: jest.fn().mockImplementation(() =>  Observable.of(categoriesElements))
             };
-            const configure: ConfigureFn = testBed => {
+            const configure: ConfigureFn = (testBed) => {
                 testBed.configureTestingModule({
                     declarations: [CatalogComponent, TranslatePipe],
                     imports: [],
@@ -129,12 +123,11 @@ describe('catalog component', () => {
                 });
             };
 
-            configureTests(configure).then(testBed => {
+            configureTests(configure).then((testBed) => {
                 fixture = testBed.createComponent(CatalogComponent);
             });
         })
     );
-
 
     it('should match current snapshot of catalog component', () => {
         expect(fixture).toMatchSnapshot();
@@ -181,7 +174,7 @@ describe('catalog component', () => {
 
     it ('should call on catalog component initScopeMembers' , () => {
         const component = TestBed.createComponent(CatalogComponent);
-        component.componentInstance.makeSortedCategories = jest.fn().mockImplementation(()=> categoriesElements);
+        component.componentInstance.makeSortedCategories = jest.fn().mockImplementation(() => categoriesElements);
         component.componentInstance.initCategoriesMap = jest.fn();
         component.componentInstance.initCheckboxesFilter = jest.fn();
         component.componentInstance.initCheckboxesFilterKeys = jest.fn();
@@ -190,9 +183,9 @@ describe('catalog component', () => {
         expect(component.componentInstance.numberOfItemToDisplay).toEqual(0);
         expect(component.componentInstance.categories).toEqual(categoriesElements);
         expect(component.componentInstance.confStatus).toEqual(component.componentInstance.sdcMenu.statuses);
-        expect(component.componentInstance.expandedSection).toEqual( ["type", "category", "status", "model"]);
+        expect(component.componentInstance.expandedSection).toEqual( ['type', 'category', 'status', 'model']);
         expect(component.componentInstance.catalogItems).toEqual([]);
-        expect(component.componentInstance.search).toEqual({FilterTerm: ""});
+        expect(component.componentInstance.search).toEqual({FilterTerm: ''});
         expect(component.componentInstance.initCategoriesMap).toHaveBeenCalled();
         expect(component.componentInstance.initCheckboxesFilter).toHaveBeenCalled();
         expect(component.componentInstance.initCheckboxesFilterKeys).toHaveBeenCalled();
@@ -207,7 +200,7 @@ describe('catalog component', () => {
         component.componentInstance.buildChecklistModelForTypes = jest.fn();
         component.componentInstance.buildChecklistModelForCategories = jest.fn();
         component.componentInstance.buildChecklistModelForStatuses = jest.fn();
-		component.componentInstance.buildChecklistModelForModels = jest.fn();
+		      component.componentInstance.buildChecklistModelForModels = jest.fn();
         component.componentInstance.buildCheckboxLists();
         expect(component.componentInstance.buildChecklistModelForTypes).toHaveBeenCalled();
         expect(component.componentInstance.buildChecklistModelForCategories).toHaveBeenCalled();
@@ -217,8 +210,8 @@ describe('catalog component', () => {
 
     it ('should call on catalog component getTestIdForCheckboxByText ' , () => {
         const component = TestBed.createComponent(CatalogComponent);
-        let testId = component.componentInstance.getTestIdForCheckboxByText("catalog filter");
-        expect(testId).toEqual("checkbox-catalogfilter");
+        const testId = component.componentInstance.getTestIdForCheckboxByText('catalog filter');
+        expect(testId).toEqual('checkbox-catalogfilter');
     });
 
     it ('should call on catalog component selectLeftSwitchItem with active catalog' , () => {
@@ -228,7 +221,7 @@ describe('catalog component', () => {
         component.componentInstance.changeFilterParams = jest.fn();
         component.componentInstance.selectLeftSwitchItem(catalogSelectorItemsMock[0]);
         expect(component.componentInstance.getActiveCatalogItems).toBeCalledWith(true);
-        expect(component.componentInstance.changeFilterParams).toBeCalledWith({"active": true});
+        expect(component.componentInstance.changeFilterParams).toBeCalledWith({active: true});
     });
 
     it ('should call on catalog component selectLeftSwitchItem with archive catalog' , () => {
@@ -238,15 +231,15 @@ describe('catalog component', () => {
         component.componentInstance.changeFilterParams = jest.fn();
         component.componentInstance.selectLeftSwitchItem(catalogSelectorItemsMock[1]);
         expect(component.componentInstance.getArchiveCatalogItems).toBeCalledWith(true);
-        expect(component.componentInstance.changeFilterParams).toBeCalledWith({"active": false});
+        expect(component.componentInstance.changeFilterParams).toBeCalledWith({active: false});
     });
 
     it ('should call on catalog component buildChecklistModelForTypes' , () => {
         const component = TestBed.createComponent(CatalogComponent);
         component.componentInstance.checkboxesFilterKeys = checkboxesFilterKeysMock;
         component.componentInstance.buildChecklistModelForTypes();
-        expect(component.componentInstance.componentTypes).toEqual({ Resource: ['VF', 'VFC', 'CR', 'PNF', 'CP', 'VL'],
-            Service: null, 'TOSCA Type': ["Data Type"]})
+        expect(component.componentInstance.componentTypes).toEqual({ 'Resource': ['VF', 'VFC', 'CR', 'PNF', 'CP', 'VL'],
+            'Service': null, 'TOSCA Type': ['Data Type']});
         expect(component.componentInstance.typesChecklistModel.checkboxes.length).toEqual(3);
     });
 
@@ -288,78 +281,77 @@ describe('catalog component', () => {
     it ('should call on catalog component initCategoriesMap' , () => {
         const component = TestBed.createComponent(CatalogComponent);
         const categoriesMap = component.componentInstance.initCategoriesMap(categoriesElements);
-        expect(categoriesMap["resourceNewCategory.allotted resource.allotted resource"].parent.name).toEqual("Allotted Resource");
-        expect(categoriesMap["resourceNewCategory.generic"].category.uniqueId).toEqual("resourceNewCategory.generic");
-        expect(categoriesMap["serviceNewCategory.voip call control"].category.name).toEqual("VoIP Call Control");
+        expect(categoriesMap['resourceNewCategory.allotted resource.allotted resource'].parent.name).toEqual('Allotted Resource');
+        expect(categoriesMap['resourceNewCategory.generic'].category.uniqueId).toEqual('resourceNewCategory.generic');
+        expect(categoriesMap['serviceNewCategory.voip call control'].category.name).toEqual('VoIP Call Control');
 
     });
-
 
     it ('should call on catalog component selectLeftSwitchItem with active and selectedCatalogItem equal to archived' , () => {
         const component = TestBed.createComponent(CatalogComponent);
         component.componentInstance.getActiveCatalogItems = jest.fn();
         component.componentInstance.changeFilterParams = jest.fn();
-        component.componentInstance.selectedCatalogItem = catalogSelectorItemsMock[1]
+        component.componentInstance.selectedCatalogItem = catalogSelectorItemsMock[1];
         component.componentInstance.selectLeftSwitchItem(catalogSelectorItemsMock[0]);
         expect(component.componentInstance.getActiveCatalogItems).toHaveBeenCalledWith(true);
-        expect(component.componentInstance.changeFilterParams).toHaveBeenCalledWith({active: true})
+        expect(component.componentInstance.changeFilterParams).toHaveBeenCalledWith({active: true});
     });
 
     it ('should call on catalog component selectLeftSwitchItem with archived and selectedCatalogItem equal to active' , () => {
         const component = TestBed.createComponent(CatalogComponent);
         component.componentInstance.getArchiveCatalogItems = jest.fn();
         component.componentInstance.changeFilterParams = jest.fn();
-        component.componentInstance.selectedCatalogItem = catalogSelectorItemsMock[0]
+        component.componentInstance.selectedCatalogItem = catalogSelectorItemsMock[0];
         component.componentInstance.selectLeftSwitchItem(catalogSelectorItemsMock[1]);
         expect(component.componentInstance.getArchiveCatalogItems).toBeCalledWith(true);
-        expect(component.componentInstance.changeFilterParams).toHaveBeenCalledWith({active: false})
+        expect(component.componentInstance.changeFilterParams).toHaveBeenCalledWith({active: false});
     });
 
     it ('should call on catalog component sectionClick with section contains in expandedSection' , () => {
         const component = TestBed.createComponent(CatalogComponent);
-        component.componentInstance.expandedSection =  ["type", "category", "status"];
-        component.componentInstance.sectionClick("type");
-        expect(component.componentInstance.expandedSection).toEqual(["category", "status"])
+        component.componentInstance.expandedSection =  ['type', 'category', 'status'];
+        component.componentInstance.sectionClick('type');
+        expect(component.componentInstance.expandedSection).toEqual(['category', 'status']);
     });
 
     it ('should call on catalog component sectionClick with section not contains in expandedSection' , () => {
         const component = TestBed.createComponent(CatalogComponent);
-        component.componentInstance.expandedSection =  ["type", "category", "status"];
-        component.componentInstance.sectionClick("newItem");
-        expect(component.componentInstance.expandedSection).toEqual(["type", "category", "status", "newItem"])
+        component.componentInstance.expandedSection =  ['type', 'category', 'status'];
+        component.componentInstance.sectionClick('newItem');
+        expect(component.componentInstance.expandedSection).toEqual(['type', 'category', 'status', 'newItem']);
     });
 
     it ('should call on catalog component makeFilterParamsFromCheckboxes with selected values' , () => {
         const component = TestBed.createComponent(CatalogComponent);
-        expect(component.componentInstance.makeFilterParamsFromCheckboxes(checkListModelMock)).toEqual(["Resource.VF", "Resource.VFD"])
+        expect(component.componentInstance.makeFilterParamsFromCheckboxes(checkListModelMock)).toEqual(['Resource.VF', 'Resource.VFD']);
     });
 
     it ('should call on catalog component order with resourceName value' , () => {
         const component = TestBed.createComponent(CatalogComponent);
         component.componentInstance.changeFilterParams = jest.fn();
-        component.componentInstance.filterParams = filterParamsMock
-        component.componentInstance.order("resourceName");
-        expect(component.componentInstance.changeFilterParams).toHaveBeenCalledWith( {"order": ["resourceName", false]})
+        component.componentInstance.filterParams = filterParamsMock;
+        component.componentInstance.order('resourceName');
+        expect(component.componentInstance.changeFilterParams).toHaveBeenCalledWith( {order: ['resourceName', false]});
     });
 
     it ('should call on catalog component goToComponent' , () => {
         const component = TestBed.createComponent(CatalogComponent);
-       const componentMock = { uniqueId: "d3e80fed-12f6-4f29-aeb1-771050e5db72", componentType: "RESOURCE"}
+        const componentMock = { uniqueId: 'd3e80fed-12f6-4f29-aeb1-771050e5db72', componentType: 'RESOURCE'};
         component.componentInstance.goToComponent(componentMock);
-       expect(stateServiceMock.go).toHaveBeenCalledWith('workspace.general', {id: componentMock.uniqueId, type: componentMock.componentType.toLowerCase()})
+        expect(stateServiceMock.go).toHaveBeenCalledWith('workspace.general', {id: componentMock.uniqueId, type: componentMock.componentType.toLowerCase()});
 
     });
 
     it ('should call on catalog component getNumOfElements for active catalog' , () => {
         const component = TestBed.createComponent(CatalogComponent);
-        component.componentInstance.selectedCatalogItem = catalogSelectorItemsMock[0]
-        expect(component.componentInstance.getNumOfElements(3)).toEqual("3 <b>Active</b> Elements found")
+        component.componentInstance.selectedCatalogItem = catalogSelectorItemsMock[0];
+        expect(component.componentInstance.getNumOfElements(3)).toEqual('3 <b>Active</b> Elements found');
 
     });
 
     it ('should call on catalog component raiseNumberOfElementToDisplay with empty catalogFilteredItems' , () => {
         const component = TestBed.createComponent(CatalogComponent);
-        component.componentInstance.catalogFilteredItems = []
+        component.componentInstance.catalogFilteredItems = [];
         component.componentInstance.raiseNumberOfElementToDisplay();
         expect(component.componentInstance.numberOfItemToDisplay).toEqual(0);
         expect(component.componentInstance.catalogFilteredSlicedItems).toEqual([]);
@@ -367,18 +359,18 @@ describe('catalog component', () => {
 
     it ('should call on catalog component raiseNumberOfElementToDisplay with full catalogFilteredItems' , () => {
         const component = TestBed.createComponent(CatalogComponent);
-        component.componentInstance.catalogFilteredItems = [1 , 2 , 3, 4, 5, 6]
+        component.componentInstance.catalogFilteredItems = [1 , 2 , 3, 4, 5, 6];
         component.componentInstance.numberOfItemToDisplay = 2;
         component.componentInstance.raiseNumberOfElementToDisplay();
-         expect(component.componentInstance.numberOfItemToDisplay).toEqual(6);
-         expect(component.componentInstance.catalogFilteredSlicedItems).toEqual([1 , 2 , 3, 4, 5, 6]);
+        expect(component.componentInstance.numberOfItemToDisplay).toEqual(6);
+        expect(component.componentInstance.catalogFilteredSlicedItems).toEqual([1 , 2 , 3, 4, 5, 6]);
     });
 
     it ('should call on catalog component componentShouldReload return false' , () => {
         const component = TestBed.createComponent(CatalogComponent);
         component.componentInstance.isDefaultFilter = jest.fn().mockImplementation(() => false);
-        cacheServiceMock.get.mockImplementation(()=> "catalog");
-        let componentShouldReload = component.componentInstance.componentShouldReload();
+        cacheServiceMock.get.mockImplementation(() => 'catalog');
+        const componentShouldReload = component.componentInstance.componentShouldReload();
         expect(component.componentInstance.cacheService.get()).toEqual('catalog');
         expect(component.componentInstance.cacheService.contains()).toEqual(true);
         expect(component.componentInstance.isDefaultFilter).toHaveBeenCalled();
@@ -388,7 +380,7 @@ describe('catalog component', () => {
     it ('should call on catalog component componentShouldReload return true' , () => {
         const component = TestBed.createComponent(CatalogComponent);
         component.componentInstance.isDefaultFilter = jest.fn();
-        let componentShouldReload = component.componentInstance.componentShouldReload();
+        const componentShouldReload = component.componentInstance.componentShouldReload();
         expect(component.componentInstance.cacheService.get()).not.toEqual('catalog');
         expect(component.componentInstance.cacheService.contains()).toEqual(true);
         expect(componentShouldReload).toEqual(true);
@@ -396,13 +388,13 @@ describe('catalog component', () => {
 
     it ('should call on catalog component getActiveCatalogItems with true' , () => {
         const component = TestBed.createComponent(CatalogComponent);
-        let resp = component.componentInstance.cacheService.get();
+        const resp = component.componentInstance.cacheService.get();
         component.componentInstance.updateCatalogItems = jest.fn().mockImplementation((resp) => {});
         component.componentInstance.getActiveCatalogItems(true);
         expect(component.componentInstance.loaderService.activate).toHaveBeenCalled();
         expect(component.componentInstance.updateCatalogItems).toHaveBeenCalledWith(resp);
         expect(component.componentInstance.loaderService.deactivate).toHaveBeenCalled();
-        expect(component.componentInstance.cacheService.set).toHaveBeenCalledWith('breadcrumbsComponentsState', "catalog");
+        expect(component.componentInstance.cacheService.set).toHaveBeenCalledWith('breadcrumbsComponentsState', 'catalog');
         expect(component.componentInstance.cacheService.set).toHaveBeenCalledWith('breadcrumbsComponents', categoriesElements);
         expect(component.componentInstance.catalogService.getCatalog).toHaveBeenCalled();
     });
@@ -413,13 +405,13 @@ describe('catalog component', () => {
         component.componentInstance.updateCatalogItems = jest.fn().mockImplementation((resp) => {});
         component.componentInstance.getActiveCatalogItems(false);
         expect(component.componentInstance.componentShouldReload).toHaveBeenCalled();
-        let resp = component.componentInstance.cacheService.get();
+        const resp = component.componentInstance.cacheService.get();
         expect(component.componentInstance.updateCatalogItems).toHaveBeenCalledWith(resp);
     });
 
     it ('should call on catalog component getActiveCatalogItems with true observable return error' , () => {
         const component = TestBed.createComponent(CatalogComponent);
-        catalogServiceMock.getCatalog.mockImplementation(()=>  Observable.throwError('error'));
+        catalogServiceMock.getCatalog.mockImplementation(() =>  Observable.throwError('error'));
         component.componentInstance.getActiveCatalogItems(true);
         expect(component.componentInstance.loaderService.activate).toHaveBeenCalled();
         expect(console.info).toHaveBeenCalledWith('Failed to load catalog CatalogViewModel::getActiveCatalogItems');
@@ -436,7 +428,7 @@ describe('catalog component', () => {
         expect(component.componentInstance.catalogService.getArchiveCatalog).toHaveBeenCalled();
         expect(component.componentInstance.cacheService.set).toHaveBeenCalledWith('archiveComponents', categoriesElements);
         expect(component.componentInstance.loaderService.deactivate).toHaveBeenCalled();
-        expect(component.componentInstance.updateCatalogItems).toHaveBeenCalledWith(resp)
+        expect(component.componentInstance.updateCatalogItems).toHaveBeenCalledWith(resp);
     });
 
     it ('should call on catalog component getArchiveCatalogItems with false' , () => {
@@ -445,13 +437,13 @@ describe('catalog component', () => {
         component.componentInstance.getArchiveCatalogItems(false);
         expect(component.componentInstance.cacheService.contains).toHaveBeenCalled();
         expect(component.componentInstance.cacheService.get).toHaveBeenCalled();
-        let resp = component.componentInstance.cacheService.get();
+        const resp = component.componentInstance.cacheService.get();
         expect(component.componentInstance.updateCatalogItems).toHaveBeenCalledWith(resp);
     });
 
     it ('should call on catalog component getArchiveCatalogItems with true observable return error' , () => {
         const component = TestBed.createComponent(CatalogComponent);
-        catalogServiceMock.getArchiveCatalog.mockImplementation(()=>  Observable.throwError('error'));
+        catalogServiceMock.getArchiveCatalog.mockImplementation(() =>  Observable.throwError('error'));
         component.componentInstance.getArchiveCatalogItems(true);
         expect(component.componentInstance.loaderService.activate).toHaveBeenCalled();
         expect(component.componentInstance.catalogService.getArchiveCatalog).toHaveBeenCalled();
@@ -496,35 +488,35 @@ describe('catalog component', () => {
         component.componentInstance.makeFilteredCategories = jest.fn();
         component.componentInstance.buildChecklistModelForCategories = jest.fn();
         component.componentInstance.categories = categoriesElements;
-        component.componentInstance.checkboxesFilter = {selectedComponentTypes: ["firstType", "secondType"]};
+        component.componentInstance.checkboxesFilter = {selectedComponentTypes: ['firstType', 'secondType']};
         component.componentInstance.filterCatalogCategories();
-        expect(component.componentInstance.makeFilteredCategories).toHaveBeenCalledWith(categoriesElements, ["firstType", "secondType"]);
+        expect(component.componentInstance.makeFilteredCategories).toHaveBeenCalledWith(categoriesElements, ['firstType', 'secondType']);
         expect(component.componentInstance.buildChecklistModelForCategories).toHaveBeenCalled();
     });
 
     it ('should call on catalog component filterCatalogItems' , () => {
         const component = TestBed.createComponent(CatalogComponent);
-        component.componentInstance.makeFilteredItems = jest.fn().mockImplementation(() => [1,2,3]);
+        component.componentInstance.makeFilteredItems = jest.fn().mockImplementation(() => [1, 2, 3]);
         component.componentInstance.raiseNumberOfElementToDisplay = jest.fn();
-        component.componentInstance.catalogItems = ["firstComponent", "secondComponent"];
+        component.componentInstance.catalogItems = ['firstComponent', 'secondComponent'];
         component.componentInstance.checkboxesFilter = {};
         component.componentInstance.search = {};
-        component.componentInstance.sortBy = "";
+        component.componentInstance.sortBy = '';
         component.componentInstance.reverse = true;
         component.componentInstance.numberOfItemToDisplay = 2;
        // component.componentInstance.catalogFilteredItems = component.componentInstance.makeFilteredItems();
         component.componentInstance.filterCatalogItems();
-        expect(component.componentInstance.makeFilteredItems).toHaveBeenCalledWith(["firstComponent", "secondComponent"], {}, {}, "",true);
+        expect(component.componentInstance.makeFilteredItems).toHaveBeenCalledWith(['firstComponent', 'secondComponent'], {}, {}, '', true);
         expect(component.componentInstance.raiseNumberOfElementToDisplay);
-        expect(component.componentInstance.catalogFilteredSlicedItems).toEqual([1,2]);
+        expect(component.componentInstance.catalogFilteredSlicedItems).toEqual([1, 2]);
     });
 
     it ('should call on catalog component applyFilterParamsToCheckboxes' , () => {
         const component = TestBed.createComponent(CatalogComponent);
-        component.componentInstance.applyFilterParamsToCheckboxes(checkListModelMock, ["Resource.CR", "Resource.VFD", "Resource.VF"]);
-        expect(checkListModelMock.selectedValues).toEqual(["Resource.VF","Resource.CR"]);
-        expect(checkListModelMock.checkboxes[1].subLevelChecklist.selectedValues).toEqual(["Resource.VFD"]);
-        expect(checkListModelMock.checkboxes[2].subLevelChecklist.selectedValues).toEqual(["Resource.VF"])
+        component.componentInstance.applyFilterParamsToCheckboxes(checkListModelMock, ['Resource.CR', 'Resource.VFD', 'Resource.VF']);
+        expect(checkListModelMock.selectedValues).toEqual(['Resource.VF', 'Resource.CR']);
+        expect(checkListModelMock.checkboxes[1].subLevelChecklist.selectedValues).toEqual(['Resource.VFD']);
+        expect(checkListModelMock.checkboxes[2].subLevelChecklist.selectedValues).toEqual(['Resource.VF']);
     });
 
     it ('should call on catalog component applyFilterParamsComponents and filterParams.active equal true' , () => {
@@ -536,8 +528,8 @@ describe('catalog component', () => {
         component.componentInstance.typesChecklistModel = checkListModelMock;
         component.componentInstance.applyFilterParamsComponents(filterParamsMock);
         expect(component.componentInstance.applyFilterParamsToCheckboxes).toHaveBeenCalledWith(checkListModelMock, filterParamsMock.components);
-        expect(component.componentInstance.checkboxesFilter.selectedComponentTypes).toEqual(["Resource.VFC"]);
-        expect(component.componentInstance.checkboxesFilter.selectedResourceSubTypes).toEqual(["VF", "VFC"]);
+        expect(component.componentInstance.checkboxesFilter.selectedComponentTypes).toEqual(['Resource.VFC']);
+        expect(component.componentInstance.checkboxesFilter.selectedResourceSubTypes).toEqual(['VF', 'VFC']);
         expect(component.componentInstance.selectedCatalogItem).toEqual(catalogSelectorItemsMock[0]);
     });
 
@@ -551,8 +543,8 @@ describe('catalog component', () => {
         component.componentInstance.typesChecklistModel = checkListModelMock;
         component.componentInstance.applyFilterParamsComponents(filterParamsMock);
         expect(component.componentInstance.applyFilterParamsToCheckboxes).toHaveBeenCalledWith(checkListModelMock, filterParamsMock.components);
-        expect(component.componentInstance.checkboxesFilter.selectedComponentTypes).toEqual(["Resource.VFC"]);
-        expect(component.componentInstance.checkboxesFilter.selectedResourceSubTypes).toEqual(["VF", "VFC"]);
+        expect(component.componentInstance.checkboxesFilter.selectedComponentTypes).toEqual(['Resource.VFC']);
+        expect(component.componentInstance.checkboxesFilter.selectedResourceSubTypes).toEqual(['VF', 'VFC']);
         expect(component.componentInstance.selectedCatalogItem).toEqual(catalogSelectorItemsMock[1]);
     });
 
@@ -564,7 +556,7 @@ describe('catalog component', () => {
         component.componentInstance.checkboxesFilter = checkboxesFilterMock;
         component.componentInstance.applyFilterParamsCategories(filterParamsMock);
         expect(component.componentInstance.applyFilterParamsToCheckboxes).toHaveBeenCalledWith(checkListModelMock, filterParamsMock.categories);
-        expect(component.componentInstance.checkboxesFilter.selectedCategoriesModel).toEqual(["serviceNewCategory.network l4+"]);
+        expect(component.componentInstance.checkboxesFilter.selectedCategoriesModel).toEqual(['serviceNewCategory.network l4+']);
     });
 
     it ('should call on catalog component applyFilterParamsStatuses' , () => {
@@ -577,20 +569,20 @@ describe('catalog component', () => {
         component.componentInstance.confStatus = sdcMenu.statuses;
         component.componentInstance.applyFilterParamsStatuses(filterParamsMock);
         expect(component.componentInstance.applyFilterParamsToCheckboxes).toHaveBeenCalledWith(checkListModelMock, filterParamsMock.statuses);
-        expect(component.componentInstance.checkboxesFilter.selectedStatuses).toEqual(["NOT_CERTIFIED_CHECKOUT", "NOT_CERTIFIED_CHECKIN"]);
+        expect(component.componentInstance.checkboxesFilter.selectedStatuses).toEqual(['NOT_CERTIFIED_CHECKOUT', 'NOT_CERTIFIED_CHECKIN']);
     });
 
     it ('should call on catalog component applyFilterParamsOrder' , () => {
         const component = TestBed.createComponent(CatalogComponent);
         component.componentInstance.applyFilterParamsOrder(filterParamsMock);
-        expect(component.componentInstance.sortBy).toEqual("lastUpdateDate");
+        expect(component.componentInstance.sortBy).toEqual('lastUpdateDate');
         expect(component.componentInstance.reverse).toEqual( true);
     });
 
     it ('should call on catalog component applyFilterParamsTerm' , () => {
         const component = TestBed.createComponent(CatalogComponent);
         component.componentInstance.applyFilterParamsTerm(filterParamsMock);
-        expect(component.componentInstance.search.filterTerm).toEqual("Vf");
+        expect(component.componentInstance.search.filterTerm).toEqual('Vf');
     });
 
     // it ('should call on catalog component loadFilterParams' , () => {
@@ -602,13 +594,13 @@ describe('catalog component', () => {
     it ('should call on catalog component changeFilterParams' , () => {
         const component = TestBed.createComponent(CatalogComponent);
         component.componentInstance.applyFilterParamsToView = jest.fn();
-        component.componentInstance.filterParams =  { active: true, categories: [], components: [], order:  ["lastUpdateDate", true], statuses: [], term: ""};
+        component.componentInstance.filterParams =  { active: true, categories: [], components: [], order:  ['lastUpdateDate', true], statuses: [], term: ''};
         const navigateMock = jest.fn().mockImplementation(() => Promise.resolve({ json: () => [] }));
         (component.componentInstance as any).navigationService = {navigate: navigateMock, getParams: () => ({}), getCurrentStateName: () => 'catalog', includes: jest.fn()};
-        const newParams = {"filter.active": true, "filter.categories": "resourceNewCategory.allotted resource.allotted resource,resourceNewCategory.allotted resource.contrail route,resourceNewCategory.application l4+.application server", "filter.components": "Resource.VF,Resource.VFC", "filter.models": "test", "filter.order": "-lastUpdateDate", "filter.statuses": "inDesign", "filter.term": "Vf"}
+        const newParams = {'filter.active': true, 'filter.categories': 'resourceNewCategory.allotted resource.allotted resource,resourceNewCategory.allotted resource.contrail route,resourceNewCategory.application l4+.application server', 'filter.components': 'Resource.VF,Resource.VFC', 'filter.models': 'test', 'filter.order': '-lastUpdateDate', 'filter.statuses': 'inDesign', 'filter.term': 'Vf'};
         component.componentInstance.changeFilterParams(filterParamsMock);
         expect(component.componentInstance.filterParams).toEqual(filterParamsMock);
-        expect(navigateMock).toHaveBeenCalledWith('.',newParams, {location: 'replace', notify: false});
+        expect(navigateMock).toHaveBeenCalledWith('.', newParams, {location: 'replace', notify: false});
         expect(component.componentInstance.applyFilterParamsToView).toHaveBeenCalledWith(filterParamsMock);
     });
 
@@ -617,41 +609,40 @@ describe('catalog component', () => {
         component.componentInstance.applyFilterParamsToView = jest.fn();
         component.componentInstance.makeFilterParamsFromCheckboxes = jest.fn();
         component.componentInstance.buildCheckboxLists = jest.fn();
-        component.componentInstance.filterParams =  { active: true, categories: [], components: [], order:  ["lastUpdateDate", true], statuses: [], term: ""};
+        component.componentInstance.filterParams =  { active: true, categories: [], components: [], order:  ['lastUpdateDate', true], statuses: [], term: ''};
         const navigateMock = jest.fn().mockImplementation(() => Promise.resolve({ json: () => [] }));
         (component.componentInstance as any).navigationService = {navigate: navigateMock, getParams: () => ({}), getCurrentStateName: () => 'catalog', includes: jest.fn()};
-        const newParams = {"filter.active": true, "filter.categories": "resourceNewCategory.allotted resource.allotted resource,resourceNewCategory.allotted resource.contrail route,resourceNewCategory.application l4+.application server", "filter.components": "Resource.VF,Resource.VFC", "filter.models": "test", "filter.order": "-lastUpdateDate", "filter.statuses": "inDesign", "filter.term": "Vf"}
+        const newParams = {'filter.active': true, 'filter.categories': 'resourceNewCategory.allotted resource.allotted resource,resourceNewCategory.allotted resource.contrail route,resourceNewCategory.application l4+.application server', 'filter.components': 'Resource.VF,Resource.VFC', 'filter.models': 'test', 'filter.order': '-lastUpdateDate', 'filter.statuses': 'inDesign', 'filter.term': 'Vf'};
         component.componentInstance.typesChecklistModel = checkListModelMock;
         component.componentInstance.categoriesChecklistModel = checkListModelMock;
         component.componentInstance.statusChecklistModel = checkListModelMock;
         component.componentInstance.changeFilterParams(filterParamsMock, true);
         expect(component.componentInstance.filterParams).toEqual(filterParamsMock);
-        expect(navigateMock).toHaveBeenCalledWith('.',newParams, {location: 'replace', notify: false});
+        expect(navigateMock).toHaveBeenCalledWith('.', newParams, {location: 'replace', notify: false});
         expect(component.componentInstance.applyFilterParamsToView).toHaveBeenCalledWith(filterParamsMock);
     });
 
     it ('should call on catalog component makeFilteredCategories' , () => {
         const component = TestBed.createComponent(CatalogComponent);
-        const categoryMock = [{"name":"Network L1-3","normalizedName":"network l1-3","uniqueId":"serviceNewCategory.network l1-3","icons":["network_l_1-3"],"subcategories":null,"version":null,"ownerId":null,"empty":false,"type":null}];
-        cacheServiceMock.get.mockImplementation(()=> categoryMock);
+        const categoryMock = [{name: 'Network L1-3', normalizedName: 'network l1-3', uniqueId: 'serviceNewCategory.network l1-3', icons: ['network_l_1-3'], subcategories: null, version: null, ownerId: null, empty: false, type: null}];
+        cacheServiceMock.get.mockImplementation(() => categoryMock);
         const resp = component.componentInstance.makeFilteredCategories(categoriesElements, checkboxesFilterMock.selectedComponentTypes);
-        expect(component.componentInstance.cacheService.get).toHaveBeenCalledWith("resourceCategories");
+        expect(component.componentInstance.cacheService.get).toHaveBeenCalledWith('resourceCategories');
         expect(resp).toEqual(categoryMock);
     });
 
     it ('should call on catalog component makeFilteredCategories return unique elements' , () => {
         const component = TestBed.createComponent(CatalogComponent);
-        const categoryMock = [{"name":"Network L1-3","normalizedName":"network l1-3","uniqueId":"serviceNewCategory.network l1-3","icons":["network_l_1-3"],"subcategories":null,"version":null,"ownerId":null,"empty":false,"type":null},
-            {"name":"Network L1-3","normalizedName":"network l1-3","uniqueId":"serviceNewCategory.network l1-3","icons":["network_l_1-3"],"subcategories":null,"version":null,"ownerId":null,"empty":false,"type":null},
-            {"name":"Network Service","normalizedName":"network service","uniqueId":"serviceNewCategory.network service","icons":["network_l_1-3"],"subcategories":null,"version":null,"ownerId":null,"empty":false,"type":null}];
-        const categoryUniqueMock = [{"name":"Network L1-3","normalizedName":"network l1-3","uniqueId":"serviceNewCategory.network l1-3","icons":["network_l_1-3"],"subcategories":null,"version":null,"ownerId":null,"empty":false,"type":null},
-            {"name":"Network Service","normalizedName":"network service","uniqueId":"serviceNewCategory.network service","icons":["network_l_1-3"],"subcategories":null,"version":null,"ownerId":null,"empty":false,"type":null}];
-        cacheServiceMock.get.mockImplementation(()=> categoryMock);
-        checkboxesFilterMock.selectedComponentTypes = ["SERVICE", "Resource.VF"];
+        const categoryMock = [{name: 'Network L1-3', normalizedName: 'network l1-3', uniqueId: 'serviceNewCategory.network l1-3', icons: ['network_l_1-3'], subcategories: null, version: null, ownerId: null, empty: false, type: null},
+            {name: 'Network L1-3', normalizedName: 'network l1-3', uniqueId: 'serviceNewCategory.network l1-3', icons: ['network_l_1-3'], subcategories: null, version: null, ownerId: null, empty: false, type: null},
+            {name: 'Network Service', normalizedName: 'network service', uniqueId: 'serviceNewCategory.network service', icons: ['network_l_1-3'], subcategories: null, version: null, ownerId: null, empty: false, type: null}];
+        const categoryUniqueMock = [{name: 'Network L1-3', normalizedName: 'network l1-3', uniqueId: 'serviceNewCategory.network l1-3', icons: ['network_l_1-3'], subcategories: null, version: null, ownerId: null, empty: false, type: null},
+            {name: 'Network Service', normalizedName: 'network service', uniqueId: 'serviceNewCategory.network service', icons: ['network_l_1-3'], subcategories: null, version: null, ownerId: null, empty: false, type: null}];
+        cacheServiceMock.get.mockImplementation(() => categoryMock);
+        checkboxesFilterMock.selectedComponentTypes = ['SERVICE', 'Resource.VF'];
         const resp = component.componentInstance.makeFilteredCategories(categoriesElements, checkboxesFilterMock.selectedComponentTypes);
-        expect(component.componentInstance.cacheService.get).toHaveBeenCalledWith("resourceCategories");
+        expect(component.componentInstance.cacheService.get).toHaveBeenCalledWith('resourceCategories');
         expect(resp).toEqual(categoryUniqueMock);
     });
-
 
 });

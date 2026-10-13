@@ -1,17 +1,16 @@
-import {ArtifactFormComponent} from "./artifact-form.component";
-import {async, ComponentFixture} from "@angular/core/testing";
-import {By} from "@angular/platform-browser";
-import {ConfigureFn, configureTests} from "../../../../jest/test-config.helper";
-import {NO_ERRORS_SCHEMA} from "@angular/core";
-import {TranslateModule} from "../../../shared/translator/translate.module";
-import {CacheService} from "../../../services/cache.service";
-import {TranslateService} from "../../../shared/translator/translate.service";
-import {ArtifactModel} from "../../../models/artifacts";
-import {IDropDownOption} from "onap-ui-angular/dist/form-elements/dropdown/dropdown-models";
-import {Subject} from "rxjs";
-import {ArtifactConfigService} from "../../../services/artifact-config.service";
-import {ArtifactType, ComponentType} from "../../../utils/constants";
-
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { async, ComponentFixture } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
+import { IDropDownOption } from 'onap-ui-angular/dist/form-elements/dropdown/dropdown-models';
+import { Subject } from 'rxjs';
+import { ConfigureFn, configureTests } from '../../../../jest/test-config.helper';
+import { ArtifactModel } from '../../../models/artifacts';
+import { ArtifactConfigService } from '../../../services/artifact-config.service';
+import { CacheService } from '../../../services/cache.service';
+import { TranslateModule } from '../../../shared/translator/translate.module';
+import { TranslateService } from '../../../shared/translator/translate.service';
+import { ArtifactType, ComponentType } from '../../../utils/constants';
+import { ArtifactFormComponent } from './artifact-form.component';
 
 describe('artifact form component', () => {
 
@@ -20,7 +19,7 @@ describe('artifact form component', () => {
     let artifactConfigService: Partial<ArtifactConfigService>;
     let onValidationChangeMock: Partial<Subject<boolean>>;
 
-    let artifactModel = new ArtifactModel();
+    const artifactModel = new ArtifactModel();
 
     artifactConfigService = {
         findAllTypeBy: jest.fn()
@@ -40,7 +39,7 @@ describe('artifact form component', () => {
                 get: jest.fn()
             };
 
-            const configure: ConfigureFn = testBed => {
+            const configure: ConfigureFn = (testBed) => {
                 testBed.configureTestingModule({
                     declarations: [ArtifactFormComponent],
                     imports: [TranslateModule],
@@ -53,14 +52,13 @@ describe('artifact form component', () => {
                 });
             };
 
-            configureTests(configure).then(testBed => {
+            configureTests(configure).then((testBed) => {
                 fixture = testBed.createComponent(ArtifactFormComponent);
             });
         })
     );
 
-
-    it('should verify initArtifactTypes for DEPLOYMENT and ArtifactType = HEAT_ENV', () =>{
+    it('should verify initArtifactTypes for DEPLOYMENT and ArtifactType = HEAT_ENV', () => {
 
         artifactConfigService.findAllTypeBy.mockImplementation((artifactType, componentType, resourceType) => {
             if (artifactType == 'DEPLOYMENT' && componentType == ComponentType.RESOURCE_INSTANCE && resourceType == 'VF') {
@@ -75,7 +73,7 @@ describe('artifact form component', () => {
 
         fixture.componentInstance.initArtifactTypes();
 
-        expect(fixture.componentInstance.selectedFileType).toEqual({"label": ArtifactType.HEAT_ENV, "value": ArtifactType.HEAT_ENV});
+        expect(fixture.componentInstance.selectedFileType).toEqual({label: ArtifactType.HEAT_ENV, value: ArtifactType.HEAT_ENV});
 
     });
 
@@ -100,7 +98,7 @@ describe('artifact form component', () => {
 
         fixture.componentInstance.initArtifactTypes();
 
-        expect(fixture.componentInstance.selectedFileType).toEqual({'label': expectedSelectedValue, 'value': expectedSelectedValue});
+        expect(fixture.componentInstance.selectedFileType).toEqual({label: expectedSelectedValue, value: expectedSelectedValue});
 
     });
 
@@ -125,7 +123,7 @@ describe('artifact form component', () => {
 
         fixture.componentInstance.initArtifactTypes();
 
-        expect(fixture.componentInstance.selectedFileType).toEqual({'label': expectedSelectedValue, 'value': expectedSelectedValue});
+        expect(fixture.componentInstance.selectedFileType).toEqual({label: expectedSelectedValue, value: expectedSelectedValue});
 
     });
 
@@ -164,8 +162,8 @@ describe('artifact form component', () => {
     });
 
     it('should verify onUploadFile -> file gets file name', () => {
-        let file = {
-            filename:'dummyFileName'
+        const file = {
+            filename: 'dummyFileName'
         };
 
         fixture.componentInstance.verifyTypeAndFileWereFilled = jest.fn();
@@ -174,12 +172,12 @@ describe('artifact form component', () => {
 
         expect(fixture.componentInstance.artifact.artifactName).toBe('dummyFileName');
 
-        const spy1 = jest.spyOn(fixture.componentInstance,'verifyTypeAndFileWereFilled');
+        const spy1 = jest.spyOn(fixture.componentInstance, 'verifyTypeAndFileWereFilled');
         expect(spy1).toHaveBeenCalled();
     });
 
     it('should verify onUploadFile -> file is null', () => {
-        let file = null;
+        const file = null;
         fixture.componentInstance.artifact = artifactModel;
         fixture.componentInstance.onUploadFile(file);
 
@@ -187,14 +185,14 @@ describe('artifact form component', () => {
     });
 
     it('should verify onTypeChange -> verifyTypeAndFileWereFilled is being called', () => {
-        let selectedFileType:IDropDownOption;
-        selectedFileType = {"label": "dummyLabel", "value": "dummyValue"};
+        let selectedFileType: IDropDownOption;
+        selectedFileType = {label: 'dummyLabel', value: 'dummyValue'};
         fixture.componentInstance.verifyTypeAndFileWereFilled = jest.fn();
 
         fixture.componentInstance.artifact = artifactModel;
         fixture.componentInstance.onTypeChange(selectedFileType);
 
-        const spy1 = jest.spyOn(fixture.componentInstance,'verifyTypeAndFileWereFilled');
+        const spy1 = jest.spyOn(fixture.componentInstance, 'verifyTypeAndFileWereFilled');
         expect(spy1).toHaveBeenCalled();
     });
 
@@ -205,7 +203,7 @@ describe('artifact form component', () => {
         fixture.componentInstance.artifact = artifactModel;
         fixture.componentInstance.onDescriptionChange();
 
-        const spy1 = jest.spyOn(fixture.componentInstance,'verifyTypeAndFileWereFilled');
+        const spy1 = jest.spyOn(fixture.componentInstance, 'verifyTypeAndFileWereFilled');
         expect(spy1).toHaveBeenCalled();
     });
 
@@ -216,7 +214,7 @@ describe('artifact form component', () => {
         fixture.componentInstance.artifact = artifactModel;
         fixture.componentInstance.onLabelChange(true);
 
-        const spy1 = jest.spyOn(fixture.componentInstance,'verifyTypeAndFileWereFilled');
+        const spy1 = jest.spyOn(fixture.componentInstance, 'verifyTypeAndFileWereFilled');
         expect(spy1).toHaveBeenCalled();
     });
 
@@ -256,6 +254,5 @@ describe('artifact form component', () => {
 
         expect(onValidationChangeResult).toBe(true);
     });
-
 
 });

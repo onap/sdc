@@ -18,16 +18,16 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-import {ChangeDetectionStrategy, Component as NgComponent, OnInit} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
+import { ChangeDetectionStrategy, Component as NgComponent, OnInit } from '@angular/core';
+import { Component } from 'app/models/components/component';
+import { DisplayModule } from 'app/models/modules/base-module';
+import { PropertyModel } from 'app/models/properties';
+import { PropertyBEModel } from 'app/models/properties-inputs/property-be-model';
+import { PROPERTY_TYPES, UNIQUE_GROUP_PROPERTIES_NAME } from 'app/utils/constants';
+import { ValidationUtils } from 'app/utils/validation-utils';
 import 'rxjs/add/observable/of';
-import {Component} from 'app/models/components/component';
-import {DisplayModule} from 'app/models/modules/base-module';
-import {PropertyModel} from 'app/models/properties';
-import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
-import {PROPERTY_TYPES, UNIQUE_GROUP_PROPERTIES_NAME} from 'app/utils/constants';
-import {ValidationUtils} from 'app/utils/validation-utils';
-import {ModulePropertyModalService} from './module-property-modal.service';
+import { Observable } from 'rxjs/Observable';
+import { ModulePropertyModalService } from './module-property-modal.service';
 
 /**
  * Angular replacement for the AngularJS ModulePropertyView + PropertyFormBaseView
@@ -43,6 +43,10 @@ import {ModulePropertyModalService} from './module-property-modal.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ModulePropertyModalComponent implements OnInit {
+
+    private get component(): Component {
+        return this.input.component;
+    }
 
     public input: {
         property: PropertyModel;
@@ -65,40 +69,12 @@ export class ModulePropertyModalComponent implements OnInit {
         this.initValidation();
     }
 
-    private get component(): Component {
-        return this.input.component;
-    }
-
-    // Old PropertyFormBaseView.isPropertyValueOwner (property-form-base-model.ts:90-92).
-    private isPropertyValueOwner(): boolean {
-        return this.component.isService() || !!this.component.selectedInstance;
-    }
-
     public isValueDisabled(): boolean {
         return this.property.readonly && !this.isPropertyValueOwner();
     }
 
     public isBooleanValue(): boolean {
         return this.valueType() === PROPERTY_TYPES.BOOLEAN;
-    }
-
-    private valueType(): string {
-        return this.property.simpleType || this.property.type;
-    }
-
-    // Ported from ModulePropertyView.initValidation (module-property-model.ts:118-140): the readonly-by-name rules.
-    private initValidation(): void {
-        switch (this.property.name) {
-            case UNIQUE_GROUP_PROPERTIES_NAME.IS_BASE:
-            case UNIQUE_GROUP_PROPERTIES_NAME.VF_MODULE_TYPE:
-            case UNIQUE_GROUP_PROPERTIES_NAME.VOLUME_GROUP:
-            case UNIQUE_GROUP_PROPERTIES_NAME.VF_MODULE_LABEL:
-                this.property.readonly = true;
-                break;
-            case UNIQUE_GROUP_PROPERTIES_NAME.VF_MODULE_DESCRIPTION:
-                this.property.readonly = this.component.isService();
-                break;
-        }
     }
 
     // Ported from ModulePropertyView.onValueChange (module-property-model.ts:161-172): reset-to-default when the
@@ -113,44 +89,18 @@ export class ModulePropertyModalComponent implements OnInit {
         this.runValueValidation();
     }
 
-    // Client-side value-format check, reproducing the old template's ng-pattern="getValidationPattern(property.type)"
-    // plus the per-type validateJson / validateIntRange $setValidity('pattern', ...) that
-    // module-property-view.html applied (see PROPERTY_EDIT_PATTERN). An empty value stays valid (the reset-to-default
-    // above already handled the owner case); a malformed value sets errors['pattern'] so isValid() fails, Save is
-    // disabled and the value never reaches the BE. Boolean is edited via a <select>, so it needs no pattern check.
-    private runValueValidation(): void {
-        this.errors['pattern'] = false;
-        const raw = this.property.value;
-        if (raw == null || raw === '' || this.isBooleanValue()) {
-            return;
-        }
-        const type: string = this.valueType();
-        const strValue: string = String(raw);
-        const pattern: RegExp = this.validationUtils.getValidationPattern(type);
-        if (pattern && !pattern.test(strValue)) {
-            this.errors['pattern'] = true;
-            return;
-        }
-        if (type === PROPERTY_TYPES.JSON && !this.validationUtils.validateJson(strValue)) {
-            this.errors['pattern'] = true;
-            return;
-        }
-        if (type === PROPERTY_TYPES.INTEGER && !this.validationUtils.validateIntRange(strValue)) {
-            this.errors['pattern'] = true;
-        }
+    public isValid(): boolean {
+        return Object.keys(this.errors).every((k) => !this.errors[k]);
     }
 
-    // Sibling property numeric value from the module's property list, by unique-group name.
-    private findValue(name: string): number {
-        const p = (this.input.filteredProperties || []).find((x) => x.name === name);
-        return p ? parseInt(p.value, 10) : NaN;
-    }
-
-    // Old ModulePropertyView.isUniqueProperty (module-property-model.ts:142-146).
-    private isUniqueProperty(): boolean {
-        return this.property.name === UNIQUE_GROUP_PROPERTIES_NAME.MIN_VF_MODULE_INSTANCES
-            || this.property.name === UNIQUE_GROUP_PROPERTIES_NAME.MAX_VF_MODULE_INSTANCES
-            || this.property.name === UNIQUE_GROUP_PROPERTIES_NAME.INITIAL_COUNT;
+    public save(): Observable<PropertyBEModel[]> {
+        // Old ModulePropertyView.save() (module-property-model.ts:112-148) only issued the PUT when the property was
+        // editable AND its value actually changed; otherwise it just closed the modal. Preserve that guard so a Save
+        // on a read-only or unchanged property does not fire a redundant BE write.
+        if (this.property.readonly || this.property.value === this.input.property.value) {
+            return Observable.of([]);
+        }
+        return this.modulePropertyModalService.save(this.component, this.input.selectedModule, this.property);
     }
 
     // Ported from ModulePropertyView.onValueChange unique-property block (module-property-model.ts:173-235).
@@ -172,9 +122,9 @@ export class ModulePropertyModalComponent implements OnInit {
                 const valid = isNaN(max)
                     ? value <= initial
                     : !!value && value <= max && value <= initial;
-                this.errors['maxValidation'] = !valid;
+                this.errors.maxValidation = !valid;
                 if (isService && !isNaN(parent)) {
-                    this.errors['minValidationVfLevel'] = !(value >= parent);
+                    this.errors.minValidationVfLevel = !(value >= parent);
                 }
                 break;
             }
@@ -182,9 +132,9 @@ export class ModulePropertyModalComponent implements OnInit {
                 const valid = isNaN(min)
                     ? value >= initial
                     : isNaN(value) || (value >= min && value >= initial);
-                this.errors['minValidation'] = !valid;
+                this.errors.minValidation = !valid;
                 if (isService && !isNaN(parent)) {
-                    this.errors['maxValidationVfLevel'] = !(value <= parent);
+                    this.errors.maxValidationVfLevel = !(value <= parent);
                 }
                 break;
             }
@@ -199,23 +149,73 @@ export class ModulePropertyModalComponent implements OnInit {
                 } else {
                     valid = min <= value && value <= max;
                 }
-                this.errors['minOrMaxValidation'] = !valid;
+                this.errors.minOrMaxValidation = !valid;
                 break;
             }
         }
     }
 
-    public isValid(): boolean {
-        return Object.keys(this.errors).every((k) => !this.errors[k]);
+    // Old PropertyFormBaseView.isPropertyValueOwner (property-form-base-model.ts:90-92).
+    private isPropertyValueOwner(): boolean {
+        return this.component.isService() || !!this.component.selectedInstance;
     }
 
-    public save(): Observable<Array<PropertyBEModel>> {
-        // Old ModulePropertyView.save() (module-property-model.ts:112-148) only issued the PUT when the property was
-        // editable AND its value actually changed; otherwise it just closed the modal. Preserve that guard so a Save
-        // on a read-only or unchanged property does not fire a redundant BE write.
-        if (this.property.readonly || this.property.value === this.input.property.value) {
-            return Observable.of([]);
+    private valueType(): string {
+        return this.property.simpleType || this.property.type;
+    }
+
+    // Ported from ModulePropertyView.initValidation (module-property-model.ts:118-140): the readonly-by-name rules.
+    private initValidation(): void {
+        switch (this.property.name) {
+            case UNIQUE_GROUP_PROPERTIES_NAME.IS_BASE:
+            case UNIQUE_GROUP_PROPERTIES_NAME.VF_MODULE_TYPE:
+            case UNIQUE_GROUP_PROPERTIES_NAME.VOLUME_GROUP:
+            case UNIQUE_GROUP_PROPERTIES_NAME.VF_MODULE_LABEL:
+                this.property.readonly = true;
+                break;
+            case UNIQUE_GROUP_PROPERTIES_NAME.VF_MODULE_DESCRIPTION:
+                this.property.readonly = this.component.isService();
+                break;
         }
-        return this.modulePropertyModalService.save(this.component, this.input.selectedModule, this.property);
+    }
+
+    // Client-side value-format check, reproducing the old template's ng-pattern="getValidationPattern(property.type)"
+    // plus the per-type validateJson / validateIntRange $setValidity('pattern', ...) that
+    // module-property-view.html applied (see PROPERTY_EDIT_PATTERN). An empty value stays valid (the reset-to-default
+    // above already handled the owner case); a malformed value sets errors['pattern'] so isValid() fails, Save is
+    // disabled and the value never reaches the BE. Boolean is edited via a <select>, so it needs no pattern check.
+    private runValueValidation(): void {
+        this.errors.pattern = false;
+        const raw = this.property.value;
+        if (raw == null || raw === '' || this.isBooleanValue()) {
+            return;
+        }
+        const type: string = this.valueType();
+        const strValue: string = String(raw);
+        const pattern: RegExp = this.validationUtils.getValidationPattern(type);
+        if (pattern && !pattern.test(strValue)) {
+            this.errors.pattern = true;
+            return;
+        }
+        if (type === PROPERTY_TYPES.JSON && !this.validationUtils.validateJson(strValue)) {
+            this.errors.pattern = true;
+            return;
+        }
+        if (type === PROPERTY_TYPES.INTEGER && !this.validationUtils.validateIntRange(strValue)) {
+            this.errors.pattern = true;
+        }
+    }
+
+    // Sibling property numeric value from the module's property list, by unique-group name.
+    private findValue(name: string): number {
+        const p = (this.input.filteredProperties || []).find((x) => x.name === name);
+        return p ? parseInt(p.value, 10) : NaN;
+    }
+
+    // Old ModulePropertyView.isUniqueProperty (module-property-model.ts:142-146).
+    private isUniqueProperty(): boolean {
+        return this.property.name === UNIQUE_GROUP_PROPERTIES_NAME.MIN_VF_MODULE_INSTANCES
+            || this.property.name === UNIQUE_GROUP_PROPERTIES_NAME.MAX_VF_MODULE_INSTANCES
+            || this.property.name === UNIQUE_GROUP_PROPERTIES_NAME.INITIAL_COUNT;
     }
 }

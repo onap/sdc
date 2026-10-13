@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,91 +22,91 @@
  * Created by obarda on 2/4/2016.
  */
 'use strict';
-import * as _ from "lodash";
-import {ArtifactGroupModel} from '../artifacts';
-import {CapabilitiesGroup} from '../capability';
-import {InputModel} from '../inputs';
-import {Module} from '../modules/base-module';
-import {PropertyModel} from '../properties';
-import {RequirementsGroup} from '../requirement';
-import {ResourceType, ComponentType} from "../../utils/constants";
-import {Capability} from "../capability";
-import {Requirement} from "../requirement";
+import * as _ from 'lodash';
+import { ComponentType, ResourceType } from '../../utils/constants';
+import { ArtifactGroupModel } from '../artifacts';
+import { CapabilitiesGroup } from '../capability';
+import { Capability } from '../capability';
+import { InputModel } from '../inputs';
+import { Module } from '../modules/base-module';
+import { PropertyModel } from '../properties';
+import { RequirementsGroup } from '../requirement';
+import { Requirement } from '../requirement';
 
 export interface IComponentInstance {
 
-    componentUid:string;
-    componentName:string;
-    posX:number;
-    posY:number;
-    componentVersion:string;
-    description:string;
-    icon:string;
-    name:string;
-    normalizedName:string;
-    originType:string;
-    deploymentArtifacts:ArtifactGroupModel;
-    artifacts:ArtifactGroupModel;
-    propertyValueCounter:number;
-    uniqueId:string;
-    creationTime:number;
-    modificationTime:number;
-    capabilities:CapabilitiesGroup;
-    requirements:RequirementsGroup;
-    customizationUUID:string;
-    sourceModelInvariant:string;
-    sourceModelName:string;
-    sourceModelUid:string;
-    sourceModelUuid:string;
-    //custom properties
-    certified:boolean;
-    iconSprite:string;
-    inputs:Array<InputModel>;
-    properties:Array<PropertyModel>;
-    groupInstances:Array<Module>;
-    invariantName:string;
-    originArchived:boolean;
+    componentUid: string;
+    componentName: string;
+    posX: number;
+    posY: number;
+    componentVersion: string;
+    description: string;
+    icon: string;
+    name: string;
+    normalizedName: string;
+    originType: string;
+    deploymentArtifacts: ArtifactGroupModel;
+    artifacts: ArtifactGroupModel;
+    propertyValueCounter: number;
+    uniqueId: string;
+    creationTime: number;
+    modificationTime: number;
+    capabilities: CapabilitiesGroup;
+    requirements: RequirementsGroup;
+    customizationUUID: string;
+    sourceModelInvariant: string;
+    sourceModelName: string;
+    sourceModelUid: string;
+    sourceModelUuid: string;
+    // custom properties
+    certified: boolean;
+    iconSprite: string;
+    inputs: InputModel[];
+    properties: PropertyModel[];
+    groupInstances: Module[];
+    invariantName: string;
+    originArchived: boolean;
 }
-export class ComponentInstance implements IComponentInstance{
+export class ComponentInstance implements IComponentInstance {
 
-    public componentUid:string;
-    public componentName:string;
-    public posX:number;
-    public posY:number;
-    public componentVersion:string;
-    public description:string;
-    public icon:string;
-    public name:string;
-    public normalizedName:string;
-    public originType:string;
-    public deploymentArtifacts:ArtifactGroupModel;
-    public artifacts:ArtifactGroupModel;
-    public propertyValueCounter:number;
-    public uniqueId:string;
-    public creationTime:number;
-    public modificationTime:number;
-    public capabilities:CapabilitiesGroup;
-    public requirements:RequirementsGroup;
-    public customizationUUID:string;
-    public sourceModelInvariant:string;
-    public sourceModelName:string;
-    public sourceModelUid:string;
-    public sourceModelUuid:string;
+    public componentUid: string;
+    public componentName: string;
+    public posX: number;
+    public posY: number;
+    public componentVersion: string;
+    public description: string;
+    public icon: string;
+    public name: string;
+    public normalizedName: string;
+    public originType: string;
+    public deploymentArtifacts: ArtifactGroupModel;
+    public artifacts: ArtifactGroupModel;
+    public propertyValueCounter: number;
+    public uniqueId: string;
+    public creationTime: number;
+    public modificationTime: number;
+    public capabilities: CapabilitiesGroup;
+    public requirements: RequirementsGroup;
+    public customizationUUID: string;
+    public sourceModelInvariant: string;
+    public sourceModelName: string;
+    public sourceModelUid: string;
+    public sourceModelUuid: string;
     public minOccurrences: string;
     public maxOccurrences: string;
     public instanceCount: string;
-    //custom properties
-    public certified:boolean;
-    public iconSprite:string;
-    public inputs:Array<InputModel>;
-    public properties:Array<PropertyModel>;
-    public groupInstances:Array<Module>;
-    public invariantName:string;
-    public originArchived:boolean;
+    // custom properties
+    public certified: boolean;
+    public iconSprite: string;
+    public inputs: InputModel[];
+    public properties: PropertyModel[];
+    public groupInstances: Module[];
+    public invariantName: string;
+    public originArchived: boolean;
     public directives: string[];
-    public interfaces:any;
+    public interfaces: any;
 
-    constructor(componentInstance?:ComponentInstance) {
+    constructor(componentInstance?: ComponentInstance) {
 
         if (componentInstance) {
             this.componentUid = componentInstance.componentUid;
@@ -144,66 +144,66 @@ export class ComponentInstance implements IComponentInstance{
         }
     }
 
-    public isUcpe = ():boolean => {
+    public isUcpe = (): boolean => {
         if (this.originType === 'VF' && this.capabilities && this.capabilities['tosca.capabilities.Container'] && this.name.toLowerCase().indexOf('ucpe') > -1) {
             return true;
         }
         return false;
-    };
+    }
 
-    public isVl = ():boolean => {
+    public isVl = (): boolean => {
         return this.originType === 'VL';
-    };
+    }
 
-    public isComplex = ():boolean => {
+    public isComplex = (): boolean => {
         return this.originType === ResourceType.VF || this.originType === ResourceType.PNF || this.originType === ResourceType.CVFC || this.originType === ResourceType.CR;
     }
 
-    public isServiceProxy = ():boolean => {
+    public isServiceProxy = (): boolean => {
         return this.originType === ComponentType.SERVICE_PROXY;
     }
-    
-    public isServiceSubstitution = ():boolean => {
+
+    public isServiceSubstitution = (): boolean => {
         return this.originType === ComponentType.SERVICE_SUBSTITUTION;
     }
 
-    public isVFC = ():boolean => {
+    public isVFC = (): boolean => {
         return this.originType === ResourceType.VFC;
     }
 
-    public getComponentUid = ():string => {
+    public getComponentUid = (): string => {
         return this.isServiceProxy() || this.isServiceSubstitution() ? this.sourceModelUid : this.componentUid;
     }
 
-    public setInstanceRC = ():void=> {
-        _.forEach(this.requirements, (requirementValue:Array<any>, requirementKey)=> {
-            _.forEach(requirementValue, (requirement)=> {
+    public setInstanceRC = (): void => {
+        _.forEach(this.requirements, (requirementValue: any[], requirementKey) => {
+            _.forEach(requirementValue, (requirement) => {
                 if (!requirement.ownerName) {
-                    requirement['ownerId'] = this.uniqueId;
-                    requirement['ownerName'] = this.name;
+                    requirement.ownerId = this.uniqueId;
+                    requirement.ownerName = this.name;
                 }
             });
         });
-        _.forEach(this.capabilities, (capabilityValue:Array<any>, capabilityKey)=> {
-            _.forEach(capabilityValue, (capability)=> {
+        _.forEach(this.capabilities, (capabilityValue: any[], capabilityKey) => {
+            _.forEach(capabilityValue, (capability) => {
                 if (!capability.ownerName) {
-                    capability['ownerId'] = this.uniqueId;
-                    capability['ownerName'] = this.name;
+                    capability.ownerId = this.uniqueId;
+                    capability.ownerName = this.name;
                 }
             });
         });
-    };
+    }
 
-    public updatePosition(posX:number, posY:number) {
+    public updatePosition(posX: number, posY: number) {
         this.posX = posX;
         this.posY = posY;
     }
 
-    public findRequirement(reqType:string, uniqueId:string, ownerId:string, name:string):Requirement|undefined {
-        let requirement:Requirement = undefined;
+    public findRequirement(reqType: string, uniqueId: string, ownerId: string, name: string): Requirement|undefined {
+        let requirement: Requirement;
         const searchGroup = (reqType) ? [this.requirements[reqType]] : this.requirements;
         _.some(_.keys(searchGroup), (searchType) => {
-            requirement = _.find<Requirement>(searchGroup[searchType], (req:Requirement) => (
+            requirement = _.find<Requirement>(searchGroup[searchType], (req: Requirement) => (
                 req.uniqueId === uniqueId && req.ownerId === ownerId && req.name === name
             ));
             return requirement;
@@ -211,11 +211,11 @@ export class ComponentInstance implements IComponentInstance{
         return requirement;
     }
 
-    public findCapability(capType:string, uniqueId:string, ownerId:string, name:string):Capability|undefined {
-        let capability:Capability = undefined;
+    public findCapability(capType: string, uniqueId: string, ownerId: string, name: string): Capability|undefined {
+        let capability: Capability;
         const searchGroup = (capType) ? [this.capabilities[capType]] : this.capabilities;
         _.some(_.keys(searchGroup), (searchType) => {
-            capability = _.find<Capability>(searchGroup[searchType], (cap:Capability) => (
+            capability = _.find<Capability>(searchGroup[searchType], (cap: Capability) => (
                 cap.uniqueId === uniqueId && cap.ownerId === ownerId && cap.name === name
             ));
             return capability;
@@ -223,8 +223,8 @@ export class ComponentInstance implements IComponentInstance{
         return capability;
     }
 
-    public toJSON = ():any => {
-        let temp = _.cloneDeep(this);
+    public toJSON = (): any => {
+        const temp = _.cloneDeep(this);
         temp.certified = undefined;
         temp.iconSprite = undefined;
         temp.inputs = undefined;
@@ -233,27 +233,27 @@ export class ComponentInstance implements IComponentInstance{
         temp.requirements = undefined;
         temp.capabilities = undefined;
         return temp;
-    };
+    }
 
     public get iconClass() {
         return this.iconSprite + ' ' + this.icon;
     }
-    public isDependent = () : boolean => {
+    public isDependent = (): boolean => {
        return Array.isArray(this.directives) && this.directives.length > 0;
     }
 
-    public setDirectiveValue = (selectedDirectives: string[]) : void => {
+    public setDirectiveValue = (selectedDirectives: string[]): void => {
         this.directives = selectedDirectives;
     }
 
-    public unmarkAsDependent = (directiveValues: string[]) : void => {
-        console.info("[START] this.directives: ", this.directives)
-        directiveValues.forEach(directive => {
-            let index = this.directives.indexOf(directive);
-            if(index >= 0) {
+    public unmarkAsDependent = (directiveValues: string[]): void => {
+        console.info('[START] this.directives: ', this.directives);
+        directiveValues.forEach((directive) => {
+            const index = this.directives.indexOf(directive);
+            if (index >= 0) {
                 this.directives.splice(index, directiveValues.length);
             }
         });
-        console.info("[STOP] this.directives: ", this.directives)
+        console.info('[STOP] this.directives: ', this.directives);
     }
 }

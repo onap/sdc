@@ -19,17 +19,17 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import {InputListComponent} from './input-list.component';
-import {TranslateModule} from '../../../../../shared/translator/translate.module';
-import {Component, Input} from '@angular/core';
-import {DataTypeModel} from '../../../../../models/data-types';
-import {TranslateService} from '../../../../../shared/translator/translate.service';
-import {ToscaFunction} from '../../../../../models/tosca-function';
-import {InstanceFeDetails} from "../../../../../models/instance-fe-details";
-import {CustomToscaFunction} from "../../../../../models/default-custom-functions";
-import {SubPropertyToscaFunction} from "../../../../../models/sub-property-tosca-function";
+import { Component, Input } from '@angular/core';
+import { DataTypeModel } from '../../../../../models/data-types';
+import { CustomToscaFunction } from '../../../../../models/default-custom-functions';
+import { InstanceFeDetails } from '../../../../../models/instance-fe-details';
+import { SubPropertyToscaFunction } from '../../../../../models/sub-property-tosca-function';
+import { ToscaFunction } from '../../../../../models/tosca-function';
+import { TranslateModule } from '../../../../../shared/translator/translate.module';
+import { TranslateService } from '../../../../../shared/translator/translate.service';
+import { InputListComponent } from './input-list.component';
 
 @Component({selector: 'app-input-list-item', template: ''})
 class InputListItemStubComponent {
@@ -44,7 +44,7 @@ class InputListItemStubComponent {
   @Input() toscaFunction: ToscaFunction;
   @Input() showToscaFunctionOption: boolean;
   @Input() componentInstanceMap: Map<string, InstanceFeDetails> = null;
-  @Input() customToscaFunctions: Array<CustomToscaFunction> = [];
+  @Input() customToscaFunctions: CustomToscaFunction[] = [];
 }
 
 const translateServiceMock: Partial<TranslateService> = {

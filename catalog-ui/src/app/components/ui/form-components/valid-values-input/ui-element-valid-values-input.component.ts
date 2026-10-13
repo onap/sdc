@@ -19,10 +19,10 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {Component, Output, EventEmitter} from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
+import { ConstraintTypes } from '../../../../pages/properties-assignment/constraints/constraints.component';
+import { PROPERTY_DATA, PROPERTY_TYPES } from '../../../../utils/constants';
 import { UiElementBase, UiElementBaseInterface } from '../ui-element-base.component';
-import {ConstraintTypes} from "../../../../pages/properties-assignment/constraints/constraints.component";
-import {PROPERTY_DATA, PROPERTY_TYPES} from "../../../../utils/constants";
 
 @Component({
     selector: 'ui-element-valid-values-input',
@@ -44,28 +44,41 @@ export class UiElementValidValuesInputComponent extends UiElementBase implements
         return this.type === PROPERTY_TYPES.INTEGER || this.type === PROPERTY_TYPES.TIMESTAMP;
     }
 
-    addToList(){
+    addToList() {
         if (!this.value) {
             this.value = new Array();
         }
-        this.value.push("");
+        this.value.push('');
         this.baseEmitter.emit({
             value: this.value,
             isValid: false
         });
-        this.emitOnConstraintChange()
+        this.emitOnConstraintChange();
     }
 
     onChangeConstrainValueIndex(newValue: any, valueIndex: number) {
-        if(!this.value) {
+        if (!this.value) {
             this.value = new Array();
         }
         this.value[valueIndex] = newValue;
         this.baseEmitter.emit({
             value: this.value,
-            isValid: newValue != "" && !this.doesArrayContaintEmptyValues(this.value)
+            isValid: newValue != '' && !this.doesArrayContaintEmptyValues(this.value)
         });
         this.emitOnConstraintChange();
+    }
+
+    removeFromList(valueIndex: number) {
+        this.value.splice(valueIndex, 1);
+        this.baseEmitter.emit({
+            value: this.value,
+            isValid: !this.doesArrayContaintEmptyValues(this.value)
+        });
+        this.emitOnConstraintChange();
+    }
+
+    trackByFn(index) {
+        return index;
     }
 
     private emitOnConstraintChange(): void {
@@ -77,25 +90,12 @@ export class UiElementValidValuesInputComponent extends UiElementBase implements
         if (Array.isArray(this.value)) {
             return !(this.value.length == 0 || this.doesArrayContaintEmptyValues(this.value));
         }
-        return this.value && this.type != ConstraintTypes.null
-    }
-
-    removeFromList(valueIndex: number){
-        this.value.splice(valueIndex, 1);
-        this.baseEmitter.emit({
-            value: this.value,
-            isValid: !this.doesArrayContaintEmptyValues(this.value)
-        });
-        this.emitOnConstraintChange()
-    }
-
-    trackByFn(index) {
-        return index;
+        return this.value && this.type != ConstraintTypes.null;
     }
 
     private doesArrayContaintEmptyValues(arr) {
-        for(const element of arr) {
-            if(element === "") return true;
+        for (const element of arr) {
+            if (element === '') { return true; }
         }
         return false;
     }

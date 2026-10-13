@@ -19,9 +19,9 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {DataTypeService} from 'app/services/data-type.service';
-import {PropertyCreatorComponent} from './property-creator.component';
-import {WorkspaceService} from '../../workspace/workspace.service';
+import { DataTypeService } from 'app/services/data-type.service';
+import { WorkspaceService } from '../../workspace/workspace.service';
+import { PropertyCreatorComponent } from './property-creator.component';
 
 describe('PropertyCreatorComponent', () => {
 

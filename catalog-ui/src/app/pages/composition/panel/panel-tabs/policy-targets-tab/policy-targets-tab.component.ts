@@ -23,18 +23,18 @@ import { Select, Store } from '@ngxs/store';
 import { CompositionService } from 'app/pages/composition/composition.service';
 import { WorkspaceService } from 'app/pages/workspace/workspace.service';
 import { EventListenerService } from 'app/services/event-listener.service';
-import {GRAPH_EVENTS} from 'app/utils/constants';
+import { GRAPH_EVENTS } from 'app/utils/constants';
 import * as _ from 'lodash';
 import { SdcUiCommon, SdcUiComponents, SdcUiServices } from 'onap-ui-angular';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { AddElementsComponent } from '../../../../../components/ui/modal/add-elements/add-elements.component';
 import { ComponentInstance } from '../../../../../models/components-instances/component-instance';
 import { PolicyInstance } from '../../../../../models/graph/zones/policy-instance';
 import { TargetUiObject } from '../../../../../models/ui-models/ui-target-object';
-import { TargetOrMemberType } from '../../../../../utils/constants';
-import { AddElementsComponent } from '../../../../../components/ui/modal/add-elements/add-elements.component';
 import { PoliciesService } from '../../../../../services/policies.service';
 import { TranslateService } from '../../../../../shared/translator/translate.service';
+import { TargetOrMemberType } from '../../../../../utils/constants';
 import { GraphState } from '../../../common/store/graph.state';
 
 @Component({

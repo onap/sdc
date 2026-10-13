@@ -1,10 +1,10 @@
-import {CommonModule} from "@angular/common";
-import {NgModule} from "@angular/core";
-import {SdcUiComponentsModule} from "onap-ui-angular";
-import {GlobalPipesModule} from "../../../pipes/global-pipes.module";
-import {ActivityLogComponent} from "./activity-log.component";
-import {ActivityLogService} from "../../../services/activity-log.service";
-import {NgxDatatableModule} from "@swimlane/ngx-datatable";
+import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { SdcUiComponentsModule } from 'onap-ui-angular';
+import { GlobalPipesModule } from '../../../pipes/global-pipes.module';
+import { ActivityLogService } from '../../../services/activity-log.service';
+import { ActivityLogComponent } from './activity-log.component';
 
 @NgModule({
     declarations: [

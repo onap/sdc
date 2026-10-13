@@ -13,13 +13,12 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -- */
-  
 
-import { ITranslateServiceConfig } from "../shared/translator/translate.service.config";
+import { ITranslateServiceConfig } from '../shared/translator/translate.service.config';
 
-declare const __ENV__:string;
+declare const __ENV__: string;
 
-export function getTranslationServiceConfig() : ITranslateServiceConfig {
+export function getTranslationServiceConfig(): ITranslateServiceConfig {
     const pathPrefix = (__ENV__ === 'prod') ? 'sdc1/' : '';
     return {
         filePrefix: pathPrefix + 'assets/languages/',

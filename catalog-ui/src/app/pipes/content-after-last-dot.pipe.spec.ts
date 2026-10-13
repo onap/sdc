@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-import {ContentAfterLastDotPipe} from './content-after-last-dot.pipe';
+import { ContentAfterLastDotPipe } from './content-after-last-dot.pipe';
 
 describe('ContentAfterLastDotPipe', () => {
     let pipe: ContentAfterLastDotPipe;

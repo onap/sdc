@@ -18,8 +18,8 @@
  * ============LICENSE_END=========================================================
  */
 
-import {OperationCreatorInterfaceDefinitionComponent} from '../../../interface-definition/operation-creator/operation-creator-interface-definition.component';
-import {OperationCreatorComponent} from '../operation-creator.component';
+import { OperationCreatorInterfaceDefinitionComponent } from '../../../interface-definition/operation-creator/operation-creator-interface-definition.component';
+import { OperationCreatorComponent } from '../operation-creator.component';
 
 /**
  * The external-workflow artifact file input used to carry the AngularJS `base-sixty-four-input`

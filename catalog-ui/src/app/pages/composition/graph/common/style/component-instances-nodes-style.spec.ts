@@ -1,6 +1,5 @@
-import {async} from "@angular/core/testing";
-import {ComponentInstanceNodesStyle} from "./component-instances-nodes-style";
-
+import { async } from '@angular/core/testing';
+import { ComponentInstanceNodesStyle } from './component-instances-nodes-style';
 
 describe('component instance nodes style component', () => {
 
@@ -11,7 +10,7 @@ describe('component instance nodes style component', () => {
                 if (tagName === 'canvas') {
                     return {
                         getContext: () => ({
-                            font: "",
+                            font: '',
                             measureText: (x) => ({width: x.length})
                         }),
                     };
@@ -22,16 +21,16 @@ describe('component instance nodes style component', () => {
     );
 
     it('verify getGraphDisplayName for String.length smaller than 67 chars', () => {
-        let inputString = 'SomeText';
-        let expectedRes = inputString;
-        let res = ComponentInstanceNodesStyle.getGraphDisplayName(inputString);
+        const inputString = 'SomeText';
+        const expectedRes = inputString;
+        const res = ComponentInstanceNodesStyle.getGraphDisplayName(inputString);
         expect(res).toBe(expectedRes);
     });
 
     it('verify getGraphDisplayName for String.length greater than 67 chars', () => {
-        let inputString = 'AAAAAAAAAABBBBBBBBBBCCCCCCCCCCDDDDDDDDDDEEEEEEEEEEFFFFFFFFFFGGGGGGGGGG12345678';
-        let expectedRes = 'AAAAAAAAAABBBBBBBBBBCCCCCCCCCCDDDDDDDDDDEEEEEEEEEEFFFFFFFFF...';
-        let res = ComponentInstanceNodesStyle.getGraphDisplayName(inputString);
+        const inputString = 'AAAAAAAAAABBBBBBBBBBCCCCCCCCCCDDDDDDDDDDEEEEEEEEEEFFFFFFFFFFGGGGGGGGGG12345678';
+        const expectedRes = 'AAAAAAAAAABBBBBBBBBBCCCCCCCCCCDDDDDDDDDDEEEEEEEEEEFFFFFFFFF...';
+        const res = ComponentInstanceNodesStyle.getGraphDisplayName(inputString);
         expect(res).toBe(expectedRes);
     });
 });

@@ -1,19 +1,19 @@
-import * as _ from "lodash";
-import {Component, ViewChild} from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
+import * as _ from 'lodash';
 
-import {Subscription} from "rxjs/Subscription";
+import { Subscription } from 'rxjs/Subscription';
 
-import {TranslateService} from "app/shared/translator/translate.service";
-import {WorkflowService} from 'app/services/workflow.service';
-import {Capability} from 'app/models/capability';
-import {InterfaceModel, OperationModel, OperationParameter, WORKFLOW_ASSOCIATION_OPTIONS} from 'app/models/operation';
-import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
+import { Capability } from 'app/models/capability';
+import { InterfaceModel, OperationModel, OperationParameter, WORKFLOW_ASSOCIATION_OPTIONS } from 'app/models/operation';
+import { InputBEModel } from 'app/models/properties-inputs/input-be-model';
+import { WorkflowService } from 'app/services/workflow.service';
+import { TranslateService } from 'app/shared/translator/translate.service';
 
-import { Tabs } from "app/components/ui/tabs/tabs.component";
-import { DropdownValue } from "app/components/ui/form-components/dropdown/ui-element-dropdown.component";
+import { DropdownValue } from 'app/components/ui/form-components/dropdown/ui-element-dropdown.component';
+import { Tabs } from 'app/components/ui/tabs/tabs.component';
+import { DROPDOWN_OPTION_TYPE } from 'app/utils/constants';
+import { DropDownComponent } from 'onap-ui-angular/dist/components';
 import { IDropDownOption } from 'onap-ui-angular/dist/form-elements/dropdown/dropdown-models';
-import { DropDownComponent } from "onap-ui-angular/dist/components";
-import { DROPDOWN_OPTION_TYPE } from "app/utils/constants";
 
 export class DropDownOption implements IDropDownOption {
     value: string;
@@ -35,16 +35,16 @@ class TypedDropDownOption extends DropDownOption {
 }
 
 export interface OperationCreatorInput {
-    allWorkflows: Array<any>,
-    inputOperation: OperationModel,
-    interfaces: Array<InterfaceModel>,
-    inputProperties: Array<InputBEModel>,
-    enableWorkflowAssociation: boolean,
-    readonly: boolean,
-    interfaceTypes: { [interfaceType: string]: Array<string> },
-    validityChangedCallback: Function,
-    workflowIsOnline: boolean,
-    capabilities: Array<Capability>
+    allWorkflows: any[];
+    inputOperation: OperationModel;
+    interfaces: InterfaceModel[];
+    inputProperties: InputBEModel[];
+    enableWorkflowAssociation: boolean;
+    readonly: boolean;
+    interfaceTypes: { [interfaceType: string]: string[] };
+    validityChangedCallback: Function;
+    workflowIsOnline: boolean;
+    capabilities: Capability[];
 }
 
 @Component({
@@ -58,33 +58,33 @@ export class OperationCreatorComponent implements OperationCreatorInput {
 
     input: OperationCreatorInput;
     inputOperation: OperationModel;
-    interfaces: Array<InterfaceModel>;
+    interfaces: InterfaceModel[];
     operation: OperationModel;
-    interfaceNames: Array<TypedDropDownOption> = [];
-    interfaceTypes: { [interfaceType: string]: Array<string> };
-    operationNames: Array<TypedDropDownOption> = [];
+    interfaceNames: TypedDropDownOption[] = [];
+    interfaceTypes: { [interfaceType: string]: string[] };
+    operationNames: TypedDropDownOption[] = [];
     validityChangedCallback: Function;
-    capabilities: Array<Capability>;
+    capabilities: Capability[];
 
-    allWorkflows: Array<any>;
-    workflows: Array<DropdownValue> = [];
-    workflowVersions: Array<DropdownValue> = [];
-    inputProperties: Array<InputBEModel> = [];
+    allWorkflows: any[];
+    workflows: DropdownValue[] = [];
+    workflowVersions: DropdownValue[] = [];
+    inputProperties: InputBEModel[] = [];
     archivedWorkflowId: string = '&';
 
-    inputParameters: Array<OperationParameter> = [];
-    noAssignInputParameters: Array<OperationParameter> = [];
-    assignInputParameters: { [key: string]: { [key: string]: Array<OperationParameter>; }; } = {};
+    inputParameters: OperationParameter[] = [];
+    noAssignInputParameters: OperationParameter[] = [];
+    assignInputParameters: { [key: string]: { [key: string]: OperationParameter[]; }; } = {};
 
-    outputParameters: Array<OperationParameter> = [];
-    noAssignOutputParameters: Array<OperationParameter> = [];
-    assignOutputParameters: { [key: string]: { [key: string]: Array<OperationParameter>; }; } = {};
-    componentCapabilities: Array<Capability> = [];
+    outputParameters: OperationParameter[] = [];
+    noAssignOutputParameters: OperationParameter[] = [];
+    assignOutputParameters: { [key: string]: { [key: string]: OperationParameter[]; }; } = {};
+    componentCapabilities: Capability[] = [];
 
-    tableParameters: Array<OperationParameter> = [];
-    operationOutputs: Array<OperationModel> = [];
+    tableParameters: OperationParameter[] = [];
+    operationOutputs: OperationModel[] = [];
 
-    associationOptions: Array<DropdownValue> = [];
+    associationOptions: DropdownValue[] = [];
     workflowAssociationType: string;
 
     enableWorkflowAssociation: boolean;
@@ -107,12 +107,12 @@ export class OperationCreatorComponent implements OperationCreatorInput {
     currentTab: String;
 
     constructor(private workflowService: WorkflowService, private translateService: TranslateService) {
-        this.translateService.languageChangedObservable.subscribe(lang => {
-            this.propertyTooltipText = this.translateService.translate("OPERATION_PROPERTY_TOOLTIP_TEXT");
+        this.translateService.languageChangedObservable.subscribe((lang) => {
+            this.propertyTooltipText = this.translateService.translate('OPERATION_PROPERTY_TOOLTIP_TEXT');
 
             this.associationOptions = [
-                new DropDownOption(WORKFLOW_ASSOCIATION_OPTIONS.EXTERNAL, this.translateService.translate("EXTERNAL_WORKFLOW_ASSOCIATION")),
-                new DropDownOption(WORKFLOW_ASSOCIATION_OPTIONS.EXISTING, this.translateService.translate("EXISTING_WORKFLOW_ASSOCIATION")),
+                new DropDownOption(WORKFLOW_ASSOCIATION_OPTIONS.EXTERNAL, this.translateService.translate('EXTERNAL_WORKFLOW_ASSOCIATION')),
+                new DropDownOption(WORKFLOW_ASSOCIATION_OPTIONS.EXISTING, this.translateService.translate('EXISTING_WORKFLOW_ASSOCIATION')),
             ];
 
             this.workflowAssociationType = this.operation.workflowAssociationType;
@@ -133,7 +133,7 @@ export class OperationCreatorComponent implements OperationCreatorInput {
     ngOnInit() {
         this.interfaceNames = _.map(
             _.keys(this.interfaceTypes),
-            type => this.createInterfaceDropdown(type)
+            (type) => this.createInterfaceDropdown(type)
         );
         this.interfaceNames.unshift(new TypedDropDownOption('Existing Interfaces', 'Existing Interfaces', DROPDOWN_OPTION_TYPE.HEADER));
         this.interfaceNames = this.interfaceNames.concat([
@@ -146,11 +146,11 @@ export class OperationCreatorComponent implements OperationCreatorInput {
 
         this.operationOutputs = _.reduce(
             this.interfaces,
-            (acc: Array<OperationModel>, interf) => [
+            (acc: OperationModel[], interf) => [
                 ...acc,
                 ..._.filter(
                     interf.operations,
-                    op => op.uniqueId !== this.operation.uniqueId
+                    (op) => op.uniqueId !== this.operation.uniqueId
                 ),
             ],
         []);
@@ -185,12 +185,12 @@ export class OperationCreatorComponent implements OperationCreatorInput {
     }
 
     ngAfterViewInit() {
-        if(this.workflowAssignmentDropdown){
+        if (this.workflowAssignmentDropdown) {
             this.workflowAssignmentDropdown.allOptions = this.associationOptions && this.associationOptions.length ?
                 this.associationOptions :
                 [
-                    new DropDownOption(WORKFLOW_ASSOCIATION_OPTIONS.EXTERNAL, this.translateService.translate("EXTERNAL_WORKFLOW_ASSOCIATION")),
-                    new DropDownOption(WORKFLOW_ASSOCIATION_OPTIONS.EXISTING, this.translateService.translate("EXISTING_WORKFLOW_ASSOCIATION")),
+                    new DropDownOption(WORKFLOW_ASSOCIATION_OPTIONS.EXTERNAL, this.translateService.translate('EXTERNAL_WORKFLOW_ASSOCIATION')),
+                    new DropDownOption(WORKFLOW_ASSOCIATION_OPTIONS.EXISTING, this.translateService.translate('EXISTING_WORKFLOW_ASSOCIATION')),
                 ];
         }
     }
@@ -277,22 +277,22 @@ export class OperationCreatorComponent implements OperationCreatorInput {
         this.operationNames = !this.operation.interfaceType ? [] : (
             _.map(
                 this.interfaceTypes[this.operation.interfaceType],
-                name => {
+                (name) => {
                     const curInterf = _.find(
                         this.interfaces,
-                        interf => interf.type === this.operation.interfaceType
+                        (interf) => interf.type === this.operation.interfaceType
                     );
                     const existingOp = _.find(
                         curInterf && curInterf.operations || [],
-                        op => op.name === name
+                        (op) => op.name === name
                     );
                     const ddType = (existingOp && existingOp.uniqueId !== this.operation.uniqueId) ? DROPDOWN_OPTION_TYPE.HORIZONTAL_LINE : DROPDOWN_OPTION_TYPE.SIMPLE;
                     return new TypedDropDownOption(name, name, ddType);
                 }
             )
         );
-        if(this.operationNamesDropdown) {
-            this.operationNamesDropdown.allOptions = <IDropDownOption[]>this.operationNames;
+        if (this.operationNamesDropdown) {
+            this.operationNamesDropdown.allOptions = (this.operationNames as IDropDownOption[]);
         }
         this.validityChanged();
     }
@@ -340,12 +340,12 @@ export class OperationCreatorComponent implements OperationCreatorInput {
 
         this.isLoading = true;
         this.validityChanged();
-        return this.workflowService.getWorkflowVersions(this.operation.workflowId).subscribe((versions: Array<any>) => {
+        return this.workflowService.getWorkflowVersions(this.operation.workflowId).subscribe((versions: any[]) => {
             this.isLoading = false;
 
             this.workflowVersions = _.map(
                 _.filter(
-                    versions, version => version.state === this.workflowService.VERSION_STATE_CERTIFIED
+                    versions, (version) => version.state === this.workflowService.VERSION_STATE_CERTIFIED
                 ).sort((a, b) => a.name.localeCompare(b.name)),
                 (version: any) => {
                     if (!this.assignInputParameters[this.operation.workflowId][version.id] && version.id !== selectedVersionId) {
@@ -427,10 +427,10 @@ export class OperationCreatorComponent implements OperationCreatorInput {
         const reader = new FileReader();
         reader.onloadend = () => {
             this.isLoading = false;
-            const result = <String>reader.result;
+            const result = reader.result as String;
             this.operation.artifactData = result.substring(result.indexOf(',') + 1);
             this.validityChanged();
-        }
+        };
 
         this.isLoading = true;
         reader.readAsDataURL(file);
@@ -465,13 +465,13 @@ export class OperationCreatorComponent implements OperationCreatorInput {
 
         let valid = true;
         if (this.currentTab === this.TYPE_INPUT) {
-            _.forEach(this.inputParameters, param => {
+            _.forEach(this.inputParameters, (param) => {
                 if (!param.name || !param.inputId) {
                     valid = false;
                 }
             });
         } else {
-            _.forEach(this.outputParameters, param => {
+            _.forEach(this.outputParameters, (param) => {
                 if (!param.name || !param.type) {
                     valid = false;
                 }
@@ -485,12 +485,12 @@ export class OperationCreatorComponent implements OperationCreatorInput {
     isParamsValid = (): boolean => {
 
         let valid = true;
-        _.forEach(this.inputParameters, param => {
+        _.forEach(this.inputParameters, (param) => {
             if (!param.name || !param.inputId) {
                 valid = false;
             }
         });
-        _.forEach(this.outputParameters, param => {
+        _.forEach(this.outputParameters, (param) => {
             if (!param.name || !param.type) {
                 valid = false;
             }
@@ -501,7 +501,7 @@ export class OperationCreatorComponent implements OperationCreatorInput {
     }
 
     onRemoveParam = (param: OperationParameter): void => {
-        let index = _.indexOf(this.tableParameters, param);
+        const index = _.indexOf(this.tableParameters, param);
         this.tableParameters.splice(index, 1);
         this.validityChanged();
     }
@@ -533,7 +533,7 @@ export class OperationCreatorComponent implements OperationCreatorInput {
     }
 
     validityChanged = () => {
-        let validState = this.checkFormValidForSubmit();
+        const validState = this.checkFormValidForSubmit();
         this.validityChangedCallback(validState);
     }
 

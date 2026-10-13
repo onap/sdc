@@ -22,45 +22,45 @@
  * ============LICENSE_END=========================================================
  */
 
-import * as _ from "lodash";
-import {Inject, Injectable} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
+import { ArtifactModel } from 'app/models/artifacts';
+import { AttributeModel } from 'app/models/attributes';
+import { Capability } from 'app/models/capability';
+import { Component } from 'app/models/components/component';
+import { IFileDownload } from 'app/models/file-download';
+import { FilterPropertiesAssignmentData } from 'app/models/filter-properties-assignment-data';
+import { InterfaceModel, OperationModel } from 'app/models/operation';
+import { PropertyModel } from 'app/models/properties';
+import { InputBEModel } from 'app/models/properties-inputs/input-be-model';
+import { InstancePropertiesAPIMap } from 'app/models/properties-inputs/property-fe-map';
+import { Requirement } from 'app/models/requirement';
+import { API_QUERY_PARAMS, ArtifactGroupType, COMPONENT_FIELDS } from 'app/utils/constants';
+import * as _ from 'lodash';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
-import {ArtifactModel} from 'app/models/artifacts';
-import {AttributeModel} from 'app/models/attributes';
-import {Capability} from 'app/models/capability';
-import {Component} from 'app/models/components/component';
-import {IFileDownload} from 'app/models/file-download';
-import {FilterPropertiesAssignmentData} from 'app/models/filter-properties-assignment-data';
-import {InterfaceModel, OperationModel} from 'app/models/operation';
-import {PropertyModel} from 'app/models/properties';
-import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
-import {InstancePropertiesAPIMap} from 'app/models/properties-inputs/property-fe-map';
-import {Requirement} from 'app/models/requirement';
-import {API_QUERY_PARAMS, ArtifactGroupType, COMPONENT_FIELDS} from 'app/utils/constants';
-import {ComponentGenericResponse} from "../responses/component-generic-response";
-import {InstanceBePropertiesMap} from "../../models/properties-inputs/property-fe-map";
-import {ComponentType, ServerTypeUrl, SERVICE_FIELDS} from "../../utils/constants";
-import {ISdcConfig, SdcConfigToken} from "../../config/sdc-config.config";
-import {IDependenciesServerResponse} from "../responses/dependencies-server-response";
-import {AutomatedUpgradeGenericResponse} from "../responses/automated-upgrade-response";
-import {IAutomatedUpgradeRequestObj} from "../../pages/automated-upgrade/automated-upgrade.service";
-import {ComponentInstance} from "../../models/components-instances/component-instance";
-import {CommonUtils} from "../../utils/common-utils";
-import {RelationshipModel} from "../../models/graph/relationship";
-import {ServiceGenericResponse} from "../responses/service-generic-response";
-import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
-import {HttpHelperService} from "../http-helper.service";
-import {ConsumptionInput} from "../../components/logic/service-consumption/service-consumption.component";
-import {PolicyInstance} from "../../models/graph/zones/policy-instance";
-import {PropertyBEModel} from "../../models/properties-inputs/property-be-model";
-import {map} from "rxjs/operators";
-import {BEInterfaceOperationModel, InterfaceOperationModel} from "../../models/interface-operation";
-import {AttributeBEModel} from "../../models/attributes-outputs/attribute-be-model";
-import {InstanceAttributesAPIMap} from "../../models/attributes-outputs/attribute-fe-map";
-import {FilterConstraint} from "../../models/filter-constraint";
-import {CustomToscaFunction, DefaultCustomFunctions} from "../../models/default-custom-functions";
+import { Observable } from 'rxjs/Observable';
+import { map } from 'rxjs/operators';
+import { ConsumptionInput } from '../../components/logic/service-consumption/service-consumption.component';
+import { ISdcConfig, SdcConfigToken } from '../../config/sdc-config.config';
+import { AttributeBEModel } from '../../models/attributes-outputs/attribute-be-model';
+import { InstanceAttributesAPIMap } from '../../models/attributes-outputs/attribute-fe-map';
+import { ComponentInstance } from '../../models/components-instances/component-instance';
+import { CustomToscaFunction, DefaultCustomFunctions } from '../../models/default-custom-functions';
+import { FilterConstraint } from '../../models/filter-constraint';
+import { RelationshipModel } from '../../models/graph/relationship';
+import { PolicyInstance } from '../../models/graph/zones/policy-instance';
+import { BEInterfaceOperationModel, InterfaceOperationModel } from '../../models/interface-operation';
+import { PropertyBEModel } from '../../models/properties-inputs/property-be-model';
+import { InstanceBePropertiesMap } from '../../models/properties-inputs/property-fe-map';
+import { IAutomatedUpgradeRequestObj } from '../../pages/automated-upgrade/automated-upgrade.service';
+import { CommonUtils } from '../../utils/common-utils';
+import { ComponentType, ServerTypeUrl, SERVICE_FIELDS } from '../../utils/constants';
+import { HttpHelperService } from '../http-helper.service';
+import { AutomatedUpgradeGenericResponse } from '../responses/automated-upgrade-response';
+import { ComponentGenericResponse } from '../responses/component-generic-response';
+import { IDependenciesServerResponse } from '../responses/dependencies-server-response';
+import { ServiceGenericResponse } from '../responses/service-generic-response';
 
 /* we need to use this service from now, we will remove component.service when we finish remove the angular1.
  The service is duplicated since we can not use downgrades service with NGXS*/
@@ -75,11 +75,11 @@ export class TopologyTemplateService {
     }
 
     putServiceToscaTemplate(componentId: string, componentType: string, file) {
-        return this.http.put<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/toscaTemplate', file)
+        return this.http.put<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/toscaTemplate', file);
     }
 
     putServiceToscaModel(componentId: string, componentType: string, file) {
-        let uploadData:FormData = new FormData();
+        const uploadData: FormData = new FormData();
         uploadData.append('upload', file);
         return this.http.put<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/toscaModel', uploadData);
     }
@@ -137,7 +137,7 @@ export class TopologyTemplateService {
 
     getComponentOutputsWithAttributes(componentType: string, componentId: string): Observable<ComponentGenericResponse> {
         return this.getComponentDataByFieldsName(componentType, componentId,
-            [COMPONENT_FIELDS.COMPONENT_OUTPUTS, COMPONENT_FIELDS.COMPONENT_INSTANCES, COMPONENT_FIELDS.COMPONENT_INSTANCES_ATTRIBUTES, COMPONENT_FIELDS.COMPONENT_ATTRIBUTES,COMPONENT_FIELDS.COMPONENT_INSTANCES_OUTPUTS]);
+            [COMPONENT_FIELDS.COMPONENT_OUTPUTS, COMPONENT_FIELDS.COMPONENT_INSTANCES, COMPONENT_FIELDS.COMPONENT_INSTANCES_ATTRIBUTES, COMPONENT_FIELDS.COMPONENT_ATTRIBUTES, COMPONENT_FIELDS.COMPONENT_INSTANCES_OUTPUTS]);
     }
 
     getComponentDeploymentArtifacts(component: Component): Observable<ComponentGenericResponse> {
@@ -321,7 +321,7 @@ export class TopologyTemplateService {
         return this.http.post<AutomatedUpgradeGenericResponse>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/automatedupgrade', componentsIdsToUpgrade);
     }
 
-    updateComponentInstance(componentMetaDataId: string, componentType: string, componentInstance:ComponentInstance): Observable<ComponentInstance> {
+    updateComponentInstance(componentMetaDataId: string, componentType: string, componentInstance: ComponentInstance): Observable<ComponentInstance> {
         return this.http.post<ComponentInstance>(this.baseUrl + this.getServerTypeUrl(componentType) + componentMetaDataId + '/resourceInstance/' + componentInstance.uniqueId, componentInstance);
     }
 
@@ -392,7 +392,7 @@ export class TopologyTemplateService {
     }
 
     // ------------------------------------------------ Properties API --------------------------------------------------//
-    addProperty = (componentType: string, componentId: string, property: PropertyModel):Observable<PropertyModel> => {
+    addProperty = (componentType: string, componentId: string, property: PropertyModel): Observable<PropertyModel> => {
         return this.http.post<PropertyModel>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/properties', property.convertToServerObject())
         .map((response) => {
             return new PropertyModel(response);
@@ -478,7 +478,7 @@ export class TopologyTemplateService {
     }
 
     getComponentInstancesAndInputsAndProperties(componentType: string, componentId: string): Observable<ComponentGenericResponse> {
-        return this.getComponentDataByFieldsName(componentType, componentId, [COMPONENT_FIELDS.COMPONENT_INSTANCES ,COMPONENT_FIELDS.COMPONENT_INSTANCES_INPUTS, COMPONENT_FIELDS.COMPONENT_INSTANCES_PROPERTIES]);
+        return this.getComponentDataByFieldsName(componentType, componentId, [COMPONENT_FIELDS.COMPONENT_INSTANCES , COMPONENT_FIELDS.COMPONENT_INSTANCES_INPUTS, COMPONENT_FIELDS.COMPONENT_INSTANCES_PROPERTIES]);
     }
 
     findAllComponentInstanceAttributes(componentType: string, componentId: string): Observable<ComponentGenericResponse> {
@@ -498,16 +498,16 @@ export class TopologyTemplateService {
         return this.http.post<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentMetaDataId + '/componentInstance/' + componentInstanceId + '/' + constraintType + '/nodeFilter', constraint);
     }
 
-    updateServiceFilterConstraints(componentMetaDataId: string, componentInstanceId: string, constraint: FilterConstraint, componentType: string, constraintType: string, constraintIndex: number):Observable<any>{
-        return this.http.put<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentMetaDataId + '/componentInstance/' + componentInstanceId + '/' + constraintType + '/' + constraintIndex + '/nodeFilter', constraint)
+    updateServiceFilterConstraints(componentMetaDataId: string, componentInstanceId: string, constraint: FilterConstraint, componentType: string, constraintType: string, constraintIndex: number): Observable<any> {
+        return this.http.put<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentMetaDataId + '/componentInstance/' + componentInstanceId + '/' + constraintType + '/' + constraintIndex + '/nodeFilter', constraint);
     }
 
-    updateServiceFilterCapabilitiesConstraint(componentMetaDataId: string, componentInstanceId: string, constraints: FilterConstraint, componentType: string, constraintType: string, constraintIndex: number):Observable<any>{
-        return this.http.put<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentMetaDataId + '/componentInstance/' + componentInstanceId + '/' + constraintType + '/' + constraintIndex + '/nodeFilter', constraints)
+    updateServiceFilterCapabilitiesConstraint(componentMetaDataId: string, componentInstanceId: string, constraints: FilterConstraint, componentType: string, constraintType: string, constraintIndex: number): Observable<any> {
+        return this.http.put<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentMetaDataId + '/componentInstance/' + componentInstanceId + '/' + constraintType + '/' + constraintIndex + '/nodeFilter', constraints);
     }
 
-    deleteServiceFilterConstraints(componentMetaDataId: string, componentInstanceId: string, constraintIndex: number, componentType: string, constraintType: string): Observable<any>{
-        return this.http.delete<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentMetaDataId + '/componentInstance/' + componentInstanceId + '/' + constraintType + '/' + constraintIndex + '/nodeFilter')
+    deleteServiceFilterConstraints(componentMetaDataId: string, componentInstanceId: string, constraintIndex: number, componentType: string, constraintType: string): Observable<any> {
+        return this.http.delete<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentMetaDataId + '/componentInstance/' + componentInstanceId + '/' + constraintType + '/' + constraintIndex + '/nodeFilter');
     }
 
     getComponentPropertiesAndInputsForSubstitutionFilter(componentType: string, componentId: string): Observable<ComponentGenericResponse> {
@@ -524,12 +524,12 @@ export class TopologyTemplateService {
         return this.http.put<any>(url, constraint);
     }
 
-    deleteSubstitutionFilterConstraints(componentMetaDataId: string, constraintIndex: number, componentType: string, constraintType: string): Observable<any>{
-        return this.http.delete<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentMetaDataId + '/substitutionFilter/' + constraintType + "/" + constraintIndex)
+    deleteSubstitutionFilterConstraints(componentMetaDataId: string, constraintIndex: number, componentType: string, constraintType: string): Observable<any> {
+        return this.http.delete<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentMetaDataId + '/substitutionFilter/' + constraintType + '/' + constraintIndex);
     }
 
     deletePolicy(component: Component, policy: PolicyInstance): Observable<PolicyInstance> {
-        return this.http.put<PolicyInstance>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/policies/' + policy.uniqueId + '/undeclare', policy)
+        return this.http.put<PolicyInstance>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/policies/' + policy.uniqueId + '/undeclare', policy);
     }
 
     createListInput(component: Component, input: any, isSelf: boolean): Observable<any> {
@@ -562,6 +562,104 @@ export class TopologyTemplateService {
                     }
                 };
         return this.http.post(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/create/policies', policiesList);
+    }
+
+    // createCapability(component: Component, capabilityData: Capability): Observable<Capability[]> {
+    createCapability(type: string, uniqueId: string, capabilityData: Capability): Observable<Capability[]> {
+        const capBEObj = {
+            capabilities: {
+                [capabilityData.type]: [capabilityData]
+            }
+        };
+        return this.http.post<any>(this.baseUrl + type + uniqueId + '/capabilities', capBEObj);
+    }
+
+    updateCapability(type: string, uniqueId: string, capabilityData: Capability): Observable<Capability[]> {
+        const capBEObj = {
+            capabilities: {
+                [capabilityData.type]: [capabilityData]
+            }
+        };
+        return this.http.put<any>(this.baseUrl + type + uniqueId + '/capabilities', capBEObj);
+    }
+
+    deleteCapability(component: Component, capId: string): Observable<Capability> {
+        return this.http.delete<Capability>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/capabilities/' + capId);
+    }
+
+    createRequirement(type: string, uniqueId: string, requirementData: Requirement): Observable<any> {
+        const reqBEObj = {
+            requirements: {
+                [requirementData.capability]: [requirementData]
+            }
+        };
+        return this.http.post(this.baseUrl + type + uniqueId + '/requirements', reqBEObj);
+    }
+
+    updateRequirement(type: string, uniqueId: string, requirementData: Requirement): Observable<any> {
+        const reqBEObj = {
+            requirements: {
+                [requirementData.capability]: [requirementData]
+            }
+        };
+        return this.http.put(this.baseUrl + type + uniqueId + '/requirements', reqBEObj);
+    }
+
+    deleteRequirement(component: Component, reqId: string): Observable<Requirement> {
+        return this.http.delete<Requirement>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/requirements/' + reqId);
+    }
+
+    getDirectiveList(): Observable<string[]> {
+        return this.http.get<ListDirectiveResponse>(this.baseUrl + 'directives')
+        .pipe(map((response) => response.directives));
+    }
+
+    updateComponentInstanceInterfaceOperation(componentMetaDataId: string,
+                                              componentMetaDataType: string,
+                                              componentInstanceId: string,
+                                              operation: InterfaceOperationModel): Observable<ComponentInstance> {
+        const operationList = {
+            interfaces: {
+                [operation.interfaceType]: {
+                    type: operation.interfaceType,
+                    operations: {
+                        [operation.name]: new BEInterfaceOperationModel(operation)
+                    }
+                }
+            }
+        };
+        return this.http.put<ComponentInstance>(this.baseUrl + this
+        .getServerTypeUrl(componentMetaDataType) + componentMetaDataId + '/componentInstance/' + componentInstanceId + '/interfaceOperation', operationList);
+    }
+
+    getDefaultCustomFunction(type= 'ALL'): Observable<CustomToscaFunction[]> {
+        return this.http.get<DefaultCustomFunctions>(this.baseUrl + 'customToscaFunctions/' + type)
+        .pipe(map((response) => response && response.defaultCustomToscaFunction  ? response.defaultCustomToscaFunction : []));
+    }
+
+    createComponentInstanceInterfaceOperation(componentMetaDataId: string, componentInstanceId: string,
+                                              operation: InterfaceOperationModel): Observable<InterfaceOperationModel> {
+        const operationList = {
+            interfaces: {
+                [operation.interfaceType]: {
+                    type: operation.interfaceType,
+                    operations: {
+                        [operation.name]: new BEInterfaceOperationModel(operation)
+                    }
+                }
+            }
+        };
+        return this.http.post<any>(this.baseUrl + 'services/' + componentMetaDataId + '/componentInstance/' + componentInstanceId + '/interfaceOperation', operationList)
+        .map((res: any) => {
+            const interf: InterfaceModel = _.find(res.interfaces, (interf) => interf.type === operation.interfaceType);
+            const newOperation: OperationModel = _.find(interf.operations, (op) => op.name === operation.name);
+
+            return new InterfaceOperationModel({
+                ...newOperation,
+                interfaceType: interf.type,
+                interfaceId: interf.uniqueId,
+            });
+        });
     }
 
     protected getComponentDataByFieldsName(componentType: string, componentId: string, fields: string[]): Observable<ComponentGenericResponse> {
@@ -599,104 +697,6 @@ export class TopologyTemplateService {
             case ArtifactGroupType.SERVICE_API:
                 return COMPONENT_FIELDS.SERVICE_API_ARTIFACT;
         }
-    }
-
-    // createCapability(component: Component, capabilityData: Capability): Observable<Capability[]> {
-    createCapability(type: string, uniqueId: string, capabilityData: Capability): Observable<Capability[]> {
-        let capBEObj = {
-            'capabilities': {
-                [capabilityData.type]: [capabilityData]
-            }
-        };
-        return this.http.post<any>(this.baseUrl + type + uniqueId + '/capabilities', capBEObj);
-    }
-
-    updateCapability(type: string, uniqueId: string, capabilityData: Capability): Observable<Capability[]> {
-        let capBEObj = {
-            'capabilities': {
-                [capabilityData.type]: [capabilityData]
-            }
-        };
-        return this.http.put<any>(this.baseUrl + type + uniqueId + '/capabilities', capBEObj);
-    }
-
-    deleteCapability(component: Component, capId: string): Observable<Capability> {
-        return this.http.delete<Capability>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/capabilities/' + capId);
-    }
-
-    createRequirement(type: string, uniqueId: string, requirementData: Requirement): Observable<any> {
-        let reqBEObj = {
-            'requirements': {
-                [requirementData.capability]: [requirementData]
-            }
-        };
-        return this.http.post(this.baseUrl + type + uniqueId + '/requirements', reqBEObj);
-    }
-
-    updateRequirement(type: string, uniqueId: string, requirementData: Requirement): Observable<any> {
-        let reqBEObj = {
-            'requirements': {
-                [requirementData.capability]: [requirementData]
-            }
-        };
-        return this.http.put(this.baseUrl + type + uniqueId + '/requirements', reqBEObj);
-    }
-
-    deleteRequirement(component: Component, reqId: string): Observable<Requirement> {
-        return this.http.delete<Requirement>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/requirements/' + reqId);
-    }
-
-    getDirectiveList(): Observable<string[]> {
-        return this.http.get<ListDirectiveResponse>(this.baseUrl + "directives")
-        .pipe(map(response => response.directives));
-    }
-
-    updateComponentInstanceInterfaceOperation(componentMetaDataId: string,
-                                              componentMetaDataType: string,
-                                              componentInstanceId: string,
-                                              operation: InterfaceOperationModel): Observable<ComponentInstance> {
-        const operationList = {
-            interfaces: {
-                [operation.interfaceType]: {
-                    type: operation.interfaceType,
-                    operations: {
-                        [operation.name]: new BEInterfaceOperationModel(operation)
-                    }
-                }
-            }
-        };
-        return this.http.put<ComponentInstance>(this.baseUrl + this
-        .getServerTypeUrl(componentMetaDataType) + componentMetaDataId + '/componentInstance/' + componentInstanceId + '/interfaceOperation', operationList);
-    }
-
-    getDefaultCustomFunction(type='ALL'): Observable<CustomToscaFunction[]> {
-        return this.http.get<DefaultCustomFunctions>(this.baseUrl + "customToscaFunctions/" + type)
-        .pipe(map(response => response && response.defaultCustomToscaFunction  ? response.defaultCustomToscaFunction : []));
-    }
-
-    createComponentInstanceInterfaceOperation(componentMetaDataId: string, componentInstanceId: string,
-        operation: InterfaceOperationModel): Observable<InterfaceOperationModel> {
-        const operationList = {
-            interfaces: {
-                [operation.interfaceType]: {
-                    type: operation.interfaceType,
-                    operations: {
-                        [operation.name]: new BEInterfaceOperationModel(operation)
-                    }
-                }
-            }
-        };
-        return this.http.post<any>(this.baseUrl + 'services/' + componentMetaDataId + '/componentInstance/' + componentInstanceId + '/interfaceOperation', operationList)
-        .map((res: any) => {
-            const interf: InterfaceModel = _.find(res.interfaces, interf => interf.type === operation.interfaceType);
-            const newOperation: OperationModel = _.find(interf.operations, op => op.name === operation.name);
-
-            return new InterfaceOperationModel({
-                ...newOperation,
-                interfaceType: interf.type,
-                interfaceId: interf.uniqueId,
-            });
-        });
     }
 
 }

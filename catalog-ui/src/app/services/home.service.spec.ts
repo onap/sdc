@@ -1,11 +1,11 @@
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { TestBed } from '@angular/core/testing';
+import { ComponentFactory } from 'app/utils/component-factory';
 import 'rxjs/add/operator/map';
-import {TestBed} from '@angular/core/testing';
-import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
-import {HomeService} from './home.service';
-import {SdcConfigToken} from '../config/sdc-config.config';
-import {SharingService} from './sharing.service';
-import {ComponentFactory} from 'app/utils/component-factory';
-import {mockSdcConfig} from '../../jest/mocks/sdc-config.mock';
+import { mockSdcConfig } from '../../jest/mocks/sdc-config.mock';
+import { SdcConfigToken } from '../config/sdc-config.config';
+import { HomeService } from './home.service';
+import { SharingService } from './sharing.service';
 
 describe('HomeService', () => {
     let service: HomeService;
@@ -56,10 +56,10 @@ describe('HomeService', () => {
                 ]
             };
 
-            service.getAllComponents().subscribe(components => {
+            service.getAllComponents().subscribe((components) => {
                 expect(components.length).toBe(2);
-                expect(components[0]['lastUpdateDate']).toBe(200);
-                expect(components[1]['lastUpdateDate']).toBe(100);
+                expect(components[0].lastUpdateDate).toBe(200);
+                expect(components[1].lastUpdateDate).toBe(100);
             });
 
             const req = httpMock.expectOne('/sdc2/rest/v1/followed');
@@ -99,7 +99,7 @@ describe('HomeService', () => {
         it('should handle empty arrays', () => {
             const mockResponse = {services: [], resources: []};
 
-            service.getAllComponents().subscribe(components => {
+            service.getAllComponents().subscribe((components) => {
                 expect(components.length).toBe(0);
             });
 
@@ -110,7 +110,7 @@ describe('HomeService', () => {
         it('should handle null services or resources', () => {
             const mockResponse = {services: null, resources: null};
 
-            service.getAllComponents().subscribe(components => {
+            service.getAllComponents().subscribe((components) => {
                 expect(components.length).toBe(0);
             });
 
@@ -129,10 +129,10 @@ describe('HomeService', () => {
                 ]
             };
 
-            service.getAllComponents().subscribe(components => {
-                expect(components[0]['lastUpdateDate']).toBe(300);
-                expect(components[1]['lastUpdateDate']).toBe(200);
-                expect(components[2]['lastUpdateDate']).toBe(100);
+            service.getAllComponents().subscribe((components) => {
+                expect(components[0].lastUpdateDate).toBe(300);
+                expect(components[1].lastUpdateDate).toBe(200);
+                expect(components[2].lastUpdateDate).toBe(100);
             });
 
             const req = httpMock.expectOne('/sdc2/rest/v1/followed');

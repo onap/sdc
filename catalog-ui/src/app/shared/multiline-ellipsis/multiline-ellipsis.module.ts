@@ -1,6 +1,6 @@
-import {NgModule} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {MultilineEllipsisComponent} from './multiline-ellipsis.component';
+import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { MultilineEllipsisComponent } from './multiline-ellipsis.component';
 
 @NgModule({
 	declarations: [MultilineEllipsisComponent],

@@ -22,35 +22,35 @@
  * Created by obarda on 3/13/2016.
  */
 'use strict';
-import * as _ from "lodash";
-import {forwardRef, Inject, Injectable} from "@angular/core";
-import {HttpClient, HttpParams} from "@angular/common/http";
-import {LeftPaletteComponent, LeftPaletteMetadataTypes} from "app/models/components/display-component";
-import {Component} from "app/models/components/component";
-import {EventListenerService} from "./event-listener.service";
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { forwardRef, Inject, Injectable } from '@angular/core';
+import { IAppConfigurtaion } from 'app/models/app-config';
+import { ComponentMetadata } from 'app/models/component-metadata';
+import { Component } from 'app/models/components/component';
+import { LeftPaletteComponent, LeftPaletteMetadataTypes } from 'app/models/components/display-component';
+import { Resource } from 'app/models/components/resource';
+import { GroupMetadata, GroupTpes } from 'app/models/group-metadata';
+import { PolicyMetadata, PolicyTpes } from 'app/models/policy-metadata';
+import * as _ from 'lodash';
+import { SdcConfigToken } from '../config/sdc-config.config';
 // Nothing injects LeftPaletteLoaderService. The composition palette is served by
 // CompositionPaletteService (pages/composition/palette/services/palette.service.ts), which builds
 // the same sdcConfig.api.uicache_root + GET_uicache_left_palette URL itself; only app.module.ts's
 // provider list and this file's spec still name this class, so the forwardRef below guards a cycle
 // that is never constructed. Left verbatim because this change only moves files - the class is a
 // deletion candidate for the dead-code sweep.
-import {ComponentFactory} from "../utils/component-factory";
-import {IAppConfigurtaion} from "app/models/app-config";
-import {ResourceType, ComponentType, EVENTS} from "../utils/constants";
-import {ComponentMetadata} from "app/models/component-metadata";
-import {GroupMetadata, GroupTpes} from "app/models/group-metadata";
-import {PolicyMetadata, PolicyTpes} from "app/models/policy-metadata";
-import {Resource} from "app/models/components/resource";
-import {SdcConfigToken} from "../config/sdc-config.config";
+import { ComponentFactory } from '../utils/component-factory';
+import { ComponentType, EVENTS, ResourceType } from '../utils/constants';
+import { EventListenerService } from './event-listener.service';
 
 @Injectable()
 export class LeftPaletteLoaderService {
 
+    leftPanelComponents: LeftPaletteComponent[];
+
     private baseUrl: string;
     // Non-enumerable for consistency with other migrated services (§SS pattern).
     private http: HttpClient;
-
-    leftPanelComponents: Array<LeftPaletteComponent>;
 
     constructor(@Inject(SdcConfigToken) private sdcConfig: IAppConfigurtaion,
                 http: HttpClient,
@@ -65,13 +65,33 @@ export class LeftPaletteLoaderService {
         this.updateLeftPaletteForTopologyTemplate(component);
     }
 
+    public getLeftPanelComponentsForDisplay = (component: Component): LeftPaletteComponent[] => {
+        return this.leftPanelComponents;
+    }
+
+    /**
+     * Update left palette items according to current topology templates we are in.
+     */
+    public updateLeftPaletteForTopologyTemplate = (component: Component): void => {
+        switch (component.componentType) {
+            case ComponentType.SERVICE:
+                this.updateLeftPalette(ComponentType.SERVICE);
+                break;
+            case ComponentType.RESOURCE:
+                this.updateLeftPalette((component as Resource).resourceType);
+                break;
+            default:
+                console.log('ERROR: Component type ' + component.componentType + ' is not exists');
+        }
+    }
+
     private updateLeftPalette = (componentInternalType: string): void => {
 
         /* add components */
-        this.http.get<Array<ComponentMetadata>>(
+        this.http.get<ComponentMetadata[]>(
             this.sdcConfig.api.uicache_root + this.sdcConfig.api.GET_uicache_left_palette,
             {params: new HttpParams().set('internalComponentType', componentInternalType)}
-        ).subscribe((leftPaletteComponentMetadata: Array<ComponentMetadata>) => {
+        ).subscribe((leftPaletteComponentMetadata: ComponentMetadata[]) => {
             _.forEach(leftPaletteComponentMetadata, (componentMetadata: ComponentMetadata) => {
                 this.leftPanelComponents.push(new LeftPaletteComponent(LeftPaletteMetadataTypes.Component, componentMetadata));
             });
@@ -99,24 +119,4 @@ export class LeftPaletteLoaderService {
             });
         });
     }
-
-    public getLeftPanelComponentsForDisplay = (component: Component): Array<LeftPaletteComponent> => {
-        return this.leftPanelComponents;
-    };
-
-    /**
-     * Update left palette items according to current topology templates we are in.
-     */
-    public updateLeftPaletteForTopologyTemplate = (component: Component): void => {
-        switch (component.componentType) {
-            case ComponentType.SERVICE:
-                this.updateLeftPalette(ComponentType.SERVICE);
-                break;
-            case ComponentType.RESOURCE:
-                this.updateLeftPalette((<Resource>component).resourceType);
-                break;
-            default:
-                console.log('ERROR: Component type ' + component.componentType + ' is not exists');
-        }
-    };
 }

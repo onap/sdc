@@ -19,15 +19,15 @@
 
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FormElementsModule } from 'app/components/ui/form-components/form-elements.module';
 import { UiElementsModule } from 'app/components/ui/ui-elements.module';
-import { TranslateModule } from '../../../shared/translator/translate.module';
-import { ToscaFunctionComponent } from './tosca-function.component';
 import { SdcUiComponentsModule } from 'onap-ui-angular';
-import { ToscaGetFunctionComponent } from './tosca-get-function/tosca-get-function.component';
+import { TranslateModule } from '../../../shared/translator/translate.module';
 import { ToscaConcatFunctionComponent } from './tosca-concat-function/tosca-concat-function.component';
 import { ToscaCustomFunctionComponent } from './tosca-custom-function/tosca-custom-function.component';
+import { ToscaFunctionComponent } from './tosca-function.component';
+import { ToscaGetFunctionComponent } from './tosca-get-function/tosca-get-function.component';
 import { YamlFunctionComponent } from './yaml-function/yaml-function.component';
 
 @NgModule({

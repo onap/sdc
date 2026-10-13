@@ -17,28 +17,28 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-import {ChangeDetectorRef, NO_ERRORS_SCHEMA} from '@angular/core';
-import {ComponentFixture, TestBed} from '@angular/core/testing';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {By} from '@angular/platform-browser';
-import {Observable} from 'rxjs/Observable';
+import { ChangeDetectorRef, NO_ERRORS_SCHEMA } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { By } from '@angular/platform-browser';
+import { PropertyModel } from 'app/models/properties';
+import { PropertyBEModel } from 'app/models/properties-inputs/property-be-model';
+import { PropertyFEModel } from 'app/models/properties-inputs/property-fe-model';
+import { CompositionService } from 'app/pages/composition/composition.service';
+import { PropertiesUtils } from 'app/pages/properties-assignment/services/properties.utils';
+import { WorkspaceService } from 'app/pages/workspace/workspace.service';
+import { TopologyTemplateService } from 'app/services/component-services/topology-template.service';
+import { DataTypesService } from 'app/services/data-types.service';
+import { ModalService } from 'app/services/modal.service';
+import { TranslateModule } from 'app/shared/translator/translate.module';
+import { TranslateService } from 'app/shared/translator/translate.service';
+import { TranslateServiceConfigToken } from 'app/shared/translator/translate.service.config';
+import { ValidationUtils } from 'app/utils/validation-utils';
+import { SdcUiServices } from 'onap-ui-angular';
 import 'rxjs/add/observable/of';
-import {PropertyModel} from 'app/models/properties';
-import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
-import {PropertyFEModel} from 'app/models/properties-inputs/property-fe-model';
-import {ValidationUtils} from 'app/utils/validation-utils';
-import {WorkspaceService} from 'app/pages/workspace/workspace.service';
-import {TranslateModule} from 'app/shared/translator/translate.module';
-import {TranslateServiceConfigToken} from 'app/shared/translator/translate.service.config';
-import {PropertiesUtils} from 'app/pages/properties-assignment/services/properties.utils';
-import {CompositionService} from 'app/pages/composition/composition.service';
-import {TopologyTemplateService} from 'app/services/component-services/topology-template.service';
-import {TranslateService} from 'app/shared/translator/translate.service';
-import {ModalService} from 'app/services/modal.service';
-import {DataTypesService} from 'app/services/data-types.service';
-import {SdcUiServices} from 'onap-ui-angular';
-import {PropertyFormModalComponent} from './property-form-modal.component';
-import {PropertyFormModalService} from './property-form-modal.service';
+import { Observable } from 'rxjs/Observable';
+import { PropertyFormModalComponent } from './property-form-modal.component';
+import { PropertyFormModalService } from './property-form-modal.service';
 
 const mockTranslateConfig = {
     filePrefix: '/assets/i18n/',

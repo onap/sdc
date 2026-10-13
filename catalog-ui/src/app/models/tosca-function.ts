@@ -19,11 +19,11 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {ToscaFunctionType} from "./tosca-function-type.enum";
+import { ToscaFunctionType } from './tosca-function-type.enum';
 
 export interface ToscaFunction {
     type: ToscaFunctionType;
     value: any;
-    buildValueString(): string
-    buildValueObject(): Object
+    buildValueString(): string;
+    buildValueObject(): Object;
 }

@@ -24,17 +24,17 @@
 /**
  * Created by rc2122 on 5/17/2017.
  */
-import {Pipe, PipeTransform} from '@angular/core';
+import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({name: 'keyValue'})
 export class KeyValuePipe implements PipeTransform {
-    transform(value, field: string): Array<any> {
-        if(!value) {
+    transform(value, field: string): any[] {
+        if (!value) {
             return null;
         }
-        let keyValueObject = [];
-        for (let key in value) {
-            keyValueObject.push({key:key, value: value[key]});
+        const keyValueObject = [];
+        for (const key in value) {
+            keyValueObject.push({key, value: value[key]});
         }
         return keyValueObject;
     }

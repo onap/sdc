@@ -1,6 +1,6 @@
 /* added Michael */
 // export interface ILeftSwitchItemModel {
-export interface ICatalogSelector{    
+export interface ICatalogSelector {
     value: CatalogSelectorTypes;
     title: string;
     header: string;

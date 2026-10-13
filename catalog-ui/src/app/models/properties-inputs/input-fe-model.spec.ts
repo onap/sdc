@@ -18,7 +18,7 @@
 * ============LICENSE_END=====================================
 */
 
-import {InputFEModel} from "./input-fe-model";
+import { InputFEModel } from './input-fe-model';
 
 describe('InputFEModel', () => {
   [

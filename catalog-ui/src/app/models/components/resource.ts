@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,32 +22,32 @@
  * Created by obarda on 2/3/2016.
  */
 'use strict';
-import * as _ from "lodash";
-import {ResourceType} from "../../utils/constants";
-import {Component} from "./component";
-import {FileUploadModel} from "../file-upload-model";
-import {ILegacyResourceService} from "../../services/legacy/resource.service";
-import {ComponentMetadata} from "../component-metadata";
+import * as _ from 'lodash';
+import { ILegacyResourceService } from '../../services/legacy/resource.service';
+import { ResourceType } from '../../utils/constants';
+import { ComponentMetadata } from '../component-metadata';
+import { FileUploadModel } from '../file-upload-model';
+import { Component } from './component';
 
 export class Resource extends Component {
 
-    public interfaces:any;
-    public derivedFrom:Array<string>;
-    public componentService:ILegacyResourceService;
-    public resourceType:string;
-    public payloadData:string;
-    public payloadName:string;
-    public importedFile:FileUploadModel;
-    public resourceVendorModelNumber:string;
+    public interfaces: any;
+    public derivedFrom: string[];
+    public componentService: ILegacyResourceService;
+    public resourceType: string;
+    public payloadData: string;
+    public payloadName: string;
+    public importedFile: FileUploadModel;
+    public resourceVendorModelNumber: string;
 
     // Onboarding parameters
-    public csarUUID:string;
-    public csarVersion:string;
+    public csarUUID: string;
+    public csarVersion: string;
     public csarVersionId: string;
-    public csarPackageType:string;
-    public packageId:string;
+    public csarPackageType: string;
+    public packageId: string;
 
-    constructor(componentService:ILegacyResourceService, component?:Resource) {
+    constructor(componentService: ILegacyResourceService, component?: Resource) {
         super(componentService, component);
         if (component) {
 
@@ -64,7 +64,7 @@ export class Resource extends Component {
             if (component.categories && component.categories[0] && component.categories[0].subcategories && component.categories[0].subcategories[0]) {
                 component.mainCategory = component.categories[0].name;
                 component.subCategory = component.categories[0].subcategories[0].name;
-                this.selectedCategory = component.mainCategory + "_#_" + component.subCategory;
+                this.selectedCategory = component.mainCategory + '_#_' + component.subCategory;
                 this.importedFile = component.importedFile;
             }
         } else {
@@ -72,7 +72,7 @@ export class Resource extends Component {
         }
 
         this.componentService = componentService;
-        this.iconSprite = "sprite-resource-icons";
+        this.iconSprite = 'sprite-resource-icons';
     }
 
     public setComponentMetadata(componentMetadata: ComponentMetadata) {
@@ -84,27 +84,27 @@ export class Resource extends Component {
         this.derivedFrom = componentMetadata.derivedFrom;
         this.resourceVendorModelNumber = componentMetadata.resourceVendorModelNumber;
         this.setComponentDisplayData();
-    };
+    }
 
-    public isResource = ():boolean => true;
+    public isResource = (): boolean => true;
 
-    public getComponentSubType = ():string => {
+    public getComponentSubType = (): string => {
         return this.resourceType;
-    };
+    }
 
-    public isComplex = ():boolean => {
+    public isComplex = (): boolean => {
         return this.resourceType === ResourceType.VF || this.resourceType === ResourceType.PNF || this.resourceType === ResourceType.CVFC || this.resourceType === ResourceType.CR;
-    };
+    }
 
-    public isVl = ():boolean => {
+    public isVl = (): boolean => {
         return ResourceType.VL == this.resourceType;
-    };
+    }
 
-    public isCsarComponent = ():boolean => {
+    public isCsarComponent = (): boolean => {
         return !!this.csarUUID;
-    };
+    }
 
-    public createComponentOnServer = ():Promise<Component> => {
+    public createComponentOnServer = (): Promise<Component> => {
         return new Promise<Component>((resolve, reject) => {
             this.handleTags();
             if (this.importedFile) {
@@ -112,34 +112,33 @@ export class Resource extends Component {
                 this.payloadName = this.importedFile.filename;
             }
             this.componentService.createComponent(this).then(
-                (component:Resource):void => {
+                (component: Resource): void => {
                     this.payloadData = undefined;
                     this.payloadName = undefined;
                     resolve(component);
                 },
-                (error:any):void => {
+                (error: any): void => {
                     reject(error);
                 });
         });
-    };
+    }
 
-    getTypeUrl():string {
+    getTypeUrl(): string {
         return 'resources/';
     }
 
-
-    setComponentDisplayData():void {
+    setComponentDisplayData(): void {
         this.filterTerm = this.name + ' ' + this.description + ' ' + (this.tags ? this.tags.toString() : '') + ' ' + this.version + ' ' + this.resourceType;
         if (this.categories && this.categories[0] && this.categories[0].subcategories && this.categories[0].subcategories[0]) {
             this.mainCategory = this.categories[0].name;
             this.subCategory = this.categories[0].subcategories[0].name;
-            this.selectedCategory = this.mainCategory + "_#_" + this.subCategory;
-            this.iconSprite = "sprite-resource-icons";
+            this.selectedCategory = this.mainCategory + '_#_' + this.subCategory;
+            this.iconSprite = 'sprite-resource-icons';
         }
-    };
+    }
 
-    public toJSON = ():any => {
-        let temp = _.cloneDeep(this);
+    public toJSON = (): any => {
+        const temp = _.cloneDeep(this);
         temp.componentService = undefined;
         temp.filterTerm = undefined;
         temp.iconSprite = undefined;
@@ -153,7 +152,5 @@ export class Resource extends Component {
         temp.groupInstances = undefined;
         temp.policies = undefined;
         return temp;
-    };
+    }
 }
-
-

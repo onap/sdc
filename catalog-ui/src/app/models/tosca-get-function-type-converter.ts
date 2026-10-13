@@ -19,8 +19,8 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {ToscaGetFunctionType} from './tosca-get-function-type';
-import {ToscaFunctionType} from "./tosca-function-type.enum";
+import { ToscaFunctionType } from './tosca-function-type.enum';
+import { ToscaGetFunctionType } from './tosca-get-function-type';
 
 export class ToscaGetFunctionTypeConverter {
 

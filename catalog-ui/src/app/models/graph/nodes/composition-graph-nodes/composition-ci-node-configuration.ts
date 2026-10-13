@@ -18,25 +18,25 @@
  * ============LICENSE_END=========================================================
  */
 
-import { ImagesUrl, GraphUIObjects} from "../../../../utils/constants";
-import {ComponentInstance} from '../../../components-instances/component-instance';
-import {CompositionCiNodeBase} from './composition-ci-node-base';
-import {ImageCreatorService} from "app/pages/composition/graph/common/image-creator.service";
+import { ImageCreatorService } from 'app/pages/composition/graph/common/image-creator.service';
+import { GraphUIObjects, ImagesUrl } from '../../../../utils/constants';
+import { ComponentInstance } from '../../../components-instances/component-instance';
+import { CompositionCiNodeBase } from './composition-ci-node-base';
 export class CompositionCiNodeConfiguration extends CompositionCiNodeBase {
 
-    constructor(instance:ComponentInstance,
-                imageCreator:ImageCreatorService) {
+    constructor(instance: ComponentInstance,
+                imageCreator: ImageCreatorService) {
         super(instance, imageCreator);
         this.initConfiguration();
     }
 
-    private initConfiguration():void {
+    private initConfiguration(): void {
         this.imagesPath = this.imagesPath + ImagesUrl.RESOURCE_ICONS;
         this.img = this.imagesPath + this.componentInstance.icon + '.png';
         this.imgWidth = GraphUIObjects.SMALL_RESOURCE_WIDTH;
-        this.type = "basic-small-node";
+        this.type = 'basic-small-node';
         this.classes = 'configuration-node';
-        if(this.archived){
+        if (this.archived) {
             this.classes = this.classes + ' archived';
         }
     }

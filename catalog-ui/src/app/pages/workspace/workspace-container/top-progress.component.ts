@@ -1,4 +1,4 @@
-import {Component as NgComponent, Input} from '@angular/core';
+import { Component as NgComponent, Input } from '@angular/core';
 
 @NgComponent({
     selector: 'workspace-top-progress',

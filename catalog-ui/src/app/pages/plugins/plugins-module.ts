@@ -1,11 +1,11 @@
-import {NgModule} from "@angular/core";
-import {PluginContextViewPageComponent} from "./plugin-context-view/plugin-context-view.page.component";
-import {PluginFrameModule} from "../../components/ui/plugin/plugin-frame.module";
-import {CommonModule} from "@angular/common";
-import {UiElementsModule} from "../../components/ui/ui-elements.module";
-import {PluginTabViewPageComponent} from "./plugin-tab-view/plugin-tab-view.page.component";
-import {LayoutModule} from "../../components/layout/layout.module";
-import {HttpModule} from "@angular/http";
+import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { HttpModule } from '@angular/http';
+import { LayoutModule } from '../../components/layout/layout.module';
+import { PluginFrameModule } from '../../components/ui/plugin/plugin-frame.module';
+import { UiElementsModule } from '../../components/ui/ui-elements.module';
+import { PluginContextViewPageComponent } from './plugin-context-view/plugin-context-view.page.component';
+import { PluginTabViewPageComponent } from './plugin-tab-view/plugin-tab-view.page.component';
 
 @NgModule({
     declarations: [
@@ -31,4 +31,3 @@ import {HttpModule} from "@angular/http";
 export class PluginsModule {
 
 }
-

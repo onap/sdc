@@ -85,7 +85,7 @@ export class DistributionComponentTableComponent implements OnInit {
     for (const i in this.expanded) {
       if (this.expanded[i].componentName === componentName) {
         this.expanded[i].expanded = !this.expanded[i].expanded;
-        break; //Stop this loop, we found it!
+        break; // Stop this loop, we found it!
       }
     }
     const selectedComponentAfter = this.expanded.find((component) => component.componentName === componentName);
@@ -96,7 +96,6 @@ export class DistributionComponentTableComponent implements OnInit {
     const selectedComponent = this.expanded.find((component) => component.componentName === componentName);
     return selectedComponent['expanded'];
   }
-
 
     private getMSOStatus(rowDistributionID: string, componentName: string): string {
         return this.distributionService.getMSOStatus(rowDistributionID, componentName);

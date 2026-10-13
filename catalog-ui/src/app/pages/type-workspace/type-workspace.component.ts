@@ -20,20 +20,20 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {Component, Inject, Injector, OnInit} from '@angular/core';
-import {SdcMenuToken, IAppMenu} from "../../config/sdc-menu.config";
-import {MenuItem, MenuItemGroup} from "../../utils/menu-handler";
-import {CacheService} from "../../services/cache.service";
-import {DataTypeModel} from "../../models/data-types";
-import {DataTypeService} from "../../services/data-type.service";
-import {TypeWorkspaceService} from "./type-workspace.service";
-import {TranslateService} from "../../shared/translator/translate.service";
-import {NavigationService} from "../../services/navigation.service";
-import {HttpErrorResponse} from "@angular/common/http";
-import {ServerErrorResponse} from "../../models/server-error-response";
-import {Observable} from "rxjs/Observable";
-import {SdcUiCommon, SdcUiServices} from "onap-ui-angular/dist";
-import {NotificationSettings} from "onap-ui-angular/dist/notifications/utilities/notification.config";
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, Inject, Injector, OnInit } from '@angular/core';
+import { SdcUiCommon, SdcUiServices } from 'onap-ui-angular/dist';
+import { NotificationSettings } from 'onap-ui-angular/dist/notifications/utilities/notification.config';
+import { Observable } from 'rxjs/Observable';
+import { IAppMenu, SdcMenuToken } from '../../config/sdc-menu.config';
+import { DataTypeModel } from '../../models/data-types';
+import { ServerErrorResponse } from '../../models/server-error-response';
+import { CacheService } from '../../services/cache.service';
+import { DataTypeService } from '../../services/data-type.service';
+import { NavigationService } from '../../services/navigation.service';
+import { TranslateService } from '../../shared/translator/translate.service';
+import { MenuItem, MenuItemGroup } from '../../utils/menu-handler';
+import { TypeWorkspaceService } from './type-workspace.service';
 
 @Component({
   selector: 'app-type-workspace',
@@ -41,16 +41,16 @@ import {NotificationSettings} from "onap-ui-angular/dist/notifications/utilities
   styleUrls: ['./type-workspace.component.less']
 })
 export class TypeWorkspaceComponent implements OnInit {
-
-  private typeMenuItemGroup: MenuItemGroup;
   isLoading: boolean;
   disabled: boolean;
   isViewOnly: boolean = true;
   sdcVersion: string;
-  breadcrumbsModel: Array<MenuItemGroup> = [];
+  breadcrumbsModel: MenuItemGroup[] = [];
   dataType: DataTypeModel = new DataTypeModel();
   importedDataType: DataTypeModel = new DataTypeModel();
   currentMenu: MenuItem;
+
+  private typeMenuItemGroup: MenuItemGroup;
 
   constructor(private typeWorkspaceService: TypeWorkspaceService,
               private dataTypeService: DataTypeService, private cacheService: CacheService,
@@ -68,16 +68,41 @@ export class TypeWorkspaceComponent implements OnInit {
     this.loadDataType();
   }
 
+  onImportedType(dataType) {
+    this.typeMenuItemGroup.updateSelectedMenuItemText(`Data Type: ${dataType.name}`);
+  }
+
+  goToBreadcrumbHome(): void {
+    const homeMenuItemGroup: MenuItemGroup = this.breadcrumbsModel[0];
+    this.navigationService.navigate(homeMenuItemGroup.menuItems[homeMenuItemGroup.selectedIndex].state);
+  }
+
+  onMenuUpdate(menuItemGroup: MenuItemGroup): void {
+    this.breadcrumbsModel.push(...[this.typeMenuItemGroup, menuItemGroup]);
+    if (!this.isViewOnly) {
+        // menu.js gives the DataType group BARE states ('general'), unlike the 7 component groups'
+        // dotted ones ('workspace.general'), so comparing against the bare name is correct here.
+        this.typeWorkspaceService.leftBarTabs.menuItems.forEach((item: MenuItem) => {
+            item.isDisabled = ('general' !== item.state);
+            item.disabledCategory = ('general' !== item.state);
+        });
+    }
+  }
+
+  onMenuClick(menuItem: MenuItem): void {
+    this.currentMenu = menuItem;
+  }
+
   private loadDataType(): void {
-    if (this.navigationService.getParams().id && this.navigationService.getParams().id != "import") {
-      this.dataTypeService.findById(this.navigationService.getParams().id).subscribe(dataType => {
+    if (this.navigationService.getParams().id && this.navigationService.getParams().id != 'import') {
+      this.dataTypeService.findById(this.navigationService.getParams().id).subscribe((dataType) => {
         this.dataType = dataType;
         this.updateTypeBreadcrumb();
-      }, error => {
+      }, (error) => {
         console.debug('Could not find data type %s', this.navigationService.getParams().id, error);
         this.goToBreadcrumbHome();
       });
-        this.isViewOnly = true;
+      this.isViewOnly = true;
     } else {
 
       this.isViewOnly = false;
@@ -85,14 +110,10 @@ export class TypeWorkspaceComponent implements OnInit {
     }
   }
 
-  onImportedType(dataType) {
-    this.typeMenuItemGroup.updateSelectedMenuItemText(`Data Type: ${dataType.name}`);
-  }
-
   private createImportType() {
       if (this.typeWorkspaceService.dataType.derivedFromName != undefined && this.typeWorkspaceService.dataType.model != undefined) {
           this.dataTypeService.createImportedType(this.typeWorkspaceService.dataType.model.name, this.typeWorkspaceService.importFile)
-              .subscribe(response => {
+              .subscribe((response) => {
               this.importedDataType = new DataTypeModel(response);
               this.notificationsService.push(new NotificationSettings(
                   'success',
@@ -100,23 +121,22 @@ export class TypeWorkspaceComponent implements OnInit {
                   this.translateService.translate('IMPORT_DATA_TYPE_TITLE_TEXT'),
                   5000));
               this.navigationService.navigate(this.navigationService.getCurrentStateName(), {importedFile: null, id: this.typeWorkspaceService.dataType.uniqueId, isViewOnly: true}, {reload: true});
-          }, error => {//because overriding http interceptor
+          }, (error) => {// because overriding http interceptor
                   if (error instanceof HttpErrorResponse) {
                       const errorResponse: ServerErrorResponse = new ServerErrorResponse(error);
                       const modalService = this.injector.get(SdcUiServices.ModalService);
                       const errorDetails = {
-                          'Error Code': errorResponse.status != 409 ? errorResponse.messageId : "Data Type already exists",
+                          'Error Code': errorResponse.status != 409 ? errorResponse.messageId : 'Data Type already exists',
                           'Status Code': errorResponse.status
                       };
-                      modalService.openErrorDetailModal('Error', errorResponse.status != 409 ? errorResponse.message : "Data Type already exists", 'error-modal', errorDetails);
+                      modalService.openErrorDetailModal('Error', errorResponse.status != 409 ? errorResponse.message : 'Data Type already exists', 'error-modal', errorDetails);
                       return Observable.throwError(error);
                   }
               });
-      }
-      else {
+      } else {
           this.notificationsService.push(new NotificationSettings(
               'error',
-              this.typeWorkspaceService.dataType.name + ' ' + "Derived from is invalid in file",
+              this.typeWorkspaceService.dataType.name + ' ' + 'Derived from is invalid in file',
               this.translateService.translate('IMPORT_DATA_TYPE_TITLE_TEXT'),
               5000));
       }
@@ -124,7 +144,7 @@ export class TypeWorkspaceComponent implements OnInit {
 
   private deleteDataType() {
       const modalTitle: string = this.translateService.translate('DELETE_DATA_TYPE_TITLE_CONFIRMATION_TEXT');
-      const modalMessage: string = this.translateService.translate('DELETE_DATA_TYPE_MESSAGE_CONFIRMATION_TEXT');;
+      const modalMessage: string = this.translateService.translate('DELETE_DATA_TYPE_MESSAGE_CONFIRMATION_TEXT');
       const modalButton: SdcUiCommon.IModalButtonComponent = {
           testId: 'ok-button',
           text: this.sdcMenu.alertMessages.okButton,
@@ -138,11 +158,11 @@ export class TypeWorkspaceComponent implements OnInit {
   private handleDeleteDataType(): () => void {
     return () => {
       this.isLoading = true;
-      this.dataTypeService.deleteDataType(this.dataType.uniqueId).subscribe(()=> {
+      this.dataTypeService.deleteDataType(this.dataType.uniqueId).subscribe(() => {
         this.notificationsService.push(new NotificationSettings(
             'success',
             this.dataType.model + ' ' + this.dataType.name + ' ' + this.translateService.translate('DELETE_SUCCESS_MESSAGE_TEXT'),
-            this.translateService.translate("DELETE_SUCCESS_MESSAGE_TITLE"),
+            this.translateService.translate('DELETE_SUCCESS_MESSAGE_TITLE'),
             5000));
         if (this.navigationService.getParams().previousState) {
             switch (this.navigationService.getParams().previousState) {
@@ -172,7 +192,7 @@ export class TypeWorkspaceComponent implements OnInit {
             modalService.openErrorDetailModal('Error', errorResponse.message, 'error-modal', errorDetails);
         }
     });
-    }
+    };
   }
 
   private updateTypeBreadcrumb(): void {
@@ -182,26 +202,5 @@ export class TypeWorkspaceComponent implements OnInit {
   private createTypeBreadcrumb(): MenuItemGroup {
     const menuItem = new MenuItem(`Data Type: ${this.dataType ? this.dataType.name : ''}`, undefined, undefined, undefined, [], [], false);
     return new MenuItemGroup(0, [menuItem]);
-  }
-
-  goToBreadcrumbHome(): void {
-    const homeMenuItemGroup: MenuItemGroup = this.breadcrumbsModel[0];
-    this.navigationService.navigate(homeMenuItemGroup.menuItems[homeMenuItemGroup.selectedIndex].state);
-  }
-
-  onMenuUpdate(menuItemGroup: MenuItemGroup): void {
-    this.breadcrumbsModel.push(...[this.typeMenuItemGroup, menuItemGroup]);
-    if (!this.isViewOnly) {
-        // menu.js gives the DataType group BARE states ('general'), unlike the 7 component groups'
-        // dotted ones ('workspace.general'), so comparing against the bare name is correct here.
-        this.typeWorkspaceService.leftBarTabs.menuItems.forEach((item: MenuItem) => {
-            item.isDisabled = ('general' !== item.state);
-            item.disabledCategory = ('general' !== item.state);
-        });
-    }
-  }
-
-  onMenuClick(menuItem: MenuItem): void {
-    this.currentMenu = menuItem;
   }
 }

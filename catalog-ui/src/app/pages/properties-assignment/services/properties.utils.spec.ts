@@ -21,11 +21,11 @@
 import * as _ from 'lodash';
 (window as any)._ = _;
 
-import { PropertiesUtils } from './properties.utils';
+import { DerivedPropertyType, PropertyBEModel } from 'app/models/properties-inputs/property-be-model';
+import { PropertyFEModel } from 'app/models/properties-inputs/property-fe-model';
 import { DataTypeService } from 'app/services/data-type.service';
 import { PropertiesService } from 'app/services/properties.service';
-import {DerivedPropertyType, PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
-import {PropertyFEModel} from 'app/models/properties-inputs/property-fe-model';
+import { PropertiesUtils } from './properties.utils';
 
 describe('PropertiesUtils characterization (engine used by dynamic-property)', () => {
     let utils: PropertiesUtils;
@@ -60,8 +60,8 @@ describe('PropertiesUtils characterization (engine used by dynamic-property)', (
         // OBSERVE (delete after locking): console.log(JSON.stringify(feProp.flattenedChildren.map(c => ({ n: c.propertiesName, k: (c as any).mapKey, v: c.valueObj }))));
         expect(feProp.derivedDataType).toBe(DerivedPropertyType.MAP);
         expect(feProp.flattenedChildren.length).toBe(2);
-        expect(feProp.flattenedChildren.map(c => (c as any).mapKey).sort()).toEqual(['a', 'b']);
-        expect(feProp.flattenedChildren.map(c => c.valueObj).sort()).toEqual(['1', '2']);
+        expect(feProp.flattenedChildren.map((c) => (c as any).mapKey).sort()).toEqual(['a', 'b']);
+        expect(feProp.flattenedChildren.map((c) => c.valueObj).sort()).toEqual(['1', '2']);
     });
 
     it('builds flattened children for a list<string> property from its value', () => {
@@ -76,7 +76,7 @@ describe('PropertiesUtils characterization (engine used by dynamic-property)', (
 
         expect(feProp.derivedDataType).toBe(DerivedPropertyType.LIST);
         expect(feProp.flattenedChildren.length).toBe(3);
-        expect(feProp.flattenedChildren.map(c => c.valueObj)).toEqual(['x', 'y', 'z']);
+        expect(feProp.flattenedChildren.map((c) => c.valueObj)).toEqual(['x', 'y', 'z']);
     });
 
     it('builds flattened children for a map<string,map<string,string>> nested map from its value', () => {
@@ -96,7 +96,7 @@ describe('PropertiesUtils characterization (engine used by dynamic-property)', (
         // Real output locked: outer key + inner key = 2 children total.
         expect(feProp.flattenedChildren.length).toBe(2);
         // propertiesName contains UUIDs — assert only on the stable mapKey values.
-        expect(feProp.flattenedChildren.map(c => (c as any).mapKey)).toEqual(['outer', 'inner']);
+        expect(feProp.flattenedChildren.map((c) => (c as any).mapKey)).toEqual(['outer', 'inner']);
         // outer child carries the nested object; inner child carries the leaf value.
         expect(feProp.flattenedChildren[0].valueObj).toEqual({ inner: 'v' });
         expect(feProp.flattenedChildren[1].valueObj).toBe('v');

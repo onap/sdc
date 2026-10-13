@@ -1,17 +1,17 @@
-import { Component, Inject, OnInit, ViewChild } from "@angular/core";
-import { WorkspaceService } from "../workspace.service";
-import {ArtifactModel} from '../../../models/artifacts';
-import { Select, Store } from "@ngxs/store";
-import { WorkspaceState } from "../../../store/states/workspace.state";
-import {ArtifactGroupType} from '../../../utils/constants';
-import { GetArtifactsByTypeAction } from "../../../store/actions/artifacts.action";
-import { Observable } from "rxjs/index";
-import { ArtifactsState } from "../../../store/states/artifacts.state";
-import { map } from "rxjs/operators";
-import { ArtifactType, ComponentState, ComponentType } from "app/utils/constants"
-import { TopologyTemplateService } from "app/services/component-services/topology-template.service";
-import { SdcUiServices } from "onap-ui-angular";
-import { NotificationSettings } from "onap-ui-angular/dist/notifications/utilities/notification.config";
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Select, Store } from '@ngxs/store';
+import { TopologyTemplateService } from 'app/services/component-services/topology-template.service';
+import { ArtifactType, ComponentState, ComponentType } from 'app/utils/constants';
+import { SdcUiServices } from 'onap-ui-angular';
+import { NotificationSettings } from 'onap-ui-angular/dist/notifications/utilities/notification.config';
+import { Observable } from 'rxjs/index';
+import { map } from 'rxjs/operators';
+import { ArtifactModel } from '../../../models/artifacts';
+import { GetArtifactsByTypeAction } from '../../../store/actions/artifacts.action';
+import { ArtifactsState } from '../../../store/states/artifacts.state';
+import { WorkspaceState } from '../../../store/states/workspace.state';
+import { ArtifactGroupType } from '../../../utils/constants';
+import { WorkspaceService } from '../workspace.service';
 
 @Component({
     selector: 'tosca-artifact-page',
@@ -25,7 +25,7 @@ export class ToscaArtifactPageComponent implements OnInit {
     @ViewChild('toscaArtifactsTable') table: any;
     public toscaArtifacts$: Observable<ArtifactModel[]>;
     public componentId: string;
-    public componentType:string;
+    public componentType: string;
     public isLoading: boolean = false;
 
     constructor(
@@ -35,17 +35,16 @@ export class ToscaArtifactPageComponent implements OnInit {
         private componentService: TopologyTemplateService) {
     }
 
-
     ngOnInit(): void {
         this.componentId = this.workspaceService.metadata.uniqueId;
         this.componentType = this.workspaceService.metadata.componentType;
 
-        this.store.dispatch(new GetArtifactsByTypeAction({componentType:this.componentType, componentId:this.componentId, artifactType:ArtifactGroupType.TOSCA}));
-        this.toscaArtifacts$ = this.store.select(ArtifactsState.getArtifactsByType).pipe(map(filterFn => filterFn(ArtifactGroupType.TOSCA)));
+        this.store.dispatch(new GetArtifactsByTypeAction({componentType: this.componentType, componentId: this.componentId, artifactType: ArtifactGroupType.TOSCA}));
+        this.toscaArtifacts$ = this.store.select(ArtifactsState.getArtifactsByType).pipe(map((filterFn) => filterFn(ArtifactGroupType.TOSCA)));
     }
 
     onActivate(event) {
-        if(event.type === 'click'){
+        if (event.type === 'click') {
             this.table.rowDetail.toggleExpandRow(event.row);
         }
     }
@@ -53,9 +52,9 @@ export class ToscaArtifactPageComponent implements OnInit {
     getExtension(artifactType: string) {
         switch (artifactType) {
             case (ArtifactType.TOSCA.TOSCA_CSAR):
-                return "csar";
+                return 'csar';
             case (ArtifactType.TOSCA.TOSCA_TEMPLATE):
-                return "yaml,yml";
+                return 'yaml,yml';
         }
     }
 
@@ -72,11 +71,11 @@ export class ToscaArtifactPageComponent implements OnInit {
             this.isLoading = true;
             switch (artifactType) {
                 case (ArtifactType.TOSCA.TOSCA_CSAR):
-                    this.componentService.putServiceToscaModel(this.componentId, this.componentType, file).subscribe((response)=> {
+                    this.componentService.putServiceToscaModel(this.componentId, this.componentType, file).subscribe((response) => {
                         this.notificationsService.push(new NotificationSettings(
                             'success',
-                            "Service " + response.name + " has been updated",
-                            "Success",
+                            'Service ' + response.name + ' has been updated',
+                            'Success',
                             5000));
                         this.isLoading = false;
                     }, () => {
@@ -84,11 +83,11 @@ export class ToscaArtifactPageComponent implements OnInit {
                     });
                     break;
                 case (ArtifactType.TOSCA.TOSCA_TEMPLATE):
-                    this.componentService.putServiceToscaTemplate(this.componentId, this.componentType, file).subscribe((response)=> {
+                    this.componentService.putServiceToscaTemplate(this.componentId, this.componentType, file).subscribe((response) => {
                         this.notificationsService.push(new NotificationSettings(
                             'success',
-                            "Service " + response.name + " has been updated",
-                            "Success",
+                            'Service ' + response.name + ' has been updated',
+                            'Success',
                             5000));
                         this.isLoading = false;
                     }, () => {

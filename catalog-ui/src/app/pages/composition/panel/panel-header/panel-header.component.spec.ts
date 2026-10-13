@@ -1,22 +1,22 @@
-import {NO_ERRORS_SCHEMA} from '@angular/core';
-import {ComponentFixture, TestBed} from '@angular/core/testing';
-import {CompositionService} from 'app/pages/composition/composition.service';
-import {EventListenerService} from '../../../../services/event-listener.service';
-import {ComponentInstanceService} from 'app/services/component-instance-services/component-instance.service';
-import {WorkspaceService} from 'app/pages/workspace/workspace.service';
-import {GroupsService} from 'app/services/groups.service';
-import {PoliciesService} from 'app/services/policies.service';
-import {CompositionPanelHeaderComponent} from './panel-header.component';
-import {SdcUiServices} from 'onap-ui-angular';
-import {CapabilitiesGroup, Capability} from 'app/models/capability';
-import {Component} from 'app/models/components/component';
-import {ComponentInstance} from 'app/models/components-instances/component-instance';
-import {FullComponentInstance} from 'app/models/components-instances/full-component-instance';
-import {GroupInstance} from 'app/models/graph/zones/group-instance';
-import {PolicyInstance} from 'app/models/graph/zones/policy-instance';
-import {Requirement, RequirementsGroup} from 'app/models/requirement';
-import {Observable, of} from "rxjs";
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { CapabilitiesGroup, Capability } from 'app/models/capability';
+import { ComponentInstance } from 'app/models/components-instances/component-instance';
+import { FullComponentInstance } from 'app/models/components-instances/full-component-instance';
+import { Component } from 'app/models/components/component';
+import { GroupInstance } from 'app/models/graph/zones/group-instance';
+import { PolicyInstance } from 'app/models/graph/zones/policy-instance';
+import { Requirement, RequirementsGroup } from 'app/models/requirement';
+import { CompositionService } from 'app/pages/composition/composition.service';
+import { WorkspaceService } from 'app/pages/workspace/workspace.service';
+import { ComponentInstanceService } from 'app/services/component-instance-services/component-instance.service';
+import { GroupsService } from 'app/services/groups.service';
+import { PoliciesService } from 'app/services/policies.service';
+import { SdcUiServices } from 'onap-ui-angular';
+import { Observable, of } from 'rxjs';
 import 'rxjs/add/observable/throw';
+import { EventListenerService } from '../../../../services/event-listener.service';
+import { CompositionPanelHeaderComponent } from './panel-header.component';
 
 describe('CompositionPanelHeaderComponent', () => {
     let component: CompositionPanelHeaderComponent;
@@ -26,7 +26,7 @@ describe('CompositionPanelHeaderComponent', () => {
     };
     const valueEditModalInstance = {
         innerModalContent: {
-            instance: {name: "VF Test"}
+            instance: {name: 'VF Test'}
         },
         buttons: [{id: 'saveButton', text: 'OK', size: 'xsm', callback: jest.fn(), closeModal: false}],
         closeModal: jest.fn()
@@ -39,8 +39,8 @@ describe('CompositionPanelHeaderComponent', () => {
 
             const workspaceServiceStub = {
                 metadata: {
-                    componentType: "SERVICE",
-                    uniqueId: "123"
+                    componentType: 'SERVICE',
+                    uniqueId: '123'
                 }
             };
             const groupsServiceStub = {
@@ -76,7 +76,7 @@ describe('CompositionPanelHeaderComponent', () => {
     });
 
     it('should close the modal without saving if the name has not changed', () => {
-        component.selectedComponent = <FullComponentInstance>{name: "VF Test"};
+        component.selectedComponent = ({name: 'VF Test'} as FullComponentInstance);
         component.valueEditModalInstance = valueEditModalInstance;
 
         component.saveInstanceName();
@@ -85,35 +85,35 @@ describe('CompositionPanelHeaderComponent', () => {
     });
 
     it('after editing instance name, capabilities/requirements should be updated with new name', () => {
-        const newName = "New VF NAME";
-        component.selectedComponent = new FullComponentInstance(<ComponentInstance>{
-            name: "VF Test",
+        const newName = 'New VF NAME';
+        component.selectedComponent = new FullComponentInstance({
+            name: 'VF Test',
             requirements: new RequirementsGroup(),
             capabilities: new CapabilitiesGroup()
-        }, <Component>{});
-        component.selectedComponent.requirements['key'] = [<Requirement>{ownerName: "VF Test"}, <Requirement>{ownerName: "VF Test"}];
-        component.selectedComponent.capabilities['key'] = [<Capability>{ownerName: "VF Test"}];
+        } as ComponentInstance, {} as Component);
+        component.selectedComponent.requirements.key = [{ownerName: 'VF Test'} as Requirement, {ownerName: 'VF Test'} as Requirement];
+        component.selectedComponent.capabilities.key = [{ownerName: 'VF Test'} as Capability];
         component.valueEditModalInstance = valueEditModalInstance;
         component.valueEditModalInstance.innerModalContent.instance.name = newName;
-        jest.spyOn(component.componentInstanceService, 'updateComponentInstance').mockReturnValue(of(<ComponentInstance>{name: newName}));
+        jest.spyOn(component.componentInstanceService, 'updateComponentInstance').mockReturnValue(of({name: newName} as ComponentInstance));
         component.saveInstanceName();
 
         expect(component.selectedComponent.name).toBe(newName);
-        expect(component.selectedComponent.requirements['key'][0].ownerName).toEqual(newName);
-        expect(component.selectedComponent.requirements['key'][1].ownerName).toEqual(newName);
-        expect(component.selectedComponent.capabilities['key'][0].ownerName).toEqual(newName);
+        expect(component.selectedComponent.requirements.key[0].ownerName).toEqual(newName);
+        expect(component.selectedComponent.requirements.key[1].ownerName).toEqual(newName);
+        expect(component.selectedComponent.capabilities.key[0].ownerName).toEqual(newName);
     });
 
     it('if update fails, name is reverted to old value', () => {
-        component.selectedComponent = new GroupInstance(<GroupInstance>{name: "GROUP NAME"});
+        component.selectedComponent = new GroupInstance({name: 'GROUP NAME'} as GroupInstance);
         component.valueEditModalInstance = valueEditModalInstance;
         jest.spyOn(component.groupService, 'updateName').mockReturnValue(Observable.throw(new Error('Error')));
         component.saveInstanceName();
-        expect(component.selectedComponent.name).toEqual("GROUP NAME");
+        expect(component.selectedComponent.name).toEqual('GROUP NAME');
     });
 
     it('policy instance uses policies service for update name', () => {
-        component.selectedComponent = new PolicyInstance(<PolicyInstance>{name: "Policy OLD NAME"});
+        component.selectedComponent = new PolicyInstance({name: 'Policy OLD NAME'} as PolicyInstance);
         component.valueEditModalInstance = valueEditModalInstance;
         jest.spyOn(component.policiesService, 'updateName').mockReturnValue(of(true));
         component.saveInstanceName();
@@ -121,7 +121,7 @@ describe('CompositionPanelHeaderComponent', () => {
     });
 
     it('group instance uses groups service for update name', () => {
-        component.selectedComponent = new GroupInstance(<GroupInstance>{name: "GROUP NAME"});
+        component.selectedComponent = new GroupInstance({name: 'GROUP NAME'} as GroupInstance);
         component.valueEditModalInstance = valueEditModalInstance;
         jest.spyOn(component.groupService, 'updateName').mockReturnValue(of(true));
         component.saveInstanceName();

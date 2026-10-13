@@ -19,24 +19,24 @@
 
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import {
-  ActivityParameter,
-  IActivityParameterList,
-  InputOperationParameter,
-  IOperationParamsList,
-  ActivityTypesEnum
-} from "../../../../../models/interface-operation";
-import { DataTypeModel } from "../../../../../models/data-types";
-import { Observable } from "rxjs/Observable";
-import { InstanceFeDetails } from "../../../../../models/instance-fe-details";
-import {
   AbstractControl,
   FormArray,
   FormControl,
-  FormGroup, 
+  FormGroup,
   ValidationErrors,
   ValidatorFn,
   Validators
 } from '@angular/forms';
+import { Observable } from 'rxjs/Observable';
+import { DataTypeModel } from '../../../../../models/data-types';
+import { InstanceFeDetails } from '../../../../../models/instance-fe-details';
+import {
+  ActivityParameter,
+  ActivityTypesEnum,
+  IActivityParameterList,
+  InputOperationParameter,
+  IOperationParamsList
+} from '../../../../../models/interface-operation';
 
 @Component({
   selector: 'activities-list',
@@ -45,21 +45,21 @@ import {
 })
 export class ActivitiesListComponent implements OnInit {
 
+
   @Input() componentInstanceMap: Map<string, InstanceFeDetails> = new Map();
-  @Input() dataTypeMap: Map<string, DataTypeModel>;;
-  @Input() dataTypeMap$: Observable<Map<string, DataTypeModel>>;
+  @Input() dataTypeMap: Map<string, DataTypeModel>;  @Input() dataTypeMap$: Observable<Map<string, DataTypeModel>>;
   @Input() existingActivities: IActivityParameterList;
   @Input() isViewOnly: boolean;
   @Output('activitiesChangeEvent') activitiesChangeEvent: EventEmitter<any> = new EventEmitter<any>();
 
-  readonly DEFAULT_INPUT_TYPE: string = "tosca.dataTypes.tmf.milestoneJeopardyData";
-  readonly DEFAULT_INPUT_NAME: string = "TMFMilestoneJeopardyData";
+  readonly DEFAULT_INPUT_TYPE: string = 'tosca.dataTypes.tmf.milestoneJeopardyData';
+  readonly DEFAULT_INPUT_NAME: string = 'TMFMilestoneJeopardyData';
   activityTypes: string[] = [];
   activities: ActivityParameter[] = [];
   activityFormArray: FormArray = new FormArray([]);
   activityForm: FormGroup = new FormGroup (
     {
-      'activityFormList': this.activityFormArray
+      activityFormList: this.activityFormArray
     }
   );
   validationMessages = {
@@ -69,45 +69,38 @@ export class ActivitiesListComponent implements OnInit {
   };
 
   ngOnInit() {
-    Object.keys(ActivityTypesEnum).forEach(key => {
-      this.activityTypes.push(ActivityTypesEnum[key])
+    Object.keys(ActivityTypesEnum).forEach((key) => {
+      this.activityTypes.push(ActivityTypesEnum[key]);
     });
     this.activityForm.valueChanges.subscribe(() => {
       this.emitOnActivityChange();
     });
     if (this.existingActivities && this.existingActivities.listToscaDataDefinition && this.existingActivities.listToscaDataDefinition.length > 0) {
-      this.existingActivities.listToscaDataDefinition.forEach(val => {
+      this.existingActivities.listToscaDataDefinition.forEach((val) => {
         this.activities.push(val);
         this.activityFormArray.push(
           new FormControl(val, [Validators.required, this.formControlValidator()])
         );
-      })
+      });
     }
-  }
-
-  private emitOnActivityChange(): void {
-    this.activitiesChangeEvent.emit({
-      activities: this.activities,
-      valid: this.activityForm.valid
-    });
   }
 
   addActivity() {
-    let input = new class implements IOperationParamsList {
-      listToscaDataDefinition: Array<InputOperationParameter> = [];
-    }
-    let activityParameter: ActivityParameter = {
+    const input = new class implements IOperationParamsList {
+      listToscaDataDefinition: InputOperationParameter[] = [];
+    };
+    const activityParameter: ActivityParameter = {
       type: null,
       workflow: null,
       inputs: input
-    }
+    };
     this.activities.push(activityParameter);
     this.activityFormArray.push(
       new FormControl(activityParameter, [Validators.required, this.formControlValidator()])
     );
 
-    let index = this.activities.indexOf(activityParameter);
-    let inputOperationParameter: InputOperationParameter = new InputOperationParameter();
+    const index = this.activities.indexOf(activityParameter);
+    const inputOperationParameter: InputOperationParameter = new InputOperationParameter();
     inputOperationParameter.name = this.DEFAULT_INPUT_NAME;
     inputOperationParameter.type = this.DEFAULT_INPUT_TYPE;
     inputOperationParameter.valid = true;
@@ -115,29 +108,19 @@ export class ActivitiesListComponent implements OnInit {
     this.activities[index].inputs.listToscaDataDefinition = Array.from(this.activities[index].inputs.listToscaDataDefinition);
   }
 
-  private formControlValidator(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const activity = control.value;
-      if (!activity || !activity.type || !activity.workflow) {
-        return {required:true};
-      }
-      return null;
-    }
-  }
-
-  removeFromActivities (index: number) {
+  removeFromActivities(index: number) {
     this.activities.splice(index, 1);
     this.activityFormArray.removeAt(index);
   }
 
   onActivityTypeChange(type: string, index: number) {
-    let activity = this.activityFormArray.controls[index].value;
+    const activity = this.activityFormArray.controls[index].value;
     activity.type = type;
     this.activityFormArray.controls[index].setValue(activity);
   }
 
-  onActivityValueChange (value: any, index: number) {
-    let activity = this.activityFormArray.controls[index].value;
+  onActivityValueChange(value: any, index: number) {
+    const activity = this.activityFormArray.controls[index].value;
     activity.workflow = value;
     this.activityFormArray.controls[index].setValue(activity);
   }
@@ -151,9 +134,9 @@ export class ActivitiesListComponent implements OnInit {
 
   onAddInput(inputOperationParameter: InputOperationParameter, index: number) {
     if (!this.activities[index].inputs) {
-      let input = new class implements IOperationParamsList {
-        listToscaDataDefinition: Array<InputOperationParameter> = [];
-      }
+      const input = new class implements IOperationParamsList {
+        listToscaDataDefinition: InputOperationParameter[] = [];
+      };
       this.activities[index].inputs = input;
     }
     this.activities[index].inputs.listToscaDataDefinition.push(inputOperationParameter);
@@ -163,7 +146,7 @@ export class ActivitiesListComponent implements OnInit {
 
   getInputs(index: number) {
     if (this.activities[index].inputs && this.activities[index].inputs.listToscaDataDefinition) {
-      let test: InputOperationParameter[] = this.activities[index].inputs.listToscaDataDefinition;
+      const test: InputOperationParameter[] = this.activities[index].inputs.listToscaDataDefinition;
       return test;
     }
     return [];
@@ -173,7 +156,7 @@ export class ActivitiesListComponent implements OnInit {
     if (changedInput.value instanceof Object) {
         changedInput.value = JSON.stringify(changedInput.value);
     }
-    const inputOperationParameter = this.activities[index].inputs.listToscaDataDefinition.find(value => value.name == changedInput.name);
+    const inputOperationParameter = this.activities[index].inputs.listToscaDataDefinition.find((value) => value.name == changedInput.name);
     inputOperationParameter.toscaFunction = null;
     inputOperationParameter.value = changedInput.value;
     inputOperationParameter.subPropertyToscaFunctions = changedInput.subPropertyToscaFunctions;
@@ -185,7 +168,7 @@ export class ActivitiesListComponent implements OnInit {
 
   onInputDelete(inputName: string, index: number) {
     const currentInputs = this.activities[index].inputs.listToscaDataDefinition;
-    const input1 = currentInputs.find(value => value.name === inputName);
+    const input1 = currentInputs.find((value) => value.name === inputName);
     const indexOfInput = currentInputs.indexOf(input1);
     if (indexOfInput === -1) {
         console.error(`Could not delete input '${inputName}'. Input not found.`);
@@ -193,5 +176,22 @@ export class ActivitiesListComponent implements OnInit {
     }
     currentInputs.splice(currentInputs.indexOf(input1), 1);
     this.activities[index].inputs.listToscaDataDefinition = Array.from(currentInputs);
+  }
+
+  private emitOnActivityChange(): void {
+    this.activitiesChangeEvent.emit({
+      activities: this.activities,
+      valid: this.activityForm.valid
+    });
+  }
+
+  private formControlValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const activity = control.value;
+      if (!activity || !activity.type || !activity.workflow) {
+        return {required: true};
+      }
+      return null;
+    };
   }
 }

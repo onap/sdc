@@ -18,19 +18,18 @@
  * ============LICENSE_END=========================================================
  */
 
-import {Component} from "@angular/core";
-import {HierarchyTabComponent} from "./panel/panel-tabs/hierarchy-tab/hierarchy-tab.component";
-import {ComponentGenericResponse} from "../../../services/responses/component-generic-response";
-import {TopologyTemplateService} from "../../../services/component-services/topology-template.service";
-import {WorkspaceService} from "../workspace.service";
-import {Module} from 'app/models/modules/base-module';
-import {SdcUiServices} from "onap-ui-angular";
-import {Select} from "@ngxs/store";
-import {WorkspaceState} from "../../../store/states/workspace.state";
-import {DeploymentGraphService} from "../../composition/deployment/deployment-graph.service";
+import { Component } from '@angular/core';
+import { Select } from '@ngxs/store';
+import { Module } from 'app/models/modules/base-module';
+import { SdcUiServices } from 'onap-ui-angular';
+import { TopologyTemplateService } from '../../../services/component-services/topology-template.service';
+import { ComponentGenericResponse } from '../../../services/responses/component-generic-response';
+import { WorkspaceState } from '../../../store/states/workspace.state';
+import { DeploymentGraphService } from '../../composition/deployment/deployment-graph.service';
+import { WorkspaceService } from '../workspace.service';
+import { HierarchyTabComponent } from './panel/panel-tabs/hierarchy-tab/hierarchy-tab.component';
 
-const tabs =
-    {
+const tabs = {
         hierarchyTab: {
             titleIcon: 'composition-o',
             component: HierarchyTabComponent,
@@ -47,9 +46,9 @@ const tabs =
 })
 
 export class DeploymentPageComponent {
-    public tabs: Array<any>;
+    public tabs: any[];
     public resourceType: string;
-    public modules: Array<Module>;
+    public modules: Module[];
     public isDataAvailable: boolean;
 
     @Select(WorkspaceState.isViewOnly) isViewOnly$: boolean;

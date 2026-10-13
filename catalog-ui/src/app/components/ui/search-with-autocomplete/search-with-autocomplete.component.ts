@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
 import { SearchBarComponent } from '../search-bar/search-bar.component';
 
 @Component({
@@ -12,7 +12,7 @@ export class SearchWithAutoCompleteComponent {
     @Input() searchPlaceholder: string;
     @Input() searchBarClass: string;
     @Input() searchQuery: string;
-    @Input() autoCompleteValues: Array<string>;
+    @Input() autoCompleteValues: string[];
     @Output() searchChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() searchButtonClicked: EventEmitter<string> = new EventEmitter<string>();
 
@@ -27,4 +27,3 @@ export class SearchWithAutoCompleteComponent {
         this.autoCompleteValues = [];
     }
 }
-

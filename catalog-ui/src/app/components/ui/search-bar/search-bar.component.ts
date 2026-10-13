@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
 
 @Component({
     selector: 'search-bar',
@@ -15,7 +15,7 @@ export class SearchBarComponent {
     @Output() searchButtonClicked: EventEmitter<string> = new EventEmitter<string>();
 
     searchButtonClick = (): void => {
-        if (this.searchQuery) { //do not allow empty search
+        if (this.searchQuery) { // do not allow empty search
             this.searchButtonClicked.emit(this.searchQuery);
         }
     }
@@ -25,8 +25,7 @@ export class SearchBarComponent {
     }
 
     private clearSearchQuery = (): void => {
-        this.searchQuery = "";
+        this.searchQuery = '';
         this.searchButtonClicked.emit(this.searchQuery);
     }
 }
-

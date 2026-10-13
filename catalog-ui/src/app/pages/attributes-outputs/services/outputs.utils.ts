@@ -19,7 +19,7 @@
  */
 
 import { Injectable } from '@angular/core';
-import {OutputFEModel} from "../../../models/attributes-outputs/output-fe-model";
+import { OutputFEModel } from '../../../models/attributes-outputs/output-fe-model';
 
 @Injectable()
 export class OutputsUtils {
@@ -30,7 +30,7 @@ export class OutputsUtils {
         output.resetDefaultValueObjValidation();
         output.defaultValueObj = output.getDefaultValueObj();
         output.updateDefaultValueObjOrig();
-    };
+    }
 
     public resetOutputDefaultValue = (output: OutputFEModel, newDefaultValue: string): void => {
         output.defaultValue = newDefaultValue;

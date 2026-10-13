@@ -19,23 +19,23 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-import {ToscaGetFunctionComponent} from './tosca-get-function.component';
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {TranslateModule} from "../../../../shared/translator/translate.module";
-import {UiElementsModule} from "../../../../components/ui/ui-elements.module";
-import {TopologyTemplateService} from "../../../../services/component-services/topology-template.service";
-import {WorkspaceService} from "../../../workspace/workspace.service";
-import {PropertiesService} from "../../../../services/properties.service";
-import {DataTypeService} from "../../../../services/data-type.service";
-import {TranslateService} from "../../../../shared/translator/translate.service";
-import {ComponentMetadata} from "../../../../models/component-metadata";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { UiElementsModule } from '../../../../components/ui/ui-elements.module';
+import { ComponentMetadata } from '../../../../models/component-metadata';
+import { TopologyTemplateService } from '../../../../services/component-services/topology-template.service';
+import { DataTypeService } from '../../../../services/data-type.service';
+import { PropertiesService } from '../../../../services/properties.service';
+import { TranslateModule } from '../../../../shared/translator/translate.module';
+import { TranslateService } from '../../../../shared/translator/translate.service';
+import { WorkspaceService } from '../../../workspace/workspace.service';
+import { ToscaGetFunctionComponent } from './tosca-get-function.component';
 
 describe('ToscaGetFunctionComponent', () => {
     let component: ToscaGetFunctionComponent;
     let fixture: ComponentFixture<ToscaGetFunctionComponent>;
     let topologyTemplateServiceMock: Partial<TopologyTemplateService>;
-    let workspaceServiceMock: Partial<WorkspaceService> = {
+    const workspaceServiceMock: Partial<WorkspaceService> = {
         metadata: new ComponentMetadata()
     };
     let propertiesServiceMock: Partial<PropertiesService>;

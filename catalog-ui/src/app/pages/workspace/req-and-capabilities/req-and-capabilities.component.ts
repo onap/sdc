@@ -1,19 +1,19 @@
 import { Component, ComponentRef, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import * as _ from 'lodash';
 import { SdcUiCommon, SdcUiServices } from 'onap-ui-angular';
+import { ModalComponent } from 'onap-ui-angular/dist/modals/modal.component';
 import { Capability, CapabilityUI } from '../../../models/capability';
 import { Requirement, RequirementUI } from '../../../models/requirement';
 import { TopologyTemplateService } from '../../../services/component-services/topology-template.service';
+import { EventListenerService } from '../../../services/event-listener.service';
 import { ComponentGenericResponse } from '../../../services/responses/component-generic-response';
+import { ComponentState } from '../../../utils/constants';
 import { WorkspaceService } from '../workspace.service';
+import { CapabilitiesEditorComponent } from './capabilities/capabilities-editor/capabilities-editor.component';
 import { CapabilitiesComponent } from './capabilities/capabilities.component';
+import { ReqAndCapabilitiesService } from './req-and-capabilities.service';
+import { RequirementsEditorComponent } from './requirements/requirements-editor/requirements-editor.component';
 import { RequirementsComponent } from './requirements/requirements.component';
-import {ReqAndCapabilitiesService} from "./req-and-capabilities.service";
-import {CapabilitiesEditorComponent} from "./capabilities/capabilities-editor/capabilities-editor.component";
-import {ModalComponent} from "onap-ui-angular/dist/modals/modal.component";
-import {EventListenerService} from "../../../services/event-listener.service";
-import {RequirementsEditorComponent} from "./requirements/requirements-editor/requirements-editor.component";
-import {ComponentState} from "../../../utils/constants";
 
 @Component({
     selector: 'req-and-capabilities',
@@ -25,20 +25,20 @@ export class ReqAndCapabilitiesComponent implements OnInit {
     @ViewChild('requirementsContainer', { read: ViewContainerRef }) requirementsContainer: ViewContainerRef;
     @ViewChild('capabilitiesContainer', { read: ViewContainerRef }) capabilitiesContainer: ViewContainerRef;
     requirements: Requirement[] = [];
-    private requirementsUI: RequirementUI[] = [];
     capabilities: Capability[] = [];
     selectTabName: string = 'REQUIREMENTS';
     notEmptyTable: boolean = true;
-    private instanceRef: ComponentRef<any>;
-    private customModalInstance: ModalComponent;
     readonly INPUTS_FOR_CAPABILITIES: string = 'INPUTS_FOR_CAPABILITIES';
     readonly INPUTS_FOR_REQUIREMENTS: string = 'INPUTS_FOR_REQUIREMENTS';
+    private requirementsUI: RequirementUI[] = [];
+    private instanceRef: ComponentRef<any>;
+    private customModalInstance: ModalComponent;
 
     constructor(private workspaceService: WorkspaceService,
                 private loaderService: SdcUiServices.LoaderService,
                 private topologyTemplateService: TopologyTemplateService,
                 private createDynamicComponentService:  SdcUiServices.CreateDynamicComponentService,
-                private reqAndCapabilitiesService : ReqAndCapabilitiesService,
+                private reqAndCapabilitiesService: ReqAndCapabilitiesService,
                 private modalService: SdcUiServices.ModalService,
                 private eventListenerService: EventListenerService) {
     }
@@ -55,7 +55,14 @@ export class ReqAndCapabilitiesComponent implements OnInit {
         });
     }
 
+    selectTab($event) {
+        this.selectTabName = $event.title.contains('Requirement') ? 'REQUIREMENTS' : 'CATPABILITIES';
+        this.loadReqOrCap();
+    }
 
+    showAdd() {
+        return this.workspaceService.metadata.lifecycleState === ComponentState.NOT_CERTIFIED_CHECKOUT;
+    }
 
     private initCapabilitiesAndRequirements(): void {
         if (!this.workspaceService.metadata.capabilities || !this.workspaceService.metadata.requirements) {
@@ -102,15 +109,6 @@ export class ReqAndCapabilitiesComponent implements OnInit {
 
     }
 
-    selectTab($event) {
-        this.selectTabName = $event.title.contains('Requirement') ? 'REQUIREMENTS' : 'CATPABILITIES';
-        this.loadReqOrCap();
-    }
-
-    showAdd() {
-        return this.workspaceService.metadata.lifecycleState === ComponentState.NOT_CERTIFIED_CHECKOUT;
-    }
-
     private async loadReqOrCap() {
         if (this.instanceRef) {
             this.instanceRef.destroy();
@@ -146,7 +144,7 @@ export class ReqAndCapabilitiesComponent implements OnInit {
     }
 
     private addCapability() {
-        let modalConfig = {
+        const modalConfig = {
             size: 'md',
             title:  'Add Capability',
             type: SdcUiCommon.ModalType.custom,
@@ -154,13 +152,13 @@ export class ReqAndCapabilitiesComponent implements OnInit {
                 {
                     id: 'saveButton',
                     text: ('Create'),
-                    size: "'x-small'",
+                    size: '\'x-small\'',
                     callback: () => this.createCapability(),
                     closeModal: true
                 },
-                {text: "Cancel", size: "'x-small'", closeModal: true}]
+                {text: 'Cancel', size: '\'x-small\'', closeModal: true}]
         };
-        let modalInputs = {
+        const modalInputs = {
             capabilityTypesList: this.reqAndCapabilitiesService.getCapabilityTypesList(),
         };
 
@@ -183,8 +181,8 @@ export class ReqAndCapabilitiesComponent implements OnInit {
         }
     }
 
-    private addRequirement () {
-        let modalConfig = {
+    private addRequirement() {
+        const modalConfig = {
             size: 'md',
             title: 'Add Requirement',
             type: SdcUiCommon.ModalType.custom,
@@ -192,13 +190,13 @@ export class ReqAndCapabilitiesComponent implements OnInit {
                 {
                     id: 'saveButton',
                     text: ('Create'),
-                    size: "'x-small'",
+                    size: '\'x-small\'',
                     callback: () => this.createRequirement(),
                     closeModal: true
                 },
-                {text: "Cancel", size: "'x-small'", closeModal: true}]
+                {text: 'Cancel', size: '\'x-small\'', closeModal: true}]
         };
-        let modalInputs = {
+        const modalInputs = {
             // requirement: req,
             relationshipTypesList: this.reqAndCapabilitiesService.getRelationsShipeTypeList(),
             nodeTypesList: this.reqAndCapabilitiesService.getNodeTypesList(),
@@ -211,12 +209,11 @@ export class ReqAndCapabilitiesComponent implements OnInit {
         onValidationChange.subscribe((isValid) => this.customModalInstance.getButtonById('saveButton').disabled = !isValid);
     }
 
-
     private createRequirement() {
         const requirement = this.customModalInstance.innerModalContent.instance.requirementData;
         this.loaderService.activate();
         if (!requirement.uniqueId) {
-            this.topologyTemplateService.createRequirement(this.workspaceService.metadata.getTypeUrl(), this.workspaceService.metadata.uniqueId, requirement).subscribe(result => {
+            this.topologyTemplateService.createRequirement(this.workspaceService.metadata.getTypeUrl(), this.workspaceService.metadata.uniqueId, requirement).subscribe((result) => {
                 this.requirementsUI.unshift(new RequirementUI(result[0], this.workspaceService.metadata.uniqueId));
                 this.loadReqOrCap();
                 this.loaderService.deactivate();

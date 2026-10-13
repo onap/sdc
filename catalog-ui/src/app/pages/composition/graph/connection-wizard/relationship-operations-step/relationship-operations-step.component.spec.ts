@@ -19,21 +19,21 @@
 
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { APP_BASE_HREF } from '@angular/common';
+import { ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { SdcUiComponentsModule } from 'onap-ui-angular/dist';
+import { TabModule } from '../../../../../components/ui/tabs/tabs.module';
+import { UiElementsModule } from '../../../../../components/ui/ui-elements.module';
+import { ComponentService } from '../../../../../services/component-services/component.service';
+import { TranslatePipe } from '../../../../../shared/translator/translate.pipe';
+import { TranslateService } from '../../../../../shared/translator/translate.service';
+import { WorkspaceService } from '../../../../workspace/workspace.service';
+import { ConnectionWizardService } from '../connection-wizard.service';
+import { CreateInputRowComponent } from '../create-interface-operation/create-input-row/create-input-row.component';
+import { CreateInterfaceOperationComponent } from '../create-interface-operation/create-interface-operation.component';
+import { InterfaceOperationListComponent } from './interface-operation-list/interface-operation-list.component';
 import { RelationshipOperationsStepComponent } from './relationship-operations-step.component';
-import {CreateInterfaceOperationComponent} from "../create-interface-operation/create-interface-operation.component";
-import {InterfaceOperationListComponent} from "./interface-operation-list/interface-operation-list.component";
-import {TranslatePipe} from "../../../../../shared/translator/translate.pipe";
-import {TranslateService} from "../../../../../shared/translator/translate.service";
-import {SdcUiComponentsModule} from "onap-ui-angular/dist";
-import {CreateInputRowComponent} from "../create-interface-operation/create-input-row/create-input-row.component";
-import {ReactiveFormsModule} from "@angular/forms";
-import {TabModule} from "../../../../../components/ui/tabs/tabs.module";
-import {UiElementsModule} from "../../../../../components/ui/ui-elements.module";
-import {RouterModule} from "@angular/router";
-import {APP_BASE_HREF} from "@angular/common";
-import {ConnectionWizardService} from "../connection-wizard.service";
-import {ComponentService} from "../../../../../services/component-services/component.service";
-import {WorkspaceService} from "../../../../workspace/workspace.service";
 
 describe('RelationshipOperationsStepComponent', () => {
   let component: RelationshipOperationsStepComponent;
@@ -52,7 +52,6 @@ describe('RelationshipOperationsStepComponent', () => {
         {provide: ComponentService, useValue: {}},
       ],
       imports: [SdcUiComponentsModule, ReactiveFormsModule, TabModule, UiElementsModule]
-
 
     })
     .compileComponents();

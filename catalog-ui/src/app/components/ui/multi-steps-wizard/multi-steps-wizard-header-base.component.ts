@@ -1,7 +1,7 @@
 /**
  * Created by rc2122 on 9/27/2017.
  */
-import {Input} from "@angular/core";
+import { Input } from '@angular/core';
 
 // Deliberately NOT decorated: this is only ever extended, never instantiated or declared in an
 // NgModule. An empty @Component({}) made AOT fail with "Cannot determine the module for class"
@@ -11,5 +11,5 @@ import {Input} from "@angular/core";
 // binds it, connection-properties-view.component.html.
 export class WizardHeaderBaseComponent {
 
-    @Input() currentStepIndex:number;
+    @Input() currentStepIndex: number;
 }

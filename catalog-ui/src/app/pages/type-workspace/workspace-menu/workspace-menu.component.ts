@@ -20,14 +20,14 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
-import {MenuItem, MenuItemGroup} from "../../../utils/menu-handler";
-import {CacheService} from "../../../services/cache.service";
-import {IAppMenu} from "../../../models/app-config";
-import {IUserProperties} from "../../../models/user";
-import {SdcMenuToken} from "../../../config/sdc-menu.config";
-import {TypeWorkspaceService} from "../type-workspace.service";
-import {NavigationService} from "../../../services/navigation.service";
+import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
+import { SdcMenuToken } from '../../../config/sdc-menu.config';
+import { IAppMenu } from '../../../models/app-config';
+import { IUserProperties } from '../../../models/user';
+import { CacheService } from '../../../services/cache.service';
+import { NavigationService } from '../../../services/navigation.service';
+import { MenuItem, MenuItemGroup } from '../../../utils/menu-handler';
+import { TypeWorkspaceService } from '../type-workspace.service';
 
 @Component({
     selector: 'app-workspace-menu',
@@ -40,10 +40,10 @@ export class WorkspaceMenuComponent implements OnInit {
     @Output() onMenuUpdate: EventEmitter<MenuItemGroup> = new EventEmitter<MenuItemGroup>();
     @Output() onClick: EventEmitter<MenuItem> = new EventEmitter<MenuItem>();
 
+    leftBarTabs: MenuItemGroup = new MenuItemGroup();
+
     private role: string;
     private user: IUserProperties;
-
-    leftBarTabs: MenuItemGroup = new MenuItemGroup();
 
     constructor(private cacheService: CacheService,
                 private typeWorkspaceService: TypeWorkspaceService,
@@ -57,9 +57,13 @@ export class WorkspaceMenuComponent implements OnInit {
         this.initMenuItems();
     }
 
+    isSelected(menuItem: MenuItem): boolean {
+        return this.leftBarTabs.selectedIndex === this.leftBarTabs.menuItems.indexOf(menuItem);
+    }
+
     private initMenuItems(): void {
         this.leftBarTabs = new MenuItemGroup();
-        const menuItemsObjects: MenuItem[] = this.updateMenuItemByRole(this.sdcMenu.component_workspace_menu_option["DataType"], this.role);
+        const menuItemsObjects: MenuItem[] = this.updateMenuItemByRole(this.sdcMenu.component_workspace_menu_option.DataType, this.role);
 
         this.leftBarTabs.menuItems = menuItemsObjects.map((item: MenuItem) => {
             const menuCallback = () => this[menuItem.action](menuItem);
@@ -74,10 +78,6 @@ export class WorkspaceMenuComponent implements OnInit {
         this.updateSelectedMenuItem();
         this.typeWorkspaceService.leftBarTabs = this.leftBarTabs;
         this.onMenuUpdate.emit(this.leftBarTabs);
-    }
-
-    isSelected(menuItem: MenuItem): boolean {
-        return this.leftBarTabs.selectedIndex === this.leftBarTabs.menuItems.indexOf(menuItem);
     }
 
     private onMenuItemPressed(menuItem: MenuItem): Promise<boolean> {
@@ -97,11 +97,11 @@ export class WorkspaceMenuComponent implements OnInit {
     }
 
     private updateSelectedMenuItem(): void {
-        const stateArray: Array<string> = this.navigationService.getCurrentStateName().split('.', 2);
+        const stateArray: string[] = this.navigationService.getCurrentStateName().split('.', 2);
         const stateWithoutInternalNavigate: string = stateArray[0] + '.' + stateArray[1];
         const selectedItem: MenuItem = this.leftBarTabs.menuItems.find((item: MenuItem) => {
-            let itemStateArray: Array<string> = item.state.split('.', 2);
-            let itemStateWithoutNavigation: string = itemStateArray[0] + '.' + itemStateArray[1];
+            const itemStateArray: string[] = item.state.split('.', 2);
+            const itemStateWithoutNavigation: string = itemStateArray[0] + '.' + itemStateArray[1];
             return (itemStateWithoutNavigation === stateWithoutInternalNavigate);
         });
         this.leftBarTabs.selectedIndex = selectedItem ? this.leftBarTabs.menuItems.indexOf(selectedItem) : 0;

@@ -1,10 +1,10 @@
 /**
  * Created by rc2122 on 8/15/2017.
  */
-import { NgModule } from "@angular/core";
-import {MultiStepsWizardComponent} from "./multi-steps-wizard.component";
-import {CommonModule} from "@angular/common";
-import {ConnectionWizardModule} from "app/pages/composition/graph/connection-wizard/connection-wizard.module";
+import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { ConnectionWizardModule } from 'app/pages/composition/graph/connection-wizard/connection-wizard.module';
+import { MultiStepsWizardComponent } from './multi-steps-wizard.component';
 
 @NgModule({
     declarations: [

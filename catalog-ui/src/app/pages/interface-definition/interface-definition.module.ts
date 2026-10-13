@@ -18,14 +18,14 @@
 *  SPDX-License-Identifier: Apache-2.0
 *  ============LICENSE_END=========================================================
 */
-import {NgModule} from "@angular/core";
-import {CommonModule} from "@angular/common";
-import {UiElementsModule} from "app/components/ui/ui-elements.module";
-import {TranslateModule} from "app/shared/translator/translate.module";
+import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { UiElementsModule } from 'app/components/ui/ui-elements.module';
+import { TranslateModule } from 'app/shared/translator/translate.module';
 import { SdcUiComponentsModule } from 'onap-ui-angular';
-import {InterfaceDefinitionComponent} from "./interface-definition.page.component";
-import {HierarchyNavigationModule} from "../../components/logic/hierarchy-navigtion/hierarchy-navigation.module";
-import {InterfaceOperationHandlerModule} from "../composition/interface-operations/operation-creator/interface-operation-handler.module";
+import { HierarchyNavigationModule } from '../../components/logic/hierarchy-navigtion/hierarchy-navigation.module';
+import { InterfaceOperationHandlerModule } from '../composition/interface-operations/operation-creator/interface-operation-handler.module';
+import { InterfaceDefinitionComponent } from './interface-definition.page.component';
 
 @NgModule({
     declarations: [

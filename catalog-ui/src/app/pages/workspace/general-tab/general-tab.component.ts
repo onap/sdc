@@ -17,34 +17,34 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component as NgComponent, Inject, OnDestroy, OnInit} from '@angular/core';
-import {ISdcConfig, SdcConfigToken} from '../../../config/sdc-config.config';
-import {IAppMenu, SdcMenuToken} from '../../../config/sdc-menu.config';
-import {FormGroup, Validators} from '@angular/forms';
-import {Subject} from 'rxjs/Subject';
-import 'rxjs/add/operator/takeUntil';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component as NgComponent, Inject, OnDestroy, OnInit } from '@angular/core';
+import { FormGroup, Validators } from '@angular/forms';
 import * as _ from 'lodash';
+import 'rxjs/add/operator/takeUntil';
+import { Subject } from 'rxjs/Subject';
+import { ISdcConfig, SdcConfigToken } from '../../../config/sdc-config.config';
+import { IAppMenu, SdcMenuToken } from '../../../config/sdc-menu.config';
 
-import {SdcUiServices} from 'onap-ui-angular';
-import {NotificationSettings} from 'onap-ui-angular/dist/notifications/utilities/notification.config';
-import {CacheService} from 'app/services/cache.service';
-import {EventListenerService} from 'app/services/event-listener.service';
-import {ValidationConfiguration} from 'app/models/validation-config';
-import {EVENTS, WorkspaceMode, ComponentState, ComponentType, ResourceType, Role, PREVIOUS_CSAR_COMPONENT, instantiationType, DEFAULT_MODEL_NAME, DEFAULT_ICON, CATEGORY_SERVICE_METADATA_KEYS} from 'app/utils/constants';
-import {ServiceCsarReader} from 'app/utils/service-csar-reader';
+import { ValidationConfiguration } from 'app/models/validation-config';
+import { CacheService } from 'app/services/cache.service';
+import { EventListenerService } from 'app/services/event-listener.service';
 // Deep paths, not the `app/utils` barrel: the barrel re-exports the whole utils tree, and pulling it
 // in here ahead of `app/services-ng2` re-orders module evaluation enough to break DI metadata (§TT).
-import {ComponentFactory} from 'app/utils/component-factory';
-import {ModalsHandler} from 'app/utils/modals-handler';
-import {ImportVSPService} from '../../../components/modals/onboarding-modal/import-vsp.service';
-import {ElementService} from '../../../services/element.service';
-import {ModelService} from '../../../services/model.service';
-import {FileUtilsService} from '../../../services/file-utils.service';
-import {NavigationService} from '../../../services/navigation.service';
-import {TranslateService} from '../../../shared/translator/translate.service';
-import {WorkspaceService} from '../workspace.service';
-import {GeneralFormService, ValidationPatterns} from './general-form.service';
-import {ComponentMetadataService} from './component-metadata.service';
+import { ComponentFactory } from 'app/utils/component-factory';
+import { CATEGORY_SERVICE_METADATA_KEYS, ComponentState, ComponentType, DEFAULT_ICON, DEFAULT_MODEL_NAME, EVENTS, instantiationType, PREVIOUS_CSAR_COMPONENT, ResourceType, Role, WorkspaceMode } from 'app/utils/constants';
+import { ModalsHandler } from 'app/utils/modals-handler';
+import { ServiceCsarReader } from 'app/utils/service-csar-reader';
+import { SdcUiServices } from 'onap-ui-angular';
+import { NotificationSettings } from 'onap-ui-angular/dist/notifications/utilities/notification.config';
+import { ImportVSPService } from '../../../components/modals/onboarding-modal/import-vsp.service';
+import { ElementService } from '../../../services/element.service';
+import { FileUtilsService } from '../../../services/file-utils.service';
+import { ModelService } from '../../../services/model.service';
+import { NavigationService } from '../../../services/navigation.service';
+import { TranslateService } from '../../../shared/translator/translate.service';
+import { WorkspaceService } from '../workspace.service';
+import { ComponentMetadataService } from './component-metadata.service';
+import { GeneralFormService, ValidationPatterns } from './general-form.service';
 
 // The old <file-upload> passed maxsize="10240" to angular-base64-upload, whose unit is KB.
 const MAX_IMPORT_FILE_SIZE_BYTES = 10240 * 1024;
@@ -57,12 +57,24 @@ const MAX_IMPORT_FILE_SIZE_BYTES = 10240 * 1024;
 })
 export class GeneralTabComponent implements OnInit, OnDestroy {
 
+    get displayedTags(): string[] {
+        const tags = (this.component && this.component.tags) || [];
+        // Don't show the component-name special tag as a removable chip (mirrors old sdc-tags directive)
+        return tags.filter((t: string) => t !== (this.component && this.component.name));
+    }
+
+    /** Angular 5-compatible substitute for the Angular 6.1+ `keyvalue` pipe.
+     *  Returns the entries of categorySpecificMetadata as [{key, value}] pairs. */
+    get categorySpecificMetadataEntries(): Array<{key: string, value: any}> {
+        const meta = this.component && this.component.categorySpecificMetadata;
+        if (!meta) { return []; }
+        return Object.keys(meta).map((k) => ({key: k, value: meta[k]}));
+    }
+
     form: FormGroup;
     component: any;
     originComponent: any;
     mode: WorkspaceMode;
-    private role: string;
-    private destroy$ = new Subject<void>();
 
     // Option-list fields populated by the init* methods (bound by the template)
     instantiationTypes: string[] = [];
@@ -86,7 +98,6 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
     importedFileExtensions: string = '';
     importedFileExtensionsWithDot: string = '';
     importedFileError: string = null;
-    private restoreFile: any = null;
 
     // Service Role / Function dropdown state (ported from the old GeneralViewModel). The dropdown
     // lists getMetadataKeyValidValues('Service Role'|'Service Function') + an "Others" sentinel;
@@ -99,6 +110,15 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
     // Resolves once the uploaded service CSAR has been unzipped and the form prefilled (an already-
     // resolved promise when there is no imported file). Exposed only so tests can await the unzip.
     csarPrefill: Promise<void> = Promise.resolve();
+
+    // ---- Tags widget ----
+
+    newTag: string = '';
+    private role: string;
+    private destroy$ = new Subject<void>();
+    private restoreFile: any = null;
+    private readonly maxTags = 20;
+    private tagPattern: RegExp;
 
     constructor(
         private generalFormService: GeneralFormService,
@@ -200,6 +220,502 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
         this.eventListenerService.unRegisterObserver(EVENTS.ON_LIFECYCLE_CHANGE);
         this.destroy$.next();
         this.destroy$.complete();
+    }
+
+    /**
+     * Called whenever the category <select> changes (via (change) binding in the template).
+     * Replicates the old GeneralViewModel.onCategoryChange (general-view-model.ts:802-863):
+     * sets component.selectedCategory from the form, then builds the structured component.categories
+     * array the backend requires — using the full category objects from the loaded option-list.
+     */
+    onCategoryChange(): void {
+        this.component.selectedCategory = this.form.get('category').value;
+        if (this.component.selectedCategory) {
+            // Re-derive role/function on category change (the new category's validValues differ);
+            // mirrors the old onCategoryChange resetting these before re-seeding (general-view-model.ts:810-816).
+            this.roleOption = null;
+            this.functionOption = null;
+            this.othersFlag = false;
+            this.othersRoleFlag = false;
+            this.component.categories = this.buildCategoriesFromSelected();
+            this.component.icon = DEFAULT_ICON;
+            // Seed category-specific metadata from the selected category's (and subcategory's)
+            // metadataKeys, ported from the old GeneralViewModel.onCategoryChange
+            // (general-view-model.ts:820-845). This is what surfaces fields like "ETSI Version" for
+            // the ETSI NFV category: each metadataKey becomes a categorySpecificMetadata entry (its
+            // defaultValue, or '') that the template renders as a <select>/<input>. Without this the
+            // ETSI Version <select data-tests-id="ETSI Version"> never appears and
+            // EtsiNetworkServiceUiTests times out in createService waiting for it.
+            this.initCategorySpecificMetadata();
+            // Load the base types for the newly-selected category and (in CREATE mode) auto-select
+            // the required/default base type — ported from the old onCategoryChange, which called
+            // loadBaseTypes (general-view-model.ts:846-860, 1004-1035). Without this a Service create
+            // on a base-type-required category never gets a base type assigned.
+            this.loadBaseTypesForSelectedCategory();
+        } else {
+            this.component.categories = undefined;
+            this.clearBaseTypes();
+        }
+        this.detectChangesSafe();
+    }
+
+    /** Whether a metadata key belongs to the selected category at all (template *ngIf guard).
+     *  Ported from GeneralViewModel.isMetadataKeyForComponentCategory (line 963). */
+    isMetadataKeyForComponentCategory(key: string): boolean {
+        return this.getMetadataKey(key) != null;
+    }
+
+    /** Whether a metadata key is one of the dedicated Service metadata fields (Naming Policy,
+     *  Service Type, Service Function, Service Role) — those have their own form controls and must
+     *  NOT be rendered again as a generic category-metadata field. Ported from
+     *  GeneralViewModel.isCategoryServiceMetadataKey/isServiceMetadataKey (lines 967-968, 1075-1077). */
+    isCategoryServiceMetadataKey(key: string): boolean {
+        return CATEGORY_SERVICE_METADATA_KEYS.indexOf(key) > -1;
+    }
+
+    /** Valid values for a metadata-key <select>; empty array → render a free-text <input> instead.
+     *  Ported from GeneralViewModel.getMetadataKeyValidValues (lines 943-953). For the two free-text
+     *  -capable keys (Service Function / Service Role) the old code appended an "Others" sentinel that
+     *  reveals a free-text <input> — restored here so those dropdowns are populated and offer Others. */
+    getMetadataKeyValidValues(key: string): string[] {
+        const metadataKey = this.getMetadataKey(key);
+        if (!metadataKey || !metadataKey.validValues) { return []; }
+        if (key === 'Service Function' || key === 'Service Role') {
+            return metadataKey.validValues.concat('Others');
+        }
+        return metadataKey.validValues;
+    }
+
+    /** Whether the metadata key is mandatory (drives the required marker). Ported from
+     *  GeneralViewModel.isMetadataKeyMandatory (lines 938-941). */
+    isMetadataKeyMandatory(key: string): boolean {
+        const metadataKey = this.getMetadataKey(key);
+        return !!(metadataKey && metadataKey.mandatory);
+    }
+
+    /** Display label for a metadata key. Ported from GeneralViewModel.getMetadataDisplayName
+     *  (lines 955-961). */
+    getMetadataDisplayName(key: string): string {
+        const metadataKey = this.getMetadataKey(key);
+        if (metadataKey) { return metadataKey.displayName ? metadataKey.displayName : metadataKey.name; }
+        return '';
+    }
+
+    /**
+     * Service base-type (Substitution Node Type) select changed. Writes the selection onto the
+     * component and refreshes the version list for the chosen base type (ported from the old
+     * GeneralViewModel.onBaseTypeChange, general-view-model.ts:875-895). Without this the select
+     * was display-only and a designer's base-type choice was never persisted.
+     */
+    onBaseTypeChange(value: string): void {
+        this.component.derivedFromGenericType = value;
+        if (!value) {
+            this.component.derivedFromGenericVersion = undefined;
+            this.showBaseTypeVersions = false;
+            this.detectChangesSafe();
+            return;
+        }
+        if (!this.component.categories || !this.component.categories[0]) { return; }
+        const modelName = this.component.model ? this.component.model : null;
+        const categoryName = this.component.categories[0].name;
+        if (this.elementService) {
+            this.elementService.getCategoryBaseTypes(categoryName, modelName)
+                .takeUntil(this.destroy$)
+                .subscribe((data: any) => {
+                    this.baseTypeVersions = [];
+                    (data.baseTypes || []).forEach((baseType: any) => {
+                        if (baseType.toscaResourceName === this.component.derivedFromGenericType) {
+                            baseType.versions.slice().reverse().forEach((v: any) => this.baseTypeVersions.push(v));
+                            this.component.derivedFromGenericVersion = baseType.versions[0];
+                        }
+                    });
+                    this.showBaseTypeVersions = true;
+                    this.detectChangesSafe();
+                });
+        }
+    }
+
+    /**
+     * Service model select changed. Clears the now-invalid category selection and re-filters the
+     * category + base-type lists by the chosen model (ported from GeneralViewModel.onModelChange,
+     * general-view-model.ts:897-906). syncFormToComponent already copies the model value; this adds
+     * the model-driven re-filtering the old handler performed.
+     */
+    onModelChange(): void {
+        // Coerce ''->null: the blank "no model" option must not reach the BE as an empty string
+        // (it would resolve an empty datatype scope — see the note in syncFormToComponent).
+        const selected = this.form.get('model').value;
+        this.component.model = selected ? selected : null;
+        if (this.component.componentType === ComponentType.SERVICE) {
+            const modelName = this.component.model ? this.component.model : null;
+            this.component.categories = undefined;
+            this.component.selectedCategory = undefined;
+            this.form.get('category').setValue('', {emitEvent: false});
+            // Re-load + re-filter categories for the new model, then refresh base types.
+            this.initCategories();
+            this.filterCategoriesByModel(modelName);
+            this.initBaseTypes();
+            this.detectChangesSafe();
+        }
+    }
+
+    /** Category-specific metadata field edited — write back into component.categorySpecificMetadata. */
+    onCategoryMetadataChange(key: string, value: string): void {
+        if (!this.component.categorySpecificMetadata) { this.component.categorySpecificMetadata = {}; }
+        this.component.categorySpecificMetadata[key] = value;
+    }
+
+    /**
+     * Service Role dropdown changed. "Others" reveals the free-text input and clears the model value
+     * (the user types a custom role); a real option writes straight onto the component. Ported from
+     * GeneralViewModel.setServiceRole (general-view-model.ts:925-934).
+     */
+    setServiceRole(option: string): void {
+        this.roleOption = option;
+        if (option === 'Others') {
+            this.othersRoleFlag = true;
+            this.component.serviceRole = '';
+        } else {
+            this.othersRoleFlag = false;
+            this.component.serviceRole = option;
+        }
+        // Keep the reactive control in sync — syncFormToComponent copies serviceRole FROM the form
+        // control, so a dropdown selection that only wrote component.serviceRole would be clobbered
+        // back on the next sync (§P). emitEvent:false avoids re-triggering the sync cycle.
+        this.patchControl('serviceRole', this.component.serviceRole);
+        this.detectChangesSafe();
+    }
+
+    /**
+     * Service Function dropdown changed. Mirrors setServiceRole. Ported from
+     * GeneralViewModel.setServiceFunction (general-view-model.ts:914-923).
+     */
+    setServiceFunction(option: string): void {
+        this.functionOption = option;
+        if (option === 'Others') {
+            this.othersFlag = true;
+            this.component.serviceFunction = '';
+        } else {
+            this.othersFlag = false;
+            this.component.serviceFunction = option;
+        }
+        this.patchControl('serviceFunction', this.component.serviceFunction);
+        this.detectChangesSafe();
+    }
+
+    /** Generated-naming select changed: clear the naming policy when it is turned off, mirroring the
+     *  old GeneralViewModel.onEcompGeneratedNamingChange (general-view-model.ts:866-870). */
+    onEcompGeneratedNamingChange(): void {
+        if (!this.form.get('ecompGeneratedNaming').value) {
+            this.component.namingPolicy = '';
+            this.patchControl('namingPolicy', '');
+        }
+        this.detectChangesSafe();
+    }
+
+    // ---- Icon ----
+
+    /** Whether the icon may be changed — non-certified, with a category, and (for Resources) a vendor.
+     *  Ported from GeneralViewModel.possibleToUpdateIcon (general-view-model.ts:657-663). */
+    possibleToUpdateIcon(): boolean {
+        return !!(this.component.selectedCategory
+            && (!this.component.isResource() || this.component.vendorName)
+            && !this.isAlreadyCertified());
+    }
+
+    /** Open the change-icon modal; in EDIT mode a confirmed change marks the workspace dirty.
+     *  Ported from GeneralViewModel.updateIcon (general-view-model.ts:647-655). */
+    updateIcon(): Promise<void> {
+        return Promise.resolve(this.modalsHandler.openUpdateIconModal(this.component)).then((isDirty: boolean) => {
+            if (isDirty && !this.isCreateMode()) {
+                this.navigationService.setUnsavedChanges(true);
+            }
+            this.detectChangesSafe();
+        }, () => { /* modal dismissed */ });
+    }
+
+    /** Build the "Main_#_Sub" unique category string. Delegates to ComponentMetadataService so the
+     *  '_#_' separator lives in one place. Ported from GeneralViewModel.calculateUnique (line 373). */
+    calculateUnique(mainCategory: string, subCategory: string): string {
+        return this.metadataService.calculateUnique(mainCategory, subCategory);
+    }
+
+    /**
+     * Asynchronously validate the component name against the backend for uniqueness and reflect the
+     * result onto the name control (nameExist error). Ported from GeneralViewModel.validateName
+     * (general-view-model.ts:665-727), simplified to the on-change path the reactive form needs.
+     */
+    validateName(): Promise<void> {
+        const nameCtrl = this.form.get('name');
+        const name = nameCtrl.value;
+        if (!name || name === '') {
+            this.clearNameExistError(nameCtrl);
+            return Promise.resolve();
+        }
+        // Don't re-validate when the name is unchanged from the loaded component.
+        if (this.originComponent && this.originComponent.name
+            && name.toUpperCase() === this.originComponent.name.toUpperCase()) {
+            this.clearNameExistError(nameCtrl);
+            return Promise.resolve();
+        }
+        // CSAR resources keep the imported name — skip the uniqueness check (old code guarded the same).
+        if (this.component.componentType === ComponentType.RESOURCE && this.isCsarComponent()) {
+            return Promise.resolve();
+        }
+        let subtype = this.component.componentType === ComponentType.RESOURCE ? this.component.getComponentSubType() : undefined;
+        if (subtype === 'SRVC') { subtype = 'VF'; }
+        return Promise.resolve(this.component.validateName(name, subtype)).then((validation: any) => {
+            if (validation && validation.isValid) {
+                this.clearNameExistError(nameCtrl);
+                // Reflect the new (valid) name into the workspace chrome (breadcrumb/menu title), which
+                // the old controller did via updateComponentNameInBreadcrumbs. The shell exposes this
+                // through containerActions; guard because the shim may not be present in every flow.
+                const actions = this.workspaceService.containerActions;
+                if (actions) {
+                    actions.menuComponentTitle = name;
+                    if (actions.cdr) { actions.cdr.detectChanges(); }
+                }
+            } else {
+                this.setNameExistError(nameCtrl);
+            }
+            this.detectChangesSafe();
+        }, () => { /* validation request failed — leave the control as-is */ });
+    }
+
+    addTag(): void {
+        const t = (this.newTag || '').trim();
+        const tags = this.component.tags || (this.component.tags = []);
+        // Mirror the old sdc-tags directive's pattern="validation.tagValidationPattern" — reject tags
+        // with invalid characters instead of silently accepting them.
+        if (t && this.tagPattern && !this.tagPattern.test(t)) { return; }
+        if (t && tags.length < this.maxTags && tags.indexOf(t) === -1 && t !== this.component.name) {
+            tags.push(t);
+            this.form.get('tags').setValue(tags);
+            this.form.get('tags').markAsDirty();
+            this.newTag = '';
+            this.navigationService.setUnsavedChanges(!this.isCreateMode());
+            this.detectChangesSafe();
+        }
+    }
+
+    deleteTag(tag: string): void {
+        const tags = this.component.tags || [];
+        const i = tags.indexOf(tag);
+        if (i > -1) {
+            tags.splice(i, 1);
+            this.form.get('tags').setValue(tags);
+            this.form.get('tags').markAsDirty();
+            this.detectChangesSafe();
+        }
+    }
+
+    // ---- Mode helpers ----
+
+    isViewMode(): boolean { return this.mode === WorkspaceMode.VIEW; }
+    isCreateMode(): boolean { return this.mode === WorkspaceMode.CREATE; }
+    isEditMode(): boolean { return this.mode === WorkspaceMode.EDIT; }
+
+    // ---- Per-field disable predicates (ported from general-view.html data-ng-disabled) ----
+    // The reactive template must NOT blanket-disable on isViewMode() — the old template encoded
+    // field-level business rules (create-only model, CSAR-immutable category/vendor, certified locks).
+    // Collapsing them to isViewMode() let a user mutate fields the BE assumed fixed (e.g. the model
+    // scope key — §Q). Each predicate below mirrors the exact old expression.
+
+    /** model: locked outside CREATE (general-view.html:84 ng-disabled="!isCreateMode()"). */
+    isModelDisabled(): boolean {
+        return !this.isCreateMode();
+    }
+
+    /** category (general-view.html:106): certified OR (CSAR && already-categorised) OR hidden-selected. */
+    isCategoryDisabled(): boolean {
+        return this.isViewMode()
+            || this.isAlreadyCertified()
+            || (this.isCsarComponent() && !!this.component.selectedCategory && this.component.selectedCategory !== '')
+            || this.isHiddenCategorySelected;
+    }
+
+    /** vendorName (general-view.html:308): certified OR (CSAR && already has a vendorName). */
+    isVendorNameDisabled(): boolean {
+        return this.isViewMode()
+            || this.isAlreadyCertified()
+            || (this.isCsarComponent() && !!this.component.vendorName && this.component.vendorName !== '');
+    }
+
+    /** vendorRelease (general-view.html:334): CSAR && already has a vendorRelease. */
+    isVendorReleaseDisabled(): boolean {
+        return this.isViewMode()
+            || (this.isCsarComponent() && !!this.component.vendorRelease && this.component.vendorRelease !== '');
+    }
+
+    /** instantiation type (general-view.html:607 ng-disabled="component.isCsarComponent()"). */
+    isInstantiationTypeDisabled(): boolean {
+        return this.isViewMode() || this.isCsarComponent();
+    }
+
+    /** base type (general-view.html:624): CSAR OR not in an editable mode. */
+    isBaseTypeDisabled(): boolean {
+        return this.isCsarComponent() || !(this.isEditMode() || this.isCreateMode());
+    }
+
+    isVspImport(): boolean {
+        return this.component && this.component.isResource && this.component.isResource() && !!this.component.csarUUID;
+    }
+
+    openOnBoardingModal(): void {
+        const csarUUID = this.component.csarUUID;
+        const csarVersion = this.component.csarVersion;
+        this.importVSPService.openOnboardingModal(csarUUID, csarVersion)
+            .takeUntil(this.destroy$)
+            .subscribe((result: any) => {
+                this.componentFactory.getComponentWithMetadataFromServer(result.type.toUpperCase(), result.previousComponent.uniqueId)
+                    .then((component: any) => {
+                        if (result.componentCsar && component.isResource()) {
+                            this.cacheService.set(PREVIOUS_CSAR_COMPONENT, component);
+                            component = this.componentFactory.updateComponentFromCsar(result.componentCsar, component);
+                        }
+                        this.workspaceService.setComponent(component);
+                        this.component = component;
+                        this.save();
+                        this.detectChangesSafe();
+                    });
+            });
+    }
+
+    isFileBrowseDisabled(): boolean {
+        // Mirrors the old element-disabled expression (general-view.html:244): editable only while
+        // creating, or while editing a VF.
+        return (!this.isCreateMode() && !(this.isEditMode() && this.component && this.component.resourceType === ResourceType.VF))
+            || this.isViewMode() || !!(this.component && this.component.vspArchived);
+    }
+
+    isImportedFileInvalid(): boolean {
+        return !!this.importedFileError;
+    }
+
+    /**
+     * Workaround kept from the old FileUploadDirective (file-upload.ts:onFileClick): if the user picks
+     * a file, clears it with the x button, then picks the SAME file again, the browser fires no change
+     * event because input.value never changed. Blanking it on every click forces the event.
+     */
+    onImportFileClick(event: any): void {
+        if (event && event.target) { event.target.value = null; }
+    }
+
+    onImportFileChange(event?: any): void {
+        const input = event && event.target;
+        const file = input && input.files && input.files[0];
+        if (file) {
+            this.importedFileError = null;
+            if (!file.size) {
+                this.importedFileError = this.translateService.translate('VALIDATION_ERROR_EMPTY_FILE');
+                this.component.importedFile = undefined;
+                this.detectChangesSafe();
+                return;
+            }
+            if (file.size > MAX_IMPORT_FILE_SIZE_BYTES) {
+                this.importedFileError = this.translateService.translate('VALIDATION_ERROR_MAX_FILE_SIZE');
+                this.component.importedFile = undefined;
+                this.detectChangesSafe();
+                return;
+            }
+            const ext: string = (file.name.split('.').pop() || '').toLowerCase();
+            if (this.importedFileExtensions && this.importedFileExtensions.split(',').indexOf(ext) === -1) {
+                this.importedFileError = this.translateService.translate('NEW_SERVICE_RESOURCE_ERROR_VALID_TOSCA_EXTENSIONS',
+                    {extensions: this.importedFileExtensions});
+                this.component.importedFile = undefined;
+                this.detectChangesSafe();
+                return;
+            }
+            // The BE takes the upload as base64 on component.payloadData, which Resource/Service
+            // createComponentOnServer reads off component.importedFile — so the read has to complete
+            // before a save, and the raw <input> alone never populated it.
+            const reader = new FileReader();
+            reader.onload = () => {
+                this.component.importedFile = {
+                    filename: file.name,
+                    filetype: ext,
+                    filesize: file.size,
+                    base64: btoa(reader.result as string)
+                };
+                this.flagUnsavedFile();
+                this.detectChangesSafe();
+            };
+            reader.readAsBinaryString(file);
+            return;
+        }
+        this.flagUnsavedFile();
+    }
+
+    clearImportedFile(): void {
+        this.component.importedFile = undefined;
+        this.importedFileError = null;
+        this.flagUnsavedFile();
+        this.detectChangesSafe();
+    }
+
+    revert(): void {
+        const restored: any = this.componentFactory.createComponent(this.originComponent);
+        this.workspaceService.setComponent(restored);
+        this.component = restored;
+        this.form.reset({
+            name: restored.name || '',
+            description: restored.description || '',
+            vendorName: restored.vendorName || '',
+            vendorRelease: restored.vendorRelease || '',
+            resourceVendorModelNumber: restored.resourceVendorModelNumber || '',
+            contactId: restored.contactId || '',
+            tags: restored.tags || [],
+            category: restored.selectedCategory || '',
+            model: restored.model || '',
+            instantiationType: restored.instantiationType || '',
+            namingPolicy: restored.namingPolicy || '',
+            ecompGeneratedNaming: restored.ecompGeneratedNaming !== undefined ? restored.ecompGeneratedNaming : true,
+            environmentContext: restored.environmentContext || '',
+            serviceType: restored.serviceType || '',
+            serviceFunction: restored.serviceFunction || '',
+            serviceRole: restored.serviceRole || ''
+        });
+        this.form.markAsPristine();
+        this.navigationService.setUnsavedChanges(false);
+        this.workspaceService.isValidForm = this.form.valid;
+        this.detectChangesSafe();
+    }
+
+    // The real save (replaces the shim's no-op $scope.save that silently dropped edits).
+    save(): Promise<void> {
+        const actions = this.workspaceService.containerActions;
+        this.syncFormToComponent();
+        this.component.tags = _.without(this.component.tags, this.component.name);
+        if (actions && actions.startProgress) { actions.startProgress('Updating Asset...'); }
+
+        return new Promise<void>((resolve, reject) => {
+            const finish = () => {
+                if (actions && actions.stopProgress) { actions.stopProgress(); }
+            };
+            this.component.updateComponent().then(
+                (updated: any) => {
+                    finish();
+                    updated.tags = _.without(updated.tags, updated.name);
+                    this.workspaceService.setComponent(updated);
+                    this.component = updated;
+                    this.originComponent = this.componentFactory.createComponent(updated);
+                    this.navigationService.setUnsavedChanges(false);
+                    this.notificationsService.push(new NotificationSettings(
+                        'success',
+                        this.translateService.translate('IMPORT_VF_MESSAGE_CREATE_FINISHED_DESCRIPTION'),
+                        this.translateService.translate('IMPORT_VF_MESSAGE_CREATE_FINISHED_TITLE'),
+                        5000));
+                    this.detectChangesSafe();
+                    resolve();
+                },
+                (err: any) => {
+                    finish();
+                    this.eventListenerService.notifyObservers(EVENTS.ON_WORKSPACE_SAVE_BUTTON_ERROR);
+                    this.detectChangesSafe();
+                    reject(err || new Error('updateComponent failed'));
+                }
+            );
+        });
     }
 
     // ---- Data-init methods ported from the old AngularJS GeneralViewModel ----
@@ -481,43 +997,6 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * Called whenever the category <select> changes (via (change) binding in the template).
-     * Replicates the old GeneralViewModel.onCategoryChange (general-view-model.ts:802-863):
-     * sets component.selectedCategory from the form, then builds the structured component.categories
-     * array the backend requires — using the full category objects from the loaded option-list.
-     */
-    onCategoryChange(): void {
-        this.component.selectedCategory = this.form.get('category').value;
-        if (this.component.selectedCategory) {
-            // Re-derive role/function on category change (the new category's validValues differ);
-            // mirrors the old onCategoryChange resetting these before re-seeding (general-view-model.ts:810-816).
-            this.roleOption = null;
-            this.functionOption = null;
-            this.othersFlag = false;
-            this.othersRoleFlag = false;
-            this.component.categories = this.buildCategoriesFromSelected();
-            this.component.icon = DEFAULT_ICON;
-            // Seed category-specific metadata from the selected category's (and subcategory's)
-            // metadataKeys, ported from the old GeneralViewModel.onCategoryChange
-            // (general-view-model.ts:820-845). This is what surfaces fields like "ETSI Version" for
-            // the ETSI NFV category: each metadataKey becomes a categorySpecificMetadata entry (its
-            // defaultValue, or '') that the template renders as a <select>/<input>. Without this the
-            // ETSI Version <select data-tests-id="ETSI Version"> never appears and
-            // EtsiNetworkServiceUiTests times out in createService waiting for it.
-            this.initCategorySpecificMetadata();
-            // Load the base types for the newly-selected category and (in CREATE mode) auto-select
-            // the required/default base type — ported from the old onCategoryChange, which called
-            // loadBaseTypes (general-view-model.ts:846-860, 1004-1035). Without this a Service create
-            // on a base-type-required category never gets a base type assigned.
-            this.loadBaseTypesForSelectedCategory();
-        } else {
-            this.component.categories = undefined;
-            this.clearBaseTypes();
-        }
-        this.detectChangesSafe();
-    }
-
-    /**
      * Service-only: fetch the base types for the currently-selected category and, in CREATE mode,
      * auto-select the required/default base type (and its newest version), mirroring the old
      * GeneralViewModel.loadBaseTypes (general-view-model.ts:1004-1035). In EDIT mode it only refreshes
@@ -626,48 +1105,6 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
         return null;
     }
 
-    /** Whether a metadata key belongs to the selected category at all (template *ngIf guard).
-     *  Ported from GeneralViewModel.isMetadataKeyForComponentCategory (line 963). */
-    isMetadataKeyForComponentCategory(key: string): boolean {
-        return this.getMetadataKey(key) != null;
-    }
-
-    /** Whether a metadata key is one of the dedicated Service metadata fields (Naming Policy,
-     *  Service Type, Service Function, Service Role) — those have their own form controls and must
-     *  NOT be rendered again as a generic category-metadata field. Ported from
-     *  GeneralViewModel.isCategoryServiceMetadataKey/isServiceMetadataKey (lines 967-968, 1075-1077). */
-    isCategoryServiceMetadataKey(key: string): boolean {
-        return CATEGORY_SERVICE_METADATA_KEYS.indexOf(key) > -1;
-    }
-
-    /** Valid values for a metadata-key <select>; empty array → render a free-text <input> instead.
-     *  Ported from GeneralViewModel.getMetadataKeyValidValues (lines 943-953). For the two free-text
-     *  -capable keys (Service Function / Service Role) the old code appended an "Others" sentinel that
-     *  reveals a free-text <input> — restored here so those dropdowns are populated and offer Others. */
-    getMetadataKeyValidValues(key: string): string[] {
-        const metadataKey = this.getMetadataKey(key);
-        if (!metadataKey || !metadataKey.validValues) { return []; }
-        if (key === 'Service Function' || key === 'Service Role') {
-            return metadataKey.validValues.concat('Others');
-        }
-        return metadataKey.validValues;
-    }
-
-    /** Whether the metadata key is mandatory (drives the required marker). Ported from
-     *  GeneralViewModel.isMetadataKeyMandatory (lines 938-941). */
-    isMetadataKeyMandatory(key: string): boolean {
-        const metadataKey = this.getMetadataKey(key);
-        return !!(metadataKey && metadataKey.mandatory);
-    }
-
-    /** Display label for a metadata key. Ported from GeneralViewModel.getMetadataDisplayName
-     *  (lines 955-961). */
-    getMetadataDisplayName(key: string): string {
-        const metadataKey = this.getMetadataKey(key);
-        if (metadataKey) { return metadataKey.displayName ? metadataKey.displayName : metadataKey.name; }
-        return '';
-    }
-
     /**
      * Replicates the old GeneralViewModel.convertCategoryStringToOneArray (general-view-model.ts:427-450).
      * Splits selectedCategory on '_#_', finds the FULL main-category object in this.categories
@@ -692,108 +1129,6 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
             }
         }
         return [mainCategoryClone];
-    }
-
-    /**
-     * Service base-type (Substitution Node Type) select changed. Writes the selection onto the
-     * component and refreshes the version list for the chosen base type (ported from the old
-     * GeneralViewModel.onBaseTypeChange, general-view-model.ts:875-895). Without this the select
-     * was display-only and a designer's base-type choice was never persisted.
-     */
-    onBaseTypeChange(value: string): void {
-        this.component.derivedFromGenericType = value;
-        if (!value) {
-            this.component.derivedFromGenericVersion = undefined;
-            this.showBaseTypeVersions = false;
-            this.detectChangesSafe();
-            return;
-        }
-        if (!this.component.categories || !this.component.categories[0]) { return; }
-        const modelName = this.component.model ? this.component.model : null;
-        const categoryName = this.component.categories[0].name;
-        if (this.elementService) {
-            this.elementService.getCategoryBaseTypes(categoryName, modelName)
-                .takeUntil(this.destroy$)
-                .subscribe((data: any) => {
-                    this.baseTypeVersions = [];
-                    (data.baseTypes || []).forEach((baseType: any) => {
-                        if (baseType.toscaResourceName === this.component.derivedFromGenericType) {
-                            baseType.versions.slice().reverse().forEach((v: any) => this.baseTypeVersions.push(v));
-                            this.component.derivedFromGenericVersion = baseType.versions[0];
-                        }
-                    });
-                    this.showBaseTypeVersions = true;
-                    this.detectChangesSafe();
-                });
-        }
-    }
-
-    /**
-     * Service model select changed. Clears the now-invalid category selection and re-filters the
-     * category + base-type lists by the chosen model (ported from GeneralViewModel.onModelChange,
-     * general-view-model.ts:897-906). syncFormToComponent already copies the model value; this adds
-     * the model-driven re-filtering the old handler performed.
-     */
-    onModelChange(): void {
-        // Coerce ''->null: the blank "no model" option must not reach the BE as an empty string
-        // (it would resolve an empty datatype scope — see the note in syncFormToComponent).
-        const selected = this.form.get('model').value;
-        this.component.model = selected ? selected : null;
-        if (this.component.componentType === ComponentType.SERVICE) {
-            const modelName = this.component.model ? this.component.model : null;
-            this.component.categories = undefined;
-            this.component.selectedCategory = undefined;
-            this.form.get('category').setValue('', {emitEvent: false});
-            // Re-load + re-filter categories for the new model, then refresh base types.
-            this.initCategories();
-            this.filterCategoriesByModel(modelName);
-            this.initBaseTypes();
-            this.detectChangesSafe();
-        }
-    }
-
-    /** Category-specific metadata field edited — write back into component.categorySpecificMetadata. */
-    onCategoryMetadataChange(key: string, value: string): void {
-        if (!this.component.categorySpecificMetadata) { this.component.categorySpecificMetadata = {}; }
-        this.component.categorySpecificMetadata[key] = value;
-    }
-
-    /**
-     * Service Role dropdown changed. "Others" reveals the free-text input and clears the model value
-     * (the user types a custom role); a real option writes straight onto the component. Ported from
-     * GeneralViewModel.setServiceRole (general-view-model.ts:925-934).
-     */
-    setServiceRole(option: string): void {
-        this.roleOption = option;
-        if (option === 'Others') {
-            this.othersRoleFlag = true;
-            this.component.serviceRole = '';
-        } else {
-            this.othersRoleFlag = false;
-            this.component.serviceRole = option;
-        }
-        // Keep the reactive control in sync — syncFormToComponent copies serviceRole FROM the form
-        // control, so a dropdown selection that only wrote component.serviceRole would be clobbered
-        // back on the next sync (§P). emitEvent:false avoids re-triggering the sync cycle.
-        this.patchControl('serviceRole', this.component.serviceRole);
-        this.detectChangesSafe();
-    }
-
-    /**
-     * Service Function dropdown changed. Mirrors setServiceRole. Ported from
-     * GeneralViewModel.setServiceFunction (general-view-model.ts:914-923).
-     */
-    setServiceFunction(option: string): void {
-        this.functionOption = option;
-        if (option === 'Others') {
-            this.othersFlag = true;
-            this.component.serviceFunction = '';
-        } else {
-            this.othersFlag = false;
-            this.component.serviceFunction = option;
-        }
-        this.patchControl('serviceFunction', this.component.serviceFunction);
-        this.detectChangesSafe();
     }
 
     /**
@@ -830,85 +1165,6 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
         }
     }
 
-    /** Generated-naming select changed: clear the naming policy when it is turned off, mirroring the
-     *  old GeneralViewModel.onEcompGeneratedNamingChange (general-view-model.ts:866-870). */
-    onEcompGeneratedNamingChange(): void {
-        if (!this.form.get('ecompGeneratedNaming').value) {
-            this.component.namingPolicy = '';
-            this.patchControl('namingPolicy', '');
-        }
-        this.detectChangesSafe();
-    }
-
-    // ---- Icon ----
-
-    /** Whether the icon may be changed — non-certified, with a category, and (for Resources) a vendor.
-     *  Ported from GeneralViewModel.possibleToUpdateIcon (general-view-model.ts:657-663). */
-    possibleToUpdateIcon(): boolean {
-        return !!(this.component.selectedCategory
-            && (!this.component.isResource() || this.component.vendorName)
-            && !this.isAlreadyCertified());
-    }
-
-    /** Open the change-icon modal; in EDIT mode a confirmed change marks the workspace dirty.
-     *  Ported from GeneralViewModel.updateIcon (general-view-model.ts:647-655). */
-    updateIcon(): Promise<void> {
-        return Promise.resolve(this.modalsHandler.openUpdateIconModal(this.component)).then((isDirty: boolean) => {
-            if (isDirty && !this.isCreateMode()) {
-                this.navigationService.setUnsavedChanges(true);
-            }
-            this.detectChangesSafe();
-        }, () => { /* modal dismissed */ });
-    }
-
-    /** Build the "Main_#_Sub" unique category string. Delegates to ComponentMetadataService so the
-     *  '_#_' separator lives in one place. Ported from GeneralViewModel.calculateUnique (line 373). */
-    calculateUnique(mainCategory: string, subCategory: string): string {
-        return this.metadataService.calculateUnique(mainCategory, subCategory);
-    }
-
-    /**
-     * Asynchronously validate the component name against the backend for uniqueness and reflect the
-     * result onto the name control (nameExist error). Ported from GeneralViewModel.validateName
-     * (general-view-model.ts:665-727), simplified to the on-change path the reactive form needs.
-     */
-    validateName(): Promise<void> {
-        const nameCtrl = this.form.get('name');
-        const name = nameCtrl.value;
-        if (!name || name === '') {
-            this.clearNameExistError(nameCtrl);
-            return Promise.resolve();
-        }
-        // Don't re-validate when the name is unchanged from the loaded component.
-        if (this.originComponent && this.originComponent.name
-            && name.toUpperCase() === this.originComponent.name.toUpperCase()) {
-            this.clearNameExistError(nameCtrl);
-            return Promise.resolve();
-        }
-        // CSAR resources keep the imported name — skip the uniqueness check (old code guarded the same).
-        if (this.component.componentType === ComponentType.RESOURCE && this.isCsarComponent()) {
-            return Promise.resolve();
-        }
-        let subtype = this.component.componentType === ComponentType.RESOURCE ? this.component.getComponentSubType() : undefined;
-        if (subtype === 'SRVC') { subtype = 'VF'; }
-        return Promise.resolve(this.component.validateName(name, subtype)).then((validation: any) => {
-            if (validation && validation.isValid) {
-                this.clearNameExistError(nameCtrl);
-                // Reflect the new (valid) name into the workspace chrome (breadcrumb/menu title), which
-                // the old controller did via updateComponentNameInBreadcrumbs. The shell exposes this
-                // through containerActions; guard because the shim may not be present in every flow.
-                const actions = this.workspaceService.containerActions;
-                if (actions) {
-                    actions.menuComponentTitle = name;
-                    if (actions.cdr) { actions.cdr.detectChanges(); }
-                }
-            } else {
-                this.setNameExistError(nameCtrl);
-            }
-            this.detectChangesSafe();
-        }, () => { /* validation request failed — leave the control as-is */ });
-    }
-
     private setNameExistError(ctrl: any): void {
         const errors = Object.assign({}, ctrl.errors || {}, {nameExist: true});
         ctrl.setErrors(errors);
@@ -922,107 +1178,12 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
         }
     }
 
-    // ---- Tags widget ----
-
-    newTag: string = '';
-    private readonly maxTags = 20;
-    private tagPattern: RegExp;
-
-    get displayedTags(): string[] {
-        const tags = (this.component && this.component.tags) || [];
-        // Don't show the component-name special tag as a removable chip (mirrors old sdc-tags directive)
-        return tags.filter((t: string) => t !== (this.component && this.component.name));
-    }
-
-    addTag(): void {
-        const t = (this.newTag || '').trim();
-        const tags = this.component.tags || (this.component.tags = []);
-        // Mirror the old sdc-tags directive's pattern="validation.tagValidationPattern" — reject tags
-        // with invalid characters instead of silently accepting them.
-        if (t && this.tagPattern && !this.tagPattern.test(t)) { return; }
-        if (t && tags.length < this.maxTags && tags.indexOf(t) === -1 && t !== this.component.name) {
-            tags.push(t);
-            this.form.get('tags').setValue(tags);
-            this.form.get('tags').markAsDirty();
-            this.newTag = '';
-            this.navigationService.setUnsavedChanges(!this.isCreateMode());
-            this.detectChangesSafe();
-        }
-    }
-
-    deleteTag(tag: string): void {
-        const tags = this.component.tags || [];
-        const i = tags.indexOf(tag);
-        if (i > -1) {
-            tags.splice(i, 1);
-            this.form.get('tags').setValue(tags);
-            this.form.get('tags').markAsDirty();
-            this.detectChangesSafe();
-        }
-    }
-
-    // ---- Mode helpers ----
-
-    isViewMode(): boolean { return this.mode === WorkspaceMode.VIEW; }
-    isCreateMode(): boolean { return this.mode === WorkspaceMode.CREATE; }
-    isEditMode(): boolean { return this.mode === WorkspaceMode.EDIT; }
-
     private isCsarComponent(): boolean {
         return !!(this.component && this.component.isCsarComponent && this.component.isCsarComponent());
     }
 
     private isAlreadyCertified(): boolean {
         return !!(this.component && this.component.isAlreadyCertified && this.component.isAlreadyCertified());
-    }
-
-    // ---- Per-field disable predicates (ported from general-view.html data-ng-disabled) ----
-    // The reactive template must NOT blanket-disable on isViewMode() — the old template encoded
-    // field-level business rules (create-only model, CSAR-immutable category/vendor, certified locks).
-    // Collapsing them to isViewMode() let a user mutate fields the BE assumed fixed (e.g. the model
-    // scope key — §Q). Each predicate below mirrors the exact old expression.
-
-    /** model: locked outside CREATE (general-view.html:84 ng-disabled="!isCreateMode()"). */
-    isModelDisabled(): boolean {
-        return !this.isCreateMode();
-    }
-
-    /** category (general-view.html:106): certified OR (CSAR && already-categorised) OR hidden-selected. */
-    isCategoryDisabled(): boolean {
-        return this.isViewMode()
-            || this.isAlreadyCertified()
-            || (this.isCsarComponent() && !!this.component.selectedCategory && this.component.selectedCategory !== '')
-            || this.isHiddenCategorySelected;
-    }
-
-    /** vendorName (general-view.html:308): certified OR (CSAR && already has a vendorName). */
-    isVendorNameDisabled(): boolean {
-        return this.isViewMode()
-            || this.isAlreadyCertified()
-            || (this.isCsarComponent() && !!this.component.vendorName && this.component.vendorName !== '');
-    }
-
-    /** vendorRelease (general-view.html:334): CSAR && already has a vendorRelease. */
-    isVendorReleaseDisabled(): boolean {
-        return this.isViewMode()
-            || (this.isCsarComponent() && !!this.component.vendorRelease && this.component.vendorRelease !== '');
-    }
-
-    /** instantiation type (general-view.html:607 ng-disabled="component.isCsarComponent()"). */
-    isInstantiationTypeDisabled(): boolean {
-        return this.isViewMode() || this.isCsarComponent();
-    }
-
-    /** base type (general-view.html:624): CSAR OR not in an editable mode. */
-    isBaseTypeDisabled(): boolean {
-        return this.isCsarComponent() || !(this.isEditMode() || this.isCreateMode());
-    }
-
-    /** Angular 5-compatible substitute for the Angular 6.1+ `keyvalue` pipe.
-     *  Returns the entries of categorySpecificMetadata as [{key, value}] pairs. */
-    get categorySpecificMetadataEntries(): Array<{key: string, value: any}> {
-        const meta = this.component && this.component.categorySpecificMetadata;
-        if (!meta) { return []; }
-        return Object.keys(meta).map(k => ({key: k, value: meta[k]}));
     }
 
     // Flush the reactive form into the working component. Because the form is now Angular
@@ -1072,30 +1233,6 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
         });
     }
 
-    isVspImport(): boolean {
-        return this.component && this.component.isResource && this.component.isResource() && !!this.component.csarUUID;
-    }
-
-    openOnBoardingModal(): void {
-        const csarUUID = this.component.csarUUID;
-        const csarVersion = this.component.csarVersion;
-        this.importVSPService.openOnboardingModal(csarUUID, csarVersion)
-            .takeUntil(this.destroy$)
-            .subscribe((result: any) => {
-                this.componentFactory.getComponentWithMetadataFromServer(result.type.toUpperCase(), result.previousComponent.uniqueId)
-                    .then((component: any) => {
-                        if (result.componentCsar && component.isResource()) {
-                            this.cacheService.set(PREVIOUS_CSAR_COMPONENT, component);
-                            component = this.componentFactory.updateComponentFromCsar(result.componentCsar, component);
-                        }
-                        this.workspaceService.setComponent(component);
-                        this.component = component;
-                        this.save();
-                        this.detectChangesSafe();
-                    });
-            });
-    }
-
     /**
      * Decide whether the "Browse to select file" widget is shown, and with which label/extensions.
      * Ported from GeneralViewModel.initScope (general-view-model.ts:278-330 + 353-369).
@@ -1143,78 +1280,6 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
         this.importedFileExtensionsWithDot = this.importedFileExtensions
             ? this.importedFileExtensions.split(',').map((e: string) => '.' + e).join(',')
             : '';
-    }
-
-    isFileBrowseDisabled(): boolean {
-        // Mirrors the old element-disabled expression (general-view.html:244): editable only while
-        // creating, or while editing a VF.
-        return (!this.isCreateMode() && !(this.isEditMode() && this.component && this.component.resourceType === ResourceType.VF))
-            || this.isViewMode() || !!(this.component && this.component.vspArchived);
-    }
-
-    isImportedFileInvalid(): boolean {
-        return !!this.importedFileError;
-    }
-
-    /**
-     * Workaround kept from the old FileUploadDirective (file-upload.ts:onFileClick): if the user picks
-     * a file, clears it with the x button, then picks the SAME file again, the browser fires no change
-     * event because input.value never changed. Blanking it on every click forces the event.
-     */
-    onImportFileClick(event: any): void {
-        if (event && event.target) { event.target.value = null; }
-    }
-
-    onImportFileChange(event?: any): void {
-        const input = event && event.target;
-        const file = input && input.files && input.files[0];
-        if (file) {
-            this.importedFileError = null;
-            if (!file.size) {
-                this.importedFileError = this.translateService.translate('VALIDATION_ERROR_EMPTY_FILE');
-                this.component.importedFile = undefined;
-                this.detectChangesSafe();
-                return;
-            }
-            if (file.size > MAX_IMPORT_FILE_SIZE_BYTES) {
-                this.importedFileError = this.translateService.translate('VALIDATION_ERROR_MAX_FILE_SIZE');
-                this.component.importedFile = undefined;
-                this.detectChangesSafe();
-                return;
-            }
-            const ext: string = (file.name.split('.').pop() || '').toLowerCase();
-            if (this.importedFileExtensions && this.importedFileExtensions.split(',').indexOf(ext) === -1) {
-                this.importedFileError = this.translateService.translate('NEW_SERVICE_RESOURCE_ERROR_VALID_TOSCA_EXTENSIONS',
-                    {extensions: this.importedFileExtensions});
-                this.component.importedFile = undefined;
-                this.detectChangesSafe();
-                return;
-            }
-            // The BE takes the upload as base64 on component.payloadData, which Resource/Service
-            // createComponentOnServer reads off component.importedFile — so the read has to complete
-            // before a save, and the raw <input> alone never populated it.
-            const reader = new FileReader();
-            reader.onload = () => {
-                this.component.importedFile = {
-                    filename: file.name,
-                    filetype: ext,
-                    filesize: file.size,
-                    base64: btoa(reader.result as string)
-                };
-                this.flagUnsavedFile();
-                this.detectChangesSafe();
-            };
-            reader.readAsBinaryString(file);
-            return;
-        }
-        this.flagUnsavedFile();
-    }
-
-    clearImportedFile(): void {
-        this.component.importedFile = undefined;
-        this.importedFileError = null;
-        this.flagUnsavedFile();
-        this.detectChangesSafe();
     }
 
     /**
@@ -1285,71 +1350,6 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
 
     private capitalize(s: any): string {
         return s && typeof s === 'string' ? s[0].toUpperCase() + s.slice(1) : s;
-    }
-
-    revert(): void {
-        const restored: any = this.componentFactory.createComponent(this.originComponent);
-        this.workspaceService.setComponent(restored);
-        this.component = restored;
-        this.form.reset({
-            name: restored.name || '',
-            description: restored.description || '',
-            vendorName: restored.vendorName || '',
-            vendorRelease: restored.vendorRelease || '',
-            resourceVendorModelNumber: restored.resourceVendorModelNumber || '',
-            contactId: restored.contactId || '',
-            tags: restored.tags || [],
-            category: restored.selectedCategory || '',
-            model: restored.model || '',
-            instantiationType: restored.instantiationType || '',
-            namingPolicy: restored.namingPolicy || '',
-            ecompGeneratedNaming: restored.ecompGeneratedNaming !== undefined ? restored.ecompGeneratedNaming : true,
-            environmentContext: restored.environmentContext || '',
-            serviceType: restored.serviceType || '',
-            serviceFunction: restored.serviceFunction || '',
-            serviceRole: restored.serviceRole || ''
-        });
-        this.form.markAsPristine();
-        this.navigationService.setUnsavedChanges(false);
-        this.workspaceService.isValidForm = this.form.valid;
-        this.detectChangesSafe();
-    }
-
-    // The real save (replaces the shim's no-op $scope.save that silently dropped edits).
-    save(): Promise<void> {
-        const actions = this.workspaceService.containerActions;
-        this.syncFormToComponent();
-        this.component.tags = _.without(this.component.tags, this.component.name);
-        if (actions && actions.startProgress) { actions.startProgress('Updating Asset...'); }
-
-        return new Promise<void>((resolve, reject) => {
-            const finish = () => {
-                if (actions && actions.stopProgress) { actions.stopProgress(); }
-            };
-            this.component.updateComponent().then(
-                (updated: any) => {
-                    finish();
-                    updated.tags = _.without(updated.tags, updated.name);
-                    this.workspaceService.setComponent(updated);
-                    this.component = updated;
-                    this.originComponent = this.componentFactory.createComponent(updated);
-                    this.navigationService.setUnsavedChanges(false);
-                    this.notificationsService.push(new NotificationSettings(
-                        'success',
-                        this.translateService.translate('IMPORT_VF_MESSAGE_CREATE_FINISHED_DESCRIPTION'),
-                        this.translateService.translate('IMPORT_VF_MESSAGE_CREATE_FINISHED_TITLE'),
-                        5000));
-                    this.detectChangesSafe();
-                    resolve();
-                },
-                (err: any) => {
-                    finish();
-                    this.eventListenerService.notifyObservers(EVENTS.ON_WORKSPACE_SAVE_BUTTON_ERROR);
-                    this.detectChangesSafe();
-                    reject(err || new Error('updateComponent failed'));
-                }
-            );
-        });
     }
 
     private registerLifecycleSaveHandler(): void {

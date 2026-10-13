@@ -1,14 +1,14 @@
-import 'rxjs/add/operator/map';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { TestBed } from '@angular/core/testing';
+import { ComponentFactory } from 'app/utils/component-factory';
 import 'rxjs/add/observable/of';
-import {TestBed} from '@angular/core/testing';
-import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
-import {CatalogService} from './catalog.service';
-import {SdcConfigToken} from '../config/sdc-config.config';
-import {SharingService} from './sharing.service';
-import {ComponentFactory} from 'app/utils/component-factory';
-import {DataTypesService} from './data-types.service';
-import {mockSdcConfig} from '../../jest/mocks/sdc-config.mock';
-import {Observable} from 'rxjs/Observable';
+import 'rxjs/add/operator/map';
+import { Observable } from 'rxjs/Observable';
+import { mockSdcConfig } from '../../jest/mocks/sdc-config.mock';
+import { SdcConfigToken } from '../config/sdc-config.config';
+import { CatalogService } from './catalog.service';
+import { DataTypesService } from './data-types.service';
+import { SharingService } from './sharing.service';
 
 describe('CatalogService', () => {
     let service: CatalogService;
@@ -60,7 +60,7 @@ describe('CatalogService', () => {
         it('should call the catalog endpoint with exclude params', () => {
             service.getCatalog().subscribe();
 
-            const req = httpMock.expectOne(r =>
+            const req = httpMock.expectOne((r) =>
                 r.url === '/sdc-ui-cache/rest/v1/catalog' &&
                 r.params.getAll('excludeTypes').indexOf('VFCMT') !== -1 &&
                 r.params.getAll('excludeTypes').indexOf('Configuration') !== -1
@@ -75,11 +75,11 @@ describe('CatalogService', () => {
                 services: [{uniqueId: 's1', uuid: 'u2', name: 'Svc1'}]
             };
 
-            service.getCatalog().subscribe(components => {
+            service.getCatalog().subscribe((components) => {
                 expect(components.length).toBe(2);
             });
 
-            const req = httpMock.expectOne(r => r.url === '/sdc-ui-cache/rest/v1/catalog');
+            const req = httpMock.expectOne((r) => r.url === '/sdc-ui-cache/rest/v1/catalog');
             req.flush(mockResponse);
         });
 
@@ -91,7 +91,7 @@ describe('CatalogService', () => {
 
             service.getCatalog().subscribe();
 
-            const req = httpMock.expectOne(r => r.url === '/sdc-ui-cache/rest/v1/catalog');
+            const req = httpMock.expectOne((r) => r.url === '/sdc-ui-cache/rest/v1/catalog');
             req.flush(mockResponse);
 
             expect(sharingServiceMock.addUuidValue).toHaveBeenCalledWith('r1', 'u1');
@@ -113,7 +113,7 @@ describe('CatalogService', () => {
                 services: []
             };
 
-            service.getArchiveCatalog().subscribe(components => {
+            service.getArchiveCatalog().subscribe((components) => {
                 expect(components.length).toBe(1);
             });
 

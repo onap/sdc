@@ -1,7 +1,7 @@
-import { TestBed, inject } from '@angular/core/testing';
+import { inject, TestBed } from '@angular/core/testing';
 
 import { ArtifactConfigService } from './artifact-config.service';
-import {CacheService} from "./cache.service";
+import { CacheService } from './cache.service';
 
 describe('ArtifactConfigService', () => {
   beforeEach(() => {
@@ -9,7 +9,7 @@ describe('ArtifactConfigService', () => {
       get: jest.fn(() => {
         return {
           artifact: null
-        }
+        };
       })
     };
     TestBed.configureTestingModule({

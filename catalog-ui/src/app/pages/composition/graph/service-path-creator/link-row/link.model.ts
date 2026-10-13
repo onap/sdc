@@ -18,19 +18,17 @@
  * ============LICENSE_END=========================================================
  */
 'use strict';
-import {ForwardingPathLink} from "app/models/forwarding-path-link";
+import { ForwardingPathLink } from 'app/models/forwarding-path-link';
 
 export class Link extends ForwardingPathLink {
-    public canEdit:boolean = false;
-    public canRemove:boolean = false;
-    public isFirst:boolean = false;
+    public canEdit: boolean = false;
+    public canRemove: boolean = false;
+    public isFirst: boolean = false;
 
     constructor(link: ForwardingPathLink, canEdit: boolean, canRemove: boolean, isFirst: boolean) {
-        super(link.fromNode,link.fromCP, link.toNode, link.toCP, link.fromCPOriginId, link.toCPOriginId);
+        super(link.fromNode, link.fromCP, link.toNode, link.toCP, link.fromCPOriginId, link.toCPOriginId);
         this.canEdit = canEdit;
         this.canRemove = canRemove;
         this.isFirst = isFirst;
     }
 }
-
-

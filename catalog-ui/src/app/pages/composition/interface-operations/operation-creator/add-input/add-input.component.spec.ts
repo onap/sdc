@@ -19,15 +19,15 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import {AddInputComponent} from './add-input.component';
-import {TranslateModule} from '../../../../../shared/translator/translate.module';
-import {ReactiveFormsModule} from '@angular/forms';
-import {SdcUiComponentsModule} from 'onap-ui-angular/dist';
-import {Observable} from 'rxjs/Observable';
-import {DataTypesMap} from '../../../../../models/data-types-map';
-import {TranslateService} from '../../../../../shared/translator/translate.service';
+import { ReactiveFormsModule } from '@angular/forms';
+import { SdcUiComponentsModule } from 'onap-ui-angular/dist';
+import { Observable } from 'rxjs/Observable';
+import { DataTypesMap } from '../../../../../models/data-types-map';
+import { TranslateModule } from '../../../../../shared/translator/translate.module';
+import { TranslateService } from '../../../../../shared/translator/translate.service';
+import { AddInputComponent } from './add-input.component';
 
 const translateServiceMock: Partial<TranslateService> = {
   translate: jest.fn((str: string) => {

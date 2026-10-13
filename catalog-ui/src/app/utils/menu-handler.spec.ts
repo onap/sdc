@@ -28,8 +28,8 @@
  * `WorkspaceContainerComponent.initBreadcrumbs()` before it assigned `breadcrumbsModel` — so the
  * whole breadcrumb bar was missing from the create form.
  */
-import {MenuHandler} from './menu-handler';
-import {Component} from '../models/components/component';
+import { Component } from '../models/components/component';
+import { MenuHandler } from './menu-handler';
 
 describe('MenuHandler', () => {
     let handler: MenuHandler;

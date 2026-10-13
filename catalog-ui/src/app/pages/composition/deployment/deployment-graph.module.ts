@@ -1,6 +1,6 @@
-import {NgModule} from "@angular/core";
-import {CommonModule} from "@angular/common";
-import {DeploymentGraphComponent} from "./deployment-graph.component";
+import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { DeploymentGraphComponent } from './deployment-graph.component';
 
 @NgModule({
     declarations: [DeploymentGraphComponent],

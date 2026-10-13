@@ -19,13 +19,13 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import {InputListItemComponent} from './input-list-item.component';
-import {TranslateModule} from '../../../../../../shared/translator/translate.module';
-import {FormsModule} from '@angular/forms';
-import {DataTypeModel} from '../../../../../../models/data-types';
-import {ToscaFunctionModule} from '../../../../../properties-assignment/tosca-function/tosca-function.module';
+import { FormsModule } from '@angular/forms';
+import { DataTypeModel } from '../../../../../../models/data-types';
+import { TranslateModule } from '../../../../../../shared/translator/translate.module';
+import { ToscaFunctionModule } from '../../../../../properties-assignment/tosca-function/tosca-function.module';
+import { InputListItemComponent } from './input-list-item.component';
 
 describe('InputListItemComponent', () => {
   let component: InputListItemComponent;
@@ -46,7 +46,7 @@ describe('InputListItemComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(InputListItemComponent);
     component = fixture.componentInstance;
-    component.valueObjRef = "";
+    component.valueObjRef = '';
     component.type = new DataTypeModel(undefined);
     fixture.detectChanges();
   });

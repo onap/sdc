@@ -38,8 +38,8 @@ export class CapabilitiesGroup {
             });
         });
     }
-    
-    public static getFlattenedCapabilities(capabilitiesGroup: CapabilitiesGroup): Array<Capability> {
+
+    public static getFlattenedCapabilities(capabilitiesGroup: CapabilitiesGroup): Capability[] {
         return _.reduce(
             _.toArray(capabilitiesGroup),
             (allCaps, capArr) => allCaps.concat(capArr),
@@ -136,5 +136,3 @@ export class CapabilityUI extends Capability {
         this.isCreatedManually = input.ownerId === componentUniqueId;
     }
 }
-
-

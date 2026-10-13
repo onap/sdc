@@ -19,19 +19,19 @@
  */
 
 import { Component } from '@angular/core';
-import {DataTypesMap} from 'app/models/data-types-map';
-import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
-import {ValidationConfiguration} from 'app/models/validation-config';
-import { DataTypeModel } from 'app/models/data-types';
-import { ModalModel } from 'app/models/modal';
-import { InstancePropertiesAPIMap } from 'app/models/properties-inputs/property-fe-map';
 import { DropdownValue } from 'app/components/ui/form-components/dropdown/ui-element-dropdown.component';
+import { DataTypeModel } from 'app/models/data-types';
+import { DataTypesMap } from 'app/models/data-types-map';
+import { ModalModel } from 'app/models/modal';
+import { PropertyBEModel } from 'app/models/properties-inputs/property-be-model';
+import { InstancePropertiesAPIMap } from 'app/models/properties-inputs/property-fe-map';
+import { ValidationConfiguration } from 'app/models/validation-config';
 import { DataTypeService } from 'app/services/data-type.service';
 import { ModalService } from 'app/services/modal.service';
-import {PROPERTY_DATA} from 'app/utils/constants';
+import { PROPERTY_DATA } from 'app/utils/constants';
 import * as _ from 'lodash';
-import {PROPERTY_TYPES} from '../../../utils/constants';
-import {WorkspaceService} from "../../workspace/workspace.service";
+import { PROPERTY_TYPES } from '../../../utils/constants';
+import { WorkspaceService } from '../../workspace/workspace.service';
 
 @Component({
     selector: 'declare-list',
@@ -80,7 +80,7 @@ export class DeclareListComponent {
         );
         const nonPrimitiveTypesValues = _.map(nonPrimitiveTypes,
             (type: string) => new DropdownValue(type,
-                    type.replace('org.openecomp.datatypes.heat.',""))
+                    type.replace('org.openecomp.datatypes.heat.', ''))
         );
         this.typesProperties = _.concat(this.typesProperties, nonPrimitiveTypesValues);
         this.typesSchemaProperties = _.concat(typesSimpleProperties, nonPrimitiveTypesValues);
@@ -89,7 +89,7 @@ export class DeclareListComponent {
 
         this.inputsToCreate = this.modalService.currentModal.instance.dynamicContent.instance.input.properties;
 
-        this.propertiesListString = this.modalService.currentModal.instance.dynamicContent.instance.input.propertyNameList.join(", ");
+        this.propertiesListString = this.modalService.currentModal.instance.dynamicContent.instance.input.propertyNameList.join(', ');
 
         this.privateDataType = new DataTypeModel(null);
         this.privateDataType.name = 'datatype';

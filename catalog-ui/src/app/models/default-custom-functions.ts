@@ -19,7 +19,7 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {ToscaFunctionType} from "../models/tosca-function-type.enum";
+import { ToscaFunctionType } from '../models/tosca-function-type.enum';
 
 export interface DefaultCustomFunctions {
   defaultCustomToscaFunction: CustomToscaFunction[];
@@ -27,13 +27,13 @@ export interface DefaultCustomFunctions {
 
 export class CustomToscaFunction {
 
-  constructor (customToscaFunction?: CustomToscaFunction) {
+  public name: string;
+  public  type: string;
+
+  constructor(customToscaFunction?: CustomToscaFunction) {
     if (customToscaFunction) {
       this.name = customToscaFunction.name;
       this.type = customToscaFunction.type.toUpperCase();
     }
   }
-
-  public name: string;
-  public  type: string;
 }

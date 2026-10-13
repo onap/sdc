@@ -1,11 +1,11 @@
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { TestBed } from '@angular/core/testing';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
-import {TestBed} from '@angular/core/testing';
-import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
-import {TopologyTemplateService} from './topology-template.service';
-import {SdcConfigToken} from '../../config/sdc-config.config';
-import {mockSdcConfig} from '../../../jest/mocks/sdc-config.mock';
-import {ComponentType} from '../../utils/constants';
+import { mockSdcConfig } from '../../../jest/mocks/sdc-config.mock';
+import { SdcConfigToken } from '../../config/sdc-config.config';
+import { ComponentType } from '../../utils/constants';
+import { TopologyTemplateService } from './topology-template.service';
 
 describe('TopologyTemplateService', () => {
     let service: TopologyTemplateService;
@@ -55,7 +55,7 @@ describe('TopologyTemplateService', () => {
         it('should request metadata fields for resource', () => {
             service.getComponentMetadata('comp-1', ComponentType.RESOURCE).subscribe();
 
-            const req = httpMock.expectOne(r =>
+            const req = httpMock.expectOne((r) =>
                 r.url === baseUrl + 'resources/comp-1/filteredDataByParams' &&
                 r.params.get('include') === 'metadata'
             );
@@ -87,7 +87,7 @@ describe('TopologyTemplateService', () => {
             const component = {componentType: ComponentType.SERVICE, uniqueId: 'svc-1'} as any;
             service.getComponentInputs(component).subscribe();
 
-            const req = httpMock.expectOne(r =>
+            const req = httpMock.expectOne((r) =>
                 r.url === baseUrl + 'services/svc-1/filteredDataByParams' &&
                 r.params.get('include') === 'inputs'
             );
@@ -100,7 +100,7 @@ describe('TopologyTemplateService', () => {
             const component = {componentType: ComponentType.RESOURCE, uniqueId: 'comp-1'} as any;
             service.getComponentProperties(component).subscribe();
 
-            const req = httpMock.expectOne(r =>
+            const req = httpMock.expectOne((r) =>
                 r.url === baseUrl + 'resources/comp-1/filteredDataByParams' &&
                 r.params.get('include') === 'properties'
             );
@@ -115,7 +115,7 @@ describe('TopologyTemplateService', () => {
                 uniqueId: 'svc-1',
                 componentType: ComponentType.SERVICE
             } as any;
-            const inputsMap = {componentInstanceProperties: {'inst1': [{name: 'prop1'}]}} as any;
+            const inputsMap = {componentInstanceProperties: {inst1: [{name: 'prop1'}]}} as any;
 
             service.createInput(component, inputsMap, false).subscribe();
 
@@ -131,12 +131,12 @@ describe('TopologyTemplateService', () => {
                 uniqueId: 'svc-1',
                 componentType: ComponentType.SERVICE
             } as any;
-            const inputsMap = {componentInstanceProperties: {'self': [{name: 'p1'}]}} as any;
+            const inputsMap = {componentInstanceProperties: {self: [{name: 'p1'}]}} as any;
 
             service.createInput(component, inputsMap, true).subscribe();
 
             const req = httpMock.expectOne(baseUrl + 'services/svc-1/create/inputs');
-            expect(req.request.body).toEqual({serviceProperties: {'self': [{name: 'p1'}]}});
+            expect(req.request.body).toEqual({serviceProperties: {self: [{name: 'p1'}]}});
             req.flush({});
         });
     });
@@ -146,7 +146,7 @@ describe('TopologyTemplateService', () => {
             const component = {getTypeUrl: () => 'resources/', uniqueId: 'comp-1'} as any;
             const input = {uniqueId: 'input-1'} as any;
 
-            service.deleteInput(component, input).subscribe(result => {
+            service.deleteInput(component, input).subscribe((result) => {
                 expect(result.uniqueId).toBe('input-1');
             });
 
@@ -166,7 +166,7 @@ describe('TopologyTemplateService', () => {
         });
 
         it('should return empty array when response is null', () => {
-            service.getServiceProperties('svc-1').subscribe(result => {
+            service.getServiceProperties('svc-1').subscribe((result) => {
                 expect(result).toEqual([]);
             });
 
@@ -190,7 +190,7 @@ describe('TopologyTemplateService', () => {
     describe('deleteServiceProperty', () => {
         it('should DELETE property by id', () => {
             const property = {uniqueId: 'prop-1', name: 'myProp'} as any;
-            service.deleteServiceProperty('svc-1', property).subscribe(result => {
+            service.deleteServiceProperty('svc-1', property).subscribe((result) => {
                 expect(result).toBe('prop-1');
             });
 
@@ -205,7 +205,7 @@ describe('TopologyTemplateService', () => {
             const component = {getTypeUrl: () => 'services/', uniqueId: 'svc-1'} as any;
             const inputs = [{uniqueId: 'i1', name: 'input1'}] as any;
 
-            service.updateComponentInputs(component, inputs).subscribe(result => {
+            service.updateComponentInputs(component, inputs).subscribe((result) => {
                 expect(result.length).toBe(1);
             });
 
@@ -316,7 +316,7 @@ describe('TopologyTemplateService', () => {
         it('should include forwarding paths for services', () => {
             service.getComponentCompositionData('svc-1', ComponentType.SERVICE).subscribe();
 
-            const req = httpMock.expectOne(r =>
+            const req = httpMock.expectOne((r) =>
                 r.url === baseUrl + 'services/svc-1/filteredDataByParams' &&
                 r.params.getAll('include').indexOf('forwardingPaths') !== -1
             );
@@ -326,7 +326,7 @@ describe('TopologyTemplateService', () => {
         it('should not include forwarding paths for resources', () => {
             service.getComponentCompositionData('comp-1', ComponentType.RESOURCE).subscribe();
 
-            const req = httpMock.expectOne(r =>
+            const req = httpMock.expectOne((r) =>
                 r.url === baseUrl + 'resources/comp-1/filteredDataByParams' &&
                 r.params.getAll('include').indexOf('forwardingPaths') === -1
             );

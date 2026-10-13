@@ -5,9 +5,9 @@ import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
 import * as _ from 'lodash';
 import { tap } from 'rxjs/operators';
 import { ArtifactModel } from '../../models/artifacts';
-import { ArtifactGroupType } from '../../utils/constants';
 import { ComponentInstanceService } from '../../services/component-instance-services/component-instance.service';
 import { ComponentGenericResponse } from '../../services/responses/component-generic-response';
+import { ArtifactGroupType } from '../../utils/constants';
 import {
     CreateInstanceArtifactAction,
     DeleteInstanceArtifactAction,

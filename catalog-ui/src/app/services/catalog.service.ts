@@ -18,33 +18,33 @@
  * ============LICENSE_END=========================================================
  */
 
-import { Injectable, Inject } from "@angular/core";
-import { Observable } from "rxjs/Observable";
-import { SdcConfigToken, ISdcConfig } from "../config/sdc-config.config";
-import {IApi} from 'app/models/app-config';
-import {IComponentsArray} from 'app/models/components-array';
-import {Component} from 'app/models/components/component';
-import {DataTypeModel} from 'app/models/data-types';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
+import { IApi } from 'app/models/app-config';
+import { IComponentsArray } from 'app/models/components-array';
+import { Component } from 'app/models/components/component';
+import { DataTypeModel } from 'app/models/data-types';
 import { ComponentFactory } from 'app/utils/component-factory';
-import {ResourceType} from "../utils/constants";
-import {SharingService} from "./sharing.service";
-import { HttpClient, HttpParams } from "@angular/common/http";
-import {DataTypesService} from "./data-types.service";
-import {DataTypeCatalogComponent} from "../models/data-type-catalog-component";
-import {zip} from "rxjs";
-import {map} from "rxjs/operators";
+import { zip } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
+import { map } from 'rxjs/operators';
+import { ISdcConfig, SdcConfigToken } from '../config/sdc-config.config';
+import { DataTypeCatalogComponent } from '../models/data-type-catalog-component';
+import { ResourceType } from '../utils/constants';
+import { DataTypesService } from './data-types.service';
+import { SharingService } from './sharing.service';
 
 @Injectable()
 export class CatalogService {
-    protected api:IApi;
-    protected baseUrl:string;
-    protected baseMicroServiceUrl:string;
+    protected api: IApi;
+    protected baseUrl: string;
+    protected baseMicroServiceUrl: string;
 
     constructor(private http: HttpClient,
-                @Inject(SdcConfigToken) sdcConfig:ISdcConfig,
-                private componentFactory:ComponentFactory,
-                private dataTypesService:DataTypesService,
-                private sharingService:SharingService) {
+                @Inject(SdcConfigToken) sdcConfig: ISdcConfig,
+                private componentFactory: ComponentFactory,
+                private dataTypesService: DataTypesService,
+                private sharingService: SharingService) {
         this.api = sdcConfig.api;
         this.baseUrl = sdcConfig.api.root ;
         this.baseMicroServiceUrl = sdcConfig.api.uicache_root;
@@ -56,16 +56,16 @@ export class CatalogService {
         const observableComponents = this.http.get<IComponentsArray>(this.baseMicroServiceUrl + this.api.GET_uicache_catalog, {params: searchParams});
         const observableDataTypes = this.dataTypesService.getDataTypesFromAllModelExcludePrimitives();
         return zip(observableComponents, observableDataTypes)
-        .pipe(map(res => this.processComponentsResponse(res, true)));
+        .pipe(map((res) => this.processComponentsResponse(res, true)));
     }
 
     public getArchiveCatalog() {
         return this.http.get<IComponentsArray>(this.baseUrl + '/v1/catalog/archive/', {})
-            .map(res => this.processComponentsResponse([res, []]));
+            .map((res) => this.processComponentsResponse([res, []]));
     }
 
-    private processComponentsResponse(componentsArr: [IComponentsArray, DataTypeModel[]], addSharing:boolean = false) {
-        const componentsList:Array<Component | DataTypeCatalogComponent> = [];
+    private processComponentsResponse(componentsArr: [IComponentsArray, DataTypeModel[]], addSharing: boolean = false) {
+        const componentsList: Array<Component | DataTypeCatalogComponent> = [];
         if (componentsArr[0].resources) {
             componentsList.push(...this.getResourceItems(componentsArr[0].resources));
         }
@@ -80,23 +80,23 @@ export class CatalogService {
         }
         return componentsList;
     }
-    
-    private getResourceItems(resources){
-        let resourceItems = resources.map((resource)=>{
-            return this.componentFactory.createResource(resource)
-        })
+
+    private getResourceItems(resources) {
+        const resourceItems = resources.map((resource) => {
+            return this.componentFactory.createResource(resource);
+        });
         return resourceItems;
     }
 
-    private getServiceItems(services){
-        let serviceItems = services.map((service)=>{
-            return this.componentFactory.createService(service)
-        })
+    private getServiceItems(services) {
+        const serviceItems = services.map((service) => {
+            return this.componentFactory.createService(service);
+        });
         return serviceItems;
     }
 
-    private getDataTypesItems(dataTypes: Array<DataTypeModel>):Array<DataTypeCatalogComponent> {
-        return dataTypes.map(dataType => new DataTypeCatalogComponent(dataType));
+    private getDataTypesItems(dataTypes: DataTypeModel[]): DataTypeCatalogComponent[] {
+        return dataTypes.map((dataType) => new DataTypeCatalogComponent(dataType));
     }
 
-}    
+}

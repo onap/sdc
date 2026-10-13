@@ -1,8 +1,8 @@
-import {async, ComponentFixture} from "@angular/core/testing";
-import {ConfigureFn, configureTests} from "../../../../../jest/test-config.helper";
-import {NO_ERRORS_SCHEMA} from "@angular/core";
-import {PaletteElementComponent} from "./palette-element.component";
-import {ResourceNamePipe} from "../../../../pipes/resource-name.pipe";
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { async, ComponentFixture } from '@angular/core/testing';
+import { ConfigureFn, configureTests } from '../../../../../jest/test-config.helper';
+import { ResourceNamePipe } from '../../../../pipes/resource-name.pipe';
+import { PaletteElementComponent } from './palette-element.component';
 
 describe('palette element component', () => {
 
@@ -10,7 +10,7 @@ describe('palette element component', () => {
 
     beforeEach(
         async(() => {
-            const configure: ConfigureFn = testBed => {
+            const configure: ConfigureFn = (testBed) => {
                 testBed.configureTestingModule({
                     declarations: [PaletteElementComponent, ResourceNamePipe],
                     imports: [],
@@ -18,7 +18,7 @@ describe('palette element component', () => {
                 });
             };
 
-            configureTests(configure).then(testBed => {
+            configureTests(configure).then((testBed) => {
                 fixture = testBed.createComponent(PaletteElementComponent);
             });
         })

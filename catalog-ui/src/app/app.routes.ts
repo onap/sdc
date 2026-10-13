@@ -18,37 +18,37 @@
  * ============LICENSE_END=========================================================
  */
 
-import {Routes} from '@angular/router';
-import {AdminDashboardComponent} from './pages/admin-dashboard/admin-dashboard.component';
-import {AttributesOutputsComponent} from './pages/attributes-outputs/attributes-outputs.page.component';
-import {CatalogComponent} from './pages/catalog/catalog.component';
-import {CompositionPageComponent} from './pages/composition/composition-page.component';
-import {Error403PageComponent} from './pages/error-403/error-403.component';
-import {HomeComponent} from './pages/home/home.component';
-import {InterfaceDefinitionComponent} from './pages/interface-definition/interface-definition.page.component';
-import {InterfaceOperationComponent} from './pages/interface-operation/interface-operation.page.component';
-import {OnboardVendorPageComponent} from './pages/onboard-vendor/onboard-vendor.component';
-import {PluginContextViewPageComponent} from './pages/plugins/plugin-context-view/plugin-context-view.page.component';
-import {PluginTabViewPageComponent} from './pages/plugins/plugin-tab-view/plugin-tab-view.page.component';
-import {PropertiesAssignmentComponent} from './pages/properties-assignment/properties-assignment.page.component';
-import {TypeWorkspaceComponent} from './pages/type-workspace/type-workspace.component';
-import {ActivityLogComponent} from './pages/workspace/activity-log/activity-log.component';
-import {DeploymentArtifactsPageComponent} from './pages/workspace/deployment-artifacts/deployment-artifacts-page.component';
-import {DeploymentPageComponent} from './pages/workspace/deployment/deployment-page.component';
-import {DistributionComponent} from './pages/workspace/disribution/distribution.component';
-import {ManagementWorkflowTabComponent} from './pages/workspace/flow-editor/management-workflow-tab.component';
-import {NetworkCallFlowTabComponent} from './pages/workspace/flow-editor/network-call-flow-tab.component';
-import {GeneralTabComponent} from './pages/workspace/general-tab/general-tab.component';
-import {InformationArtifactPageComponent} from './pages/workspace/information-artifact/information-artifact-page.component';
-import {WorkspacePropertiesTabComponent} from './pages/workspace/properties-tab/properties-tab.component';
-import {ReqAndCapabilitiesComponent} from './pages/workspace/req-and-capabilities/req-and-capabilities.component';
-import {ToscaArtifactPageComponent} from './pages/workspace/tosca-artifacts/tosca-artifact-page.component';
-import {WorkspaceComponentResolver} from './pages/workspace/workspace-component.resolver';
-import {WorkspaceContainerComponent} from './pages/workspace/workspace-container/workspace-container.component';
-import {AttributesComponent} from './pages/workspace/attributes/attributes.component';
-import {AuthGuard} from './guards/auth.guard';
-import {UnsavedChangesFlagGuard} from './guards/unsaved-changes-flag.guard';
-import {UnsavedChangesGuard} from './guards/unsaved-changes.guard';
+import { Routes } from '@angular/router';
+import { AuthGuard } from './guards/auth.guard';
+import { UnsavedChangesFlagGuard } from './guards/unsaved-changes-flag.guard';
+import { UnsavedChangesGuard } from './guards/unsaved-changes.guard';
+import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard.component';
+import { AttributesOutputsComponent } from './pages/attributes-outputs/attributes-outputs.page.component';
+import { CatalogComponent } from './pages/catalog/catalog.component';
+import { CompositionPageComponent } from './pages/composition/composition-page.component';
+import { Error403PageComponent } from './pages/error-403/error-403.component';
+import { HomeComponent } from './pages/home/home.component';
+import { InterfaceDefinitionComponent } from './pages/interface-definition/interface-definition.page.component';
+import { InterfaceOperationComponent } from './pages/interface-operation/interface-operation.page.component';
+import { OnboardVendorPageComponent } from './pages/onboard-vendor/onboard-vendor.component';
+import { PluginContextViewPageComponent } from './pages/plugins/plugin-context-view/plugin-context-view.page.component';
+import { PluginTabViewPageComponent } from './pages/plugins/plugin-tab-view/plugin-tab-view.page.component';
+import { PropertiesAssignmentComponent } from './pages/properties-assignment/properties-assignment.page.component';
+import { TypeWorkspaceComponent } from './pages/type-workspace/type-workspace.component';
+import { ActivityLogComponent } from './pages/workspace/activity-log/activity-log.component';
+import { AttributesComponent } from './pages/workspace/attributes/attributes.component';
+import { DeploymentArtifactsPageComponent } from './pages/workspace/deployment-artifacts/deployment-artifacts-page.component';
+import { DeploymentPageComponent } from './pages/workspace/deployment/deployment-page.component';
+import { DistributionComponent } from './pages/workspace/disribution/distribution.component';
+import { ManagementWorkflowTabComponent } from './pages/workspace/flow-editor/management-workflow-tab.component';
+import { NetworkCallFlowTabComponent } from './pages/workspace/flow-editor/network-call-flow-tab.component';
+import { GeneralTabComponent } from './pages/workspace/general-tab/general-tab.component';
+import { InformationArtifactPageComponent } from './pages/workspace/information-artifact/information-artifact-page.component';
+import { WorkspacePropertiesTabComponent } from './pages/workspace/properties-tab/properties-tab.component';
+import { ReqAndCapabilitiesComponent } from './pages/workspace/req-and-capabilities/req-and-capabilities.component';
+import { ToscaArtifactPageComponent } from './pages/workspace/tosca-artifacts/tosca-artifact-page.component';
+import { WorkspaceComponentResolver } from './pages/workspace/workspace-component.resolver';
+import { WorkspaceContainerComponent } from './pages/workspace/workspace-container/workspace-container.component';
 
 /**
  * The 19 workspace tabs. Under ui-router these were child states of 'workspace' and each declared

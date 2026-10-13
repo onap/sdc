@@ -1,9 +1,9 @@
-import { Injectable, Inject } from "@angular/core";
-import { Observable } from "rxjs/Observable";
-import { SdcConfigToken, ISdcConfig } from "../config/sdc-config.config";
-import { HttpClient } from "@angular/common/http";
-import {Component} from 'app/models/components/component';
-import {OperationModel} from 'app/models/operation';
+import { HttpClient } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
+import { Component } from 'app/models/components/component';
+import { OperationModel } from 'app/models/operation';
+import { Observable } from 'rxjs/Observable';
+import { ISdcConfig, SdcConfigToken } from '../config/sdc-config.config';
 
 interface WorkflowOutputParameter {
     name: string;
@@ -18,14 +18,14 @@ interface WorkflowInputParameter extends WorkflowOutputParameter {
 @Injectable()
 export class WorkflowService {
 
-    protected baseUrl;
-    protected catalogBaseUrl;
-
     WF_STATE_ACTIVE = 'ACTIVE';
     WF_STATE_ARCHIVED = 'ARCHIVED';
     VERSION_STATE_CERTIFIED = 'CERTIFIED';
 
-    constructor(private http: HttpClient, @Inject(SdcConfigToken) sdcConfig:ISdcConfig) {
+    protected baseUrl;
+    protected catalogBaseUrl;
+
+    constructor(private http: HttpClient, @Inject(SdcConfigToken) sdcConfig: ISdcConfig) {
         this.baseUrl = sdcConfig.api.workflow_root;
         this.catalogBaseUrl = sdcConfig.api.POST_workflow_artifact;
     }

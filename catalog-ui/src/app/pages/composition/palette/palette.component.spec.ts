@@ -1,21 +1,20 @@
-import {async, ComponentFixture, TestBed} from "@angular/core/testing";
-import {NO_ERRORS_SCHEMA} from "@angular/core";
-import {CompositionPaletteService} from "./services/palette.service";
-import {EventListenerService} from "../../../services/event-listener.service";
-import {PaletteElementComponent} from "./palette-element/palette-element.component";
-import {PaletteComponent} from "./palette.component";
-import {ConfigureFn, configureTests} from "../../../../jest/test-config.helper";
-import {KeyValuePipe} from "../../../pipes/key-value.pipe";
-import {ResourceNamePipe} from "../../../pipes/resource-name.pipe";
-import {Observable} from "rxjs/Observable";
-import {leftPaletteElements} from "../../../../jest/mocks/left-paeltte-elements.mock";
-import {NgxsModule, Select} from '@ngxs/store';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { NgxsModule, Select } from '@ngxs/store';
 import { WorkspaceState } from 'app/store/states/workspace.state';
-
+import { Observable } from 'rxjs/Observable';
+import { leftPaletteElements } from '../../../../jest/mocks/left-paeltte-elements.mock';
+import { ConfigureFn, configureTests } from '../../../../jest/test-config.helper';
+import { KeyValuePipe } from '../../../pipes/key-value.pipe';
+import { ResourceNamePipe } from '../../../pipes/resource-name.pipe';
+import { EventListenerService } from '../../../services/event-listener.service';
+import { PaletteElementComponent } from './palette-element/palette-element.component';
+import { PaletteComponent } from './palette.component';
+import { CompositionPaletteService } from './services/palette.service';
 
 describe('palette component', () => {
 
-    const mockedEvent = <MouseEvent>{ target: {} }
+    const mockedEvent = { target: {} } as MouseEvent;
     let fixture: ComponentFixture<PaletteComponent>;
     let eventServiceMock: Partial<EventListenerService>;
     let compositionPaletteMockService: Partial<CompositionPaletteService>;
@@ -24,12 +23,12 @@ describe('palette component', () => {
         async(() => {
             eventServiceMock = {
                 notifyObservers: jest.fn()
-            }
+            };
             compositionPaletteMockService = {
-                subscribeToLeftPaletteElements:  jest.fn().mockImplementation(()=>  Observable.of(leftPaletteElements)),
-                getLeftPaletteElements: jest.fn().mockImplementation(()=>  leftPaletteElements)
-            }
-            const configure: ConfigureFn = testBed => {
+                subscribeToLeftPaletteElements:  jest.fn().mockImplementation(() =>  Observable.of(leftPaletteElements)),
+                getLeftPaletteElements: jest.fn().mockImplementation(() =>  leftPaletteElements)
+            };
+            const configure: ConfigureFn = (testBed) => {
                 testBed.configureTestingModule({
                     declarations: [PaletteComponent, PaletteElementComponent, KeyValuePipe, ResourceNamePipe],
                     imports: [NgxsModule.forRoot([WorkspaceState])],
@@ -41,7 +40,7 @@ describe('palette component', () => {
                 });
             };
 
-            configureTests(configure).then(testBed => {
+            configureTests(configure).then((testBed) => {
                 fixture = testBed.createComponent(PaletteComponent);
             });
         })
@@ -53,24 +52,24 @@ describe('palette component', () => {
 
     it('should build Palette By Categories without searchText', () => {
         fixture.componentInstance.buildPaletteByCategories();
-        expect(fixture.componentInstance.paletteElements["Generic"]["Network"].length).toBe(5);
-        expect(fixture.componentInstance.paletteElements["Generic"]["Network"][0].searchFilterTerms).toBe("extvirtualmachineinterfacecp external port for virtual machine interface extvirtualmachineinterfacecp 3.0");
-        expect(fixture.componentInstance.paletteElements["Generic"]["Network"][1].searchFilterTerms).toBe("newservice2 asdfasdfa newservice2 0.3");
+        expect(fixture.componentInstance.paletteElements.Generic.Network.length).toBe(5);
+        expect(fixture.componentInstance.paletteElements.Generic.Network[0].searchFilterTerms).toBe('extvirtualmachineinterfacecp external port for virtual machine interface extvirtualmachineinterfacecp 3.0');
+        expect(fixture.componentInstance.paletteElements.Generic.Network[1].searchFilterTerms).toBe('newservice2 asdfasdfa newservice2 0.3');
 
-        expect(fixture.componentInstance.paletteElements["Generic"]["Configuration"].length).toBe(1);
-        expect(fixture.componentInstance.paletteElements["Generic"]["Configuration"][0].systemName).toBe("Extvirtualmachineinterfacecp");
+        expect(fixture.componentInstance.paletteElements.Generic.Configuration.length).toBe(1);
+        expect(fixture.componentInstance.paletteElements.Generic.Configuration[0].systemName).toBe('Extvirtualmachineinterfacecp');
     });
 
     it('should build Palette By Categories with searchText', () => {
-        fixture.componentInstance.buildPaletteByCategories("testVal");
-        expect(fixture.componentInstance.paletteElements["Generic"]["Network"].length).toBe(1);
-        expect(fixture.componentInstance.paletteElements["Generic"]["Network"][0].searchFilterTerms).toBe("testVal and other values");
+        fixture.componentInstance.buildPaletteByCategories('testVal');
+        expect(fixture.componentInstance.paletteElements.Generic.Network.length).toBe(1);
+        expect(fixture.componentInstance.paletteElements.Generic.Network[0].searchFilterTerms).toBe('testVal and other values');
     });
 
     it('should change numbers of elements', () => {
         fixture.componentInstance.buildPaletteByCategories();
         expect(fixture.componentInstance.numberOfElements).toEqual(6);
-        fixture.componentInstance.buildPaletteByCategories("testVal");
+        fixture.componentInstance.buildPaletteByCategories('testVal');
         expect(fixture.componentInstance.numberOfElements).toEqual(1);
     });
 });

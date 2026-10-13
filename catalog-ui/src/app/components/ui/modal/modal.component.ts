@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,19 +21,19 @@
 /**
  * Created by rc2122 on 6/1/2017.
  */
-import { Component, ElementRef, HostListener, Input, OnInit, OnDestroy } from '@angular/core';
-import {ViewContainerRef, ViewChild} from '@angular/core';
-import * as $ from 'jquery';
-import {ButtonsModelMap} from 'app/models/button';
-import {ModalModel} from 'app/models/modal';
+import { Component, ElementRef, HostListener, Input, OnDestroy, OnInit } from '@angular/core';
+import { ViewChild, ViewContainerRef } from '@angular/core';
+import { ButtonsModelMap } from 'app/models/button';
+import { ModalModel } from 'app/models/modal';
 import { FocusTrap } from 'app/shared/accessibility/focus-trap';
+import * as $ from 'jquery';
 
 let modalIdCounter = 0;
 
 @Component({
     selector: 'modal',
     templateUrl: './modal.component.html',
-    styleUrls:['modal.component.less']
+    styleUrls: ['modal.component.less']
 })
 
 export class ModalComponent implements OnInit, OnDestroy {

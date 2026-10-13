@@ -20,39 +20,39 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-import {Injectable} from "@angular/core";
+import { Injectable } from '@angular/core';
 
 @Injectable()
 export class QueueServiceUtils {
 
-    private executionQueue:any;
+    private executionQueue: any;
 
     constructor() {
-        if(!this.executionQueue) {
+        if (!this.executionQueue) {
             this.executionQueue = this.getQueue();
         }
     }
 
-    private getQueue = () => new Promise((resolve, reject) => {
-       resolve(true);
-    });
-
-    private addMethodToQueue = (runMe:Function):void => {
-        this.executionQueue = this.executionQueue.then(runMe, runMe);
-    };
-
-    addNonBlockingUIAction = (update:Function, releaseUIcallBack?:Function):void => {
+    addNonBlockingUIAction = (update: Function, releaseUIcallBack?: Function): void => {
         // releaseUIcallBack();
         this.addMethodToQueue(update);
-    };
+    }
 
     // The Method call is responsible for releasing the UI
-    addBlockingUIAction = (blockingServerRequest:Function):void => {
+    addBlockingUIAction = (blockingServerRequest: Function): void => {
         this.addMethodToQueue(blockingServerRequest);
-    };
+    }
 
-    addBlockingUIActionWithReleaseCallback = (blockingServerRequest:Function, releaseUIcallBack:Function):void=> {
+    addBlockingUIActionWithReleaseCallback = (blockingServerRequest: Function, releaseUIcallBack: Function): void => {
         this.addMethodToQueue(blockingServerRequest);
         // this.addMethodToQueue(releaseUIcallBack);
-    };
+    }
+
+    private getQueue = () => new Promise((resolve, reject) => {
+       resolve(true);
+    })
+
+    private addMethodToQueue = (runMe: Function): void => {
+        this.executionQueue = this.executionQueue.then(runMe, runMe);
+    }
 }

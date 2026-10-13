@@ -18,8 +18,8 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-import {ModulePropertyModalComponent} from './module-property-modal.component';
-import {UNIQUE_GROUP_PROPERTIES_NAME} from 'app/utils/constants';
+import { UNIQUE_GROUP_PROPERTIES_NAME } from 'app/utils/constants';
+import { ModulePropertyModalComponent } from './module-property-modal.component';
 
 describe('ModulePropertyModalComponent', () => {
     let comp: ModulePropertyModalComponent;
@@ -81,7 +81,7 @@ describe('ModulePropertyModalComponent', () => {
         build(props[0], resource, props);   // editing MIN, value 5, initial 2, no max
         comp.property.value = '5';
         comp.onValueChange();
-        expect(comp.errors['maxValidation']).toBe(true);
+        expect(comp.errors.maxValidation).toBe(true);
         expect(comp.isValid()).toBe(false);
     });
 
@@ -90,7 +90,7 @@ describe('ModulePropertyModalComponent', () => {
         build(props[0], resource, props);
         comp.property.value = '1';
         comp.onValueChange();
-        expect(comp.errors['maxValidation']).toBeFalsy();
+        expect(comp.errors.maxValidation).toBeFalsy();
         expect(comp.isValid()).toBe(true);
     });
 
@@ -99,7 +99,7 @@ describe('ModulePropertyModalComponent', () => {
         build(props[2], resource, props);   // editing INITIAL_COUNT = 9, min 2 max 4
         comp.property.value = '9';
         comp.onValueChange();
-        expect(comp.errors['minOrMaxValidation']).toBe(true);
+        expect(comp.errors.minOrMaxValidation).toBe(true);
     });
 
     it('for a service, flags minValidationVfLevel when min < parentValue', () => {
@@ -109,14 +109,14 @@ describe('ModulePropertyModalComponent', () => {
         comp.property.value = '1';
         comp.property.parentValue = '3';
         comp.onValueChange();
-        expect(comp.errors['minValidationVfLevel']).toBe(true);
+        expect(comp.errors.minValidationVfLevel).toBe(true);
     });
 
     it('flags a pattern error for a non-integer value on an integer property and blocks isValid', () => {
         build({name: 'plain', type: 'integer', value: '1', uniqueId: 'p'}, resource);
         comp.property.value = 'abc';
         comp.onValueChange();
-        expect(comp.errors['pattern']).toBe(true);
+        expect(comp.errors.pattern).toBe(true);
         expect(comp.isValid()).toBe(false);
     });
 
@@ -124,7 +124,7 @@ describe('ModulePropertyModalComponent', () => {
         build({name: 'plain', type: 'integer', value: '1', uniqueId: 'p'}, resource);
         comp.property.value = '42';
         comp.onValueChange();
-        expect(comp.errors['pattern']).toBeFalsy();
+        expect(comp.errors.pattern).toBeFalsy();
         expect(comp.isValid()).toBe(true);
     });
 
@@ -132,7 +132,7 @@ describe('ModulePropertyModalComponent', () => {
         build({name: 'plain', type: 'boolean', value: 'true', uniqueId: 'p'}, resource);
         comp.property.value = 'true';
         comp.onValueChange();
-        expect(comp.errors['pattern']).toBeFalsy();
+        expect(comp.errors.pattern).toBeFalsy();
         expect(validationUtilsMock.getValidationPattern).not.toHaveBeenCalled();
     });
 

@@ -19,25 +19,25 @@
 *  ============LICENSE_END=========================================================
 */
 
-import { NgModule} from '@angular/core';
-import { CommonModule} from '@angular/common';
+import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
-import { FormElementsModule } from 'app/components/ui/form-components/form-elements.module';
-import { TranslateModule } from 'app/shared/translator/translate.module';
-import { AddInputComponent } from './add-input/add-input.component';
-import { InputListComponent } from './input-list/input-list.component';
-import { InputListItemComponent } from './input-list/input-list-item/input-list-item.component';
-import { PropertyParamRowComponent } from './property-param-row/property-param-row.component';
-import { InterfaceOperationHandlerComponent } from './interface-operation-handler.component';
-import { SdcUiComponentsModule } from 'onap-ui-angular/dist';
-import { UiElementsModule } from 'app/components/ui/ui-elements.module';
 import { PropertyTableModule } from 'app/components/logic/properties-table/property-table.module';
-import { ToscaFunctionModule } from '../../../properties-assignment/tosca-function/tosca-function.module';
+import { FormElementsModule } from 'app/components/ui/form-components/form-elements.module';
 import { TabModule } from 'app/components/ui/tabs/tabs.module';
-import { FiltersListComponent } from './filters-list/filters-list.component';
+import { UiElementsModule } from 'app/components/ui/ui-elements.module';
+import { TranslateModule } from 'app/shared/translator/translate.module';
+import { SdcUiComponentsModule } from 'onap-ui-angular/dist';
+import { ToscaFunctionModule } from '../../../properties-assignment/tosca-function/tosca-function.module';
 import { ActivitiesListComponent } from './activities-list/activities-list.component';
+import { AddInputComponent } from './add-input/add-input.component';
+import { FiltersListComponent } from './filters-list/filters-list.component';
+import { InputListItemComponent } from './input-list/input-list-item/input-list-item.component';
+import { InputListComponent } from './input-list/input-list.component';
+import { InterfaceOperationHandlerComponent } from './interface-operation-handler.component';
+import { PropertyParamRowComponent } from './property-param-row/property-param-row.component';
 
 @NgModule({
     declarations: [

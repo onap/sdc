@@ -1,8 +1,8 @@
-import { NgModule } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { FormsModule } from "@angular/forms";
-import { TranslateModule } from "../../shared/translator/translate.module";
-import { TopNavComponent } from "./top-nav/top-nav.component";
+import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '../../shared/translator/translate.module';
+import { TopNavComponent } from './top-nav/top-nav.component';
 
 @NgModule({
     declarations: [
@@ -16,7 +16,7 @@ import { TopNavComponent } from "./top-nav/top-nav.component";
     exports: [
         TopNavComponent
     ],
-    entryComponents: [ //need to add anything that will be dynamically created
+    entryComponents: [ // need to add anything that will be dynamically created
         TopNavComponent
     ],
     providers: []

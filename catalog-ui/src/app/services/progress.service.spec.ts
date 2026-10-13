@@ -31,8 +31,8 @@
  * supplies a pass-through fake `NgZone` (runOutsideAngular/run just invoke the callback), which
  * preserves every behavioural assertion across the migration.
  */
-import {NgZone} from '@angular/core';
-import {ProgressService} from './progress.service';
+import { NgZone } from '@angular/core';
+import { ProgressService } from './progress.service';
 
 describe('ProgressService (Angular characterization)', () => {
     // Pass-through fake NgZone: runOutsideAngular/run simply invoke the callback synchronously.

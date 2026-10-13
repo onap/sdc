@@ -18,14 +18,14 @@
  * ============LICENSE_END=========================================================
  */
 
-import * as _ from "lodash";
-import { Component, Inject, Input} from "@angular/core";
-import { TranslateService } from '../../../../../shared/translator/translate.service';
+import { Component, Inject, Input } from '@angular/core';
+import { Component as TopologyTemplate } from 'app/models/components/component';
+import { GroupInstance } from 'app/models/graph/zones/group-instance';
 import { PolicyInstance } from 'app/models/graph/zones/policy-instance';
+import { ModalsHandler } from 'app/utils/modals-handler';
+import * as _ from 'lodash';
 import { PropertyModel } from '../../../../../models/properties';
-import {ModalsHandler} from 'app/utils/modals-handler';
-import {Component as TopologyTemplate} from 'app/models/components/component';
-import {GroupInstance} from 'app/models/graph/zones/group-instance';
+import { TranslateService } from '../../../../../shared/translator/translate.service';
 
 @Component({
     selector: 'group-or-policy-properties-tab',
@@ -34,20 +34,18 @@ import {GroupInstance} from 'app/models/graph/zones/group-instance';
                 './group-or-policy-properties-tab.component.less'],
 })
 export class GroupOrPolicyPropertiesTab {
- 
+
     @Input() component: GroupInstance | PolicyInstance;
-    @Input() topologyTemplate:TopologyTemplate;
+    @Input() topologyTemplate: TopologyTemplate;
     @Input() isViewOnly: boolean;
     @Input() input: {type: string};
 
-
-    constructor(private translateService:TranslateService, private ModalsHandler:ModalsHandler) {
+    constructor(private translateService: TranslateService, private ModalsHandler: ModalsHandler) {
     }
 
-
-    editProperty = (property?:PropertyModel):void => {
-        this.ModalsHandler.openEditPropertyModal((property ? property : new PropertyModel()), this.topologyTemplate, this.component.properties, false, this.input.type, this.component.uniqueId).then((updatedProperty:PropertyModel) => {
-            console.log("ok");
+    editProperty = (property?: PropertyModel): void => {
+        this.ModalsHandler.openEditPropertyModal((property ? property : new PropertyModel()), this.topologyTemplate, this.component.properties, false, this.input.type, this.component.uniqueId).then((updatedProperty: PropertyModel) => {
+            console.log('ok');
         });
     }
 

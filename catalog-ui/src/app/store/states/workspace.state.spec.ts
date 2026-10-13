@@ -1,5 +1,5 @@
-import {WorkspaceState, WorkspaceStateModel} from './workspace.state';
-import {UpdateIsViewOnly, UpdateIsDesigner} from '../actions/workspace.action';
+import { UpdateIsDesigner, UpdateIsViewOnly } from '../actions/workspace.action';
+import { WorkspaceState, WorkspaceStateModel } from './workspace.state';
 
 describe('WorkspaceState', () => {
     let state: WorkspaceState;

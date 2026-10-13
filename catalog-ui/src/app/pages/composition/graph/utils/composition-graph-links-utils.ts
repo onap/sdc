@@ -21,36 +21,39 @@
 /**
  * Created by obarda on 6/28/2016.
  */
-import * as _ from "lodash";
-import {GraphUIObjects} from 'app/utils/constants';
-import {Capability} from 'app/models/capability';
-import {Component} from 'app/models/components/component';
-import {ComponentInstance} from 'app/models/components-instances/component-instance';
-import {ConnectRelationModel} from 'app/models/graph/connect-relation-model';
-import {CompositionCiLinkBase} from 'app/models/graph/graph-links/composition-graph-links/composition-ci-link-base';
-import {LinkMenu} from 'app/models/graph/link-menu';
-import {Match} from 'app/models/graph/match-relation';
-import {CompositionCiNodeBase} from 'app/models/graph/nodes/composition-graph-nodes/composition-ci-node-base';
-import {Point} from 'app/models/graph/point';
-import {Relationship, RelationshipModel} from 'app/models/graph/relationship';
-import {Requirement} from 'app/models/requirement';
+import { Injectable } from '@angular/core';
+import { Capability } from 'app/models/capability';
+import { ComponentInstance } from 'app/models/components-instances/component-instance';
+import { Component } from 'app/models/components/component';
+import { ConnectRelationModel } from 'app/models/graph/connect-relation-model';
+import { CompositionCiLinkBase } from 'app/models/graph/graph-links/composition-graph-links/composition-ci-link-base';
+import { CompositionCiServicePathLink } from 'app/models/graph/graph-links/composition-graph-links/composition-ci-service-path-link';
 // LinksFactory is deep-imported (not via the 'app/models' barrel) to avoid a
 // barrel↔links-factory circular dependency that leaves this @Injectable's
 // constructor param metadata undefined under JIT ("Can't resolve all parameters").
-import { LinksFactory } from "app/models/graph/graph-links/links-factory";
-import {CommonGraphUtils} from "../common/common-graph-utils";
-import {CompositionGraphGeneralUtils} from "./composition-graph-general-utils";
-import {MatchCapabilitiesRequirementsUtils} from "./match-capability-requirement-utils";
-import {CompositionCiServicePathLink} from "app/models/graph/graph-links/composition-graph-links/composition-ci-service-path-link";
-import {Injectable} from "@angular/core";
-import {QueueServiceUtils} from "app/utils/queue-service-utils";
-import {TopologyTemplateService} from "app/services/component-services/topology-template.service";
-import {SdcUiServices} from "onap-ui-angular";
-import {CompositionService} from "../../composition.service";
-import {WorkspaceService} from "app/pages/workspace/workspace.service";
+import { LinksFactory } from 'app/models/graph/graph-links/links-factory';
+import { LinkMenu } from 'app/models/graph/link-menu';
+import { Match } from 'app/models/graph/match-relation';
+import { CompositionCiNodeBase } from 'app/models/graph/nodes/composition-graph-nodes/composition-ci-node-base';
+import { Point } from 'app/models/graph/point';
+import { Relationship, RelationshipModel } from 'app/models/graph/relationship';
+import { Requirement } from 'app/models/requirement';
+import { WorkspaceService } from 'app/pages/workspace/workspace.service';
+import { TopologyTemplateService } from 'app/services/component-services/topology-template.service';
+import { GraphUIObjects } from 'app/utils/constants';
+import { QueueServiceUtils } from 'app/utils/queue-service-utils';
+import * as _ from 'lodash';
+import { SdcUiServices } from 'onap-ui-angular';
+import { CompositionService } from '../../composition.service';
+import { CommonGraphUtils } from '../common/common-graph-utils';
+import { CompositionGraphGeneralUtils } from './composition-graph-general-utils';
+import { MatchCapabilitiesRequirementsUtils } from './match-capability-requirement-utils';
 
 @Injectable()
 export class CompositionGraphLinkUtils {
+
+
+
 
     constructor(private linksFactory: LinksFactory,
                 private generalGraphUtils: CompositionGraphGeneralUtils,
@@ -61,7 +64,6 @@ export class CompositionGraphLinkUtils {
                 private loaderService: SdcUiServices.LoaderService,
                 private compositionService: CompositionService,
                 private workspaceService: WorkspaceService) {
-
 
     }
 
@@ -79,9 +81,9 @@ export class CompositionGraphLinkUtils {
                 this.compositionService.deleteRelation(deletedRelation);
                 cy.remove(link);
                 this.loaderService.deactivate();
-            }, (error) => {this.loaderService.deactivate()});
+            }, (error) => {this.loaderService.deactivate(); });
         });
-    };
+    }
 
     /**
      * create the link on server and than draw it on graph
@@ -100,15 +102,9 @@ export class CompositionGraphLinkUtils {
                 this.insertLinkToGraph(cy, link);
                 this.compositionService.addRelation(relation);
                 this.loaderService.deactivate();
-            }, (error) => {this.loaderService.deactivate()})
+            }, (error) => {this.loaderService.deactivate(); });
         });
-    };
-
-    private createSimpleLink = (match: Match, cy: Cy.Instance): void => {
-        let newRelation: RelationshipModel = match.matchToRelationModel();
-        let linkObg: CompositionCiLinkBase = this.linksFactory.createGraphLink(cy, newRelation, newRelation.relationships[0]);
-        this.createLink(linkObg, cy);
-    };
+    }
 
     public createLinkFromMenu = (cy: Cy.Instance, chosenMatch: Match): void => {
 
@@ -128,41 +124,18 @@ export class CompositionGraphLinkUtils {
      */
     public onLinkDrawn(cy: Cy.Instance, fromNode: Cy.CollectionFirstNode, toNode: Cy.CollectionFirstNode): ConnectRelationModel {
 
-        let linkModel: Array<CompositionCiLinkBase> = this.generalGraphUtils.getAllCompositionCiLinks(cy);
+        const linkModel: CompositionCiLinkBase[] = this.generalGraphUtils.getAllCompositionCiLinks(cy);
 
-        let possibleRelations: Array<Match> = this.matchCapabilitiesRequirementsUtils.getMatchedRequirementsCapabilities(fromNode.data().componentInstance,
+        const possibleRelations: Match[] = this.matchCapabilitiesRequirementsUtils.getMatchedRequirementsCapabilities(fromNode.data().componentInstance,
             toNode.data().componentInstance, linkModel);
 
-        //if found possibleRelations between the nodes we create relation menu directive and open the link menu
+        // if found possibleRelations between the nodes we create relation menu directive and open the link menu
         if (possibleRelations.length) {
             // let menuPosition = this.generalGraphUtils.getLinkMenuPosition(cy, toNode.renderedPoint());
             return new ConnectRelationModel(fromNode.data(), toNode.data(), possibleRelations);
         }
         return null;
-    };
-
-    private handlePathLink(cy: Cy.Instance, event: Cy.EventObject) {
-        let linkData = event.cyTarget.data();
-        let selectedPathId = linkData.pathId;
-        let pathEdges = cy.collection(`[pathId='${selectedPathId}']`);
-        if (pathEdges.length > 1) {
-            setTimeout(() => {
-                pathEdges.select();
-            }, 0);
-        }
     }
-
-    private handleVLLink(event: Cy.EventObject) {
-        let vl: Cy.CollectionNodes = event.cyTarget[0].target('.vl-node');
-        let connectedEdges: Cy.CollectionEdges = vl.connectedEdges(`[type!="${CompositionCiServicePathLink.LINK_TYPE}"]`);
-        if (vl.length && connectedEdges.length > 1) {
-            setTimeout(() => {
-                vl.select();
-                connectedEdges.select();
-            }, 0);
-        }
-    }
-
 
     /**
      * Handles click event on links.
@@ -177,13 +150,11 @@ export class CompositionGraphLinkUtils {
         } else {
             if (event.cyTarget[0].data().type === CompositionCiServicePathLink.LINK_TYPE) {
                 this.handlePathLink(cy, event);
-            }
-            else {
+            } else {
                 this.handleVLLink(event);
             }
         }
     }
-
 
     /**
      * Calculates the position for the menu that modifies an existing link
@@ -193,7 +164,7 @@ export class CompositionGraphLinkUtils {
      * @returns {Point}
      */
     public calculateLinkMenuPosition(event, elementWidth, elementHeight): Point {
-        let point: Point = new Point(event.originalEvent.clientX, event.originalEvent.clientY);
+        const point: Point = new Point(event.originalEvent.clientX, event.originalEvent.clientY);
         if (event.originalEvent.view.screen.height - elementHeight < point.y) {
             point.y = event.originalEvent.view.screen.height - elementHeight;
         }
@@ -201,8 +172,7 @@ export class CompositionGraphLinkUtils {
             point.x = event.originalEvent.view.screen.width - elementWidth;
         }
         return point;
-    };
-
+    }
 
     /**
      * Gets the menu that is displayed when you click an existing link.
@@ -211,11 +181,10 @@ export class CompositionGraphLinkUtils {
      * @returns {LinkMenu}
      */
     public getModifyLinkMenu(link: Cy.CollectionFirstEdge, event: Cy.EventObject): LinkMenu {
-        let point: Point = this.calculateLinkMenuPosition(event, GraphUIObjects.MENU_LINK_VL_WIDTH_OFFSET, GraphUIObjects.MENU_LINK_VL_HEIGHT_OFFSET);
-        let menu: LinkMenu = new LinkMenu(point, true, link);
+        const point: Point = this.calculateLinkMenuPosition(event, GraphUIObjects.MENU_LINK_VL_WIDTH_OFFSET, GraphUIObjects.MENU_LINK_VL_HEIGHT_OFFSET);
+        const menu: LinkMenu = new LinkMenu(point, true, link);
         return menu;
-    };
-
+    }
     /**
      * Returns relation source and target nodes.
      * @param nodes - all nodes in graph in order to find the edge connecting the two nodes
@@ -230,7 +199,6 @@ export class CompositionGraphLinkUtils {
         ];
     }
 
-
     /**
      *  go over the relations and draw links on the graph
      * @param cy
@@ -240,7 +208,7 @@ export class CompositionGraphLinkUtils {
         if (relations) {
             _.forEach(relations, (relationshipModel: RelationshipModel) => {
                 _.forEach(relationshipModel.relationships, (relationship: Relationship) => {
-                    let linkToCreate = this.linksFactory.createGraphLink(cy, relationshipModel, relationship);
+                    const linkToCreate = this.linksFactory.createGraphLink(cy, relationshipModel, relationship);
                     this.insertLinkToGraph(cy, linkToCreate);
                 });
             });
@@ -260,7 +228,7 @@ export class CompositionGraphLinkUtils {
         if ((sourceNode && !sourceNode.certified) || (targetNode && !targetNode.certified)) {
             link.classes = 'not-certified-link';
         }
-        let linkElement = cy.add({
+        const linkElement = cy.add({
             group: 'edges',
             data: link,
             classes: link.classes
@@ -269,10 +237,10 @@ export class CompositionGraphLinkUtils {
         const getLinkRequirementCapability = () =>
             this.getRelationRequirementCapability(link.relation.relationships[0], sourceNode.componentInstance, targetNode.componentInstance);
         this.commonGraphUtils.initLinkTooltip(linkElement, link.relation.relationships[0], getLinkRequirementCapability);
-    };
+    }
 
     public syncComponentByRelation(relation: RelationshipModel) {
-        let componentInstances = this.compositionService.getComponentInstances();
+        const componentInstances = this.compositionService.getComponentInstances();
         relation.relationships.forEach((rel) => {
             if (rel.capability) {
                 const toComponentInstance: ComponentInstance = componentInstances.find((inst) => inst.uniqueId === relation.toNode);
@@ -284,7 +252,7 @@ export class CompositionGraphLinkUtils {
                     console.log('Capability is fulfilled', rel.capability.getFullTitle(), rel.capability.leftOccurrences);
                     toComponentInstance.capabilities[rel.capability.type].splice(
                         toComponentInstance.capabilities[rel.capability.type].findIndex((cap) => cap === toComponentInstanceCapability), 1
-                    )
+                    );
                 } else if (!isCapabilityFulfilled && !toComponentInstanceCapability) {
                     // if capability is unfulfilled and not in component, then add it
                     console.log('Capability is unfulfilled', rel.capability.getFullTitle(), rel.capability.leftOccurrences);
@@ -301,7 +269,7 @@ export class CompositionGraphLinkUtils {
                     console.log('Requirement is fulfilled', rel.requirement.getFullTitle(), rel.requirement.leftOccurrences);
                     fromComponentInstance.requirements[rel.requirement.capability].splice(
                         fromComponentInstance.requirements[rel.requirement.capability].findIndex((req) => req === fromComponentInstanceRequirement), 1
-                    )
+                    );
                 } else if (!isRequirementFulfilled && !fromComponentInstanceRequirement) {
                     // if requirement is unfulfilled and not in component, then add it
                     console.log('Requirement is unfulfilled', rel.requirement.getFullTitle(), rel.requirement.leftOccurrences);
@@ -313,11 +281,11 @@ export class CompositionGraphLinkUtils {
 
     public getRelationRequirementCapability(relationship: Relationship, sourceNode: ComponentInstance, targetNode: ComponentInstance): Promise<{ requirement: Requirement, capability: Capability }> {
         // try find the requirement and capability in the source and target component instances:
-        let capability: Capability = targetNode.findCapability(undefined,
+        const capability: Capability = targetNode.findCapability(undefined,
             relationship.relation.capabilityUid,
             relationship.relation.capabilityOwnerId,
             relationship.relation.capability);
-        let requirement: Requirement = sourceNode.findRequirement(undefined,
+        const requirement: Requirement = sourceNode.findRequirement(undefined,
             relationship.relation.requirementUid,
             relationship.relation.requirementOwnerId,
             relationship.relation.requirement);
@@ -325,8 +293,7 @@ export class CompositionGraphLinkUtils {
         return new Promise<{ requirement: Requirement, capability: Capability }>((resolve, reject) => {
             if (capability && requirement) {
                 resolve({capability, requirement});
-            }
-            else {
+            } else {
                 // if requirement and/or capability is missing, then fetch the full relation with its requirement and capability:
                 this.topologyTemplateService.fetchRelation(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId, relationship.relation.id).subscribe((fetchedRelation) => {
                     this.syncComponentByRelation(fetchedRelation);
@@ -338,5 +305,32 @@ export class CompositionGraphLinkUtils {
             }
         });
     }
-}
 
+    private createSimpleLink = (match: Match, cy: Cy.Instance): void => {
+        const newRelation: RelationshipModel = match.matchToRelationModel();
+        const linkObg: CompositionCiLinkBase = this.linksFactory.createGraphLink(cy, newRelation, newRelation.relationships[0]);
+        this.createLink(linkObg, cy);
+    }
+
+    private handlePathLink(cy: Cy.Instance, event: Cy.EventObject) {
+        const linkData = event.cyTarget.data();
+        const selectedPathId = linkData.pathId;
+        const pathEdges = cy.collection(`[pathId='${selectedPathId}']`);
+        if (pathEdges.length > 1) {
+            setTimeout(() => {
+                pathEdges.select();
+            }, 0);
+        }
+    }
+
+    private handleVLLink(event: Cy.EventObject) {
+        const vl: Cy.CollectionNodes = event.cyTarget[0].target('.vl-node');
+        const connectedEdges: Cy.CollectionEdges = vl.connectedEdges(`[type!="${CompositionCiServicePathLink.LINK_TYPE}"]`);
+        if (vl.length && connectedEdges.length > 1) {
+            setTimeout(() => {
+                vl.select();
+                connectedEdges.select();
+            }, 0);
+        }
+    }
+}

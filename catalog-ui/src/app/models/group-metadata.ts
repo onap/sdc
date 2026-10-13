@@ -1,6 +1,6 @@
 export class GroupMetadata {
-    public name:string;
-    public icon:string;
+    public name: string;
+    public icon: string;
     public uniqueId: string;
     public type: string;
     public version: string;
@@ -10,7 +10,7 @@ export class GroupMetadata {
     public highestVersion: boolean;
     public empty: boolean;
 
-    deserialize (response): GroupMetadata {
+    deserialize(response): GroupMetadata {
         this.uniqueId = response.uniqueId;
         this.type = response.type;
         this.name = response.name;
@@ -27,11 +27,11 @@ export class GroupMetadata {
 }
 
 export interface GroupTpes {
-    groupTypes: Array<GroupMetadata>;
+    groupTypes: GroupMetadata[];
     excludeMapping: ExcludedGroupTypes;
 }
 
 export interface ExcludedGroupTypes {
     componentType: string;
-    excludedGroupTypes: Array<string>;
+    excludedGroupTypes: string[];
 }

@@ -25,7 +25,7 @@
  * service is a plain @Injectable with a no-arg constructor. These tests lock the exact matching
  * behaviour of each inlined pattern so the migration cannot silently change validation.
  */
-import {ValidationUtils} from './validation-utils';
+import { ValidationUtils } from './validation-utils';
 
 describe('ValidationUtils', () => {
 

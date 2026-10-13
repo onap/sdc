@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,17 +17,17 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-import {CommonNodeBase} from "./base-common-node";
-import {ComponentInstance} from "../../components-instances/component-instance";
+import { ComponentInstance } from '../../components-instances/component-instance';
+import { CommonNodeBase } from './base-common-node';
 export abstract class CommonCINodeBase extends CommonNodeBase {
 
-    public certified:boolean;
-    public archived:boolean;
-    public template:string;
-    public componentInstance:ComponentInstance;
-    public group:string;
+    public certified: boolean;
+    public archived: boolean;
+    public template: string;
+    public componentInstance: ComponentInstance;
+    public group: string;
 
-    constructor(instance:ComponentInstance) {
+    constructor(instance: ComponentInstance) {
         super();
         this.componentInstance = instance;
         this.id = this.componentInstance.uniqueId;
@@ -38,9 +38,8 @@ export abstract class CommonCINodeBase extends CommonNodeBase {
         this.archived = instance.originArchived;
     }
 
-    private isCertified(version:string):boolean {
+    private isCertified(version: string): boolean {
         return 0 === (parseFloat(version)) % 1;
     }
 
 }
-

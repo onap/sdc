@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,23 +19,23 @@
  */
 'use strict';
 
-import {ComponentInstance} from '../../components-instances/component-instance';
-import {Module} from '../../modules/base-module';
-import {CompositionCiNodeBase} from './composition-graph-nodes/composition-ci-node-base';
-import {CompositionCiNodeConfiguration} from './composition-graph-nodes/composition-ci-node-configuration';
-import {CompositionCiNodeCp} from './composition-graph-nodes/composition-ci-node-cp';
-import {CompositionCiNodeService} from './composition-graph-nodes/composition-ci-node-service';
-import {CompositionCiNodeServiceProxy} from './composition-graph-nodes/composition-ci-node-service-proxy';
-import {CompositionCiNodeServiceSubstitution} from './composition-graph-nodes/composition-ci-node-service-substitution';
-import {NodeUcpe} from './composition-graph-nodes/composition-ci-node-ucpe';
-import {CompositionCiNodeUcpeCp} from './composition-graph-nodes/composition-ci-node-ucpe-cp';
-import {CompositionCiNodeVf} from './composition-graph-nodes/composition-ci-node-vf';
-import {CompositionCiNodeVfc} from './composition-graph-nodes/composition-ci-node-vfc';
-import {CompositionCiNodeVl} from './composition-graph-nodes/composition-ci-node-vl';
-import {ModuleNodeBase} from './modules-graph-nodes/module-node-base';
-import {ComponentType, ResourceType} from "../../../utils/constants";
-import {ImageCreatorService} from "app/pages/composition/graph/common/image-creator.service";
-import {Injectable} from "@angular/core";
+import { Injectable } from '@angular/core';
+import { ImageCreatorService } from 'app/pages/composition/graph/common/image-creator.service';
+import { ComponentType, ResourceType } from '../../../utils/constants';
+import { ComponentInstance } from '../../components-instances/component-instance';
+import { Module } from '../../modules/base-module';
+import { CompositionCiNodeBase } from './composition-graph-nodes/composition-ci-node-base';
+import { CompositionCiNodeConfiguration } from './composition-graph-nodes/composition-ci-node-configuration';
+import { CompositionCiNodeCp } from './composition-graph-nodes/composition-ci-node-cp';
+import { CompositionCiNodeService } from './composition-graph-nodes/composition-ci-node-service';
+import { CompositionCiNodeServiceProxy } from './composition-graph-nodes/composition-ci-node-service-proxy';
+import { CompositionCiNodeServiceSubstitution } from './composition-graph-nodes/composition-ci-node-service-substitution';
+import { NodeUcpe } from './composition-graph-nodes/composition-ci-node-ucpe';
+import { CompositionCiNodeUcpeCp } from './composition-graph-nodes/composition-ci-node-ucpe-cp';
+import { CompositionCiNodeVf } from './composition-graph-nodes/composition-ci-node-vf';
+import { CompositionCiNodeVfc } from './composition-graph-nodes/composition-ci-node-vfc';
+import { CompositionCiNodeVl } from './composition-graph-nodes/composition-ci-node-vl';
+import { ModuleNodeBase } from './modules-graph-nodes/module-node-base';
 
 @Injectable()
 export class NodesFactory {
@@ -71,15 +71,14 @@ export class NodesFactory {
         }
 
         return new CompositionCiNodeVf(instance, this.imageCreator);
-    };
+    }
 
     public createModuleNode = (module: Module): ModuleNodeBase => {
         return new ModuleNodeBase(module);
-    };
+    }
 
     public createUcpeCpNode = (instance: ComponentInstance): CompositionCiNodeCp => {
 
         return new CompositionCiNodeUcpeCp(instance, this.imageCreator);
     }
 }
-

@@ -19,14 +19,14 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {InputOperationParameter} from '../../../../../models/interface-operation';
-import {IDropDownOption} from 'onap-ui-angular/dist/form-elements/dropdown/dropdown-models';
-import {Observable} from 'rxjs/Observable';
-import {AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
-import {PROPERTY_TYPES} from '../../../../../utils/constants';
-import {SchemaProperty, SchemaPropertyGroupModel} from '../../../../../models/schema-property';
-import {DataTypeModel} from "../../../../../models/data-types";
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { IDropDownOption } from 'onap-ui-angular/dist/form-elements/dropdown/dropdown-models';
+import { Observable } from 'rxjs/Observable';
+import { DataTypeModel } from '../../../../../models/data-types';
+import { InputOperationParameter } from '../../../../../models/interface-operation';
+import { SchemaProperty, SchemaPropertyGroupModel } from '../../../../../models/schema-property';
+import { PROPERTY_TYPES } from '../../../../../utils/constants';
 
 @Component({
   selector: 'app-add-input',
@@ -37,14 +37,14 @@ export class AddInputComponent implements OnInit {
 
   @Input('dataTypeMap') dataTypeMap$: Observable<Map<string, DataTypeModel>>;
   @Input('isView') isView: boolean;
-  @Input() existingInputNames: Array<string> = [];
+  @Input() existingInputNames: string[] = [];
   @Input('defaultType') defaultType: string;
   @Output('onAddInput') onAddInputEvent: EventEmitter<InputOperationParameter>;
 
   dataTypeMap: Map<string, DataTypeModel>;
   inputToAdd: InputOperationParameter;
-  inputTypeOptions: Array<IDropDownOption>;
-  inputSchemaOptions: Array<IDropDownOption>;
+  inputTypeOptions: IDropDownOption[];
+  inputSchemaOptions: IDropDownOption[];
   showForm: boolean = false;
   showAddLink: boolean = true;
   showInputSchema: boolean = false;
@@ -62,39 +62,16 @@ export class AddInputComponent implements OnInit {
     const type = control.get('type');
     const schema = control.get('schema');
     return (type.value === 'list' || type.value === 'map') && !schema.value ? { schemaRequired: true } : null;
-  };
+  }
 
   uniqueNameValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
     const name = control.get('name');
     return this.existingInputNames.indexOf(name.value) === -1 ? null : { nameIsNotUnique: true };
-  };
+  }
 
   ngOnInit() {
     this.initForm();
     this.initInputType();
-  }
-
-  private initForm() {
-    this.inputForm = new FormGroup({
-      name: new FormControl({value: '', disabled: this.isView}, [Validators.required, Validators.minLength(1)]),
-      type: new FormControl({value: '', disabled: this.isView}, [Validators.required, Validators.minLength(1)]),
-      schema: new FormControl({value: '', disabled: this.isView})
-    }, { validators: [this.schemaValidator, this.uniqueNameValidator] });
-  }
-
-  private initInputType() {
-    this.dataTypeMap$.subscribe((dataTypesMap: Map<string, DataTypeModel>) => {
-      this.dataTypeMap = dataTypesMap;
-      this.inputTypeOptions = [];
-      this.inputSchemaOptions = [];
-      dataTypesMap.forEach((value, key) => {
-        const entry = {label: key, value: key};
-        this.inputTypeOptions.push(entry);
-        if (key != PROPERTY_TYPES.LIST && key != PROPERTY_TYPES.MAP) {
-          this.inputSchemaOptions.push(entry);
-        }
-      });
-    });
   }
 
   onChangeInputType(inputType) {
@@ -161,12 +138,6 @@ export class AddInputComponent implements OnInit {
     this.resetForm();
   }
 
-  private resetForm() {
-    this.inputForm.reset();
-    this.showInputSchema = false;
-    this.inputToAdd = new InputOperationParameter();
-  }
-
   getSchemaType() {
     return this.inputToAdd.schema == undefined ? undefined : this.inputToAdd.schema.property.type;
   }
@@ -174,6 +145,35 @@ export class AddInputComponent implements OnInit {
   getSchemaPlaceholder() {
     const schemaType = this.getSchemaType();
     return schemaType === undefined ? 'Select...' : schemaType;
+  }
+
+  private initForm() {
+    this.inputForm = new FormGroup({
+      name: new FormControl({value: '', disabled: this.isView}, [Validators.required, Validators.minLength(1)]),
+      type: new FormControl({value: '', disabled: this.isView}, [Validators.required, Validators.minLength(1)]),
+      schema: new FormControl({value: '', disabled: this.isView})
+    }, { validators: [this.schemaValidator, this.uniqueNameValidator] });
+  }
+
+  private initInputType() {
+    this.dataTypeMap$.subscribe((dataTypesMap: Map<string, DataTypeModel>) => {
+      this.dataTypeMap = dataTypesMap;
+      this.inputTypeOptions = [];
+      this.inputSchemaOptions = [];
+      dataTypesMap.forEach((value, key) => {
+        const entry = {label: key, value: key};
+        this.inputTypeOptions.push(entry);
+        if (key != PROPERTY_TYPES.LIST && key != PROPERTY_TYPES.MAP) {
+          this.inputSchemaOptions.push(entry);
+        }
+      });
+    });
+  }
+
+  private resetForm() {
+    this.inputForm.reset();
+    this.showInputSchema = false;
+    this.inputToAdd = new InputOperationParameter();
   }
 
   private toggleInputSchema() {

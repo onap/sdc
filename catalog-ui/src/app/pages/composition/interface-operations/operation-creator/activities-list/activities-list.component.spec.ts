@@ -19,14 +19,14 @@
  */
 
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivitiesListComponent } from './activities-list.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SdcUiComponentsModule } from 'onap-ui-angular/dist';
 import { TranslateModule } from '../../../../../shared/translator/translate.module';
-import { AddInputComponent } from '../add-input/add-input.component';
-import { InputListComponent } from '../input-list/input-list.component';
-import { InputListItemComponent } from '../input-list/input-list-item/input-list-item.component';
-import { SdcUiComponentsModule } from "onap-ui-angular/dist";
 import { ToscaFunctionModule } from '../../../../properties-assignment/tosca-function/tosca-function.module';
+import { AddInputComponent } from '../add-input/add-input.component';
+import { InputListItemComponent } from '../input-list/input-list-item/input-list-item.component';
+import { InputListComponent } from '../input-list/input-list.component';
+import { ActivitiesListComponent } from './activities-list.component';
 
 describe('ActivitiesListComponent', () => {
   let component: ActivitiesListComponent;
@@ -34,7 +34,7 @@ describe('ActivitiesListComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ 
+      declarations: [
         ActivitiesListComponent,
         AddInputComponent,
         InputListComponent,

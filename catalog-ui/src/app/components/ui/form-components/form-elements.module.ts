@@ -13,9 +13,9 @@ import { UiElementInputComponent } from './input/ui-element-input.component';
 import { UiElementIntegerInputComponent } from './integer-input/ui-element-integer-input.component';
 import { UiElementPopoverInputComponent } from './popover-input/ui-element-popover-input.component';
 import { RadioButtonComponent } from './radio-buttons/radio-buttons.component';
+import { UiElementRangeInputComponent } from './range-input/ui-element-range-input.component';
 import { UiElementBase } from './ui-element-base.component';
-import {UiElementRangeInputComponent} from "./range-input/ui-element-range-input.component";
-import {UiElementValidValuesInputComponent} from "./valid-values-input/ui-element-valid-values-input.component";
+import { UiElementValidValuesInputComponent } from './valid-values-input/ui-element-valid-values-input.component';
 
 @NgModule({
     imports: [

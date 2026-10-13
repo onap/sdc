@@ -20,124 +20,122 @@
 
 'use strict';
 
-import * as _ from "lodash";
-import {AdditionalInformationModel} from '../additional-information';
-import {IAppMenu} from '../app-config';
-import {ArtifactGroupModel, ArtifactModel} from '../artifacts';
-import {AttributeModel, AttributesGroup} from '../attributes';
-import {CapabilitiesGroup} from '../capability';
-import {IMainCategory} from '../category';
-import {AsdcComment} from '../comments';
-import {ComponentInstance} from '../components-instances/component-instance';
-import {IFileDownload} from '../file-download';
-import {RelationshipModel} from '../graph/relationship';
-import {InputModel} from '../inputs';
-import {DisplayModule, Module} from '../modules/base-module';
-import {OperationModel} from '../operation';
-import {PropertiesGroup, PropertyModel} from '../properties';
-import {RequirementsGroup} from '../requirement';
-import {IValidate} from '../validate';
+import * as _ from 'lodash';
+import { AdditionalInformationModel } from '../additional-information';
+import { IAppMenu } from '../app-config';
+import { ArtifactGroupModel, ArtifactModel } from '../artifacts';
+import { AttributeModel, AttributesGroup } from '../attributes';
+import { CapabilitiesGroup } from '../capability';
+import { IMainCategory } from '../category';
+import { AsdcComment } from '../comments';
+import { ComponentInstance } from '../components-instances/component-instance';
+import { IFileDownload } from '../file-download';
+import { RelationshipModel } from '../graph/relationship';
+import { InputModel } from '../inputs';
+import { DisplayModule, Module } from '../modules/base-module';
+import { OperationModel } from '../operation';
+import { PropertiesGroup, PropertyModel } from '../properties';
+import { RequirementsGroup } from '../requirement';
+import { IValidate } from '../validate';
 
-import {ILegacyComponentService} from "../../services/legacy/component.service";
-import {CommonUtils} from "../../utils/common-utils";
-import {ArtifactGroupType} from "../../utils/constants";
-import {ComponentMetadata} from "../component-metadata";
-import { PolicyInstance } from "app/models/graph/zones/policy-instance";
-import { GroupInstance } from "../graph/zones/group-instance";
-import { Metadata } from "app/models/metadata";
-
+import { PolicyInstance } from 'app/models/graph/zones/policy-instance';
+import { Metadata } from 'app/models/metadata';
+import { ILegacyComponentService } from '../../services/legacy/component.service';
+import { CommonUtils } from '../../utils/common-utils';
+import { ArtifactGroupType } from '../../utils/constants';
+import { ComponentMetadata } from '../component-metadata';
+import { GroupInstance } from '../graph/zones/group-instance';
 
 // import {}
 export interface IComponent {
 
-    //---------------------------------------------- API CALLS ----------------------------------------------------//
+    // ---------------------------------------------- API CALLS ----------------------------------------------------//
 
-    //Component API
-    getComponent():Promise<Component>;
-    updateComponent():Promise<Component>;
-    createComponentOnServer():Promise<Component>;
-    changeLifecycleState(state:string, commentObj:AsdcComment):Promise<Component>;
-    validateName(newName:string):Promise<IValidate>;
+    // Component API
+    getComponent(): Promise<Component>;
+    updateComponent(): Promise<Component>;
+    createComponentOnServer(): Promise<Component>;
+    changeLifecycleState(state: string, commentObj: AsdcComment): Promise<Component>;
+    validateName(newName: string): Promise<IValidate>;
 
-    //Artifacts API
-    downloadInstanceArtifact(artifactId:string):Promise<IFileDownload>;
-    downloadArtifact(artifactId:string):Promise<IFileDownload>;
+    // Artifacts API
+    downloadInstanceArtifact(artifactId: string): Promise<IFileDownload>;
+    downloadArtifact(artifactId: string): Promise<IFileDownload>;
 
-    //Property API
-    deleteProperty(propertyId:string):Promise<void>;
+    // Property API
+    deleteProperty(propertyId: string): Promise<void>;
 
-    //---------------------------------------------- HELP FUNCTIONS ----------------------------------------------------//
+    // ---------------------------------------------- HELP FUNCTIONS ----------------------------------------------------//
 
-    getComponentSubType():string;
-    isAlreadyCertified():boolean;
-    isService():boolean;
-    isResource():boolean;
-    isComplex():boolean;
-    getAllVersionsAsSortedArray():Array<any>;
-    getStatus(sdcMenu:IAppMenu):string;
+    getComponentSubType(): string;
+    isAlreadyCertified(): boolean;
+    isService(): boolean;
+    isResource(): boolean;
+    isComplex(): boolean;
+    getAllVersionsAsSortedArray(): any[];
+    getStatus(sdcMenu: IAppMenu): string;
 }
-
 
 export abstract class Component implements IComponent {
 
-    //server data
-    public abstract:string;
-    public uniqueId:string;
-    public uuid:string;
-    public invariantUUID:string;
-    public name:string;
-    public version:string;
-    public creationDate:number;
-    public lastUpdateDate:number;
-    public description:string;
-    public lifecycleState:string;
-    public tags:Array<string>;
-    public icon:string;
-    public contactId:string;
-    public allVersions:any;
-    public creatorUserId:string;
-    public creatorFullName:string;
-    public lastUpdaterUserId:string;
-    public lastUpdaterFullName:string;
-    public componentType:string;
-    public deploymentArtifacts:ArtifactGroupModel;
-    public artifacts:ArtifactGroupModel;
-    public toscaArtifacts:ArtifactGroupModel;
-    public interfaceOperations:Array<OperationModel>;
-    public distributionStatus:string;
-    public categories:Array<IMainCategory>;
+    // server data
+    public abstract: string;
+    public uniqueId: string;
+    public uuid: string;
+    public invariantUUID: string;
+    public name: string;
+    public version: string;
+    public creationDate: number;
+    public lastUpdateDate: number;
+    public description: string;
+    public lifecycleState: string;
+    public tags: string[];
+    public icon: string;
+    public contactId: string;
+    public allVersions: any;
+    public creatorUserId: string;
+    public creatorFullName: string;
+    public lastUpdaterUserId: string;
+    public lastUpdaterFullName: string;
+    public componentType: string;
+    public deploymentArtifacts: ArtifactGroupModel;
+    public artifacts: ArtifactGroupModel;
+    public toscaArtifacts: ArtifactGroupModel;
+    public interfaceOperations: OperationModel[];
+    public distributionStatus: string;
+    public categories: IMainCategory[];
     public categoryNormalizedName: string;
     public subCategoryNormalizedName: string;
-    public componentInstancesProperties:PropertiesGroup;
-    public componentInstancesAttributes:AttributesGroup;
-    public componentInstancesRelations:Array<RelationshipModel>;
-    public componentInstances:Array<ComponentInstance>;
-    public inputs:Array<InputModel>;
-    public capabilities:CapabilitiesGroup;
-    public requirements:RequirementsGroup;
-    public additionalInformation:any;
-    public properties:Array<PropertyModel>;
-    public attributes:Array<AttributeModel>;
-    public highestVersion:boolean;
-    public vendorName:string;
-    public vendorRelease:string;
-    public derivedList:Array<any>;
-    public interfaces:any;
-    public normalizedName:string;
-    public systemName:string;
-    public policies:Array<PolicyInstance>;
-    public groupInstances:Array<GroupInstance>
-    public modules:Array<Module>;
-    //custom properties
-    public componentService:ILegacyComponentService;
-    public filterTerm:string;
-    public iconSprite:string;
-    public selectedInstance:ComponentInstance;
-    public mainCategory:string;
-    public subCategory:string;
-    public selectedCategory:string;
-    public showMenu:boolean;
-    public isArchived:boolean;
+    public componentInstancesProperties: PropertiesGroup;
+    public componentInstancesAttributes: AttributesGroup;
+    public componentInstancesRelations: RelationshipModel[];
+    public componentInstances: ComponentInstance[];
+    public inputs: InputModel[];
+    public capabilities: CapabilitiesGroup;
+    public requirements: RequirementsGroup;
+    public additionalInformation: any;
+    public properties: PropertyModel[];
+    public attributes: AttributeModel[];
+    public highestVersion: boolean;
+    public vendorName: string;
+    public vendorRelease: string;
+    public derivedList: any[];
+    public interfaces: any;
+    public normalizedName: string;
+    public systemName: string;
+    public policies: PolicyInstance[];
+    public groupInstances: GroupInstance[];
+    public modules: Module[];
+    // custom properties
+    public componentService: ILegacyComponentService;
+    public filterTerm: string;
+    public iconSprite: string;
+    public selectedInstance: ComponentInstance;
+    public mainCategory: string;
+    public subCategory: string;
+    public selectedCategory: string;
+    public showMenu: boolean;
+    public isArchived: boolean;
     public vspArchived: boolean;
     public componentMetadata: ComponentMetadata;
     public categorySpecificMetadata: Metadata = new Metadata();
@@ -145,7 +143,7 @@ export abstract class Component implements IComponent {
     public derivedFromGenericVersion: string;
     public model: string;
 
-    constructor(componentService:ILegacyComponentService, component?:Component) {
+    constructor(componentService: ILegacyComponentService, component?: Component) {
         if (component) {
             this.abstract = component.abstract;
             this.uniqueId = component.uniqueId;
@@ -203,7 +201,7 @@ export abstract class Component implements IComponent {
             if (component.componentMetadata) {
                 this.componentMetadata = component.componentMetadata;
             }
-            if (component.categorySpecificMetadata && component.categories && component.categories[0]){
+            if (component.categorySpecificMetadata && component.categories && component.categories[0]) {
                 this.copyCategoryMetadata(component);
                 this.copySubcategoryMetadata(component);
             }
@@ -213,183 +211,152 @@ export abstract class Component implements IComponent {
             this.model = component.model;
         }
 
-        //custom properties
+        // custom properties
         this.componentService = componentService;
     }
 
-    private copyCategoryMetadata = (component:Component):void => {
-        if (component.categories[0].metadataKeys){
-            for (let key of Object.keys(component.categorySpecificMetadata)) {
-                if (component.categories[0].metadataKeys.some(metadataKey => metadataKey.name == key)) {
-                    this.categorySpecificMetadata[key] = component.categorySpecificMetadata[key];
-                }
-            }
-        }
-    }
-    private copySubcategoryMetadata = (component:Component):void => {
-        if (component.categories[0].subcategories && component.categories[0].subcategories[0] && component.categories[0].subcategories[0].metadataKeys){
-            for (let key of Object.keys(component.categorySpecificMetadata)) {
-                if (component.categories[0].subcategories[0].metadataKeys.some(metadataKey => metadataKey.name == key)) {
-                    this.categorySpecificMetadata[key] = component.categorySpecificMetadata[key];
-                }
-            }
-        }
-    }
-
-    public setUniqueId = (uniqueId:string):void => {
+    public setUniqueId = (uniqueId: string): void => {
         this.uniqueId = uniqueId;
-    };
+    }
 
-    //------------------------------------------ API Calls ----------------------------------------------------------------//
-    public changeLifecycleState = (state:string, commentObj:AsdcComment):Promise<Component> => {
+    // ------------------------------------------ API Calls ----------------------------------------------------------------//
+    public changeLifecycleState = (state: string, commentObj: AsdcComment): Promise<Component> => {
         return new Promise<Component>((resolve, reject) => {
             this.componentService.changeLifecycleState(this, state, commentObj).then(
-                (componentMetadata:ComponentMetadata):void => {
+                (componentMetadata: ComponentMetadata): void => {
                     this.setComponentMetadata(componentMetadata);
                     this.lifecycleState = componentMetadata.lifecycleState;
                     resolve(this);
                 },
-                (error:any):void => {
+                (error: any): void => {
                     reject(error);
                 });
         });
-    };
+    }
 
-    public getComponent = ():Promise<Component> => {
+    public getComponent = (): Promise<Component> => {
         return this.componentService.getComponent(this.uniqueId);
-    };
+    }
 
-    public createComponentOnServer = ():Promise<Component> => {
+    public createComponentOnServer = (): Promise<Component> => {
         this.handleTags();
         return this.componentService.createComponent(this);
-    };
-    
+    }
+
     public importComponentOnServer = (): Promise<Component> => {
         this.handleTags();
         return this.componentService.importComponent(this);
-    };
+    }
 
-    public updateComponent = ():Promise<Component> => {
+    public updateComponent = (): Promise<Component> => {
         this.handleTags();
         return this.componentService.updateComponent(this);
-    };
+    }
 
-    public validateName = (newName:string, subtype?:string):Promise<IValidate> => {
+    public validateName = (newName: string, subtype?: string): Promise<IValidate> => {
         return this.componentService.validateName(newName, subtype);
-    };
+    }
 
     public downloadArtifact = (artifactId: string): Promise<IFileDownload> => {
-        if(this.vendorName === 'IsService'){
+        if (this.vendorName === 'IsService') {
             return this.componentService.downloadArtifact(this.uniqueId, artifactId, this.vendorName);
-        }else{
+        } else {
             return this.componentService.downloadArtifact(this.uniqueId, artifactId);
         }
-    };
+    }
 
     // Resolves with no value: the sole caller (pages/workspace/properties-tab) only needs to know
     // the round-trip finished so it can refresh the table.
-    public deleteProperty = (propertyId:string):Promise<void> => {
+    public deleteProperty = (propertyId: string): Promise<void> => {
         return new Promise<void>((resolve, reject) => {
             this.componentService.deleteProperty(this.uniqueId, propertyId).then(
-                ():void => {
+                (): void => {
                     delete _.remove(this.properties, {uniqueId: propertyId})[0];
                     resolve();
                 },
-                ():void => {
+                (): void => {
                     reject();
                 });
         });
-    };
+    }
 
-    public downloadInstanceArtifact = (artifactId:string):Promise<IFileDownload> => {
+    public downloadInstanceArtifact = (artifactId: string): Promise<IFileDownload> => {
         return this.componentService.downloadInstanceArtifact(this.uniqueId, this.selectedInstance.uniqueId, artifactId);
-    };
+    }
 
-    //------------------------------------------ Help Functions ----------------------------------------------------------------//
+    // ------------------------------------------ Help Functions ----------------------------------------------------------------//
 
-    public isService = ():boolean => {
+    public isService = (): boolean => {
         return false;
-    };
+    }
 
-    public isResource = ():boolean => {
+    public isResource = (): boolean => {
         return false;
-    };
+    }
 
-    public getComponentSubType = ():string => {
+    public getComponentSubType = (): string => {
         return this.componentType;
-    };
+    }
 
-    public isAlreadyCertified = ():boolean => {
+    public isAlreadyCertified = (): boolean => {
         return parseInt(this.version) >= 1;
-    };
+    }
 
-    public isComplex = ():boolean => {
+    public isComplex = (): boolean => {
         return true;
-    };
+    }
 
-    //sort string version value from hash to sorted version (i.e 1.9 before 1.11)
-    private sortVersions = (v1:string, v2:string):number => {
-        let ver1 = v1.split('.');
-        let ver2 = v2.split('.');
-        let diff = parseInt(_.first(ver1)) - parseInt(_.first(ver2));
-        if (!diff) {
-            return parseInt(_.last(ver1)) - parseInt(_.last(ver2));
-        }
-        return diff;
-    };
-
-    public getAllVersionsAsSortedArray = ():Array<any> => {
-        let res = [];
+    public getAllVersionsAsSortedArray = (): any[] => {
+        const res = [];
         if (this.allVersions) {
-            let keys = Object.keys(this.allVersions).sort(this.sortVersions);
-            _.forEach(keys, (key)=> {
+            const keys = Object.keys(this.allVersions).sort(this.sortVersions);
+            _.forEach(keys, (key) => {
                 res.push({
                     versionNumber: key,
                     versionId: this.allVersions[key]
-                })
+                });
             });
         }
         return res;
-    };
+    }
 
-    public isLatestVersion = ():boolean => {
+    public isLatestVersion = (): boolean => {
         if (this.allVersions) {
             return this.version === _.last(Object.keys(this.allVersions).sort(this.sortVersions));
         } else {
             return true;
         }
 
-    };
+    }
 
-
-    public handleTags = ():void => {
-        let isContainTag = _.find(this.tags, (tag)=> {
+    public handleTags = (): void => {
+        const isContainTag = _.find(this.tags, (tag) => {
             return tag === this.name;
         });
         if (!isContainTag) {
             this.tags.push(this.name);
         }
-    };
+    }
 
-    public getArtifactsByType = (artifactGroupType:string):ArtifactGroupModel => {
+    public getArtifactsByType = (artifactGroupType: string): ArtifactGroupModel => {
         switch (artifactGroupType) {
             case ArtifactGroupType.DEPLOYMENT:
                 return this.deploymentArtifacts;
             case ArtifactGroupType.INFORMATION:
                 return this.artifacts;
         }
-    };
+    }
 
-    public getStatus = (sdcMenu:IAppMenu):string => {
-        let status:string = sdcMenu.LifeCycleStatuses[this.lifecycleState].text;
-        if (this.lifecycleState == "CERTIFIED" && sdcMenu.DistributionStatuses[this.distributionStatus]) {
+    public getStatus = (sdcMenu: IAppMenu): string => {
+        let status: string = sdcMenu.LifeCycleStatuses[this.lifecycleState].text;
+        if (this.lifecycleState == 'CERTIFIED' && sdcMenu.DistributionStatuses[this.distributionStatus]) {
             status = sdcMenu.DistributionStatuses[this.distributionStatus].text;
         }
         return status;
-    };
+    }
 
-    public abstract setComponentDisplayData():void;
-    public abstract getTypeUrl():string;
+    public abstract setComponentDisplayData(): void;
+    public abstract getTypeUrl(): string;
 
     public setComponentMetadata(componentMetadata: ComponentMetadata) {
         this.abstract = componentMetadata.abstract;
@@ -428,15 +395,15 @@ export abstract class Component implements IComponent {
         this.isArchived = componentMetadata.isArchived;
         this.vspArchived = componentMetadata.vspArchived;
         this.componentMetadata = componentMetadata;
-        if (componentMetadata.categorySpecificMetadata){
+        if (componentMetadata.categorySpecificMetadata) {
             this.categorySpecificMetadata = componentMetadata.categorySpecificMetadata;
         } else {
             this.categorySpecificMetadata = new Metadata();
         }
     }
 
-    public toJSON = ():any => {
-        let temp = _.cloneDeep(this);
+    public toJSON = (): any => {
+        const temp = _.cloneDeep(this);
         temp.componentService = undefined;
         temp.filterTerm = undefined;
         temp.iconSprite = undefined;
@@ -445,10 +412,39 @@ export abstract class Component implements IComponent {
         temp.selectedInstance = undefined;
         temp.showMenu = undefined;
         temp.selectedCategory = undefined;
-        temp.modules = undefined
+        temp.modules = undefined;
         temp.groupInstances = undefined;
         temp.policies = undefined;
         return temp;
-    };
-}
+    }
 
+    private copyCategoryMetadata = (component: Component): void => {
+        if (component.categories[0].metadataKeys) {
+            for (const key of Object.keys(component.categorySpecificMetadata)) {
+                if (component.categories[0].metadataKeys.some((metadataKey) => metadataKey.name == key)) {
+                    this.categorySpecificMetadata[key] = component.categorySpecificMetadata[key];
+                }
+            }
+        }
+    }
+    private copySubcategoryMetadata = (component: Component): void => {
+        if (component.categories[0].subcategories && component.categories[0].subcategories[0] && component.categories[0].subcategories[0].metadataKeys) {
+            for (const key of Object.keys(component.categorySpecificMetadata)) {
+                if (component.categories[0].subcategories[0].metadataKeys.some((metadataKey) => metadataKey.name == key)) {
+                    this.categorySpecificMetadata[key] = component.categorySpecificMetadata[key];
+                }
+            }
+        }
+    }
+
+    // sort string version value from hash to sorted version (i.e 1.9 before 1.11)
+    private sortVersions = (v1: string, v2: string): number => {
+        const ver1 = v1.split('.');
+        const ver2 = v2.split('.');
+        const diff = parseInt(_.first(ver1)) - parseInt(_.first(ver2));
+        if (!diff) {
+            return parseInt(_.last(ver1)) - parseInt(_.last(ver2));
+        }
+        return diff;
+    }
+}

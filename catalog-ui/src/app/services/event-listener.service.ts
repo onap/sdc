@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,10 +21,9 @@
  * Created by obarda on 7/4/2016.
  */
 'use strict';
-import * as _ from "lodash";
-import {Dictionary} from "../utils/dictionary";
-import {Injectable} from "@angular/core";
-
+import { Injectable } from '@angular/core';
+import * as _ from 'lodash';
+import { Dictionary } from '../utils/dictionary';
 
 interface ICallbackData {
     callback: Function;
@@ -34,17 +33,17 @@ interface ICallbackData {
 @Injectable()
 export class EventListenerService {
 
-    public observerCallbacks: Dictionary<string, ICallbackData[]> = new Dictionary<string, Array<ICallbackData>>();
+    public observerCallbacks: Dictionary<string, ICallbackData[]> = new Dictionary<string, ICallbackData[]>();
 
-    //register an observer + callback
+    // register an observer + callback
     public registerObserverCallback = (eventName: string, callback: Function, ...args) => {
-        let callbackData = {
-            callback: callback,
-            args: args
-        }
+        const callbackData = {
+            callback,
+            args
+        };
 
         if (this.observerCallbacks.containsKey(eventName)) {
-            let callbacks = this.observerCallbacks.getValue(eventName);
+            const callbacks = this.observerCallbacks.getValue(eventName);
 
             // Only insert the callback if the callback is different from existing callbacks.
             for (let i = 0; i < callbacks.length; i++) {
@@ -58,25 +57,25 @@ export class EventListenerService {
         } else {
             this.observerCallbacks.setValue(eventName, [callbackData]);
         }
-    };
+    }
 
-    //unregister an observer
+    // unregister an observer
     public unRegisterObserver = (eventName: string, callbackFunc?: Function) => {
         if (this.observerCallbacks.containsKey(eventName)) {
 
-            let callbacks: ICallbackData[] = this.observerCallbacks.getValue(eventName);
+            const callbacks: ICallbackData[] = this.observerCallbacks.getValue(eventName);
             if (callbacks.length === 1) {
                 this.observerCallbacks.remove(eventName);
             } else {
-                let filterCallbacks = _.filter(callbacks, (callBackObj) => {
+                const filterCallbacks = _.filter(callbacks, (callBackObj) => {
                     return callBackObj.callback != callbackFunc;
                 });
                 this.observerCallbacks.setValue(eventName, filterCallbacks);
             }
         }
-    };
+    }
 
-    public notifyObservers = function (eventName: string, ...args) {
+    public notifyObservers = function(eventName: string, ...args) {
             _.forEach(this.observerCallbacks.getValue(eventName), (callbackData: ICallbackData) => {
                 callbackData.callback(...args);
             });

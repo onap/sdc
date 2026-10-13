@@ -1,16 +1,16 @@
 const mock = () => {
     let storage = {};
     return {
-  getItem: key => (key in storage ? storage[key] : null),
+  getItem: (key) => (key in storage ? storage[key] : null),
              setItem: (key, value) => (storage[key] = value || ''),
-             removeItem: key => delete storage[key],
+             removeItem: (key) => delete storage[key],
              clear: () => (storage = {})
     };
   };
 
-  Object.defineProperty(window, 'localStorage', { value: mock() });
-  Object.defineProperty(window, 'sessionStorage', { value: mock() });
-  Object.defineProperty(window, 'getComputedStyle', {
+Object.defineProperty(window, 'localStorage', { value: mock() });
+Object.defineProperty(window, 'sessionStorage', { value: mock() });
+Object.defineProperty(window, 'getComputedStyle', {
         value: () => ['-webkit-appearance'],
 
   });
@@ -20,4 +20,4 @@ const mock = () => {
   // `_.keyBy` at automated-upgrade.service.ts:89). Jest never mirrored it, so a spec that reaches
   // any of them — even transitively, e.g. via workspace-container.component.ts — died with
   // `ReferenceError: _ is not defined` before its first test ran.
-  (global as any)._ = require('lodash');
+(global as any)._ = require('lodash');

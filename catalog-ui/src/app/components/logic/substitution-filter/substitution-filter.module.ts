@@ -21,8 +21,8 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { UiElementsModule } from 'app/components/ui/ui-elements.module';
 import { TranslateModule } from 'app/shared/translator/translate.module';
-import { SubstitutionFilterComponent } from "./substitution-filter.component";
-import {AccordionModule} from "onap-ui-angular/dist/accordion/accordion.module";
+import { AccordionModule } from 'onap-ui-angular/dist/accordion/accordion.module';
+import { SubstitutionFilterComponent } from './substitution-filter.component';
 
 @NgModule({
     declarations: [

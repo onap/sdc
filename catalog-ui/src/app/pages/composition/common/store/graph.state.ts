@@ -1,22 +1,22 @@
-import { Action, Selector, State, StateContext} from '@ngxs/store';
+import { Action, Selector, State, StateContext } from '@ngxs/store';
+import { ComponentInstance } from 'app/models/components-instances/component-instance';
+import { FullComponentInstance } from 'app/models/components-instances/full-component-instance';
+import { Component as TopologyTemplate } from 'app/models/components/component';
+import { LeftPaletteComponent } from 'app/models/components/display-component';
+import { GroupInstance } from 'app/models/graph/zones/group-instance';
+import { PolicyInstance } from 'app/models/graph/zones/policy-instance';
+import { CompositionService } from 'app/pages/composition/composition.service';
+import { TopologyTemplateService } from 'app/services/component-services/topology-template.service';
+import { tap } from 'rxjs/operators';
+import { GroupsService } from '../../../../services/groups.service';
+import { PoliciesService } from '../../../../services/policies.service';
+import { WorkspaceService } from '../../../workspace/workspace.service';
 import {
     OnSidebarOpenOrCloseAction,
     SelectedComponentType,
     SetSelectedComponentAction,
     TogglePanelLoadingAction
-} from "./graph.actions";
-import {Component as TopologyTemplate} from 'app/models/components/component';
-import {LeftPaletteComponent} from 'app/models/components/display-component';
-import {ComponentInstance} from 'app/models/components-instances/component-instance';
-import {FullComponentInstance} from 'app/models/components-instances/full-component-instance';
-import {GroupInstance} from 'app/models/graph/zones/group-instance';
-import {PolicyInstance} from 'app/models/graph/zones/policy-instance';
-import { TopologyTemplateService } from "app/services/component-services/topology-template.service";
-import { tap } from "rxjs/operators";
-import { CompositionService } from "app/pages/composition/composition.service";
-import {GroupsService} from "../../../../services/groups.service";
-import {PoliciesService} from "../../../../services/policies.service";
-import {WorkspaceService} from "../../../workspace/workspace.service";
+} from './graph.actions';
 
 export class CompositionStateModel {
 
@@ -37,82 +37,8 @@ export class GraphState {
 
     constructor(private topologyTemplateService: TopologyTemplateService,
                 private compositionService: CompositionService,
-         private policiesService:PoliciesService, private groupsService:GroupsService,
-                 private workspaceService: WorkspaceService) {}
-
-    @Action(SetSelectedComponentAction)
-    setSelectedComponent({dispatch, getState, patchState}:StateContext<CompositionStateModel>, action: SetSelectedComponentAction) {
-        
-        const state:CompositionStateModel = getState();
-
-        patchState({ panelLoading: true });
-
-        if(action.payload.component instanceof ComponentInstance){
-            let originComponent = this.compositionService.getOriginComponentById(action.payload.component.getComponentUid());
-            if(!originComponent) {
-                return this.topologyTemplateService.getFullComponent(action.payload.component.originType, action.payload.component.getComponentUid())
-                .pipe(tap(resp => {
-                    this.compositionService.addOriginComponent(resp);
-                    this.compositionService.setSelectedComponentType(SelectedComponentType.COMPONENT_INSTANCE);
-                    patchState({
-                        selectedComponent: new FullComponentInstance(action.payload.component, resp), 
-                        selectedComponentType: action.payload.type,
-                        panelLoading: false
-                    });
-                    }, err => {
-                        patchState({
-                            panelLoading: false
-                        })
-                    }
-                ));
-            } else {
-                patchState({
-                    selectedComponent: new FullComponentInstance(action.payload.component, originComponent), 
-                    selectedComponentType: action.payload.type,
-                    panelLoading: false
-                });
-            }
-        } else if (action.payload.component instanceof PolicyInstance) {
-            let topologyTemplate = this.workspaceService.metadata;
-            return this.policiesService.getSpecificPolicy(topologyTemplate.componentType, topologyTemplate.uniqueId, action.payload.component.uniqueId).pipe(tap(resp => 
-                {
-                    this.compositionService.updatePolicy(resp);
-                    patchState({
-                        selectedComponent: resp, 
-                        selectedComponentType: action.payload.type,
-                        panelLoading: false
-                    })
-                }, err => {
-                    patchState({
-                        panelLoading: false
-                    })
-                 }
-            ));
-        
-        } else if (action.payload.component instanceof GroupInstance) {
-            let topologyTemplate = this.workspaceService.metadata;
-            return this.groupsService.getSpecificGroup(topologyTemplate.componentType, topologyTemplate.uniqueId, action.payload.component.uniqueId).pipe(tap(resp => {
-                this.compositionService.updateGroup(resp);
-                patchState({
-                    selectedComponent: resp,
-                    selectedComponentType: action.payload.type,
-                    panelLoading: false
-                });
-            }, err => {
-                patchState({
-                    panelLoading: false
-                })
-             }
-            ));
-        } else { //TopologyTemplate
-            patchState({
-                selectedComponent: action.payload.component,
-                selectedComponentType: action.payload.type,
-                panelLoading: false
-            })
-        }
-    }
-
+                private policiesService: PoliciesService, private groupsService: GroupsService,
+                private workspaceService: WorkspaceService) {}
 
     // @Action(UpdateSelectedComponentNameAction)
     // UpdateSelectedComponentNameAction({patchState}:StateContext<CompositionStateModel>, action: UpdateSelectedComponentNameAction) {
@@ -129,47 +55,118 @@ export class GraphState {
 
     //     }
     //     if(action.payload.type === SelectedComponentType.COMPONENT_INSTANCE){
-            
-    //     } 
-    
+
+    //     }
+
     // }
 
-    @Selector() 
-    static getSelectedComponent(state:CompositionStateModel) {
+    @Selector()
+    static getSelectedComponent(state: CompositionStateModel) {
         return state.selectedComponent;
     }
 
-    @Selector() 
-    static getSelectedComponentId(state:CompositionStateModel) {
+    @Selector()
+    static getSelectedComponentId(state: CompositionStateModel) {
         return state.selectedComponent.uniqueId;
     }
 
-    @Selector() 
-    static getSelectedComponentType(state:CompositionStateModel) {
+    @Selector()
+    static getSelectedComponentType(state: CompositionStateModel) {
         return state.selectedComponentType;
     }
 
+    @Selector() static withSidebar(state): boolean {
+        return state.withSidebar;
+    }
+
+    @Action(SetSelectedComponentAction)
+    setSelectedComponent({dispatch, getState, patchState}: StateContext<CompositionStateModel>, action: SetSelectedComponentAction) {
+
+        const state: CompositionStateModel = getState();
+
+        patchState({ panelLoading: true });
+
+        if (action.payload.component instanceof ComponentInstance) {
+            const originComponent = this.compositionService.getOriginComponentById(action.payload.component.getComponentUid());
+            if (!originComponent) {
+                return this.topologyTemplateService.getFullComponent(action.payload.component.originType, action.payload.component.getComponentUid())
+                .pipe(tap((resp) => {
+                    this.compositionService.addOriginComponent(resp);
+                    this.compositionService.setSelectedComponentType(SelectedComponentType.COMPONENT_INSTANCE);
+                    patchState({
+                        selectedComponent: new FullComponentInstance(action.payload.component, resp),
+                        selectedComponentType: action.payload.type,
+                        panelLoading: false
+                    });
+                    }, (err) => {
+                        patchState({
+                            panelLoading: false
+                        });
+                    }
+                ));
+            } else {
+                patchState({
+                    selectedComponent: new FullComponentInstance(action.payload.component, originComponent),
+                    selectedComponentType: action.payload.type,
+                    panelLoading: false
+                });
+            }
+        } else if (action.payload.component instanceof PolicyInstance) {
+            const topologyTemplate = this.workspaceService.metadata;
+            return this.policiesService.getSpecificPolicy(topologyTemplate.componentType, topologyTemplate.uniqueId, action.payload.component.uniqueId).pipe(tap((resp) => {
+                    this.compositionService.updatePolicy(resp);
+                    patchState({
+                        selectedComponent: resp,
+                        selectedComponentType: action.payload.type,
+                        panelLoading: false
+                    });
+                }, (err) => {
+                    patchState({
+                        panelLoading: false
+                    });
+                 }
+            ));
+
+        } else if (action.payload.component instanceof GroupInstance) {
+            const topologyTemplate = this.workspaceService.metadata;
+            return this.groupsService.getSpecificGroup(topologyTemplate.componentType, topologyTemplate.uniqueId, action.payload.component.uniqueId).pipe(tap((resp) => {
+                this.compositionService.updateGroup(resp);
+                patchState({
+                    selectedComponent: resp,
+                    selectedComponentType: action.payload.type,
+                    panelLoading: false
+                });
+            }, (err) => {
+                patchState({
+                    panelLoading: false
+                });
+             }
+            ));
+        } else { // TopologyTemplate
+            patchState({
+                selectedComponent: action.payload.component,
+                selectedComponentType: action.payload.type,
+                panelLoading: false
+            });
+        }
+    }
 
     @Action(OnSidebarOpenOrCloseAction)
-    onSidebarOpenOrCloseAction({getState, setState}:StateContext<CompositionStateModel>) {
-        const state:CompositionStateModel = getState();
+    onSidebarOpenOrCloseAction({getState, setState}: StateContext<CompositionStateModel>) {
+        const state: CompositionStateModel = getState();
 
         setState({
             ...state,
             withSidebar: !state.withSidebar
         });
     }
-    
+
     @Action(TogglePanelLoadingAction)
-    TogglePanelLoading({patchState}:StateContext<CompositionStateModel>, action: TogglePanelLoadingAction) {
+    TogglePanelLoading({patchState}: StateContext<CompositionStateModel>, action: TogglePanelLoadingAction) {
 
         patchState({
             panelLoading: action.payload.isLoading
         });
-    }
-
-    @Selector() static withSidebar(state):boolean {
-        return state.withSidebar;
     }
 
 }

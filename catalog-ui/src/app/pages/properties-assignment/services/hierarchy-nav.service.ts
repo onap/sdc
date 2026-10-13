@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,12 +18,11 @@
  * ============LICENSE_END=========================================================
  */
 
-import * as _ from "lodash";
 import { Injectable } from '@angular/core';
-import {DerivedFEProperty} from 'app/models/properties-inputs/derived-fe-property';
-import {PropertyFEModel} from 'app/models/properties-inputs/property-fe-model';
-import {SimpleFlatProperty} from 'app/models/properties-inputs/simple-flat-property';
-
+import { DerivedFEProperty } from 'app/models/properties-inputs/derived-fe-property';
+import { PropertyFEModel } from 'app/models/properties-inputs/property-fe-model';
+import { SimpleFlatProperty } from 'app/models/properties-inputs/simple-flat-property';
+import * as _ from 'lodash';
 
 @Injectable()
 export class HierarchyNavService {
@@ -36,39 +35,39 @@ export class HierarchyNavService {
      * @argument property: PropertyFEModel - property contains flattenedChildren array of DerivedFEProperty
      * @returns  Array<SimpleFlatProperty> - containing childrens Array<SimpleFlatProperty>, augmantin childrens to SimpleFlatProperty.
      */
-    public getSimplePropertiesTree(property: PropertyFEModel, instanceName: string): Array<SimpleFlatProperty> {
+    public getSimplePropertiesTree(property: PropertyFEModel, instanceName: string): SimpleFlatProperty[] {
         // Build Array of SimpleFlatProperty before unflatten function
-        let flattenProperties: Array<SimpleFlatProperty> = [];
+        const flattenProperties: SimpleFlatProperty[] = [];
         flattenProperties.push(this.createSimpleFlatProperty(property, instanceName)); // Push the root property
         _.each(property.flattenedChildren, (child: DerivedFEProperty): void => {
-            if (child.isChildOfListOrMap && child.schema.property.isSimpleType) return; //do not display non-complex children of list or map
+            if (child.isChildOfListOrMap && child.schema.property.isSimpleType) { return; } // do not display non-complex children of list or map
             flattenProperties.push(this.createSimpleFlatProperty(child, instanceName));
         });
 
-        let tree = this.unflatten(flattenProperties, '', []);
+        const tree = this.unflatten(flattenProperties, '', []);
 
         return tree[0].childrens; // Return the childrens without the root.
     }
 
-    public createSimpleFlatProperty = (property: PropertyFEModel | DerivedFEProperty, instanceName:string): SimpleFlatProperty => {
+    public createSimpleFlatProperty = (property: PropertyFEModel | DerivedFEProperty, instanceName: string): SimpleFlatProperty => {
         if (property instanceof PropertyFEModel) {
             return new SimpleFlatProperty(property.uniqueId, property.name, property.name, '', instanceName);
         } else {
-            let propName: string = (property.isChildOfListOrMap) ? property.mapKey : property.name;
+            const propName: string = (property.isChildOfListOrMap) ? property.mapKey : property.name;
             return new SimpleFlatProperty(property.uniqueId, property.propertiesName, propName, property.parentName, instanceName);
         }
-        
+
     }
 
     /**
      * Unflatten Array<SimpleFlatProperty> and build hirarchy.
      * The result will be Array<SimpleFlatProperty> that augmantin with childrens for each SimpleFlatProperty.
      */
-    private unflatten(array: Array<SimpleFlatProperty>, parent: any, tree?: any): any {
+    private unflatten(array: SimpleFlatProperty[], parent: any, tree?: any): any {
         tree = typeof tree !== 'undefined' ? tree : [];
         parent = typeof parent !== 'undefined' && parent !== '' ? parent : { path: '' };
 
-        var childrens = _.filter(array, (child: SimpleFlatProperty): boolean => {
+        const childrens = _.filter(array, (child: SimpleFlatProperty): boolean => {
             return child.parentName == parent.path;
         });
 
@@ -76,7 +75,7 @@ export class HierarchyNavService {
             if (parent.path == '') {
                 tree = childrens;
             } else {
-                parent['childrens'] = childrens;
+                parent.childrens = childrens;
             }
             _.each(childrens, (child): void => {
                 this.unflatten(array, child);

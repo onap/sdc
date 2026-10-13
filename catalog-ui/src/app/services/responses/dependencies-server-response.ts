@@ -9,6 +9,6 @@ export interface IDependenciesServerResponse {
     uniqueId: string;
     version: string;
     state: string;
-    dependencies: Array<IDependenciesServerResponse>;
-    instanceNames: Array<string>;
+    dependencies: IDependenciesServerResponse[];
+    instanceNames: string[];
 }

@@ -24,15 +24,15 @@ import * as _ from 'lodash';
 
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
+import { PropertyBEModel } from 'app/models/properties-inputs/property-be-model';
+import { PropertyFEModel } from 'app/models/properties-inputs/property-fe-model';
+import { PROPERTY_TYPES } from 'app/utils/constants';
 import { ConfigureFn, configureTests } from '../../../../../jest/test-config.helper';
-import { DynamicPropertyComponent } from './dynamic-property.component';
 import { PropertiesUtils } from '../../../../pages/properties-assignment/services/properties.utils';
-import { DataTypeService } from '../../../../services/data-type.service';
-import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
-import {PropertyFEModel} from 'app/models/properties-inputs/property-fe-model';
-import {PROPERTY_TYPES} from 'app/utils/constants';
 import { ContentAfterLastDotPipe } from '../../../../pipes/content-after-last-dot.pipe';
+import { DataTypeService } from '../../../../services/data-type.service';
 import { FilterChildPropertiesPipe } from '../pipes/filter-child-properties.pipe';
+import { DynamicPropertyComponent } from './dynamic-property.component';
 
 describe('dynamic-property component', () => {
     let fixture: ComponentFixture<DynamicPropertyComponent>;

@@ -4,12 +4,13 @@ import { NgxsModule, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { Mock } from 'ts-mockery';
 import { ConfigureFn, configureTests } from '../../../../jest/test-config.helper';
-import { Service } from '../../../models/components/service';
 import { Resource } from '../../../models/components/resource';
+import { Service } from '../../../models/components/service';
 import { GroupInstance } from '../../../models/graph/zones/group-instance';
 import { PolicyInstance } from '../../../models/graph/zones/policy-instance';
-import { ArtifactGroupType } from '../../../utils/constants';
 import { WorkspaceState } from '../../../store/states/workspace.state';
+import { ArtifactGroupType } from '../../../utils/constants';
+import { InterfaceOperationsComponent } from '../interface-operations/interface-operations.component';
 import { CompositionPanelComponent } from './composition-panel.component';
 import { ArtifactsTabComponent } from './panel-tabs/artifacts-tab/artifacts-tab.component';
 import { GroupMembersTabComponent } from './panel-tabs/group-members-tab/group-members-tab.component';
@@ -18,8 +19,7 @@ import { InfoTabComponent } from './panel-tabs/info-tab/info-tab.component';
 import { PolicyTargetsTabComponent } from './panel-tabs/policy-targets-tab/policy-targets-tab.component';
 import { PropertiesTabComponent } from './panel-tabs/properties-tab/properties-tab.component';
 import { ReqAndCapabilitiesTabComponent } from './panel-tabs/req-capabilities-tab/req-capabilities-tab.component';
-import {SubstitutionFilterTabComponent} from "./panel-tabs/substitution-filter-tab/substitution-filter-tab.component";
-import {InterfaceOperationsComponent} from "../interface-operations/interface-operations.component";
+import { SubstitutionFilterTabComponent } from './panel-tabs/substitution-filter-tab/substitution-filter-tab.component';
 
 describe('composition-panel component', () => {
 

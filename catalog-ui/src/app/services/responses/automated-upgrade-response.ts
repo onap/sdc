@@ -3,14 +3,14 @@
  */
 
 export class AutomatedUpgradeStatusResponse {
-    name:string;
-    status:string;
-    uniqueId:string;
-    version:string;
+    name: string;
+    status: string;
+    uniqueId: string;
+    version: string;
 }
 
 export class AutomatedUpgradeGenericResponse {
-    error:string;
-    status:string;
-    componentToUpgradeStatus:Array<AutomatedUpgradeStatusResponse>;
+    error: string;
+    status: string;
+    componentToUpgradeStatus: AutomatedUpgradeStatusResponse[];
 }

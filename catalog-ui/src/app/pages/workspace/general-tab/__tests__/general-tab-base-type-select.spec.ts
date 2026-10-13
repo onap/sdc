@@ -37,28 +37,28 @@
  * the template's write-ordering and is invisible to AOT compilation and to the component-level
  * unit tests in this directory (which never render).
  */
-import {NO_ERRORS_SCHEMA} from '@angular/core';
-import {ComponentFixture} from '@angular/core/testing';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {EventListenerService} from 'app/services/event-listener.service';
-import {CacheService} from 'app/services/cache.service';
-import {SdcUiServices} from 'onap-ui-angular';
-import {Subject} from 'rxjs/Subject';
-import {ComponentFactory} from 'app/utils/component-factory';
-import {ModalsHandler} from 'app/utils/modals-handler';
-import {ConfigureFn, configureTests} from '../../../../../jest/test-config.helper';
-import {ImportVSPService} from '../../../../components/modals/onboarding-modal/import-vsp.service';
-import {SdcConfigToken} from '../../../../config/sdc-config.config';
-import {SdcMenuToken} from '../../../../config/sdc-menu.config';
-import {ElementService} from '../../../../services/element.service';
-import {ModelService} from '../../../../services/model.service';
-import {FileUtilsService} from '../../../../services/file-utils.service';
-import {NavigationService} from '../../../../services/navigation.service';
-import {TranslateService} from '../../../../shared/translator/translate.service';
-import {WorkspaceService} from '../../workspace.service';
-import {ComponentMetadataService} from '../component-metadata.service';
-import {GeneralFormService} from '../general-form.service';
-import {GeneralTabComponent} from '../general-tab.component';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { ComponentFixture } from '@angular/core/testing';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CacheService } from 'app/services/cache.service';
+import { EventListenerService } from 'app/services/event-listener.service';
+import { ComponentFactory } from 'app/utils/component-factory';
+import { ModalsHandler } from 'app/utils/modals-handler';
+import { SdcUiServices } from 'onap-ui-angular';
+import { Subject } from 'rxjs/Subject';
+import { ConfigureFn, configureTests } from '../../../../../jest/test-config.helper';
+import { ImportVSPService } from '../../../../components/modals/onboarding-modal/import-vsp.service';
+import { SdcConfigToken } from '../../../../config/sdc-config.config';
+import { SdcMenuToken } from '../../../../config/sdc-menu.config';
+import { ElementService } from '../../../../services/element.service';
+import { FileUtilsService } from '../../../../services/file-utils.service';
+import { ModelService } from '../../../../services/model.service';
+import { NavigationService } from '../../../../services/navigation.service';
+import { TranslateService } from '../../../../shared/translator/translate.service';
+import { WorkspaceService } from '../../workspace.service';
+import { ComponentMetadataService } from '../component-metadata.service';
+import { GeneralFormService } from '../general-form.service';
+import { GeneralTabComponent } from '../general-tab.component';
 
 const NS = 'tosca.nodes.nfv.NS';
 const CATEGORY = 'ETSI NFV Network Service';

@@ -20,22 +20,22 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import {WorkspaceMenuComponent} from './workspace-menu.component';
-import {CacheService} from "../../../services/cache.service";
-import {States} from "../../../utils/constants";
-import {IAppMenu} from "../../../models/app-config";
-import {SdcMenuToken} from "../../../config/sdc-menu.config";
-import {TypeWorkspaceService} from "../type-workspace.service";
-import {NavigationService} from "../../../services/navigation.service";
-import {Subject} from "rxjs/Subject";
+import { Subject } from 'rxjs/Subject';
+import { SdcMenuToken } from '../../../config/sdc-menu.config';
+import { IAppMenu } from '../../../models/app-config';
+import { CacheService } from '../../../services/cache.service';
+import { NavigationService } from '../../../services/navigation.service';
+import { States } from '../../../utils/constants';
+import { TypeWorkspaceService } from '../type-workspace.service';
+import { WorkspaceMenuComponent } from './workspace-menu.component';
 
 describe('WorkspaceMenuComponent', () => {
   let component: WorkspaceMenuComponent;
   let fixture: ComponentFixture<WorkspaceMenuComponent>;
-  let cacheService: Partial<CacheService> = {
-    'get': jest.fn(param => {
+  const cacheService: Partial<CacheService> = {
+    get: jest.fn((param) => {
       if (param === 'version') {
         return 'version';
       }
@@ -44,25 +44,25 @@ describe('WorkspaceMenuComponent', () => {
       }
     })
   };
-  let sdcMenuMock: Partial<IAppMenu> = {
-    'component_workspace_menu_option': {
-      "DataType": [
-        {"text": "General", "action": "onMenuItemPressed", "state": "general"}
+  const sdcMenuMock: Partial<IAppMenu> = {
+    component_workspace_menu_option: {
+      DataType: [
+        {text: 'General', action: 'onMenuItemPressed', state: 'general'}
       ]
     }
   };
   // The url getCurrentStateName() has to map back to States.TYPE_WORKSPACE.
-  let routerMock: any = {
-    'url': '/dashboard/' + States.TYPE_WORKSPACE + '/datatype/id-1/general',
-    'events': new Subject<any>(),
-    'navigateByUrl': jest.fn(() => Promise.resolve(true))
+  const routerMock: any = {
+    url: '/dashboard/' + States.TYPE_WORKSPACE + '/datatype/id-1/general',
+    events: new Subject<any>(),
+    navigateByUrl: jest.fn(() => Promise.resolve(true))
   };
-  let routeMock: any = {
-    'snapshot': {'params': {'type': 'datatype', 'id': 'id-1'}, 'queryParams': {}, 'firstChild': null}
+  const routeMock: any = {
+    snapshot: {params: {type: 'datatype', id: 'id-1'}, queryParams: {}, firstChild: null}
   };
   // A REAL NavigationService over the mocked Router — the component reads the current state name
   // through the facade now instead of injecting $state itself.
-  let navigationServiceMock = new NavigationService(routerMock, routeMock, {unsavedChanges: false} as any);
+  const navigationServiceMock = new NavigationService(routerMock, routeMock, {unsavedChanges: false} as any);
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({

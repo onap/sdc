@@ -1,7 +1,7 @@
+import { IUserProperties } from 'app/models/user';
+import { of, Subject, throwError } from 'rxjs';
 import 'rxjs/add/operator/map';
-import {of, throwError, Subject} from 'rxjs';
-import {IUserProperties} from 'app/models/user';
-import {UserManagementComponent} from '../user-management.component';
+import { UserManagementComponent } from '../user-management.component';
 
 function makeUser(userId: string, overrides: any = {}): IUserProperties {
     return Object.assign({

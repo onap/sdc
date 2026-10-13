@@ -19,11 +19,11 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import {YamlFunctionComponent} from './yaml-function.component';
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {TranslateModule} from "../../../../shared/translator/translate.module";
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { TranslateModule } from '../../../../shared/translator/translate.module';
+import { YamlFunctionComponent } from './yaml-function.component';
 
 describe('YamlFunctionComponent', () => {
     let component: YamlFunctionComponent;

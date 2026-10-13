@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,37 +18,37 @@
  * ============LICENSE_END=========================================================
  */
 
-import * as _ from "lodash";
-import {Inject, Injectable} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
+import { OutputBEModel } from 'app/models/attributes-outputs/output-be-model';
+import { Component } from 'app/models/components/component';
+import { FilterPropertiesAssignmentData } from 'app/models/filter-properties-assignment-data';
+import { OperationModel } from 'app/models/operation';
+import { InputBEModel } from 'app/models/properties-inputs/input-be-model';
+import { InstancePropertiesAPIMap } from 'app/models/properties-inputs/property-fe-map';
+import { API_QUERY_PARAMS, COMPONENT_FIELDS } from 'app/utils/constants';
+import * as _ from 'lodash';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
-import {Component} from 'app/models/components/component';
-import {FilterPropertiesAssignmentData} from 'app/models/filter-properties-assignment-data';
-import {OperationModel} from 'app/models/operation';
-import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
-import {InstancePropertiesAPIMap} from 'app/models/properties-inputs/property-fe-map';
-import {API_QUERY_PARAMS, COMPONENT_FIELDS} from 'app/utils/constants';
-import {ComponentGenericResponse} from "../responses/component-generic-response";
-import {InstanceBePropertiesMap} from "../../models/properties-inputs/property-fe-map";
-import {ComponentType, ServerTypeUrl, SERVICE_FIELDS} from "../../utils/constants";
-import {ISdcConfig, SdcConfigToken} from "../../config/sdc-config.config";
-import {IDependenciesServerResponse} from "../responses/dependencies-server-response";
-import {AutomatedUpgradeGenericResponse} from "../responses/automated-upgrade-response";
-import {IAutomatedUpgradeRequestObj} from "../../pages/automated-upgrade/automated-upgrade.service";
-import {ComponentInstance} from "../../models/components-instances/component-instance";
-import {CommonUtils} from "../../utils/common-utils";
-import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
-import {BEOperationModel, InterfaceModel} from "../../models/operation";
-import {PropertyBEModel} from "../../models/properties-inputs/property-be-model";
-import {PolicyInstance} from "../../models/graph/zones/policy-instance";
-import {OutputBEModel} from "app/models/attributes-outputs/output-be-model";
-import {HttpHelperService} from '../http-helper.service';
+import { Observable } from 'rxjs/Observable';
+import { ISdcConfig, SdcConfigToken } from '../../config/sdc-config.config';
+import { ComponentInstance } from '../../models/components-instances/component-instance';
+import { FilterConstraint } from '../../models/filter-constraint';
+import { PolicyInstance } from '../../models/graph/zones/policy-instance';
 import {
     BEInterfaceOperationModel,
     InterfaceOperationModel
-} from "../../models/interface-operation";
-import {FilterConstraint} from "../../models/filter-constraint";
+} from '../../models/interface-operation';
+import { BEOperationModel, InterfaceModel } from '../../models/operation';
+import { PropertyBEModel } from '../../models/properties-inputs/property-be-model';
+import { InstanceBePropertiesMap } from '../../models/properties-inputs/property-fe-map';
+import { IAutomatedUpgradeRequestObj } from '../../pages/automated-upgrade/automated-upgrade.service';
+import { CommonUtils } from '../../utils/common-utils';
+import { ComponentType, ServerTypeUrl, SERVICE_FIELDS } from '../../utils/constants';
+import { HttpHelperService } from '../http-helper.service';
+import { AutomatedUpgradeGenericResponse } from '../responses/automated-upgrade-response';
+import { ComponentGenericResponse } from '../responses/component-generic-response';
+import { IDependenciesServerResponse } from '../responses/dependencies-server-response';
 
 /*
 PLEASE DO NOT USE THIS SERVICE IN ANGULAR2! Use the topology-template.service instead
@@ -60,28 +60,6 @@ export class ComponentService {
 
     constructor(protected http: HttpClient, @Inject(SdcConfigToken) sdcConfig: ISdcConfig) {
         this.baseUrl = sdcConfig.api.root + sdcConfig.api.component_api_root;
-    }
-
-    protected getComponentDataByFieldsName(componentType: string, componentId: string, fields: Array<string>): Observable<ComponentGenericResponse> {
-
-        let params: HttpParams = new HttpParams();
-        fields.forEach((field: string): void => {
-            params = params.append(API_QUERY_PARAMS.INCLUDE, field);
-        });
-
-        return this.http.get<ComponentGenericResponse>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/filteredDataByParams', {params: params})
-        .map((res) => {
-            return new ComponentGenericResponse().deserialize(res);
-        });
-    }
-
-    protected getServerTypeUrl = (componentType: string): string => {
-        switch (componentType) {
-            case ComponentType.SERVICE:
-                return ServerTypeUrl.SERVICES;
-            default:
-                return ServerTypeUrl.RESOURCES;
-        }
     }
 
     getFullComponent(uniqueId: string): Observable<ComponentGenericResponse> {
@@ -155,8 +133,6 @@ export class ComponentService {
         return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [COMPONENT_FIELDS.COMPONENT_INTERFACE_OPERATIONS]);
     }
 
-    
-
     getInterfaceOperation(component: Component, operation: OperationModel): Observable<OperationModel> {
         return this.http.get<OperationModel>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/interfaceOperations/' + operation.uniqueId);
     }
@@ -164,10 +140,10 @@ export class ComponentService {
     // tslint:disable-next-line:member-ordering
     createInterfaceOperation(component: Component, operation: OperationModel): Observable<OperationModel> {
         const operationList = {
-            'interfaces': {
+            interfaces: {
                 [operation.interfaceType]: {
-                    'type': operation.interfaceType,
-                    'operations': {
+                    type: operation.interfaceType,
+                    operations: {
                         [operation.name]: new BEOperationModel(operation)
                     }
                 }
@@ -175,8 +151,8 @@ export class ComponentService {
         };
         return this.http.post<any>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/interfaceOperations', operationList)
         .map((res: any) => {
-            const interf: InterfaceModel = _.find(res.interfaces, interf => interf.type === operation.interfaceType);
-            const newOperation: OperationModel = _.find(interf.operations, op => op.name === operation.name);
+            const interf: InterfaceModel = _.find(res.interfaces, (interf) => interf.type === operation.interfaceType);
+            const newOperation: OperationModel = _.find(interf.operations, (op) => op.name === operation.name);
             return new OperationModel({
                 ...newOperation,
                 interfaceType: interf.type,
@@ -200,8 +176,8 @@ export class ComponentService {
         };
         return this.http.put<any>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/interfaceOperations', operationList)
         .map((res: any) => {
-            const interf: InterfaceModel = _.find(res.interfaces, interf => interf.type === operation.interfaceType);
-            const newOperation: OperationModel = _.find(interf.operations, op => op.name === operation.name);
+            const interf: InterfaceModel = _.find(res.interfaces, (interf) => interf.type === operation.interfaceType);
+            const newOperation: OperationModel = _.find(interf.operations, (op) => op.name === operation.name);
             return new OperationModel({
                 ...newOperation,
                 interfaceType: interf.type,
@@ -225,8 +201,8 @@ export class ComponentService {
         };
         return this.http.put<any>(this.baseUrl + 'resources/' + componentMetaDataId + '/interfaceOperation', operationList)
         .map((res: any) => {
-            const interf: InterfaceModel = _.find(res.interfaces, interf => interf.type === operation.interfaceType);
-            const newOperation: OperationModel = _.find(interf.operations, op => op.name === operation.name);
+            const interf: InterfaceModel = _.find(res.interfaces, (interf) => interf.type === operation.interfaceType);
+            const newOperation: OperationModel = _.find(interf.operations, (op) => op.name === operation.name);
 
             return new InterfaceOperationModel({
                 ...newOperation,
@@ -250,11 +226,11 @@ export class ComponentService {
             }
         };
         console.log(operationList);
-        console.log(this.baseUrl + componentMetaDataType + componentMetaDataId + '/resource/interfaceOperation')
+        console.log(this.baseUrl + componentMetaDataType + componentMetaDataId + '/resource/interfaceOperation');
         return this.http.post<any>(this.baseUrl + componentMetaDataType + componentMetaDataId + '/resource/interfaceOperation', operationList)
         .map((res: any) => {
-            const interf: InterfaceModel = _.find(res.interfaces, interf => interf.type === operation.interfaceType);
-            const newOperation: OperationModel = _.find(interf.operations, op => op.name === operation.name);
+            const interf: InterfaceModel = _.find(res.interfaces, (interf) => interf.type === operation.interfaceType);
+            const newOperation: OperationModel = _.find(interf.operations, (op) => op.name === operation.name);
 
             return new InterfaceOperationModel({
                 ...newOperation,
@@ -268,18 +244,18 @@ export class ComponentService {
         return this.http.delete<OperationModel>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/interfaces/' + operation.interfaceId + '/operations/' + operation.uniqueId);
     }
 
-    getInterfaceTypes(component: Component): Observable<{ [id: string]: Array<string> }> {
+    getInterfaceTypes(component: Component): Observable<{ [id: string]: string[] }> {
         return this.getInterfaceTypesByModel(component && component.model);
     }
 
-    getInterfaceTypesByModel(model: string): Observable<{ [id: string]: Array<string> }> {
+    getInterfaceTypesByModel(model: string): Observable<{ [id: string]: string[] }> {
         return this.http.get<any>(this.baseUrl + 'interfaceLifecycleTypes' + ((model) ? '?model=' + model : ''))
         .map((res: any) => {
             const interfaceMap = {};
             if (!res) {
                 return interfaceMap;
             }
-            Object.keys(res).forEach(interfaceName => {
+            Object.keys(res).forEach((interfaceName) => {
                 const interface1 = res[interfaceName];
                 if (!interface1.toscaPresentation.operations) {
                     return;
@@ -292,16 +268,16 @@ export class ComponentService {
 
     uploadInterfaceOperationArtifact(component: Component, newOperation: OperationModel, oldOperation: OperationModel) {
         const payload = {
-            artifactType: "WORKFLOW",
+            artifactType: 'WORKFLOW',
             artifactName: oldOperation.artifactFileName,
-            description: "Workflow Artifact Description",
+            description: 'Workflow Artifact Description',
             payloadData: oldOperation.artifactData
         };
 
         const headers = new HttpHeaders().append('Content-MD5', HttpHelperService.getHeaderMd5(payload));
 
         return this.http.post(this.baseUrl + component.getTypeUrl() + component.uuid + '/interfaces/' + newOperation.interfaceId + '/operations/' + newOperation.uniqueId + '/artifacts/' + newOperation.implementation.artifactUUID,
-            payload, {headers: headers}
+            payload, {headers}
         ).map((res: any) => {
             const fileName = res.artifactDisplayName || res.artifactName;
             newOperation.artifactFileName = fileName;
@@ -342,12 +318,12 @@ export class ComponentService {
         const policiesList =
             isSelf ?
                 {
-                    'componentPropertiesToPolicies': {
+                    componentPropertiesToPolicies: {
                         ...policiesToCreate.componentInstanceProperties
                     }
                 } :
                 {
-                    'componentInstancePropertiesToPolicies': {
+                    componentInstancePropertiesToPolicies: {
                         ...policiesToCreate.componentInstanceProperties
                     }
                 };
@@ -359,11 +335,11 @@ export class ComponentService {
     }
 
     restoreComponent(componentType: string, componentId: string) {
-        return this.http.post(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/restore', {})
+        return this.http.post(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/restore', {});
     }
 
     archiveComponent(componentType: string, componentId: string) {
-        return this.http.post(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/archive', {})
+        return this.http.post(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/archive', {});
     }
 
     deleteInput(component: Component, input: InputBEModel): Observable<InputBEModel> {
@@ -371,7 +347,7 @@ export class ComponentService {
         return this.http.delete<InputBEModel>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/delete/' + input.uniqueId + '/input')
         .map((res) => {
             return new InputBEModel(res);
-        })
+        });
     }
 
     deleteOutput(component: Component, output: OutputBEModel): Observable<OutputBEModel> {
@@ -379,7 +355,7 @@ export class ComponentService {
         return this.http.delete<OutputBEModel>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/delete/' + output.uniqueId + '/output')
         .map((res) => {
             return new OutputBEModel(res);
-        })
+        });
     }
 
     updateComponentInputs(component: Component, inputs: InputBEModel[]): Observable<InputBEModel[]> {
@@ -387,7 +363,7 @@ export class ComponentService {
         return this.http.post<InputBEModel[]>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/update/inputs', inputs)
         .map((res) => {
             return res.map((input) => new InputBEModel(input));
-        })
+        });
     }
 
     updateComponentOutputs(component: Component, outputs: OutputBEModel[]): Observable<OutputBEModel[]> {
@@ -395,39 +371,39 @@ export class ComponentService {
         return this.http.post<OutputBEModel[]>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/update/outputs', outputs)
         .map((res) => {
             return res.map((output) => new OutputBEModel(output));
-        })
+        });
     }
 
-    filterComponentInstanceProperties(component: Component, filterData: FilterPropertiesAssignmentData): Observable<InstanceBePropertiesMap> {//instance-property-be-map
+    filterComponentInstanceProperties(component: Component, filterData: FilterPropertiesAssignmentData): Observable<InstanceBePropertiesMap> {// instance-property-be-map
         let params: HttpParams = new HttpParams();
         filterData.selectedTypes.forEach((type: string) => {
             params = params.append('resourceType', type);
         });
 
-        return this.http.get<InstanceBePropertiesMap>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/filteredproperties/' + filterData.propertyName, {params: params});
+        return this.http.get<InstanceBePropertiesMap>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/filteredproperties/' + filterData.propertyName, {params});
     }
 
-    filterComponentInstanceAttributes(component: Component, filterData: FilterPropertiesAssignmentData): Observable<InstanceBePropertiesMap> {//instance-property-be-map
+    filterComponentInstanceAttributes(component: Component, filterData: FilterPropertiesAssignmentData): Observable<InstanceBePropertiesMap> {// instance-property-be-map
         let params: HttpParams = new HttpParams();
         filterData.selectedTypes.forEach((type: string) => {
             params = params.append('resourceType', type);
         });
 
-        return this.http.get<InstanceBePropertiesMap>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/filteredproperties/' + filterData.propertyName, {params: params});
+        return this.http.get<InstanceBePropertiesMap>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/filteredproperties/' + filterData.propertyName, {params});
     }
 
     deleteComponent(componentType: string, componentId: string) {
-        return this.http.delete(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + "?deleteAction=DELETE", {});
+        return this.http.delete(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '?deleteAction=DELETE', {});
     }
 
     createServiceProperty(component: Component, propertyModel: PropertyBEModel): Observable<PropertyBEModel> {
-        let serverObject = {};
+        const serverObject = {};
         serverObject[propertyModel.name] = propertyModel;
         return this.http.post(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/properties', serverObject)
         .map((res: PropertyBEModel) => {
             const property: PropertyBEModel = new PropertyBEModel(res);
             return property;
-        })
+        });
     }
 
     getServiceProperties(component: Component): Observable<PropertyBEModel[]> {
@@ -453,7 +429,7 @@ export class ComponentService {
         return this.http.delete(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/properties/' + property.uniqueId)
         .map((res: Response) => {
             return property.uniqueId;
-        })
+        });
     }
 
     getDependencies(componentType: string, componentId: string): Observable<IDependenciesServerResponse[]> {
@@ -482,6 +458,28 @@ export class ComponentService {
 
     deleteServiceFilterConstraints(component: Component, componentInstance: ComponentInstance, constraintIndex: number) {
         return this.http.delete<any>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/resourceInstances/' + componentInstance.uniqueId + '/nodeFilter/' + constraintIndex);
+    }
+
+    protected getComponentDataByFieldsName(componentType: string, componentId: string, fields: string[]): Observable<ComponentGenericResponse> {
+
+        let params: HttpParams = new HttpParams();
+        fields.forEach((field: string): void => {
+            params = params.append(API_QUERY_PARAMS.INCLUDE, field);
+        });
+
+        return this.http.get<ComponentGenericResponse>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/filteredDataByParams', {params})
+        .map((res) => {
+            return new ComponentGenericResponse().deserialize(res);
+        });
+    }
+
+    protected getServerTypeUrl = (componentType: string): string => {
+        switch (componentType) {
+            case ComponentType.SERVICE:
+                return ServerTypeUrl.SERVICES;
+            default:
+                return ServerTypeUrl.RESOURCES;
+        }
     }
 
     protected analyzeComponentDataResponse(res: Response): ComponentGenericResponse {

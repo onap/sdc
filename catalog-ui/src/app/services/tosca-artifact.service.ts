@@ -20,7 +20,7 @@ import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { ISdcConfig, SdcConfigToken } from '../config/sdc-config.config';
-import {ToscaArtifactModel} from "../models/tosca-artifact";
+import { ToscaArtifactModel } from '../models/tosca-artifact';
 
 @Injectable()
 export class ToscaArtifactService {
@@ -31,8 +31,8 @@ export class ToscaArtifactService {
     this.baseUrl = sdcConfig.api.root + sdcConfig.api.component_api_root;
   }
 
-  getToscaArtifacts(modelName: string):Observable<ToscaArtifactModel[]> {
-    const url = this.baseUrl + "artifactTypes";
+  getToscaArtifacts(modelName: string): Observable<ToscaArtifactModel[]> {
+    const url = this.baseUrl + 'artifactTypes';
     if (modelName) {
       return this.http.get<ToscaArtifactModel[]>(url, {params: {model: modelName}});
     }

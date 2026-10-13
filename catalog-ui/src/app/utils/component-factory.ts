@@ -20,20 +20,19 @@
  */
 
 'use strict';
-import * as _ from "lodash";
-import {Injectable} from "@angular/core";
-import {DEFAULT_ICON, ResourceType, ComponentType} from "./constants";
-import {LegacyResourceService} from 'app/services/legacy/resource.service';
-import {LegacyServiceService} from 'app/services/legacy/service.service';
-import {CacheService} from "../services/cache.service";
-import {IMainCategory, ISubCategory} from 'app/models/category';
-import {Component} from 'app/models/components/component';
-import {Resource} from 'app/models/components/resource';
-import {Service} from 'app/models/components/service';
-import {ICsarComponent} from 'app/models/csar-component';
-import {ComponentService} from "../services/component-services/component.service";
-import {ComponentGenericResponse} from "../services/responses/component-generic-response";
-
+import { Injectable } from '@angular/core';
+import { IMainCategory, ISubCategory } from 'app/models/category';
+import { Component } from 'app/models/components/component';
+import { Resource } from 'app/models/components/resource';
+import { Service } from 'app/models/components/service';
+import { ICsarComponent } from 'app/models/csar-component';
+import { LegacyResourceService } from 'app/services/legacy/resource.service';
+import { LegacyServiceService } from 'app/services/legacy/service.service';
+import * as _ from 'lodash';
+import { CacheService } from '../services/cache.service';
+import { ComponentService } from '../services/component-services/component.service';
+import { ComponentGenericResponse } from '../services/responses/component-generic-response';
+import { ComponentType, DEFAULT_ICON, ResourceType } from './constants';
 
 @Injectable()
 export class ComponentFactory {
@@ -44,33 +43,33 @@ export class ComponentFactory {
                 private ComponentService: ComponentService) {
     }
 
-    public createComponent = (component:Component):Component => {
-        let newComponent:Component;
+    public createComponent = (component: Component): Component => {
+        let newComponent: Component;
         switch (component.componentType) {
 
             case 'SERVICE':
-                newComponent = new Service(this.LegacyServiceService, <Service> component);
+                newComponent = new Service(this.LegacyServiceService, component as Service);
                 break;
 
             case 'RESOURCE':
-                newComponent = new Resource(this.LegacyResourceService, <Resource> component);
+                newComponent = new Resource(this.LegacyResourceService, component as Resource);
                 break;
 
         }
         return newComponent;
-    };
+    }
 
-    public createService = (service:Service):Service => {
-        let newService:Service = new Service(this.LegacyServiceService, <Service> service);
+    public createService = (service: Service): Service => {
+        const newService: Service = new Service(this.LegacyServiceService, service as Service);
         return newService;
-    };
+    }
 
-    public createResource = (resource:Resource):Resource => {
-        let newResource:Resource = new Resource(this.LegacyResourceService, <Resource> resource);
+    public createResource = (resource: Resource): Resource => {
+        const newResource: Resource = new Resource(this.LegacyResourceService, resource as Resource);
         return newResource;
-    };
+    }
 
-    public updateComponentFromCsar = (csarComponent:Resource, oldComponent: Resource): Component => {
+    public updateComponentFromCsar = (csarComponent: Resource, oldComponent: Resource): Component => {
           _.pull(oldComponent.tags, oldComponent.name);
           if (!oldComponent.isAlreadyCertified()) {
             oldComponent.name = csarComponent.name;
@@ -89,8 +88,8 @@ export class ComponentFactory {
           return oldComponent;
     }
 
-    public createFromCsarComponent = (csar:ICsarComponent):Component => {
-        let newResource:Resource = <Resource>this.createEmptyComponent(ComponentType.RESOURCE);
+    public createFromCsarComponent = (csar: ICsarComponent): Component => {
+        const newResource: Resource = this.createEmptyComponent(ComponentType.RESOURCE) as Resource;
         newResource.name = csar.vspName;
 
         /**
@@ -100,25 +99,25 @@ export class ComponentFactory {
          * Then find the selected sub category and category.
          * @type {any}
          */
-        let availableCategories = _.cloneDeep(this.cacheService.get('resourceCategories'));
+        const availableCategories = _.cloneDeep(this.cacheService.get('resourceCategories'));
         let allSubs = [];
-        _.each(availableCategories, (main:IMainCategory)=> {
+        _.each(availableCategories, (main: IMainCategory) => {
             if (main.subcategories) {
                 allSubs = allSubs.concat(main.subcategories);
             }
         });
 
-        let selectedCategory:IMainCategory = _.find(availableCategories, function (main:IMainCategory) {
+        const selectedCategory: IMainCategory = _.find(availableCategories, function(main: IMainCategory) {
             return main.uniqueId === csar.category;
         });
 
-        let selectedSubCategory:ISubCategory = _.find(allSubs, (sub:ISubCategory)=> {
+        const selectedSubCategory: ISubCategory = _.find(allSubs, (sub: ISubCategory) => {
             return sub.uniqueId === csar.subCategory;
         });
 
         // Build the categories and sub categories array (same format as component category)
-        let categories:Array<IMainCategory> = new Array();
-        let subcategories:Array<ISubCategory> = new Array();
+        const categories: IMainCategory[] = new Array();
+        const subcategories: ISubCategory[] = new Array();
         if (selectedCategory && selectedSubCategory) {
             subcategories.push(selectedSubCategory);
             selectedCategory.subcategories = subcategories;
@@ -136,13 +135,13 @@ export class ComponentFactory {
         newResource.packageId = csar.packageId;
         newResource.description = csar.description;
         newResource.resourceType = csar.resourceType;
-        newResource.selectedCategory = selectedCategory && selectedSubCategory ? selectedCategory.name + "_#_" + selectedSubCategory.name : '';
+        newResource.selectedCategory = selectedCategory && selectedSubCategory ? selectedCategory.name + '_#_' + selectedSubCategory.name : '';
         newResource.filterTerm = newResource.name +  ' '  + newResource.description + ' ' + newResource.vendorName + ' ' + newResource.csarVersion;
         return newResource;
-    };
+    }
 
-    public createEmptyComponent = (componentType:string, resourceType?:string):Component => {
-        let newComponent:Component;
+    public createEmptyComponent = (componentType: string, resourceType?: string): Component => {
+        let newComponent: Component;
 
         switch (componentType) {
             case ComponentType.SERVICE_PROXY:
@@ -161,8 +160,8 @@ export class ComponentFactory {
             case ResourceType.CVFC:
             case ResourceType.CONFIGURATION:
                 newComponent = new Resource(this.LegacyResourceService);
-                if (resourceType){
-                    (<Resource> newComponent).resourceType = resourceType;
+                if (resourceType) {
+                    (newComponent as Resource).resourceType = resourceType;
                 }
                 break;
         }
@@ -170,31 +169,31 @@ export class ComponentFactory {
         newComponent.tags = [];
         newComponent.icon = DEFAULT_ICON;
         return newComponent;
-    };
+    }
 
-    public getComponentFromServer = (componentType:string, componentId:string):Promise<Component> => {
-        let newComponent:Component = this.createEmptyComponent(componentType);
+    public getComponentFromServer = (componentType: string, componentId: string): Promise<Component> => {
+        const newComponent: Component = this.createEmptyComponent(componentType);
         newComponent.setUniqueId(componentId);
         return newComponent.getComponent();
-    };
+    }
 
-    public createComponentOnServer = (componentObject:Component):Promise<Component> => {
-        let component:Component = this.createComponent(componentObject);
+    public createComponentOnServer = (componentObject: Component): Promise<Component> => {
+        const component: Component = this.createComponent(componentObject);
         return component.createComponentOnServer();
 
-    };
+    }
 
     public importComponentOnServer = (componentObject: Component): Promise<Component> => {
-        let component: Component = this.createComponent(componentObject);
+        const component: Component = this.createComponent(componentObject);
         return component.importComponentOnServer();
 
-    };
+    }
 
-    public getComponentWithMetadataFromServer = (componentType:string, componentId:string):Promise<Component> => {
+    public getComponentWithMetadataFromServer = (componentType: string, componentId: string): Promise<Component> => {
         return new Promise<Component>((resolve) => {
-            let component = this.createEmptyComponent(componentType);
+            const component = this.createEmptyComponent(componentType);
             component.setUniqueId(componentId);
-            this.ComponentService.getComponentMetadata(component.uniqueId, component.componentType).subscribe((response:ComponentGenericResponse) => {
+            this.ComponentService.getComponentMetadata(component.uniqueId, component.componentType).subscribe((response: ComponentGenericResponse) => {
                 component.setComponentMetadata(response.metadata);
                 component.derivedFromGenericType = response.derivedFromGenericType;
                 component.derivedFromGenericVersion = response.derivedFromGenericVersion;

@@ -17,10 +17,10 @@
  *  ============LICENSE_END=========================================================
  */
 
-import { Component, EventEmitter, Input, Output } from "@angular/core";
-import {ArtifactModel} from 'app/models/artifacts';
-import { TranslateService } from '../../../shared/translator/translate.service';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ArtifactModel } from 'app/models/artifacts';
 import { SdcUiServices } from 'onap-ui-angular';
+import { TranslateService } from '../../../shared/translator/translate.service';
 
 @Component({
     selector: 'upload-artifact',
@@ -54,10 +54,10 @@ export class UploadArtifactComponent {
     @Input() componentId: string;
     @Input() testId: string;
     @Input() disabled: boolean;
-    @Output("onFileUpload") onFileUpload: EventEmitter<any> = new EventEmitter<any>();
+    @Output('onFileUpload') onFileUpload: EventEmitter<any> = new EventEmitter<any>();
 
     public extensionsWithDot: string;
-    public iconType:string = "upload-o";
+    public iconType: string = 'upload-o';
 
     constructor(
         private modalService: SdcUiServices.ModalService,
@@ -65,14 +65,14 @@ export class UploadArtifactComponent {
 
     }
 
-    ngOnInit () {
+    ngOnInit() {
         this.extensionsWithDot = this.getExtensionsWithDot(this.extensions);
     }
 
-    public getExtensionsWithDot(extensions:string):string {
+    public getExtensionsWithDot(extensions: string): string {
         extensions = extensions || '';
         return extensions.split(',')
-            .map(ext => '.' + ext.toString())
+            .map((ext) => '.' + ext.toString())
             .join(',');
     }
 

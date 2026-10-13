@@ -18,31 +18,30 @@
  * ============LICENSE_END=========================================================
  */
 
-import { Component, Input, OnInit } from "@angular/core";
-import { SdcUiComponents, SdcUiCommon, SdcUiServices } from "onap-ui-angular";
-import { EditNameModalComponent } from "app/pages/composition/panel/panel-header/edit-name-modal/edit-name-modal.component";
-import {Capability} from 'app/models/capability';
-import {Component as TopologyTemplate} from 'app/models/components/component';
-import {ComponentInstance} from 'app/models/components-instances/component-instance';
-import {FullComponentInstance} from 'app/models/components-instances/full-component-instance';
-import {GroupInstance} from 'app/models/graph/zones/group-instance';
-import {PolicyInstance} from 'app/models/graph/zones/policy-instance';
-import {Requirement} from 'app/models/requirement';
-import { Select } from "@ngxs/store";
-import { Observable } from "rxjs/Observable";
-import { Subscription } from "rxjs";
-import {GRAPH_EVENTS} from "../../../../utils/constants";
-import { CompositionService } from "app/pages/composition/composition.service";
-import {EventListenerService} from "../../../../services/event-listener.service";
-import { ComponentInstanceService } from "app/services/component-instance-services/component-instance.service";
-import { WorkspaceService } from "app/pages/workspace/workspace.service";
-import {GroupsService} from 'app/services/groups.service';
-import {PoliciesService} from 'app/services/policies.service';
-import { UIZoneInstanceObject } from "../../../../models/ui-models/ui-zone-instance-object";
-import {SelectedComponentType} from "../../common/store/graph.actions";
+import { Component, Input, OnInit } from '@angular/core';
+import { Select } from '@ngxs/store';
+import { Capability } from 'app/models/capability';
+import { ComponentInstance } from 'app/models/components-instances/component-instance';
+import { FullComponentInstance } from 'app/models/components-instances/full-component-instance';
+import { Component as TopologyTemplate } from 'app/models/components/component';
+import { GroupInstance } from 'app/models/graph/zones/group-instance';
+import { PolicyInstance } from 'app/models/graph/zones/policy-instance';
+import { Requirement } from 'app/models/requirement';
+import { CompositionService } from 'app/pages/composition/composition.service';
+import { EditNameModalComponent } from 'app/pages/composition/panel/panel-header/edit-name-modal/edit-name-modal.component';
+import { WorkspaceService } from 'app/pages/workspace/workspace.service';
+import { ComponentInstanceService } from 'app/services/component-instance-services/component-instance.service';
+import { GroupsService } from 'app/services/groups.service';
+import { PoliciesService } from 'app/services/policies.service';
 import * as _ from 'lodash';
-import {GraphState} from "../../common/store/graph.state";
-
+import { SdcUiCommon, SdcUiComponents, SdcUiServices } from 'onap-ui-angular';
+import { Subscription } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
+import { UIZoneInstanceObject } from '../../../../models/ui-models/ui-zone-instance-object';
+import { EventListenerService } from '../../../../services/event-listener.service';
+import { GRAPH_EVENTS } from '../../../../utils/constants';
+import { SelectedComponentType } from '../../common/store/graph.actions';
+import { GraphState } from '../../common/store/graph.state';
 
 @Component({
     selector: 'ng2-composition-panel-header',
@@ -52,8 +51,12 @@ import {GraphState} from "../../common/store/graph.state";
 export class CompositionPanelHeaderComponent implements OnInit {
     @Input() isViewOnly: boolean;
     @Input() selectedComponent: FullComponentInstance | TopologyTemplate | GroupInstance | PolicyInstance;
-    @Select(GraphState.getSelectedComponentType) selectedComponentType$:Observable<SelectedComponentType>;
+    @Select(GraphState.getSelectedComponentType) selectedComponentType$: Observable<SelectedComponentType>;
 
+    private iconClassName: string;
+    private valueEditModalInstance: SdcUiComponents.ModalComponent;
+    private isTopologyTemplateSelected: boolean;
+    private componentTypeSubscription: Subscription;
 
     constructor(private modalService: SdcUiServices.ModalService,
                 private groupService: GroupsService,
@@ -62,11 +65,6 @@ export class CompositionPanelHeaderComponent implements OnInit {
                 private compositionService: CompositionService,
                 private workspaceService: WorkspaceService,
                 private componentInstanceService: ComponentInstanceService) { }
-
-    private iconClassName: string;
-    private valueEditModalInstance: SdcUiComponents.ModalComponent;
-    private isTopologyTemplateSelected: boolean;
-    private componentTypeSubscription: Subscription;
 
     ngOnInit(): void {
         this.componentTypeSubscription = this.selectedComponentType$.subscribe((newComponentType) => {
@@ -77,16 +75,16 @@ export class CompositionPanelHeaderComponent implements OnInit {
     }
 
     ngOnDestroy() {
-        if(this.componentTypeSubscription) {
+        if (this.componentTypeSubscription) {
             this.componentTypeSubscription.unsubscribe();
         }
     }
 
-    private initClasses = (componentType:SelectedComponentType): void => {
+    private initClasses = (componentType: SelectedComponentType): void => {
         if (componentType === SelectedComponentType.POLICY) {
-            this.iconClassName = "sprite-policy-icons policy";
+            this.iconClassName = 'sprite-policy-icons policy';
         } else if (componentType === SelectedComponentType.GROUP) {
-            this.iconClassName = "sprite-group-icons group";
+            this.iconClassName = 'sprite-group-icons group';
         } else {
             this.iconClassName = undefined;
         }
@@ -94,47 +92,47 @@ export class CompositionPanelHeaderComponent implements OnInit {
 
     private renameInstance = (): void => {
         const modalConfig = {
-            title: "Edit Name",
-            size: "sm",
+            title: 'Edit Name',
+            size: 'sm',
             type: SdcUiCommon.ModalType.custom,
-            testId: "renameInstanceModal",
+            testId: 'renameInstanceModal',
             buttons: [
                 {id: 'saveButton', text: 'OK', size: 'xsm', callback: this.saveInstanceName, closeModal: false},
                 {id: 'cancelButton', text: 'Cancel', size: 'sm', closeModal: true}
             ] as SdcUiCommon.IModalButtonComponent[]
         } as SdcUiCommon.IModalConfig;
         this.valueEditModalInstance = this.modalService.openCustomModal(modalConfig, EditNameModalComponent, {name: this.selectedComponent.name, validityChangedCallback: this.enableOrDisableSaveButton});
-    };
+    }
 
     private enableOrDisableSaveButton = (shouldEnable: boolean): void => {
-        let saveButton: SdcUiComponents.ModalButtonComponent = this.valueEditModalInstance.getButtonById('saveButton');
+        const saveButton: SdcUiComponents.ModalButtonComponent = this.valueEditModalInstance.getButtonById('saveButton');
         saveButton.disabled = !shouldEnable;
     }
 
-    private saveInstanceName = ():void => {
-        let nameFromModal:string = this.valueEditModalInstance.innerModalContent.instance.name;
+    private saveInstanceName = (): void => {
+        const nameFromModal: string = this.valueEditModalInstance.innerModalContent.instance.name;
 
-        if(nameFromModal != this.selectedComponent.name){
-            let oldName = this.selectedComponent.name;
+        if (nameFromModal != this.selectedComponent.name) {
+            const oldName = this.selectedComponent.name;
             this.selectedComponent.name = nameFromModal;
             this.valueEditModalInstance.buttons[0].disabled = true;
 
-            let onFailed = (error) => { 
+            const onFailed = (error) => {
                 this.selectedComponent.name = oldName;
                 this.valueEditModalInstance.buttons[0].disabled = false;
             };
 
-            if(this.selectedComponent instanceof FullComponentInstance){
-                let onSuccess = (componentInstance:ComponentInstance) => {
-                    //update requirements and capabilities owner name
-                    _.forEach((<FullComponentInstance>this.selectedComponent).requirements, (requirementsArray:Array<Requirement>) => {
-                        _.forEach(requirementsArray, (requirement:Requirement):void => {
+            if (this.selectedComponent instanceof FullComponentInstance) {
+                const onSuccess = (componentInstance: ComponentInstance) => {
+                    // update requirements and capabilities owner name
+                    _.forEach((this.selectedComponent as FullComponentInstance).requirements, (requirementsArray: Requirement[]) => {
+                        _.forEach(requirementsArray, (requirement: Requirement): void => {
                             requirement.ownerName = componentInstance.name;
                         });
                     });
 
-                    _.forEach((<FullComponentInstance>this.selectedComponent).capabilities, (capabilitiesArray:Array<Capability>) => {
-                        _.forEach(capabilitiesArray, (capability:Capability):void => {
+                    _.forEach((this.selectedComponent as FullComponentInstance).capabilities, (capabilitiesArray: Capability[]) => {
+                        _.forEach(capabilitiesArray, (capability: Capability): void => {
                             capability.ownerName = componentInstance.name;
                         });
                     });
@@ -145,12 +143,12 @@ export class CompositionPanelHeaderComponent implements OnInit {
                 this.componentInstanceService.updateComponentInstance(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId, new ComponentInstance(this.selectedComponent))
                     .subscribe(onSuccess, onFailed);
             } else if (this.selectedComponent instanceof PolicyInstance) {
-                this.policiesService.updateName(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId, this.selectedComponent.uniqueId, nameFromModal).subscribe((success)=>{
+                this.policiesService.updateName(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId, this.selectedComponent.uniqueId, nameFromModal).subscribe((success) => {
                     this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_POLICY_INSTANCE_UPDATE, this.selectedComponent);
                     this.valueEditModalInstance.closeModal(undefined);
                 }, onFailed);
-            } else if (this.selectedComponent instanceof GroupInstance){
-                this.groupService.updateName(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId, this.selectedComponent.uniqueId, nameFromModal).subscribe((success)=>{
+            } else if (this.selectedComponent instanceof GroupInstance) {
+                this.groupService.updateName(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId, this.selectedComponent.uniqueId, nameFromModal).subscribe((success) => {
                     this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_GROUP_INSTANCE_UPDATE, this.selectedComponent);
                     this.valueEditModalInstance.closeModal(undefined);
                 }, onFailed);
@@ -158,33 +156,30 @@ export class CompositionPanelHeaderComponent implements OnInit {
         }  else {
             this.valueEditModalInstance.closeModal(undefined);
         }
-    };
+    }
 
     private deleteInstance = (): void => {
-        let title:string = "Delete Confirmation";
-        let message:string = "Are you sure you would like to delete "+ this.selectedComponent.name + "?";
-        const okButton: SdcUiCommon.IModalButtonComponent = {testId: "OK", text: "OK", type: SdcUiCommon.ButtonType.warning, callback: this.deleteInstanceConfirmed, closeModal: true};
-        this.modalService.openWarningModal(title, message, "delete-modal", [okButton]);
-    };
+        const title: string = 'Delete Confirmation';
+        const message: string = 'Are you sure you would like to delete ' + this.selectedComponent.name + '?';
+        const okButton: SdcUiCommon.IModalButtonComponent = {testId: 'OK', text: 'OK', type: SdcUiCommon.ButtonType.warning, callback: this.deleteInstanceConfirmed, closeModal: true};
+        this.modalService.openWarningModal(title, message, 'delete-modal', [okButton]);
+    }
 
     private deleteInstanceConfirmed = () => {
-        if(this.selectedComponent instanceof FullComponentInstance){
+        if (this.selectedComponent instanceof FullComponentInstance) {
             this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_DELETE_COMPONENT_INSTANCE , this.selectedComponent.uniqueId);
-        }
-        else if(this.selectedComponent instanceof PolicyInstance){
-            this.policiesService.deletePolicy(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId, this.selectedComponent.uniqueId).subscribe((success)=>{
+        } else if (this.selectedComponent instanceof PolicyInstance) {
+            this.policiesService.deletePolicy(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId, this.selectedComponent.uniqueId).subscribe((success) => {
                 this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_DELETE_ZONE_INSTANCE ,
                     new UIZoneInstanceObject(this.selectedComponent.uniqueId, 1));
             }, (err) => {});
 
-        }
-        else if(this.selectedComponent instanceof GroupInstance){
-            this.groupService.deleteGroup(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId, this.selectedComponent.uniqueId).subscribe((success)=>{
+        } else if (this.selectedComponent instanceof GroupInstance) {
+            this.groupService.deleteGroup(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId, this.selectedComponent.uniqueId).subscribe((success) => {
                 this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_DELETE_ZONE_INSTANCE ,
                     new UIZoneInstanceObject(this.selectedComponent.uniqueId, 0));
             }, (err) => {});
 
         }
-    };
+    }
 }
-

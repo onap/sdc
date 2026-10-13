@@ -8,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,65 +21,65 @@
 
 'use strict';
 
-import * as _ from "lodash";
-import {ArtifactType} from '../utils/constants';
-import {HeatParameterModel} from "./heat-parameters";
-import {PropertyBEModel} from "./properties-inputs/property-be-model";
+import * as _ from 'lodash';
+import { ArtifactType } from '../utils/constants';
+import { HeatParameterModel } from './heat-parameters';
+import { PropertyBEModel } from './properties-inputs/property-be-model';
 
-//this object contains keys, each key contain ArtifactModel
+// this object contains keys, each key contain ArtifactModel
 export class ArtifactGroupModel {
-    
-    constructor(artifacts?:ArtifactGroupModel) {
-        _.forEach(artifacts, (artifact:ArtifactModel, key) => {
+
+    constructor(artifacts?: ArtifactGroupModel) {
+        _.forEach(artifacts, (artifact: ArtifactModel, key) => {
             this[key] = new ArtifactModel(artifact);
         });
     }
 
-    public filteredByType(type:string):ArtifactGroupModel {
-        let tmpArtifactGroupModel = new ArtifactGroupModel();
-        _.each(Object.keys(this), (key)=>{
+    public filteredByType(type: string): ArtifactGroupModel {
+        const tmpArtifactGroupModel = new ArtifactGroupModel();
+        _.each(Object.keys(this), (key) => {
             if (this[key].artifactType === type) {
                 tmpArtifactGroupModel[key] = this[key];
             }
         });
         return tmpArtifactGroupModel;
-    };
+    }
 }
 
 export class ArtifactModel {
 
-    artifactDisplayName:string;
-    artifactGroupType:string;
-    uniqueId:string;
-    artifactName:string;
-    artifactLabel:string;
-    artifactType:string;
-    artifactUUID:string;
-    artifactVersion:string;
-    creatorFullName:string;
-    creationDate:number;
-    lastUpdateDate:number;
-    description:string;
-    mandatory:boolean;
-    serviceApi:boolean;
-    payloadData:string;
-    timeout:number;
-    esId:string;
-    "Content-MD5":string;
-    artifactChecksum:string;
-    apiUrl:string;
-    heatParameters:Array<HeatParameterModel>;
-    generatedFromId:string;
+    artifactDisplayName: string;
+    artifactGroupType: string;
+    uniqueId: string;
+    artifactName: string;
+    artifactLabel: string;
+    artifactType: string;
+    artifactUUID: string;
+    artifactVersion: string;
+    creatorFullName: string;
+    creationDate: number;
+    lastUpdateDate: number;
+    description: string;
+    mandatory: boolean;
+    serviceApi: boolean;
+    payloadData: string;
+    timeout: number;
+    esId: string;
+    'Content-MD5': string;
+    artifactChecksum: string;
+    apiUrl: string;
+    heatParameters: HeatParameterModel[];
+    generatedFromId: string;
     isFromCsar: boolean;
 
-    //custom properties
-    selected:boolean;
-    originalDescription:string;
-    envArtifact:ArtifactModel;
+    // custom properties
+    selected: boolean;
+    originalDescription: string;
+    envArtifact: ArtifactModel;
     allowDeleteAndUpdate: boolean;
-    properties:Array<PropertyBEModel>;
+    properties: PropertyBEModel[];
 
-    constructor(artifact?:ArtifactModel) {
+    constructor(artifact?: ArtifactModel) {
         if (artifact) {
             this.artifactDisplayName = artifact.artifactDisplayName;
             this.artifactGroupType = artifact.artifactGroupType;
@@ -98,7 +98,7 @@ export class ArtifactModel {
             this.payloadData = artifact.payloadData;
             this.timeout = artifact.timeout;
             this.esId = artifact.esId;
-            this["Content-MD5"] = artifact["Content-MD5"];
+            this['Content-MD5'] = artifact['Content-MD5'];
             this.artifactChecksum = artifact.artifactChecksum;
             this.apiUrl = artifact.apiUrl;
             this.heatParameters = _.sortBy(_.cloneDeep(artifact.heatParameters), 'name');
@@ -110,25 +110,23 @@ export class ArtifactModel {
         }
     }
 
-    public isHEAT = ():boolean => {
+    public isHEAT = (): boolean => {
         return ArtifactType.HEAT === this.artifactType || ArtifactType.HEAT_VOL === this.artifactType || ArtifactType.HEAT_NET === this.artifactType;
-    };
+    }
 
-    public isThirdParty = ():boolean => {
+    public isThirdParty = (): boolean => {
         return _.has(ArtifactType.THIRD_PARTY_RESERVED_TYPES, this.artifactType);
-    };
+    }
 
-    public isGenericBrowseable = ():boolean => {
+    public isGenericBrowseable = (): boolean => {
         return this.artifactType === ArtifactType.VES_EVENTS || this.artifactType === ArtifactType.PM_DICTIONARY;
-    };
+    }
 
-    public toJSON = ():any => {
+    public toJSON = (): any => {
         this.selected = undefined;
         this.originalDescription = undefined;
         this.envArtifact = undefined;
         this.allowDeleteAndUpdate = undefined;
         return this;
-    };
+    }
 }
-
-

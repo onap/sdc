@@ -30,13 +30,13 @@
  *   - the `tosca.datatypes.Root` cache pruning, and
  *   - the pure derived-type logic (getFirsLevelOfDataTypeProperties, isDataTypeFor*).
  */
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { TestBed } from '@angular/core/testing';
 import 'rxjs/add/operator/map';
-import {TestBed} from '@angular/core/testing';
-import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
-import {DataTypesService} from './data-types.service';
-import {SdcConfigToken} from '../config/sdc-config.config';
-import {mockSdcConfig} from '../../jest/mocks/sdc-config.mock';
-import {PROPERTY_DATA} from '../utils/constants';
+import { mockSdcConfig } from '../../jest/mocks/sdc-config.mock';
+import { SdcConfigToken } from '../config/sdc-config.config';
+import { PROPERTY_DATA } from '../utils/constants';
+import { DataTypesService } from './data-types.service';
 
 describe('DataTypesService', () => {
     let service: DataTypesService;

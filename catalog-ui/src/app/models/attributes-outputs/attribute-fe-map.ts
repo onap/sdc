@@ -20,15 +20,15 @@
 
 'use strict';
 
-import {AttributeBEModel} from "./attribute-be-model";
-import {AttributeFEModel} from "./attribute-fe-model";
+import { AttributeBEModel } from './attribute-be-model';
+import { AttributeFEModel } from './attribute-fe-model';
 
 export class InstanceBeAttributesMap {
-  [instanceId: string]: Array<AttributeBEModel>;
+  [instanceId: string]: AttributeBEModel[];
 }
 
 export class InstanceFeAttributesMap {
-  [instanceId: string]: Array<AttributeFEModel>;
+  [instanceId: string]: AttributeFEModel[];
 }
 
 export class InstanceAttributesAPIMap {

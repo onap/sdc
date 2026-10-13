@@ -22,55 +22,55 @@
  */
 
 'use strict';
-import {Inject, Injectable} from "@angular/core";
-import {SdcConfigToken, ISdcConfig} from "app/config/sdc-config.config";
-import {Observable} from "rxjs/Observable";
-import { HttpClient, HttpResponse } from "@angular/common/http";
-import { ComponentFactory } from "../utils/component-factory";
-import { DEFAULT_ICON, ComponentType } from "../utils/constants";
-import { ICsarComponent } from "../models/csar-component";
-import { IApi } from "../models/app-config";
-import { CacheService } from "./cache.service";
-import { IComponentMetadata, ComponentMetadata } from "../models/component-metadata";
-import { IMainCategory, ISubCategory } from "../models/category";
-import { Resource } from "../models/components/resource";
+import { HttpClient, HttpResponse } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
+import { ISdcConfig, SdcConfigToken } from 'app/config/sdc-config.config';
 import * as _ from 'lodash';
+import { Observable } from 'rxjs/Observable';
+import { IApi } from '../models/app-config';
+import { IMainCategory, ISubCategory } from '../models/category';
+import { ComponentMetadata, IComponentMetadata } from '../models/component-metadata';
+import { Resource } from '../models/components/resource';
+import { ICsarComponent } from '../models/csar-component';
+import { ComponentFactory } from '../utils/component-factory';
+import { ComponentType, DEFAULT_ICON } from '../utils/constants';
+import { CacheService } from './cache.service';
 
 export interface OnboardingComponents {
     listCount: number;
-    results: Array<ICsarComponent>
-} 
+    results: ICsarComponent[];
+}
 
 @Injectable()
 export class OnboardingService {
-    private api:IApi;
+    private api: IApi;
 
     constructor(protected http: HttpClient,
-                private cacheService:CacheService,
-                @Inject(SdcConfigToken) sdcConfig:ISdcConfig,
+                private cacheService: CacheService,
+                @Inject(SdcConfigToken) sdcConfig: ISdcConfig,
                 private componentFactory: ComponentFactory) {
                 this.api = sdcConfig.api;
     }
 
-    getOnboardingVSPs = (): Observable<Array<ICsarComponent>> =>{
-        return this.http.get<OnboardingComponents>(this.api.GET_onboarding).map((onboardingVSPs) =>{
-            return onboardingVSPs.results
+    getOnboardingVSPs = (): Observable<ICsarComponent[]> => {
+        return this.http.get<OnboardingComponents>(this.api.GET_onboarding).map((onboardingVSPs) => {
+            return onboardingVSPs.results;
         });
     }
 
-    getOnboardingComponents = ():Observable<Array<IComponentMetadata>> => {
+    getOnboardingComponents = (): Observable<IComponentMetadata[]> => {
         return this.getOnboardingVSPs().map((onboardingComponents) => {
-            let componentsMetadataList: Array<IComponentMetadata> = new Array();
-            onboardingComponents.forEach((obc:ICsarComponent) => {
-                let componentMetaData: ComponentMetadata = this.createFromCsarComponent(obc);
+            const componentsMetadataList: IComponentMetadata[] = new Array();
+            onboardingComponents.forEach((obc: ICsarComponent) => {
+                const componentMetaData: ComponentMetadata = this.createFromCsarComponent(obc);
                 componentsMetadataList.push(componentMetaData);
             });
             return componentsMetadataList;
         });
-    };
-    
-    public createFromCsarComponent = (csar:ICsarComponent): ComponentMetadata => {
-        let newMetadata = new ComponentMetadata();  
+    }
+
+    public createFromCsarComponent = (csar: ICsarComponent): ComponentMetadata => {
+        const newMetadata = new ComponentMetadata();
         newMetadata.name = csar.vspName;
 
         /**
@@ -80,25 +80,25 @@ export class OnboardingService {
          * Then find the selected sub category and category.
          * @type {any}
          */
-        let availableCategories = _.cloneDeep(this.cacheService.get('resourceCategories'));
+        const availableCategories = _.cloneDeep(this.cacheService.get('resourceCategories'));
         let allSubs = [];
-        _.each(availableCategories, (main:IMainCategory)=> {
+        _.each(availableCategories, (main: IMainCategory) => {
             if (main.subcategories) {
                 allSubs = allSubs.concat(main.subcategories);
             }
         });
 
-        let selectedCategory:IMainCategory = _.find(availableCategories, function (main:IMainCategory) {
+        const selectedCategory: IMainCategory = _.find(availableCategories, function(main: IMainCategory) {
             return main.uniqueId === csar.category;
         });
 
-        let selectedSubCategory:ISubCategory = _.find(allSubs, (sub:ISubCategory)=> {
+        const selectedSubCategory: ISubCategory = _.find(allSubs, (sub: ISubCategory) => {
             return sub.uniqueId === csar.subCategory;
         });
 
         // Build the categories and sub categories array (same format as component category)
-        let categories:Array<IMainCategory> = new Array();
-        let subcategories:Array<ISubCategory> = new Array();
+        const categories: IMainCategory[] = new Array();
+        const subcategories: ISubCategory[] = new Array();
         if (selectedCategory && selectedSubCategory) {
             subcategories.push(selectedSubCategory);
             selectedCategory.subcategories = subcategories;
@@ -116,22 +116,22 @@ export class OnboardingService {
         newMetadata.csarVersionId = csar.versionId;
         newMetadata.packageId = csar.packageId;
         newMetadata.description = csar.description;
-        newMetadata.selectedCategory = selectedCategory && selectedSubCategory ? selectedCategory.name + "_#_" + selectedSubCategory.name : '';
+        newMetadata.selectedCategory = selectedCategory && selectedSubCategory ? selectedCategory.name + '_#_' + selectedSubCategory.name : '';
         newMetadata.filterTerm = newMetadata.name +  ' '  + newMetadata.description + ' ' + newMetadata.vendorName + ' ' + newMetadata.csarVersion;
         newMetadata.resourceType = csar.resourceType;
         newMetadata.componentType = ComponentType.RESOURCE;
         newMetadata.tags = [];
         newMetadata.icon = DEFAULT_ICON;
-        newMetadata.iconSprite = "sprite-resource-icons";
+        newMetadata.iconSprite = 'sprite-resource-icons';
         newMetadata.models = csar.models;
         return newMetadata;
-    };
+    }
 
-    downloadOnboardingCsar = (packageId:string):Observable<HttpResponse<Blob>> => {
-        return this.http.get(this.api.GET_onboarding + "/" + packageId, {observe: 'response', responseType: 'blob'});
-    };
+    downloadOnboardingCsar = (packageId: string): Observable<HttpResponse<Blob>> => {
+        return this.http.get(this.api.GET_onboarding + '/' + packageId, {observe: 'response', responseType: 'blob'});
+    }
 
-    getComponentFromCsarUuid = (csarUuid:string):Observable<ComponentMetadata> => {
+    getComponentFromCsarUuid = (csarUuid: string): Observable<ComponentMetadata> => {
         return this.http.get<ComponentMetadata>(this.api.root + this.api.GET_component_from_csar_uuid.replace(':csar_uuid', csarUuid))
             .map((response: any) => {
                 // If the status is 400, this means that the component not found.
@@ -143,11 +143,11 @@ export class OnboardingService {
                     return componentMetadata;
                 }
             });
-    };
+    }
 
-    //TODO remove when workspace page convert to angular5
+    // TODO remove when workspace page convert to angular5
     convertMetaDataToComponent(componentMetadata: ComponentMetadata) {
-        let newResource: Resource = <Resource>this.componentFactory.createEmptyComponent(ComponentType.RESOURCE);
+        const newResource: Resource = this.componentFactory.createEmptyComponent(ComponentType.RESOURCE) as Resource;
         newResource.setComponentMetadata(componentMetadata);
         return newResource;
     }

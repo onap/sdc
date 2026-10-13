@@ -17,13 +17,13 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
-import {TestBed} from '@angular/core/testing';
-import {LegacyResourceService} from './resource.service';
-import {LegacyComponentService} from './component.service';
-import {SdcConfigToken} from '../../config/sdc-config.config';
-import {SharingService} from '../sharing.service';
-import {DataTypesService} from '../data-types.service';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { TestBed } from '@angular/core/testing';
+import { SdcConfigToken } from '../../config/sdc-config.config';
+import { DataTypesService } from '../data-types.service';
+import { SharingService } from '../sharing.service';
+import { LegacyComponentService } from './component.service';
+import { LegacyResourceService } from './resource.service';
 
 const sdcConfig = {api: {root: 'http://localhost/', component_api_root: 'v1/catalog/'}} as any;
 

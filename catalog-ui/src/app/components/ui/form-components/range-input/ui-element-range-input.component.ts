@@ -19,9 +19,9 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {Component, Input} from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { PROPERTY_DATA } from '../../../../utils/constants';
 import { UiElementBase, UiElementBaseInterface } from '../ui-element-base.component';
-import {PROPERTY_DATA} from "../../../../utils/constants";
 
 @Component({
     selector: 'ui-element-range-input',
@@ -40,7 +40,7 @@ export class UiElementRangeInputComponent extends UiElementBase implements UiEle
         this.value[1] = this.upperBound;
     }
 
-    ngOnInit(){
+    ngOnInit() {
         this.step = 0;
         if (this.type === 'float') {
             this.step = 0.01;
@@ -85,27 +85,25 @@ export class UiElementRangeInputComponent extends UiElementBase implements UiEle
     }
 
     getInRangeValue(valueIndex: number): string {
-        if(!this.value || !this.value[valueIndex]) {
-            return "";
+        if (!this.value || !this.value[valueIndex]) {
+            return '';
         }
         return this.value[valueIndex];
     }
 
-    isNumber(value: string | number): boolean
-    {
+    isNumber(value: string | number): boolean {
         return ((value != undefined) &&
             (value != null) &&
             (value !== '') &&
             !isNaN(Number(value.toString())));
     }
 
-    isValidRange(): boolean
-    {
+    isValidRange(): boolean {
         if (this.isStringType()) {
             return this.getInRangeValue(0) <= this.getInRangeValue(1);
         }
         return this.isNumber(this.value[0])
-        && (this.getInRangeValue(1) === "UNBOUNDED"
+        && (this.getInRangeValue(1) === 'UNBOUNDED'
                 || (this.isNumber(this.value[1])
                     && this.getInRangeValue(0) <= this.getInRangeValue(1)));
     }

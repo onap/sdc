@@ -18,7 +18,7 @@ export class ToscaPresentationData {
     creationTime: number;
     description: string;
     type: string;
-    validTargetTypes: Array<string>;
+    validTargetTypes: string[];
     modificationTime: number;
     uniqueId: string;
     ownerId: string;

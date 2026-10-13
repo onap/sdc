@@ -1,48 +1,47 @@
-import {Component, forwardRef, Inject} from '@angular/core';
-import {IStepComponent} from 'app/models/wizard-step';import {Dictionary} from "lodash";
-import {ConnectionWizardService} from "../connection-wizard.service";
-import {Match} from "app/models/graph/match-relation";
-import {Requirement} from "app/models/requirement";
-import {Capability} from "app/models/capability";
-import {PropertyModel} from "app/models/properties";
+import { Component, forwardRef, Inject } from '@angular/core';
+import { IStepComponent } from 'app/models/wizard-step'; import { Dictionary } from 'lodash';
+import { Capability } from 'app/models/capability';
+import { Match } from 'app/models/graph/match-relation';
+import { PropertyModel } from 'app/models/properties';
+import { Requirement } from 'app/models/requirement';
+import { ConnectionWizardService } from '../connection-wizard.service';
 
 @Component({
     selector: 'to-node-step',
     templateUrl: './to-node-step.component.html'
 })
 
-export class ToNodeStepComponent implements IStepComponent{
+export class ToNodeStepComponent implements IStepComponent {
 
-    displayRequirementsOrCapabilities:string; //get 'Requirement' or 'Capability'
+    displayRequirementsOrCapabilities: string; // get 'Requirement' or 'Capability'
     optionalRequirementsMap: Dictionary<Requirement[]> = {};
-    optionalCapabilitiesMap: Dictionary<Capability[]> ={};
+    optionalCapabilitiesMap: Dictionary<Capability[]> = {};
 
     constructor(@Inject(forwardRef(() => ConnectionWizardService)) public connectWizardService: ConnectionWizardService) {
     }
 
-    ngOnInit(){
-        if(this.connectWizardService.selectedMatch.isFromTo){
+    ngOnInit() {
+        if (this.connectWizardService.selectedMatch.isFromTo) {
             this.displayRequirementsOrCapabilities = 'Capability';
             this.optionalRequirementsMap = {};
             this.optionalCapabilitiesMap = this.connectWizardService.getOptionalCapabilitiesByInstanceUniqueId(true, this.connectWizardService.selectedMatch.requirement);
-        }else{
+        } else {
             this.displayRequirementsOrCapabilities = 'Requirement';
             this.optionalRequirementsMap = this.connectWizardService.getOptionalRequirementsByInstanceUniqueId(false, this.connectWizardService.selectedMatch.capability);
-            this.optionalCapabilitiesMap = {}
+            this.optionalCapabilitiesMap = {};
         }
-
 
     }
 
-    preventNext = ():boolean => {
+    preventNext = (): boolean => {
         return !this.connectWizardService.selectedMatch.capability || !this.connectWizardService.selectedMatch.requirement;
     }
 
-    preventBack = ():boolean => {
+    preventBack = (): boolean => {
         return false;
     }
 
-    updateSelectedReqOrCap = (selected:Requirement|Capability):void => {
+    updateSelectedReqOrCap = (selected: Requirement|Capability): void => {
         if (!selected) {
             if (this.connectWizardService.selectedMatch.isFromTo) {
                 this.connectWizardService.selectedMatch.capability = undefined;
@@ -52,10 +51,10 @@ export class ToNodeStepComponent implements IStepComponent{
                 this.connectWizardService.selectedMatch.fromNode = undefined;
             }
         } else if (selected instanceof Requirement) {
-            this.connectWizardService.selectedMatch.requirement = <Requirement>selected;
+            this.connectWizardService.selectedMatch.requirement = (selected as Requirement);
             this.connectWizardService.selectedMatch.fromNode = this.connectWizardService.connectRelationModel.toNode.componentInstance.uniqueId;
         } else {
-            this.connectWizardService.selectedMatch.capability = <Capability>selected;
+            this.connectWizardService.selectedMatch.capability = (selected as Capability);
             this.connectWizardService.selectedMatch.toNode = this.connectWizardService.connectRelationModel.toNode.componentInstance.uniqueId;
         }
         this.connectWizardService.selectedMatch.relationship = undefined;

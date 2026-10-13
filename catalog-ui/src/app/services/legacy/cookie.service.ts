@@ -8,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,17 +20,17 @@
  */
 
 'use strict';
-import {Inject, Injectable} from "@angular/core";
-import {DOCUMENT} from "@angular/common";
-import {SdcConfigToken} from "../../config/sdc-config.config";
-import {IAppConfigurtaion, ICookie} from "../../models/app-config";
+import { DOCUMENT } from '@angular/common';
+import { Inject, Injectable } from '@angular/core';
+import { SdcConfigToken } from '../../config/sdc-config.config';
+import { IAppConfigurtaion, ICookie } from '../../models/app-config';
 
 interface ICookieService {
-    getUserId():string;
-    getFirstName():string;
-    getLastName():string;
-    getEmail():string;
-    getUserIdSuffix():string;
+    getUserId(): string;
+    getFirstName(): string;
+    getLastName(): string;
+    getEmail(): string;
+    getUserIdSuffix(): string;
 }
 
 /**
@@ -46,25 +46,52 @@ interface ICookieService {
 @Injectable()
 export class LegacyCookieService implements ICookieService {
 
-    private cookie:ICookie;
-    private cookiePrefix:string;
+    private cookie: ICookie;
+    private cookiePrefix: string;
 
-
-    constructor(@Inject(SdcConfigToken) sdcConfig:IAppConfigurtaion, @Inject(DOCUMENT) private $document:Document) {
+    constructor(@Inject(SdcConfigToken) sdcConfig: IAppConfigurtaion, @Inject(DOCUMENT) private $document: Document) {
         this.cookie = sdcConfig.cookie;
 
         this.cookiePrefix = '';
-        let junctionName:string = this.getCookieByName(this.cookie.junctionName);
+        const junctionName: string = this.getCookieByName(this.cookie.junctionName);
         if ((junctionName !== null) && (junctionName !== '')) {
             this.cookiePrefix = this.cookie.prefix + junctionName + '!';
         }
     }
 
-    private getCookieByName = (cookieName:string):string => {
+    public getUserIdSuffix = (): string => {
+        return this.cookie.userIdSuffix;
+    }
+
+    public getUserId = (): string => {
+        const userIdCookieName: string = this.cookiePrefix + this.cookie.userIdSuffix;
+        const userId: string = this.getCookieByName(userIdCookieName);
+        return userId;
+    }
+
+    public getFirstName = (): string => {
+        const firstNameCookieName: string = this.cookiePrefix + this.cookie.userFirstName;
+        const firstName: string = this.getCookieByName(firstNameCookieName);
+        return firstName;
+    }
+
+    public getLastName = (): string => {
+        const lastNameCookieName: string = this.cookiePrefix + this.cookie.userLastName;
+        const lastName: string = this.getCookieByName(lastNameCookieName);
+        return lastName;
+    }
+
+    public getEmail = (): string => {
+        const emailCookieName: string = this.cookiePrefix + this.cookie.userEmail;
+        const email: string = this.getCookieByName(emailCookieName);
+        return email;
+    }
+
+    private getCookieByName = (cookieName: string): string => {
         cookieName += '=';
-        let cookies:Array<string> = this.$document.cookie.split(';');
-        let cookieVal:string = '';
-        cookies.forEach((cookie:string) => {
+        const cookies: string[] = this.$document.cookie.split(';');
+        let cookieVal: string = '';
+        cookies.forEach((cookie: string) => {
             while (cookie.charAt(0) === ' ') {
                 cookie = cookie.substring(1);
             }
@@ -74,33 +101,5 @@ export class LegacyCookieService implements ICookieService {
             }
         });
         return cookieVal;
-    };
-
-    public getUserIdSuffix = ():string => {
-        return this.cookie.userIdSuffix;
-    };
-
-    public getUserId = ():string => {
-        let userIdCookieName:string = this.cookiePrefix + this.cookie.userIdSuffix;
-        let userId:string = this.getCookieByName(userIdCookieName);
-        return userId;
-    };
-
-    public getFirstName = ():string => {
-        let firstNameCookieName:string = this.cookiePrefix + this.cookie.userFirstName;
-        let firstName:string = this.getCookieByName(firstNameCookieName);
-        return firstName;
-    };
-
-    public getLastName = ():string => {
-        let lastNameCookieName:string = this.cookiePrefix + this.cookie.userLastName;
-        let lastName:string = this.getCookieByName(lastNameCookieName);
-        return lastName;
-    };
-
-    public getEmail = ():string => {
-        let emailCookieName:string = this.cookiePrefix + this.cookie.userEmail;
-        let email:string = this.getCookieByName(emailCookieName);
-        return email;
     }
 }

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,17 +20,17 @@
  * ================================================================================
  */
 
-import * as _ from "lodash";
-import { Component, Compiler, EventEmitter, ViewContainerRef, ViewChild, Input, Output, ElementRef, ComponentRef, ComponentFactoryResolver } from '@angular/core'
-import {ValidationConfiguration} from 'app/models/validation-config';
-import {IUiElementChangeEvent} from "../form-components/ui-element-base.component";
-import {UiElementInputComponent} from "../form-components/input/ui-element-input.component";
-import {UiElementPopoverInputComponent} from "../form-components/popover-input/ui-element-popover-input.component";
-import {UiElementIntegerInputComponent} from "../form-components/integer-input/ui-element-integer-input.component";
-import {UiElementDropDownComponent, DropdownValue} from "../form-components/dropdown/ui-element-dropdown.component";
-import {PROPERTY_DATA, PROPERTY_TYPES} from "../../../utils/constants";
-import {UiElementValidValuesInputComponent} from "../form-components/valid-values-input/ui-element-valid-values-input.component";
-import {UiElementRangeInputComponent} from "../form-components/range-input/ui-element-range-input.component";
+import { Compiler, Component, ComponentFactoryResolver, ComponentRef, ElementRef, EventEmitter, Input, Output, ViewChild, ViewContainerRef } from '@angular/core';
+import { ValidationConfiguration } from 'app/models/validation-config';
+import * as _ from 'lodash';
+import { PROPERTY_DATA, PROPERTY_TYPES } from '../../../utils/constants';
+import { DropdownValue, UiElementDropDownComponent } from '../form-components/dropdown/ui-element-dropdown.component';
+import { UiElementInputComponent } from '../form-components/input/ui-element-input.component';
+import { UiElementIntegerInputComponent } from '../form-components/integer-input/ui-element-integer-input.component';
+import { UiElementPopoverInputComponent } from '../form-components/popover-input/ui-element-popover-input.component';
+import { UiElementRangeInputComponent } from '../form-components/range-input/ui-element-range-input.component';
+import { IUiElementChangeEvent } from '../form-components/ui-element-base.component';
+import { UiElementValidValuesInputComponent } from '../form-components/valid-values-input/ui-element-valid-values-input.component';
 
 enum DynamicElementComponentCreatorIdentifier {
     STRING,
@@ -68,38 +68,37 @@ export class DynamicElementComponent {
     @Input() childType: any;
     @Input() name: string;
     @Input() testId: string;
-    @Input() readonly:boolean;
-    @Input() constraints: Array<any>;
-    @Input() path:string;//optional param. used only for for subnetpoolid type
-    @Input() declared:boolean;
+    @Input() readonly: boolean;
+    @Input() constraints: any[];
+    @Input() path: string; // optional param. used only for for subnetpoolid type
+    @Input() declared: boolean;
 
     @Input() value: any;
     @Output() valueChange: EventEmitter<any> = new EventEmitter<any>();
     @Output('elementChanged') emitter: EventEmitter<IUiElementChangeEvent> = new EventEmitter<IUiElementChangeEvent>();
 
     cmpRef: ComponentRef<any>;
+    validation = ValidationConfiguration.validation;
     private isViewInitialized: boolean = false;
     private elementCreatorIdentifier: DynamicElementComponentCreatorIdentifier;
-    validation = ValidationConfiguration.validation;
 
     constructor(
-        
+
         private componentFactoryResolver: ComponentFactoryResolver,
         private compiler: Compiler,
         private el: ElementRef) {
-           
-            
+
     }
 
     updateComponent() {
         if (!this.isViewInitialized) {
             return;
         }
-        
+
         // Factory to create component based on type or other property attributes.
         const prevElementCreatorIdentifier: DynamicElementComponentCreatorIdentifier = this.elementCreatorIdentifier;
-        switch(true) {
-            case this.path && this.path.toUpperCase().indexOf("SUBNETPOOLID") !== -1 && this.operator != 'valid_values':
+        switch (true) {
+            case this.path && this.path.toUpperCase().indexOf('SUBNETPOOLID') !== -1 && this.operator != 'valid_values':
                 this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.SUBNETPOOLID;
                 break;
             case this.getValidValues() !== undefined && this.getValidValues() !== null:
@@ -155,8 +154,8 @@ export class DynamicElementComponent {
         }
     }
 
-    createElementCreatorIdentifierForChild():void{
-      switch(this.childType) {
+    createElementCreatorIdentifierForChild(): void {
+      switch (this.childType) {
         case 'integer':
           this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.INTEGER;
           break;
@@ -185,17 +184,17 @@ export class DynamicElementComponent {
 
     createComponentByIdentifier() {
         // if(!this.constraints || this.declared){
-            switch(this.elementCreatorIdentifier) {
+            switch (this.elementCreatorIdentifier) {
                 case DynamicElementComponentCreatorIdentifier.SUBNETPOOLID:
-                    if(this.name.toUpperCase().indexOf("SUBNETPOOLID") == -1){//if it's an item of subnetpoolid list get the parent name
-                        let pathArray = this.path.split("#");
+                    if (this.name.toUpperCase().indexOf('SUBNETPOOLID') == -1) {// if it's an item of subnetpoolid list get the parent name
+                        const pathArray = this.path.split('#');
                         this.name = pathArray[pathArray.length - 2];
                     }
                     this.createComponent(UiElementPopoverInputComponent);
                     break;
                 case DynamicElementComponentCreatorIdentifier.ENUM:
                     this.createComponent(UiElementDropDownComponent);
-                    let validVals:Array<DropdownValue> = [...this.getValidValues()].map(val => new DropdownValue(val, val));
+                    let validVals: DropdownValue[] = [...this.getValidValues()].map((val) => new DropdownValue(val, val));
                     if (this.type === 'float' || this.type === 'integer') {
                         this.value = this.value && Number(this.value);
                         validVals = _.map(
@@ -236,12 +235,12 @@ export class DynamicElementComponent {
                     this.createComponent(UiElementDropDownComponent);
 
                     // Build drop down values
-                    let tmp = [];
-                    tmp.push(new DropdownValue(true,'TRUE'));
-                    tmp.push(new DropdownValue(false,'FALSE'));
+                    const tmp = [];
+                    tmp.push(new DropdownValue(true, 'TRUE'));
+                    tmp.push(new DropdownValue(false, 'FALSE'));
                     this.cmpRef.instance.values = tmp;
                     try {
-                        if(typeof this.value === 'string'){
+                        if (typeof this.value === 'string') {
                             this.value = JSON.parse(this.value);
                         }
                     } catch (err) {
@@ -252,12 +251,12 @@ export class DynamicElementComponent {
                 case DynamicElementComponentCreatorIdentifier.DEFAULT:
                 default:
                     this.createComponent(UiElementInputComponent);
-                    console.error("ERROR: No ui-models component to handle type: " + this.type);
+                    console.error('ERROR: No ui-models component to handle type: ' + this.type);
             }
         // }
         // //There are consraints
         // else {
-            
+
         //     this.createComponent(UiElementDropDownComponent);
 
         //     // Build drop down values
@@ -268,26 +267,24 @@ export class DynamicElementComponent {
 
         //     items.push(new DropdownValue(this.value,this.value, true, true));
         //     this.cmpRef.instance.values = items;
-            
-            
-            
+
         // }
 
         // Subscribe to change event of of ui-models-element-basic and fire event to change the value
-        this.cmpRef.instance.baseEmitter.subscribe((event) => { this.emitter.emit(event); });
-        this.cmpRef.instance.valueChange.subscribe((event) => { this.valueChange.emit(event); });
+            this.cmpRef.instance.baseEmitter.subscribe((event) => { this.emitter.emit(event); });
+            this.cmpRef.instance.valueChange.subscribe((event) => { this.valueChange.emit(event); });
     }
 
-    getValidValues(): Array<string> {
+    getValidValues(): string[] {
         let validVals;
-        _.forEach(this.constraints, constraint => {
+        _.forEach(this.constraints, (constraint) => {
             validVals = validVals || constraint.validValues;
         });
         return validVals;
     }
 
-    createComponent(ComponentToCreate:any):void {
-        let factory = this.componentFactoryResolver.resolveComponentFactory(ComponentToCreate);
+    createComponent(ComponentToCreate: any): void {
+        const factory = this.componentFactoryResolver.resolveComponentFactory(ComponentToCreate);
         this.cmpRef = this.target.createComponent(factory);
     }
 

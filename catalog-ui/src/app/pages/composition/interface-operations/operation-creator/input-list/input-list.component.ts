@@ -19,16 +19,16 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {InputOperationParameter} from "../../../../../models/interface-operation";
-import {DataTypeModel} from "../../../../../models/data-types";
-import {DerivedPropertyType} from "../../../../../models/properties-inputs/property-be-model";
-import {SubPropertyToscaFunction} from "../../../../../models/sub-property-tosca-function";
-import {PROPERTY_DATA, PROPERTY_TYPES} from "../../../../../utils/constants";
-import {InstanceFeDetails} from "../../../../../models/instance-fe-details";
-import {ToscaFunction} from "../../../../../models/tosca-function";
-import {CustomToscaFunction} from "../../../../../models/default-custom-functions";
-import {ToscaFunctionType} from 'app/models/tosca-function-type.enum';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ToscaFunctionType } from 'app/models/tosca-function-type.enum';
+import { DataTypeModel } from '../../../../../models/data-types';
+import { CustomToscaFunction } from '../../../../../models/default-custom-functions';
+import { InstanceFeDetails } from '../../../../../models/instance-fe-details';
+import { InputOperationParameter } from '../../../../../models/interface-operation';
+import { DerivedPropertyType } from '../../../../../models/properties-inputs/property-be-model';
+import { SubPropertyToscaFunction } from '../../../../../models/sub-property-tosca-function';
+import { ToscaFunction } from '../../../../../models/tosca-function';
+import { PROPERTY_DATA, PROPERTY_TYPES } from '../../../../../utils/constants';
 
 @Component({
   selector: 'input-list',
@@ -37,10 +37,10 @@ import {ToscaFunctionType} from 'app/models/tosca-function-type.enum';
 })
 export class InputListComponent {
 
-  @Input() set inputs(inputs: Array<InputOperationParameter>) {
+  @Input() set inputs(inputs: InputOperationParameter[]) {
     this._inputs = new Array<InputOperationParameter>();
     if (inputs) {
-      inputs.forEach(input => {
+      inputs.forEach((input) => {
         const inputCopy = new InputOperationParameter(input);
         this.initValue(inputCopy);
 
@@ -55,43 +55,15 @@ export class InputListComponent {
   @Input() showToscaFunctionOption: boolean = false;
   @Input() allowDeletion: boolean = false;
   @Input() componentInstanceMap: Map<string, InstanceFeDetails> = new Map();
-  @Input() customToscaFunctions: Array<CustomToscaFunction> = [];
+  @Input() customToscaFunctions: CustomToscaFunction[] = [];
   @Output('onInputsValidityChange') inputsValidityChangeEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output('onValueChange') inputValueChangeEvent: EventEmitter<InputOperationParameter> = new EventEmitter<InputOperationParameter>();
   @Output('onDelete') inputDeleteEvent: EventEmitter<string> = new EventEmitter<string>();
 
-  _inputs: Array<InputOperationParameter> = [];
+  _inputs: InputOperationParameter[] = [];
 
   getDataType(type: string): DataTypeModel {
     return this.dataTypeMap.get(type);
-  }
-
-  private initValue(input: InputOperationParameter): void {
-    if (input.value) {
-      try {
-        input.value = JSON.parse(input.value);
-      } catch (e) {
-        console.debug('Could not parse value', input.value, e);
-      }
-      return;
-    }
-
-    if (input.toscaDefaultValue) {
-      try {
-        input.value = JSON.parse(input.toscaDefaultValue);
-        return;
-      } catch (e) {
-        console.debug('Could not parse value', input.value, e);
-      }
-    }
-
-    if (this.isTypeComplex(input.type) || this.isTypeMap(input.type)) {
-      input.value = {};
-    } else if (this.isTypeList(input.type)) {
-      input.value = [];
-    } else {
-      input.value = undefined;
-    }
   }
 
   getType(typeName: string): DerivedPropertyType {
@@ -123,7 +95,7 @@ export class InputListComponent {
   }
 
   onValueChange($event: any) {
-    const inputOperationParameter = this._inputs.find(input => input.name == $event.name);
+    const inputOperationParameter = this._inputs.find((input) => input.name == $event.name);
     if (!inputOperationParameter.subPropertyToscaFunctions) {
       inputOperationParameter.subPropertyToscaFunctions = [];
     }
@@ -153,39 +125,67 @@ export class InputListComponent {
         inputOperationParameter.toscaFunction = null;
       }
     }
-      this.inputsValidityChangeEvent.emit(this._inputs.every(input => input.valid === true));
-      this.inputValueChangeEvent.emit(new InputOperationParameter(inputOperationParameter));
+    this.inputsValidityChangeEvent.emit(this._inputs.every((input) => input.valid === true));
+    this.inputValueChangeEvent.emit(new InputOperationParameter(inputOperationParameter));
   }
 
-  private setComplexType ($event, inputOperationParameter): void {
-    Object.keys($event.value).forEach(function (key) {
-      let value = $event.value[key];
+  onDelete(inputName: string) {
+    this.inputDeleteEvent.emit(inputName);
+  }
+
+  private initValue(input: InputOperationParameter): void {
+    if (input.value) {
+      try {
+        input.value = JSON.parse(input.value);
+      } catch (e) {
+        console.debug('Could not parse value', input.value, e);
+      }
+      return;
+    }
+
+    if (input.toscaDefaultValue) {
+      try {
+        input.value = JSON.parse(input.toscaDefaultValue);
+        return;
+      } catch (e) {
+        console.debug('Could not parse value', input.value, e);
+      }
+    }
+
+    if (this.isTypeComplex(input.type) || this.isTypeMap(input.type)) {
+      input.value = {};
+    } else if (this.isTypeList(input.type)) {
+      input.value = [];
+    } else {
+      input.value = undefined;
+    }
+  }
+
+  private setComplexType($event, inputOperationParameter): void {
+    Object.keys($event.value).forEach(function(key) {
+      const value = $event.value[key];
       if (!value || value.length < 1) {
         return;
       }
-      let subPropertyToscaFunction = inputOperationParameter.subPropertyToscaFunctions.find(existingSubPropertyToscaFunction => {
+      let subPropertyToscaFunction = inputOperationParameter.subPropertyToscaFunctions.find((existingSubPropertyToscaFunction) => {
         const prop = existingSubPropertyToscaFunction.subPropertyPath;
-        return prop && [key] && prop.length === [key].length && prop.every(function(value, index) { return value === [key][index]});
+        return prop && [key] && prop.length === [key].length && prop.every(function(value, index) { return value === [key][index]; });
       });
-      let valueKeys = value instanceof Object ? Object.keys(value) : undefined;
+      const valueKeys = value instanceof Object ? Object.keys(value) : undefined;
       if (value && value.type && value.type in ToscaFunctionType) {
-        if (!subPropertyToscaFunction){
+        if (!subPropertyToscaFunction) {
           subPropertyToscaFunction = new SubPropertyToscaFunction();
           inputOperationParameter.subPropertyToscaFunctions.push(subPropertyToscaFunction);
         }
         subPropertyToscaFunction.toscaFunction = value;
         $event.value[key] = (value as ToscaFunction).buildValueObject();
-        let array: string[] = [];
-        array.push(key)
+        const array: string[] = [];
+        array.push(key);
         subPropertyToscaFunction.subPropertyPath = array;
-      } else if (subPropertyToscaFunction && (!valueKeys || !valueKeys.every(value => value.toUpperCase() in ToscaFunctionType))) {
-        inputOperationParameter.subPropertyToscaFunctions.splice(inputOperationParameter.subPropertyToscaFunctions.indexOf(subPropertyToscaFunction), 1)
+      } else if (subPropertyToscaFunction && (!valueKeys || !valueKeys.every((value) => value.toUpperCase() in ToscaFunctionType))) {
+        inputOperationParameter.subPropertyToscaFunctions.splice(inputOperationParameter.subPropertyToscaFunctions.indexOf(subPropertyToscaFunction), 1);
       }
     });
 }
-
-  onDelete(inputName: string) {
-    this.inputDeleteEvent.emit(inputName);
-  }
 
 }

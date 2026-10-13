@@ -1,13 +1,13 @@
 import * as _ from 'lodash';
 (window as any)._ = _;
 
-import {TestBed} from '@angular/core/testing';
-import {HttpModule, Http, BaseRequestOptions} from '@angular/http';
-import {MockBackend} from '@angular/http/testing';
-import {PluginsService} from './plugins.service';
-import {SdcConfigToken} from '../config/sdc-config.config';
-import {mockSdcConfig} from '../../jest/mocks/sdc-config.mock';
-import {Plugin, PluginsConfiguration} from 'app/models/plugins-config';
+import { TestBed } from '@angular/core/testing';
+import { BaseRequestOptions, Http, HttpModule } from '@angular/http';
+import { MockBackend } from '@angular/http/testing';
+import { Plugin, PluginsConfiguration } from 'app/models/plugins-config';
+import { mockSdcConfig } from '../../jest/mocks/sdc-config.mock';
+import { SdcConfigToken } from '../config/sdc-config.config';
+import { PluginsService } from './plugins.service';
 
 describe('PluginsService', () => {
     let service: PluginsService;
@@ -87,7 +87,7 @@ describe('PluginsService', () => {
     describe('getPluginByStateUrl', () => {
         it('should return the plugin matching the state URL', () => {
             const testPlugin = {pluginStateUrl: 'test-state', pluginId: 'test'};
-            PluginsConfiguration.plugins = {'test': testPlugin} as any;
+            PluginsConfiguration.plugins = {test: testPlugin} as any;
 
             const result = service.getPluginByStateUrl('test-state');
             expect(result).toBe(testPlugin);

@@ -18,17 +18,17 @@
  * ============LICENSE_END=========================================================
  */
 
-import { GraphColors, GraphUIObjects} from "app/utils/constants";
-import constant = require("lodash/constant");
-import {ImagesUrl} from "app/utils/constants";
-import {getSdcConfig} from "app/config/sdc-config.config.factory";
-import {CanvasHandleTypes} from 'app/utils/constants';
+import { getSdcConfig } from 'app/config/sdc-config.config.factory';
+import { GraphColors, GraphUIObjects } from 'app/utils/constants';
+import { ImagesUrl } from 'app/utils/constants';
+import { CanvasHandleTypes } from 'app/utils/constants';
+import constant = require('lodash/constant');
 /**
  * Created by obarda on 12/18/2016.
  */
 export class ComponentInstanceNodesStyle {
 
-    public static getCompositionGraphStyle = ():Array<Cy.Stylesheet>  => {
+    public static getCompositionGraphStyle = (): Cy.Stylesheet[]  => {
         return [
             {
                 selector: 'core',
@@ -65,8 +65,8 @@ export class ComponentInstanceNodesStyle {
                     'width': GraphUIObjects.DEFAULT_RESOURCE_WIDTH,
                     'height': GraphUIObjects.DEFAULT_RESOURCE_WIDTH,
                     'background-opacity': 0,
-                    "background-width": GraphUIObjects.DEFAULT_RESOURCE_WIDTH,
-                    "background-height": GraphUIObjects.DEFAULT_RESOURCE_WIDTH,
+                    'background-width': GraphUIObjects.DEFAULT_RESOURCE_WIDTH,
+                    'background-height': GraphUIObjects.DEFAULT_RESOURCE_WIDTH,
                     'text-valign': 'bottom',
                     'text-halign': 'center',
                     'background-fit': 'cover',
@@ -86,7 +86,7 @@ export class ComponentInstanceNodesStyle {
                     'background-image': 'data(img)',
                     'width': 64,
                     'height': 64,
-                    "border-width": 0,
+                    'border-width': 0,
                     'text-valign': 'bottom',
                     'text-halign': 'center',
                     'background-opacity': 0,
@@ -104,7 +104,7 @@ export class ComponentInstanceNodesStyle {
                     'background-width': GraphUIObjects.SMALL_RESOURCE_WIDTH,
                     'background-height': GraphUIObjects.SMALL_RESOURCE_WIDTH,
                     'width': GraphUIObjects.SMALL_RESOURCE_WIDTH + GraphUIObjects.HANDLE_SIZE,
-                    'height': GraphUIObjects.SMALL_RESOURCE_WIDTH + GraphUIObjects.HANDLE_SIZE/2,
+                    'height': GraphUIObjects.SMALL_RESOURCE_WIDTH + GraphUIObjects.HANDLE_SIZE / 2,
                     'background-position-x': GraphUIObjects.HANDLE_SIZE / 2,
                     'background-position-y': GraphUIObjects.HANDLE_SIZE / 2,
                     'text-valign': 'bottom',
@@ -161,7 +161,7 @@ export class ComponentInstanceNodesStyle {
                     'overlay-opacity': 0,
                     'label': 'data(displayName)',
                     'text-valign': 'data(textPosition)',
-                    'text-margin-y': (ele:Cy.Collection) => {
+                    'text-margin-y': (ele: Cy.Collection) => {
                         return (ele.data('textPosition') == 'top') ? -5 : 5;
                     },
                     'font-size': 12
@@ -209,7 +209,7 @@ export class ComponentInstanceNodesStyle {
             {
                 selector: '.ucpe-host-link',
                 css: {
-                    'width': 0
+                    width: 0
                 }
             },
             {
@@ -241,7 +241,7 @@ export class ComponentInstanceNodesStyle {
                 selector: '.not-certified',
                 css: {
                     'shape': 'rectangle',
-                    'background-image': (ele:Cy.Collection) => {
+                    'background-image': (ele: Cy.Collection) => {
                         // return ele.data().setUncertifiedImageBgStyle(ele, GraphUIObjects.NODE_OVERLAP_MIN_SIZE);//Change name to setUncertifiedImageBgStyle??
                         return ele.data().initUncertifiedImage(ele, GraphUIObjects.NODE_OVERLAP_MIN_SIZE);
                     },
@@ -259,8 +259,8 @@ export class ComponentInstanceNodesStyle {
                 selector: '.dependent.not-certified',
                 css: {
                     'shape': 'rectangle',
-                    'background-image': (ele:Cy.Collection) => {
-                        return ele.data().initUncertifiedDependentImage(ele, GraphUIObjects.NODE_OVERLAP_MIN_SIZE)
+                    'background-image': (ele: Cy.Collection) => {
+                        return ele.data().initUncertifiedDependentImage(ele, GraphUIObjects.NODE_OVERLAP_MIN_SIZE);
                     },
                     'border-width': 0
                 }
@@ -268,8 +268,8 @@ export class ComponentInstanceNodesStyle {
             {
                 selector: 'node:selected',
                 css: {
-                    "border-width": 2,
-                    "border-color": GraphColors.NODE_SELECTED_BORDER_COLOR,
+                    'border-width': 2,
+                    'border-color': GraphColors.NODE_SELECTED_BORDER_COLOR,
                     'shape': 'rectangle'
                 }
             },
@@ -297,7 +297,7 @@ export class ComponentInstanceNodesStyle {
                     'background-position-x': GraphUIObjects.HANDLE_SIZE / 2,
                     'background-position-y': GraphUIObjects.HANDLE_SIZE / 2,
                     'width': GraphUIObjects.SMALL_RESOURCE_WIDTH + GraphUIObjects.HANDLE_SIZE,
-                    'height': GraphUIObjects.SMALL_RESOURCE_WIDTH + GraphUIObjects.HANDLE_SIZE/2,
+                    'height': GraphUIObjects.SMALL_RESOURCE_WIDTH + GraphUIObjects.HANDLE_SIZE / 2,
                     'text-valign': 'bottom',
                     'text-halign': 'center',
                     'background-opacity': 0,
@@ -309,13 +309,13 @@ export class ComponentInstanceNodesStyle {
                 selector: '.archived',
                 css: {
                     'shape': 'rectangle',
-                    'background-image': (ele:Cy.Collection) => {
-                        return ele.data().setArchivedImageBgStyle(ele, GraphUIObjects.NODE_OVERLAP_MIN_SIZE); //Change name to setArchivedImageBgStyle ??
+                    'background-image': (ele: Cy.Collection) => {
+                        return ele.data().setArchivedImageBgStyle(ele, GraphUIObjects.NODE_OVERLAP_MIN_SIZE); // Change name to setArchivedImageBgStyle ??
                     },
-                    "border-width": 0
+                    'border-width': 0
                 }
             }
-        ]
+        ];
     }
 
     public static getAddEdgeHandle = () => {
@@ -328,7 +328,7 @@ export class ComponentInstanceNodesStyle {
             lineWidth: 2,
             lineStyle: 'dashed'
 
-        }
+        };
     }
 
     public static getTagHandle = () => {
@@ -336,7 +336,7 @@ export class ComponentInstanceNodesStyle {
             single: false,
             type: CanvasHandleTypes.TAG_AVAILABLE,
             imageUrl: getSdcConfig().imagesPath + ImagesUrl.CANVAS_TAG_ICON,
-        }        
+        };
     }
 
     public static getTaggedPolicyHandle = () => {
@@ -344,7 +344,7 @@ export class ComponentInstanceNodesStyle {
             single: false,
             type: CanvasHandleTypes.TAGGED_POLICY,
             imageUrl: getSdcConfig().imagesPath + ImagesUrl.CANVAS_POLICY_TAGGED_ICON,
-        }        
+        };
     }
 
     public static getTaggedGroupHandle = () => {
@@ -352,12 +352,12 @@ export class ComponentInstanceNodesStyle {
             single: false,
             type: CanvasHandleTypes.TAGGED_GROUP,
             imageUrl: getSdcConfig().imagesPath + ImagesUrl.CANVAS_GROUP_TAGGED_ICON,
-        }        
+        };
     }
-    
-    public static getGraphDisplayName(name:string):string {
-        let context = document.createElement("canvas").getContext("2d");
-        context.font = "13px Arial";
+
+    public static getGraphDisplayName(name: string): string {
+        const context = document.createElement('canvas').getContext('2d');
+        context.font = '13px Arial';
 
         if (67 < context.measureText(name).width) {
             let newLen = name.length - 3;

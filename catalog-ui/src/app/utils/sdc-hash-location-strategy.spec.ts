@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-import {SdcHashLocationStrategy} from './sdc-hash-location-strategy';
+import { SdcHashLocationStrategy } from './sdc-hash-location-strategy';
 
 /**
  * The '#!' prefix is a compatibility contract, not a style choice: every bookmark users hold, every

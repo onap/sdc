@@ -15,28 +15,28 @@
  */
 
 import { Component, ComponentRef, Input } from '@angular/core';
-import {ButtonModel} from 'app/models/button';
-import {CapabilitiesGroup, Capability} from 'app/models/capability';
-import {Component as TopologyTemplate} from 'app/models/components/component';
-import {ModalModel} from 'app/models/modal';
-import {InterfaceModel, OperationModel} from 'app/models/operation';
-import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
-import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
-import {PropertyFEModel} from 'app/models/properties-inputs/property-fe-model';
 import { ModalComponent } from 'app/components/ui/modal/modal.component';
+import { ButtonModel } from 'app/models/button';
+import { CapabilitiesGroup, Capability } from 'app/models/capability';
+import { Component as TopologyTemplate } from 'app/models/components/component';
+import { ModalModel } from 'app/models/modal';
+import { InterfaceModel, OperationModel } from 'app/models/operation';
+import { InputBEModel } from 'app/models/properties-inputs/input-be-model';
+import { PropertyBEModel } from 'app/models/properties-inputs/property-be-model';
+import { PropertyFEModel } from 'app/models/properties-inputs/property-fe-model';
 import { ServiceConsumptionCreatorComponent } from 'app/pages/service-consumption-editor/service-consumption-editor.component';
 import { ComponentInstanceService } from 'app/services/component-instance-services/component-instance.service';
 import { ComponentService } from 'app/services/component-services/component.service';
 import { ModalService } from 'app/services/modal.service';
 import { ComponentMetadata } from '../../../models/component-metadata';
-import { Resource } from '../../../models/components/resource';
 import { FullComponentInstance } from '../../../models/components-instances/full-component-instance';
+import { Resource } from '../../../models/components/resource';
 import { ServiceInstanceObject } from '../../../models/service-instance-properties-and-interfaces';
+import { TopologyTemplateService } from '../../../services/component-services/topology-template.service';
 import { ComponentFactory } from '../../../utils/component-factory';
 import { ComponentType } from '../../../utils/constants';
-import { TopologyTemplateService } from '../../../services/component-services/topology-template.service';
 
-export class ConsumptionInput extends PropertyFEModel{
+export class ConsumptionInput extends PropertyFEModel {
     inputId: string;
     type: string;
     source: string;
@@ -109,7 +109,7 @@ export class InterfaceWithServiceOperation {
         if (input) {
             this.interfaceId = input.uniqueId;
             this.displayName = input.displayType();
-            this.operationsList = _.map(input.operations, (operation) => new ServiceOperation({operation: operation}));
+            this.operationsList = _.map(input.operations, (operation) => new ServiceOperation({operation}));
             this.isExpanded = true;
         }
     }
@@ -250,7 +250,7 @@ export class ServiceConsumptionComponent {
         return !this.modalInstance.instance.dynamicContent.instance.checkFormValidForSubmit();
     }
 
-     //TODO remove when workspace page convert to angular5
+     // TODO remove when workspace page convert to angular5
      convertMetaDataToComponent(componentMetadata: ComponentMetadata) {
         const newResource: Resource = this.componentFactory.createEmptyComponent(ComponentType.RESOURCE) as Resource;
         newResource.setComponentMetadata(componentMetadata);

@@ -40,7 +40,7 @@ export class PropertyMetadataComponent implements OnInit {
   metadataFormArray: FormArray = new FormArray([]);
   metadataForm: FormGroup = new FormGroup (
     {
-      'metadataFormList': this.metadataFormArray
+      metadataFormList: this.metadataFormArray
     }
   );
   validationMessages = {
@@ -53,6 +53,34 @@ export class PropertyMetadataComponent implements OnInit {
     this.initForm();
   }
 
+  addMetadataField() {
+    const metadata: Metadata = {
+      key: null,
+      value: null,
+    };
+    this.propertyMetadataArray.push(metadata);
+    this.metadataFormArray.push(
+      new FormControl(metadata, [Validators.required, this.formControlValidator()])
+    );
+  }
+
+  removeFromList(index: number) {
+    this.propertyMetadataArray.splice(index, 1);
+    this.metadataFormArray.removeAt(index);
+  }
+
+  onChangePropertyMetadataValue(index: number, newValue: any) {
+    const metadata = this.metadataFormArray.controls[index].value;
+    metadata.value = newValue;
+    this.metadataFormArray.controls[index].setValue(metadata);
+  }
+
+  onChangePropertyMetadataKey(index: number, newKey: any) {
+    const metadata = this.metadataFormArray.controls[index].value;
+    metadata.key = newKey;
+    this.metadataFormArray.controls[index].setValue(metadata);
+  }
+
   private initForm(): void {
     this.metadataForm.valueChanges.subscribe(() => {
       this.emitOnPropertyMetadataChange();
@@ -60,10 +88,10 @@ export class PropertyMetadataComponent implements OnInit {
     if (this.propertyMetadata) {
       for (const key in this.propertyMetadata) {
         const value = this.propertyMetadata[key];
-        let metadata: Metadata = {
-          key: key,
-          value: value
-        }
+        const metadata: Metadata = {
+          key,
+          value
+        };
         this.propertyMetadataArray.push(metadata);
         this.metadataFormArray.push(
           new FormControl(metadata, [Validators.required, Validators.minLength(1)])
@@ -72,35 +100,19 @@ export class PropertyMetadataComponent implements OnInit {
     }
   }
 
-  addMetadataField() {
-    let metadata: Metadata = {
-      key: null,
-      value: null,
-    }
-    this.propertyMetadataArray.push(metadata);
-    this.metadataFormArray.push(
-      new FormControl(metadata, [Validators.required, this.formControlValidator()])
-    );
-  }
-
   private formControlValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const metadata = control.value;
 
       if (!metadata || !metadata.key || !metadata.value) {
-        return {required:true};
+        return {required: true};
       }
       return null;
-    }
-  }
-
-  removeFromList(index: number) {
-    this.propertyMetadataArray.splice(index, 1);;
-    this.metadataFormArray.removeAt(index);
+    };
   }
 
   private emitOnPropertyMetadataChange(): void {
-    let newMetadata = new Object;
+    const newMetadata = new Object;
     for (const metadata of this.propertyMetadataArray) {
       const key = metadata.key;
       const value = metadata.value;
@@ -112,21 +124,9 @@ export class PropertyMetadataComponent implements OnInit {
       valid: this.metadataForm.valid
     });
   }
-
-  onChangePropertyMetadataValue(index: number, newValue: any) {
-    let metadata = this.metadataFormArray.controls[index].value;
-    metadata.value = newValue;
-    this.metadataFormArray.controls[index].setValue(metadata);
-  }
-
-  onChangePropertyMetadataKey(index: number, newKey: any) {
-    let metadata = this.metadataFormArray.controls[index].value;
-    metadata.key = newKey;
-    this.metadataFormArray.controls[index].setValue(metadata);
-  }
 }
 
 export interface Metadata {
-  key: string,
-  value: string
+  key: string;
+  value: string;
 }

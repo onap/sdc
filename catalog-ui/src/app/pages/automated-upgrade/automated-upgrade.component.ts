@@ -21,10 +21,10 @@
  * ============LICENSE_END=========================================================
  */
 
-import {Component, Input, Inject, forwardRef} from "@angular/core";
-import {TranslateService} from "../../shared/translator/translate.service";
-import {ServiceContainerToUpgradeUiObject} from "./automated-upgrade-models/ui-component-to-upgrade";
-import {AutomatedUpgradeService} from "./automated-upgrade.service";
+import { Component, forwardRef, Inject, Input } from '@angular/core';
+import { TranslateService } from '../../shared/translator/translate.service';
+import { ServiceContainerToUpgradeUiObject } from './automated-upgrade-models/ui-component-to-upgrade';
+import { AutomatedUpgradeService } from './automated-upgrade.service';
 
 @Component({
     selector: 'upgrade-vsp',
@@ -33,29 +33,29 @@ import {AutomatedUpgradeService} from "./automated-upgrade.service";
 })
 export class AutomatedUpgradeComponent {
 
-    @Input() componentsToUpgrade: Array<ServiceContainerToUpgradeUiObject>;
+    @Input() componentsToUpgrade: ServiceContainerToUpgradeUiObject[];
     @Input() certificationStatusText: string;
     @Input() informationText: string;
     @Input() disabled: string;
-    private selectedComponentsToUpgrade: Array<string> = [];
+    private selectedComponentsToUpgrade: string[] = [];
 
-    constructor (@Inject(forwardRef(() => AutomatedUpgradeService)) private automatedUpgradeService: AutomatedUpgradeService) {
+    constructor(@Inject(forwardRef(() => AutomatedUpgradeService)) private automatedUpgradeService: AutomatedUpgradeService) {
     }
 
     ngOnInit(): void  { // We need to check all elements that needed upgrade as default
-        this.selectedComponentsToUpgrade = _.filter(this.componentsToUpgrade, (componentToUpgrade:ServiceContainerToUpgradeUiObject) => {
+        this.selectedComponentsToUpgrade = _.filter(this.componentsToUpgrade, (componentToUpgrade: ServiceContainerToUpgradeUiObject) => {
                 return !componentToUpgrade.isAlreadyUpgrade && !componentToUpgrade.isLock;
-        }).map(element => element.uniqueId)
+        }).map((element) => element.uniqueId);
     }
 
-    onComponentSelected  = (uniqueId:string):void => {
+    onComponentSelected  = (uniqueId: string): void => {
 
-        if(this.selectedComponentsToUpgrade.indexOf(uniqueId) > -1) {
+        if (this.selectedComponentsToUpgrade.indexOf(uniqueId) > -1) {
             this.selectedComponentsToUpgrade = _.without(this.selectedComponentsToUpgrade, uniqueId);
         } else  {
             this.selectedComponentsToUpgrade.push(uniqueId);
         }
-        if(this.selectedComponentsToUpgrade.length === 0) {
+        if (this.selectedComponentsToUpgrade.length === 0) {
             this.automatedUpgradeService.changeUpgradeButtonState(true);
         } else {
             this.automatedUpgradeService.changeUpgradeButtonState(false);

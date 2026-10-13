@@ -1,9 +1,9 @@
 /**
  * Created by ob0695 on 7/17/2018.
  */
-import {State, Action, StateContext} from '@ngxs/store';
-import {UpdateIsDesigner, UpdateIsViewOnly} from "../actions/workspace.action";
-import {Selector} from "@ngxs/store";
+import { Action, State, StateContext } from '@ngxs/store';
+import { Selector } from '@ngxs/store';
+import { UpdateIsDesigner, UpdateIsViewOnly } from '../actions/workspace.action';
 
 export interface WorkspaceStateModel {
     isViewOnly: boolean;
@@ -20,9 +20,9 @@ export interface WorkspaceStateModel {
 
 export class WorkspaceState {
 
-    constructor(){}
+    constructor() {}
 
-    @Selector() static isViewOnly(state: WorkspaceStateModel):boolean {
+    @Selector() static isViewOnly(state: WorkspaceStateModel): boolean {
         return state.isViewOnly;
     }
     @Selector() static isDesigner(state: WorkspaceStateModel): boolean {
@@ -30,7 +30,7 @@ export class WorkspaceState {
     }
 
     @Action(UpdateIsViewOnly)
-    updateIsViewOnly({getState, setState}: StateContext<WorkspaceStateModel>, action:UpdateIsViewOnly) {
+    updateIsViewOnly({getState, setState}: StateContext<WorkspaceStateModel>, action: UpdateIsViewOnly) {
         const state = getState();
         setState({
             ...state,
@@ -39,7 +39,7 @@ export class WorkspaceState {
     }
 
     @Action(UpdateIsDesigner)
-    updateIsDesigner({getState, patchState}: StateContext<WorkspaceStateModel>, action:UpdateIsDesigner) {
+    updateIsDesigner({getState, patchState}: StateContext<WorkspaceStateModel>, action: UpdateIsDesigner) {
         const state = getState();
         patchState({
             isDesigner: action.isDesigner

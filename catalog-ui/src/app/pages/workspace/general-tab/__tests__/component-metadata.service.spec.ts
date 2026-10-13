@@ -1,4 +1,4 @@
-import {ComponentMetadataService} from '../component-metadata.service';
+import { ComponentMetadataService } from '../component-metadata.service';
 
 describe('ComponentMetadataService', () => {
     let service: ComponentMetadataService;
