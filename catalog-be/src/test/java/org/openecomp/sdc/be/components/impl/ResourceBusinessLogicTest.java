@@ -413,6 +413,15 @@ class ResourceBusinessLogicTest {
     }
 
     @Test
+    void getUiComponentDataTransferByComponentIdNotFoundNamesTheResource() {
+        when(toscaOperationFacade.getToscaElement(eq("missing-id"), Mockito.any(ComponentParametersView.class))).thenReturn(
+            Either.right(StorageOperationStatus.NOT_FOUND));
+        final ResponseFormat responseFormat = bl.getUiComponentDataTransferByComponentId("missing-id", new ArrayList<>()).right().value();
+        assertEquals("SVC4063", responseFormat.getMessageId());
+        assertThat(responseFormat.getVariables()).containsExactly("missing-id");
+    }
+
+    @Test
     void shouldUpgradeToLatestDerivedTest() {
         createCR();
         createVF();
