@@ -1,8 +1,8 @@
 export enum SelectedComponentType {
-    COMPONENT_INSTANCE = "COMPONENT_INSTANCE",
-    GROUP = "GROUP",
-    POLICY = "POLICY",
-    TOPOLOGY_TEMPLATE = "TOPOLOGY_TEMPLATE"
+    COMPONENT_INSTANCE = 'COMPONENT_INSTANCE',
+    GROUP = 'GROUP',
+    POLICY = 'POLICY',
+    TOPOLOGY_TEMPLATE = 'TOPOLOGY_TEMPLATE'
 }
 
 export class UpdateSelectedComponentAction {
@@ -11,7 +11,7 @@ export class UpdateSelectedComponentAction {
         constructor(public payload: {uniqueId?: string, type?: string}) {
     }
 }
-    
+
 export class SetSelectedComponentAction {
     static readonly type = '[COMPOSITION] SetSelectedComponent';
 

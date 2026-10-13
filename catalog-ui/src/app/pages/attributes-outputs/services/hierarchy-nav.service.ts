@@ -18,10 +18,10 @@
  * ============LICENSE_END=========================================================
  */
 
-import {Injectable} from '@angular/core';
-import {AttributeFEModel} from "../../../models/attributes-outputs/attribute-fe-model";
-import {SimpleFlatAttribute} from "app/models/attributes-outputs/simple-flat-attribute";
-import {DerivedFEAttribute} from "../../../models/attributes-outputs/derived-fe-attribute";
+import { Injectable } from '@angular/core';
+import { SimpleFlatAttribute } from 'app/models/attributes-outputs/simple-flat-attribute';
+import { AttributeFEModel } from '../../../models/attributes-outputs/attribute-fe-model';
+import { DerivedFEAttribute } from '../../../models/attributes-outputs/derived-fe-attribute';
 
 @Injectable()
 export class HierarchyNavService {
@@ -34,16 +34,16 @@ export class HierarchyNavService {
    * @argument attribute: AttributeFEModel - attribute contains flattenedChildren array of DerivedFEAttribute
    * @returns  Array<SimpleFlatAttribute> - containing children Array<SimpleFlatAttribute>, augmantin children to SimpleFlatAttribute.
    */
-  public getSimpleAttributesTree(attribute: AttributeFEModel, instanceName: string): Array<SimpleFlatAttribute> {
+  public getSimpleAttributesTree(attribute: AttributeFEModel, instanceName: string): SimpleFlatAttribute[] {
     // Build Array of SimpleFlatAttribute before unflatten function
-    let flatAttributes: Array<SimpleFlatAttribute> = [];
+    const flatAttributes: SimpleFlatAttribute[] = [];
     flatAttributes.push(this.createSimpleFlatAttribute(attribute, instanceName)); // Push the root attribute
     attribute.flattenedChildren.forEach((child: DerivedFEAttribute): void => {
-      if (child.isChildOfListOrMap && child.schema.property.isSimpleType) return; //do not display non-complex children of list or map
+      if (child.isChildOfListOrMap && child.schema.property.isSimpleType) { return; } // do not display non-complex children of list or map
       flatAttributes.push(this.createSimpleFlatAttribute(child, instanceName));
     });
 
-    let tree = this.unflatten(flatAttributes, '', []);
+    const tree = this.unflatten(flatAttributes, '', []);
     return tree[0].childrens; // Return the childrens without the root.
   }
 
@@ -51,7 +51,7 @@ export class HierarchyNavService {
     if (attribute instanceof AttributeFEModel) {
       return new SimpleFlatAttribute(attribute.uniqueId, attribute.name, attribute.name, '', instanceName);
     } else {
-      let attribName: string = (attribute.isChildOfListOrMap) ? attribute.mapKey : attribute.name;
+      const attribName: string = (attribute.isChildOfListOrMap) ? attribute.mapKey : attribute.name;
       return new SimpleFlatAttribute(attribute.uniqueId, attribute.attributesName, attribName, attribute.parentName, instanceName);
     }
 
@@ -61,11 +61,11 @@ export class HierarchyNavService {
    * Unflatten Array<SimpleFlatAttribute> and build hierarchy.
    * The result will be Array<SimpleFlatAttribute> that augmantin with children for each SimpleFlatAttribute.
    */
-  private unflatten(array: Array<SimpleFlatAttribute>, parent: any, tree?: any): any {
+  private unflatten(array: SimpleFlatAttribute[], parent: any, tree?: any): any {
     tree = typeof tree !== 'undefined' ? tree : [];
     parent = typeof parent !== 'undefined' && parent !== '' ? parent : {path: ''};
 
-    var children = array.filter((child: SimpleFlatAttribute): boolean => {
+    const children = array.filter((child: SimpleFlatAttribute): boolean => {
       return child.parentName == parent.path;
     });
 
@@ -73,7 +73,7 @@ export class HierarchyNavService {
       if (parent.path == '') {
         tree = children;
       } else {
-        parent['children'] = children;
+        parent.children = children;
       }
       children.forEach((child): void => {
         this.unflatten(array, child);

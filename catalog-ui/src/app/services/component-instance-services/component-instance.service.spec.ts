@@ -17,22 +17,22 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {TestBed} from '@angular/core/testing';
-import {ISdcConfig, SdcConfigToken} from "../../config/sdc-config.config";
-import {ComponentInstanceService} from "./component-instance.service";
-import {Capability} from "../../models/capability";
-import {HttpClientTestingModule, HttpTestingController} from "@angular/common/http/testing";
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { TestBed } from '@angular/core/testing';
+import { ISdcConfig, SdcConfigToken } from '../../config/sdc-config.config';
+import { Capability } from '../../models/capability';
+import { ComponentInstanceService } from './component-instance.service';
 
 describe('ComponentInstanceService', () => {
   let httpTestingController: HttpTestingController;
   let componentInstanceService: ComponentInstanceService;
-  let rootApi: string = 'http://localhost/'
-  let componentApiRoot: string = 'catalog/'
+  const rootApi: string = 'http://localhost/';
+  const componentApiRoot: string = 'catalog/';
   beforeEach(() => {
     const sdcConfigToken: Partial<ISdcConfig> = {
-      'api': {
-        'root': rootApi,
-        'component_api_root': componentApiRoot,
+      api: {
+        root: rootApi,
+        component_api_root: componentApiRoot,
       }
     };
     TestBed.configureTestingModule({
@@ -51,16 +51,16 @@ describe('ComponentInstanceService', () => {
 
   it('updateInstanceCapability call should return the expected data', () => {
     const capabilityToUpdate = new Capability();
-    capabilityToUpdate.type = "tosca.capabilities.Scalable";
-    capabilityToUpdate.name = "capScalable";
-    capabilityToUpdate.ownerId = "191f8a83-d362-4db4-af30-75d71a55c959.a822dd1c-3560-47ea-b8a2-f557fed5e186.vfcapreq10";
-    capabilityToUpdate.uniqueId = "2047eb3c-de31-4413-a358-8710a3dd2670";
+    capabilityToUpdate.type = 'tosca.capabilities.Scalable';
+    capabilityToUpdate.name = 'capScalable';
+    capabilityToUpdate.ownerId = '191f8a83-d362-4db4-af30-75d71a55c959.a822dd1c-3560-47ea-b8a2-f557fed5e186.vfcapreq10';
+    capabilityToUpdate.uniqueId = '2047eb3c-de31-4413-a358-8710a3dd2670';
     capabilityToUpdate.external = true;
 
-    const componentTypeUrl = "services/";
+    const componentTypeUrl = 'services/';
     let actualCapability: Capability;
-    componentInstanceService.updateInstanceCapability(componentTypeUrl, "componentId", "componentInstanceId", capabilityToUpdate)
-    .subscribe(capability => {
+    componentInstanceService.updateInstanceCapability(componentTypeUrl, 'componentId', 'componentInstanceId', capabilityToUpdate)
+    .subscribe((capability) => {
       actualCapability = capability;
     });
 

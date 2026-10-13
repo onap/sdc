@@ -18,8 +18,8 @@
  * ============LICENSE_END=========================================================
  */
 
-import {ComponentMetadata} from '../component-metadata';
-import {Resource} from './resource';
+import { ComponentMetadata } from '../component-metadata';
+import { Resource } from './resource';
 
 // Both `tags` assignments used to be angular.copy(src, this.tags) against an array destination.
 // angular.copy REFILLS such a destination (so a null/undefined source yielded [] rather than

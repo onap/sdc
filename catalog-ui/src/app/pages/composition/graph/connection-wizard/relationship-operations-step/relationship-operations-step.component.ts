@@ -18,14 +18,14 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {Component, OnInit} from '@angular/core';
-import {IStepComponent} from "../../../../../models/wizard-step";
-import {ConnectionWizardService} from "../connection-wizard.service";
-import {Component as IComponent} from "../../../../../models/components/component";
-import {ComponentService} from "../../../../../services/component-services/component.service";
-import {Observable} from "rxjs";
-import {Operation} from "../create-interface-operation/model/operation";
-import {WorkspaceService} from "../../../../workspace/workspace.service";
+import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
+import { Component as IComponent } from '../../../../../models/components/component';
+import { IStepComponent } from '../../../../../models/wizard-step';
+import { ComponentService } from '../../../../../services/component-services/component.service';
+import { WorkspaceService } from '../../../../workspace/workspace.service';
+import { ConnectionWizardService } from '../connection-wizard.service';
+import { Operation } from '../create-interface-operation/model/operation';
 
 @Component({
   selector: 'app-relationship-operations-step',
@@ -33,21 +33,21 @@ import {WorkspaceService} from "../../../../workspace/workspace.service";
   styleUrls: ['./relationship-operations-step.component.less']
 })
 export class RelationshipOperationsStepComponent implements OnInit, IStepComponent {
+  interfaceTypeMap: Map<string, string[]>;
+  component: IComponent;
+  operationList: Operation[];
+  operationList$: Observable<Operation[]>;
+  enableAddOperation: boolean;
 
   private connectionWizardService: ConnectionWizardService;
   private componentService: ComponentService;
-  interfaceTypeMap: Map<string, Array<string>>;
-  component: IComponent;
-  operationList: Array<Operation>;
-  operationList$: Observable<Array<Operation>>;
-  enableAddOperation: boolean;
 
   constructor(private workspaceService: WorkspaceService,
               connectionWizardService: ConnectionWizardService,
               componentService: ComponentService) {
     this.componentService = componentService;
     this.connectionWizardService = connectionWizardService;
-    this.interfaceTypeMap = new Map<string, Array<string>>();
+    this.interfaceTypeMap = new Map<string, string[]>();
   }
 
   // Read in ngOnInit, not the constructor: the route resolver that writes
@@ -56,35 +56,6 @@ export class RelationshipOperationsStepComponent implements OnInit, IStepCompone
     this.component = this.workspaceService.component;
     this.loadOperationList();
     this.loadInterfaceTypeMap();
-  }
-
-  private loadOperationList(): void {
-    if (this.connectionWizardService.selectedMatch.operations) {
-      this.operationList = this.connectionWizardService.selectedMatch.operations.slice();
-    } else {
-      this.operationList = new Array<Operation>();
-    }
-    this.operationList$ = Observable.of(this.operationList);
-  }
-
-  private loadInterfaceTypeMap(): void {
-    this.componentService.getInterfaceTypes(this.component).subscribe(response => {
-      for (const interfaceType in response) {
-        let operationList = response[interfaceType];
-        //ignore interfaceTypes that doesn't contain operations
-        if (operationList && operationList.length > 0) {
-          //remove operations already on the list
-          const existingOperations =
-              this.operationList.filter(operation => operation.interfaceType === interfaceType);
-          operationList = operationList
-          .filter(operationType => !existingOperations.find(operation => operation.operationType === operationType));
-          if (operationList && operationList.length > 0) {
-            operationList.sort();
-            this.interfaceTypeMap.set(interfaceType, operationList);
-          }
-        }
-      }
-    });
   }
 
   preventBack(): boolean {
@@ -103,7 +74,7 @@ export class RelationshipOperationsStepComponent implements OnInit, IStepCompone
     this.enableAddOperation = false;
     if (operation) {
       const foundOperation = this.operationList
-      .find(operation1 => operation1.interfaceType === operation.interfaceType
+      .find((operation1) => operation1.interfaceType === operation.interfaceType
           && operation1.operationType === operation.operationType);
       if (foundOperation) {
         return;
@@ -126,6 +97,35 @@ export class RelationshipOperationsStepComponent implements OnInit, IStepCompone
       this.connectionWizardService.selectedMatch.removeFromOperations(operation);
       this.addToInterfaceMap(operation);
     }
+  }
+
+  private loadOperationList(): void {
+    if (this.connectionWizardService.selectedMatch.operations) {
+      this.operationList = this.connectionWizardService.selectedMatch.operations.slice();
+    } else {
+      this.operationList = new Array<Operation>();
+    }
+    this.operationList$ = Observable.of(this.operationList);
+  }
+
+  private loadInterfaceTypeMap(): void {
+    this.componentService.getInterfaceTypes(this.component).subscribe((response) => {
+      for (const interfaceType in response) {
+        let operationList = response[interfaceType];
+        // ignore interfaceTypes that doesn't contain operations
+        if (operationList && operationList.length > 0) {
+          // remove operations already on the list
+          const existingOperations =
+              this.operationList.filter((operation) => operation.interfaceType === interfaceType);
+          operationList = operationList
+          .filter((operationType) => !existingOperations.find((operation) => operation.operationType === operationType));
+          if (operationList && operationList.length > 0) {
+            operationList.sort();
+            this.interfaceTypeMap.set(interfaceType, operationList);
+          }
+        }
+      }
+    });
   }
 
   private removeFromInterfaceMap(operation: Operation) {

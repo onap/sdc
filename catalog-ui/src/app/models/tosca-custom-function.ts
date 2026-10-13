@@ -19,18 +19,18 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {ToscaFunction} from "./tosca-function";
-import {ToscaFunctionType} from "./tosca-function-type.enum";
-import {ToscaFunctionParameter} from "./tosca-function-parameter";
-import {ToscaGetFunction} from "./tosca-get-function";
-import {YamlFunction} from "./yaml-function";
-import {ToscaStringParameter} from "./tosca-string-parameter";
+import { ToscaFunction } from './tosca-function';
+import { ToscaFunctionParameter } from './tosca-function-parameter';
+import { ToscaFunctionType } from './tosca-function-type.enum';
+import { ToscaGetFunction } from './tosca-get-function';
+import { ToscaStringParameter } from './tosca-string-parameter';
+import { YamlFunction } from './yaml-function';
 
 export class ToscaCustomFunction implements ToscaFunction, ToscaFunctionParameter {
     name: string;
     type = ToscaFunctionType.CUSTOM;
     value: any;
-    parameters: Array<ToscaFunctionParameter> = [];
+    parameters: ToscaFunctionParameter[] = [];
 
     constructor(toscaCustomFunction?: ToscaCustomFunction) {
         if (!toscaCustomFunction) {
@@ -39,24 +39,24 @@ export class ToscaCustomFunction implements ToscaFunction, ToscaFunctionParamete
         this.value = toscaCustomFunction.value;
         this.name = toscaCustomFunction.name;
         if (toscaCustomFunction.parameters) {
-            toscaCustomFunction.parameters.forEach(parameter => {
+            toscaCustomFunction.parameters.forEach((parameter) => {
                 switch (parameter.type) {
                     case ToscaFunctionType.GET_INPUT:
                     case ToscaFunctionType.GET_ATTRIBUTE:
                     case ToscaFunctionType.GET_PROPERTY:
-                        this.parameters.push(new ToscaGetFunction(<ToscaGetFunction>parameter));
+                        this.parameters.push(new ToscaGetFunction(parameter as ToscaGetFunction));
                         break;
                     case ToscaFunctionType.CONCAT:
-                        this.parameters.push(new ToscaCustomFunction(<ToscaCustomFunction>parameter));
+                        this.parameters.push(new ToscaCustomFunction(parameter as ToscaCustomFunction));
                         break;
                     case ToscaFunctionType.CUSTOM:
-                        this.parameters.push(new ToscaCustomFunction(<ToscaCustomFunction>parameter));
+                        this.parameters.push(new ToscaCustomFunction(parameter as ToscaCustomFunction));
                         break;
                     case ToscaFunctionType.YAML:
-                        this.parameters.push(new YamlFunction(<YamlFunction>parameter));
+                        this.parameters.push(new YamlFunction(parameter as YamlFunction));
                         break;
                     case ToscaFunctionType.STRING:
-                        this.parameters.push(new ToscaStringParameter(<ToscaStringParameter>parameter));
+                        this.parameters.push(new ToscaStringParameter(parameter as ToscaStringParameter));
                         break;
                     default:
                         console.error(`Unsupported parameter type "${parameter.type}"`);
@@ -72,8 +72,8 @@ export class ToscaCustomFunction implements ToscaFunction, ToscaFunctionParamete
 
     public buildValueObject(): Object {
         return {
-            [this.name]: this.parameters.map(parameter => parameter.buildValueObject())
-        }
+            [this.name]: this.parameters.map((parameter) => parameter.buildValueObject())
+        };
     }
 
 }

@@ -18,39 +18,39 @@
  * ============LICENSE_END=========================================================
  */
 
-import {Component as NgComponent, ChangeDetectorRef, Inject, OnInit, OnDestroy} from '@angular/core';
+import { ChangeDetectorRef, Component as NgComponent, Inject, OnDestroy, OnInit } from '@angular/core';
 import * as _ from 'lodash';
 
-import {IAppMenu} from 'app/models/app-config';
-import {Component} from 'app/models/components/component';
-import {Resource} from 'app/models/components/resource';
-import {Service} from 'app/models/components/service';
-import {Plugin, PluginsConfiguration} from 'app/models/plugins-config';
-import {IUserProperties} from 'app/models/user';
+import { IAppMenu } from 'app/models/app-config';
+import { Component } from 'app/models/components/component';
+import { Resource } from 'app/models/components/resource';
+import { Service } from 'app/models/components/service';
+import { Plugin, PluginsConfiguration } from 'app/models/plugins-config';
+import { IUserProperties } from 'app/models/user';
+import { CacheService } from 'app/services/cache.service';
+import { EventListenerService } from 'app/services/event-listener.service';
+import { ProgressService } from 'app/services/progress.service';
 // Deep-imported rather than taken from the `app/utils` barrel — see the comment on that barrel:
 // re-exporting the now-@Injectable handler closed a runtime import cycle through app/models.
-import {ChangeLifecycleStateHandler} from 'app/utils/change-lifecycle-state-handler';
-import {ComponentFactory} from 'app/utils/component-factory';
-import {CHANGE_COMPONENT_CSAR_VERSION_FLAG, ComponentState, EVENTS, ResourceType, Role, States, WorkspaceMode} from 'app/utils/constants';
-import {MenuHandler, MenuItem, MenuItemGroup} from 'app/utils/menu-handler';
-import {EventListenerService} from 'app/services/event-listener.service';
-import {ProgressService} from 'app/services/progress.service';
-import {CacheService} from 'app/services/cache.service';
-import {SdcUiCommon, SdcUiServices} from 'onap-ui-angular';
-import {NotificationSettings} from 'onap-ui-angular/dist/notifications/utilities/notification.config';
-import {IModalButtonComponent} from 'onap-ui-angular/dist/common';
-import {AutomatedUpgradeService} from '../../automated-upgrade/automated-upgrade.service';
-import {CatalogService} from '../../../services/catalog.service';
-import {ComponentService} from '../../../services/component-services/component.service';
-import {EventBusService} from '../../../services/event-bus.service';
-import {HomeService} from '../../../services/home.service';
-import {PluginsService} from '../../../services/plugins.service';
-import {IDependenciesServerResponse} from '../../../services/responses/dependencies-server-response';
-import {WorkspaceNg1BridgeService} from '../workspace-ng1-bridge-service';
-import {WorkspaceService} from '../workspace.service';
-import {TranslateService} from '../../../shared/translator/translate.service';
-import {NavigationService} from '../../../services/navigation.service';
-import {SdcMenuToken} from '../../../config/sdc-menu.config';
+import { ChangeLifecycleStateHandler } from 'app/utils/change-lifecycle-state-handler';
+import { ComponentFactory } from 'app/utils/component-factory';
+import { CHANGE_COMPONENT_CSAR_VERSION_FLAG, ComponentState, EVENTS, ResourceType, Role, States, WorkspaceMode } from 'app/utils/constants';
+import { MenuHandler, MenuItem, MenuItemGroup } from 'app/utils/menu-handler';
+import { SdcUiCommon, SdcUiServices } from 'onap-ui-angular';
+import { IModalButtonComponent } from 'onap-ui-angular/dist/common';
+import { NotificationSettings } from 'onap-ui-angular/dist/notifications/utilities/notification.config';
+import { SdcMenuToken } from '../../../config/sdc-menu.config';
+import { CatalogService } from '../../../services/catalog.service';
+import { ComponentService } from '../../../services/component-services/component.service';
+import { EventBusService } from '../../../services/event-bus.service';
+import { HomeService } from '../../../services/home.service';
+import { NavigationService } from '../../../services/navigation.service';
+import { PluginsService } from '../../../services/plugins.service';
+import { IDependenciesServerResponse } from '../../../services/responses/dependencies-server-response';
+import { TranslateService } from '../../../shared/translator/translate.service';
+import { AutomatedUpgradeService } from '../../automated-upgrade/automated-upgrade.service';
+import { WorkspaceNg1BridgeService } from '../workspace-ng1-bridge-service';
+import { WorkspaceService } from '../workspace.service';
 
 /**
  * Deliberately NOT OnPush, unlike most components here. It used to be, harmlessly: as a
@@ -80,10 +80,10 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
     isCreateProgress: boolean = false;
     isValidForm: boolean = true;
     mode: WorkspaceMode;
-    breadcrumbsModel: Array<MenuItemGroup>;
+    breadcrumbsModel: MenuItemGroup[];
     changeLifecycleStateButtons: any;
     version: string;
-    versionsList: Array<any>;
+    versionsList: any[];
     changeVersion: any;
     isComposition: boolean = false;
     isDeployment: boolean = false;
@@ -140,90 +140,12 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
         }
     }
 
-    private initWorkspace(): void {
-        const raw = this.workspaceService.component;
-        if (!raw) { return; }
-        this.component = (typeof raw.isService === 'function') ? raw : this.componentFactory.createComponent(raw);
-        if (!this.component) { return; }
-        this.menuComponentTitle = this.component.name;
-        this.originComponent = this.componentFactory.createComponent(this.component);
-        this.componentType = this.component.componentType;
-        this.version = this.cacheService.get('version');
-        this.user = this.cacheService.get('user');
-        this.role = this.user.role;
-        this.category = this.component.selectedCategory;
-        this.mode = this.initViewMode();
-        this.initChangeLifecycleStateButtons();
-        this.initVersionObject();
-        this.updateFullBleedFlags();
-        this.initMenuItems();
-        this.verifyIfDependenciesExist();
-        this.updateSelectedMenuItem(this.navigationService.getCurrentStateName());
-        this.eventListenerService.registerObserverCallback(EVENTS.ON_WORKSPACE_UNSAVED_CHANGES, this.setWorkspaceButtonState);
-        // Keep the highlighted sidebar item + tab title in sync as the user moves between child
-        // tab states (General, TOSCA Artifacts, ...). The old WorkspaceViewModel did this via
-        // $scope.$on('$stateChangeSuccess'); the shell re-mounts only on full reloads, so without
-        // this the title/selection stay stuck on the initial tab (e.g. Selenium waiting for the
-        // 'TOSCA Artifacts' tab-title after navigating there would time out).
-        this.deregisterStateChange = this.navigationService.onNavigationSuccess(() => {
-            this.updateFullBleedFlags();
-            this.updateSelectedMenuItem(this.navigationService.getCurrentStateName());
-            this.cdr.detectChanges();
-        });
-    }
-
     ngOnDestroy(): void {
         this.eventListenerService.unRegisterObserver(EVENTS.ON_WORKSPACE_UNSAVED_CHANGES);
         if (this.deregisterStateChange) { this.deregisterStateChange(); }
         if (this.workspaceService.containerActions === this) {
             this.workspaceService.containerActions = undefined;
         }
-    }
-
-    // --- Mode determination ---
-
-    private initViewMode(): WorkspaceMode {
-        let mode = WorkspaceMode.VIEW;
-        if (!this.navigationService.getParam('id')) {
-            mode = WorkspaceMode.CREATE;
-        } else {
-            if (this.component.lifecycleState === ComponentState.NOT_CERTIFIED_CHECKOUT &&
-                this.component.lastUpdaterUserId === this.user.userId) {
-                if ((this.component.isService() || this.component.isResource()) && this.role === Role.DESIGNER) {
-                    mode = WorkspaceMode.EDIT;
-                }
-            }
-        }
-        this.workspaceNg1BridgeService.updateIsViewOnly(mode === WorkspaceMode.VIEW);
-        return mode;
-    }
-
-    // --- Lifecycle state buttons ---
-
-    private initChangeLifecycleStateButtons(): void {
-        let state: string;
-        if (this.component.isService() && this.component.lifecycleState === 'CERTIFIED') {
-            state = this.component.distributionStatus;
-        } else {
-            state = this.component.lifecycleState;
-        }
-        this.changeLifecycleStateButtons = (this.sdcMenu.roles[this.role].changeLifecycleStateButtons[state] || [])[this.component.componentType.toUpperCase()];
-        this.updateLifecycleButtonEntries();
-    }
-
-    private updateLifecycleButtonEntries(): void {
-        if (!this.changeLifecycleStateButtons) {
-            this.lifecycleButtonEntries = [];
-            return;
-        }
-        // deleteVersion is FILTERED OUT rather than hidden in the template. Both spellings look
-        // equivalent, but `[hidden]` leaves a second, 0x0 element carrying
-        // data-tests-id="delete_version" in the DOM, and Selenium/Playwright resolve the FIRST
-        // match — so the standalone sprite span below it becomes unreachable. The AngularJS
-        // original used `ng-if="key != 'deleteVersion'"`, which removed the node outright.
-        this.lifecycleButtonEntries = Object.keys(this.changeLifecycleStateButtons)
-            .filter((key) => key !== 'deleteVersion')
-            .map((key) => ({key, value: this.changeLifecycleStateButtons[key]}));
     }
 
     trackByKey(index: number, entry: {key: string, value: any}): string {
@@ -315,47 +237,6 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
     stopProgress = (): void => {
         this.isCreateProgress = false;
         this.progressService.deleteProgressValue(this.component.uniqueId);
-    }
-
-    // configurations/menu.js supplies DOTTED states ('workspace.general') for the 7 component
-    // groups and BARE states ('general') only for the DataType group, so every comparison must
-    // tolerate both forms.
-    private isMenuState(item: MenuItem, shortName: string): boolean {
-        return !!item && this.isState(item.state, shortName);
-    }
-
-    private isState(state: string, shortName: string): boolean {
-        if (!state) { return false; }
-        return state === shortName || state === 'workspace.' + shortName;
-    }
-
-    private applyCreateModeDisabling(items: MenuItem[], inCreateMode: boolean): void {
-        items.forEach((item: MenuItem) => {
-            item.isDisabled = (inCreateMode && !this.isMenuState(item, 'general')) ||
-                (this.isMenuState(item, 'deployment') && this.component.modules
-                    && this.component.modules.length === 0 && this.component.isResource()) ||
-                (item.disabledCategory === true);
-        });
-    }
-
-    private disableMenuItems(): void {
-        this.leftBarTabs.menuItems.forEach((item: MenuItem) => {
-            item.isDisabled = !this.isMenuState(item, 'general');
-        });
-    }
-
-    private enableMenuItems(): void {
-        this.leftBarTabs.menuItems.forEach((item: MenuItem) => {
-            item.isDisabled = false;
-        });
-    }
-
-    private showSuccessNotificationMessage(): void {
-        this.notificationsService.push(new NotificationSettings(
-            'success',
-            this.translateService.translate('IMPORT_VF_MESSAGE_CREATE_FINISHED_DESCRIPTION'),
-            this.translateService.translate('IMPORT_VF_MESSAGE_CREATE_FINISHED_TITLE'),
-            5000));
     }
 
     isGeneralView(): boolean {
@@ -530,52 +411,6 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
     }
 
-    private handleCertification(certifyComponent: Component): void {
-        if (this.component.getComponentSubType() === ResourceType.VF || this.component.isService()) {
-            this.componentService.getDependencies(this.component.componentType, this.component.uniqueId).subscribe((response: IDependenciesServerResponse[]) => {
-                this.isLoading = false;
-                const isUpgradeNeeded = response.filter((c) => c.dependencies && c.dependencies.length > 0);
-                if (isUpgradeNeeded.length === 0) {
-                    this.onSuccessWithoutUpgradeNeeded();
-                    return;
-                }
-                this.refreshDataAfterChangeLifecycleState(certifyComponent);
-                this.automatedUpgradeService.openAutomatedUpgradeModal(response, this.component, true);
-            });
-        } else {
-            this.onSuccessWithoutUpgradeNeeded();
-        }
-    }
-
-    private onSuccessWithoutUpgradeNeeded(): void {
-        this.isLoading = false;
-        this.notificationsService.push(new NotificationSettings(
-            'success',
-            this.translateService.translate('SERVICE_CERTIFICATION_STATUS_TEXT'),
-            this.translateService.translate('SERVICE_CERTIFICATION_STATUS_TITLE'),
-            5000));
-        this.initVersionObject();
-        this.initChangeLifecycleStateButtons();
-        this.cdr.detectChanges();
-    }
-
-    private refreshDataAfterChangeLifecycleState(component: Component): void {
-        this.isLoading = false;
-        this.mode = this.initViewMode();
-        this.initChangeLifecycleStateButtons();
-        this.initVersionObject();
-        this.cdr.detectChanges();
-    }
-
-    private reload(component: Component): void {
-        const isGeneralTab = this.navigationService.getCurrentStateName() === States.WORKSPACE_GENERAL;
-        if (isGeneralTab) {
-            this.navigationService.reload({id: component.uniqueId, componentCsar: null});
-        } else {
-            this.navigationService.reload({id: component.uniqueId});
-        }
-    }
-
     // --- Archive / restore / delete-archived ---
 
     archiveComponent = (): void => {
@@ -665,37 +500,6 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
             });
     }
 
-    // The catalog's Archive left-switch view is served from this cache entry, so leaving it in place
-    // makes an archived/restored/deleted component keep showing its previous archive state there.
-    private deleteArchiveCache(): void {
-        this.cacheService.remove('archiveComponents');
-    }
-
-    // Archive and delete-archived both leave the current component unviewable, so they return the
-    // user to wherever they came from. `fallback` is where delete-archived goes when the previous
-    // state is something other than catalog/dashboard; archive passes none and stays put instead.
-    // Entering the workspace without a previousState at all navigates nowhere in either case.
-    private navigateToPreviousState(fallback?: string): void {
-        const previousState = this.navigationService.getParam('previousState');
-        if (!previousState) { return; }
-        if (previousState === 'catalog' || previousState === 'dashboard') {
-            this.navigationService.navigate(previousState);
-        } else if (fallback) {
-            this.navigationService.navigate(fallback);
-        }
-    }
-
-    // --- Version handling ---
-
-    private initVersionObject(): void {
-        this.versionsList = (this.component.getAllVersionsAsSortedArray()).reverse();
-        this.changeVersion = {
-            selectedVersion: _.find(this.versionsList, (versionObj) => {
-                return versionObj.versionNumber === this.component.version;
-            })
-        };
-    }
-
     onVersionChanged(versionId: string): void {
         const eventData = {
             uuid: this.component.uuid,
@@ -754,6 +558,202 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
         this.navigationService.navigate(state, params || {});
     }
 
+    private initWorkspace(): void {
+        const raw = this.workspaceService.component;
+        if (!raw) { return; }
+        this.component = (typeof raw.isService === 'function') ? raw : this.componentFactory.createComponent(raw);
+        if (!this.component) { return; }
+        this.menuComponentTitle = this.component.name;
+        this.originComponent = this.componentFactory.createComponent(this.component);
+        this.componentType = this.component.componentType;
+        this.version = this.cacheService.get('version');
+        this.user = this.cacheService.get('user');
+        this.role = this.user.role;
+        this.category = this.component.selectedCategory;
+        this.mode = this.initViewMode();
+        this.initChangeLifecycleStateButtons();
+        this.initVersionObject();
+        this.updateFullBleedFlags();
+        this.initMenuItems();
+        this.verifyIfDependenciesExist();
+        this.updateSelectedMenuItem(this.navigationService.getCurrentStateName());
+        this.eventListenerService.registerObserverCallback(EVENTS.ON_WORKSPACE_UNSAVED_CHANGES, this.setWorkspaceButtonState);
+        // Keep the highlighted sidebar item + tab title in sync as the user moves between child
+        // tab states (General, TOSCA Artifacts, ...). The old WorkspaceViewModel did this via
+        // $scope.$on('$stateChangeSuccess'); the shell re-mounts only on full reloads, so without
+        // this the title/selection stay stuck on the initial tab (e.g. Selenium waiting for the
+        // 'TOSCA Artifacts' tab-title after navigating there would time out).
+        this.deregisterStateChange = this.navigationService.onNavigationSuccess(() => {
+            this.updateFullBleedFlags();
+            this.updateSelectedMenuItem(this.navigationService.getCurrentStateName());
+            this.cdr.detectChanges();
+        });
+    }
+
+    // --- Mode determination ---
+
+    private initViewMode(): WorkspaceMode {
+        let mode = WorkspaceMode.VIEW;
+        if (!this.navigationService.getParam('id')) {
+            mode = WorkspaceMode.CREATE;
+        } else {
+            if (this.component.lifecycleState === ComponentState.NOT_CERTIFIED_CHECKOUT &&
+                this.component.lastUpdaterUserId === this.user.userId) {
+                if ((this.component.isService() || this.component.isResource()) && this.role === Role.DESIGNER) {
+                    mode = WorkspaceMode.EDIT;
+                }
+            }
+        }
+        this.workspaceNg1BridgeService.updateIsViewOnly(mode === WorkspaceMode.VIEW);
+        return mode;
+    }
+
+    // --- Lifecycle state buttons ---
+
+    private initChangeLifecycleStateButtons(): void {
+        let state: string;
+        if (this.component.isService() && this.component.lifecycleState === 'CERTIFIED') {
+            state = this.component.distributionStatus;
+        } else {
+            state = this.component.lifecycleState;
+        }
+        this.changeLifecycleStateButtons = (this.sdcMenu.roles[this.role].changeLifecycleStateButtons[state] || [])[this.component.componentType.toUpperCase()];
+        this.updateLifecycleButtonEntries();
+    }
+
+    private updateLifecycleButtonEntries(): void {
+        if (!this.changeLifecycleStateButtons) {
+            this.lifecycleButtonEntries = [];
+            return;
+        }
+        // deleteVersion is FILTERED OUT rather than hidden in the template. Both spellings look
+        // equivalent, but `[hidden]` leaves a second, 0x0 element carrying
+        // data-tests-id="delete_version" in the DOM, and Selenium/Playwright resolve the FIRST
+        // match — so the standalone sprite span below it becomes unreachable. The AngularJS
+        // original used `ng-if="key != 'deleteVersion'"`, which removed the node outright.
+        this.lifecycleButtonEntries = Object.keys(this.changeLifecycleStateButtons)
+            .filter((key) => key !== 'deleteVersion')
+            .map((key) => ({key, value: this.changeLifecycleStateButtons[key]}));
+    }
+
+    // configurations/menu.js supplies DOTTED states ('workspace.general') for the 7 component
+    // groups and BARE states ('general') only for the DataType group, so every comparison must
+    // tolerate both forms.
+    private isMenuState(item: MenuItem, shortName: string): boolean {
+        return !!item && this.isState(item.state, shortName);
+    }
+
+    private isState(state: string, shortName: string): boolean {
+        if (!state) { return false; }
+        return state === shortName || state === 'workspace.' + shortName;
+    }
+
+    private applyCreateModeDisabling(items: MenuItem[], inCreateMode: boolean): void {
+        items.forEach((item: MenuItem) => {
+            item.isDisabled = (inCreateMode && !this.isMenuState(item, 'general')) ||
+                (this.isMenuState(item, 'deployment') && this.component.modules
+                    && this.component.modules.length === 0 && this.component.isResource()) ||
+                (item.disabledCategory === true);
+        });
+    }
+
+    private disableMenuItems(): void {
+        this.leftBarTabs.menuItems.forEach((item: MenuItem) => {
+            item.isDisabled = !this.isMenuState(item, 'general');
+        });
+    }
+
+    private enableMenuItems(): void {
+        this.leftBarTabs.menuItems.forEach((item: MenuItem) => {
+            item.isDisabled = false;
+        });
+    }
+
+    private showSuccessNotificationMessage(): void {
+        this.notificationsService.push(new NotificationSettings(
+            'success',
+            this.translateService.translate('IMPORT_VF_MESSAGE_CREATE_FINISHED_DESCRIPTION'),
+            this.translateService.translate('IMPORT_VF_MESSAGE_CREATE_FINISHED_TITLE'),
+            5000));
+    }
+
+    private handleCertification(certifyComponent: Component): void {
+        if (this.component.getComponentSubType() === ResourceType.VF || this.component.isService()) {
+            this.componentService.getDependencies(this.component.componentType, this.component.uniqueId).subscribe((response: IDependenciesServerResponse[]) => {
+                this.isLoading = false;
+                const isUpgradeNeeded = response.filter((c) => c.dependencies && c.dependencies.length > 0);
+                if (isUpgradeNeeded.length === 0) {
+                    this.onSuccessWithoutUpgradeNeeded();
+                    return;
+                }
+                this.refreshDataAfterChangeLifecycleState(certifyComponent);
+                this.automatedUpgradeService.openAutomatedUpgradeModal(response, this.component, true);
+            });
+        } else {
+            this.onSuccessWithoutUpgradeNeeded();
+        }
+    }
+
+    private onSuccessWithoutUpgradeNeeded(): void {
+        this.isLoading = false;
+        this.notificationsService.push(new NotificationSettings(
+            'success',
+            this.translateService.translate('SERVICE_CERTIFICATION_STATUS_TEXT'),
+            this.translateService.translate('SERVICE_CERTIFICATION_STATUS_TITLE'),
+            5000));
+        this.initVersionObject();
+        this.initChangeLifecycleStateButtons();
+        this.cdr.detectChanges();
+    }
+
+    private refreshDataAfterChangeLifecycleState(component: Component): void {
+        this.isLoading = false;
+        this.mode = this.initViewMode();
+        this.initChangeLifecycleStateButtons();
+        this.initVersionObject();
+        this.cdr.detectChanges();
+    }
+
+    private reload(component: Component): void {
+        const isGeneralTab = this.navigationService.getCurrentStateName() === States.WORKSPACE_GENERAL;
+        if (isGeneralTab) {
+            this.navigationService.reload({id: component.uniqueId, componentCsar: null});
+        } else {
+            this.navigationService.reload({id: component.uniqueId});
+        }
+    }
+
+    // The catalog's Archive left-switch view is served from this cache entry, so leaving it in place
+    // makes an archived/restored/deleted component keep showing its previous archive state there.
+    private deleteArchiveCache(): void {
+        this.cacheService.remove('archiveComponents');
+    }
+
+    // Archive and delete-archived both leave the current component unviewable, so they return the
+    // user to wherever they came from. `fallback` is where delete-archived goes when the previous
+    // state is something other than catalog/dashboard; archive passes none and stays put instead.
+    // Entering the workspace without a previousState at all navigates nowhere in either case.
+    private navigateToPreviousState(fallback?: string): void {
+        const previousState = this.navigationService.getParam('previousState');
+        if (!previousState) { return; }
+        if (previousState === 'catalog' || previousState === 'dashboard') {
+            this.navigationService.navigate(previousState);
+        } else if (fallback) {
+            this.navigationService.navigate(fallback);
+        }
+    }
+
+    // --- Version handling ---
+
+    private initVersionObject(): void {
+        this.versionsList = (this.component.getAllVersionsAsSortedArray()).reverse();
+        this.changeVersion = {
+            selectedVersion: _.find(this.versionsList, (versionObj) => {
+                return versionObj.versionNumber === this.component.version;
+            })
+        };
+    }
+
     /**
      * The three full-bleed states: they suppress the tab-title header.
      * Kept in ONE place because the two callers (ngOnInit and the onNavigationSuccess handler) must
@@ -805,7 +805,7 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
         _.each(PluginsConfiguration.plugins, (plugin: Plugin) => {
             if (this.pluginsService.isPluginDisplayedInContext(plugin, this.role, this.component.getComponentSubType())) {
                 menuItemsObjects.push({
-                    text: plugin.pluginDisplayOptions['context'].displayName,
+                    text: plugin.pluginDisplayOptions.context.displayName,
                     action: 'onMenuItemPressed',
                     state: 'plugins',
                     params: {path: plugin.pluginStateUrl}

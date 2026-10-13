@@ -17,17 +17,17 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject } from '@angular/core';
+import { SdcConfigToken } from 'app/config/sdc-config.config';
+import { ComponentInstance } from 'app/models/components-instances/component-instance';
+import { CacheService } from 'app/services/cache.service';
+import { ComponentService } from 'app/services/component-services/component.service';
+import { ComponentGenericResponse } from 'app/services/responses/component-generic-response';
+import { ArtifactType, ResourceType } from 'app/utils/constants';
 import * as _ from 'lodash';
-import {ArtifactType, ResourceType} from 'app/utils/constants';
-import {ComponentInstance} from 'app/models/components-instances/component-instance';
-import {CacheService} from 'app/services/cache.service';
-import {ComponentService} from 'app/services/component-services/component.service';
-import {ComponentGenericResponse} from 'app/services/responses/component-generic-response';
-import {SdcConfigToken} from 'app/config/sdc-config.config';
-import {WorkspaceService} from '../workspace.service';
-import {FlowEditorTabBase} from './flow-editor-tab.base';
-import {VendorModel, participant} from './vendor-model';
+import { WorkspaceService } from '../workspace.service';
+import { FlowEditorTabBase } from './flow-editor-tab.base';
+import { participant, VendorModel } from './vendor-model';
 
 /**
  * Network Call Flow workspace tab — renders the internal React "sequence-diagram" flows editor for the
@@ -76,8 +76,8 @@ export class NetworkCallFlowTabComponent extends FlowEditorTabBase {
 
     /** One participant lane per VF component instance (ported from the old
      *  NetworkCallFlowViewModel.getVFParticipantsFromInstances). */
-    private getVFParticipantsFromInstances(instances: Array<ComponentInstance>): Array<participant> {
-        const participants: Array<participant> = [];
+    private getVFParticipantsFromInstances(instances: ComponentInstance[]): participant[] {
+        const participants: participant[] = [];
         _.forEach(instances, (instance: ComponentInstance) => {
             if (ResourceType.VF === instance.originType) {
                 participants.push(new participant(instance));

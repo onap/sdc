@@ -19,9 +19,9 @@
  */
 
 'use strict';
-import {AttributeBEModel} from "./attribute-be-model";
-import {AttributeFEModel} from "./attribute-fe-model";
-import {DerivedFEAttribute} from "./derived-fe-attribute";
+import { AttributeBEModel } from './attribute-be-model';
+import { AttributeFEModel } from './attribute-fe-model';
+import { DerivedFEAttribute } from './derived-fe-attribute';
 
 export class AttributeDeclareAPIModel extends AttributeBEModel {
   output: AttributeBEModel;

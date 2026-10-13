@@ -18,61 +18,61 @@
  * ============LICENSE_END=========================================================
  */
 
-import {Pipe, PipeTransform} from "@angular/core";
+import { Pipe, PipeTransform } from '@angular/core';
+import { Component } from 'app/models/components/component';
+import { Resource } from 'app/models/components/resource';
+import { ComponentType, DEFAULT_MODEL_NAME, ToscaType } from 'app/utils/constants';
 import * as _ from 'lodash';
-import {Component} from 'app/models/components/component';
-import {Resource} from 'app/models/components/resource';
-import {ComponentType, DEFAULT_MODEL_NAME, ToscaType} from "app/utils/constants";
-import {DataTypeCatalogComponent} from "../models/data-type-catalog-component";
+import { DataTypeCatalogComponent } from '../models/data-type-catalog-component';
 
 export interface ISearchFilter {
-    [key:string]: string;
+    [key: string]: string;
 }
 
 export interface IEntityFilterObject {
     // Types
-    selectedComponentTypes?:Array<string>;
-    selectedResourceSubTypes?:Array<string>;
-    selectedToscaTypes?:Array<string>
+    selectedComponentTypes?: string[];
+    selectedResourceSubTypes?: string[];
+    selectedToscaTypes?: string[];
     // Categories
-    selectedCategoriesModel?:Array<string>;
+    selectedCategoriesModel?: string[];
     // Statuses
-    selectedStatuses?:Array<string>;
+    selectedStatuses?: string[];
     // Models
-    selectedModels?:Array<string>;
+    selectedModels?: string[];
     // distributed
-    distributed?:Array<string>;
+    distributed?: string[];
     // search
-    search?:ISearchFilter;
-    
+    search?: ISearchFilter;
+
 }
 
 @Pipe({name: 'entity-filter'})
-export class EntityFilterPipe implements PipeTransform{
+export class EntityFilterPipe implements PipeTransform {
     constructor() {
     }
 
-    public static transform(components:Array<Component | DataTypeCatalogComponent>, filter:IEntityFilterObject) {
-        let filteredComponents:Array<Component | DataTypeCatalogComponent> = components;
+    public static transform(components: Array<Component | DataTypeCatalogComponent>, filter: IEntityFilterObject) {
+        let filteredComponents: Array<Component | DataTypeCatalogComponent> = components;
 
         // filter by type
         // --------------------------------------------------------------------------
         if ((filter.selectedComponentTypes && filter.selectedComponentTypes.length > 0) || (filter.selectedResourceSubTypes && filter.selectedResourceSubTypes.length > 0)
             || (filter.selectedToscaTypes && filter.selectedToscaTypes.length > 0)) {
-            let filteredTypes = [];
+            const filteredTypes = [];
             _.forEach(components, (component: Component | DataTypeCatalogComponent): void => {
                 // Filter by component type
                     if (component.componentType === ComponentType.RESOURCE || ComponentType.SERVICE && component.componentType !== ToscaType.DATATYPE) {
-                        let typeLower: string = component.componentType.toLowerCase();
-                        let typeFirstCapital: string = typeLower.charAt(0).toUpperCase() + typeLower.slice(1);
+                        const typeLower: string = component.componentType.toLowerCase();
+                        const typeFirstCapital: string = typeLower.charAt(0).toUpperCase() + typeLower.slice(1);
                         if (filter.selectedComponentTypes.indexOf(typeFirstCapital) !== -1) {
                             filteredTypes.push(component);
                         }
 
                         // Filter by resource sub type, only in case the resource checkbox was not selected (because in this case we already added all the components in above section).
-                        if (component.isResource() && filter.selectedComponentTypes.indexOf("Resource") === -1 && filter.selectedResourceSubTypes.length > 0) {
-                            //filteredComponents.pop(); // Remove the last inserted component.
-                            let resource: Resource = <Resource>component;
+                        if (component.isResource() && filter.selectedComponentTypes.indexOf('Resource') === -1 && filter.selectedResourceSubTypes.length > 0) {
+                            // filteredComponents.pop(); // Remove the last inserted component.
+                            const resource: Resource = component as Resource;
                             if (filter.selectedResourceSubTypes.indexOf(resource.getComponentSubType()) !== -1) {
                                 filteredTypes.push(component);
                             }
@@ -90,8 +90,8 @@ export class EntityFilterPipe implements PipeTransform{
         // filter by categories & subcategories & groupings
         // --------------------------------------------------------------------------
         if (filter.selectedCategoriesModel && filter.selectedCategoriesModel.length > 0) {
-            let filteredCategories = [];
-            _.forEach(filteredComponents, (component:Component):void => {
+            const filteredCategories = [];
+            _.forEach(filteredComponents, (component: Component): void => {
                 let componentCategory = component.categoryNormalizedName +
                     ((component.subCategoryNormalizedName) ? '.' + component.subCategoryNormalizedName : '');
                 if (component.componentType === ComponentType.RESOURCE) {
@@ -110,12 +110,12 @@ export class EntityFilterPipe implements PipeTransform{
         // --------------------------------------------------------------------------
         if (filter.selectedStatuses && filter.selectedStatuses.length > 0) {
 
-            let filteredStatuses = [];
-            _.forEach(filteredComponents, (component:Component):void => {
+            const filteredStatuses = [];
+            _.forEach(filteredComponents, (component: Component): void => {
                 if (filter.selectedStatuses.indexOf(component.lifecycleState) > -1) {
                     filteredStatuses.push(component);
                 }
-                //if status DISTRIBUTED && CERTIFIED are selected the component will added in  CERTIFIED status , not need to add twice
+                // if status DISTRIBUTED && CERTIFIED are selected the component will added in  CERTIFIED status , not need to add twice
                 if (filter.selectedStatuses.indexOf('DISTRIBUTED') > -1 && !(filter.selectedStatuses.indexOf('CERTIFIED') > -1)) {
                     if (component.distributionStatus && component.distributionStatus.indexOf('DISTRIBUTED') > -1 && component.lifecycleState.indexOf('CERTIFIED') > -1) {
                         filteredStatuses.push(component);
@@ -128,16 +128,16 @@ export class EntityFilterPipe implements PipeTransform{
         // filter by statuses and distributed
         // --------------------------------------------------------------------------
         if (filter.distributed != undefined && filter.distributed.length > 0) {
-            let filterDistributed:Array<any> = filter.distributed;
-            let filteredDistributed = [];
+            const filterDistributed: any[] = filter.distributed;
+            const filteredDistributed = [];
             _.forEach(filteredComponents, (entity: Component) => {
                 filterDistributed.forEach((distribute) => {
-                    let distributeItem = distribute.split(',');
+                    const distributeItem = distribute.split(',');
                     distributeItem.forEach((item) => {
                         if (item !== undefined && entity.distributionStatus === item) {
                             filteredDistributed.push(entity);
                         }
-                    })
+                    });
                 });
             });
             filteredComponents = filteredDistributed;
@@ -146,9 +146,9 @@ export class EntityFilterPipe implements PipeTransform{
         // filter by model
         // --------------------------------------------------------------------------
         if (filter.selectedModels && filter.selectedModels.length > 0) {
-            let filteredModels = [];
-            let allSelectedModels =  [].concat.apply([], filter.selectedModels);
-            _.forEach(filteredComponents, (component:Component | DataTypeCatalogComponent):void => {
+            const filteredModels = [];
+            const allSelectedModels =  [].concat.apply([], filter.selectedModels);
+            _.forEach(filteredComponents, (component: Component | DataTypeCatalogComponent): void => {
                 if (component.model && allSelectedModels.indexOf(component.model) > -1) {
                     filteredModels.push(component);
                 } else if (!component.model && allSelectedModels.indexOf(DEFAULT_MODEL_NAME) > -1) {
@@ -160,8 +160,8 @@ export class EntityFilterPipe implements PipeTransform{
 
         // filter by search
         // --------------------------------------------------------------------------
-        if (filter.search != undefined && filter.search['filterTerm'] != '') {
-            let filteredSearchComponents = [];
+        if (filter.search != undefined && filter.search.filterTerm != '') {
+            const filteredSearchComponents = [];
             Object.keys(filter.search).forEach((searchKey) => {
                 let searchVal = filter.search[searchKey];
                 if (searchVal) {
@@ -179,7 +179,7 @@ export class EntityFilterPipe implements PipeTransform{
         return filteredComponents;
     }
 
-    public transform(components:Array<any>, filter:IEntityFilterObject) {
+    public transform(components: any[], filter: IEntityFilterObject) {
         return EntityFilterPipe.transform(components, filter);
     }
 }

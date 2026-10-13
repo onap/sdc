@@ -19,10 +19,10 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {TestBed} from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 
-import {TypeWorkspaceService} from './type-workspace.service';
-import {MenuItem, MenuItemGroup} from '../../utils/menu-handler';
+import { MenuItem, MenuItemGroup } from '../../utils/menu-handler';
+import { TypeWorkspaceService } from './type-workspace.service';
 
 describe('TypeWorkspaceService', () => {
     let service: TypeWorkspaceService;

@@ -1,12 +1,12 @@
-import {Component, Input} from '@angular/core';
-import {PROPERTY_DATA} from 'app/utils/constants';
-import {DataTypeService} from "app/services/data-type.service";
-import {Capability} from 'app/models/capability';
-import {DataTypeModel} from 'app/models/data-types';
-import {OperationModel, OperationParameter} from 'app/models/operation';
-import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
-import {DropdownValue} from "app/components/ui/form-components/dropdown/ui-element-dropdown.component";
-import {WorkspaceService} from "../../../workspace/workspace.service";
+import { Component, Input } from '@angular/core';
+import { DropdownValue } from 'app/components/ui/form-components/dropdown/ui-element-dropdown.component';
+import { Capability } from 'app/models/capability';
+import { DataTypeModel } from 'app/models/data-types';
+import { OperationModel, OperationParameter } from 'app/models/operation';
+import { InputBEModel } from 'app/models/properties-inputs/input-be-model';
+import { DataTypeService } from 'app/services/data-type.service';
+import { PROPERTY_DATA } from 'app/utils/constants';
+import { WorkspaceService } from '../../../workspace/workspace.service';
 
 class DropdownValueType extends DropdownValue {
     type: String;
@@ -27,21 +27,21 @@ class DropdownValueType extends DropdownValue {
 
 export class ParamRowComponent {
     @Input() param: OperationParameter;
-    @Input() inputProps: Array<InputBEModel>;
-    @Input() operationOutputs: Array<OperationModel>;
-    @Input() capabilitiesProps: Array<Capability>;
+    @Input() inputProps: InputBEModel[];
+    @Input() operationOutputs: OperationModel[];
+    @Input() capabilitiesProps: Capability[];
     @Input() onRemoveParam: Function;
     @Input() isAssociateWorkflow: boolean;
     @Input() readonly: boolean;
     @Input() isInputParam: boolean;
     @Input() validityChanged: Function;
 
-    propTypeEnum: Array<string> = [];
-    operationOutputCats: Array<{ operationName: string, outputs: Array<DropdownValueType> }> = [];
-    filteredInputProps: Array<DropdownValue> = [];
-    filteredCapabilitiesProps: Array<{capabilityName: string, properties: Array<DropdownValueType>}> = [];
+    propTypeEnum: string[] = [];
+    operationOutputCats: Array<{ operationName: string, outputs: DropdownValueType[] }> = [];
+    filteredInputProps: DropdownValue[] = [];
+    filteredCapabilitiesProps: Array<{capabilityName: string, properties: DropdownValueType[]}> = [];
 
-    constructor(private dataTypeService:DataTypeService, protected workspaceService: WorkspaceService) {}
+    constructor(private dataTypeService: DataTypeService, protected workspaceService: WorkspaceService) {}
 
     ngOnInit() {
         if (this.isInputParam) {
@@ -58,25 +58,25 @@ export class ParamRowComponent {
                             (acc, capab) => [...acc, ...capab.properties],
                             [])
                     ),
-                    prop => prop.type
+                    (prop) => prop.type
                 )
             );
         } else {
-            const dataTypes: Array<DataTypeModel> = _.toArray(this.dataTypeService.getDataTypeByModel(this.workspaceService.metadata.model));
+            const dataTypes: DataTypeModel[] = _.toArray(this.dataTypeService.getDataTypeByModel(this.workspaceService.metadata.model));
             this.propTypeEnum = _.concat(
                 _.map(
                     _.filter(
                         dataTypes,
-                        type => this.isTypePrimitive(type.name)
+                        (type) => this.isTypePrimitive(type.name)
                     ),
-                    type => type.name
+                    (type) => type.name
                 ).sort(),
                 _.map(
                     _.filter(
                         dataTypes,
-                        type => !this.isTypePrimitive(type.name)
+                        (type) => !this.isTypePrimitive(type.name)
                     ),
-                    type => type.name
+                    (type) => type.name
                 ).sort()
             );
         }
@@ -98,21 +98,21 @@ export class ParamRowComponent {
         this.filteredInputProps = _.map(
             _.filter(
                 this.getPrimitiveSubtypes(),
-                prop => !this.param.type || prop.type === this.param.type
+                (prop) => !this.param.type || prop.type === this.param.type
             ),
-            prop => new DropdownValue(prop.uniqueId, prop.name)
+            (prop) => new DropdownValue(prop.uniqueId, prop.name)
         );
-        this.filteredInputProps.unshift(new DropdownValue("",""));
+        this.filteredInputProps.unshift(new DropdownValue('', ''));
 
         this.operationOutputCats = _.filter(
             _.map(
                 this.operationOutputs,
-                op => {
+                (op) => {
                     return {
                         operationName: `${op.displayType()}.${op.name}`,
                         outputs: _.map(
-                            _.filter(op.outputs.listToscaDataDefinition, output => !this.param.type || output.type === this.param.type),
-                            output => new DropdownValueType(
+                            _.filter(op.outputs.listToscaDataDefinition, (output) => !this.param.type || output.type === this.param.type),
+                            (output) => new DropdownValueType(
                                 `${op.interfaceType}.${op.name}.${output.name}`,
                                 output.name,
                                 output.type
@@ -121,18 +121,18 @@ export class ParamRowComponent {
                     };
                 }
             ),
-            category => category.outputs.length > 0
+            (category) => category.outputs.length > 0
         );
 
         this.filteredCapabilitiesProps = _.filter(
             _.map(
                 this.capabilitiesProps,
-                cap => {
+                (cap) => {
                     return {
                         capabilityName: cap.name,
                         properties: _.map(
-                            _.filter(cap.properties, prop => !this.param.type || prop.type === this.param.type),
-                            prop => new DropdownValueType(
+                            _.filter(cap.properties, (prop) => !this.param.type || prop.type === this.param.type),
+                            (prop) => new DropdownValueType(
                                 prop.uniqueId,
                                 prop.name,
                                 prop.type
@@ -141,7 +141,7 @@ export class ParamRowComponent {
                     };
                 }
             ),
-            capability => capability.properties.length > 0
+            (capability) => capability.properties.length > 0
         );
 
         if (this.param.inputId) {
@@ -172,12 +172,12 @@ export class ParamRowComponent {
         this.validityChanged();
     }
 
-    getPrimitiveSubtypes(): Array<InputBEModel> {
-        const flattenedProps: Array<any> = [];
+    getPrimitiveSubtypes(): InputBEModel[] {
+        const flattenedProps: any[] = [];
         const dataTypes = this.dataTypeService.getDataTypeByModel(this.workspaceService.metadata.model);
 
-        _.forEach(this.inputProps, prop => {
-            const type:DataTypeModel = _.find(
+        _.forEach(this.inputProps, (prop) => {
+            const type: DataTypeModel = _.find(
                 _.toArray(dataTypes),
                 (type: DataTypeModel) => type.name === prop.type
             );
@@ -186,7 +186,7 @@ export class ParamRowComponent {
                 console.error('Could not find prop in dataTypes: ', prop);
             } else {
                 if (type.properties) {
-                    _.forEach(type.properties, subType => {
+                    _.forEach(type.properties, (subType) => {
                         if (this.isTypePrimitive(subType.type)) {
                             flattenedProps.push({
                                 type: subType.type,
@@ -205,7 +205,7 @@ export class ParamRowComponent {
     getSelectedProp() {
         return _.find(
             this.getPrimitiveSubtypes(),
-            prop => this.param.inputId === prop.uniqueId
+            (prop) => this.param.inputId === prop.uniqueId
         ) || _.find(
             _.reduce(
                 this.operationOutputCats,

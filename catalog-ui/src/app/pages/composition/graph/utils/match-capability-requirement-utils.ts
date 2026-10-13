@@ -18,12 +18,12 @@
  * ============LICENSE_END=========================================================
  */
 import { Injectable } from '@angular/core';
-import {CapabilitiesGroup, Capability} from 'app/models/capability';
-import {ComponentInstance} from 'app/models/components-instances/component-instance';
-import {CompositionCiLinkBase} from 'app/models/graph/graph-links/composition-graph-links/composition-ci-link-base';
-import {Match} from 'app/models/graph/match-relation';
-import {CompositionCiNodeBase} from 'app/models/graph/nodes/composition-graph-nodes/composition-ci-node-base';
-import {Requirement, RequirementsGroup} from 'app/models/requirement';
+import { CapabilitiesGroup, Capability } from 'app/models/capability';
+import { ComponentInstance } from 'app/models/components-instances/component-instance';
+import { CompositionCiLinkBase } from 'app/models/graph/graph-links/composition-graph-links/composition-ci-link-base';
+import { Match } from 'app/models/graph/match-relation';
+import { CompositionCiNodeBase } from 'app/models/graph/nodes/composition-graph-nodes/composition-ci-node-base';
+import { Requirement, RequirementsGroup } from 'app/models/requirement';
 import * as _ from 'lodash';
 
 /**
@@ -120,7 +120,7 @@ export class MatchCapabilitiesRequirementsUtils {
             }
         });
         return requirementArray;
-    };
+    }
 
     /**
      * Returns true if there is a match between the capabilities and requirements that are passed in
@@ -181,7 +181,7 @@ export class MatchCapabilitiesRequirementsUtils {
             return false;
         }
 
-        let list =_.filter(links, {
+        const list = _.filter(links, {
             relation: {
                 fromNode: fromNodeId,
                 relationships: [{

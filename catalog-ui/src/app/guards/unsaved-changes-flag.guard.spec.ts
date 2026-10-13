@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-import {UnsavedChangesFlagGuard} from './unsaved-changes-flag.guard';
+import { UnsavedChangesFlagGuard } from './unsaved-changes-flag.guard';
 
 /** Mirrors the RouterStateSnapshot shape the guard walks: root -> firstChild -> … */
 function stateWith(url: string, params: any[]): any {

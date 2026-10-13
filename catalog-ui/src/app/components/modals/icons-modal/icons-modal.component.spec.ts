@@ -18,7 +18,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-import {IconsModalComponent} from './icons-modal.component';
+import { IconsModalComponent } from './icons-modal.component';
 
 describe('IconsModalComponent', () => {
     let comp: IconsModalComponent;

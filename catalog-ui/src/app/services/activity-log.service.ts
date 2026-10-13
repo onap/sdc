@@ -19,18 +19,18 @@
  */
 
 import { HttpClient } from '@angular/common/http';
-import { Inject, Injectable} from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
+import { ISdcConfig, SdcConfigToken } from '../config/sdc-config.config';
 import { Activity } from '../models/activity';
 import { ServerTypeUrl } from '../utils/constants';
-import { ISdcConfig, SdcConfigToken } from '../config/sdc-config.config';
 import { HttpHelperService } from './http-helper.service';
 
 @Injectable()
 export class ActivityLogService {
     url: string;
 
-    constructor(private httpClient: HttpClient, @Inject(SdcConfigToken) private sdcConfig:ISdcConfig) {
+    constructor(private httpClient: HttpClient, @Inject(SdcConfigToken) private sdcConfig: ISdcConfig) {
         this.url = this.sdcConfig.api.root + this.sdcConfig.api.GET_activity_log;
     }
 

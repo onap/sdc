@@ -16,10 +16,10 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import {DeclareInputComponent} from "./declare-input.component";
+import { DeclareInputComponent } from './declare-input.component';
 
 @NgModule({
     imports: [

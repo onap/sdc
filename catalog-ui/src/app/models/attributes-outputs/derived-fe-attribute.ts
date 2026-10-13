@@ -18,12 +18,12 @@
  * ============LICENSE_END=========================================================
  */
 
-import * as _ from "lodash";
-import {SchemaAttribute, SchemaAttributeGroupModel} from '../schema-attribute';
-import {PROPERTY_TYPES} from 'app/utils/constants';
-import {UUID} from "angular2-uuid";
-import {AttributeBEModel, DerivedAttributeType} from "./attribute-be-model";
-import {AttributeFEModel} from "./attribute-fe-model";
+import { UUID } from 'angular2-uuid';
+import { PROPERTY_TYPES } from 'app/utils/constants';
+import * as _ from 'lodash';
+import { SchemaAttribute, SchemaAttributeGroupModel } from '../schema-attribute';
+import { AttributeBEModel, DerivedAttributeType } from './attribute-be-model';
+import { AttributeFEModel } from './attribute-fe-model';
 
 export class DerivedFEAttribute extends AttributeBEModel {
   valueObj: any;
@@ -43,7 +43,7 @@ export class DerivedFEAttribute extends AttributeBEModel {
   mapKeyError: string;
 
   constructor(attribute: AttributeBEModel, parentName?: string, createChildOfListOrMap?: boolean, key?: string, value?: any) {
-    if (createChildOfListOrMap) { //creating a direct child of list or map (ie. Item that can be deleted, with UUID instead of name)
+    if (createChildOfListOrMap) { // creating a direct child of list or map (ie. Item that can be deleted, with UUID instead of name)
       super(null);
       this.isChildOfListOrMap = true;
       this.canBeDeclared = false;
@@ -55,7 +55,7 @@ export class DerivedFEAttribute extends AttributeBEModel {
         this.mapKey = attribute.schema.property.type.split('.').pop();
         this.mapKeyError = null;
         this.type = attribute.schema.property.type;
-      } else { //map
+      } else { // map
         if (key) {
           this.mapKey = key;
           this.mapKeyError = null;
@@ -68,11 +68,11 @@ export class DerivedFEAttribute extends AttributeBEModel {
       this.valueObj = (this.type == PROPERTY_TYPES.JSON && typeof value == 'object') ? JSON.stringify(value) : value;
       this.schema = new SchemaAttributeGroupModel(new SchemaAttribute(attribute.schema.property));
       this.updateValueObjOrig();
-    } else { //creating a standard derived prop
+    } else { // creating a standard derived prop
       super(attribute);
       this.parentName = parentName ? parentName : null;
       this.attributesName = (parentName) ? parentName + '#' + attribute.name : attribute.name;
-      this.canBeDeclared = true; //defaults to true
+      this.canBeDeclared = true; // defaults to true
     }
     this.valueObjIsValid = true;
     this.derivedDataType = this.getDerivedAttributeType();

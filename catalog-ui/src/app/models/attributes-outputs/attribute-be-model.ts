@@ -18,11 +18,11 @@
  * ============LICENSE_END=========================================================
  */
 
-import {PROPERTY_DATA, PROPERTY_TYPES} from 'app/utils/constants';
-import {ToscaPresentationData} from '../tosca-presentation';
-import {AttributeOutputDetail} from "app/models/attributes-outputs/attribute-output-detail";
-import {SchemaAttribute, SchemaAttributeGroupModel} from "../schema-attribute";
+import { AttributeOutputDetail } from 'app/models/attributes-outputs/attribute-output-detail';
+import { PROPERTY_DATA, PROPERTY_TYPES } from 'app/utils/constants';
 import * as _ from 'lodash';
+import { SchemaAttribute, SchemaAttributeGroupModel } from '../schema-attribute';
+import { ToscaPresentationData } from '../tosca-presentation';
 
 export enum DerivedAttributeType {
   SIMPLE,

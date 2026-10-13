@@ -18,10 +18,10 @@
  * ============LICENSE_END=========================================================
  */
 
-import {DataTypeModel} from '../models/data-types';
-import {PropertyBEModel} from '../models/properties-inputs/property-be-model';
-import {Constraint, ConstraintTypes} from "../pages/properties-assignment/constraints/constraints.component";
-import {load} from 'js-yaml';
+import { load } from 'js-yaml';
+import { DataTypeModel } from '../models/data-types';
+import { PropertyBEModel } from '../models/properties-inputs/property-be-model';
+import { Constraint, ConstraintTypes } from '../pages/properties-assignment/constraints/constraints.component';
 
 export class ServiceDataTypeReader {
 
@@ -33,9 +33,9 @@ export class ServiceDataTypeReader {
             const reader = new FileReader();
             reader.onloadend = () => {
                 try {
-                    const result = <String>reader.result;
+                    const result = reader.result as String;
                     const loadedContent = load(result);
-                    console.log("Readed content: " + loadedContent);
+                    console.log('Readed content: ' + loadedContent);
                     const dataType = this.getDataType(loadedContent);
                     this.readName(dataType);
                     this.readDerivedFrom(dataType);
@@ -45,17 +45,17 @@ export class ServiceDataTypeReader {
                 } catch (error) {
                     reject(error);
                 }
-            }
+            };
             reader.readAsText(dataTypeFile);
         });
     }
 
-    private getDataType(fileContent:any) {
-        const index = Object.keys(fileContent).indexOf("data_types",0)
-        if (index == -1){
+    private getDataType(fileContent: any) {
+        const index = Object.keys(fileContent).indexOf('data_types', 0);
+        if (index == -1) {
             return fileContent;
         }
-        return fileContent["data_types"];
+        return fileContent.data_types;
     }
 
     private readName(fileContent: any) {
@@ -63,36 +63,35 @@ export class ServiceDataTypeReader {
     }
 
     private readDerivedFrom(fileContent: any) {
-        let dataType = Object.keys(fileContent).values().next().value;
-        this.serviceDataType.derivedFromName = fileContent[dataType]["derived_from"];
+        const dataType = Object.keys(fileContent).values().next().value;
+        this.serviceDataType.derivedFromName = fileContent[dataType].derived_from;
     }
 
     private readDescription(fileContent: any) {
-        let dataType = Object.keys(fileContent).values().next().value;
-        this.serviceDataType.description = fileContent[dataType]["description"];
+        const dataType = Object.keys(fileContent).values().next().value;
+        this.serviceDataType.description = fileContent[dataType].description;
     }
 
     private readProperties(fileContent: any) {
         this.serviceDataType.properties = new Array<PropertyBEModel>();
-        let dataType = Object.keys(fileContent).values().next().value;
-        const properties = fileContent[dataType]["properties"];
-        Object.keys(properties).forEach((key )=>
-            {
-                let property = new PropertyBEModel();
+        const dataType = Object.keys(fileContent).values().next().value;
+        const properties = fileContent[dataType].properties;
+        Object.keys(properties).forEach((key ) => {
+                const property = new PropertyBEModel();
                 property.name = key;
-                property.description = properties[key]["description"];
-                property.type = properties[key]["type"];
-                property.schemaType = properties[key]["schema"];
-                property.required = properties[key]["required"];
-                const constraints = properties[key]["constraints"];
+                property.description = properties[key].description;
+                property.type = properties[key].type;
+                property.schemaType = properties[key].schema;
+                property.required = properties[key].required;
+                const constraints = properties[key].constraints;
 
                 if (constraints) {
                     property.constraints = new Array();
-                    let constraintArray = new Array();
+                    const constraintArray = new Array();
                     Object.keys(constraints).forEach((constrainKey) => {
                         Object.keys(constraints[constrainKey]).forEach((kc) => {
-                            let newConstraint = this.mapValuesToConstraint(<ConstraintTypes>kc, constraints[constrainKey][kc]);
-                            let jsonObject = this.getConstraintFormat(newConstraint);
+                            const newConstraint = this.mapValuesToConstraint(kc as ConstraintTypes, constraints[constrainKey][kc]);
+                            const jsonObject = this.getConstraintFormat(newConstraint);
                             constraintArray.push(jsonObject);
 
                         });
@@ -109,98 +108,98 @@ export class ServiceDataTypeReader {
             case ConstraintTypes.equal:
                 return {
                     [ConstraintTypes.equal]: constraint.value
-                }
+                };
             case ConstraintTypes.less_or_equal:
                 return {
                     [ConstraintTypes.less_or_equal]: constraint.value
-                }
+                };
             case ConstraintTypes.less_than:
                 return {
                     [ConstraintTypes.less_than]: constraint.value
-                }
+                };
             case ConstraintTypes.greater_or_equal:
                 return {
                     [ConstraintTypes.greater_or_equal]: constraint.value
-                }
+                };
             case ConstraintTypes.greater_than:
                 return {
                     [ConstraintTypes.greater_than]: constraint.value
-                }
+                };
             case ConstraintTypes.in_range:
                 return {
                     [ConstraintTypes.in_range]: constraint.value
-                }
+                };
             case ConstraintTypes.length:
                 return {
                     [ConstraintTypes.length]: constraint.value
-                }
+                };
             case ConstraintTypes.max_length:
                 return {
                     [ConstraintTypes.max_length]: constraint.value
-                }
+                };
             case ConstraintTypes.min_length:
                 return {
                     [ConstraintTypes.min_length]: constraint.value
-                }
+                };
             case ConstraintTypes.pattern:
                 return {
                     [ConstraintTypes.pattern]: constraint.value
-                }
+                };
             case ConstraintTypes.valid_values:
                 return {
                     [ConstraintTypes.valid_values]: constraint.value
-                }
+                };
             default:
                 return;
         }
     }
 
-    private mapValuesToConstraint(type: string, value: any):Constraint {
+    private mapValuesToConstraint(type: string, value: any): Constraint {
         let constraintType: ConstraintTypes;
         let constraintValue: any;
         if (!type) {
             constraintType = ConstraintTypes.null;
-            constraintValue = "";
-        } else if(type === "valid_values"){
+            constraintValue = '';
+        } else if (type === 'valid_values') {
             constraintType = ConstraintTypes.valid_values;
             constraintValue = value;
-        } else if(type === "equal") {
+        } else if (type === 'equal') {
             constraintType = ConstraintTypes.equal;
             constraintValue = value;
-        } else if(type === "greater_than") {
+        } else if (type === 'greater_than') {
             constraintType = ConstraintTypes.greater_than;
             constraintValue = value;
-        } else if(type === "greater_or_equal") {
+        } else if (type === 'greater_or_equal') {
             constraintType = ConstraintTypes.greater_or_equal;
             constraintValue = value;
-        } else if(type === "less_than") {
+        } else if (type === 'less_than') {
             constraintType = ConstraintTypes.less_than;
             constraintValue = value;
-        } else if(type === "less_or_equal") {
+        } else if (type === 'less_or_equal') {
             constraintType = ConstraintTypes.less_or_equal;
             constraintValue = value;
-        } else if(type === "in_range") {
+        } else if (type === 'in_range') {
             constraintType = ConstraintTypes.in_range;
             constraintValue = value;
-        } else if(type === "range_max_value" || type === "range_min_value") {
+        } else if (type === 'range_max_value' || type === 'range_min_value') {
             constraintType = ConstraintTypes.in_range;
             constraintValue = value;
-        } else if(type === "length") {
+        } else if (type === 'length') {
             constraintType = ConstraintTypes.length;
             constraintValue = value;
-        } else if(type === "min_length") {
+        } else if (type === 'min_length') {
             constraintType = ConstraintTypes.min_length;
             constraintValue = value;
-        } else if(type === "max_length") {
+        } else if (type === 'max_length') {
             constraintType = ConstraintTypes.max_length;
             constraintValue = value;
-        } else if(type === "pattern") {
+        } else if (type === 'pattern') {
             constraintType = ConstraintTypes.pattern;
             constraintValue = value;
         }
         return {
-            type:constraintType,
-            value:constraintValue
-        }
+            type: constraintType,
+            value: constraintValue
+        };
     }
 }

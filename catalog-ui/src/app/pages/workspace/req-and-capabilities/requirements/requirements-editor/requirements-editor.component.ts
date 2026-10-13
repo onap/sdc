@@ -1,12 +1,12 @@
-import {Component} from '@angular/core';
-import {ServiceService} from "app/services/component-services/service.service";
-import {CapabilityTypeModel} from 'app/models/capability-types';
-import {NodeTypeModel} from 'app/models/node-types';
-import {RelationshipTypeModel} from 'app/models/relationship-types';
-import {Requirement} from 'app/models/requirement';
-import {TranslateService} from 'app/shared/translator/translate.service';
-import {DropdownValue} from "app/components/ui/form-components/dropdown/ui-element-dropdown.component";
-import {Subject} from "rxjs";
+import { Component } from '@angular/core';
+import { DropdownValue } from 'app/components/ui/form-components/dropdown/ui-element-dropdown.component';
+import { CapabilityTypeModel } from 'app/models/capability-types';
+import { NodeTypeModel } from 'app/models/node-types';
+import { RelationshipTypeModel } from 'app/models/relationship-types';
+import { Requirement } from 'app/models/requirement';
+import { ServiceService } from 'app/services/component-services/service.service';
+import { TranslateService } from 'app/shared/translator/translate.service';
+import { Subject } from 'rxjs';
 
 @Component({
     selector: 'requirements-editor',
@@ -19,15 +19,15 @@ export class RequirementsEditorComponent {
 
     input: {
         requirement: Requirement,
-        relationshipTypesList: Array<RelationshipTypeModel>;
-        nodeTypesList: Array<NodeTypeModel>;
-        capabilityTypesList: Array<CapabilityTypeModel>;
+        relationshipTypesList: RelationshipTypeModel[];
+        nodeTypesList: NodeTypeModel[];
+        capabilityTypesList: CapabilityTypeModel[];
         isReadonly: boolean;
     };
     requirementData: Requirement;
-    capabilityTypesMappedList: Array<DropdownValue>;
-    relationshipTypesMappedList: Array<DropdownValue>;
-    nodeTypesMappedList: Array<DropdownValue>;
+    capabilityTypesMappedList: DropdownValue[];
+    relationshipTypesMappedList: DropdownValue[];
+    nodeTypesMappedList: DropdownValue[];
     isUnboundedChecked: boolean;
     isReadonly: boolean;
     translatedUnboundTxt: string;
@@ -41,14 +41,14 @@ export class RequirementsEditorComponent {
         this.requirementData = new Requirement(this.input.requirement);
         this.requirementData.minOccurrences = this.requirementData.minOccurrences || 0;
         this.translatedUnboundTxt = '';
-        this.capabilityTypesMappedList = _.map(this.input.capabilityTypesList, capType => new DropdownValue(capType.toscaPresentation.type, capType.toscaPresentation.type));
-        this.relationshipTypesMappedList = _.map(this.input.relationshipTypesList, rType => new DropdownValue(rType.toscaPresentation.type, rType.toscaPresentation.type));
-        this.nodeTypesMappedList = _.map(this.input.nodeTypesList, nodeType => {
+        this.capabilityTypesMappedList = _.map(this.input.capabilityTypesList, (capType) => new DropdownValue(capType.toscaPresentation.type, capType.toscaPresentation.type));
+        this.relationshipTypesMappedList = _.map(this.input.relationshipTypesList, (rType) => new DropdownValue(rType.toscaPresentation.type, rType.toscaPresentation.type));
+        this.nodeTypesMappedList = _.map(this.input.nodeTypesList, (nodeType) => {
             return new DropdownValue(
                 nodeType.componentMetadataDefinition.componentMetadataDataDefinition.toscaResourceName,
-                nodeType.componentMetadataDefinition.componentMetadataDataDefinition.toscaResourceName)
+                nodeType.componentMetadataDefinition.componentMetadataDataDefinition.toscaResourceName);
         });
-        this.translateService.languageChangedObservable.subscribe(lang => {
+        this.translateService.languageChangedObservable.subscribe((lang) => {
             this.translatedUnboundTxt = this.translateService.translate('REQ_CAP_OCCURRENCES_UNBOUNDED');
             this.requirementData.maxOccurrences = this.requirementData.maxOccurrences || this.translatedUnboundTxt;
             this.isUnboundedChecked = this.requirementData.maxOccurrences === this.translatedUnboundTxt;
@@ -78,7 +78,7 @@ export class RequirementsEditorComponent {
 
     checkFormValidForSubmit() {
         return this.requirementData.name && this.requirementData.name.length &&
-            this.requirementData.capability && this.requirementData.capability.length && !_.isEqual(this.requirementData.minOccurrences, "") && this.requirementData.minOccurrences >= 0 &&
+            this.requirementData.capability && this.requirementData.capability.length && !_.isEqual(this.requirementData.minOccurrences, '') && this.requirementData.minOccurrences >= 0 &&
             (
                 this.isUnboundedChecked ||
                 (this.requirementData.maxOccurrences && (this.requirementData.minOccurrences <= parseInt(this.requirementData.maxOccurrences)))
@@ -86,7 +86,7 @@ export class RequirementsEditorComponent {
     }
 
     validityChanged = () => {
-        let validState = this.checkFormValidForSubmit();
+        const validState = this.checkFormValidForSubmit();
         this.onValidationChange.next(validState);
     }
 

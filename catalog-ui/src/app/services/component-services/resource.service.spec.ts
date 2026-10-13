@@ -17,21 +17,21 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {inject, TestBed} from '@angular/core/testing';
+import { inject, TestBed } from '@angular/core/testing';
 
-import {ResourceService} from "./resource.service";
-import {HttpClient} from "@angular/common/http";
-import {ISdcConfig, SdcConfigToken} from "../../config/sdc-config.config";
+import { HttpClient } from '@angular/common/http';
+import { ISdcConfig, SdcConfigToken } from '../../config/sdc-config.config';
+import { ResourceService } from './resource.service';
 
 describe('ResourceService', () => {
   beforeEach(() => {
     const sdcConfigToken: Partial<ISdcConfig> = {
-      'api': {
-        'root': 'testRoot',
-        'component_api_root': 'testApiRoot',
+      api: {
+        root: 'testRoot',
+        component_api_root: 'testApiRoot',
       }
     };
-    let httpServiceMock: Partial<HttpClient> = {
+    const httpServiceMock: Partial<HttpClient> = {
       get: jest.fn()
     };
     TestBed.configureTestingModule({

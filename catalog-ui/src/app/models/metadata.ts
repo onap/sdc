@@ -18,14 +18,13 @@
  */
 
 'use strict';
-import * as _ from "lodash";
+import * as _ from 'lodash';
 
 export class Metadata {
-    
-    constructor(metaDataValues?:Metadata) {
-        _.forEach(metaDataValues, (metaDataValue:string, key) => {
+
+    constructor(metaDataValues?: Metadata) {
+        _.forEach(metaDataValues, (metaDataValue: string, key) => {
             this[key] = metaDataValue;
         });
     }
 }
-

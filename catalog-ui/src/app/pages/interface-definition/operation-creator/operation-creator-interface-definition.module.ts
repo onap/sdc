@@ -18,15 +18,15 @@
 *  SPDX-License-Identifier: Apache-2.0
 *  ============LICENSE_END=========================================================
 */
-import {NgModule} from "@angular/core";
-import {ParamRowComponent} from "./param-row/param-row.component";
-import {OperationCreatorInterfaceDefinitionComponent} from "./operation-creator-interface-definition.component";
-import {UiElementsModule} from "../../../components/ui/ui-elements.module";
-import {TranslateModule} from "../../../shared/translator/translate.module";
-import {SdcUiComponentsModule} from "onap-ui-angular";
-import {CommonModule} from "@angular/common";
-import {FormsModule} from "@angular/forms";
-import {FormElementsModule} from "../../../components/ui/form-components/form-elements.module";
+import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { SdcUiComponentsModule } from 'onap-ui-angular';
+import { FormElementsModule } from '../../../components/ui/form-components/form-elements.module';
+import { UiElementsModule } from '../../../components/ui/ui-elements.module';
+import { TranslateModule } from '../../../shared/translator/translate.module';
+import { OperationCreatorInterfaceDefinitionComponent } from './operation-creator-interface-definition.component';
+import { ParamRowComponent } from './param-row/param-row.component';
 
 @NgModule({
     declarations: [

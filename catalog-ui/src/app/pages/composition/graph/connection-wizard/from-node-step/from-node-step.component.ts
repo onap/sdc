@@ -1,6 +1,6 @@
 import { Component, forwardRef, Inject, OnInit } from '@angular/core';
-import {Match} from 'app/models/graph/match-relation';
 import { Capability } from 'app/models/capability';
+import { Match } from 'app/models/graph/match-relation';
 import { Requirement } from 'app/models/requirement';
 import { IStepComponent } from 'app/models/wizard-step';
 import { Dictionary } from 'lodash';
@@ -11,7 +11,7 @@ import { ConnectionWizardService } from '../connection-wizard.service';
     templateUrl: './from-node-step.component.html'
 })
 
-export class FromNodeStepComponent implements IStepComponent, OnInit{
+export class FromNodeStepComponent implements IStepComponent, OnInit {
 
     optionalRequirementsMap: Dictionary<Requirement[]>;
     optionalCapabilitiesMap: Dictionary<Capability[]>;
@@ -35,9 +35,9 @@ export class FromNodeStepComponent implements IStepComponent, OnInit{
         if (!selected) {
             this.connectWizardService.selectedMatch = null;
         } else if (selected instanceof Requirement) {
-            this.connectWizardService.selectedMatch = new Match(<Requirement>selected, null, true, this.connectWizardService.connectRelationModel.fromNode.componentInstance.uniqueId, null);
+            this.connectWizardService.selectedMatch = new Match(selected as Requirement, null, true, this.connectWizardService.connectRelationModel.fromNode.componentInstance.uniqueId, null);
         } else {
-            this.connectWizardService.selectedMatch = new Match(null, <Capability>selected , false, null, this.connectWizardService.connectRelationModel.fromNode.componentInstance.uniqueId);
+            this.connectWizardService.selectedMatch = new Match(null, selected as Capability , false, null, this.connectWizardService.connectRelationModel.fromNode.componentInstance.uniqueId);
         }
     }
 

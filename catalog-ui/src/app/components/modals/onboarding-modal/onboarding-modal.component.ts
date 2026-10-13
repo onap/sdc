@@ -8,11 +8,11 @@ import { ComponentMetadata, IComponentMetadata } from '../../../models/component
 import { IUserProperties } from '../../../models/user';
 
 import { Resource } from '../../../models/components/resource';
-import { ComponentType } from '../../../utils/constants';
 import { CacheService } from '../../../services/cache.service';
 import { FileUtilsService } from '../../../services/file-utils.service';
 import { OnboardingService } from '../../../services/onboarding.service';
 import { TranslateService } from '../../../shared/translator/translate.service';
+import { ComponentType } from '../../../utils/constants';
 
 export interface ImportVSPdata {
     componentCsar: Resource;

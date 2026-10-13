@@ -1,4 +1,4 @@
-import {GeneralFormService, ValidationPatterns} from '../general-form.service';
+import { GeneralFormService, ValidationPatterns } from '../general-form.service';
 
 const PATTERNS: ValidationPatterns = {
     name: /^(?=.*[^. ])[\s\w\&_.:-]{1,1024}$/,
@@ -17,7 +17,7 @@ describe('GeneralFormService', () => {
     it('builds a FormGroup with the expected controls', () => {
         const form = service.buildForm(PATTERNS);
         ['name', 'description', 'vendorName', 'vendorRelease', 'resourceVendorModelNumber',
-         'contactId', 'tags', 'category', 'model'].forEach(c => {
+         'contactId', 'tags', 'category', 'model'].forEach((c) => {
             expect(form.get(c)).toBeTruthy();
         });
     });

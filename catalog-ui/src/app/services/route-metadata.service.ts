@@ -18,10 +18,10 @@
  * ============LICENSE_END=========================================================
  */
 
-import {DOCUMENT} from '@angular/common';
-import {Inject, Injectable} from '@angular/core';
-import {ActivatedRouteSnapshot, NavigationEnd, Router} from '@angular/router';
-import {Subscription} from 'rxjs/Subscription';
+import { DOCUMENT } from '@angular/common';
+import { Inject, Injectable } from '@angular/core';
+import { ActivatedRouteSnapshot, NavigationEnd, Router } from '@angular/router';
+import { Subscription } from 'rxjs/Subscription';
 
 const DEFAULT_BODY_CLASS = 'default-class';
 const DEFAULT_TITLE = 'SDC';

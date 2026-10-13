@@ -1,10 +1,10 @@
-import {GeneralTabComponent} from '../general-tab.component';
-import {GeneralFormService} from '../general-form.service';
-import {ComponentMetadataService} from '../component-metadata.service';
-import {NavigationService} from '../../../../services/navigation.service';
-import {ValidationConfiguration} from 'app/models/validation-config';
-import {of} from 'rxjs';
-import {Subject} from 'rxjs/Subject';
+import { ValidationConfiguration } from 'app/models/validation-config';
+import { of } from 'rxjs';
+import { Subject } from 'rxjs/Subject';
+import { NavigationService } from '../../../../services/navigation.service';
+import { ComponentMetadataService } from '../component-metadata.service';
+import { GeneralFormService } from '../general-form.service';
+import { GeneralTabComponent } from '../general-tab.component';
 
 function makeComponent(overrides: any = {}) {
     return Object.assign({

@@ -1,26 +1,26 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Store } from '@ngxs/store';
-import {AttributeModel, AttributesGroup} from 'app/models/attributes';
-import {ComponentMetadata} from 'app/models/component-metadata';
-import {Component as TopologyTemplate} from 'app/models/components/component';
-import {ComponentInstance} from 'app/models/components-instances/component-instance';
-import {FullComponentInstance} from 'app/models/components-instances/full-component-instance';
-import {InputModel, InputsGroup} from 'app/models/inputs';
-import {PropertiesGroup, PropertyModel} from 'app/models/properties';
-import {DataTypesService} from 'app/services/data-types.service';
-import {ToscaGetFunctionType} from "app/models/tosca-get-function-type";
+import { DropdownValue } from 'app/components/ui/form-components/dropdown/ui-element-dropdown.component';
+import { AttributeModel, AttributesGroup } from 'app/models/attributes';
+import { ComponentMetadata } from 'app/models/component-metadata';
+import { ComponentInstance } from 'app/models/components-instances/component-instance';
+import { FullComponentInstance } from 'app/models/components-instances/full-component-instance';
+import { Component as TopologyTemplate } from 'app/models/components/component';
+import { InputModel, InputsGroup } from 'app/models/inputs';
+import { PropertiesGroup, PropertyModel } from 'app/models/properties';
+import { ToscaGetFunctionType } from 'app/models/tosca-get-function-type';
 import { CompositionService } from 'app/pages/composition/composition.service';
 import { WorkspaceService } from 'app/pages/workspace/workspace.service';
 import { GroupByPipe } from 'app/pipes/group-by.pipe';
 import { ResourceNamePipe } from 'app/pipes/resource-name.pipe';
+import { ComponentInstanceService } from 'app/services/component-instance-services/component-instance.service';
 import { TopologyTemplateService } from 'app/services/component-services/topology-template.service';
-import { ComponentInstanceService } from "app/services/component-instance-services/component-instance.service";
-import { DropdownValue } from 'app/components/ui/form-components/dropdown/ui-element-dropdown.component';
+import { DataTypesService } from 'app/services/data-types.service';
 import { ComponentGenericResponse } from 'app/services/responses/component-generic-response';
 import { TranslateService } from 'app/shared/translator/translate.service';
-import {ModalsHandler} from 'app/utils/modals-handler';
+import { ModalsHandler } from 'app/utils/modals-handler';
 import { SdcUiCommon, SdcUiServices } from 'onap-ui-angular';
-import {SelectedComponentType, TogglePanelLoadingAction} from "../../../common/store/graph.actions";
+import { SelectedComponentType, TogglePanelLoadingAction } from '../../../common/store/graph.actions';
 
 @Component({
     selector: 'properties-tab',
@@ -48,7 +48,7 @@ export class PropertiesTabComponent implements OnInit {
 
     constructor(private store: Store,
                 private workspaceService: WorkspaceService,
-                private DataTypesService:DataTypesService,
+                private DataTypesService: DataTypesService,
                 private compositionService: CompositionService,
                 private modalsHandler: ModalsHandler,
                 private topologyTemplateService: TopologyTemplateService,
@@ -121,6 +121,11 @@ export class PropertiesTabComponent implements OnInit {
         return instanceName;
     }
 
+    onUnboundedChanged(component: ComponentInstance) {
+        this.isUnboundedChecked = !this.isUnboundedChecked;
+        component.maxOccurrences = this.isUnboundedChecked ? 'UNBOUNDED' : '1';
+    }
+
     private getComponentInstancesPropertiesAndAttributes = () => {
         this.topologyTemplateService.getComponentInstanceAttributesAndPropertiesAndInputs(
             this.workspaceService.metadata.uniqueId,
@@ -161,7 +166,7 @@ export class PropertiesTabComponent implements OnInit {
                 }
             });
             if (derived.length) {
-                result['derived'] = derived;
+                result.derived = derived;
             }
             this.objectKeys(result).forEach((key) => { result[key] =  _.orderBy(result[key], ['name']); });
         }
@@ -189,18 +194,18 @@ export class PropertiesTabComponent implements OnInit {
 
     private initComponentOccurrences = (): void => {
         if (this.component instanceof FullComponentInstance) {
-            if(this.component.minOccurrences != null && this.component.maxOccurrences != null){
+            if (this.component.minOccurrences != null && this.component.maxOccurrences != null) {
                 this.isOccurrencesEnabled = true;
             }
-            this.isUnboundedChecked = this.component.maxOccurrences == "UNBOUNDED" ? true: false;
+            this.isUnboundedChecked = this.component.maxOccurrences == 'UNBOUNDED' ? true : false;
 
-            if(!this.component.instanceCount){
-                this.component.instanceCount = "";
+            if (!this.component.instanceCount) {
+                this.component.instanceCount = '';
             }
 
             _.forEach(this.inputs, (input: InputModel) => {
-                if(input.type === "integer"){
-                    this.selectInputs.push(new DropdownValue('{' + ToscaGetFunctionType.GET_INPUT.toLowerCase() + ":" + input.name + '}', input.name));
+                if (input.type === 'integer') {
+                    this.selectInputs.push(new DropdownValue('{' + ToscaGetFunctionType.GET_INPUT.toLowerCase() + ':' + input.name + '}', input.name));
                 }
             });
 
@@ -243,11 +248,6 @@ export class PropertiesTabComponent implements OnInit {
         this.initComponentOccurrences();
     }
 
-    onUnboundedChanged(component: ComponentInstance) {
-        this.isUnboundedChecked = !this.isUnboundedChecked;
-        component.maxOccurrences = this.isUnboundedChecked ? "UNBOUNDED" : "1";
-    }
-
     private updateComponentInstance(component: ComponentInstance) {
         this.store.dispatch(new TogglePanelLoadingAction({isLoading: true}));
 
@@ -259,7 +259,7 @@ export class PropertiesTabComponent implements OnInit {
             this.compositionService.getComponentInstances().find((item) => item.uniqueId === component.uniqueId).minOccurrences = component.minOccurrences;
             this.compositionService.getComponentInstances().find((item) => item.uniqueId === component.uniqueId).instanceCount = component.instanceCount;
             this.store.dispatch(new TogglePanelLoadingAction({isLoading: false}));
-        }, (error:any) => {
+        }, (error: any) => {
             this.store.dispatch(new TogglePanelLoadingAction({isLoading: false}));
             if (error) {
                 console.log(error);
@@ -267,24 +267,24 @@ export class PropertiesTabComponent implements OnInit {
     }
 
     private enableOccurrences = () => {
-        if(this.component instanceof FullComponentInstance){
-            if(!this.isOccurrencesEnabled){
+        if (this.component instanceof FullComponentInstance) {
+            if (!this.isOccurrencesEnabled) {
                 this.component.minOccurrences = null;
                 this.component.maxOccurrences = null;
                 this.component.instanceCount = null;
             } else {
-                this.component.minOccurrences = "1";
-                this.component.maxOccurrences = "1";
-                this.component.instanceCount = "";
+                this.component.minOccurrences = '1';
+                this.component.maxOccurrences = '1';
+                this.component.instanceCount = '';
             }
         }
     }
 
     private isOccurrencesFormValid(component: FullComponentInstance) {
-        if(
+        if (
             (component.minOccurrences === null && component.maxOccurrences === null && !component.instanceCount) ||
             (component.minOccurrences && parseInt(component.minOccurrences) >= 0 && component.maxOccurrences &&
-            (parseInt(component.maxOccurrences) >= parseInt(component.minOccurrences) || component.maxOccurrences === "UNBOUNDED"))
+            (parseInt(component.maxOccurrences) >= parseInt(component.minOccurrences) || component.maxOccurrences === 'UNBOUNDED'))
         ) {
             return true;
         } else {
@@ -293,7 +293,7 @@ export class PropertiesTabComponent implements OnInit {
     }
 
     private saveOccurrences = () => {
-        if(this.component instanceof FullComponentInstance && this.isOccurrencesFormValid(this.component)) {
+        if (this.component instanceof FullComponentInstance && this.isOccurrencesFormValid(this.component)) {
             this.updateComponentInstance(this.component);
         }
     }

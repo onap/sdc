@@ -33,10 +33,10 @@ const WorkspaceContainerComponent = require('./workspace-container.component').W
 // tslint:disable-next-line:no-var-requires
 const template: string = require('./workspace-container.component.html');
 
-import {Role, WorkspaceMode} from 'app/utils/constants';
+import { Role, WorkspaceMode } from 'app/utils/constants';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/throw';
-import {Observable} from 'rxjs/Observable';
+import { Observable } from 'rxjs/Observable';
 
 function makeComponent(overrides: any = {}) {
     return {

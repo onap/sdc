@@ -8,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,17 +19,17 @@
  * ============LICENSE_END=========================================================
  */
 
-import {ContentAfterLastDotPipe} from "./content-after-last-dot.pipe";
-import {SearchFilterPipe} from "./search-filter.pipe";
-import {KeysPipe} from "./keys.pipe";
-import {GroupByPipe} from "./group-by.pipe";
-import {ResourceNamePipe} from "./resource-name.pipe";
-import {NgModule} from "@angular/core";
-import {SafeUrlSanitizerPipe} from "./safe-url-sanitizer.pipe";
-import {EntityFilterPipe} from "./entity-filter.pipe";
-import {KeyValuePipe} from "./key-value.pipe";
-import {PropertiesOrderByPipe} from "./properties-order-by.pipe";
-import {OrderByPipe} from "./order-by.pipe";
+import { NgModule } from '@angular/core';
+import { ContentAfterLastDotPipe } from './content-after-last-dot.pipe';
+import { EntityFilterPipe } from './entity-filter.pipe';
+import { GroupByPipe } from './group-by.pipe';
+import { KeyValuePipe } from './key-value.pipe';
+import { KeysPipe } from './keys.pipe';
+import { OrderByPipe } from './order-by.pipe';
+import { PropertiesOrderByPipe } from './properties-order-by.pipe';
+import { ResourceNamePipe } from './resource-name.pipe';
+import { SafeUrlSanitizerPipe } from './safe-url-sanitizer.pipe';
+import { SearchFilterPipe } from './search-filter.pipe';
 
 @NgModule({
     declarations: [

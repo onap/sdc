@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,10 +17,10 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-import {ImagesUrl, GraphUIObjects} from "../../../../utils/constants";
-import {ComponentInstance} from '../../../components-instances/component-instance';
-import {CompositionCiNodeBase} from './composition-ci-node-base';
-import {ImageCreatorService} from "app/pages/composition/graph/common/image-creator.service";
+import { ImageCreatorService } from 'app/pages/composition/graph/common/image-creator.service';
+import { GraphUIObjects, ImagesUrl } from '../../../../utils/constants';
+import { ComponentInstance } from '../../../components-instances/component-instance';
+import { CompositionCiNodeBase } from './composition-ci-node-base';
 
 export class CompositionCiNodeVfc extends CompositionCiNodeBase {
   private isDependent: boolean;
@@ -30,6 +30,14 @@ export class CompositionCiNodeVfc extends CompositionCiNodeBase {
     super(instance, imageCreator);
     this.isDependent = instance.isDependent();
     this.initVfc();
+  }
+
+  public initUncertifiedDependentImage(node: Cy.Collection, nodeMinSize: number): string {
+    return this.enhanceImage(node, nodeMinSize, this.imagesPath + 'uncertified_dependent.png');
+  }
+
+  public initDependentImage(node: Cy.Collection, nodeMinSize: number): string {
+    return this.enhanceImage(node, nodeMinSize, this.imagesPath + 'dependent.png');
   }
 
   private initVfc(): void {
@@ -48,14 +56,6 @@ export class CompositionCiNodeVfc extends CompositionCiNodeBase {
     if (!this.certified) {
       this.classes = this.classes + ' not-certified';
     }
-  }
-
-  public initUncertifiedDependentImage(node:Cy.Collection, nodeMinSize:number):string {
-    return this.enhanceImage(node, nodeMinSize, this.imagesPath + 'uncertified_dependent.png');
-  }
-
-  public initDependentImage(node:Cy.Collection, nodeMinSize:number):string {
-    return this.enhanceImage(node, nodeMinSize, this.imagesPath + 'dependent.png');
   }
 
 }

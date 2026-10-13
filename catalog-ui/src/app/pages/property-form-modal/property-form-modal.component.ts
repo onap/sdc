@@ -19,30 +19,30 @@
  * ============LICENSE_END=========================================================
  */
 
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
-import {FormControl, FormGroup, ValidatorFn, Validators} from '@angular/forms';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { Component as IComponent } from 'app/models/components/component';
+import { CustomToscaFunction } from 'app/models/default-custom-functions';
+import { InstanceFeDetails } from 'app/models/instance-fe-details';
+import { PropertyModel } from 'app/models/properties';
+import { InputFEModel } from 'app/models/properties-inputs/input-fe-model';
+import { PropertyFEModel } from 'app/models/properties-inputs/property-fe-model';
+import { ToscaGetFunction } from 'app/models/tosca-get-function';
+import { CompositionService } from 'app/pages/composition/composition.service';
+import { PropertiesUtils } from 'app/pages/properties-assignment/services/properties.utils';
+import { ToscaFunctionValidationEvent } from 'app/pages/properties-assignment/tosca-function/tosca-function.component';
+import { WorkspaceService } from 'app/pages/workspace/workspace.service';
+import { TopologyTemplateService } from 'app/services/component-services/topology-template.service';
+import { DataTypesService } from 'app/services/data-types.service';
+import { ModalService } from 'app/services/modal.service';
+import { TranslateService } from 'app/shared/translator/translate.service';
+import { PROPERTY_DATA, PROPERTY_TYPES, PROPERTY_VALUE_CONSTRAINTS } from 'app/utils/constants';
+import { ValidationUtils } from 'app/utils/validation-utils';
 import * as _ from 'lodash';
-import {Observable} from 'rxjs/Observable';
+import { SdcUiCommon, SdcUiServices } from 'onap-ui-angular';
 import 'rxjs/add/observable/of';
-import {Component as IComponent} from 'app/models/components/component';
-import {PropertyModel} from 'app/models/properties';
-import {InputFEModel} from 'app/models/properties-inputs/input-fe-model';
-import {PropertyFEModel} from 'app/models/properties-inputs/property-fe-model';
-import {DataTypesService} from 'app/services/data-types.service';
-import {InstanceFeDetails} from 'app/models/instance-fe-details';
-import {CustomToscaFunction} from 'app/models/default-custom-functions';
-import {ToscaGetFunction} from 'app/models/tosca-get-function';
-import {PROPERTY_DATA, PROPERTY_TYPES, PROPERTY_VALUE_CONSTRAINTS} from 'app/utils/constants';
-import {ValidationUtils} from 'app/utils/validation-utils';
-import {WorkspaceService} from 'app/pages/workspace/workspace.service';
-import {CompositionService} from 'app/pages/composition/composition.service';
-import {TopologyTemplateService} from 'app/services/component-services/topology-template.service';
-import {ModalService} from 'app/services/modal.service';
-import {TranslateService} from 'app/shared/translator/translate.service';
-import {PropertiesUtils} from 'app/pages/properties-assignment/services/properties.utils';
-import {ToscaFunctionValidationEvent} from 'app/pages/properties-assignment/tosca-function/tosca-function.component';
-import {SdcUiCommon, SdcUiServices} from 'onap-ui-angular';
-import {PropertyFormModalService, PropertyFormModalSaveContext} from './property-form-modal.service';
+import { Observable } from 'rxjs/Observable';
+import { PropertyFormModalSaveContext, PropertyFormModalService } from './property-form-modal.service';
 
 // Validation patterns registered as AngularJS values in app.ts. They are static (no injected state),
 // so they are mirrored here to keep the reactive form self-contained (see app.ts: PropertyNameValidationPattern
@@ -58,6 +58,55 @@ const COMMENT_VALIDATION_PATTERN = /^[\u0000-\u00BF]*$/;
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PropertyFormModalComponent implements OnInit {
+
+    // Complex-vs-simple boundary, exactly the old isComplexType (property-form-view-model.ts:269-274):
+    // a populated type not in PROPERTY_DATA.SIMPLE_TYPES is complex → render <dynamic-property>; simple →
+    // keep the scalar text input / boolean select. (Task 6 gates this further with !hasGetFunctionValue.)
+    public get isComplexType(): boolean {
+        const type: string = this.property && this.property.type;
+        return !!type && PROPERTY_DATA.SIMPLE_TYPES.indexOf(type) === -1;
+    }
+
+    // The reused editor is read-only in view-only mode (mirrors the old isViewOnly gate on the value region).
+    public get isValueReadonly(): boolean {
+        return this.input.isViewOnly;
+    }
+
+    /**
+     * Task-5 seam: the whole value region (scalar input, boolean select, <dynamic-property>) is shown only when
+     * the "Value/Entries" radio is selected, mirroring the old template's data-ng-if="!hasGetFunctionValue"
+     * wrapper (property-form-view.html:165). When "TOSCA Function" is selected the value editor hides and
+     * <tosca-function> takes over.
+     */
+    public get showValueEditor(): boolean {
+        return !this.hasGetFunctionValue;
+    }
+
+    /**
+     * The default-value TYPE radio is offered only for non-VFC components (old ng-if="!componentMetadata.isVfc",
+     * property-form-view.html:144). For a VFC the value editor is always shown (hasGetFunctionValue stays false).
+     */
+    public get showToscaFunctionOption(): boolean {
+        return !this.componentMetadata.isVfc;
+    }
+
+    // The top-bar (delete / prev / next) is shown only for an existing, non-input property
+    // (old data-ng-if="!isNew && !editPropertyModel.property.propertyView", template:18).
+    public get showTopBar(): boolean {
+        return !this.isNew && !this.property.propertyView;
+    }
+
+    // isNew mirrors the old FormState.CREATE check: a property with no name is being created (VM:161,303).
+    public get isNew(): boolean {
+        return !this.input.property || !this.input.property.name;
+    }
+
+    // Delete is disabled for value-owners / readonly / group / policy owners
+    // (old ng-class disabled predicate, template:20).
+    public get isDeleteDisabled(): boolean {
+        return this.input.isPropertyValueOwner || this.property.readonly
+            || this.input.propertyOwnerType === 'group' || this.input.propertyOwnerType === 'policy';
+    }
 
     public input: {
         property: PropertyModel;
@@ -108,7 +157,7 @@ export class PropertyFormModalComponent implements OnInit {
     public isGetFunctionValid: boolean = true;
     // Inputs the <tosca-function> component needs: the instance map (uniqueId -> {name}) and the custom functions.
     public componentInstanceMap: Map<string, InstanceFeDetails> = new Map<string, InstanceFeDetails>();
-    public customToscaFunctions: Array<CustomToscaFunction> = [];
+    public customToscaFunctions: CustomToscaFunction[] = [];
 
     // ---- Task 6: constraints / metadata Save-gating ----
     // The old VM tracked the base form validity in invalidMandatoryFields and let the constraints / metadata
@@ -164,177 +213,6 @@ export class PropertyFormModalComponent implements OnInit {
     }
 
     /**
-     * Fetches the model's data types and keeps only the non-primitive ones (those not already in {@link #types}),
-     * sorted — mirroring the old VM (property-form-view-model.ts:345-350). OnPush: markForCheck after the async
-     * result so the Type/entry-schema <option> lists repaint. Best-effort: on error the dropdown still offers the
-     * primitives (matching the old behaviour where nonPrimitiveTypes simply stayed empty until the fetch resolved).
-     */
-    private loadNonPrimitiveTypes(): void {
-        this.dataTypesService.fetchDataTypesByModel(this.workspaceService.metadata.model).then((dataTypes) => {
-            this.nonPrimitiveTypes = Object.keys(dataTypes)
-                .filter((type: string) => this.types.indexOf(type) === -1)
-                .sort((a, b) => a.localeCompare(b));
-            this.cdr.markForCheck();
-        });
-    }
-
-    /**
-     * (Re)builds the working property, reactive form, TOSCA-function radio state and the complex-value editor
-     * from the given source property. Called at open and by getPrev/getNext, mirroring the old VM's
-     * initResource + initToscaGetFunction + initForNotSimpleType (property-form-view-model.ts:165-234).
-     */
-    private initResource(source: PropertyModel): void {
-        // Working copy of the property: a fresh PropertyModel, type kept as "" (not null) so the empty <select>
-        // option round-trips exactly as AngularJS did, and value falls back to defaultValue when absent.
-        this.property = new PropertyModel(source);
-        this.property.type = source && source.type ? source.type : '';
-        this.property.value = source && source.value ? source.value : (source ? source.defaultValue : undefined);
-
-        // Task 6: the radio state is derived from whether the property currently holds a tosca function
-        // (old initToscaGetFunction, VM:174-177). isGetFunctionValid starts true so an unedited get-function
-        // property is savable; onValueTypeChange re-gates it when the user switches the radio.
-        this.hasGetFunctionValue = this.property.isToscaFunction();
-        this.isGetFunctionValid = true;
-
-        this.buildForm();
-        this.setMaxLength();
-
-        // For complex types, build the FEModel the reused <dynamic-property> edits. Mirror the old
-        // initForNotSimpleType (property-form-view-model.ts:205-220): when there is no existing value the
-        // complex value is seeded empty first so the editor shows one empty row.
-        this.initComplexValue();
-    }
-
-    /**
-     * Builds the {@link #componentInstanceMap} (uniqueId -> {name}) the reused <tosca-function> consumes,
-     * from CompositionService.componentInstances — verbatim from the old initComponentInstanceMap (VM:236-245).
-     */
-    private initComponentInstanceMap(): void {
-        this.componentInstanceMap = new Map<string, InstanceFeDetails>();
-        if (this.compositionService.componentInstances) {
-            this.compositionService.componentInstances.forEach((value) => {
-                this.componentInstanceMap.set(value.uniqueId, <InstanceFeDetails>{name: value.name});
-            });
-        }
-    }
-
-    /**
-     * Loads the custom TOSCA functions the reused <tosca-function> offers, from
-     * TopologyTemplateService.getDefaultCustomFunction() — verbatim from the old initCustomToscaFunctions (VM:247-254).
-     * OnPush: mark for check after the async result lands so the tosca-function inputs repaint.
-     */
-    private initCustomToscaFunctions(): void {
-        this.customToscaFunctions = [];
-        this.topologyTemplateService.getDefaultCustomFunction().subscribe((data) => {
-            if (data) {
-                data.forEach((customFunction) => this.customToscaFunctions.push(new CustomToscaFunction(customFunction)));
-            }
-            this.cdr.markForCheck();
-        });
-    }
-
-    /**
-     * Builds (or rebuilds) {@link #propertyFEModel} from the working property for complex types, seeding an
-     * empty complex value first when the property has none — mirroring the old initForNotSimpleType /
-     * initEmptyComplexValue (property-form-view-model.ts:205-220, 256-267). No-op for simple types.
-     */
-    private initComplexValue(): void {
-        if (!this.isComplexType) {
-            this.propertyFEModel = undefined;
-            return;
-        }
-        // BUG 1: at CREATE time the name lives only in the reactive form, not yet on this.property. The FEModel
-        // build below calls updateExpandedChildPropertyId(name) → name.lastIndexOf('#'), which throws on undefined.
-        // Sync the name from the form first ('' is safe: ''.lastIndexOf('#') === -1). See failure-catalog.
-        this.syncNameFromForm();
-        if (!this.property.value && !this.property.defaultValue) {
-            this.property.value = JSON.stringify(this.emptyComplexValue(this.property.type));
-        }
-        this.propertyFEModel = this.propertiesUtils.convertAddPropertyBAToPropertyFE(this.property);
-        // Reviewer Important: seed the save-seam fields from the freshly-built FEModel. dynamic-property
-        // only emits (propertyChanged) on USER edits, never on init, so without this an unedited save of an
-        // EXISTING complex property would find serializedValue/valueObj undefined and overwrite the stored
-        // value with undefined (silent data loss). The old VM avoided this by pre-populating myValue at open
-        // (initForNotSimpleType, property-form-view-model.ts:205-220). No detectChanges here: this runs from
-        // ngOnInit before the view exists (calling detectChanges pre-init would throw); onValueChanged keeps
-        // its own detectChanges for the post-edit OnPush repaint.
-        this.captureValueFromFEModel();
-    }
-
-    /**
-     * Copies the current {@link #propertyFEModel} value onto the save-seam fields (serializedValue / valueObj /
-     * valueValid) that {@link #save} reads, using the same flatten (PropertyFEModel.stringifyValueObj) the
-     * properties-assignment getJSONValue idiom does. Shared by {@link #initComplexValue} (open-time seed) and
-     * {@link #onValueChanged} (post-edit) so the two never drift.
-     */
-    private captureValueFromFEModel(): void {
-        this.serializedValue = PropertyFEModel.stringifyValueObj(
-            this.propertyFEModel.valueObj,
-            this.propertyFEModel.schema.property.type,
-            this.propertyFEModel.derivedDataType
-        );
-        this.valueObj = this.propertyFEModel.valueObj;
-        this.valueValid = this.propertyFEModel.valueObjIsValid;
-    }
-
-    /**
-     * BUG 1: reflect the reactive-form name onto the working property before building the complex-value
-     * FEModel. At CREATE time this.property.name is undefined (the name lives only in the form) and
-     * PropertiesUtils.convertAddPropertyBAToPropertyFE → PropertyFEModel.updateExpandedChildPropertyId does
-     * name.lastIndexOf('#'), which throws on undefined. Defaulting to '' is safe (''.lastIndexOf('#') === -1).
-     */
-    private syncNameFromForm(): void {
-        if (this.form && this.form.get('name')) {
-            this.property.name = this.form.get('name').value || '';
-        } else if (this.property.name == null) {
-            this.property.name = '';
-        }
-    }
-
-    // Old initEmptyComplexValue (property-form-view-model.ts:256-267): map → {'': null}, list → [''], else {}.
-    private emptyComplexValue(type: string): any {
-        switch (type) {
-            case PROPERTY_TYPES.MAP:
-                return {'': null};
-            case PROPERTY_TYPES.LIST:
-                return [''];
-            default:
-                return {};
-        }
-    }
-
-    // Complex-vs-simple boundary, exactly the old isComplexType (property-form-view-model.ts:269-274):
-    // a populated type not in PROPERTY_DATA.SIMPLE_TYPES is complex → render <dynamic-property>; simple →
-    // keep the scalar text input / boolean select. (Task 6 gates this further with !hasGetFunctionValue.)
-    public get isComplexType(): boolean {
-        const type: string = this.property && this.property.type;
-        return !!type && PROPERTY_DATA.SIMPLE_TYPES.indexOf(type) === -1;
-    }
-
-    // The reused editor is read-only in view-only mode (mirrors the old isViewOnly gate on the value region).
-    public get isValueReadonly(): boolean {
-        return this.input.isViewOnly;
-    }
-
-    /**
-     * Task-5 seam: the whole value region (scalar input, boolean select, <dynamic-property>) is shown only when
-     * the "Value/Entries" radio is selected, mirroring the old template's data-ng-if="!hasGetFunctionValue"
-     * wrapper (property-form-view.html:165). When "TOSCA Function" is selected the value editor hides and
-     * <tosca-function> takes over.
-     */
-    public get showValueEditor(): boolean {
-        return !this.hasGetFunctionValue;
-    }
-
-    /**
-     * The default-value TYPE radio is offered only for non-VFC components (old ng-if="!componentMetadata.isVfc",
-     * property-form-view.html:144). For a VFC the value editor is always shown (hasGetFunctionValue stays false).
-     */
-    public get showToscaFunctionOption(): boolean {
-        return !this.componentMetadata.isVfc;
-    }
-
-    /**
      * Reused-editor change handler. Flattens the FEModel's valueObj back to a JSON string exactly like
      * properties-assignment's getJSONValue (PropertyFEModel.stringifyValueObj), stores it on the save seam
      * fields, then triggers OnPush change detection so the reused editor stays painted.
@@ -359,21 +237,6 @@ export class PropertyFormModalComponent implements OnInit {
         } else {
             this.property.toscaFunction = undefined;
             this.isGetFunctionValid = true;
-        }
-    }
-
-    // Old setEmptyValue (property-form-view-model.ts:588-596): clear the scalar value, or (re)seed an empty
-    // complex value + rebuild the FEModel so the editor shows an empty row when switching back to Value/Entries.
-    private setEmptyValue(): void {
-        this.property.value = undefined;
-        if (this.isComplexType) {
-            // BUG 1: ensure the working property carries a name before rebuilding the FEModel (see syncNameFromForm).
-            this.syncNameFromForm();
-            this.property.value = JSON.stringify(this.emptyComplexValue(this.property.type));
-            this.propertyFEModel = this.propertiesUtils.convertAddPropertyBAToPropertyFE(this.property);
-            this.captureValueFromFEModel();
-        } else {
-            this.form.get('value').setValue('', {emitEvent: false});
         }
     }
 
@@ -421,24 +284,6 @@ export class PropertyFormModalComponent implements OnInit {
         this.property.metadata = event.metadata;
     }
 
-    // Old serializePropertyConstraints (property-form-view-model.ts:577-586).
-    private serializePropertyConstraints(constraints: any[]): string[] {
-        if (constraints) {
-            return constraints.map((constraint) => JSON.stringify(constraint));
-        }
-        return null;
-    }
-
-    // ---- Task 6: prev/next navigation through filteredProperties ----
-
-    private findCurrentIndex(property: PropertyModel): number {
-        if (!property || !this.input.filteredProperties) {
-            return 0;
-        }
-        const idx = this.input.filteredProperties.findIndex((p) => p.name === property.name);
-        return idx === -1 ? 0 : idx;
-    }
-
     // Old getPrev (property-form-view-model.ts:432-437): re-init the form + value region from the previous row.
     public getPrev(): void {
         if (this.isFirstProperty()) {
@@ -465,24 +310,6 @@ export class PropertyFormModalComponent implements OnInit {
     // next is disabled at the last row (old isLastProperty, VM:310, template:23).
     public isLastProperty(): boolean {
         return !this.input.filteredProperties || this.currentPropertyIndexValue >= this.input.filteredProperties.length - 1;
-    }
-
-    // The top-bar (delete / prev / next) is shown only for an existing, non-input property
-    // (old data-ng-if="!isNew && !editPropertyModel.property.propertyView", template:18).
-    public get showTopBar(): boolean {
-        return !this.isNew && !this.property.propertyView;
-    }
-
-    // isNew mirrors the old FormState.CREATE check: a property with no name is being created (VM:161,303).
-    public get isNew(): boolean {
-        return !this.input.property || !this.input.property.name;
-    }
-
-    // Delete is disabled for value-owners / readonly / group / policy owners
-    // (old ng-class disabled predicate, template:20).
-    public get isDeleteDisabled(): boolean {
-        return this.input.isPropertyValueOwner || this.property.readonly
-            || this.input.propertyOwnerType === 'group' || this.input.propertyOwnerType === 'policy';
     }
 
     // ---- Task 6: delete (confirm + splice) ----
@@ -528,93 +355,6 @@ export class PropertyFormModalComponent implements OnInit {
     // open this modal (createCustomModal/closeCurrentModal). Overridable in tests.
     public closeModal(): void {
         this.modalService.closeCurrentModal();
-    }
-
-    private buildForm(): void {
-        const schemaType = this.property.schema && this.property.schema.property && this.property.schema.property.type
-            ? this.property.schema.property.type : '';
-
-        // §Q / reviewer Important #2: the form inits type/schemaType to '' (matching the old AngularJS
-        // <option value="">), but the OLD VM held null (property-form-view-model.ts:167). PropertyModel.toJSON()
-        // deep-copies and does NOT coerce type, so an empty '' would wire type:"" — which keys the BE
-        // datatype cache differently from null/omitted. save() therefore coerces ''->null on the property before
-        // delegating to the BE (see save() below); the wire payload never ships type:'' (asserted in the spec).
-        this.form = new FormGroup({
-            name: new FormControl(this.property.name || '', this.nameValidators()),
-            type: new FormControl(this.property.type || '', Validators.required),
-            schemaType: new FormControl(schemaType, this.schemaTypeValidators()),
-            description: new FormControl(this.property.description || '', [
-                Validators.maxLength(400),
-                Validators.pattern(COMMENT_VALIDATION_PATTERN)
-            ]),
-            value: new FormControl(this.property.value != null ? this.property.value : '')
-        });
-        // BUG 3: gate the scalar value with the same client-side validation the old template had
-        // (ng-pattern + per-type validateJson / validateIntRange). Applied here and re-applied on type change.
-        this.applyValueValidator();
-    }
-
-    /**
-     * BUG 3: (re)installs the scalar value validator for the current simple type, reproducing the old
-     * AngularJS wiring (property-form-view.html): ng-pattern="getValidationPattern(simpleType||type)" plus
-     * ng-change that set $setValidity('pattern', validateJson(value)) for json and validateIntRange(value)
-     * for integer. An empty value stays valid; a bad value fails with the {value: true} error so the
-     * value control becomes invalid, Save is disabled (isValid() folds in form.valid), and the value never POSTs.
-     * Only the scalar (non-complex) value control is validated — complex values are validated by the FEModel.
-     */
-    private applyValueValidator(): void {
-        if (!this.form || !this.form.get('value')) {
-            return;
-        }
-        this.form.get('value').setValidators(this.valueValidator());
-        this.form.get('value').updateValueAndValidity({emitEvent: false});
-    }
-
-    private valueValidator(): ValidatorFn {
-        return (control: FormControl): { [key: string]: any } | null => {
-            // Complex types are edited by <dynamic-property> (validated via valueValid), not the scalar control.
-            if (this.isComplexType) {
-                return null;
-            }
-            const raw = control.value;
-            // Empty value is valid (nothing entered yet) — matches the old ng-pattern (empty passes).
-            if (raw == null || raw === '') {
-                return null;
-            }
-            const type: string = (this.property && this.property.simpleType) || this.property.type;
-            const strValue: string = String(raw);
-            const pattern: RegExp = this.getValidationPattern(type);
-            if (pattern && !pattern.test(strValue)) {
-                return {value: true};
-            }
-            // Per-type extra checks the old template applied via $setValidity('pattern', ...).
-            if (type === PROPERTY_TYPES.JSON && !this.validateJson(strValue)) {
-                return {value: true};
-            }
-            if (type === PROPERTY_TYPES.INTEGER && !this.validateIntRange(strValue)) {
-                return {value: true};
-            }
-            return null;
-        };
-    }
-
-    // Name: required only when NOT a service (old: label ng-class="{'required': !componentMetadata.isService}");
-    // pattern is the PropertyNameValidationPattern, maxlength 100.
-    private nameValidators(): ValidatorFn[] {
-        const validators: ValidatorFn[] = [
-            Validators.maxLength(this.nameMaxLength),
-            Validators.pattern(PROPERTY_NAME_VALIDATION_PATTERN)
-        ];
-        if (!this.componentMetadata.isService) {
-            validators.push(Validators.required);
-        }
-        return validators;
-    }
-
-    // Entry schema: required only while it is rendered (old: field lives inside data-ng-if="showSchema()",
-    // so in AngularJS it is neither shown nor validated for scalar types). See failure-catalog S.
-    private schemaTypeValidators(): ValidatorFn[] {
-        return this.showSchema() ? [Validators.required] : [];
     }
 
     public showSchema(): boolean {
@@ -790,6 +530,266 @@ export class PropertyFormModalComponent implements OnInit {
             myValueJson: this.serializedValue
         };
         return this.propertyFormModalService.save(ctx);
+    }
+
+    /**
+     * Fetches the model's data types and keeps only the non-primitive ones (those not already in {@link #types}),
+     * sorted — mirroring the old VM (property-form-view-model.ts:345-350). OnPush: markForCheck after the async
+     * result so the Type/entry-schema <option> lists repaint. Best-effort: on error the dropdown still offers the
+     * primitives (matching the old behaviour where nonPrimitiveTypes simply stayed empty until the fetch resolved).
+     */
+    private loadNonPrimitiveTypes(): void {
+        this.dataTypesService.fetchDataTypesByModel(this.workspaceService.metadata.model).then((dataTypes) => {
+            this.nonPrimitiveTypes = Object.keys(dataTypes)
+                .filter((type: string) => this.types.indexOf(type) === -1)
+                .sort((a, b) => a.localeCompare(b));
+            this.cdr.markForCheck();
+        });
+    }
+
+    /**
+     * (Re)builds the working property, reactive form, TOSCA-function radio state and the complex-value editor
+     * from the given source property. Called at open and by getPrev/getNext, mirroring the old VM's
+     * initResource + initToscaGetFunction + initForNotSimpleType (property-form-view-model.ts:165-234).
+     */
+    private initResource(source: PropertyModel): void {
+        // Working copy of the property: a fresh PropertyModel, type kept as "" (not null) so the empty <select>
+        // option round-trips exactly as AngularJS did, and value falls back to defaultValue when absent.
+        this.property = new PropertyModel(source);
+        this.property.type = source && source.type ? source.type : '';
+        this.property.value = source && source.value ? source.value : (source ? source.defaultValue : undefined);
+
+        // Task 6: the radio state is derived from whether the property currently holds a tosca function
+        // (old initToscaGetFunction, VM:174-177). isGetFunctionValid starts true so an unedited get-function
+        // property is savable; onValueTypeChange re-gates it when the user switches the radio.
+        this.hasGetFunctionValue = this.property.isToscaFunction();
+        this.isGetFunctionValid = true;
+
+        this.buildForm();
+        this.setMaxLength();
+
+        // For complex types, build the FEModel the reused <dynamic-property> edits. Mirror the old
+        // initForNotSimpleType (property-form-view-model.ts:205-220): when there is no existing value the
+        // complex value is seeded empty first so the editor shows one empty row.
+        this.initComplexValue();
+    }
+
+    /**
+     * Builds the {@link #componentInstanceMap} (uniqueId -> {name}) the reused <tosca-function> consumes,
+     * from CompositionService.componentInstances — verbatim from the old initComponentInstanceMap (VM:236-245).
+     */
+    private initComponentInstanceMap(): void {
+        this.componentInstanceMap = new Map<string, InstanceFeDetails>();
+        if (this.compositionService.componentInstances) {
+            this.compositionService.componentInstances.forEach((value) => {
+                this.componentInstanceMap.set(value.uniqueId, {name: value.name} as InstanceFeDetails);
+            });
+        }
+    }
+
+    /**
+     * Loads the custom TOSCA functions the reused <tosca-function> offers, from
+     * TopologyTemplateService.getDefaultCustomFunction() — verbatim from the old initCustomToscaFunctions (VM:247-254).
+     * OnPush: mark for check after the async result lands so the tosca-function inputs repaint.
+     */
+    private initCustomToscaFunctions(): void {
+        this.customToscaFunctions = [];
+        this.topologyTemplateService.getDefaultCustomFunction().subscribe((data) => {
+            if (data) {
+                data.forEach((customFunction) => this.customToscaFunctions.push(new CustomToscaFunction(customFunction)));
+            }
+            this.cdr.markForCheck();
+        });
+    }
+
+    /**
+     * Builds (or rebuilds) {@link #propertyFEModel} from the working property for complex types, seeding an
+     * empty complex value first when the property has none — mirroring the old initForNotSimpleType /
+     * initEmptyComplexValue (property-form-view-model.ts:205-220, 256-267). No-op for simple types.
+     */
+    private initComplexValue(): void {
+        if (!this.isComplexType) {
+            this.propertyFEModel = undefined;
+            return;
+        }
+        // BUG 1: at CREATE time the name lives only in the reactive form, not yet on this.property. The FEModel
+        // build below calls updateExpandedChildPropertyId(name) → name.lastIndexOf('#'), which throws on undefined.
+        // Sync the name from the form first ('' is safe: ''.lastIndexOf('#') === -1). See failure-catalog.
+        this.syncNameFromForm();
+        if (!this.property.value && !this.property.defaultValue) {
+            this.property.value = JSON.stringify(this.emptyComplexValue(this.property.type));
+        }
+        this.propertyFEModel = this.propertiesUtils.convertAddPropertyBAToPropertyFE(this.property);
+        // Reviewer Important: seed the save-seam fields from the freshly-built FEModel. dynamic-property
+        // only emits (propertyChanged) on USER edits, never on init, so without this an unedited save of an
+        // EXISTING complex property would find serializedValue/valueObj undefined and overwrite the stored
+        // value with undefined (silent data loss). The old VM avoided this by pre-populating myValue at open
+        // (initForNotSimpleType, property-form-view-model.ts:205-220). No detectChanges here: this runs from
+        // ngOnInit before the view exists (calling detectChanges pre-init would throw); onValueChanged keeps
+        // its own detectChanges for the post-edit OnPush repaint.
+        this.captureValueFromFEModel();
+    }
+
+    /**
+     * Copies the current {@link #propertyFEModel} value onto the save-seam fields (serializedValue / valueObj /
+     * valueValid) that {@link #save} reads, using the same flatten (PropertyFEModel.stringifyValueObj) the
+     * properties-assignment getJSONValue idiom does. Shared by {@link #initComplexValue} (open-time seed) and
+     * {@link #onValueChanged} (post-edit) so the two never drift.
+     */
+    private captureValueFromFEModel(): void {
+        this.serializedValue = PropertyFEModel.stringifyValueObj(
+            this.propertyFEModel.valueObj,
+            this.propertyFEModel.schema.property.type,
+            this.propertyFEModel.derivedDataType
+        );
+        this.valueObj = this.propertyFEModel.valueObj;
+        this.valueValid = this.propertyFEModel.valueObjIsValid;
+    }
+
+    /**
+     * BUG 1: reflect the reactive-form name onto the working property before building the complex-value
+     * FEModel. At CREATE time this.property.name is undefined (the name lives only in the form) and
+     * PropertiesUtils.convertAddPropertyBAToPropertyFE → PropertyFEModel.updateExpandedChildPropertyId does
+     * name.lastIndexOf('#'), which throws on undefined. Defaulting to '' is safe (''.lastIndexOf('#') === -1).
+     */
+    private syncNameFromForm(): void {
+        if (this.form && this.form.get('name')) {
+            this.property.name = this.form.get('name').value || '';
+        } else if (this.property.name == null) {
+            this.property.name = '';
+        }
+    }
+
+    // Old initEmptyComplexValue (property-form-view-model.ts:256-267): map → {'': null}, list → [''], else {}.
+    private emptyComplexValue(type: string): any {
+        switch (type) {
+            case PROPERTY_TYPES.MAP:
+                return {'': null};
+            case PROPERTY_TYPES.LIST:
+                return [''];
+            default:
+                return {};
+        }
+    }
+
+    // Old setEmptyValue (property-form-view-model.ts:588-596): clear the scalar value, or (re)seed an empty
+    // complex value + rebuild the FEModel so the editor shows an empty row when switching back to Value/Entries.
+    private setEmptyValue(): void {
+        this.property.value = undefined;
+        if (this.isComplexType) {
+            // BUG 1: ensure the working property carries a name before rebuilding the FEModel (see syncNameFromForm).
+            this.syncNameFromForm();
+            this.property.value = JSON.stringify(this.emptyComplexValue(this.property.type));
+            this.propertyFEModel = this.propertiesUtils.convertAddPropertyBAToPropertyFE(this.property);
+            this.captureValueFromFEModel();
+        } else {
+            this.form.get('value').setValue('', {emitEvent: false});
+        }
+    }
+
+    // Old serializePropertyConstraints (property-form-view-model.ts:577-586).
+    private serializePropertyConstraints(constraints: any[]): string[] {
+        if (constraints) {
+            return constraints.map((constraint) => JSON.stringify(constraint));
+        }
+        return null;
+    }
+
+    // ---- Task 6: prev/next navigation through filteredProperties ----
+
+    private findCurrentIndex(property: PropertyModel): number {
+        if (!property || !this.input.filteredProperties) {
+            return 0;
+        }
+        const idx = this.input.filteredProperties.findIndex((p) => p.name === property.name);
+        return idx === -1 ? 0 : idx;
+    }
+
+    private buildForm(): void {
+        const schemaType = this.property.schema && this.property.schema.property && this.property.schema.property.type
+            ? this.property.schema.property.type : '';
+
+        // §Q / reviewer Important #2: the form inits type/schemaType to '' (matching the old AngularJS
+        // <option value="">), but the OLD VM held null (property-form-view-model.ts:167). PropertyModel.toJSON()
+        // deep-copies and does NOT coerce type, so an empty '' would wire type:"" — which keys the BE
+        // datatype cache differently from null/omitted. save() therefore coerces ''->null on the property before
+        // delegating to the BE (see save() below); the wire payload never ships type:'' (asserted in the spec).
+        this.form = new FormGroup({
+            name: new FormControl(this.property.name || '', this.nameValidators()),
+            type: new FormControl(this.property.type || '', Validators.required),
+            schemaType: new FormControl(schemaType, this.schemaTypeValidators()),
+            description: new FormControl(this.property.description || '', [
+                Validators.maxLength(400),
+                Validators.pattern(COMMENT_VALIDATION_PATTERN)
+            ]),
+            value: new FormControl(this.property.value != null ? this.property.value : '')
+        });
+        // BUG 3: gate the scalar value with the same client-side validation the old template had
+        // (ng-pattern + per-type validateJson / validateIntRange). Applied here and re-applied on type change.
+        this.applyValueValidator();
+    }
+
+    /**
+     * BUG 3: (re)installs the scalar value validator for the current simple type, reproducing the old
+     * AngularJS wiring (property-form-view.html): ng-pattern="getValidationPattern(simpleType||type)" plus
+     * ng-change that set $setValidity('pattern', validateJson(value)) for json and validateIntRange(value)
+     * for integer. An empty value stays valid; a bad value fails with the {value: true} error so the
+     * value control becomes invalid, Save is disabled (isValid() folds in form.valid), and the value never POSTs.
+     * Only the scalar (non-complex) value control is validated — complex values are validated by the FEModel.
+     */
+    private applyValueValidator(): void {
+        if (!this.form || !this.form.get('value')) {
+            return;
+        }
+        this.form.get('value').setValidators(this.valueValidator());
+        this.form.get('value').updateValueAndValidity({emitEvent: false});
+    }
+
+    private valueValidator(): ValidatorFn {
+        return (control: FormControl): { [key: string]: any } | null => {
+            // Complex types are edited by <dynamic-property> (validated via valueValid), not the scalar control.
+            if (this.isComplexType) {
+                return null;
+            }
+            const raw = control.value;
+            // Empty value is valid (nothing entered yet) — matches the old ng-pattern (empty passes).
+            if (raw == null || raw === '') {
+                return null;
+            }
+            const type: string = (this.property && this.property.simpleType) || this.property.type;
+            const strValue: string = String(raw);
+            const pattern: RegExp = this.getValidationPattern(type);
+            if (pattern && !pattern.test(strValue)) {
+                return {value: true};
+            }
+            // Per-type extra checks the old template applied via $setValidity('pattern', ...).
+            if (type === PROPERTY_TYPES.JSON && !this.validateJson(strValue)) {
+                return {value: true};
+            }
+            if (type === PROPERTY_TYPES.INTEGER && !this.validateIntRange(strValue)) {
+                return {value: true};
+            }
+            return null;
+        };
+    }
+
+    // Name: required only when NOT a service (old: label ng-class="{'required': !componentMetadata.isService}");
+    // pattern is the PropertyNameValidationPattern, maxlength 100.
+    private nameValidators(): ValidatorFn[] {
+        const validators: ValidatorFn[] = [
+            Validators.maxLength(this.nameMaxLength),
+            Validators.pattern(PROPERTY_NAME_VALIDATION_PATTERN)
+        ];
+        if (!this.componentMetadata.isService) {
+            validators.push(Validators.required);
+        }
+        return validators;
+    }
+
+    // Entry schema: required only while it is rendered (old: field lives inside data-ng-if="showSchema()",
+    // so in AngularJS it is neither shown nor validated for scalar types). See failure-catalog S.
+    private schemaTypeValidators(): ValidatorFn[] {
+        return this.showSchema() ? [Validators.required] : [];
     }
 
     // Task 5 seam: the JSON string of the complex value. Until the value region is wired, serializedValue is

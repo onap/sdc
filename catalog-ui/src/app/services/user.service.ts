@@ -18,35 +18,34 @@
  * ============LICENSE_END=========================================================
  */
 
-import { Injectable, Inject } from "@angular/core";
-import { Observable } from "rxjs/Observable";
-import { IUserProperties } from "../models/user";
+import { Inject, Injectable } from '@angular/core';
+import { Observable } from 'rxjs/Observable';
+import { IUserProperties } from '../models/user';
 
-import {SdcConfigToken, ISdcConfig} from "../config/sdc-config.config";
-import { HttpClient } from "@angular/common/http";
-import { HttpHelperService } from "./http-helper.service";
+import { HttpClient } from '@angular/common/http';
+import { ISdcConfig, SdcConfigToken } from '../config/sdc-config.config';
+import { HttpHelperService } from './http-helper.service';
 /**
  * User Service provides CRUD for Users. See authentication service for authentication/login.
  */
 @Injectable()
-export class UserService { 
-    private url:string;
+export class UserService {
+    private url: string;
 
     constructor(private http: HttpClient,
-                @Inject(SdcConfigToken) private sdcConfig:ISdcConfig) {
+                @Inject(SdcConfigToken) private sdcConfig: ISdcConfig) {
         this.url = this.sdcConfig.api.root + this.sdcConfig.api.GET_user;
     }
 
-
-    public getAllUsers() :Observable<IUserProperties[]> {
+    public getAllUsers(): Observable<IUserProperties[]> {
         return this.http.get(
             this.sdcConfig.api.root + this.sdcConfig.api.GET_all_users
-        ).map(resp => <IUserProperties[]> resp) ;
+        ).map((resp) => resp as IUserProperties[]) ;
     }
 
-    public getUser(userId:string) :Observable<IUserProperties> {
+    public getUser(userId: string): Observable<IUserProperties> {
         return this.http.get(
             HttpHelperService.replaceUrlParams(this.url, { id: userId })
-        ).map(resp => <IUserProperties> resp);
+        ).map((resp) => resp as IUserProperties);
     }
 }

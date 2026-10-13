@@ -18,39 +18,39 @@
  * ============LICENSE_END=========================================================
  */
 
-import * as _ from "lodash";
-import {Component, ComponentRef} from '@angular/core';
-import {ForwardingPath} from "app/models/forwarding-path";
-import {ServiceService} from "app/services/component-services/service.service";
-import {ModalService} from "app/services/modal.service";
-import {ModalComponent} from "app/components/ui/modal/modal.component";
-import {CompositionService} from "app/pages/composition/composition.service";
+import { Component, ComponentRef } from '@angular/core';
+import { ModalComponent } from 'app/components/ui/modal/modal.component';
+import { ForwardingPath } from 'app/models/forwarding-path';
+import { CompositionService } from 'app/pages/composition/composition.service';
+import { ServiceService } from 'app/services/component-services/service.service';
+import { ModalService } from 'app/services/modal.service';
+import * as _ from 'lodash';
 
 @Component({
     selector: 'service-paths-list',
     templateUrl: './service-paths-list.component.html',
-    styleUrls:['service-paths-list.component.less'],
+    styleUrls: ['service-paths-list.component.less'],
     providers: [ServiceService, ModalService]
 })
 export class ServicePathsListComponent {
     modalInstance: ComponentRef<ModalComponent>;
-    headers: Array<string> = [];
-    paths: Array<ForwardingPath> = [];
-    input:any;
+    headers: string[] = [];
+    paths: ForwardingPath[] = [];
+    input: any;
     onAddServicePath: Function;
     onEditServicePath: Function;
     isViewOnly: boolean;
 
-    constructor(private serviceService:ServiceService,
+    constructor(private serviceService: ServiceService,
                 private compositionService: CompositionService) {
-        this.headers = ['Flow Name','Actions'];
+        this.headers = ['Flow Name', 'Actions'];
     }
 
     ngOnInit() {
-        _.forEach(this.compositionService.forwardingPaths, (path: ForwardingPath)=> {
+        _.forEach(this.compositionService.forwardingPaths, (path: ForwardingPath) => {
             this.paths[this.paths.length] = path;
         });
-        this.paths.sort((a:ForwardingPath, b:ForwardingPath)=> {
+        this.paths.sort((a: ForwardingPath, b: ForwardingPath) => {
             return a.name.localeCompare(b.name);
         });
         this.onAddServicePath = this.input.onCreateServicePath;
@@ -58,13 +58,13 @@ export class ServicePathsListComponent {
         this.isViewOnly = this.input.isViewOnly;
     }
 
-    deletePath = (id:string):void =>   {
-        this.serviceService.deleteServicePath(this.input.serviceId, id).subscribe((res:any) => {
+    deletePath = (id: string): void =>   {
+        this.serviceService.deleteServicePath(this.input.serviceId, id).subscribe((res: any) => {
             delete this.compositionService.forwardingPaths[id];
-            this.paths = this.paths.filter(function(path){
+            this.paths = this.paths.filter(function(path) {
                 return path.uniqueId !== id;
             });
         });
-    };
+    }
 
 }

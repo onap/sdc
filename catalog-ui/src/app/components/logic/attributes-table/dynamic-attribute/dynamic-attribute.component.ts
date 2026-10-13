@@ -18,17 +18,17 @@
  * ============LICENSE_END=========================================================
  */
 
-import * as _ from "lodash";
-import {Component, EventEmitter, Input, Output, ViewChild} from "@angular/core";
-import {PROPERTY_TYPES} from 'app/utils/constants';
-import {DataTypeService} from "../../../../services/data-type.service";
-import {animate, style, transition, trigger} from '@angular/animations';
-import {IUiElementChangeEvent} from "../../../ui/form-components/ui-element-base.component";
-import {DynamicElementComponent} from "../../../ui/dynamic-element/dynamic-element.component";
-import {DerivedAttributeType} from "../../../../models/attributes-outputs/attribute-be-model";
-import {AttributeFEModel} from "app/models/attributes-outputs/attribute-fe-model";
-import {DerivedFEAttribute} from "../../../../models/attributes-outputs/derived-fe-attribute";
-import {AttributesUtils} from "../../../../pages/attributes-outputs/services/attributes.utils";
+import { animate, style, transition, trigger } from '@angular/animations';
+import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { AttributeFEModel } from 'app/models/attributes-outputs/attribute-fe-model';
+import { PROPERTY_TYPES } from 'app/utils/constants';
+import * as _ from 'lodash';
+import { DerivedAttributeType } from '../../../../models/attributes-outputs/attribute-be-model';
+import { DerivedFEAttribute } from '../../../../models/attributes-outputs/derived-fe-attribute';
+import { AttributesUtils } from '../../../../pages/attributes-outputs/services/attributes.utils';
+import { DataTypeService } from '../../../../services/data-type.service';
+import { DynamicElementComponent } from '../../../ui/dynamic-element/dynamic-element.component';
+import { IUiElementChangeEvent } from '../../../ui/form-components/ui-element-base.component';
 
 @Component({
   selector: 'dynamic-property',
@@ -62,7 +62,7 @@ export class DynamicAttributeComponent {
   @Output() deleteItem: EventEmitter<string> = new EventEmitter<string>();
   @Output() clickOnAttributeRow: EventEmitter<AttributeFEModel | DerivedFEAttribute> = new EventEmitter<AttributeFEModel | DerivedFEAttribute>();
   @Output() mapKeyChanged: EventEmitter<string> = new EventEmitter<string>();
-  @Output() addChildAttribsToParent: EventEmitter<Array<DerivedFEAttribute>> = new EventEmitter<Array<DerivedFEAttribute>>();
+  @Output() addChildAttribsToParent: EventEmitter<DerivedFEAttribute[]> = new EventEmitter<DerivedFEAttribute[]>();
 
   @ViewChild('mapKeyInput') public mapKeyInput: DynamicElementComponent;
 
@@ -76,7 +76,7 @@ export class DynamicAttributeComponent {
    * cast has to live here.
    */
   public get attributeAsDerived(): DerivedFEAttribute {
-    return <DerivedFEAttribute>this.attribute;
+    return this.attribute as DerivedFEAttribute;
   }
 
   ngOnInit() {
@@ -84,7 +84,7 @@ export class DynamicAttributeComponent {
     this.attribType = this.attribute.derivedDataType;
     this.attribPath = (this.attribute instanceof AttributeFEModel) ? this.attribute.name : this.attribute.attributesName;
     this.nestedLevel = (this.attribute.attributesName.match(/#/g) || []).length;
-    this.rootAttribute = (this.rootAttribute) ? this.rootAttribute : <AttributeFEModel>this.attribute;
+    this.rootAttribute = (this.rootAttribute) ? this.rootAttribute : this.attribute as AttributeFEModel;
     this.attributeTestsId = this.getAttributeTestsId();
 
     this.initConstraintsValues();
@@ -92,14 +92,11 @@ export class DynamicAttributeComponent {
   }
 
   initConstraintsValues() {
-    let primitiveProperties = ['string', 'integer', 'float', 'boolean'];
+    const primitiveProperties = ['string', 'integer', 'float', 'boolean'];
 
     if (this.attribute.constraints) {
-      this.constraints = this.attribute.constraints[0].validValues
-    }
-
-    //Complex Type
-    else if (primitiveProperties.indexOf(this.rootAttribute.type) == -1 && primitiveProperties.indexOf(this.attribute.type) >= 0) {
+      this.constraints = this.attribute.constraints[0].validValues;
+    } else if (primitiveProperties.indexOf(this.rootAttribute.type) == -1 && primitiveProperties.indexOf(this.attribute.type) >= 0) {
       this.constraints = this.dataTypeService.getConstraintsByParentTypeAndUniqueID(this.rootAttribute.type, this.attribute.name);
     } else {
       this.constraints = null;
@@ -123,23 +120,23 @@ export class DynamicAttributeComponent {
   }
 
   getHasChildren = (property: DerivedFEAttribute): boolean => {// enter to this function only from base property (AttributeFEModel) and check for child property if it has children
-    return _.filter((<AttributeFEModel>this.attribute).flattenedChildren, (prop: DerivedFEAttribute) => {
+    return _.filter((this.attribute as AttributeFEModel).flattenedChildren, (prop: DerivedFEAttribute) => {
       return _.startsWith(prop.attributesName + '#', property.attributesName);
     }).length > 1;
   }
 
   getAttributeTestsId = () => {
     return [this.rootAttribute.name].concat(this.rootAttribute.getParentNamesArray(this.attribute.attributesName, [], true)).join('.');
-  };
+  }
 
   onElementChanged = (event: IUiElementChangeEvent) => {
     this.attribute.updateValueObj(event.value, event.isValid);
     this.emitter.emit();
-  };
+  }
 
   createNewChildProperty = (): void => {
 
-    let newProps: Array<DerivedFEAttribute> = this.attributesUtils.createListOrMapChildren(this.attribute, "", null);
+    const newProps: DerivedFEAttribute[] = this.attributesUtils.createListOrMapChildren(this.attribute, '', null);
     this.attributesUtils.assignFlattenedChildrenValues(this.attribute.valueObj, [newProps[0]], this.attribute.attributesName);
     if (this.attribute instanceof AttributeFEModel) {
       this.addChildProps(newProps, this.attribute.name);
@@ -148,11 +145,11 @@ export class DynamicAttributeComponent {
     }
   }
 
-  addChildProps = (newProps: Array<DerivedFEAttribute>, childPropName: string) => {
+  addChildProps = (newProps: DerivedFEAttribute[], childPropName: string) => {
 
     if (this.attribute instanceof AttributeFEModel) {
-      let insertIndex: number = this.attribute.getIndexOfChild(childPropName) + this.attribute.getCountOfChildren(childPropName); //insert after parent prop and existing children
-      this.attribute.flattenedChildren.splice(insertIndex, 0, ...newProps); //using ES6 spread operator
+      const insertIndex: number = this.attribute.getIndexOfChild(childPropName) + this.attribute.getCountOfChildren(childPropName); // insert after parent prop and existing children
+      this.attribute.flattenedChildren.splice(insertIndex, 0, ...newProps); // using ES6 spread operator
       this.expandChildById(newProps[0].attributesName);
 
       this.updateMapKeyValueOnMainParent(newProps);
@@ -160,28 +157,28 @@ export class DynamicAttributeComponent {
     }
   }
 
-  updateMapKeyValueOnMainParent(childrenProps: Array<DerivedFEAttribute>) {
+  updateMapKeyValueOnMainParent(childrenProps: DerivedFEAttribute[]) {
     if (this.attribute instanceof AttributeFEModel) {
-      const attributeFEModel: AttributeFEModel = <AttributeFEModel>this.attribute;
-      //Update only if all this attributeFEModel parents has key name
+      const attributeFEModel: AttributeFEModel = this.attribute as AttributeFEModel;
+      // Update only if all this attributeFEModel parents has key name
       if (attributeFEModel.getParentNamesArray(childrenProps[0].attributesName, []).indexOf('') === -1) {
-        _.forEach(childrenProps, (prop: DerivedFEAttribute): void => { //Update parent AttributeFEModel with value for each child, including nested props
+        _.forEach(childrenProps, (prop: DerivedFEAttribute): void => { // Update parent AttributeFEModel with value for each child, including nested props
           attributeFEModel.childPropUpdated(prop);
           if (prop.isChildOfListOrMap && prop.mapKey !== undefined) {
             attributeFEModel.childPropMapKeyUpdated(prop, prop.mapKey, true);
           }
         });
-        //grab the cumulative value for the new item from parent AttributeFEModel and assign that value to DerivedFEProp[0] (which is the list or map parent with UUID of the set we just added)
-        let parentNames = (<AttributeFEModel>attributeFEModel).getParentNamesArray(childrenProps[0].attributesName, []);
+        // grab the cumulative value for the new item from parent AttributeFEModel and assign that value to DerivedFEProp[0] (which is the list or map parent with UUID of the set we just added)
+        const parentNames = (attributeFEModel as AttributeFEModel).getParentNamesArray(childrenProps[0].attributesName, []);
         childrenProps[0].valueObj = _.get(attributeFEModel.valueObj, parentNames.join('.'), null);
       }
     }
   }
 
-  childValueChanged = (property: DerivedFEAttribute) => { //value of child property changed
+  childValueChanged = (property: DerivedFEAttribute) => { // value of child property changed
 
     if (this.attribute instanceof AttributeFEModel) { // will always be the case
-      if (this.attribute.getParentNamesArray(property.attributesName, []).indexOf('') === -1) {//If one of the parents is empty key -don't save
+      if (this.attribute.getParentNamesArray(property.attributesName, []).indexOf('') === -1) {// If one of the parents is empty key -don't save
         this.attribute.childPropUpdated(property);
         this.emitter.emit();
       }
@@ -198,8 +195,8 @@ export class DynamicAttributeComponent {
 
   removeValueFromParent = (item: DerivedFEAttribute) => {
     if (this.attribute instanceof AttributeFEModel) {
-      let itemParent = (item.parentName == this.attribute.name)
-          ? this.attribute : this.attribute.flattenedChildren.find(prop => prop.attributesName == item.parentName);
+      const itemParent = (item.parentName == this.attribute.name)
+          ? this.attribute : this.attribute.flattenedChildren.find((prop) => prop.attributesName == item.parentName);
       if (!itemParent) {
         return;
       }
@@ -213,16 +210,16 @@ export class DynamicAttributeComponent {
         }
         this.attribute.childPropMapKeyUpdated(item, null);  // remove map key
       } else {
-        const itemIndex: number = this.attribute.flattenedChildren.filter(prop => prop.parentName == item.parentName).map(prop => prop.attributesName).indexOf(item.attributesName);
+        const itemIndex: number = this.attribute.flattenedChildren.filter((prop) => prop.parentName == item.parentName).map((prop) => prop.attributesName).indexOf(item.attributesName);
         itemParent.valueObj.splice(itemIndex, 1);
         if (itemParent instanceof AttributeFEModel) {
           itemParent.valueObjValidation.splice(itemIndex, 1);
           itemParent.valueObjIsValid = itemParent.calculateValueObjIsValid();
         }
       }
-      if (itemParent instanceof AttributeFEModel) { //direct child
+      if (itemParent instanceof AttributeFEModel) { // direct child
         this.emitter.emit();
-      } else { //nested child - need to update parent prop by getting flattened name (recurse through parents and replace map/list keys, etc)
+      } else { // nested child - need to update parent prop by getting flattened name (recurse through parents and replace map/list keys, etc)
         this.childValueChanged(itemParent);
       }
     }

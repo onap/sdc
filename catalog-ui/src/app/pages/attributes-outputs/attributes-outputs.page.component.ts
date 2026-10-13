@@ -19,52 +19,52 @@
  * Modifications Copyright (C) 2026 Deutsche Telekom AG.
  */
 
-import {Component, ViewChild} from '@angular/core';
-import {ButtonModel} from 'app/models/button';
-import {Component as ComponentData} from 'app/models/components/component';
-import {ComponentInstance} from 'app/models/components-instances/component-instance';
-import {ModalModel} from 'app/models/modal';
-import {ToscaPresentationData} from 'app/models/tosca-presentation';
-import {SdcUiCommon, SdcUiServices} from 'onap-ui-angular';
-import {NotificationSettings} from 'onap-ui-angular/dist/notifications/utilities/notification.config';
-import {TopologyTemplateService} from "../../services/component-services/topology-template.service";
-import {Tab, Tabs} from "../../components/ui/tabs/tabs.component";
-import * as _ from 'lodash';
-import {OutputFEModel} from "../../models/attributes-outputs/output-fe-model";
-import {OutputBEModel} from "../../models/attributes-outputs/output-be-model";
-import {EVENTS, ResourceType, WorkspaceMode} from "../../utils/constants";
-import {ComponentModeService} from "../../services/component-services/component-mode.service";
-import {EventListenerService} from 'app/services/event-listener.service';
-import {HierarchyNavService} from "./services/hierarchy-nav.service";
-import {ComponentService} from "../../services/component-services/component.service";
-import {ComponentInstanceService} from "../../services/component-instance-services/component-instance.service";
-import {KeysPipe} from "../../pipes/keys.pipe";
+import { Component, ViewChild } from '@angular/core';
+import { AttributeRowSelectedEvent } from 'app/components/logic/attributes-table/attributes-table.component';
 import {
   InstanceAttributesAPIMap,
   InstanceBeAttributesMap,
   InstanceFeAttributesMap
-} from "app/models/attributes-outputs/attribute-fe-map";
+} from 'app/models/attributes-outputs/attribute-fe-map';
+import { SimpleFlatAttribute } from 'app/models/attributes-outputs/simple-flat-attribute';
+import { ButtonModel } from 'app/models/button';
+import { ComponentInstance } from 'app/models/components-instances/component-instance';
+import { Component as ComponentData } from 'app/models/components/component';
+import { ModalModel } from 'app/models/modal';
 import {
   InstanceBePropertiesMap
-} from "app/models/properties-inputs/property-fe-map";
-import {ModalService} from "../../services/modal.service";
-import {InstanceFeDetails} from "../../models/instance-fe-details";
-import {HierarchyDisplayOptions} from "../../components/logic/hierarchy-navigtion/hierarchy-display-options";
-import {UnsavedChangesComponent} from "../../components/ui/forms/unsaved-changes/unsaved-changes.component";
-import {SimpleFlatAttribute} from "app/models/attributes-outputs/simple-flat-attribute";
-import {AttributeFEModel} from "../../models/attributes-outputs/attribute-fe-model";
-import {AttributesUtils} from "./services/attributes.utils";
-import {OutputsUtils} from "app/pages/attributes-outputs/services/outputs.utils";
-import {AttributesService} from "app/services/attributes.service";
-import {DerivedFEAttribute} from "../../models/attributes-outputs/derived-fe-attribute";
-import {AttributeBEModel} from "../../models/attributes-outputs/attribute-be-model";
-import {AttributeCreatorComponent} from "app/pages/attributes-outputs/attribute-creator/attribute-creator.component";
-import {AttributeRowSelectedEvent} from "app/components/logic/attributes-table/attributes-table.component";
+} from 'app/models/properties-inputs/property-fe-map';
+import { ToscaPresentationData } from 'app/models/tosca-presentation';
+import { AttributeCreatorComponent } from 'app/pages/attributes-outputs/attribute-creator/attribute-creator.component';
+import { OutputsUtils } from 'app/pages/attributes-outputs/services/outputs.utils';
+import { AttributesService } from 'app/services/attributes.service';
+import { EventListenerService } from 'app/services/event-listener.service';
+import * as _ from 'lodash';
+import { SdcUiCommon, SdcUiServices } from 'onap-ui-angular';
+import { NotificationSettings } from 'onap-ui-angular/dist/notifications/utilities/notification.config';
+import { HierarchyDisplayOptions } from '../../components/logic/hierarchy-navigtion/hierarchy-display-options';
+import { UnsavedChangesComponent } from '../../components/ui/forms/unsaved-changes/unsaved-changes.component';
+import { Tab, Tabs } from '../../components/ui/tabs/tabs.component';
+import { UnsavedChangesAware } from '../../guards/unsaved-changes.guard';
+import { AttributeBEModel } from '../../models/attributes-outputs/attribute-be-model';
+import { AttributeFEModel } from '../../models/attributes-outputs/attribute-fe-model';
+import { DerivedFEAttribute } from '../../models/attributes-outputs/derived-fe-attribute';
+import { OutputBEModel } from '../../models/attributes-outputs/output-be-model';
+import { OutputFEModel } from '../../models/attributes-outputs/output-fe-model';
+import { InstanceFeDetails } from '../../models/instance-fe-details';
+import { KeysPipe } from '../../pipes/keys.pipe';
+import { ComponentInstanceService } from '../../services/component-instance-services/component-instance.service';
+import { ComponentModeService } from '../../services/component-services/component-mode.service';
+import { ComponentService } from '../../services/component-services/component.service';
+import { TopologyTemplateService } from '../../services/component-services/topology-template.service';
+import { ModalService } from '../../services/modal.service';
+import { EVENTS, ResourceType, WorkspaceMode } from '../../utils/constants';
 import { DeclareInputComponent } from '../properties-assignment/declare-input/declare-input.component';
-import {UnsavedChangesAware} from "../../guards/unsaved-changes.guard";
-import {WorkspaceService} from "../workspace/workspace.service";
+import { WorkspaceService } from '../workspace/workspace.service';
+import { AttributesUtils } from './services/attributes.utils';
+import { HierarchyNavService } from './services/hierarchy-nav.service';
 
-const SERVICE_SELF_TITLE = "SELF";
+const SERVICE_SELF_TITLE = 'SELF';
 
 @Component({
   selector: 'attributes-outputs',
@@ -72,20 +72,17 @@ const SERVICE_SELF_TITLE = "SELF";
   styleUrls: ['./attributes-outputs.page.component.less', '../../../assets/styles/table-style.less']
 })
 export class AttributesOutputsComponent implements UnsavedChangesAware {
-  title = "Attributes & Outputs";
-
-  @ViewChild('componentAttributesTable')
-  private table: any;
+  title = 'Attributes & Outputs';
 
   component: ComponentData;
-  componentInstanceNamesMap: Map<string, InstanceFeDetails> = new Map<string, InstanceFeDetails>();//instanceUniqueId, {name, iconClass}
+  componentInstanceNamesMap: Map<string, InstanceFeDetails> = new Map<string, InstanceFeDetails>(); // instanceUniqueId, {name, iconClass}
 
   attributesNavigationData = [];
   instancesNavigationData = [];
 
   instanceFeAttributesMap: InstanceFeAttributesMap;
-  outputs: Array<OutputFEModel> = [];
-  instances: Array<ComponentInstance> = [];
+  outputs: OutputFEModel[] = [];
+  instances: ComponentInstance[] = [];
   searchQuery: string;
   attributeStructureHeader: string;
 
@@ -113,6 +110,8 @@ export class AttributesOutputsComponent implements UnsavedChangesAware {
   @ViewChild('hierarchyNavTabs') hierarchyNavTabs: Tabs;
   @ViewChild('attributeOutputTabs') attributeOutputTabs: Tabs;
 
+  @ViewChild('componentAttributesTable')
+  private table: any;
 
   constructor(
     private attributesService: AttributesService,
@@ -149,15 +148,15 @@ export class AttributesOutputsComponent implements UnsavedChangesAware {
     this.loadingAttributes = true;
     this.topologyTemplateService
     .getComponentOutputsWithAttributes(this.component.componentType, this.component.uniqueId)
-    .subscribe(response => {
+    .subscribe((response) => {
       if (response.outputs) {
-        response.outputs.forEach(output => {
+        response.outputs.forEach((output) => {
           const newOutput: OutputFEModel = new OutputFEModel(output);
           this.outputsUtils.resetOutputDefaultValue(newOutput, output.defaultValue);
           this.outputs.push(newOutput);
         });
       }
-    }, error => {
+    }, (error) => {
       this.notificationsService.push(new NotificationSettings(
           'error',
           'Failed to Initialize:' + error,
@@ -168,7 +167,7 @@ export class AttributesOutputsComponent implements UnsavedChangesAware {
     });
     this.componentService
     .getComponentResourceAttributesData(this.component)
-    .subscribe(response => {
+    .subscribe((response) => {
       this.instances = [];
       this.instances.push(...response.componentInstances);
 
@@ -178,13 +177,13 @@ export class AttributesOutputsComponent implements UnsavedChangesAware {
       serviceInstance.uniqueId = this.component.uniqueId;
       this.instances.unshift(serviceInstance);
       if (this.instances) {
-        this.instances.forEach(instance => {
+        this.instances.forEach((instance) => {
           this.instancesNavigationData.push(instance);
-          this.componentInstanceNamesMap[instance.uniqueId] = <InstanceFeDetails>{
+          this.componentInstanceNamesMap[instance.uniqueId] = ({
             name: instance.name,
             iconClass: instance.iconClass,
             originArchived: instance.originArchived
-          };
+          } as InstanceFeDetails);
         });
       }
       this.selectFirstInstanceByDefault();
@@ -208,7 +207,7 @@ export class AttributesOutputsComponent implements UnsavedChangesAware {
     if (this.instancesNavigationData.length > 0) {
       this.onInstanceSelectedUpdate(this.instancesNavigationData[0]);
     }
-  };
+  }
 
   updateViewMode = () => {
     this.isReadonly = this.componentModeService.getComponentMode(this.component) === WorkspaceMode.VIEW;
@@ -246,12 +245,12 @@ export class AttributesOutputsComponent implements UnsavedChangesAware {
     // stop if has changed attributes
     if (this.hasChangedData) {
       this.showUnsavedChangesAlert().then(() => {
-        this.changeSelectedInstance(instance)
+        this.changeSelectedInstance(instance);
       });
       return;
     }
     this.changeSelectedInstance(instance);
-  };
+  }
 
   changeSelectedInstance = (instance: ComponentInstance) => {
     this.selectedInstanceData = instance;
@@ -262,10 +261,10 @@ export class AttributesOutputsComponent implements UnsavedChangesAware {
       if (this.isOutput(instance.originType)) {
         this.componentInstanceService
         .getComponentInstanceOutputs(this.component, instance)
-        .subscribe(response => {
+        .subscribe((response) => {
           instanceBeAttributesMap[instance.uniqueId] = response;
           this.processInstanceAttributesResponse(instanceBeAttributesMap, true, instance.uniqueId);
-        }, error => {
+        }, (error) => {
           this.notificationsService.push(new NotificationSettings(
               'error',
               'Failed to change Selected Instance:' + error,
@@ -279,11 +278,11 @@ export class AttributesOutputsComponent implements UnsavedChangesAware {
       } else {
         this.componentInstanceService
         .getComponentInstanceAttributes(this.component, instance.uniqueId)
-        .subscribe(response => {
+        .subscribe((response) => {
           instanceBeAttributesMap = new InstanceBeAttributesMap();
           instanceBeAttributesMap[instance.uniqueId] = response;
           this.processInstanceAttributesResponse(instanceBeAttributesMap, false, instance.uniqueId);
-        }, error => {
+        }, (error) => {
           this.notificationsService.push(new NotificationSettings(
               'error',
               'Failed to change Selected Instance:' + error,
@@ -294,11 +293,11 @@ export class AttributesOutputsComponent implements UnsavedChangesAware {
         });
         this.componentInstanceService
         .getComponentInstanceProperties(this.component, instance.uniqueId)
-        .subscribe(response => {
+        .subscribe((response) => {
           instanceBeAttributesMap = new InstanceBePropertiesMap();
           instanceBeAttributesMap[instance.uniqueId] = response;
           this.processInstanceAttributesResponse(instanceBeAttributesMap, false, instance.uniqueId);
-        }, error => {
+        }, (error) => {
           this.notificationsService.push(new NotificationSettings(
               'error',
               'Failed to change Selected Instance:' + error,
@@ -308,36 +307,35 @@ export class AttributesOutputsComponent implements UnsavedChangesAware {
           this.loadingAttributes = false;
         });
       }
-      this.resourceIsReadonly = (instance.componentName === "vnfConfiguration");
+      this.resourceIsReadonly = (instance.componentName === 'vnfConfiguration');
     } else {
       this.loadingAttributes = false;
     }
 
-    //clear selected attribute from the navigation
+    // clear selected attribute from the navigation
     this.selectedFlatAttribute = new SimpleFlatAttribute();
     this.attributesNavigationData = [];
-  };
+  }
 
   /**
    * Entry point handling response from server
    */
   processInstanceAttributesResponse = (instanceBeAttributesMap: InstanceBePropertiesMap | InstanceBeAttributesMap, originTypeIsVF: boolean, instanceId: string) => {
-    let attributesMap = this.attributesUtils.convertAttributesMapToFEAndCreateChildren(instanceBeAttributesMap, originTypeIsVF, this.outputs); //create flattened children, disable declared attribs, and init values
+    const attributesMap = this.attributesUtils.convertAttributesMapToFEAndCreateChildren(instanceBeAttributesMap, originTypeIsVF, this.outputs); // create flattened children, disable declared attribs, and init values
     if (!this.instanceFeAttributesMap) {
       this.instanceFeAttributesMap = attributesMap;
     } else if (instanceId) {
       let toAdd: AttributeFEModel[];
       if (instanceBeAttributesMap instanceof InstanceBeAttributesMap) {
-        toAdd = this.instanceFeAttributesMap[instanceId].filter(currentAtr => !attributesMap[instanceId].some(newAtr => newAtr.name === currentAtr.name))
+        toAdd = this.instanceFeAttributesMap[instanceId].filter((currentAtr) => !attributesMap[instanceId].some((newAtr) => newAtr.name === currentAtr.name));
         this.instanceFeAttributesMap[instanceId] = attributesMap[instanceId];
       } else {
-        toAdd = attributesMap[instanceId].filter(currentAtr => !this.instanceFeAttributesMap[instanceId].some(newAtr => newAtr.name === currentAtr.name))
+        toAdd = attributesMap[instanceId].filter((currentAtr) => !this.instanceFeAttributesMap[instanceId].some((newAtr) => newAtr.name === currentAtr.name));
       }
       this.instanceFeAttributesMap[instanceId] = this.instanceFeAttributesMap[instanceId].concat(toAdd);
     }
     this.checkedAttributesCount = 0;
-  };
-
+  }
 
   /*** VALUE CHANGE EVENTS ***/
   dataChanged = (item: AttributeFEModel | OutputFEModel) => {
@@ -360,13 +358,12 @@ export class AttributesOutputsComponent implements UnsavedChangesAware {
     }
 
     if (this.isAttributesTabSelected) {
-      this.isValidChangedData = this.changedData.every((changedItem) => (<AttributeFEModel>changedItem).valueObjIsValid);
+      this.isValidChangedData = this.changedData.every((changedItem) => (changedItem as AttributeFEModel).valueObjIsValid);
     } else if (this.isOutputsTabSelected) {
-      this.isValidChangedData = this.changedData.every((changedItem) => (<OutputFEModel>changedItem).defaultValueObjIsValid);
+      this.isValidChangedData = this.changedData.every((changedItem) => (changedItem as OutputFEModel).defaultValueObjIsValid);
     }
     this.updateHasChangedData();
-  };
-
+  }
 
   /*** HEIRARCHY/NAV RELATED FUNCTIONS ***/
 
@@ -375,26 +372,26 @@ export class AttributesOutputsComponent implements UnsavedChangesAware {
    */
   onAttributeSelectedUpdate = ($event) => {
     this.selectedFlatAttribute = $event;
-    let parentAttribute: AttributeFEModel = this.attributesService.getParentAttributeFEModelFromPath(this.instanceFeAttributesMap[this.selectedFlatAttribute.instanceName], this.selectedFlatAttribute.path);
+    const parentAttribute: AttributeFEModel = this.attributesService.getParentAttributeFEModelFromPath(this.instanceFeAttributesMap[this.selectedFlatAttribute.instanceName], this.selectedFlatAttribute.path);
     parentAttribute.expandedChildAttributeId = this.selectedFlatAttribute.path;
-  };
+  }
 
   /**
    * When user select row in table, this will prepare the hierarchy object for the tree.
    */
   selectAttributeRow = (attributeRowSelectedEvent: AttributeRowSelectedEvent) => {
-    let attribute = attributeRowSelectedEvent.attributeModel;
-    let instanceName = attributeRowSelectedEvent.instanceName;
+    const attribute = attributeRowSelectedEvent.attributeModel;
+    const instanceName = attributeRowSelectedEvent.instanceName;
     this.attributeStructureHeader = null;
 
     // Build hierarchy tree for the navigation and update attributesNavigationData with it.
     if (!(this.selectedInstanceData instanceof ComponentInstance) || this.selectedInstanceData.originType !== ResourceType.VF) {
-      let simpleFlatAttributes: Array<SimpleFlatAttribute>;
+      let simpleFlatAttributes: SimpleFlatAttribute[];
       if (attribute instanceof AttributeFEModel) {
         simpleFlatAttributes = this.hierarchyNavService.getSimpleAttributesTree(attribute, instanceName);
       } else if (attribute instanceof DerivedFEAttribute) {
         // Need to find parent AttributeFEModel
-        let parentAttributeFEModel: AttributeFEModel = _.find(this.instanceFeAttributesMap[instanceName], (tmpFeAttribute): boolean => {
+        const parentAttributeFEModel: AttributeFEModel = _.find(this.instanceFeAttributesMap[instanceName], (tmpFeAttribute): boolean => {
           return attribute.attributesName.indexOf(tmpFeAttribute.name) === 0;
         });
         simpleFlatAttributes = this.hierarchyNavService.getSimpleAttributesTree(parentAttributeFEModel, instanceName);
@@ -408,7 +405,7 @@ export class AttributesOutputsComponent implements UnsavedChangesAware {
     // Set selected attribute in table
     this.selectedFlatAttribute = this.hierarchyNavService.createSimpleFlatAttribute(attribute, instanceName);
     this.hierarchyNavTabs.triggerTabChange('Attribute Structure');
-  };
+  }
 
   tabChanged = (event) => {
     // stop if has changed attributes
@@ -421,11 +418,11 @@ export class AttributesOutputsComponent implements UnsavedChangesAware {
     }
 
     this.currentMainTab = this.attributeOutputTabs.tabs.find((tab) => tab.title === event.title);
-    this.isAttributesTabSelected = this.currentMainTab.title === "Attributes";
-    this.isOutputsTabSelected = this.currentMainTab.title === "Outputs";
+    this.isAttributesTabSelected = this.currentMainTab.title === 'Attributes';
+    this.isOutputsTabSelected = this.currentMainTab.title === 'Outputs';
     this.attributeStructureHeader = null;
     this.searchQuery = '';
-  };
+  }
 
   declareOutput = (): void => {
     if (this.checkedAttributesCount == 1) {
@@ -433,6 +430,353 @@ export class AttributesOutputsComponent implements UnsavedChangesAware {
     } else if (this.checkedAttributesCount > 1) {
         this.declareAttributes();
     }
+  }
+
+  generateDefaultOutputName = (): string => {
+    let defaultInputName: string;
+    const instancesIds = this.keysPipe.transform(this.instanceFeAttributesMap, []);
+    _.forEach(instancesIds, (instanceId: string) => {
+      const selectedOutput: AttributeBEModel = this.attributesService.getCheckedAttributes(this.instanceFeAttributesMap[instanceId])[0];
+      const selectedInstanceData: any = this.instances.find((instance) => instance.uniqueId == instanceId);
+      defaultInputName = selectedOutput.name;
+      if (selectedInstanceData.invariantName) {
+          defaultInputName = selectedInstanceData.invariantName + '_' + selectedOutput.name;
+        }
+    });
+    return defaultInputName;
+  }
+
+  /*** DECLARE ATTRIBUTES/OUTPUTS ***/
+  declareAttributes = (outputName?: string): void => {
+    this.loadingAttributes = true;
+    const selectedComponentInstancesAttributes: InstanceBeAttributesMap = new InstanceBeAttributesMap();
+    const selectedComponentInstancesOutputs: InstanceBeAttributesMap = new InstanceBeAttributesMap();
+    const instancesIds = this.keysPipe.transform(this.instanceFeAttributesMap, []);
+
+    _.forEach(instancesIds, (instanceId: string): void => {
+      const selectedInstanceData: any = this.instances.find((instance) => instance.uniqueId == instanceId);
+      if (selectedInstanceData instanceof ComponentInstance) {
+        if (!this.isOutput(selectedInstanceData.originType)) {
+          // convert Attribute FE model -> Attribute BE model, extract only checked
+          selectedComponentInstancesAttributes[instanceId] = this.attributesService.getCheckedAttributes(this.instanceFeAttributesMap[instanceId]);
+          if (outputName) {
+            selectedComponentInstancesAttributes[instanceId][0].outputName = outputName;
+          }
+        } else {
+          selectedComponentInstancesOutputs[instanceId] = this.attributesService.getCheckedAttributes(this.instanceFeAttributesMap[instanceId]);
+        }
+      }
+    });
+
+    const outputsToCreate: InstanceAttributesAPIMap = new InstanceAttributesAPIMap(selectedComponentInstancesOutputs, selectedComponentInstancesAttributes);
+    this.topologyTemplateService
+    .createOutput(this.component, outputsToCreate, this.isSelf())
+    .subscribe((response) => {
+      this.setOutputTabIndication(response.length);
+      this.checkedAttributesCount = 0;
+      response.forEach((output: OutputBEModel) => {
+        const newOutput: OutputFEModel = new OutputFEModel(output);
+        this.outputsUtils.resetOutputDefaultValue(newOutput, output.defaultValue);
+        this.outputs.push(newOutput);
+        this.updateAttributeValueAfterDeclare(newOutput);
+      });
+      this.loadingAttributes = false;
+    }, (error) => {this.loadingAttributes = false; }); // ignore error
+  }
+
+  saveChangedData = (): Promise<Array<AttributeBEModel | OutputBEModel>> => {
+    return new Promise((resolve, reject) => {
+      if (!this.isValidChangedData) {
+        reject('Changed data is invalid - cannot save!');
+        return;
+      }
+      if (!this.changedData.length) {
+        resolve([]);
+        return;
+      }
+
+      // make request and its handlers
+      let request;
+      let handleSuccess, handleError;
+      if (this.isAttributesTabSelected) {
+        const changedAttribs = this.changedData.map((changedAttrib) => {
+          changedAttrib = (changedAttrib as AttributeFEModel);
+          const attribBE = new AttributeBEModel(changedAttrib);
+          attribBE.toscaPresentation = new ToscaPresentationData();
+          attribBE.toscaPresentation.ownerId = changedAttrib.parentUniqueId;
+          attribBE.value = changedAttrib.getJSONValue();
+          attribBE.name = changedAttrib.origName || changedAttrib.name;
+          delete attribBE.origName;
+          return attribBE;
+        });
+
+        if (this.selectedInstanceData instanceof ComponentInstance) {
+          if (this.isSelf()) {
+            console.log('changedAttribs', changedAttribs);
+            request = this.topologyTemplateService.updateServiceAttributes(this.component.uniqueId, _.map(changedAttribs, (cp) => {
+              delete cp.constraints;
+              return cp;
+            }));
+          } else {
+            request = this.componentInstanceService
+            .updateInstanceAttributes(this.component.componentType, this.component.uniqueId, this.selectedInstanceData.uniqueId, changedAttribs);
+          }
+          handleSuccess = (response) => {
+            // reset each changed attribute with new value and remove it from changed attributes list
+            response.forEach((resAttrib) => {
+              const changedAttrib = this.changedData.shift() as AttributeFEModel;
+              this.attributesUtils.resetAttributeValue(changedAttrib, resAttrib.value);
+            });
+            resolve(response);
+            console.log('updated instance attributes: ', response);
+          };
+        }
+      } else if (this.isOutputsTabSelected) {
+        const changedOutputs: OutputBEModel[] = this.changedData.map((changedOutput) => {
+          changedOutput = (changedOutput as OutputFEModel);
+          const outputBE = new OutputBEModel(changedOutput);
+          outputBE.defaultValue = changedOutput.getJSONDefaultValue();
+          return outputBE;
+        });
+        request = this.componentService.updateComponentOutputs(this.component, changedOutputs);
+        handleSuccess = (response) => {
+          // reset each changed attribute with new value and remove it from changed attributes list
+          response.forEach((resOutput) => {
+            const changedOutput = this.changedData.shift() as OutputFEModel;
+            this.outputsUtils.resetOutputDefaultValue(changedOutput, resOutput.defaultValue);
+            changedOutput.required = resOutput.required;
+          });
+        };
+      }
+
+      this.savingChangedData = true;
+      request.subscribe(
+          (response) => {
+            this.savingChangedData = false;
+            handleSuccess && handleSuccess(response);
+            this.updateHasChangedData();
+            resolve(response);
+          },
+          (error) => {
+            this.savingChangedData = false;
+            handleError && handleError(error);
+            this.updateHasChangedData();
+            reject(error);
+          }
+      );
+
+    });
+  }
+
+  reverseChangedData = (): void => {
+    // make reverse item handler
+    let handleReverseItem;
+    if (this.isAttributesTabSelected) {
+      handleReverseItem = (changedItem) => {
+        changedItem = (changedItem as AttributeFEModel);
+        this.attributesUtils.resetAttributeValue(changedItem, changedItem.value);
+        this.checkedAttributesCount = 0;
+      };
+    } else if (this.isOutputsTabSelected) {
+      handleReverseItem = (changedItem) => {
+        changedItem = (changedItem as OutputFEModel);
+        this.outputsUtils.resetOutputDefaultValue(changedItem, changedItem.defaultValue);
+        changedItem.required = changedItem.requiredOrig;
+      };
+    }
+
+    this.changedData.forEach(handleReverseItem);
+    this.changedData = [];
+    this.updateHasChangedData();
+  }
+
+  updateHasChangedData = (): boolean => {
+    const curHasChangedData: boolean = (this.changedData.length > 0);
+    if (curHasChangedData !== this.hasChangedData) {
+      this.hasChangedData = curHasChangedData;
+      if (this.hasChangedData) {
+        this.EventListenerService.notifyObservers(EVENTS.ON_WORKSPACE_UNSAVED_CHANGES, this.hasChangedData, this.showUnsavedChangesAlert);
+      } else {
+        this.EventListenerService.notifyObservers(EVENTS.ON_WORKSPACE_UNSAVED_CHANGES, false);
+      }
+    }
+    return this.hasChangedData;
+  }
+
+  doSaveChangedData = (onSuccessFunction?: Function, onError?: Function): void => {
+    this.saveChangedData().then(
+        () => {
+          this.notificationsService.push(new NotificationSettings(
+              'success',
+              'Successfully saved changes',
+              'Saved',
+              5000));
+          if (onSuccessFunction) { onSuccessFunction(); }
+          if (this.isAttributesTabSelected) {
+            this.checkedAttributesCount = 0;
+          }
+          this.instanceFeAttributesMap[this.selectedInstanceData.uniqueId].forEach((prop) => prop.isSelected = false);
+          this.hasChangedData = false;
+          this.isValidChangedData = false;
+        },
+        () => {
+          this.notificationsService.push(new NotificationSettings(
+              'error',
+              'Failed to save changes!',
+              'Failure',
+              5000));
+          if (onError) { onError(); }
+        }
+    );
+  }
+
+  showUnsavedChangesAlert = (): Promise<any> => {
+    let modalTitle: string;
+    if (this.isAttributesTabSelected) {
+      modalTitle = `Unsaved attributes for ${this.selectedInstanceData.name}`;
+    } else if (this.isOutputsTabSelected) {
+      modalTitle = `Unsaved outputs for ${this.component.name}`;
+    }
+
+    return new Promise<any>((resolve, reject) => {
+      this.ModalServiceSdcUI.openCustomModal(
+          {
+            title: modalTitle,
+            size: 'sm',
+            type: SdcUiCommon.ModalType.custom,
+            testId: 'navigate-modal',
+
+            buttons: [
+              {
+                id: 'cancelButton',
+                text: 'Cancel',
+                type: SdcUiCommon.ButtonType.secondary,
+                size: 'xsm',
+                closeModal: true,
+                callback: () => reject()
+              },
+              {
+                id: 'discardButton',
+                text: 'Discard',
+                type: SdcUiCommon.ButtonType.secondary,
+                size: 'xsm',
+                closeModal: true,
+                callback: () => {
+                  this.reverseChangedData();
+                  resolve();
+                }
+              },
+              {
+                id: 'saveButton',
+                text: 'Save',
+                type: SdcUiCommon.ButtonType.primary,
+                size: 'xsm',
+                closeModal: true,
+                disabled: !this.isValidChangedData,
+                callback: () => this.doSaveChangedData(resolve, reject)
+              }
+            ] as SdcUiCommon.IModalButtonComponent[]
+          } as SdcUiCommon.IModalConfig, UnsavedChangesComponent, {isValidChangedData: this.isValidChangedData});
+    });
+
+  }
+
+  updateAttributeValueAfterDeclare = (output: OutputFEModel) => {
+    const attributeList = this.instanceFeAttributesMap[output.instanceUniqueId];
+    if (attributeList) {
+      const instanceName = output.instanceUniqueId.slice(output.instanceUniqueId.lastIndexOf('.') + 1);
+      const attributeForUpdatingVal = attributeList.find((feAttribute: AttributeFEModel) => {
+        return feAttribute.name == output.relatedAttributeName &&
+            (feAttribute.name == output.relatedAttributeName || output.name === instanceName.concat('_').concat(feAttribute.name.replace(/[.]/g, '_')));
+      });
+      const outputPath = (output.outputPath && output.outputPath != attributeForUpdatingVal.name) ? output.outputPath : undefined;
+      attributeForUpdatingVal.setAsDeclared(outputPath); // set attribute as declared before assigning value
+      // this.attributesService.disableRelatedAttributes(attributeForUpdatingVal, outputPath);
+      this.attributesUtils.resetAttributeValue(attributeForUpdatingVal, output.relatedAttributeValue, outputPath);
+    }
+  }
+
+  // used for declare button, to keep count of newly checked attributes (and ignore declared attributes)
+  updateCheckedAttributeCount = (increment: boolean): void => {
+    this.checkedAttributesCount += (increment) ? 1 : -1;
+  }
+
+  setOutputTabIndication = (numOutputs: number): void => {
+    this.attributeOutputTabs.setTabIndication('Outputs', numOutputs);
+  }
+
+  deleteOutput = (output: OutputFEModel) => {
+    const outputToDelete = new OutputBEModel(output);
+
+    this.componentService
+    .deleteOutput(this.component, outputToDelete)
+    .subscribe((response) => {
+      this.outputs = this.outputs.filter((output) => output.uniqueId !== response.uniqueId);
+
+      // Reload the whole instance for now - TODO: CHANGE THIS after the BE starts returning attributes within the response, use commented code below instead!
+      this.changeSelectedInstance(this.selectedInstanceData);
+    }, (error) => {
+      this.notificationsService.push(new NotificationSettings(
+          'error',
+          'Failed to delete Output:' + error,
+          'Failure',
+          5000));
+    });
+  }
+
+  deleteAttribute = (attribute: AttributeFEModel) => {
+    const attributeToDelete = new AttributeFEModel(attribute);
+    this.loadingAttributes = true;
+    const feMap = this.instanceFeAttributesMap;
+    this.topologyTemplateService
+    .deleteServiceAttribute(this.component.uniqueId, attributeToDelete)
+    .subscribe((response) => {
+      const attribs = feMap[this.component.uniqueId];
+      attribs.splice(attribs.findIndex((p) => p.uniqueId === response), 1);
+    }, (error) => {
+      this.notificationsService.push(new NotificationSettings(
+          'error',
+          'Failed to delete Attribute:' + error,
+          'Failure',
+          5000));
+    }, () => {
+      this.loadingAttributes = false;
+    });
+  }
+
+  addAttribute = () => {
+    const modalTitle = 'Add Attribute';
+    const modal = this.ModalService.createCustomModal(new ModalModel(
+        'sm',
+        modalTitle,
+        null,
+        [
+          new ButtonModel('Save', 'blue', () => {
+            modal.instance.dynamicContent.instance.isLoading = true;
+            const newAttribute: AttributeBEModel = modal.instance.dynamicContent.instance.attributeModel;
+            this.topologyTemplateService.createServiceAttribute(this.component.uniqueId, newAttribute)
+            .subscribe((response) => {
+              modal.instance.dynamicContent.instance.isLoading = false;
+              const newAttrib: AttributeFEModel = this.attributesUtils.convertAddAttributeBEToAttributeFE(response);
+              this.instanceFeAttributesMap[this.component.uniqueId].push(newAttrib);
+              modal.instance.close();
+            }, (error) => {
+              modal.instance.dynamicContent.instance.isLoading = false;
+              this.notificationsService.push(new NotificationSettings(
+                  'error',
+                  'Failed to add Attribute:' + error,
+                  'Failure',
+                  5000));
+            });
+          }, () => !modal.instance.dynamicContent.instance.checkFormValidForSubmit()),
+          new ButtonModel('Cancel', 'outline grey', () => {
+            modal.instance.close();
+          }),
+        ],
+        null
+    ));
+    this.ModalService.addDynamicContentToModal(modal, AttributeCreatorComponent, {});
+    modal.instance.open();
   }
 
   private openAddOutputNameModal = (): void => {
@@ -464,354 +808,6 @@ export class AttributesOutputsComponent implements UnsavedChangesAware {
         this.ModalService.closeCurrentModal();
     }));
     this.ModalService.addDynamicContentToModal(modal, DeclareInputComponent, {defaultInputName: this.generateDefaultOutputName()});
-    modal.instance.open();
-  }
-
-  generateDefaultOutputName = (): string => {
-    let defaultInputName: string;
-    let instancesIds = this.keysPipe.transform(this.instanceFeAttributesMap, []);
-    _.forEach(instancesIds, (instanceId: string) => {
-      const selectedOutput : AttributeBEModel = this.attributesService.getCheckedAttributes(this.instanceFeAttributesMap[instanceId])[0];
-        let selectedInstanceData: any = this.instances.find(instance => instance.uniqueId == instanceId);
-        defaultInputName = selectedOutput.name;
-        if (selectedInstanceData.invariantName) {
-          defaultInputName = selectedInstanceData.invariantName+'_'+selectedOutput.name;
-        }
-    });
-    return defaultInputName;
-  }
-
-  /*** DECLARE ATTRIBUTES/OUTPUTS ***/
-  declareAttributes = (outputName?: string): void => {
-    this.loadingAttributes = true;
-    let selectedComponentInstancesAttributes: InstanceBeAttributesMap = new InstanceBeAttributesMap();
-    let selectedComponentInstancesOutputs: InstanceBeAttributesMap = new InstanceBeAttributesMap();
-    let instancesIds = this.keysPipe.transform(this.instanceFeAttributesMap, []);
-
-    _.forEach(instancesIds, (instanceId: string): void => {
-      let selectedInstanceData: any = this.instances.find(instance => instance.uniqueId == instanceId);
-      if (selectedInstanceData instanceof ComponentInstance) {
-        if (!this.isOutput(selectedInstanceData.originType)) {
-          // convert Attribute FE model -> Attribute BE model, extract only checked
-          selectedComponentInstancesAttributes[instanceId] = this.attributesService.getCheckedAttributes(this.instanceFeAttributesMap[instanceId]);
-          if (outputName) {
-            selectedComponentInstancesAttributes[instanceId][0].outputName = outputName;
-          }
-        } else {
-          selectedComponentInstancesOutputs[instanceId] = this.attributesService.getCheckedAttributes(this.instanceFeAttributesMap[instanceId]);
-        }
-      }
-    });
-
-    let outputsToCreate: InstanceAttributesAPIMap = new InstanceAttributesAPIMap(selectedComponentInstancesOutputs, selectedComponentInstancesAttributes);
-    this.topologyTemplateService
-    .createOutput(this.component, outputsToCreate, this.isSelf())
-    .subscribe((response) => {
-      this.setOutputTabIndication(response.length);
-      this.checkedAttributesCount = 0;
-      response.forEach((output: OutputBEModel) => {
-        const newOutput: OutputFEModel = new OutputFEModel(output);
-        this.outputsUtils.resetOutputDefaultValue(newOutput, output.defaultValue);
-        this.outputs.push(newOutput);
-        this.updateAttributeValueAfterDeclare(newOutput);
-      });
-      this.loadingAttributes = false;
-    }, error => {this.loadingAttributes = false;}); //ignore error
-  };
-
-  saveChangedData = (): Promise<(AttributeBEModel | OutputBEModel)[]> => {
-    return new Promise((resolve, reject) => {
-      if (!this.isValidChangedData) {
-        reject('Changed data is invalid - cannot save!');
-        return;
-      }
-      if (!this.changedData.length) {
-        resolve([]);
-        return;
-      }
-
-      // make request and its handlers
-      let request;
-      let handleSuccess, handleError;
-      if (this.isAttributesTabSelected) {
-        const changedAttribs = this.changedData.map((changedAttrib) => {
-          changedAttrib = <AttributeFEModel>changedAttrib;
-          const attribBE = new AttributeBEModel(changedAttrib);
-          attribBE.toscaPresentation = new ToscaPresentationData();
-          attribBE.toscaPresentation.ownerId = changedAttrib.parentUniqueId;
-          attribBE.value = changedAttrib.getJSONValue();
-          attribBE.name = changedAttrib.origName || changedAttrib.name;
-          delete attribBE.origName;
-          return attribBE;
-        });
-
-        if (this.selectedInstanceData instanceof ComponentInstance) {
-          if (this.isSelf()) {
-            console.log("changedAttribs", changedAttribs);
-            request = this.topologyTemplateService.updateServiceAttributes(this.component.uniqueId, _.map(changedAttribs, cp => {
-              delete cp.constraints;
-              return cp;
-            }));
-          } else {
-            request = this.componentInstanceService
-            .updateInstanceAttributes(this.component.componentType, this.component.uniqueId, this.selectedInstanceData.uniqueId, changedAttribs);
-          }
-          handleSuccess = (response) => {
-            // reset each changed attribute with new value and remove it from changed attributes list
-            response.forEach((resAttrib) => {
-              const changedAttrib = <AttributeFEModel>this.changedData.shift();
-              this.attributesUtils.resetAttributeValue(changedAttrib, resAttrib.value);
-            });
-            resolve(response);
-            console.log("updated instance attributes: ", response);
-          };
-        }
-      } else if (this.isOutputsTabSelected) {
-        const changedOutputs: OutputBEModel[] = this.changedData.map((changedOutput) => {
-          changedOutput = <OutputFEModel>changedOutput;
-          const outputBE = new OutputBEModel(changedOutput);
-          outputBE.defaultValue = changedOutput.getJSONDefaultValue();
-          return outputBE;
-        });
-        request = this.componentService.updateComponentOutputs(this.component, changedOutputs);
-        handleSuccess = (response) => {
-          // reset each changed attribute with new value and remove it from changed attributes list
-          response.forEach((resOutput) => {
-            const changedOutput = <OutputFEModel>this.changedData.shift();
-            this.outputsUtils.resetOutputDefaultValue(changedOutput, resOutput.defaultValue);
-            changedOutput.required = resOutput.required;
-          });
-        }
-      }
-
-      this.savingChangedData = true;
-      request.subscribe(
-          (response) => {
-            this.savingChangedData = false;
-            handleSuccess && handleSuccess(response);
-            this.updateHasChangedData();
-            resolve(response);
-          },
-          (error) => {
-            this.savingChangedData = false;
-            handleError && handleError(error);
-            this.updateHasChangedData();
-            reject(error);
-          }
-      );
-
-    });
-  };
-
-
-  reverseChangedData = (): void => {
-    // make reverse item handler
-    let handleReverseItem;
-    if (this.isAttributesTabSelected) {
-      handleReverseItem = (changedItem) => {
-        changedItem = <AttributeFEModel>changedItem;
-        this.attributesUtils.resetAttributeValue(changedItem, changedItem.value);
-        this.checkedAttributesCount = 0;
-      };
-    } else if (this.isOutputsTabSelected) {
-      handleReverseItem = (changedItem) => {
-        changedItem = <OutputFEModel>changedItem;
-        this.outputsUtils.resetOutputDefaultValue(changedItem, changedItem.defaultValue);
-        changedItem.required = changedItem.requiredOrig;
-      };
-    }
-
-    this.changedData.forEach(handleReverseItem);
-    this.changedData = [];
-    this.updateHasChangedData();
-  };
-
-  updateHasChangedData = (): boolean => {
-    const curHasChangedData: boolean = (this.changedData.length > 0);
-    if (curHasChangedData !== this.hasChangedData) {
-      this.hasChangedData = curHasChangedData;
-      if (this.hasChangedData) {
-        this.EventListenerService.notifyObservers(EVENTS.ON_WORKSPACE_UNSAVED_CHANGES, this.hasChangedData, this.showUnsavedChangesAlert);
-      } else {
-        this.EventListenerService.notifyObservers(EVENTS.ON_WORKSPACE_UNSAVED_CHANGES, false);
-      }
-    }
-    return this.hasChangedData;
-  };
-
-  doSaveChangedData = (onSuccessFunction?: Function, onError?: Function): void => {
-    this.saveChangedData().then(
-        () => {
-          this.notificationsService.push(new NotificationSettings(
-              'success',
-              'Successfully saved changes',
-              'Saved',
-              5000));
-          if (onSuccessFunction) onSuccessFunction();
-          if (this.isAttributesTabSelected) {
-            this.checkedAttributesCount = 0;
-          }
-          this.instanceFeAttributesMap[this.selectedInstanceData.uniqueId].forEach(prop => prop.isSelected = false);
-          this.hasChangedData = false;
-          this.isValidChangedData = false;
-        },
-        () => {
-          this.notificationsService.push(new NotificationSettings(
-              'error',
-              'Failed to save changes!',
-              'Failure',
-              5000));
-          if (onError) onError();
-        }
-    );
-  };
-
-  showUnsavedChangesAlert = (): Promise<any> => {
-    let modalTitle: string;
-    if (this.isAttributesTabSelected) {
-      modalTitle = `Unsaved attributes for ${this.selectedInstanceData.name}`;
-    } else if (this.isOutputsTabSelected) {
-      modalTitle = `Unsaved outputs for ${this.component.name}`;
-    }
-
-    return new Promise<any>((resolve, reject) => {
-      this.ModalServiceSdcUI.openCustomModal(
-          {
-            title: modalTitle,
-            size: 'sm',
-            type: SdcUiCommon.ModalType.custom,
-            testId: "navigate-modal",
-
-            buttons: [
-              {
-                id: 'cancelButton',
-                text: 'Cancel',
-                type: SdcUiCommon.ButtonType.secondary,
-                size: 'xsm',
-                closeModal: true,
-                callback: () => reject()
-              },
-              {
-                id: 'discardButton',
-                text: 'Discard',
-                type: SdcUiCommon.ButtonType.secondary,
-                size: 'xsm',
-                closeModal: true,
-                callback: () => {
-                  this.reverseChangedData();
-                  resolve()
-                }
-              },
-              {
-                id: 'saveButton',
-                text: 'Save',
-                type: SdcUiCommon.ButtonType.primary,
-                size: 'xsm',
-                closeModal: true,
-                disabled: !this.isValidChangedData,
-                callback: () => this.doSaveChangedData(resolve, reject)
-              }
-            ] as SdcUiCommon.IModalButtonComponent[]
-          } as SdcUiCommon.IModalConfig, UnsavedChangesComponent, {isValidChangedData: this.isValidChangedData});
-    });
-
-  }
-
-  updateAttributeValueAfterDeclare = (output: OutputFEModel) => {
-    const attributeList = this.instanceFeAttributesMap[output.instanceUniqueId];
-    if (attributeList) {
-      const instanceName = output.instanceUniqueId.slice(output.instanceUniqueId.lastIndexOf('.') + 1);
-      const attributeForUpdatingVal = attributeList.find((feAttribute: AttributeFEModel) => {
-        return feAttribute.name == output.relatedAttributeName &&
-            (feAttribute.name == output.relatedAttributeName || output.name === instanceName.concat('_').concat(feAttribute.name.replace(/[.]/g, '_')));
-      });
-      const outputPath = (output.outputPath && output.outputPath != attributeForUpdatingVal.name) ? output.outputPath : undefined;
-      attributeForUpdatingVal.setAsDeclared(outputPath); //set attribute as declared before assigning value
-      // this.attributesService.disableRelatedAttributes(attributeForUpdatingVal, outputPath);
-      this.attributesUtils.resetAttributeValue(attributeForUpdatingVal, output.relatedAttributeValue, outputPath);
-    }
-  }
-
-  //used for declare button, to keep count of newly checked attributes (and ignore declared attributes)
-  updateCheckedAttributeCount = (increment: boolean): void => {
-    this.checkedAttributesCount += (increment) ? 1 : -1;
-  };
-
-  setOutputTabIndication = (numOutputs: number): void => {
-    this.attributeOutputTabs.setTabIndication('Outputs', numOutputs);
-  };
-
-  deleteOutput = (output: OutputFEModel) => {
-    let outputToDelete = new OutputBEModel(output);
-
-    this.componentService
-    .deleteOutput(this.component, outputToDelete)
-    .subscribe(response => {
-      this.outputs = this.outputs.filter(output => output.uniqueId !== response.uniqueId);
-
-      //Reload the whole instance for now - TODO: CHANGE THIS after the BE starts returning attributes within the response, use commented code below instead!
-      this.changeSelectedInstance(this.selectedInstanceData);
-    }, error => {
-      this.notificationsService.push(new NotificationSettings(
-          'error',
-          'Failed to delete Output:' + error,
-          'Failure',
-          5000));
-    });
-  };
-
-  deleteAttribute = (attribute: AttributeFEModel) => {
-    const attributeToDelete = new AttributeFEModel(attribute);
-    this.loadingAttributes = true;
-    const feMap = this.instanceFeAttributesMap;
-    this.topologyTemplateService
-    .deleteServiceAttribute(this.component.uniqueId, attributeToDelete)
-    .subscribe((response) => {
-      const attribs = feMap[this.component.uniqueId];
-      attribs.splice(attribs.findIndex(p => p.uniqueId === response), 1);
-    }, (error) => {
-      this.notificationsService.push(new NotificationSettings(
-          'error',
-          'Failed to delete Attribute:' + error,
-          'Failure',
-          5000));
-    }, () => {
-      this.loadingAttributes = false;
-    });
-  }
-
-  addAttribute = () => {
-    let modalTitle = 'Add Attribute';
-    let modal = this.ModalService.createCustomModal(new ModalModel(
-        'sm',
-        modalTitle,
-        null,
-        [
-          new ButtonModel('Save', 'blue', () => {
-            modal.instance.dynamicContent.instance.isLoading = true;
-            const newAttribute: AttributeBEModel = modal.instance.dynamicContent.instance.attributeModel;
-            this.topologyTemplateService.createServiceAttribute(this.component.uniqueId, newAttribute)
-            .subscribe((response) => {
-              modal.instance.dynamicContent.instance.isLoading = false;
-              const newAttrib: AttributeFEModel = this.attributesUtils.convertAddAttributeBEToAttributeFE(response);
-              this.instanceFeAttributesMap[this.component.uniqueId].push(newAttrib);
-              modal.instance.close();
-            }, (error) => {
-              modal.instance.dynamicContent.instance.isLoading = false;
-              this.notificationsService.push(new NotificationSettings(
-                  'error',
-                  'Failed to add Attribute:' + error,
-                  'Failure',
-                  5000));
-            });
-          }, () => !modal.instance.dynamicContent.instance.checkFormValidForSubmit()),
-          new ButtonModel('Cancel', 'outline grey', () => {
-            modal.instance.close();
-          }),
-        ],
-        null
-    ));
-    this.ModalService.addDynamicContentToModal(modal, AttributeCreatorComponent, {});
     modal.instance.open();
   }
 

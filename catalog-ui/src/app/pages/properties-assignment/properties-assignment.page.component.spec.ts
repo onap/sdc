@@ -19,10 +19,10 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {ButtonModel} from 'app/models/button';
-import {ModalModel} from 'app/models/modal';
-import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
-import {PropertiesAssignmentComponent} from './properties-assignment.page.component';
+import { ButtonModel } from 'app/models/button';
+import { ModalModel } from 'app/models/modal';
+import { PropertyBEModel } from 'app/models/properties-inputs/property-be-model';
+import { PropertiesAssignmentComponent } from './properties-assignment.page.component';
 
 describe('PropertiesAssignmentComponent', () => {
 

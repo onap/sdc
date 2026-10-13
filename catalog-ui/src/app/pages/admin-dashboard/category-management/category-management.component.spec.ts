@@ -1,7 +1,7 @@
+import { IMainCategory, ISubCategory } from 'app/models/category';
 import 'rxjs/add/observable/of';
-import {Observable} from 'rxjs/Observable';
-import {IMainCategory, ISubCategory} from 'app/models/category';
-import {CategoryManagementComponent} from './category-management.component';
+import { Observable } from 'rxjs/Observable';
+import { CategoryManagementComponent } from './category-management.component';
 
 // ---------------------------------------------------------------------------
 // Helpers

@@ -18,16 +18,16 @@
  * ============LICENSE_END=========================================================
  */
 
-import {NgModule} from "@angular/core";
-import {AttributesTableComponent} from "./attributes-table.component";
-import {DynamicAttributeComponent} from "./dynamic-attribute/dynamic-attribute.component";
-import {FormsModule} from "@angular/forms";
-import {UiElementsModule} from "../../ui/ui-elements.module";
-import {CommonModule} from "@angular/common";
-import {FilterChildAttributesPipe} from "./pipes/filter-child-attributes.pipe";
-import {GlobalPipesModule} from "../../../pipes/global-pipes.module";
-import {MultilineEllipsisModule} from "../../../shared/multiline-ellipsis/multiline-ellipsis.module";
-import {AttributesService} from "../../../services/attributes.service";
+import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { GlobalPipesModule } from '../../../pipes/global-pipes.module';
+import { AttributesService } from '../../../services/attributes.service';
+import { MultilineEllipsisModule } from '../../../shared/multiline-ellipsis/multiline-ellipsis.module';
+import { UiElementsModule } from '../../ui/ui-elements.module';
+import { AttributesTableComponent } from './attributes-table.component';
+import { DynamicAttributeComponent } from './dynamic-attribute/dynamic-attribute.component';
+import { FilterChildAttributesPipe } from './pipes/filter-child-attributes.pipe';
 
 @NgModule({
   imports: [

@@ -17,12 +17,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
-import {TestBed} from '@angular/core/testing';
-import {LegacyComponentService} from './component.service';
-import {SdcConfigToken} from '../../config/sdc-config.config';
-import {SharingService} from '../sharing.service';
-import {DataTypesService} from '../data-types.service';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { TestBed } from '@angular/core/testing';
+import { SdcConfigToken } from '../../config/sdc-config.config';
+import { DataTypesService } from '../data-types.service';
+import { SharingService } from '../sharing.service';
+import { LegacyComponentService } from './component.service';
 
 const sdcConfig = {api: {root: 'http://localhost/', component_api_root: 'v1/catalog/'}} as any;
 
@@ -62,14 +62,14 @@ describe('LegacyComponentService', () => {
 
     it('validateName issues GET with subtype query param', () => {
         service.validateName('n1', 'VF');
-        const req = httpMock.expectOne(r => r.url === 'http://localhost/v1/catalog/validate-name/n1');
+        const req = httpMock.expectOne((r) => r.url === 'http://localhost/v1/catalog/validate-name/n1');
         expect(req.request.params.get('subtype')).toBe('VF');
         req.flush({isValid: true});
     });
 
     it('deleteArtifact issues DELETE with operation param', () => {
         service.deleteArtifact('c1', 'a1', 'label1');
-        const req = httpMock.expectOne(r => r.url === 'http://localhost/v1/catalog/c1/artifacts/a1');
+        const req = httpMock.expectOne((r) => r.url === 'http://localhost/v1/catalog/c1/artifacts/a1');
         expect(req.request.method).toBe('DELETE');
         expect(req.request.params.get('operation')).toBe('label1');
         req.flush({});

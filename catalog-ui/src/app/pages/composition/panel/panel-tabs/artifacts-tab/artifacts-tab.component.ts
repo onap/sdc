@@ -1,14 +1,14 @@
 import { Component, Input } from '@angular/core';
 import { Store } from '@ngxs/store';
-import {ArtifactModel} from 'app/models/artifacts';
-import {Component as TopologyTemplate} from 'app/models/components/component';
-import {Resource} from 'app/models/components/resource';
-import {FullComponentInstance} from 'app/models/components-instances/full-component-instance';
+import { ArtifactModel } from 'app/models/artifacts';
+import { FullComponentInstance } from 'app/models/components-instances/full-component-instance';
+import { Component as TopologyTemplate } from 'app/models/components/component';
+import { Resource } from 'app/models/components/resource';
 import { WorkspaceService } from 'app/pages/workspace/workspace.service';
 import { ResourceNamePipe } from 'app/pipes/resource-name.pipe';
 import { ComponentInstanceService } from 'app/services/component-instance-services/component-instance.service';
 import { TopologyTemplateService } from 'app/services/component-services/topology-template.service';
-import {ArtifactType} from 'app/utils/constants';
+import { ArtifactType } from 'app/utils/constants';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs/Observable';
 import { map } from 'rxjs/operators';
@@ -37,11 +37,11 @@ export class ArtifactsTabComponent {
     public type: string;
     public isComponentInstanceSelected: boolean;
     public artifacts$: Observable<ArtifactModel[]>;
+    public isComplex: boolean;
     private topologyTemplateType: string;
     private topologyTemplateId: string;
     private heatToEnv: Map<string, ArtifactModel>;
     private resourceType: string;
-    public isComplex: boolean;
 
     constructor(private store: Store,
                 private compositionService: CompositionService,
@@ -58,7 +58,7 @@ export class ArtifactsTabComponent {
         this.type = this.input.type;
         this.title = this.getTitle(this.type);
         this.isComponentInstanceSelected = this.componentType === SelectedComponentType.COMPONENT_INSTANCE;
-        this.resourceType = this.component['resourceType'];
+        this.resourceType = this.component.resourceType;
         this.isComplex = this.component.isComplex();
         this.loadArtifacts();
     }
@@ -107,7 +107,7 @@ export class ArtifactsTabComponent {
     }
 
     public isVfOrPnf(): boolean {
-        if (this.component.isResource()){
+        if (this.component.isResource()) {
             if (this.resourceType) {
                 return this.resourceType === 'VF' || this.resourceType == 'PNF';
             }

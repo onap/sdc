@@ -19,11 +19,11 @@
 *  ============LICENSE_END=========================================================
 */
 
-import { NO_ERRORS_SCHEMA, ViewContainerRef } from "@angular/core";
-import { async, TestBed } from "@angular/core/testing";
+import { NO_ERRORS_SCHEMA, ViewContainerRef } from '@angular/core';
+import { async, TestBed } from '@angular/core/testing';
+import { AppComponent } from './app.component';
 import { AuthenticationService } from './services/authentication.service';
 import { RouteMetadataService } from './services/route-metadata.service';
-import { AppComponent } from './app.component'
 
 describe('AppComponent', () => {
 

@@ -21,7 +21,7 @@ export class OperationParameter {
 }
 
 export interface IOperationParamsList {
-    listToscaDataDefinition: Array<OperationParameter>;
+    listToscaDataDefinition: OperationParameter[];
 }
 
 export class WORKFLOW_ASSOCIATION_OPTIONS {
@@ -68,15 +68,15 @@ export class BEOperationModel {
         }
     }
 
-    public createInputsList(inputs: Array<OperationParameter>): void {
+    public createInputsList(inputs: OperationParameter[]): void {
         this.inputs = {
             listToscaDataDefinition: inputs
         };
     }
 
-    public createOutputsList(outputs: Array<OperationParameter>): void {
+    public createOutputsList(outputs: OperationParameter[]): void {
         this.outputs = {
-            listToscaDataDefinition: _.map(outputs, output => {
+            listToscaDataDefinition: _.map(outputs, (output) => {
                 delete output.inputId;
                 return output;
             })
@@ -84,7 +84,7 @@ export class BEOperationModel {
     }
 }
 
-export class OperationModel extends BEOperationModel{
+export class OperationModel extends BEOperationModel {
     interfaceType: string;
     interfaceId: string;
     operationType: string;
@@ -103,7 +103,7 @@ export class OperationModel extends BEOperationModel{
 
     milestones: Object;
 
-    protected OperationTypeEnum: Array<String> = [
+    protected OperationTypeEnum: String[] = [
         'Create',
         'Delete',
         'Instantiate',
@@ -135,13 +135,13 @@ export class OperationModel extends BEOperationModel{
         return displayType(this.interfaceType);
     }
 
-    public createInputParamsList(inputParams: Array<OperationParameter>): void {
+    public createInputParamsList(inputParams: OperationParameter[]): void {
         this.inputParams = {
             listToscaDataDefinition: inputParams
         };
     }
 
-    public createOutputParamsList(outputParams: Array<OperationParameter>): void {
+    public createOutputParamsList(outputParams: OperationParameter[]): void {
         this.outputParams = {
             listToscaDataDefinition: outputParams
         };
@@ -155,7 +155,7 @@ export interface CreateOperationResponse extends OperationModel {
 export class InterfaceModel {
     type: string;
     uniqueId: string;
-    operations: Array<OperationModel>;
+    operations: OperationModel[];
 
     constructor(interf?: any) {
         if (interf) {
@@ -170,4 +170,4 @@ export class InterfaceModel {
     }
 }
 
-const displayType = (type:string) => type && type.substr(type.lastIndexOf('.') + 1);
+const displayType = (type: string) => type && type.substr(type.lastIndexOf('.') + 1);

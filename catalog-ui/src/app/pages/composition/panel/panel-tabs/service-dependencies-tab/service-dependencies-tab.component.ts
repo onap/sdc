@@ -19,26 +19,26 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {Component, Input, OnInit} from '@angular/core';
-import {Store} from '@ngxs/store';
-import {CapabilitiesGroup, Capability} from 'app/models/capability';
-import {Component as TopologyTemplate} from 'app/models/components/component';
-import {ComponentInstance} from 'app/models/components-instances/component-instance';
-import {FullComponentInstance} from 'app/models/components-instances/full-component-instance';
-import {PropertiesGroup, PropertyModel} from 'app/models/properties';
-import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
-import {ResourceType} from 'app/utils/constants';
-import {DEPENDENCY_EVENTS} from 'app/utils/constants';
-import {ComponentMetadata} from '../../../../../models/component-metadata';
-import {ServiceInstanceObject} from '../../../../../models/service-instance-properties-and-interfaces';
-import {EventListenerService} from '../../../../../services/event-listener.service';
-import {TopologyTemplateService} from '../../../../../services/component-services/topology-template.service';
-import {ComponentInstanceService} from '../../../../../services/component-instance-services/component-instance.service';
-import {ComponentGenericResponse} from '../../../../../services/responses/component-generic-response';
-import {WorkspaceService} from '../../../../workspace/workspace.service';
-import {SelectedComponentType} from '../../../common/store/graph.actions';
-import {CompositionService} from '../../../composition.service';
-import {FilterConstraint} from "../../../../../models/filter-constraint";
+import { Component, Input, OnInit } from '@angular/core';
+import { Store } from '@ngxs/store';
+import { CapabilitiesGroup, Capability } from 'app/models/capability';
+import { ComponentInstance } from 'app/models/components-instances/component-instance';
+import { FullComponentInstance } from 'app/models/components-instances/full-component-instance';
+import { Component as TopologyTemplate } from 'app/models/components/component';
+import { PropertiesGroup, PropertyModel } from 'app/models/properties';
+import { PropertyBEModel } from 'app/models/properties-inputs/property-be-model';
+import { ResourceType } from 'app/utils/constants';
+import { DEPENDENCY_EVENTS } from 'app/utils/constants';
+import { ComponentMetadata } from '../../../../../models/component-metadata';
+import { FilterConstraint } from '../../../../../models/filter-constraint';
+import { ServiceInstanceObject } from '../../../../../models/service-instance-properties-and-interfaces';
+import { ComponentInstanceService } from '../../../../../services/component-instance-services/component-instance.service';
+import { TopologyTemplateService } from '../../../../../services/component-services/topology-template.service';
+import { EventListenerService } from '../../../../../services/event-listener.service';
+import { ComponentGenericResponse } from '../../../../../services/responses/component-generic-response';
+import { WorkspaceService } from '../../../../workspace/workspace.service';
+import { SelectedComponentType } from '../../../common/store/graph.actions';
+import { CompositionService } from '../../../composition.service';
 
 @Component({
     selector: 'service-dependencies-tab',
@@ -55,7 +55,7 @@ export class ServiceDependenciesTabComponent implements OnInit {
     componentInstanceProperties: PropertiesGroup;
     componentInstanceCapabilityProperties: CapabilitiesGroup;
     metaData: ComponentMetadata;
-    componentInstanceCapabilitiesMap : Map<string, PropertyModel[]> = new Map();
+    componentInstanceCapabilitiesMap: Map<string, PropertyModel[]> = new Map();
 
     @Input() isViewOnly: boolean;
     @Input() componentType: SelectedComponentType;
@@ -76,7 +76,7 @@ export class ServiceDependenciesTabComponent implements OnInit {
         this.initInstancesWithProperties();
         this.loadConstraints();
         this.initInstancesWithProperties();
-        this.initInstancesWithCapabilityProperties()
+        this.initInstancesWithCapabilityProperties();
     }
 
     public loadConstraints = (): void => {
@@ -89,12 +89,12 @@ export class ServiceDependenciesTabComponent implements OnInit {
         this.eventListenerService.notifyObservers(DEPENDENCY_EVENTS.ON_DEPENDENCY_CHANGE, isChecked);
     }
 
-    public updateSelectedInstanceConstraints = (constraintsList:Array<FilterConstraint>):void => {
+    public updateSelectedInstanceConstraints = (constraintsList: FilterConstraint[]): void => {
         this.componentInstancesConstraints[this.component.uniqueId].properties = constraintsList;
         this.selectedInstanceConstraints = this.componentInstancesConstraints[this.component.uniqueId].properties;
     }
 
-    public updateSelectedInstanceCapabilitiesConstraints = (constraintsList:Array<FilterConstraint>):void => {
+    public updateSelectedInstanceCapabilitiesConstraints = (constraintsList: FilterConstraint[]): void => {
         this.componentInstancesConstraints[this.component.uniqueId].capabilities = constraintsList;
         this.selectedInstanceConstraints = this.componentInstancesConstraints[this.component.uniqueId].capabilities;
     }
@@ -103,7 +103,7 @@ export class ServiceDependenciesTabComponent implements OnInit {
         if (this.component instanceof FullComponentInstance && this.isInput(this.component.resourceType)) {
             this.componentInstanceService
             .getComponentInstanceInputsByIdAndType(this.metaData.uniqueId, this.metaData.componentType, this.component as ComponentInstance)
-            .subscribe(response => {
+            .subscribe((response) => {
                 this.selectedInstanceProperties = response;
             });
         } else {
@@ -114,7 +114,7 @@ export class ServiceDependenciesTabComponent implements OnInit {
         }
     }
 
-    private isInput = (instanceType:string):boolean =>{
+    private isInput = (instanceType: string): boolean => {
         return instanceType === ResourceType.VF || instanceType === ResourceType.PNF || instanceType === ResourceType.CVFC || instanceType === ResourceType.CR;
     }
 

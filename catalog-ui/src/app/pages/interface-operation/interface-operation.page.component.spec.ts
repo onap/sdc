@@ -17,11 +17,11 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+import { WorkspaceMode } from 'app/utils/constants';
 import 'rxjs/add/observable/forkJoin';
 import 'rxjs/add/observable/of';
-import {Observable} from 'rxjs/Observable';
-import {WorkspaceMode} from 'app/utils/constants';
-import {InterfaceOperationComponent} from './interface-operation.page.component';
+import { Observable } from 'rxjs/Observable';
+import { InterfaceOperationComponent } from './interface-operation.page.component';
 
 function makeComponent(overrides: any = {}) {
     return Object.assign({

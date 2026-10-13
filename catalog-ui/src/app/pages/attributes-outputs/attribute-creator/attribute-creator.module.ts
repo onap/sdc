@@ -18,13 +18,13 @@
  * ============LICENSE_END=========================================================
  */
 
-import {CommonModule} from '@angular/common';
-import {NgModule} from '@angular/core';
-import {FormsModule} from '@angular/forms';
-import {FormElementsModule} from 'app/components/ui/form-components/form-elements.module';
-import {UiElementsModule} from 'app/components/ui/ui-elements.module';
-import {TranslateModule} from '../../../shared/translator/translate.module';
-import {AttributeCreatorComponent} from './attribute-creator.component';
+import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { FormElementsModule } from 'app/components/ui/form-components/form-elements.module';
+import { UiElementsModule } from 'app/components/ui/ui-elements.module';
+import { TranslateModule } from '../../../shared/translator/translate.module';
+import { AttributeCreatorComponent } from './attribute-creator.component';
 
 @NgModule({
   declarations: [

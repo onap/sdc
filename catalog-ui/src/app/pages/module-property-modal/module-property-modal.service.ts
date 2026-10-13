@@ -18,15 +18,15 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
+import { Component } from 'app/models/components/component';
+import { DisplayModule } from 'app/models/modules/base-module';
+import { PropertyModel } from 'app/models/properties';
+import { PropertyBEModel } from 'app/models/properties-inputs/property-be-model';
+import { ComponentInstanceService } from 'app/services/component-instance-services/component-instance.service';
 import * as _ from 'lodash';
-import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/do';
-import {Component} from 'app/models/components/component';
-import {DisplayModule} from 'app/models/modules/base-module';
-import {PropertyModel} from 'app/models/properties';
-import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
-import {ComponentInstanceService} from 'app/services/component-instance-services/component-instance.service';
+import { Observable } from 'rxjs/Observable';
 
 /**
  * BE-call routing for the module/group property modal, ported from the AngularJS
@@ -42,8 +42,8 @@ export class ModulePropertyModalService {
     constructor(private componentInstanceService: ComponentInstanceService) {
     }
 
-    public save(component: Component, selectedModule: DisplayModule, property: PropertyModel): Observable<Array<PropertyBEModel>> {
-        const beCall: Observable<Array<PropertyBEModel>> = component.isResource()
+    public save(component: Component, selectedModule: DisplayModule, property: PropertyModel): Observable<PropertyBEModel[]> {
+        const beCall: Observable<PropertyBEModel[]> = component.isResource()
             ? this.componentInstanceService.updateComponentGroupInstanceProperties(
                 component.componentType, component.uniqueId, selectedModule.uniqueId, [property])
             // Service: find the component instance whose groupInstances contain this group instance

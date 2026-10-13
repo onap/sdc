@@ -17,9 +17,9 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-import {of} from 'rxjs';
-import {WorkspaceMode} from 'app/utils/constants';
-import {NetworkCallFlowTabComponent} from '../network-call-flow-tab.component';
+import { WorkspaceMode } from 'app/utils/constants';
+import { of } from 'rxjs';
+import { NetworkCallFlowTabComponent } from '../network-call-flow-tab.component';
 
 function makeRegistry() {
     return {

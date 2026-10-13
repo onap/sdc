@@ -1,24 +1,22 @@
-import {SdcConfigToken} from "../../config/sdc-config.config";
-import {SdcMenuToken} from "../../config/sdc-menu.config";
+import { SdcConfigToken } from '../../config/sdc-config.config';
+import { SdcMenuToken } from '../../config/sdc-menu.config';
 
-
-import {async, ComponentFixture, TestBed} from "@angular/core/testing";
-import {HomeComponent} from "./home.component";
-import {ConfigureFn, configureTests} from "../../../jest/test-config.helper";
-import {NO_ERRORS_SCHEMA} from "@angular/core";
-import {TranslateService} from "../../shared/translator/translate.service";
-import {ImportVSPService} from '../../components/modals/onboarding-modal/import-vsp.service';
-import {AuthenticationService} from '../../services/authentication.service';
-import {CacheService} from '../../services/cache.service';
-import {ResourceService} from '../../services/component-services/resource.service';
-import {HomeService} from '../../services/home.service';
-import {ModalService} from '../../services/modal.service';
-import {ModalsHandler} from '../../utils/modals-handler';
-import {SdcUiServices} from "onap-ui-angular";
-import {ComponentType, ResourceType} from "../../utils/constants";
-import {HomeFilter} from "../../models/home-filter";
-import {NavigationService} from "../../services/navigation.service";
-
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { SdcUiServices } from 'onap-ui-angular';
+import { ConfigureFn, configureTests } from '../../../jest/test-config.helper';
+import { ImportVSPService } from '../../components/modals/onboarding-modal/import-vsp.service';
+import { HomeFilter } from '../../models/home-filter';
+import { AuthenticationService } from '../../services/authentication.service';
+import { CacheService } from '../../services/cache.service';
+import { ResourceService } from '../../services/component-services/resource.service';
+import { HomeService } from '../../services/home.service';
+import { ModalService } from '../../services/modal.service';
+import { NavigationService } from '../../services/navigation.service';
+import { TranslateService } from '../../shared/translator/translate.service';
+import { ComponentType, ResourceType } from '../../utils/constants';
+import { ModalsHandler } from '../../utils/modals-handler';
+import { HomeComponent } from './home.component';
 
 describe('home component', () => {
 
@@ -28,41 +26,40 @@ describe('home component', () => {
 
     let importVspService: Partial<ImportVSPService>;
     let mockStateService;
-    let modalServiceMock :Partial<SdcUiServices.ModalService>;
-    let modalServiceMock_ :Partial<ModalService>;
-    let translateServiceMock : Partial<TranslateService>;
+    let modalServiceMock: Partial<SdcUiServices.ModalService>;
+    let modalServiceMock_: Partial<ModalService>;
+    let translateServiceMock: Partial<TranslateService>;
     let foldersItemsMenuMock;
-    let homeFilterMock :Partial<HomeFilter>;
+    let homeFilterMock: Partial<HomeFilter>;
     let foldersMock;
     let loaderServiceMock;
     let resourceServiceMock: Partial<ResourceService>;
-
 
     beforeEach(
         async(() => {
             modalServiceMock = {
                 openWarningModal: jest.fn()
-            }
+            };
 
             mockStateService = {
                 go: jest.fn(),
                 current: {name: 'dashboard'},
                 params: {},
                 includes: jest.fn()
-            }
+            };
 
             translateServiceMock = {
                 translate: jest.fn()
-            }
+            };
 
             homeFilterMock = {
                 search: jest.fn,
                 toUrlParam: jest.fn()
-            }
+            };
 
             foldersMock = {
                 setSelected: jest.fn()
-            }
+            };
 
             loaderServiceMock = {
                 activate: jest.fn(),
@@ -73,13 +70,13 @@ describe('home component', () => {
                 checkout: jest.fn()
             };
 
-            const configure: ConfigureFn = testBed => {
+            const configure: ConfigureFn = (testBed) => {
                 testBed.configureTestingModule({
                     declarations: [HomeComponent],
                     imports: [],
                     schemas: [NO_ERRORS_SCHEMA],
                     providers: [
-                        {provide: SdcConfigToken, useValue: {"csarFileExtension":"csar", "toscaFileExtension":"yaml,yml"}},
+                        {provide: SdcConfigToken, useValue: {csarFileExtension: 'csar', toscaFileExtension: 'yaml,yml'}},
                         {provide: SdcMenuToken, useValue: {}},
                         {provide: NavigationService, useValue: {navigate: mockStateService.go, getParams: () => mockStateService.params, getCurrentStateName: () => mockStateService.current.name, includes: mockStateService.includes}},
                         {provide: HomeService, useValue: {}},
@@ -96,12 +93,11 @@ describe('home component', () => {
                 });
             };
 
-            configureTests(configure).then(testBed => {
+            configureTests(configure).then((testBed) => {
                 fixture = testBed.createComponent(HomeComponent);
             });
         })
     );
-
 
     it('should match current snapshot', () => {
         expect(fixture).toMatchSnapshot();
@@ -109,36 +105,33 @@ describe('home component', () => {
 
     it('should call on home component openCreateModal with null imported file', () => {
         const component = TestBed.createComponent(HomeComponent);
-        let componentType:string = 'test';
-        let importedFile:any = null;
+        const componentType: string = 'test';
+        const importedFile: any = null;
         component.componentInstance.openCreateModal(componentType, importedFile);
         expect(mockStateService.go).toBeCalledWith('workspace.general', {type: componentType.toLowerCase()});
     });
 
-
     it('should call on home component openCreateModal with imported file', () => {
         const component = TestBed.createComponent(HomeComponent);
         component.componentInstance.initEntities = jest.fn();
-        let componentType:string = 'test';
-        let importedFile:any = 'importedFile';
+        const componentType: string = 'test';
+        const importedFile: any = 'importedFile';
         component.componentInstance.openCreateModal(componentType, importedFile);
         expect(component.componentInstance.initEntities).toBeCalledWith(true);
     });
 
-
     it ('should call on home component onImportVf without file without extension', () => {
         const component = TestBed.createComponent(HomeComponent);
-        let file:any = {filename : 'test'};
-        let expectedTitle:string = translateServiceMock.translate("NEW_SERVICE_RESOURCE_ERROR_VALID_CSAR_EXTENSIONS_TITLE");
-        let expectedMessage:string = translateServiceMock.translate("NEW_SERVICE_RESOURCE_ERROR_VALID_CSAR_EXTENSIONS", {"csarFileExtension":"csar"});
+        const file: any = {filename : 'test'};
+        const expectedTitle: string = translateServiceMock.translate('NEW_SERVICE_RESOURCE_ERROR_VALID_CSAR_EXTENSIONS_TITLE');
+        const expectedMessage: string = translateServiceMock.translate('NEW_SERVICE_RESOURCE_ERROR_VALID_CSAR_EXTENSIONS', {csarFileExtension: 'csar'});
         component.componentInstance.onImportVf(file);
         expect(modalServiceMock.openWarningModal).toBeCalledWith(expectedTitle, expectedMessage , 'error-invalid-csar-ext');
     });
 
-
     it ('should call on home component onImportVf with file without extension' , () => {
         const component = TestBed.createComponent(HomeComponent);
-        let file:any = {filename : 'test.csar'};
+        const file: any = {filename : 'test.csar'};
         component.componentInstance.onImportVf(file);
         expect(mockStateService.go).toBeCalledWith('workspace.general', {
             type: ComponentType.RESOURCE.toLowerCase(),
@@ -147,19 +140,18 @@ describe('home component', () => {
         });
     });
 
-
     it ('should call on home component onImportVfc without file without extension', () => {
         const component = TestBed.createComponent(HomeComponent);
-        let file:any = {filename : 'test'};
-        let expectedTitle:string = translateServiceMock.translate("NEW_SERVICE_RESOURCE_ERROR_VALID_TOSCA_EXTENSIONS_TITLE");
-        let expectedMessage:string = translateServiceMock.translate("NEW_SERVICE_RESOURCE_ERROR_VALID_TOSCA_EXTENSIONS", {"toscaFileExtension":"yaml,yml"});
+        const file: any = {filename : 'test'};
+        const expectedTitle: string = translateServiceMock.translate('NEW_SERVICE_RESOURCE_ERROR_VALID_TOSCA_EXTENSIONS_TITLE');
+        const expectedMessage: string = translateServiceMock.translate('NEW_SERVICE_RESOURCE_ERROR_VALID_TOSCA_EXTENSIONS', {toscaFileExtension: 'yaml,yml'});
         component.componentInstance.onImportVfc(file);
         expect(modalServiceMock.openWarningModal).toBeCalledWith(expectedTitle, expectedMessage , 'error-invalid-tosca-ext');
     });
 
     it ('should call on home component onImportVfc with file without extension' , () => {
         const component = TestBed.createComponent(HomeComponent);
-        let file:any = {filename : 'test.yml'};
+        const file: any = {filename : 'test.yml'};
         component.componentInstance.onImportVfc(file);
         expect(mockStateService.go).toBeCalledWith('workspace.general', {
             type: ComponentType.RESOURCE.toLowerCase(),
@@ -185,7 +177,6 @@ describe('home component', () => {
             resourceType: ResourceType.CR
         });
     });
-
 
     it ('should call on home component updateFilter' , () => {
         const component = TestBed.createComponent(HomeComponent);
@@ -252,11 +243,6 @@ describe('home component', () => {
     //     // expect ( "testStr" ).toEqual(homeFilterMock.search.)
     // });
 
-
-
-
-
-
     // it ('should call on home component entitiesCount' , () => {
     //     const component = TestBed.createComponent(HomeComponent);
     //     component.componentInstance.entitiesCount("aaa");
@@ -265,7 +251,6 @@ describe('home component', () => {
     //         resourceType: ResourceType.CR
     //     });
     // });
-
 
     // it('should call on home component notificationIconCallback', () => {
     //     const component = TestBed.createComponent(HomeComponent);
@@ -303,9 +288,5 @@ describe('home component', () => {
             expect(component.componentInstance.isDefaultFilter()).toBe(false);
         });
     });
-
-
-
-
 
 });

@@ -1,11 +1,11 @@
-import {Component, Input, KeyValueDiffer, IterableDiffers, KeyValueDiffers, DoCheck} from '@angular/core';
-import {Service} from "app/models/components/service";
-import {TranslateService} from "app/shared/translator/translate.service";
-import {ForwardingPath} from "app/models/forwarding-path";
-import {DropdownValue} from "app/components/ui/form-components/dropdown/ui-element-dropdown.component";
-import {CompositionService} from "app/pages/composition/composition.service";
-import {EventListenerService} from "app/services/event-listener.service";
-import {GRAPH_EVENTS} from "app/utils/constants";
+import { Component, DoCheck, Input, IterableDiffers, KeyValueDiffer, KeyValueDiffers } from '@angular/core';
+import { DropdownValue } from 'app/components/ui/form-components/dropdown/ui-element-dropdown.component';
+import { Service } from 'app/models/components/service';
+import { ForwardingPath } from 'app/models/forwarding-path';
+import { CompositionService } from 'app/pages/composition/composition.service';
+import { EventListenerService } from 'app/services/event-listener.service';
+import { TranslateService } from 'app/shared/translator/translate.service';
+import { GRAPH_EVENTS } from 'app/utils/constants';
 
 @Component({
     selector: 'service-path-selector',
@@ -21,8 +21,8 @@ export class ServicePathSelectorComponent {
     showAllValue: string;
     showAllId: string = '1';
 
-    paths: Array<ForwardingPath> = [];
-    dropdownOptions: Array<DropdownValue>;
+    paths: ForwardingPath[] = [];
+    dropdownOptions: DropdownValue[];
     differ: KeyValueDiffer<string, ForwardingPath>;
 
     @Input() drawPath: Function;
@@ -38,9 +38,9 @@ export class ServicePathSelectorComponent {
         this.defaultSelectedId = this.hideAllId;
         this.convertPathsToDropdownOptions();
 
-        this.translateService.languageChangedObservable.subscribe(lang => {
-            this.hideAllValue = this.translateService.translate("SERVICE_PATH_SELECTOR_HIDE_ALL_VALUE");
-            this.showAllValue = this.translateService.translate("SERVICE_PATH_SELECTOR_SHOW_ALL_VALUE");
+        this.translateService.languageChangedObservable.subscribe((lang) => {
+            this.hideAllValue = this.translateService.translate('SERVICE_PATH_SELECTOR_HIDE_ALL_VALUE');
+            this.showAllValue = this.translateService.translate('SERVICE_PATH_SELECTOR_SHOW_ALL_VALUE');
             this.convertPathsToDropdownOptions();
         });
 
@@ -54,7 +54,7 @@ export class ServicePathSelectorComponent {
         this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_SERVICE_PATH_CREATED, (createdId) => {
             this.selectedPathId = createdId;
             this.updatePaths();
-        } )
+        } );
 
     }
 
@@ -63,13 +63,13 @@ export class ServicePathSelectorComponent {
         const pathsChanged = this.differ.diff(this.compositionService.forwardingPaths);
 
         if (pathsChanged) {
-            let oldPaths = _.cloneDeep(this.paths);
+            const oldPaths = _.cloneDeep(this.paths);
             this.populatePathsFromService();
 
             if (!(_.isEqual(oldPaths, this.paths))) {
                 this.convertPathsToDropdownOptions();
 
-                let temp = this.selectedPathId;
+                const temp = this.selectedPathId;
                 this.selectedPathId = '-1';
 
                 setTimeout(() => {
@@ -85,7 +85,7 @@ export class ServicePathSelectorComponent {
 
         this.paths = [];
 
-        _.forEach(this.compositionService.forwardingPaths, path => {
+        _.forEach(this.compositionService.forwardingPaths, (path) => {
             this.paths.push(path);
         });
         this.paths.sort((a: ForwardingPath, b: ForwardingPath) => {
@@ -96,7 +96,7 @@ export class ServicePathSelectorComponent {
 
     convertPathsToDropdownOptions(): void {
 
-        let result = [
+        const result = [
             new DropdownValue(this.hideAllId, this.hideAllValue),
             new DropdownValue(this.showAllId, this.showAllValue)
         ];
@@ -119,13 +119,13 @@ export class ServicePathSelectorComponent {
                     break;
 
                 case this.showAllId:
-                    _.forEach(this.paths, path =>
+                    _.forEach(this.paths, (path) =>
                         this.drawPath(path)
                     );
                     break;
 
                 default:
-                    let path = this.paths.find(path =>
+                    const path = this.paths.find((path) =>
                         path.uniqueId === this.selectedPathId
                     );
                     if (!path) {

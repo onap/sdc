@@ -19,18 +19,18 @@
  */
 
 import { Injectable } from '@angular/core';
-import {Component as TopologyTemplate} from 'app/models/components/component';
-import {Service} from 'app/models/components/service';
-import {ComponentInstance} from 'app/models/components-instances/component-instance';
-import {CompositionCiNodeVl} from 'app/models/graph/nodes/composition-graph-nodes/composition-ci-node-vl';
+import { ComponentInstance } from 'app/models/components-instances/component-instance';
+import { Component as TopologyTemplate } from 'app/models/components/component';
+import { Service } from 'app/models/components/service';
 import { CompositionCiServicePathLink } from 'app/models/graph/graph-links/composition-graph-links/composition-ci-service-path-link';
+import { CompositionCiNodeVl } from 'app/models/graph/nodes/composition-graph-nodes/composition-ci-node-vl';
 import { WorkspaceService } from 'app/pages/workspace/workspace.service';
 import { ServiceService } from 'app/services/component-services/service.service';
 import { TopologyTemplateService } from 'app/services/component-services/topology-template.service';
+import { EventListenerService } from 'app/services/event-listener.service';
 import { ServiceGenericResponse } from 'app/services/responses/service-generic-response';
+import { GRAPH_EVENTS } from 'app/utils/constants';
 import { QueueServiceUtils } from 'app/utils/queue-service-utils';
-import {EventListenerService} from 'app/services/event-listener.service';
-import {GRAPH_EVENTS} from 'app/utils/constants';
 import * as _ from 'lodash';
 import { SdcUiServices } from 'onap-ui-angular';
 import { CompositionService } from '../../composition.service';
@@ -67,15 +67,15 @@ export class CompositionGraphNodesUtils {
     public highlightMatchingNodesByName = (cy: Cy.Instance, nameToMatch: string) => {
 
         cy.batch(() => {
-            cy.nodes("[name !@^= '" + nameToMatch + "']").style({'background-image-opacity': 0.4});
-            cy.nodes("[name @^= '" + nameToMatch + "']").style({'background-image-opacity': 1});
+            cy.nodes('[name !@^= \'' + nameToMatch + '\']').style({'background-image-opacity': 0.4});
+            cy.nodes('[name @^= \'' + nameToMatch + '\']').style({'background-image-opacity': 1});
         });
 
     }
 
     // Returns all nodes whose name starts with searchTerm
     public getMatchingNodesByName = (cy: Cy.Instance, nameToMatch: string): Cy.CollectionNodes => {
-        return cy.nodes("[name @^= '" + nameToMatch + "']");
+        return cy.nodes('[name @^= \'' + nameToMatch + '\']');
     }
 
     /**

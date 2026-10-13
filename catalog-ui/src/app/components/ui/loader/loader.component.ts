@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,7 +21,7 @@
 /**
  * Created by rc2122 on 6/6/2017.
  */
-import { Component, Input, ViewContainerRef, SimpleChanges} from "@angular/core";
+import { Component, Input, SimpleChanges, ViewContainerRef } from '@angular/core';
 @Component({
     selector: 'loader',
     templateUrl: './loader.component.html',
@@ -30,19 +30,19 @@ import { Component, Input, ViewContainerRef, SimpleChanges} from "@angular/core"
 export class LoaderComponent {
 
     @Input() display: boolean;
-    @Input() size: string;// small || medium || large
+    @Input() size: string; // small || medium || large
     @Input() relative: boolean; // If is relative is set to true, loader will appear over parent element. Otherwise, will be fixed over the entire page.
-    @Input() loaderDelay: number; //optional - number of ms to delay loader display.
-    
+    @Input() loaderDelay: number; // optional - number of ms to delay loader display.
+
     isVisible: boolean = false;
-    private offset : {
+    private offset: {
         top: string;
         left: string;
         width: string;
         height: string;
     };
 
-    constructor(private viewContainerRef: ViewContainerRef) { 
+    constructor(private viewContainerRef: ViewContainerRef) {
     }
 
     ngOnInit() {
@@ -55,7 +55,7 @@ export class LoaderComponent {
     }
 
     ngOnChanges(changes: SimpleChanges) {
-        if(changes.display){
+        if (changes.display) {
             this.changeLoaderDisplay(this.display);
         }
     }
@@ -63,7 +63,7 @@ export class LoaderComponent {
     private changeLoaderDisplay = (display: boolean): void => {
         if (display) {
             window.setTimeout((): void => {
-                this.display && this.showLoader(); //only show loader if this.display has not changed in the meanwhile.
+                this.display && this.showLoader(); // only show loader if this.display has not changed in the meanwhile.
             }, this.loaderDelay || 0);
         } else {
             this.isVisible = false;
@@ -72,12 +72,12 @@ export class LoaderComponent {
 
     private showLoader = () => {
         if (this.relative === true) {
-            let parentElement = this.viewContainerRef.element.nativeElement.parentElement;
+            const parentElement = this.viewContainerRef.element.nativeElement.parentElement;
             this.offset = {
-                left: (parentElement.offsetLeft !== undefined) ? parentElement.offsetLeft + "px" : undefined,
-                top: (parentElement.offsetTop !== undefined) ? parentElement.offsetTop + "px" : undefined,
-                width: (parentElement.offsetWidth !== undefined) ? parentElement.offsetWidth + "px" : undefined,
-                height: (parentElement.offsetHeight !== undefined) ? parentElement.offsetHeight + "px" : undefined
+                left: (parentElement.offsetLeft !== undefined) ? parentElement.offsetLeft + 'px' : undefined,
+                top: (parentElement.offsetTop !== undefined) ? parentElement.offsetTop + 'px' : undefined,
+                width: (parentElement.offsetWidth !== undefined) ? parentElement.offsetWidth + 'px' : undefined,
+                height: (parentElement.offsetHeight !== undefined) ? parentElement.offsetHeight + 'px' : undefined
             };
         } else {
             this.offset = {
@@ -85,7 +85,7 @@ export class LoaderComponent {
                 top: '0px',
                 width: '100%',
                 height: '100%'
-            }
+            };
         }
         this.isVisible = true;
     }

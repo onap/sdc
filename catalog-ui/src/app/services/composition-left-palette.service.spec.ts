@@ -18,13 +18,13 @@
  * ============LICENSE_END=========================================================
  */
 
-import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
-import {TestBed} from '@angular/core/testing';
-import {LeftPaletteLoaderService} from './composition-left-palette.service';
-import {SdcConfigToken} from '../config/sdc-config.config';
-import {ComponentFactory} from '../utils/component-factory';
-import {EventListenerService} from './event-listener.service';
-import {ComponentType} from '../utils/constants';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { TestBed } from '@angular/core/testing';
+import { SdcConfigToken } from '../config/sdc-config.config';
+import { ComponentFactory } from '../utils/component-factory';
+import { ComponentType } from '../utils/constants';
+import { LeftPaletteLoaderService } from './composition-left-palette.service';
+import { EventListenerService } from './event-listener.service';
 
 const sdcConfig = {
     api: {
@@ -57,11 +57,11 @@ describe('LeftPaletteLoaderService', () => {
 
     it('updateLeftPalette GETs the uicache left-palette URL with internalComponentType param', () => {
         service.loadLeftPanel({componentType: ComponentType.SERVICE} as any);
-        const req = httpMock.expectOne(r => r.url.indexOf(sdcConfig.api.GET_uicache_left_palette) !== -1);
+        const req = httpMock.expectOne((r) => r.url.indexOf(sdcConfig.api.GET_uicache_left_palette) !== -1);
         expect(req.request.params.get('internalComponentType')).toBe(ComponentType.SERVICE);
         req.flush([]);
-        httpMock.expectOne(r => r.url.indexOf('groupTypes') !== -1).flush([]);
-        httpMock.expectOne(r => r.url.indexOf('policyTypes') !== -1).flush([]);
+        httpMock.expectOne((r) => r.url.indexOf('groupTypes') !== -1).flush([]);
+        httpMock.expectOne((r) => r.url.indexOf('policyTypes') !== -1).flush([]);
     });
 
     it('§SS: injected HttpClient is a NON-ENUMERABLE field', () => {
@@ -70,19 +70,19 @@ describe('LeftPaletteLoaderService', () => {
 
     it('groupTypes GET uses baseUrl (root + component_api_root)', () => {
         service.loadLeftPanel({componentType: ComponentType.SERVICE} as any);
-        httpMock.expectOne(r => r.url.indexOf(sdcConfig.api.GET_uicache_left_palette) !== -1).flush([]);
-        const groupReq = httpMock.expectOne(r => r.url.indexOf('groupTypes') !== -1);
+        httpMock.expectOne((r) => r.url.indexOf(sdcConfig.api.GET_uicache_left_palette) !== -1).flush([]);
+        const groupReq = httpMock.expectOne((r) => r.url.indexOf('groupTypes') !== -1);
         expect(groupReq.request.url).toBe('http://localhost/v1/catalog/groupTypes');
         expect(groupReq.request.params.get('internalComponentType')).toBe(ComponentType.SERVICE);
         groupReq.flush([]);
-        httpMock.expectOne(r => r.url.indexOf('policyTypes') !== -1).flush([]);
+        httpMock.expectOne((r) => r.url.indexOf('policyTypes') !== -1).flush([]);
     });
 
     it('policyTypes GET uses baseUrl (root + component_api_root)', () => {
         service.loadLeftPanel({componentType: ComponentType.SERVICE} as any);
-        httpMock.expectOne(r => r.url.indexOf(sdcConfig.api.GET_uicache_left_palette) !== -1).flush([]);
-        httpMock.expectOne(r => r.url.indexOf('groupTypes') !== -1).flush([]);
-        const policyReq = httpMock.expectOne(r => r.url.indexOf('policyTypes') !== -1);
+        httpMock.expectOne((r) => r.url.indexOf(sdcConfig.api.GET_uicache_left_palette) !== -1).flush([]);
+        httpMock.expectOne((r) => r.url.indexOf('groupTypes') !== -1).flush([]);
+        const policyReq = httpMock.expectOne((r) => r.url.indexOf('policyTypes') !== -1);
         expect(policyReq.request.url).toBe('http://localhost/v1/catalog/policyTypes');
         expect(policyReq.request.params.get('internalComponentType')).toBe(ComponentType.SERVICE);
         policyReq.flush([]);

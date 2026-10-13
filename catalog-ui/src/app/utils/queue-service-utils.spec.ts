@@ -20,7 +20,7 @@
 */
 
 import { TestBed } from '@angular/core/testing';
-import { QueueServiceUtils } from './queue-service-utils'
+import { QueueServiceUtils } from './queue-service-utils';
 
 describe('QueueServiceUtils', () => {
     let service: QueueServiceUtils;

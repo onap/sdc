@@ -18,11 +18,11 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-import {NgModule} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {TranslateModule} from 'app/shared/translator/translate.module';
-import {AvailableIconsService} from 'app/services/available-icons.service';
-import {IconsModalComponent} from './icons-modal.component';
+import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { AvailableIconsService } from 'app/services/available-icons.service';
+import { TranslateModule } from 'app/shared/translator/translate.module';
+import { IconsModalComponent } from './icons-modal.component';
 
 @NgModule({
     declarations: [IconsModalComponent],

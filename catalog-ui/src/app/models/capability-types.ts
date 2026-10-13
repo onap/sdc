@@ -14,8 +14,8 @@
  * permissions and limitations under the License.
  */
 
-import {ToscaPresentationData} from "./tosca-presentation";
-import {PropertyModel} from "./properties";
+import { PropertyModel } from './properties';
+import { ToscaPresentationData } from './tosca-presentation';
 
 export class CapabilityTypesMap {
     capabilityTypesMap: CapabilityTypesMapData;
@@ -31,7 +31,7 @@ export class CapabilityTypesMapData {
 
 export class CapabilityTypeModel {
     derivedFrom: string;
-    properties: Array<PropertyModel>;
+    properties: PropertyModel[];
     toscaPresentation: ToscaPresentationData;
 
     constructor(capabilityType?: CapabilityTypeModel) {

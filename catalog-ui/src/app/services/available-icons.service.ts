@@ -8,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,11 +23,11 @@
  * Created by obarda on 2/23/2016.
  */
 'use strict';
-import {Injectable} from "@angular/core";
-import {ComponentType} from "../utils/constants";
+import { Injectable } from '@angular/core';
+import { ComponentType } from '../utils/constants';
 
 interface IAvailableIconsService {
-    getIcons(componentType:ComponentType):Array<string>;
+    getIcons(componentType: ComponentType): string[];
 }
 
 @Injectable()
@@ -35,9 +35,9 @@ export class AvailableIconsService implements IAvailableIconsService {
     constructor() {
     }
 
-    public getIcons = (componentType:string):Array<string> => {
+    public getIcons = (componentType: string): string[] => {
 
-        let icons:Array<string>;
+        let icons: string[];
 
         switch (componentType) {
             case ComponentType.SERVICE:
@@ -88,6 +88,3 @@ export class AvailableIconsService implements IAvailableIconsService {
         return icons;
     }
 }
-
-
-

@@ -17,8 +17,8 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-import {Injectable} from '@angular/core';
-import {AbstractControl, FormControl, FormGroup, ValidatorFn, Validators} from '@angular/forms';
+import { Injectable } from '@angular/core';
+import { AbstractControl, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 
 export interface ValidationPatterns {
     name: RegExp;

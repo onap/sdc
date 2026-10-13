@@ -4,20 +4,20 @@ export interface IItemMenu {
 }
 
 export interface IMenuItemProperties {
-    text:string;
-    group:string;
-    state:string;
-    dist:string;
-    groupname:string;
-    states:Array<any>;
+    text: string;
+    group: string;
+    state: string;
+    dist: string;
+    groupname: string;
+    states: any[];
 }
 
 export class FoldersMenu {
-    private _folders:Array<FoldersItemsMenu> = [];
+    private _folders: FoldersItemsMenu[] = [];
 
-    constructor(folders:Array<IMenuItemProperties>) {
-        let self = this;
-        folders.forEach(function (folder:IMenuItemProperties) {
+    constructor(folders: IMenuItemProperties[]) {
+        const self = this;
+        folders.forEach(function(folder: IMenuItemProperties) {
             if (folder.groupname) {
                 self._folders.push(new FoldersItemsMenuGroup(folder));
             } else {
@@ -27,13 +27,13 @@ export class FoldersMenu {
         self._folders[0].setSelected(true);
     }
 
-    public getFolders():Array<FoldersItemsMenu> {
+    public getFolders(): FoldersItemsMenu[] {
         return this._folders;
     }
 
-    public getCurrentFolder():FoldersItemsMenu {
-        let menuItem:FoldersItemsMenu = undefined;
-        this.getFolders().forEach(function (tmpFolder:FoldersItemsMenu) {
+    public getCurrentFolder(): FoldersItemsMenu {
+        let menuItem: FoldersItemsMenu;
+        this.getFolders().forEach(function(tmpFolder: FoldersItemsMenu) {
             if (tmpFolder.isSelected()) {
                 menuItem = tmpFolder;
             }
@@ -41,8 +41,8 @@ export class FoldersMenu {
         return menuItem;
     }
 
-    public setSelected(folder:FoldersItemsMenu):void {
-        this.getFolders().forEach(function (tmpFolder:FoldersItemsMenu) {
+    public setSelected(folder: FoldersItemsMenu): void {
+        this.getFolders().forEach(function(tmpFolder: FoldersItemsMenu) {
             tmpFolder.setSelected(false);
         });
         folder.setSelected(true);
@@ -50,15 +50,15 @@ export class FoldersMenu {
 }
 
 export class FoldersItemsMenu implements IItemMenu {
-    public text:string;
-    public group:string;
-    public state:string;
-    public dist:string;
-    public states:Array<any>;
+    public text: string;
+    public group: string;
+    public state: string;
+    public dist: string;
+    public states: any[];
 
-    private selected:boolean = false;
+    private selected: boolean = false;
 
-    constructor(menuProperties:IMenuItemProperties) {
+    constructor(menuProperties: IMenuItemProperties) {
         this.text = menuProperties.text;
         this.group = menuProperties.group;
         this.state = menuProperties.state;
@@ -66,28 +66,28 @@ export class FoldersItemsMenu implements IItemMenu {
         this.dist = menuProperties.dist;
     }
 
-    public isSelected():boolean {
+    public isSelected(): boolean {
         return this.selected;
     }
 
-    public setSelected(value:boolean):void {
+    public setSelected(value: boolean): void {
         this.selected = value;
     }
 
-    public isGroup():boolean {
+    public isGroup(): boolean {
         return false;
     }
 }
 
 export class FoldersItemsMenuGroup extends FoldersItemsMenu {
-    public groupname:string;
+    public groupname: string;
 
-    constructor(menuProperties:IMenuItemProperties) {
+    constructor(menuProperties: IMenuItemProperties) {
         super(menuProperties);
         this.groupname = menuProperties.groupname;
     }
 
-    public isGroup():boolean {
+    public isGroup(): boolean {
         return true;
     }
 }

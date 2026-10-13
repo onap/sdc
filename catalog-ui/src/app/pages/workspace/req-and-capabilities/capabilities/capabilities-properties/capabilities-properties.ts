@@ -1,10 +1,9 @@
 
-import { ViewChild, Input, OnInit, Component } from "@angular/core";
-import {SdcUiServices} from "onap-ui-angular";
-import { ModalsHandler } from "../../../../../utils/modals-handler";
-import { WorkspaceService } from "../../../workspace.service";
-import { PropertyModel } from "../../../../../models/properties";
-
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { SdcUiServices } from 'onap-ui-angular';
+import { PropertyModel } from '../../../../../models/properties';
+import { ModalsHandler } from '../../../../../utils/modals-handler';
+import { WorkspaceService } from '../../../workspace.service';
 
 @Component({
     selector: 'capabilities-properties',
@@ -12,7 +11,7 @@ import { PropertyModel } from "../../../../../models/properties";
     styleUrls: ['./capabilities-properties.less', '../../../../../../assets/styles/table-style.less']
 })
 export class CapabilitiesPropertiesComponent {
-    @Input() public capabilitiesProperties: Array<PropertyModel> = [];
+    @Input() public capabilitiesProperties: PropertyModel[] = [];
 
     public capabilityPropertiesColumns = [
         {name: 'Name', prop: 'name', flexGrow: 1},

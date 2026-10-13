@@ -18,16 +18,16 @@
  * ============LICENSE_END=========================================================
  */
 
-import {Injectable} from '@angular/core';
-import {ActivatedRouteSnapshot, Resolve} from '@angular/router';
-import {Component} from 'app/models/components/component';
-import {Resource} from 'app/models/components/resource';
-import {ComponentFactory} from 'app/utils/component-factory';
-import {PREVIOUS_CSAR_COMPONENT} from 'app/utils/constants';
-import {CacheService} from '../../services/cache.service';
-import {NavigationService} from '../../services/navigation.service';
-import {WorkspaceService} from './workspace.service';
+import { Injectable } from '@angular/core';
+import { ActivatedRouteSnapshot, Resolve } from '@angular/router';
+import { Component } from 'app/models/components/component';
+import { Resource } from 'app/models/components/resource';
+import { ComponentFactory } from 'app/utils/component-factory';
+import { PREVIOUS_CSAR_COMPONENT } from 'app/utils/constants';
 import * as _ from 'lodash';
+import { CacheService } from '../../services/cache.service';
+import { NavigationService } from '../../services/navigation.service';
+import { WorkspaceService } from './workspace.service';
 
 /**
  * Port of the `injectComponent` ui-router resolve (app.ts). Every workspace tab depended on it
@@ -49,8 +49,8 @@ export class WorkspaceComponentResolver implements Resolve<Component> {
     }
 
     public resolve(route: ActivatedRouteSnapshot): Promise<Component> | Component {
-        const id: string = route.params['id'];
-        const type: string = route.params['type'];
+        const id: string = route.params.id;
+        const type: string = route.params.type;
         const componentCsar: any = this.navigationService.getParam('componentCsar');
 
         if (id && id.length) { // need to check length in case ID is an empty string

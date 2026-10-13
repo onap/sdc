@@ -1,11 +1,11 @@
-import {CommonModule} from "@angular/common";
-import {NgModule} from "@angular/core";
-import {SdcUiComponentsModule} from "onap-ui-angular";
-import {NgxDatatableModule} from "@swimlane/ngx-datatable";
-import {UiElementsModule} from "../../../components/ui/ui-elements.module";
-import {InformationArtifactPageComponent} from "./information-artifact-page.component";
-import {ArtifactFormModule} from "../../../components/forms/artifacts-form/artifact-form.module";
-import {ArtifactsService} from "../../../components/forms/artifacts-form/artifacts.service";
+import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { SdcUiComponentsModule } from 'onap-ui-angular';
+import { ArtifactFormModule } from '../../../components/forms/artifacts-form/artifact-form.module';
+import { ArtifactsService } from '../../../components/forms/artifacts-form/artifacts.service';
+import { UiElementsModule } from '../../../components/ui/ui-elements.module';
+import { InformationArtifactPageComponent } from './information-artifact-page.component';
 
 @NgModule({
     declarations: [
@@ -24,7 +24,7 @@ import {ArtifactsService} from "../../../components/forms/artifacts-form/artifac
     entryComponents: [
         InformationArtifactPageComponent
     ],
-    providers:[ArtifactsService]
+    providers: [ArtifactsService]
 })
 export class InformationArtifactPageModule {
 }

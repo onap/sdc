@@ -1,5 +1,14 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { NgxsModule } from '@ngxs/store';
+import { GroupInstance } from 'app/models/graph/zones/group-instance';
+import { PolicyInstance } from 'app/models/graph/zones/policy-instance';
+import { TargetUiObject } from 'app/models/ui-models/ui-target-object';
+import { GraphState } from 'app/pages/composition/common/store/graph.state';
+import { PolicyTargetsTabComponent } from 'app/pages/composition/panel/panel-tabs/policy-targets-tab/policy-targets-tab.component';
+import { PoliciesService } from 'app/services/policies.service';
+import { WorkspaceState } from 'app/store/states/workspace.state';
+import { TargetOrMemberType } from 'app/utils/constants';
 import { SdcUiCommon, SdcUiComponents, SdcUiServices } from 'onap-ui-angular';
 import { Observable } from 'rxjs/Rx';
 import { Mock } from 'ts-mockery';
@@ -9,25 +18,13 @@ import { EventListenerService } from '../../../../../services/event-listener.ser
 import { TranslateService } from '../../../../../shared/translator/translate.service';
 import { WorkspaceService } from '../../../../workspace/workspace.service';
 import { CompositionService } from '../../../composition.service';
-import { PolicyTargetsTabComponent } from "app/pages/composition/panel/panel-tabs/policy-targets-tab/policy-targets-tab.component";
-import {PoliciesService} from 'app/services/policies.service';
-import {GroupInstance} from 'app/models/graph/zones/group-instance';
-import {PolicyInstance} from 'app/models/graph/zones/policy-instance';
-import { NgxsModule } from "@ngxs/store";
-import { GraphState } from "app/pages/composition/common/store/graph.state";
-import { WorkspaceState } from "app/store/states/workspace.state";
-import { TargetUiObject } from "app/models/ui-models/ui-target-object";
-import {TargetOrMemberType} from 'app/utils/constants';
-
-
-
 
 describe('policy targets tab component', () => {
 
     let fixture: ComponentFixture<PolicyTargetsTabComponent>;
     let component: PolicyTargetsTabComponent;
 
-    let policiesServiceMock = Mock.of<PoliciesService>(
+    const policiesServiceMock = Mock.of<PoliciesService>(
         {
             updateTargets: jest.fn().mockImplementation((compType, uid, policyUniqueId, updatedTargets) => {
                     if (updatedTargets === undefined) {
@@ -38,7 +35,7 @@ describe('policy targets tab component', () => {
                 }
     )});
 
-    let compositionServiceMock = {
+    const compositionServiceMock = {
         componentInstances: [{uniqueId: '1', name: 'inst1'},
                     {uniqueId: '2', name: 'inst2'},
                     {uniqueId: '3', name: 'inst3'},
@@ -46,32 +43,32 @@ describe('policy targets tab component', () => {
                     {uniqueId: '5', name: 'inst5'}
         ],
         groupInstances : [
-            Mock.of<GroupInstance>({uniqueId: "group1", name: "group1"}),
-            Mock.of<GroupInstance>({uniqueId: "group2", name: "group2"}),
-            Mock.of<GroupInstance>({uniqueId: "group3", name: "group3"})
+            Mock.of<GroupInstance>({uniqueId: 'group1', name: 'group1'}),
+            Mock.of<GroupInstance>({uniqueId: 'group2', name: 'group2'}),
+            Mock.of<GroupInstance>({uniqueId: 'group3', name: 'group3'})
         ]
     };
 
-    let workspaceServiceMock = {
+    const workspaceServiceMock = {
         metadata: Mock.of<ComponentMetadata>()
     };
 
-    let modalServiceMock = {
+    const modalServiceMock = {
         openInfoModal: jest.fn(),
         openCustomModal: jest.fn().mockImplementation(() => { return  {
             innerModalContent: { instance: { existingElements: targetsToAdd }},
             closeModal: jest.fn()
-        }})
+        }; })
     };
 
-    let loaderServiceMock = {
+    const loaderServiceMock = {
         activate: jest.fn(),
         deactivate: jest.fn()
     };
 
     const targetsToAdd = [
-        <TargetUiObject>{uniqueId: '1', name: 'inst1', type: TargetOrMemberType.COMPONENT_INSTANCES},
-        <TargetUiObject>{uniqueId: "group1", name: "group1", type: TargetOrMemberType.GROUPS}
+        {uniqueId: '1', name: 'inst1', type: TargetOrMemberType.COMPONENT_INSTANCES} as TargetUiObject,
+        {uniqueId: 'group1', name: 'group1', type: TargetOrMemberType.GROUPS} as TargetUiObject
     ];
 
     const policyInstanceMock = Mock.of<PolicyInstance>(
@@ -93,12 +90,11 @@ describe('policy targets tab component', () => {
                     {provide: SdcUiServices.LoaderService, useValue: loaderServiceMock }
                 ],
         });
-        
+
         fixture = TestBed.createComponent(PolicyTargetsTabComponent);
         component = fixture.componentInstance;
         component.policy = policyInstanceMock;
     });
-    
 
     it('if there are no existing targets, all component instances AND all groups are available for adding', () => {
         component.targets = [];

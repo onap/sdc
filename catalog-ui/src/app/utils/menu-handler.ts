@@ -20,32 +20,31 @@
  */
 
 'use strict';
-import * as _ from "lodash";
-import {Injectable} from "@angular/core";
-import {WorkspaceMode, ComponentState} from "./constants";
-import {Component} from '../models/components/component';
-import {ResourceNamePipe} from "../pipes/resource-name.pipe";
-import {NavigationService} from "../services/navigation.service";
+import { Injectable } from '@angular/core';
+import * as _ from 'lodash';
+import { Component } from '../models/components/component';
+import { ResourceNamePipe } from '../pipes/resource-name.pipe';
+import { NavigationService } from '../services/navigation.service';
+import { ComponentState, WorkspaceMode } from './constants';
 
 export class MenuItem {
-    text:string;
-    callback:(...args:Array<any>) => Promise<boolean>;
-    state:string;
-    action:string;
-    params:any;
-    isDisabled:boolean;
-    disabledCategory:boolean;
-    disabledRoles:Array<string>;
-    blockedForTypes:Array<string>;  // This item will not be shown for specific components types.
+    text: string;
+    callback: (...args: any[]) => Promise<boolean>;
+    state: string;
+    action: string;
+    params: any;
+    isDisabled: boolean;
+    disabledCategory: boolean;
+    disabledRoles: string[];
+    blockedForTypes: string[];  // This item will not be shown for specific components types.
 
-    //TODO check if needed
-    alertModal:string;
+    // TODO check if needed
+    alertModal: string;
     conformanceLevelModal: boolean; // Call validateConformanceLevel API and shows conformanceLevelModal if necessary, then continue with action or invokes another action
-    confirmationModal:string;       // Open confirmation modal (user should select "OK" or "Cancel"), and continue with the action.
-    url:string;                     // Data added to menu item, in case the function need to use it, example: for function "changeLifecycleState", I need to pass also the state "CHECKOUT" that I want the state to change to.
+    confirmationModal: string;       // Open confirmation modal (user should select "OK" or "Cancel"), and continue with the action.
+    url: string;                     // Data added to menu item, in case the function need to use it, example: for function "changeLifecycleState", I need to pass also the state "CHECKOUT" that I want the state to change to.
 
-
-    constructor(text:string, callback:(...args:Array<any>) => Promise<boolean>, state:string, action:string, params?:any, blockedForTypes?:Array<string>, disabledCategory?:boolean) {
+    constructor(text: string, callback: (...args: any[]) => Promise<boolean>, state: string, action: string, params?: any, blockedForTypes?: string[], disabledCategory?: boolean) {
         this.text = text;
         this.callback = callback;
         this.state = state;
@@ -57,17 +56,17 @@ export class MenuItem {
 }
 
 export class MenuItemGroup {
-    selectedIndex:number;
-    menuItems:Array<MenuItem>;
-    itemClick:boolean;
+    selectedIndex: number;
+    menuItems: MenuItem[];
+    itemClick: boolean;
 
-    constructor(selectedIndex?:number, menuItems?:Array<MenuItem>, itemClick?:boolean) {
+    constructor(selectedIndex?: number, menuItems?: MenuItem[], itemClick?: boolean) {
         this.selectedIndex = selectedIndex;
         this.menuItems = menuItems;
         this.itemClick = itemClick;
     }
 
-    public updateSelectedMenuItemText(newText:string) {
+    public updateSelectedMenuItemText(newText: string) {
         const selectedMenuItem = this.menuItems[this.selectedIndex];
         if (selectedMenuItem) {
             this.menuItems[this.selectedIndex].text = newText;
@@ -75,46 +74,44 @@ export class MenuItemGroup {
     }
 }
 
-
 @Injectable()
 export class MenuHandler {
 
-    constructor(private navigationService:NavigationService) {
+    constructor(private navigationService: NavigationService) {
 
     }
 
-
-    findBreadcrumbComponentIndex = (components:Array<Component>, selected:Component):number => {
+    findBreadcrumbComponentIndex = (components: Component[], selected: Component): number => {
         let selectedItemIdx;
 
         // Search the component in all components by uuid (and not uniqueid, gives access to an assets's minor versions).
-        selectedItemIdx = _.findIndex(components, (item:Component) => {
+        selectedItemIdx = _.findIndex(components, (item: Component) => {
             return item.uuid === selected.uuid;
         });
 
         // If not found search by invariantUUID
         if (selectedItemIdx === -1) {
-            selectedItemIdx = _.findIndex(components, (item:Component) => {
-                //invariantUUID && Certified State matches between major versions
+            selectedItemIdx = _.findIndex(components, (item: Component) => {
+                // invariantUUID && Certified State matches between major versions
                 return item.invariantUUID === selected.invariantUUID && item.lifecycleState === ComponentState.CERTIFIED;
             });
         }
 
         // If not found search by name (name is unique).
         if (selectedItemIdx === -1) {
-            selectedItemIdx = _.findIndex(components, (item:Component) => {
+            selectedItemIdx = _.findIndex(components, (item: Component) => {
                 return item.name === selected.name && item.componentType === selected.componentType;
             });
         }
 
         return selectedItemIdx;
-    };
+    }
 
-    generateBreadcrumbsModelFromComponents = (components:Array<Component>, selected:Component):MenuItemGroup => {
-        let result = new MenuItemGroup(0, [], false);
+    generateBreadcrumbsModelFromComponents = (components: Component[], selected: Component): MenuItemGroup => {
+        const result = new MenuItemGroup(0, [], false);
         if (components) {
             result.selectedIndex = this.findBreadcrumbComponentIndex(components, selected);
-            let clickItemCallback = (component:Component):Promise<boolean> => {
+            const clickItemCallback = (component: Component): Promise<boolean> => {
                 this.navigationService.navigate('workspace.general', {
                     id: component.uniqueId,
                     type: component.componentType.toLowerCase(),
@@ -123,8 +120,8 @@ export class MenuHandler {
                 return Promise.resolve(true);
             };
 
-            components.forEach((component:Component) => {
-                let menuItem = new MenuItem(
+            components.forEach((component: Component) => {
+                const menuItem = new MenuItem(
                     //  component.name,
                     component.getComponentSubType() + ': ' + ResourceNamePipe.getDisplayName(component.name),
                     clickItemCallback,
@@ -140,7 +137,7 @@ export class MenuHandler {
 
             // if component does not exist, then add a temporary menu item for the current component
             if (result.selectedIndex === -1) {
-                let menuItem = new MenuItem(
+                const menuItem = new MenuItem(
                     //  component.name,
                     selected.getComponentSubType() + ': ' + ResourceNamePipe.getDisplayName(selected.name),
                     clickItemCallback,
@@ -153,5 +150,5 @@ export class MenuHandler {
             }
         }
         return result;
-    };
+    }
 }

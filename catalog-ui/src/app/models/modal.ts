@@ -1,14 +1,14 @@
-import {ButtonModel} from 'app/models/button';
+import { ButtonModel } from 'app/models/button';
 
 export class ModalModel {
-    size: string; 'xl|l|md|sm|xsm'
+    size: string; 'xl|l|md|sm|xsm';
     title: string;
     content: any;
-    buttons: Array<ButtonModel>;
-    type: string; 'standard|error|alert'
+    buttons: ButtonModel[];
+    type: string; 'standard|error|alert';
     isMovable: boolean;
 
-    constructor(size?: string, title?: string, content?: any, buttons?: Array<ButtonModel>, type?: string, isMovable?: boolean) {
+    constructor(size?: string, title?: string, content?: any, buttons?: ButtonModel[], type?: string, isMovable?: boolean) {
         this.size = size;
         this.title = title;
         this.content = content;
@@ -17,4 +17,3 @@ export class ModalModel {
         this.isMovable = !!isMovable;
     }
 }
-

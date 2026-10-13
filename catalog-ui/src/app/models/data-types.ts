@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,10 +22,10 @@
  * Created by rcohen on 9/25/2016.
  */
 'use strict';
-import {PropertyBEModel} from "./properties-inputs/property-be-model";
-import {AttributeBEModel} from "./attributes-outputs/attribute-be-model";
-import {Model} from "./model";
-import {PROPERTY_DATA} from "../utils/constants";
+import { PROPERTY_DATA } from '../utils/constants';
+import { AttributeBEModel } from './attributes-outputs/attribute-be-model';
+import { Model } from './model';
+import { PropertyBEModel } from './properties-inputs/property-be-model';
 
 export class DataTypeModel {
 
@@ -36,8 +36,8 @@ export class DataTypeModel {
     description: string;
     creationTime: string;
     modificationTime: string;
-    properties: Array<PropertyBEModel>;
-    attributes: Array<AttributeBEModel>;
+    properties: PropertyBEModel[];
+    attributes: AttributeBEModel[];
     model: Model;
     normative: boolean;
 
@@ -57,7 +57,7 @@ export class DataTypeModel {
         this.modificationTime = dataType.modificationTime;
         if (dataType.properties) {
             this.properties = [];
-            dataType.properties.forEach(property => {
+            dataType.properties.forEach((property) => {
                 this.properties.push(new PropertyBEModel(property));
             });
         }
@@ -66,10 +66,10 @@ export class DataTypeModel {
         this.normative = dataType.normative;
     }
 
-    public toJSON = ():any => {
+    public toJSON = (): any => {
 
         return this;
-    };
+    }
 
     /**
      * Parses the default value to JSON.
@@ -80,7 +80,7 @@ export class DataTypeModel {
         }
         const defaultValue = {};
         if (this.properties) {
-            this.properties.forEach(property => {
+            this.properties.forEach((property) => {
                 const propertyDefaultValue = property.parseDefaultValueToJson();
                 if (propertyDefaultValue != undefined) {
                     defaultValue[property.name] = propertyDefaultValue;
@@ -91,4 +91,3 @@ export class DataTypeModel {
         return defaultValue === {} ? undefined : defaultValue;
     }
 }
-

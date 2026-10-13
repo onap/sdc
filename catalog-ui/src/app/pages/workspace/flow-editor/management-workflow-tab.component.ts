@@ -17,15 +17,15 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject} from '@angular/core';
-import {ArtifactType} from 'app/utils/constants';
-import {CacheService} from 'app/services/cache.service';
-import {ComponentService} from 'app/services/component-services/component.service';
-import {ComponentGenericResponse} from 'app/services/responses/component-generic-response';
-import {SdcConfigToken} from 'app/config/sdc-config.config';
-import {WorkspaceService} from '../workspace.service';
-import {FlowEditorTabBase} from './flow-editor-tab.base';
-import {VendorModel} from './vendor-model';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject } from '@angular/core';
+import { SdcConfigToken } from 'app/config/sdc-config.config';
+import { CacheService } from 'app/services/cache.service';
+import { ComponentService } from 'app/services/component-services/component.service';
+import { ComponentGenericResponse } from 'app/services/responses/component-generic-response';
+import { ArtifactType } from 'app/utils/constants';
+import { WorkspaceService } from '../workspace.service';
+import { FlowEditorTabBase } from './flow-editor-tab.base';
+import { VendorModel } from './vendor-model';
 
 /**
  * Management Workflow workspace tab — renders the internal React "sequence-diagram" flows editor for

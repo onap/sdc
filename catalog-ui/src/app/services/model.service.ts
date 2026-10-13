@@ -20,7 +20,7 @@ import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { ISdcConfig, SdcConfigToken } from '../config/sdc-config.config';
-import {Model} from "../models/model";
+import { Model } from '../models/model';
 
 @Injectable()
 export class ModelService {
@@ -31,15 +31,15 @@ export class ModelService {
     this.baseUrl = sdcConfig.api.root;
   }
 
-  getModels():Observable<Model[]> {
-    return this.http.get<Model[]>(this.baseUrl + "/v1/catalog/model");
+  getModels(): Observable<Model[]> {
+    return this.http.get<Model[]>(this.baseUrl + '/v1/catalog/model');
   }
 
-  getModelsOfType(type: string):Observable<Model[]> {
-    return this.http.get<Model[]>(this.baseUrl + "/v1/catalog/model?modelType=" + type);
+  getModelsOfType(type: string): Observable<Model[]> {
+    return this.http.get<Model[]>(this.baseUrl + '/v1/catalog/model?modelType=' + type);
   }
 
-  getDataTypeModels(typeName: string):Observable<any> {
-    return this.http.get<Array<string>>(this.baseUrl + "/v1/catalog/data-types/" + typeName + "/models");
+  getDataTypeModels(typeName: string): Observable<any> {
+    return this.http.get<string[]>(this.baseUrl + '/v1/catalog/data-types/' + typeName + '/models');
   }
 }

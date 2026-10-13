@@ -19,9 +19,9 @@
  * ============LICENSE_END=========================================================
  */
 
-import {NgModule} from '@angular/core';
-import {RouterModule} from '@angular/router';
-import {routes} from './app.routes';
+import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { routes } from './app.routes';
 
 /**
  * `SdcUrlHandlingStrategy` used to live here, gating which URLs the Angular router was allowed to

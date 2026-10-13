@@ -16,9 +16,9 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-import {Component, OnInit} from '@angular/core';
-import {FormControl, FormGroup} from "@angular/forms";
-import {ModalService} from "../../../services/modal.service";
+import { Component, OnInit } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
+import { ModalService } from '../../../services/modal.service';
 
 @Component({
   selector: 'declare-input',
@@ -27,7 +27,7 @@ import {ModalService} from "../../../services/modal.service";
 export class DeclareInputComponent implements OnInit {
   inputNameForm: FormControl = new FormControl(undefined);
   formGroup: FormGroup = new FormGroup({
-    'inputName': this.inputNameForm,
+    inputName: this.inputNameForm,
   });
   inputName: string;
   defaultInputName: string;

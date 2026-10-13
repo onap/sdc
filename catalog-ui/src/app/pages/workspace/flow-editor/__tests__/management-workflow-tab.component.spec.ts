@@ -17,9 +17,9 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-import {of} from 'rxjs';
-import {WorkspaceMode} from 'app/utils/constants';
-import {ManagementWorkflowTabComponent} from '../management-workflow-tab.component';
+import { WorkspaceMode } from 'app/utils/constants';
+import { of } from 'rxjs';
+import { ManagementWorkflowTabComponent } from '../management-workflow-tab.component';
 
 function makeRegistry() {
     return {

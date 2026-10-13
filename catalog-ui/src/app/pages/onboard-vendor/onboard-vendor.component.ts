@@ -27,11 +27,11 @@ import {
     OnDestroy,
     OnInit
 } from '@angular/core';
+import { SdcConfigToken } from 'app/config/sdc-config.config';
+import { IUserProperties } from 'app/models/user';
+import { CacheService } from 'app/services/cache.service';
+import { MenuItem, MenuItemGroup } from 'app/utils/menu-handler';
 import * as _ from 'lodash';
-import {CacheService} from 'app/services/cache.service';
-import {MenuItem, MenuItemGroup} from 'app/utils/menu-handler';
-import {SdcConfigToken} from 'app/config/sdc-config.config';
-import {IUserProperties} from 'app/models/user';
 // Side-effect import: defines the global window.PunchOutRegistry used below. The old AngularJS
 // <punch-out> directive carried the only require() of this bundle; it was removed with the
 // directive layer, so this consumer must load it itself (the IIFE self-guards, so importing it
@@ -66,7 +66,7 @@ export class OnboardVendorPageComponent implements OnInit, AfterViewInit, OnDest
 
     isLoading: boolean = true;
     vendorData: {breadcrumbs: {selectedKeys: string[]}};
-    topNavMenuModel: Array<MenuItemGroup>;
+    topNavMenuModel: MenuItemGroup[];
     user: IUserProperties;
     version: string;
 
@@ -93,7 +93,7 @@ export class OnboardVendorPageComponent implements OnInit, AfterViewInit, OnDest
         this.vendorData = {breadcrumbs: {selectedKeys: []}};
         this.topNavMenuModel = [];
 
-        window['PunchOutRegistry'].loadOnBoarding(() => {
+        window.PunchOutRegistry.loadOnBoarding(() => {
             if (this.destroyed) { return; }
             this.isLoading = false;
             this.pendingMount = true;
@@ -114,7 +114,7 @@ export class OnboardVendorPageComponent implements OnInit, AfterViewInit, OnDest
         const host = this.getHost();
         if (host && this.mounted) {
             try {
-                window['PunchOutRegistry'].unmount(host);
+                window.PunchOutRegistry.unmount(host);
             } catch (e) {
                 // no-op: nothing mounted yet or already unmounted
             }
@@ -141,7 +141,7 @@ export class OnboardVendorPageComponent implements OnInit, AfterViewInit, OnDest
 
     private doRender(host: any): void {
         const props = this.buildProps();
-        window['PunchOutRegistry'].render(props, host);
+        window.PunchOutRegistry.render(props, host);
         this.mounted = true;
     }
 
@@ -191,7 +191,7 @@ export class OnboardVendorPageComponent implements OnInit, AfterViewInit, OnDest
      * updates vendorData with the new selectedKeys, and re-renders the punch-out
      * so the React app receives the updated breadcrumb path.
      */
-    private updateBreadcrumbsPath = (selectedKeys: Array<string>): Promise<boolean> => {
+    private updateBreadcrumbsPath = (selectedKeys: string[]): Promise<boolean> => {
         const topNavMenuModel = this.topNavMenuModel;
         let startIndex = topNavMenuModel.indexOf(this.firstControlledTopNavMenu);
         if (startIndex === -1) {
@@ -203,15 +203,15 @@ export class OnboardVendorPageComponent implements OnInit, AfterViewInit, OnDest
         this.reRender();
         this.detectChangesSafe();
         return Promise.resolve(true);
-    };
+    }
 
     /**
      * Ported verbatim from OnboardVendorViewModel.handleBreadcrumbsUpdate.
      * Builds an array of MenuItemGroup from the emitted breadcrumb menus and splices
      * them into topNavMenuModel at the firstControlledTopNavMenu anchor.
      */
-    private handleBreadcrumbsUpdate(breadcrumbsMenus: Array<any>): void {
-        let selectedKeys: string[] = [];
+    private handleBreadcrumbsUpdate(breadcrumbsMenus: any[]): void {
+        const selectedKeys: string[] = [];
         const topNavMenus: MenuItemGroup[] = breadcrumbsMenus.map((breadcrumbMenu) => {
             const topNavMenu = new MenuItemGroup();
             topNavMenu.menuItems = breadcrumbMenu.menuItems.map((menuItem: any) =>

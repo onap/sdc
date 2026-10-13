@@ -18,12 +18,12 @@
  * ============LICENSE_END=========================================================
  */
 
-import {ComponentFixture, TestBed} from '@angular/core/testing';
-import {HttpClientTestingModule} from '@angular/common/http/testing';
-import {Error403PageComponent} from './error-403.component';
-import {LegacyCookieService} from 'app/services/legacy/cookie.service';
-import {TranslateModule} from 'app/shared/translator/translate.module';
-import {TranslateServiceConfigToken} from 'app/shared/translator/translate.service.config';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { LegacyCookieService } from 'app/services/legacy/cookie.service';
+import { TranslateModule } from 'app/shared/translator/translate.module';
+import { TranslateServiceConfigToken } from 'app/shared/translator/translate.service.config';
+import { Error403PageComponent } from './error-403.component';
 
 const mockTranslateConfig = {
     filePrefix: '/assets/i18n/',

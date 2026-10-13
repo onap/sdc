@@ -15,27 +15,27 @@
  * permissions and limitations under the License.
  */
 
-import {Component, ComponentRef, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
-import {ButtonModel} from 'app/models/button';
-import {ComponentInstance} from 'app/models/components-instances/component-instance';
-import {ModalModel} from 'app/models/modal';
-import {PropertyModel} from 'app/models/properties';
-import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
-import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
-import {ModalComponent} from 'app/components/ui/modal/modal.component';
-import {FilterType, ServiceDependenciesEditorComponent} from 'app/pages/service-dependencies-editor/service-dependencies-editor.component';
-import {ModalService} from 'app/services/modal.service';
-import {ComponentGenericResponse} from 'app/services/responses/component-generic-response';
-import {TranslateService} from 'app/shared/translator/translate.service';
-import {ComponentMetadata} from '../../../models/component-metadata';
-import {ServiceInstanceObject} from '../../../models/service-instance-properties-and-interfaces';
-import {TopologyTemplateService} from '../../../services/component-services/topology-template.service';
-import {ToscaFilterConstraintType} from "../../../models/tosca-filter-constraint-type.enum";
-import {CompositionService} from "../../../pages/composition/composition.service";
-import {FilterConstraint} from "app/models/filter-constraint";
-import {PropertyFilterConstraintUi} from "../../../models/ui-models/property-filter-constraint-ui";
-import {ConstraintOperatorType, FilterConstraintHelper} from "../../../utils/filter-constraint-helper";
-import {CustomToscaFunction} from "../../../models/default-custom-functions";
+import { Component, ComponentRef, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
+import { ModalComponent } from 'app/components/ui/modal/modal.component';
+import { ButtonModel } from 'app/models/button';
+import { ComponentInstance } from 'app/models/components-instances/component-instance';
+import { FilterConstraint } from 'app/models/filter-constraint';
+import { ModalModel } from 'app/models/modal';
+import { PropertyModel } from 'app/models/properties';
+import { InputBEModel } from 'app/models/properties-inputs/input-be-model';
+import { PropertyBEModel } from 'app/models/properties-inputs/property-be-model';
+import { FilterType, ServiceDependenciesEditorComponent } from 'app/pages/service-dependencies-editor/service-dependencies-editor.component';
+import { ModalService } from 'app/services/modal.service';
+import { ComponentGenericResponse } from 'app/services/responses/component-generic-response';
+import { TranslateService } from 'app/shared/translator/translate.service';
+import { ComponentMetadata } from '../../../models/component-metadata';
+import { CustomToscaFunction } from '../../../models/default-custom-functions';
+import { ServiceInstanceObject } from '../../../models/service-instance-properties-and-interfaces';
+import { ToscaFilterConstraintType } from '../../../models/tosca-filter-constraint-type.enum';
+import { PropertyFilterConstraintUi } from '../../../models/ui-models/property-filter-constraint-ui';
+import { CompositionService } from '../../../pages/composition/composition.service';
+import { TopologyTemplateService } from '../../../services/component-services/topology-template.service';
+import { ConstraintOperatorType, FilterConstraintHelper } from '../../../utils/filter-constraint-helper';
 
 export enum SourceType {
     STATIC = 'static',
@@ -58,10 +58,10 @@ class I18nTexts {
     static updateNodeFilterTxt: string;
     static deleteNodeFilterTxt: string;
     static deleteNodeFilterMsg: string;
-    static validateCapabilitiesTxt: string
-    static validateCapabilitiesMsg: string
-    static validateNodePropertiesTxt: string
-    static validateNodePropertiesMsg: string
+    static validateCapabilitiesTxt: string;
+    static validateCapabilitiesMsg: string;
+    static validateNodePropertiesTxt: string;
+    static validateNodePropertiesMsg: string;
 
     public static translateTexts(translateService) {
             I18nTexts.removeDirectiveModalTitle = translateService.translate('DIRECTIVES_AND_NODE_FILTER_REMOVE_TITLE');
@@ -104,9 +104,8 @@ export class ServiceDependenciesComponent implements OnInit, OnChanges {
     operatorTypes: any[];
     capabilities: string = ToscaFilterConstraintType.CAPABILITIES;
     properties: string = ToscaFilterConstraintType.PROPERTIES;
-    private componentInstancesConstraints: FilterConstraint[] = [];
     isEditable: boolean;
-    customToscaFunctions: Array<CustomToscaFunction>;
+    customToscaFunctions: CustomToscaFunction[];
 
     @Input() readonly: boolean;
     @Input() compositeService: ComponentMetadata;
@@ -118,8 +117,9 @@ export class ServiceDependenciesComponent implements OnInit, OnChanges {
     @Output() updateRulesListEvent: EventEmitter<FilterConstraint[]> = new EventEmitter<FilterConstraint[]>();
     @Output() updateNodeFilterProperties: EventEmitter<FilterConstraint[]> = new EventEmitter<FilterConstraint[]>();
     @Output() updateNodeFilterCapabilities: EventEmitter<PropertyFilterConstraintUi[]> = new EventEmitter<PropertyFilterConstraintUi[]>();
-    @Output() loadRulesListEvent:EventEmitter<any> = new EventEmitter();
+    @Output() loadRulesListEvent: EventEmitter<any> = new EventEmitter();
     @Output() dependencyStatus = new EventEmitter<boolean>();
+    private componentInstancesConstraints: FilterConstraint[] = [];
 
     constructor(private topologyTemplateService: TopologyTemplateService,
                 private modalService: ModalService,
@@ -153,17 +153,6 @@ export class ServiceDependenciesComponent implements OnInit, OnChanges {
         });
     }
 
-    private initCustomToscaFunctions() {
-        if (!this.customToscaFunctions) {
-            this.customToscaFunctions = [];
-            this.topologyTemplateService.getDefaultCustomFunction().toPromise().then((data) => {
-                for (let customFunction of data) {
-                    this.customToscaFunctions.push(new CustomToscaFunction(customFunction));
-                }
-            });
-        }
-    }
-
     ngOnChanges(changes): void {
         if (changes.currentServiceInstance) {
             this.currentServiceInstance = changes.currentServiceInstance.currentValue;
@@ -175,10 +164,6 @@ export class ServiceDependenciesComponent implements OnInit, OnChanges {
         }
     }
 
-    private getActualDirectiveValue = (): string[] => {
-        return this.currentServiceInstance.directives.length > 0 ? this.currentServiceInstance.directives : [];
-    }
-
     public openRemoveDependencyModal = (): ComponentRef<ModalComponent> => {
         const actionButton: ButtonModel = new ButtonModel(I18nTexts.modalApprove, 'blue', this.onUncheckDependency);
         const cancelButton: ButtonModel = new ButtonModel(I18nTexts.modalCancel, 'grey', this.onCloseRemoveDependencyModal);
@@ -186,18 +171,6 @@ export class ServiceDependenciesComponent implements OnInit, OnChanges {
             I18nTexts.removeDirectiveModalText, [actionButton, cancelButton]);
         this.loadNodeFilter();
         return this.modalService.createCustomModal(modalModel);
-    }
-
-    private loadNodeFilter = (): void => {
-        this.topologyTemplateService.getServiceFilterConstraints(this.compositeService.componentType, this.compositeService.uniqueId).subscribe((response) => {
-            if (response.nodeFilterforNode && response.nodeFilterforNode[this.currentServiceInstance.uniqueId]) {
-                this.componentInstancesConstraints = response.nodeFilterforNode;
-                this.constraintProperties = response.nodeFilterforNode[this.currentServiceInstance.uniqueId].properties;
-                this.buildConstraintPropertyLabels();
-                this.constraintCapabilities = response.nodeFilterforNode[this.currentServiceInstance.uniqueId].capabilities;
-                this.buildCapabilityFilterConstraintLabels();
-            }
-        });
     }
 
     onUncheckDependency = (): void => {
@@ -226,22 +199,6 @@ export class ServiceDependenciesComponent implements OnInit, OnChanges {
         this.updateComponentInstance(this.isDependent, rulesListOrig);
     }
 
-    private onRemoveDirective(): void {
-        this.openRemoveDependencyModal().instance.open();
-        this.constraintProperties = [];
-        this.constraintPropertyLabels = [];
-        this.constraintCapabilities = [];
-        this.constraintCapabilityLabels = [];
-    }
-
-    private onEditDirectives(): void {
-        this.isEditable = true;
-    }
-
-    private setDirectiveValue(newDirectiveValues: string[]): void {
-        this.currentServiceInstance.setDirectiveValue(newDirectiveValues);
-    }
-
     updateComponentInstance(isDependentOrigVal: boolean, rulesListOrig: FilterConstraint[]): void {
         this.isLoading = true;
         this.topologyTemplateService.updateComponentInstance(this.compositeService.uniqueId,
@@ -249,7 +206,7 @@ export class ServiceDependenciesComponent implements OnInit, OnChanges {
                                                              this.currentServiceInstance)
                                                              .subscribe((updatedServiceIns: ComponentInstance) => {
             const selectedComponentInstance = this.compositionService.getComponentInstances()
-            .find(componentInstance => componentInstance.uniqueId == this.currentServiceInstance.uniqueId);
+            .find((componentInstance) => componentInstance.uniqueId == this.currentServiceInstance.uniqueId);
             selectedComponentInstance.directives = updatedServiceIns.directives;
             this.currentServiceInstance = new ComponentInstance(updatedServiceIns);
             this.isDependent = this.currentServiceInstance.isDependent();
@@ -278,14 +235,14 @@ export class ServiceDependenciesComponent implements OnInit, OnChanges {
                 this.modalInstance,
                 ServiceDependenciesEditorComponent,
                 {
-                    'currentServiceName': this.currentServiceInstance.name,
-                    'operatorTypes': this.operatorTypes,
-                    'compositeServiceName': this.compositeService.name,
-                    'parentServiceInputs': this.parentServiceInputs,
-                    'parentServiceProperties': this.parentServiceProperties,
-                    'selectedInstanceProperties': this.selectedInstanceProperties,
-                    'customToscaFunctions': this.customToscaFunctions,
-                    'filterType': FilterType.PROPERTY,
+                    currentServiceName: this.currentServiceInstance.name,
+                    operatorTypes: this.operatorTypes,
+                    compositeServiceName: this.compositeService.name,
+                    parentServiceInputs: this.parentServiceInputs,
+                    parentServiceProperties: this.parentServiceProperties,
+                    selectedInstanceProperties: this.selectedInstanceProperties,
+                    customToscaFunctions: this.customToscaFunctions,
+                    filterType: FilterType.PROPERTY,
                 }
             );
             this.modalInstance.instance.open();
@@ -304,14 +261,14 @@ export class ServiceDependenciesComponent implements OnInit, OnChanges {
                 this.modalInstance,
                 ServiceDependenciesEditorComponent,
                 {
-                    'currentServiceName': this.currentServiceInstance.name,
-                    'operatorTypes': this.operatorTypes,
-                    'compositeServiceName': this.compositeService.name,
-                    'parentServiceInputs': this.parentServiceInputs,
-                    'parentServiceProperties': this.parentServiceProperties,
-                    'selectedInstanceProperties': this.selectedInstanceProperties,
-                    'capabilityNameAndPropertiesMap': this.componentInstanceCapabilitiesMap,
-                    'filterType': FilterType.CAPABILITY,
+                    currentServiceName: this.currentServiceInstance.name,
+                    operatorTypes: this.operatorTypes,
+                    compositeServiceName: this.compositeService.name,
+                    parentServiceInputs: this.parentServiceInputs,
+                    parentServiceProperties: this.parentServiceProperties,
+                    selectedInstanceProperties: this.selectedInstanceProperties,
+                    capabilityNameAndPropertiesMap: this.componentInstanceCapabilitiesMap,
+                    filterType: FilterType.CAPABILITY,
                 }
             );
             this.modalInstance.instance.open();
@@ -363,15 +320,15 @@ export class ServiceDependenciesComponent implements OnInit, OnChanges {
             this.modalInstance,
             ServiceDependenciesEditorComponent,
             {
-                'filterConstraint': selectedFilterConstraint,
-                'currentServiceName': this.currentServiceInstance.name,
-                'operatorTypes': this.operatorTypes,
-                'compositeServiceName': this.compositeService.name,
-                'parentServiceInputs': this.parentServiceInputs,
-                'parentServiceProperties': this.parentServiceProperties,
-                'selectedInstanceProperties': this.selectedInstanceProperties,
-                'capabilityNameAndPropertiesMap': this.componentInstanceCapabilitiesMap,
-                'filterType': FilterType.CAPABILITY,
+                filterConstraint: selectedFilterConstraint,
+                currentServiceName: this.currentServiceInstance.name,
+                operatorTypes: this.operatorTypes,
+                compositeServiceName: this.compositeService.name,
+                parentServiceInputs: this.parentServiceInputs,
+                parentServiceProperties: this.parentServiceProperties,
+                selectedInstanceProperties: this.selectedInstanceProperties,
+                capabilityNameAndPropertiesMap: this.componentInstanceCapabilitiesMap,
+                filterType: FilterType.CAPABILITY,
             }
         );
         this.modalInstance.instance.open();
@@ -387,15 +344,15 @@ export class ServiceDependenciesComponent implements OnInit, OnChanges {
             this.modalInstance,
             ServiceDependenciesEditorComponent,
             {
-                'filterConstraint': selectedFilterConstraint,
-                'currentServiceName': this.currentServiceInstance.name,
-                'operatorTypes': this.operatorTypes,
-                'compositeServiceName': this.compositeService.name,
-                'parentServiceInputs': this.parentServiceInputs,
-                'parentServiceProperties': this.parentServiceProperties,
-                'selectedInstanceProperties': this.selectedInstanceProperties,
-                'customToscaFunctions': this.customToscaFunctions,
-                'filterType': FilterType.PROPERTY
+                filterConstraint: selectedFilterConstraint,
+                currentServiceName: this.currentServiceInstance.name,
+                operatorTypes: this.operatorTypes,
+                compositeServiceName: this.compositeService.name,
+                parentServiceInputs: this.parentServiceInputs,
+                parentServiceProperties: this.parentServiceProperties,
+                selectedInstanceProperties: this.selectedInstanceProperties,
+                customToscaFunctions: this.customToscaFunctions,
+                filterType: FilterType.PROPERTY
             }
         );
 
@@ -459,6 +416,54 @@ export class ServiceDependenciesComponent implements OnInit, OnChanges {
         this.modalService.closeCurrentModal();
     }
 
+    openDeleteModal = (constraintType: string, index: number): void => {
+        this.modalService.createActionModal(I18nTexts.deleteNodeFilterTxt, I18nTexts.deleteNodeFilterMsg,
+            I18nTexts.modalDelete, () => this.onDeleteNodeFilter(constraintType, index), I18nTexts.modalCancel).instance.open();
+    }
+
+    private initCustomToscaFunctions() {
+        if (!this.customToscaFunctions) {
+            this.customToscaFunctions = [];
+            this.topologyTemplateService.getDefaultCustomFunction().toPromise().then((data) => {
+                for (const customFunction of data) {
+                    this.customToscaFunctions.push(new CustomToscaFunction(customFunction));
+                }
+            });
+        }
+    }
+
+    private getActualDirectiveValue = (): string[] => {
+        return this.currentServiceInstance.directives.length > 0 ? this.currentServiceInstance.directives : [];
+    }
+
+    private loadNodeFilter = (): void => {
+        this.topologyTemplateService.getServiceFilterConstraints(this.compositeService.componentType, this.compositeService.uniqueId).subscribe((response) => {
+            if (response.nodeFilterforNode && response.nodeFilterforNode[this.currentServiceInstance.uniqueId]) {
+                this.componentInstancesConstraints = response.nodeFilterforNode;
+                this.constraintProperties = response.nodeFilterforNode[this.currentServiceInstance.uniqueId].properties;
+                this.buildConstraintPropertyLabels();
+                this.constraintCapabilities = response.nodeFilterforNode[this.currentServiceInstance.uniqueId].capabilities;
+                this.buildCapabilityFilterConstraintLabels();
+            }
+        });
+    }
+
+    private onRemoveDirective(): void {
+        this.openRemoveDependencyModal().instance.open();
+        this.constraintProperties = [];
+        this.constraintPropertyLabels = [];
+        this.constraintCapabilities = [];
+        this.constraintCapabilityLabels = [];
+    }
+
+    private onEditDirectives(): void {
+        this.isEditable = true;
+    }
+
+    private setDirectiveValue(newDirectiveValues: string[]): void {
+        this.currentServiceInstance.setDirectiveValue(newDirectiveValues);
+    }
+
     private emitEventOnChanges(constraintType: string, response) {
         if (this.properties === constraintType) {
             this.updateNodeFilterProperties.emit(response.properties);
@@ -471,19 +476,14 @@ export class ServiceDependenciesComponent implements OnInit, OnChanges {
         }
     }
 
-    openDeleteModal = (constraintType: string, index: number): void => {
-        this.modalService.createActionModal(I18nTexts.deleteNodeFilterTxt, I18nTexts.deleteNodeFilterMsg,
-            I18nTexts.modalDelete, () => this.onDeleteNodeFilter(constraintType, index), I18nTexts.modalCancel).instance.open();
-    }
-
     private buildConstraintPropertyLabels(): void {
         this.constraintPropertyLabels = [];
         if (!this.constraintProperties) {
             return;
         }
         this.constraintProperties.forEach(
-            constraint => this.constraintPropertyLabels.push(FilterConstraintHelper.buildFilterConstraintLabel(constraint))
-        )
+            (constraint) => this.constraintPropertyLabels.push(FilterConstraintHelper.buildFilterConstraintLabel(constraint))
+        );
     }
 
     private buildCapabilityFilterConstraintLabels(): void {
@@ -492,8 +492,8 @@ export class ServiceDependenciesComponent implements OnInit, OnChanges {
             return;
         }
         this.constraintCapabilities.forEach(
-            constraint => this.constraintCapabilityLabels.push(FilterConstraintHelper.buildFilterConstraintLabel(constraint))
-        )
+            (constraint) => this.constraintCapabilityLabels.push(FilterConstraintHelper.buildFilterConstraintLabel(constraint))
+        );
     }
 
 }

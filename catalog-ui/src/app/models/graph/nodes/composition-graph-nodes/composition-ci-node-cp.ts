@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,33 +18,33 @@
  * ============LICENSE_END=========================================================
  */
 
-import {CompositionCiNodeBase} from "./composition-ci-node-base";
-import {ComponentInstance} from "../../../components-instances/component-instance";
-import {ImageCreatorService} from "app/pages/composition/graph/common/image-creator.service";
-import {getSdcConfig} from "app/config/sdc-config.config.factory";
-import { ImagesUrl, GraphUIObjects} from "../../../../utils/constants";
+import { getSdcConfig } from 'app/config/sdc-config.config.factory';
+import { ImageCreatorService } from 'app/pages/composition/graph/common/image-creator.service';
+import { GraphUIObjects, ImagesUrl } from '../../../../utils/constants';
+import { ComponentInstance } from '../../../components-instances/component-instance';
+import { CompositionCiNodeBase } from './composition-ci-node-base';
 
 export class CompositionCiNodeCp extends CompositionCiNodeBase {
 
-    constructor(instance:ComponentInstance,
-                imageCreator:ImageCreatorService) {
+    constructor(instance: ComponentInstance,
+                imageCreator: ImageCreatorService) {
         super(instance, imageCreator);
         this.initCp();
     }
 
-    private initCp():void {
-        let sdcConfig = getSdcConfig();
+    private initCp(): void {
+        const sdcConfig = getSdcConfig();
         this.imagesPath = this.imagesPath + ImagesUrl.RESOURCE_ICONS;
         this.img =  this.imagesPath + this.componentInstance.icon + '.png';
         this.imgWidth = GraphUIObjects.SMALL_RESOURCE_WIDTH;
-        this.type = "basic-small-node";
-        //if the cp from type cpEndPointInstances create with another template
+        this.type = 'basic-small-node';
+        // if the cp from type cpEndPointInstances create with another template
         if (sdcConfig.cpEndPointInstances.indexOf(this.componentInstance.icon) > -1) {
             this.classes = 'cp-end-point-node';
         } else {
             this.classes = 'cp-node';
         }
-        if(this.archived){
+        if (this.archived) {
             this.classes = this.classes + ' archived';
             return;
         }

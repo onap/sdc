@@ -17,9 +17,9 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-import {Component, EventEmitter, Input, Output, ViewEncapsulation} from "@angular/core";
-import {TopologyTemplateService} from "../../../services/component-services/topology-template.service";
-import {NgSelectModule} from "@ng-select/ng-select";
+import { Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { TopologyTemplateService } from '../../../services/component-services/topology-template.service';
 
 @Component({
   selector: 'select-directives',
@@ -55,7 +55,7 @@ export class SelectDirectivesComponent {
   loadDirectives() {
     this.topologyTemplateService.getDirectiveList().subscribe((data: string[]) => {
       this.directiveOptions = data;
-    })
+    });
   }
 
   onClearDirectives() {

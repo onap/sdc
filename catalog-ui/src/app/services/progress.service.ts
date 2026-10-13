@@ -8,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,51 +24,42 @@
  */
 
 'use strict';
-import {Injectable, NgZone} from "@angular/core";
+import { Injectable, NgZone } from '@angular/core';
 
 @Injectable()
 export class ProgressService {
 
-    public progresses:any = {};
+    public progresses: any = {};
 
-    constructor(private ngZone:NgZone) {
-    }
-
-    private totalProgress:number = 90;
-    private startProgress:number = 10;
-    private onePercentIntervalSeconds:number = 5;
+    private totalProgress: number = 90;
+    private startProgress: number = 10;
+    private onePercentIntervalSeconds: number = 5;
     private createComponentInterval;
 
-    public setProgressValue(name:string, value:number):void {
+    constructor(private ngZone: NgZone) {
+    }
+
+    public setProgressValue(name: string, value: number): void {
         if (!this.progresses[name]) {
             this.progresses[name] = {};
         }
         this.progresses[name].value = value;
     }
 
-    public getProgressValue(name:string):number {
+    public getProgressValue(name: string): number {
         if (this.progresses[name]) {
             return this.progresses[name].value;
         }
         return 0;
     }
 
-    public deleteProgressValue(name:string):void {
+    public deleteProgressValue(name: string): void {
         this.stopCreateComponentInterval();
         delete this.progresses[name];
     }
 
-
-    private stopCreateComponentInterval = ():void => {
-        if (this.createComponentInterval) {
-            clearInterval(this.createComponentInterval);
-            this.createComponentInterval = undefined;
-        }
-    };
-
-
-    public initCreateComponentProgress = (componentId:string):void => {
-        let progressValue:number = this.startProgress;
+    public initCreateComponentProgress = (componentId: string): void => {
+        const progressValue: number = this.startProgress;
         if (!this.getProgressValue(componentId)) {
             this.stopCreateComponentInterval();
             this.setProgressValue(componentId, this.startProgress);
@@ -76,12 +67,12 @@ export class ProgressService {
             // never-settling macrotask (which would hang Protractor/Selenium waitForAngular — see
             // ngUpgrade failure-catalog §B). Re-enter the zone only for the progress-value write so
             // change detection still fires.
-            this.createComponentInterval = this.ngZone.runOutsideAngular(():any =>
-                setInterval(():void => {
-                    //TODO replace getProgressMockData to real data after BE provide the API
-                    let progressValue = this.getProgressMockData(componentId);
+            this.createComponentInterval = this.ngZone.runOutsideAngular((): any =>
+                setInterval((): void => {
+                    // TODO replace getProgressMockData to real data after BE provide the API
+                    const progressValue = this.getProgressMockData(componentId);
                     if (progressValue <= this.totalProgress) {
-                        this.ngZone.run(():void => this.setProgressValue(componentId, progressValue));
+                        this.ngZone.run((): void => this.setProgressValue(componentId, progressValue));
                     } else {
                         /**
                          * Currently the progress is not really checking against the BE.
@@ -89,20 +80,26 @@ export class ProgressService {
                          * stop the interval, so the progress will be kept at 90 until the promise will return value and set
                          * the progress to 100.
                          */
-                        this.ngZone.run(():void => this.deleteProgressValue(componentId));
+                        this.ngZone.run((): void => this.deleteProgressValue(componentId));
                     }
                 }, this.onePercentIntervalSeconds * 1000));
         }
 
-    };
+    }
 
+    private stopCreateComponentInterval = (): void => {
+        if (this.createComponentInterval) {
+            clearInterval(this.createComponentInterval);
+            this.createComponentInterval = undefined;
+        }
+    }
 
-    private getProgressMockData = (id:string):number => {
+    private getProgressMockData = (id: string): number => {
         let progressValue = this.getProgressValue(id);
         if (progressValue > 0) {
             progressValue = progressValue + 1;
         }
-        //if not finish always stay on 90%
+        // if not finish always stay on 90%
         if (progressValue > 90) {
             progressValue = 90;
         }

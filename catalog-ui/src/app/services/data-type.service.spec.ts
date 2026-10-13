@@ -1,12 +1,12 @@
+import { HttpBackend } from '@angular/common/http';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { TestBed } from '@angular/core/testing';
 import 'rxjs/add/operator/map';
-import {TestBed} from '@angular/core/testing';
-import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
-import {HttpBackend} from '@angular/common/http';
-import {DataTypeService} from './data-type.service';
-import {DataTypesService} from './data-types.service';
-import {AuthenticationService} from './authentication.service';
-import {SdcConfigToken} from '../config/sdc-config.config';
-import {mockSdcConfig} from '../../jest/mocks/sdc-config.mock';
+import { mockSdcConfig } from '../../jest/mocks/sdc-config.mock';
+import { SdcConfigToken } from '../config/sdc-config.config';
+import { AuthenticationService } from './authentication.service';
+import { DataTypeService } from './data-type.service';
+import { DataTypesService } from './data-types.service';
 
 describe('DataTypeService', () => {
     let service: DataTypeService;
@@ -117,7 +117,7 @@ describe('DataTypeService', () => {
 
     describe('findById', () => {
         it('should call the correct URL', () => {
-            service.findById('dt-123').subscribe(result => {
+            service.findById('dt-123').subscribe((result) => {
                 expect(result).toEqual({name: 'found', properties: []});
             });
 
@@ -129,7 +129,7 @@ describe('DataTypeService', () => {
 
     describe('findAllProperties', () => {
         it('should call the correct URL', () => {
-            service.findAllProperties('dt-123').subscribe(result => {
+            service.findAllProperties('dt-123').subscribe((result) => {
                 expect(result).toEqual([{name: 'prop1'}]);
             });
 

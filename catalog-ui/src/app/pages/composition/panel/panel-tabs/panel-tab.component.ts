@@ -1,14 +1,14 @@
 import {
-  Component,
-  ViewContainerRef,
-  ViewChild,
-  Input,
-  ComponentRef,
-  ComponentFactoryResolver,
+  AfterViewInit,
   ChangeDetectorRef,
-  OnChanges, OnDestroy, AfterViewInit
+  Component,
+  ComponentFactoryResolver,
+  ComponentRef,
+  Input,
+  OnChanges,
+  OnDestroy, ViewChild, ViewContainerRef
 } from '@angular/core';
-import {Component as TopologyTemplate} from 'app/models/components/component';
+import { Component as TopologyTemplate } from 'app/models/components/component';
 
 // Helper component to add dynamic tabs
 @Component({
@@ -17,17 +17,17 @@ import {Component as TopologyTemplate} from 'app/models/components/component';
 })
 export class PanelTabComponent implements OnChanges, OnDestroy, AfterViewInit {
   @ViewChild('content', { read: ViewContainerRef }) content;
-  @Input() isActive:boolean;
+  @Input() isActive: boolean;
   @Input() panelTabType;
   @Input() input;
-  @Input() isViewOnly:boolean;
-  @Input() component:TopologyTemplate;
+  @Input() isViewOnly: boolean;
+  @Input() component: TopologyTemplate;
   @Input() componentType;
   cmpRef: ComponentRef<any>;
   private isViewInitialized: boolean = false;
 
   constructor(private componentFactoryResolver: ComponentFactoryResolver,
-    private cdRef: ChangeDetectorRef) { }
+              private cdRef: ChangeDetectorRef) { }
 
   updateComponent() {
     if (!this.isViewInitialized || !this.isActive) {
@@ -37,7 +37,7 @@ export class PanelTabComponent implements OnChanges, OnDestroy, AfterViewInit {
       this.cmpRef.destroy();
     }
 
-    let factory = this.componentFactoryResolver.resolveComponentFactory(this.panelTabType);
+    const factory = this.componentFactoryResolver.resolveComponentFactory(this.panelTabType);
     this.cmpRef = this.content.createComponent(factory);
     this.cmpRef.instance.input = this.input;
     this.cmpRef.instance.isViewOnly = this.isViewOnly;

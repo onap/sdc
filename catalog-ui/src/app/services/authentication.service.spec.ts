@@ -1,11 +1,11 @@
-import {TestBed} from '@angular/core/testing';
-import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
-import {AuthenticationService} from './authentication.service';
-import {CookieService} from './cookie.service';
-import {CacheService} from './cache.service';
-import {SdcConfigToken} from '../config/sdc-config.config';
-import {mockSdcConfig} from '../../jest/mocks/sdc-config.mock';
-import {createMockUser} from '../../jest/mocks/user-data.mock';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { TestBed } from '@angular/core/testing';
+import { mockSdcConfig } from '../../jest/mocks/sdc-config.mock';
+import { createMockUser } from '../../jest/mocks/user-data.mock';
+import { SdcConfigToken } from '../config/sdc-config.config';
+import { AuthenticationService } from './authentication.service';
+import { CacheService } from './cache.service';
+import { CookieService } from './cookie.service';
 
 describe('AuthenticationService', () => {
     let service: AuthenticationService;
@@ -51,7 +51,7 @@ describe('AuthenticationService', () => {
     describe('authenticate', () => {
         it('should call the authorize endpoint', () => {
             const mockUser = createMockUser();
-            service.authenticate().subscribe(user => {
+            service.authenticate().subscribe((user) => {
                 expect(user).toEqual(mockUser);
             });
 

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,24 +26,24 @@ export interface ICategoryBase {
     displayName: string;
     normalizedName: string;
     uniqueId: string;
-    models: Array<string>;
-    icons: Array<string>;
+    models: string[];
+    icons: string[];
     metadataKeys: IMetadataKey[];
 
     // custom properties
     filterTerms: string;
     isDisabled: boolean;
-    filteredGroup: Array<IGroup>;
+    filteredGroup: IGroup[];
 }
 
 export interface IMainCategory extends ICategoryBase {
-    subcategories: Array<ISubCategory>;
+    subcategories: ISubCategory[];
     useServiceSubstitutionForNestedServices: boolean;
-    notApplicableMetadataKeys: Array<string>;
+    notApplicableMetadataKeys: string[];
 }
 
 export interface ISubCategory extends ICategoryBase {
-    groupings: Array<ICategoryBase>;
+    groupings: ICategoryBase[];
 }
 
 export interface IGroup extends ICategoryBase {

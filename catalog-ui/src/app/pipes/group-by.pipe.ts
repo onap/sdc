@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,22 +21,22 @@
 /**
  * Created by rc2122 on 5/17/2017.
  */
-import {Pipe, PipeTransform} from '@angular/core';
+import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({name: 'groupBy'})
 export class GroupByPipe implements PipeTransform {
-    transform(value: Array<any>, field: string): Array<any> {
-        if(!value) {
+    transform(value: any[], field: string): any[] {
+        if (!value) {
             return null;
         }
-        const groupedObj = value.reduce((prev, cur)=> {
-            if(!prev[cur[field]]) {
+        const groupedObj = value.reduce((prev, cur) => {
+            if (!prev[cur[field]]) {
                 prev[cur[field]] = [cur];
             } else {
                 prev[cur[field]].push(cur);
             }
             return prev;
         }, {});
-        return Object.keys(groupedObj).map((key:string) => {return { key, value: groupedObj[key] }; });
+        return Object.keys(groupedObj).map((key: string) => ({ key, value: groupedObj[key] }));
     }
 }

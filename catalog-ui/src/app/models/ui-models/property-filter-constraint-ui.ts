@@ -19,10 +19,10 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {FilterConstraint} from "../filter-constraint";
-import {ConstraintOperatorType} from "../../utils/filter-constraint-helper";
-import {ToscaGetFunction} from "../tosca-get-function";
-import {ToscaFunction} from "../tosca-function";
+import { ConstraintOperatorType } from '../../utils/filter-constraint-helper';
+import { FilterConstraint } from '../filter-constraint';
+import { ToscaFunction } from '../tosca-function';
+import { ToscaGetFunction } from '../tosca-get-function';
 
 export class PropertyFilterConstraintUi extends FilterConstraint {
     isValidValue: boolean;

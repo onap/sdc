@@ -1,18 +1,18 @@
-import {async, ComponentFixture, TestBed} from "@angular/core/testing";
-import { NO_ERRORS_SCHEMA} from "@angular/core";
-import {ConfigureFn, configureTests} from "../../../../jest/test-config.helper";
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ConfigureFn, configureTests } from '../../../../jest/test-config.helper';
 
-import {Observable} from "rxjs/Observable";
-import {NgxDatatableModule} from "@swimlane/ngx-datatable";
-import {SdcUiServices, SdcUiCommon} from "onap-ui-angular";
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { SdcUiCommon, SdcUiServices } from 'onap-ui-angular';
 import 'rxjs/add/observable/of';
-import {OnboardingService} from "../../../services/onboarding.service";
-import {TranslateService} from "../../../shared/translator/translate.service";
-import {CacheService} from "../../../services/cache.service";
-import {FileUtilsService} from "../../../services/file-utils.service";
-import {onboardingModalVSPMock, onboardingModalUniqueVSPMock, vspFromServerMock} from "../../../../jest/mocks/onboarding-vsp.mock";
-import {OnboardingModalComponent} from "./onboarding-modal.component";
-import {TranslatePipe} from "../../../shared/translator/translate.pipe";
+import { Observable } from 'rxjs/Observable';
+import { onboardingModalUniqueVSPMock, onboardingModalVSPMock, vspFromServerMock } from '../../../../jest/mocks/onboarding-vsp.mock';
+import { CacheService } from '../../../services/cache.service';
+import { FileUtilsService } from '../../../services/file-utils.service';
+import { OnboardingService } from '../../../services/onboarding.service';
+import { TranslatePipe } from '../../../shared/translator/translate.pipe';
+import { TranslateService } from '../../../shared/translator/translate.service';
+import { OnboardingModalComponent } from './onboarding-modal.component';
 
 describe('onboarding modal component', () => {
 
@@ -28,8 +28,8 @@ describe('onboarding modal component', () => {
         async(() => {
 
             onboardingServiceMock = {
-                getOnboardingComponents: jest.fn().mockImplementation(()=>  Observable.of(onboardingModalUniqueVSPMock)),
-                getComponentFromCsarUuid: jest.fn().mockImplementation(()=>  Observable.of(vspFromServerMock))
+                getOnboardingComponents: jest.fn().mockImplementation(() =>  Observable.of(onboardingModalUniqueVSPMock)),
+                getComponentFromCsarUuid: jest.fn().mockImplementation(() =>  Observable.of(vspFromServerMock))
             };
 
             cacheServiceMock = {
@@ -39,10 +39,9 @@ describe('onboarding modal component', () => {
             loaderServiceMock = {
                 activate: jest.fn(),
                 deactivate: jest.fn()
-            }
+            };
 
-
-            const configure: ConfigureFn = testBed => {
+            const configure: ConfigureFn = (testBed) => {
                 testBed.configureTestingModule({
                     declarations: [OnboardingModalComponent, TranslatePipe],
                     imports: [NgxDatatableModule],
@@ -57,7 +56,7 @@ describe('onboarding modal component', () => {
                     ],
                 });
             };
-            configureTests(configure).then(testBed => {
+            configureTests(configure).then((testBed) => {
                 fixture = testBed.createComponent(OnboardingModalComponent);
             });
         })
@@ -73,7 +72,7 @@ describe('onboarding modal component', () => {
     });
 
     it('should see exactly 1 vsp in onboarding modal and call initOnboardingComponentsList', () => {
-        fixture.componentInstance.currentCsarUUID = "6348841e79a64871ba064ce340a968a4";
+        fixture.componentInstance.currentCsarUUID = '6348841e79a64871ba064ce340a968a4';
         fixture.componentInstance.initOnboardingComponentsList();
         expect(fixture.componentInstance.componentsMetadataList.length).toBe(1);
     });
@@ -86,11 +85,11 @@ describe('onboarding modal component', () => {
 
     it('should filter out 1 vsp when searching and call updateFilter function', () => {
         fixture.componentInstance.initOnboardingComponentsList();
-        let event = {
+        const event = {
             target : {
                 value : 'test new vsp'
             }
-        }
+        };
 
         expect(fixture.componentInstance.componentsMetadataList.length).toBe(2);
         fixture.componentInstance.updateFilter(event);

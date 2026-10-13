@@ -32,7 +32,7 @@ class validationPatterns {
     contactId: RegExp;
     componentName: RegExp;
     string: RegExp;
-    comment:RegExp;
+    comment: RegExp;
     integer: RegExp;
 }
 
@@ -47,16 +47,16 @@ export class ValidationConfiguration {
 }
 
 export class Validation {
-    componentNameValidationPattern:RegExp;
-    contactIdValidationPattern:RegExp;
-    tagValidationPattern:RegExp;
-    VendorReleaseValidationPattern:RegExp;
-    VendorNameValidationPattern:RegExp;
-    VendorModelNumberValidationPattern:RegExp;
-    commentValidationPattern:RegExp;
+    componentNameValidationPattern: RegExp;
+    contactIdValidationPattern: RegExp;
+    tagValidationPattern: RegExp;
+    VendorReleaseValidationPattern: RegExp;
+    VendorNameValidationPattern: RegExp;
+    VendorModelNumberValidationPattern: RegExp;
+    commentValidationPattern: RegExp;
 
-    constructor(validationData?:Validations) {
-        if(validationData) {
+    constructor(validationData?: Validations) {
+        if (validationData) {
             this.commentValidationPattern = validationData.validationPatterns.comment;
             this.componentNameValidationPattern = validationData.validationPatterns.componentName;
             this.contactIdValidationPattern = validationData.validationPatterns.contactId;

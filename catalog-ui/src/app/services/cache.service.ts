@@ -18,37 +18,37 @@
  * ============LICENSE_END=========================================================
  */
 
-import {Injectable} from "@angular/core";
+import { Injectable } from '@angular/core';
 // Deep-imported, NOT via the 'app/utils' barrel: the barrel also re-exports ModalsHandler and
 // ChangeLifecycleStateHandler, whose import graphs reach DataTypeService, which injects
 // AuthenticationService, which imports this file. Through the barrel that cycle is closed and
 // AuthenticationService's design:paramtypes entry in DataTypeService reflects as undefined,
 // so the app throws "Can't resolve all parameters for DataTypeService" and never bootstraps.
-import {Dictionary} from "../utils/dictionary";
+import { Dictionary } from '../utils/dictionary';
 
 @Injectable()
 export class CacheService {
-    private storage:Dictionary<string, any>;
+    private storage: Dictionary<string, any>;
 
     constructor() {
         this.storage = new Dictionary<string, any>();
-    };
+    }
 
-    public get(key:string): any {
+    public get(key: string): any {
         return this.storage.getValue(key);
     }
 
-    public set(key:string, value:any): void {
+    public set(key: string, value: any): void {
         this.storage.setValue(key, value);
     }
 
-    public remove(key:string): void {
+    public remove(key: string): void {
         if (this.storage.containsKey(key)) {
             this.storage.remove(key);
         }
     }
 
-    public contains(key:string): boolean {
+    public contains(key: string): boolean {
         return this.storage.containsKey(key);
     }
 }

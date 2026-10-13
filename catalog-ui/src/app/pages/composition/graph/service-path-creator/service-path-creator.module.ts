@@ -1,10 +1,10 @@
-import { NgModule } from "@angular/core";
-import {CommonModule} from "@angular/common";
-import {ServicePathCreatorComponent} from "./service-path-creator.component";
-import {FormsModule} from "@angular/forms";
-import {FormElementsModule} from "app/components/ui/form-components/form-elements.module";
-import {UiElementsModule} from "app/components/ui/ui-elements.module";
-import {LinkRowComponent} from './link-row/link-row.component'
+import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { FormElementsModule } from 'app/components/ui/form-components/form-elements.module';
+import { UiElementsModule } from 'app/components/ui/ui-elements.module';
+import { LinkRowComponent } from './link-row/link-row.component';
+import { ServicePathCreatorComponent } from './service-path-creator.component';
 @NgModule({
     declarations: [
         ServicePathCreatorComponent,

@@ -4,12 +4,11 @@
 /**
  * Created by ob0695 on 5/2/2018.
  */
-import {Component, Input} from "@angular/core";
+import { Component, Input } from '@angular/core';
 import {
-    VspInstanceUiObject,
-    AutomatedUpgradeInstanceType
-} from "../../automated-upgrade-models/ui-component-to-upgrade";
-
+    AutomatedUpgradeInstanceType,
+    VspInstanceUiObject
+} from '../../automated-upgrade-models/ui-component-to-upgrade';
 
 @Component({
     selector: 'upgrade-list-item-inner-content',
@@ -18,7 +17,7 @@ import {
 })
 export class UpgradeListItemInnerContent {
 
-    @Input() vspInstances:Array<VspInstanceUiObject>;
+    @Input() vspInstances: VspInstanceUiObject[];
 
     automatedUpgradeType = AutomatedUpgradeInstanceType;
 }

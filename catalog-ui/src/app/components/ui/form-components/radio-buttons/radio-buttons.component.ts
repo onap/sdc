@@ -2,7 +2,7 @@
  * Created by rc2122 on 9/4/2017.
  */
 import { Component, Input, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
-import {RadioButtonModel} from 'app/models/radio-button';import {UiElementBaseInterface, UiElementBase} from "../ui-element-base.component";
+import { RadioButtonModel } from 'app/models/radio-button'; import { UiElementBaseInterface, UiElementBase } from '../ui-element-base.component';
 
 @Component({
     selector: 'radio-buttons',
@@ -10,15 +10,14 @@ import {RadioButtonModel} from 'app/models/radio-button';import {UiElementBaseIn
     styleUrls: ['./radio-button.component.less']
 })
 export class RadioButtonComponent  extends UiElementBase implements UiElementBaseInterface {
-    
-    @Input() options:Array<RadioButtonModel>;
-    @Input() readonly:boolean;
-    @Input() direction:string = 'vertical'; //get 'horizontal' | 'vertical'
-    value:any;
-    
-    select(value:any) {
+
+    @Input() options: RadioButtonModel[];
+    @Input() readonly: boolean;
+    @Input() direction: string = 'vertical'; // get 'horizontal' | 'vertical'
+    value: any;
+
+    select(value: any) {
         this.value = value;
         this.onChange();
     }
 }
-

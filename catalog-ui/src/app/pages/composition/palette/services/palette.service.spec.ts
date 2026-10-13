@@ -1,21 +1,21 @@
-import {TestBed} from "@angular/core/testing";
-import {CompositionPaletteService} from "./palette.service";
-import {ISdcConfig, SdcConfigToken} from "../../../../config/sdc-config.config";
-import {WorkspaceService} from "../../../workspace/workspace.service";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient } from '@angular/common/http';
+import { TestBed } from '@angular/core/testing';
+import { ISdcConfig, SdcConfigToken } from '../../../../config/sdc-config.config';
+import { WorkspaceService } from '../../../workspace/workspace.service';
+import { CompositionPaletteService } from './palette.service';
 describe('palette component', () => {
 
     let service: CompositionPaletteService;
 
-    let httpServiceMock: Partial<HttpClient> = {
+    const httpServiceMock: Partial<HttpClient> = {
         get: jest.fn()
-    }
+    };
 
-    let sdcConfigToken: Partial<ISdcConfig> = {
-        "api": {
-            "root": ''
+    const sdcConfigToken: Partial<ISdcConfig> = {
+        api: {
+            root: ''
         }
-    }
+    };
 
     beforeEach(() => {
         TestBed.configureTestingModule({
@@ -38,4 +38,3 @@ describe('palette component', () => {
     //     expect(await service.subscribeToLeftPaletteElements("resources")).toEqual([]);
     // });
 });
-

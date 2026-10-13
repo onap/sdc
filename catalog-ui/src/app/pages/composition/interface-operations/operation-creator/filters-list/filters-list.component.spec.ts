@@ -17,11 +17,11 @@
  *  ============LICENSE_END=========================================================
  */
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { FiltersListComponent } from './filters-list.component';
-import { TranslateModule } from '../../../../../shared/translator/translate.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SdcUiComponentsModule } from 'onap-ui-angular/dist';
+import { TranslateModule } from '../../../../../shared/translator/translate.module';
 import { ToscaFunctionModule } from '../../../../properties-assignment/tosca-function/tosca-function.module';
-import { SdcUiComponentsModule } from "onap-ui-angular/dist";
+import { FiltersListComponent } from './filters-list.component';
 
 describe('FiltersListComponent', () => {
   let component: FiltersListComponent;

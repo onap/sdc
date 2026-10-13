@@ -5,10 +5,10 @@ import { Action, Selector, State, StateContext } from '@ngxs/store';
 import * as _ from 'lodash';
 import { tap } from 'rxjs/operators';
 import { ArtifactModel } from '../../models/artifacts';
-import { ArtifactGroupType } from '../../utils/constants';
 import { TopologyTemplateService } from '../../services/component-services/topology-template.service';
 import { ComponentGenericResponse } from '../../services/responses/component-generic-response';
 import { ServiceGenericResponse } from '../../services/responses/service-generic-response';
+import { ArtifactGroupType } from '../../utils/constants';
 import { CreateOrUpdateArtifactAction, DeleteArtifactAction, GetArtifactsByTypeAction } from '../actions/artifacts.action';
 
 export interface ArtifactsStateModel {
@@ -36,9 +36,9 @@ export class ArtifactsState {
     @Selector()
     static getEnvArtifact(state: ArtifactsStateModel, heatEnvArtifact: ArtifactModel) {
         return (heatEnvArtifact: ArtifactModel) => {
-            _.find(state.deploymentArtifacts, (artifact)=> {
-                return artifact.generatedFromId === heatEnvArtifact.uniqueId
-            })
+            _.find(state.deploymentArtifacts, (artifact) => {
+                return artifact.generatedFromId === heatEnvArtifact.uniqueId;
+            });
         };
     }
 
@@ -58,19 +58,6 @@ export class ArtifactsState {
         };
     }
 
-    private updateArtifactState = (artifactsState: ArtifactModel[], artifactToUpdate: ArtifactModel, updatedArtifact: ArtifactModel) => {
-        if (!artifactToUpdate.uniqueId) { // Create Artifact
-            return [...artifactsState, updatedArtifact]
-        } else { // Update Artifact
-            let artifactToUpdateIndex = _.findIndex(artifactsState, (artifact) => {
-                return artifact.uniqueId === artifactToUpdate.uniqueId
-            })
-            let artifacts = Array.from(artifactsState);
-            artifacts[artifactToUpdateIndex] = updatedArtifact;
-            return [...artifacts];
-        }
-    }
-
     @Action(GetArtifactsByTypeAction)
     getArtifactsByType({getState, patchState}: StateContext<ArtifactsStateModel>, action: GetArtifactsByTypeAction) {
         const state = getState();
@@ -79,22 +66,22 @@ export class ArtifactsState {
                 switch (action.payload.artifactType) {
                     case ArtifactGroupType.INFORMATION:
                         patchState({
-                            artifacts: <ArtifactModel[]>_.values(resp.artifacts)
+                            artifacts: _.values(resp.artifacts) as ArtifactModel[]
                         });
 
                     case ArtifactGroupType.DEPLOYMENT:
                         patchState({
-                            deploymentArtifacts: <ArtifactModel[]>_.values(resp.deploymentArtifacts)
+                            deploymentArtifacts: _.values(resp.deploymentArtifacts) as ArtifactModel[]
                         });
 
                     case ArtifactGroupType.TOSCA:
                         patchState({
-                            toscaArtifacts: <ArtifactModel[]>_.values(resp.toscaArtifacts)
+                            toscaArtifacts: _.values(resp.toscaArtifacts) as ArtifactModel[]
                         });
 
                     case ArtifactGroupType.SERVICE_API:
                         patchState({
-                            serviceApiArtifacts: <ArtifactModel[]>_.values((<ServiceGenericResponse>resp).serviceApiArtifacts)
+                            serviceApiArtifacts: _.values((resp as ServiceGenericResponse).serviceApiArtifacts) as ArtifactModel[]
                         });
                 }
             }));
@@ -136,5 +123,18 @@ export class ArtifactsState {
                         });
                 }
             }));
+    }
+
+    private updateArtifactState = (artifactsState: ArtifactModel[], artifactToUpdate: ArtifactModel, updatedArtifact: ArtifactModel) => {
+        if (!artifactToUpdate.uniqueId) { // Create Artifact
+            return [...artifactsState, updatedArtifact];
+        } else { // Update Artifact
+            const artifactToUpdateIndex = _.findIndex(artifactsState, (artifact) => {
+                return artifact.uniqueId === artifactToUpdate.uniqueId;
+            });
+            const artifacts = Array.from(artifactsState);
+            artifacts[artifactToUpdateIndex] = updatedArtifact;
+            return [...artifacts];
+        }
     }
 }

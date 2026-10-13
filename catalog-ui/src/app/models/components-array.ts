@@ -1,7 +1,7 @@
-import {Service} from "./components/service";
-import {Resource} from "./components/resource";
+import { Resource } from './components/resource';
+import { Service } from './components/service';
 
 export interface IComponentsArray {
-    services:Array<Service>;
-    resources:Array<Resource>;
+    services: Service[];
+    resources: Resource[];
 }

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,42 +22,42 @@
  * Created by obarda on 4/20/2016.
  */
 'use strict';
-import * as _ from "lodash";
-import {RequirementCapabilityModel} from "./capability";
+import * as _ from 'lodash';
+import { RequirementCapabilityModel } from './capability';
 
-//this is an object contains keys, when each key has matching array.
+// this is an object contains keys, when each key has matching array.
 // for example: key = tosca.capabilities.network. and the match array is array of requirements objects
 export class RequirementsGroup {
-    [key: string]: Array<Requirement>;
-    constructor(requirementGroupObj?:RequirementsGroup) {
-        _.forEach(requirementGroupObj, (requirementsArrayObj:Array<Requirement>, instance) => {
+    [key: string]: Requirement[];
+    constructor(requirementGroupObj?: RequirementsGroup) {
+        _.forEach(requirementGroupObj, (requirementsArrayObj: Requirement[], instance) => {
             this[instance] = [];
-            _.forEach(requirementsArrayObj, (requirement:Requirement):void => {
+            _.forEach(requirementsArrayObj, (requirement: Requirement): void => {
                 this[instance].push(new Requirement(requirement));
             });
         });
     }
 }
 
-export class Requirement implements RequirementCapabilityModel{
+export class Requirement implements RequirementCapabilityModel {
 
-    //server data
-    capability:string;
-    name:string;
-    ownerId:string;
-    ownerName:string;
+    // server data
+    capability: string;
+    name: string;
+    ownerId: string;
+    ownerName: string;
     parentName: string;
-    node:string;
-    uniqueId:string;
-    relationship:string;
-    leftOccurrences:string;
-    minOccurrences:string | number;
-    maxOccurrences:string;
-    external:boolean;
-    //custom
-    filterTerm:string;
+    node: string;
+    uniqueId: string;
+    relationship: string;
+    leftOccurrences: string;
+    minOccurrences: string | number;
+    maxOccurrences: string;
+    external: boolean;
+    // custom
+    filterTerm: string;
 
-    constructor(requirement?:Requirement) {
+    constructor(requirement?: Requirement) {
 
         if (requirement) {
             this.capability = requirement.capability;
@@ -77,30 +77,30 @@ export class Requirement implements RequirementCapabilityModel{
         }
     }
 
-    public getTitle():string {
+    public getTitle(): string {
         return this.ownerName + ': ' + this.name;
     }
 
-    public getFullTitle():string {
+    public getFullTitle(): string {
          return this.getTitle() + ': [' + this.minOccurrences + ', ' + this.maxOccurrences + ']';
     }
 
-    public toJSON = ():any => {
+    public toJSON = (): any => {
         this.filterTerm = undefined;
         return this;
-    };
-
-    private initFilterTerm = ():void => {
-        this.filterTerm = (this.name + " ") +
-            (this.ownerName + " " ) +
-            (this.capability ? (this.capability.substring("tosca.capabilities.".length) + " " ) : "") +
-            (this.node ? (this.node.substring("tosca.nodes.".length) + " ") : "") +
-            (this.relationship ? (this.relationship.substring("tosca.relationships.".length) + " ") : "") +
-            this.minOccurrences + "," + this.maxOccurrences;
     }
 
     public isFulfilled() {
         return parseInt(this.leftOccurrences) === 0;
+    }
+
+    private initFilterTerm = (): void => {
+        this.filterTerm = (this.name + ' ') +
+            (this.ownerName + ' ' ) +
+            (this.capability ? (this.capability.substring('tosca.capabilities.'.length) + ' ' ) : '') +
+            (this.node ? (this.node.substring('tosca.nodes.'.length) + ' ') : '') +
+            (this.relationship ? (this.relationship.substring('tosca.relationships.'.length) + ' ') : '') +
+            this.minOccurrences + ',' + this.maxOccurrences;
     }
 }
 
@@ -113,5 +113,3 @@ export class RequirementUI extends Requirement {
         this.isCreatedManually = input.ownerId === componentUniqueId;
     }
 }
-
-

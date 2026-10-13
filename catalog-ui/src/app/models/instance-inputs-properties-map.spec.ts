@@ -18,9 +18,9 @@
  * ============LICENSE_END=========================================================
  */
 
-import {InputModel} from './inputs';
-import {InstancesInputsOrPropertiesMapData, InstancesInputsPropertiesMap} from './instance-inputs-properties-map';
-import {PropertyModel} from './properties';
+import { InputModel } from './inputs';
+import { InstancesInputsOrPropertiesMapData, InstancesInputsPropertiesMap } from './instance-inputs-properties-map';
+import { PropertyModel } from './properties';
 
 // cleanUnnecessaryDataBeforeSending() builds the POST body for createInputsFromInstancesInputs.
 // It used to deep-copy via angular.copy(this, map); it now uses _.cloneDeep(this). The two are

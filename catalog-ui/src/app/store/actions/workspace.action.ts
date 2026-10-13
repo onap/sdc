@@ -5,13 +5,13 @@
 export class UpdateIsViewOnly {
     static readonly type = '[WORKSPACE] UpdateIsViewOnly';
 
-    constructor(public isViewOnly:boolean) {
+    constructor(public isViewOnly: boolean) {
     }
 }
 
 export class UpdateIsDesigner {
     static readonly type = '[WORKSPACE] UpdateIsDesigner';
 
-    constructor(public isDesigner:boolean) {
+    constructor(public isDesigner: boolean) {
     }
 }

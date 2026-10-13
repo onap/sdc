@@ -17,13 +17,13 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
-import {IDropDownOption} from "onap-ui-angular/dist/form-elements/dropdown/dropdown-models";
-import {DropDownComponent} from "onap-ui-angular/dist/components";
-import {PropertyAssignment} from "../../../../../models/properties-inputs/property-assignment";
-import {Observable} from "rxjs";
-import {Operation} from "./model/operation";
-import {FormControl, FormGroup, Validators} from "@angular/forms";
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { DropDownComponent } from 'onap-ui-angular/dist/components';
+import { IDropDownOption } from 'onap-ui-angular/dist/form-elements/dropdown/dropdown-models';
+import { Observable } from 'rxjs';
+import { PropertyAssignment } from '../../../../../models/properties-inputs/property-assignment';
+import { Operation } from './model/operation';
 
 @Component({
   selector: 'app-create-interface-operation',
@@ -31,8 +31,7 @@ import {FormControl, FormGroup, Validators} from "@angular/forms";
   styleUrls: ['./create-interface-operation.component.less']
 })
 export class CreateInterfaceOperationComponent implements OnInit {
-  @Input('interfaceTypeMap') interfaceTypeMap: Map<string, Array<string>>;
-  @Input('operation') private operation: Operation;
+  @Input('interfaceTypeMap') interfaceTypeMap: Map<string, string[]>;
   @Output('addOperation') addOperation: EventEmitter<Operation> = new EventEmitter<Operation>();
   @ViewChild('operationDropdown') operationDropdown: DropDownComponent;
 
@@ -40,22 +39,22 @@ export class CreateInterfaceOperationComponent implements OnInit {
   isLoading: boolean;
   isReadOnly: boolean;
   currentInOutTab: string;
-  interfaceTypeOptions: Array<TypedDropDownOption>;
-  operationOptions: Array<TypedDropDownOption>;
+  interfaceTypeOptions: TypedDropDownOption[];
+  operationOptions: TypedDropDownOption[];
   selectedInterfaceType: TypedDropDownOption;
   selectedOperation: TypedDropDownOption;
   implementation: string;
-  inputs$: Observable<Array<PropertyAssignment>>;
-  inputs: Array<PropertyAssignment>;
+  inputs$: Observable<PropertyAssignment[]>;
+  inputs: PropertyAssignment[];
   inputErrorMap: Map<string, boolean>;
-  validationMessageList: Array<string>;
+  validationMessageList: string[];
   interfaceTypeFormCtrl: FormControl;
   operationTypeFormCtrl: FormControl;
   implementationFormCtrl: FormControl;
 
   TYPE_INPUT = 'Inputs';
   TYPE_OUTPUT = 'Outputs';
-
+  @Input('operation') private operation: Operation;
 
   constructor() {
     this.currentInOutTab = this.TYPE_INPUT;
@@ -90,34 +89,6 @@ export class CreateInterfaceOperationComponent implements OnInit {
     this.isLoading = false;
   }
 
-  private loadInterfaceOptions() {
-    this.interfaceTypeOptions = new Array<TypedDropDownOption>();
-    const interfaceTypeList = Array.from(this.interfaceTypeMap.keys());
-    interfaceTypeList.sort();
-    interfaceTypeList.forEach(interfaceType => {
-      this.interfaceTypeOptions.push(this.createInterfaceDropdownOption(interfaceType));
-    });
-  }
-
-  private loadOperationOptions() {
-    this.operationOptions = new Array<TypedDropDownOption>();
-    if (!this.selectedInterfaceType) {
-      return;
-    }
-
-    const operationArray: Array<string> = this.interfaceTypeMap.get(this.selectedInterfaceType.value);
-    operationArray.sort();
-    operationArray.forEach(operationName =>
-        this.operationOptions.push(new TypedDropDownOption(operationName, operationName))
-    );
-    this.operationDropdown.allOptions = <IDropDownOption[]> this.operationOptions;
-  }
-
-  private loadOperationInputs() {
-    this.inputs = new Array<PropertyAssignment>();
-    this.inputs$ = Observable.of(this.inputs);
-  }
-
   descriptionValue(): string {
     return this.operation.description;
   }
@@ -127,23 +98,14 @@ export class CreateInterfaceOperationComponent implements OnInit {
   }
 
   onSelectInterfaceType(selectedOption: IDropDownOption) {
-    this.selectedInterfaceType = <TypedDropDownOption> selectedOption;
+    this.selectedInterfaceType = (selectedOption as TypedDropDownOption);
     this.operation.interfaceType = selectedOption.value;
     this.interfaceTypeFormCtrl.setValue(this.operation.interfaceType);
     this.loadOperationOptions();
   }
 
-  private createInterfaceDropdownOption(type: string) {
-    let label = type;
-    const lastDot = label.lastIndexOf('.');
-    if (lastDot > -1) {
-      label = label.substr(lastDot + 1);
-    }
-    return new TypedDropDownOption(type, label);
-  }
-
   onSelectOperation(selectedOption: IDropDownOption) {
-    this.selectedOperation = <TypedDropDownOption> selectedOption;
+    this.selectedOperation = (selectedOption as TypedDropDownOption);
     this.operation.operationType = selectedOption.value;
     this.operationTypeFormCtrl.setValue(this.operation.operationType);
   }
@@ -175,14 +137,6 @@ export class CreateInterfaceOperationComponent implements OnInit {
     this.addOperation.emit(null);
   }
 
-  private isValid(): boolean {
-    if (this.form.invalid) {
-      return false;
-    }
-
-    return this.validateInputs();
-  }
-
   validateInputs(): boolean {
     this.inputErrorMap = new Map<string, boolean>();
     if (!this.inputs) {
@@ -190,7 +144,7 @@ export class CreateInterfaceOperationComponent implements OnInit {
     }
 
     const inputNameSet = new Set<string>();
-    this.inputs.forEach(value => {
+    this.inputs.forEach((value) => {
       if (value.name) {
         value.name = value.name.trim();
         if (!value.name) {
@@ -202,7 +156,7 @@ export class CreateInterfaceOperationComponent implements OnInit {
       if (value.value) {
         value.value = value.value.trim();
       }
-      //for later check of duplicate input name
+      // for later check of duplicate input name
       inputNameSet.add(value.name);
     });
 
@@ -211,6 +165,51 @@ export class CreateInterfaceOperationComponent implements OnInit {
     }
 
     return this.inputErrorMap.size == 0;
+  }
+
+  private loadInterfaceOptions() {
+    this.interfaceTypeOptions = new Array<TypedDropDownOption>();
+    const interfaceTypeList = Array.from(this.interfaceTypeMap.keys());
+    interfaceTypeList.sort();
+    interfaceTypeList.forEach((interfaceType) => {
+      this.interfaceTypeOptions.push(this.createInterfaceDropdownOption(interfaceType));
+    });
+  }
+
+  private loadOperationOptions() {
+    this.operationOptions = new Array<TypedDropDownOption>();
+    if (!this.selectedInterfaceType) {
+      return;
+    }
+
+    const operationArray: string[] = this.interfaceTypeMap.get(this.selectedInterfaceType.value);
+    operationArray.sort();
+    operationArray.forEach((operationName) =>
+        this.operationOptions.push(new TypedDropDownOption(operationName, operationName))
+    );
+    this.operationDropdown.allOptions = (this.operationOptions as IDropDownOption[]);
+  }
+
+  private loadOperationInputs() {
+    this.inputs = new Array<PropertyAssignment>();
+    this.inputs$ = Observable.of(this.inputs);
+  }
+
+  private createInterfaceDropdownOption(type: string) {
+    let label = type;
+    const lastDot = label.lastIndexOf('.');
+    if (lastDot > -1) {
+      label = label.substr(lastDot + 1);
+    }
+    return new TypedDropDownOption(type, label);
+  }
+
+  private isValid(): boolean {
+    if (this.form.invalid) {
+      return false;
+    }
+
+    return this.validateInputs();
   }
 
 }

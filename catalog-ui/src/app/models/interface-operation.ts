@@ -19,11 +19,11 @@
 
 'use strict';
 
-import {ArtifactModel} from "./artifacts";
-import {SchemaPropertyGroupModel} from "./schema-property";
-import {PROPERTY_DATA, PROPERTY_TYPES} from "../utils/constants";
-import {ToscaFunction} from "./tosca-function";
-import {SubPropertyToscaFunction} from "./sub-property-tosca-function";
+import { PROPERTY_DATA, PROPERTY_TYPES } from '../utils/constants';
+import { ArtifactModel } from './artifacts';
+import { SchemaPropertyGroupModel } from './schema-property';
+import { SubPropertyToscaFunction } from './sub-property-tosca-function';
+import { ToscaFunction } from './tosca-function';
 
 export enum MilestoneEnum {
     on_entry = 'on_entry',
@@ -45,7 +45,7 @@ export class InputOperationParameter {
     value?: any;
     toscaFunction?: ToscaFunction;
     subPropertyToscaFunctions: SubPropertyToscaFunction[];
-    valid:boolean= true;
+    valid: boolean = true;
 
     constructor(param?: any) {
         if (param) {
@@ -78,12 +78,12 @@ export class InputOperationParameter {
         return this.toscaDefaultValue;
     }
 
-    private isTypeNotSimple() {
-        return PROPERTY_DATA.SIMPLE_TYPES.indexOf(this.type) == -1;
-    }
-
     public isToscaFunction(): boolean {
         return this.toscaFunction != null;
+    }
+
+    private isTypeNotSimple() {
+        return PROPERTY_DATA.SIMPLE_TYPES.indexOf(this.type) == -1;
     }
 }
 
@@ -104,7 +104,7 @@ export class PropertyOperationParameter {
 }
 
 export interface IOperationParamsList {
-    listToscaDataDefinition: Array<InputOperationParameter>;
+    listToscaDataDefinition: InputOperationParameter[];
 }
 
 export class Milestone {
@@ -134,7 +134,7 @@ export class ActivityParameter {
 }
 
 export interface IActivityParameterList {
-    listToscaDataDefinition: Array<ActivityParameter>;
+    listToscaDataDefinition: ActivityParameter[];
 }
 
 export class FilterParameter {
@@ -154,7 +154,7 @@ export class FilterParameter {
 }
 
 export interface IFilterParameterList {
-    listToscaDataDefinition: Array<FilterParameter>;
+    listToscaDataDefinition: FilterParameter[];
 }
 
 export class BEInterfaceOperationModel {
@@ -189,7 +189,7 @@ export class InterfaceOperationModel extends BEInterfaceOperationModel {
     uniqueId: string;
     inputParams: IOperationParamsList;
     implementation: ArtifactModel;
-    milestones: Object
+    milestones: Object;
 
     constructor(operation?: any) {
         super(operation);
@@ -201,12 +201,12 @@ export class InterfaceOperationModel extends BEInterfaceOperationModel {
             this.uniqueId = operation.uniqueId;
             if (operation.inputParams && operation.inputParams.listToscaDataDefinition) {
                 const listToscaDataDefinition: InputOperationParameter[] = [];
-                operation.inputParams.listToscaDataDefinition.forEach(inputOperation => {
+                operation.inputParams.listToscaDataDefinition.forEach((inputOperation) => {
                     listToscaDataDefinition.push(new InputOperationParameter(inputOperation));
                 });
-                this.inputParams = <IOperationParamsList> {
-                    'listToscaDataDefinition': listToscaDataDefinition
-                };
+                this.inputParams = ({
+                    listToscaDataDefinition: listToscaDataDefinition
+                } as IOperationParamsList);
             }
             if (operation.implementation) {
                 this.implementation = new ArtifactModel(operation.implementation);
@@ -236,7 +236,7 @@ export class InterfaceOperationModel extends BEInterfaceOperationModel {
 export class ComponentInterfaceDefinitionModel {
     type: string;
     uniqueId: string;
-    operations: Array<InterfaceOperationModel>;
+    operations: InterfaceOperationModel[];
 
     constructor(interfaceOperation?: any) {
         if (interfaceOperation) {
@@ -251,4 +251,4 @@ export class ComponentInterfaceDefinitionModel {
     }
 }
 
-const displayType = (type:string) => type && type.substr(type.lastIndexOf('.') + 1);
+const displayType = (type: string) => type && type.substr(type.lastIndexOf('.') + 1);

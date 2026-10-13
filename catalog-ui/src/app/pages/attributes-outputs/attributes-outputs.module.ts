@@ -18,23 +18,23 @@
  * ============LICENSE_END=========================================================
  */
 
-import {CommonModule} from '@angular/common';
-import {NgModule} from '@angular/core';
-import {SdcUiComponentsModule} from 'onap-ui-angular';
-import {GlobalPipesModule} from "../../pipes/global-pipes.module";
-import {NgxDatatableModule} from "@swimlane/ngx-datatable";
-import {TranslateModule} from "../../shared/translator/translate.module";
-import {TopologyTemplateService} from "../../services/component-services/topology-template.service";
-import {AttributesOutputsComponent} from "./attributes-outputs.page.component";
-import {TabModule} from "../../components/ui/tabs/tabs.module";
-import {UiElementsModule} from "../../components/ui/ui-elements.module"
-import {HierarchyNavigationModule} from "../../components/logic/hierarchy-navigtion/hierarchy-navigation.module";
-import {AttributesService} from "../../services/attributes.service";
-import {HierarchyNavService} from "./services/hierarchy-nav.service";
-import {AttributesUtils} from "./services/attributes.utils";
-import {OutputsUtils} from "./services/outputs.utils";
-import { OutputsTableComponent } from "app/components/logic/outputs-table/outputs-table.component";
-import {AttributeTableModule} from "../../components/logic/attributes-table/attribute-table.module";
+import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { OutputsTableComponent } from 'app/components/logic/outputs-table/outputs-table.component';
+import { SdcUiComponentsModule } from 'onap-ui-angular';
+import { AttributeTableModule } from '../../components/logic/attributes-table/attribute-table.module';
+import { HierarchyNavigationModule } from '../../components/logic/hierarchy-navigtion/hierarchy-navigation.module';
+import { TabModule } from '../../components/ui/tabs/tabs.module';
+import { UiElementsModule } from '../../components/ui/ui-elements.module';
+import { GlobalPipesModule } from '../../pipes/global-pipes.module';
+import { AttributesService } from '../../services/attributes.service';
+import { TopologyTemplateService } from '../../services/component-services/topology-template.service';
+import { TranslateModule } from '../../shared/translator/translate.module';
+import { AttributesOutputsComponent } from './attributes-outputs.page.component';
+import { AttributesUtils } from './services/attributes.utils';
+import { HierarchyNavService } from './services/hierarchy-nav.service';
+import { OutputsUtils } from './services/outputs.utils';
 
 @NgModule({
   declarations: [

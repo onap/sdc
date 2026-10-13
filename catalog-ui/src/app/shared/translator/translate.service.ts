@@ -18,31 +18,35 @@
  * ============LICENSE_END=========================================================
  */
 
-import { Injectable, Inject } from "@angular/core";
-import { ITranslateServiceConfig, TranslateServiceConfigToken } from "./translate.service.config";
-import { Observer, Subscription, Observable, ConnectableObservable } from 'rxjs/Rx';
-import { HttpClient } from "@angular/common/http";
+import { HttpClient } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
+import { ConnectableObservable, Observable, Observer, Subscription } from 'rxjs/Rx';
+import { ITranslateServiceConfig, TranslateServiceConfigToken } from './translate.service.config';
 
 export { ITranslateServiceConfig, TranslateServiceConfigToken };
 
 export interface ITranslateLanguageJson {
-    [index:string]: string;
+    [index: string]: string;
 }
 
 export interface ITranslateArgs {
-    [index:string]: any;
+    [index: string]: any;
 }
 
 export class PhraseTranslator {
-    private _observable:ConnectableObservable<string>;
-    private _observer:Observer<string>;
-    private _languageChangeSubscription:Subscription;
 
-    private _phraseKey:string;
-    private _args:ITranslateArgs;
-    private _language:string;
+    public get observable() {
+        return this._observable;
+    }
+    private _observable: ConnectableObservable<string>;
+    private _observer: Observer<string>;
+    private _languageChangeSubscription: Subscription;
 
-    private _markForCheck:boolean = false;
+    private _phraseKey: string;
+    private _args: ITranslateArgs;
+    private _language: string;
+
+    private _markForCheck: boolean = false;
     private _lastParams: {
         phraseKey: string;
         args: {[index: string]: any};
@@ -53,20 +57,16 @@ export class PhraseTranslator {
         language: undefined
     };
 
-    constructor(private translateService:TranslateService) {
-        this._observable = Observable.create(observer => {
+    constructor(private translateService: TranslateService) {
+        this._observable = Observable.create((observer) => {
             this._observer = observer;
-            this._languageChangeSubscription = this.translateService.languageChangedObservable.subscribe(language => {
+            this._languageChangeSubscription = this.translateService.languageChangedObservable.subscribe((language) => {
                 // using the active language, then force update
                 if (!this._language) {
                     this.update(true);
                 }
             });
         }).publishReplay(1).refCount();
-    }
-
-    public get observable() {
-        return this._observable;
     }
 
     public destroy() {
@@ -78,7 +78,7 @@ export class PhraseTranslator {
         delete this._languageChangeSubscription;
     }
 
-    public shouldUpdate() : boolean {
+    public shouldUpdate(): boolean {
         if (!this._markForCheck) {
             return false;
         }
@@ -90,7 +90,7 @@ export class PhraseTranslator {
         );
     }
 
-    public update(forceUpdate:boolean=false) : void {
+    public update(forceUpdate: boolean= false): void {
         // only update translation when having subscriptions connected.
         if (this._observer && !this._observer.closed) {
             if (forceUpdate || this.shouldUpdate()) {
@@ -107,65 +107,104 @@ export class PhraseTranslator {
         }
     }
 
-    private _changeParam(paramKey:string, value:any, update:boolean) : void {
-        this[`_${paramKey}`] = value;
-        this._markForCheck = true;
-        if (update) {
-            this.update();
-        }
-    }
-
-    public changePhraseKey(phraseKey:string, update:boolean=true) : void {
+    public changePhraseKey(phraseKey: string, update: boolean= true): void {
         this._changeParam('phraseKey', phraseKey, update);
     }
 
-    public changeArgs(args:ITranslateArgs, update:boolean=true) :void {
+    public changeArgs(args: ITranslateArgs, update: boolean= true): void {
         this._changeParam('args', args, update);
     }
 
-    public changeLangauge(language:string, update:boolean=true) :void {
+    public changeLangauge(language: string, update: boolean= true): void {
         this._changeParam('language', language, update);
     }
 
-    public changeParams(phraseKey:string, args:ITranslateArgs={}, language?:string, forceUpdate:boolean=false) {
+    public changeParams(phraseKey: string, args: ITranslateArgs= {}, language?: string, forceUpdate: boolean= false) {
         this._phraseKey = phraseKey;
         this._args = args;
         this._language = language;
         this._markForCheck = true;
         this.update(forceUpdate);
     }
-}
 
+    private _changeParam(paramKey: string, value: any, update: boolean): void {
+        this[`_${paramKey}`] = value;
+        this._markForCheck = true;
+        if (update) {
+            this.update();
+        }
+    }
+}
 
 @Injectable()
 export class TranslateService {
-    private _activeLanguage:string;
-    private _languageChangedObservable:ConnectableObservable<string>;
-    private _languageChangedObserver:Observer<string>;
-    private _cacheLanguagesJsons:{[index:string]:ITranslateLanguageJson} = {};
-    private _cacheLanguagesLoaders:{[index:string]:Observable<ITranslateLanguageJson>} = {};
 
-    constructor(@Inject(TranslateServiceConfigToken) private config:ITranslateServiceConfig, private http: HttpClient) {
-        this.initLanguageObservable();
-        this.loadAndActivateLanguage(this.config.defaultLanguage);
-    }
-
-    public get languageChangedObservable() : Observable<string> {
+    public get languageChangedObservable(): Observable<string> {
         return this._languageChangedObservable;
     }
 
     public get activeLanguage() {
         return this._activeLanguage;
     }
+    private _activeLanguage: string;
+    private _languageChangedObservable: ConnectableObservable<string>;
+    private _languageChangedObserver: Observer<string>;
+    private _cacheLanguagesJsons: {[index: string]: ITranslateLanguageJson} = {};
+    private _cacheLanguagesLoaders: {[index: string]: Observable<ITranslateLanguageJson>} = {};
+
+    constructor(@Inject(TranslateServiceConfigToken) private config: ITranslateServiceConfig, private http: HttpClient) {
+        this.initLanguageObservable();
+        this.loadAndActivateLanguage(this.config.defaultLanguage);
+    }
+
+    public activateLanguage(language: string): boolean {
+        if (this._cacheLanguagesJsons[language]) {
+            if (language !== this._activeLanguage) {
+                this._activeLanguage = language;
+                this._languageChangedObserver.next(this._activeLanguage);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public loadAndActivateLanguage(language: string): void {
+
+        const loadLanguageObservable = this.loadLanguageJsonFile(language, false);
+        loadLanguageObservable.subscribe(() => {
+            this.activateLanguage(language);
+        }, () => {});
+    }
+
+    public translate(phraseKey: string, args: ITranslateArgs= {}, language: string= this._activeLanguage): string {
+        const phrase: string = (this._cacheLanguagesJsons[language] || {})[phraseKey] || '';
+        let translated: string;
+        if (typeof(phrase) === 'string') {
+            translated = phrase
+                .replace(
+                    /(^|[^\\]|\\\\)\{\{(\w+)\}\}/g,
+                    (m, p1, p2) => `${p1}${args[p2] || ''}`
+                )
+                .replace('\\{{', '{{')
+                .replace('\\\\', '\\');
+        }
+        return translated;
+    }
+
+    public createPhraseTranslator(phraseKey?: string, args?: ITranslateArgs, language?: string): PhraseTranslator {
+        const phraseTranslator = new PhraseTranslator(this);
+        phraseTranslator.changeParams(phraseKey, args, language);
+        return phraseTranslator;
+    }
 
     private initLanguageObservable() {
-        this._languageChangedObservable = ConnectableObservable.create(observer => {
+        this._languageChangedObservable = ConnectableObservable.create((observer) => {
             this._languageChangedObserver = observer;
         }).publishReplay(1);  // replay last emitted change on subscribe
         this._languageChangedObservable.connect();
     }
 
-    private loadLanguageJsonFile(language:string, emitOnLoad:boolean=true) : Observable<ITranslateLanguageJson> {
+    private loadLanguageJsonFile(language: string, emitOnLoad: boolean= true): Observable<ITranslateLanguageJson> {
         if (this.config.allowedLanguages.indexOf(language) === -1) {
             return Observable.throw(`Language "${language}" is not available.`);
         }
@@ -179,8 +218,8 @@ export class TranslateService {
             this._cacheLanguagesLoaders[language] = this.http.get<ITranslateLanguageJson>(filePath)
                 .catch(() => Observable.throw(`Failed to load language file for "${language}"`))
                 .publish();
-            (<ConnectableObservable<ITranslateLanguageJson>>this._cacheLanguagesLoaders[language]).connect();
-            this._cacheLanguagesLoaders[language].subscribe(languageJson => {
+            (this._cacheLanguagesLoaders[language] as ConnectableObservable<ITranslateLanguageJson>).connect();
+            this._cacheLanguagesLoaders[language].subscribe((languageJson) => {
                     this._cacheLanguagesJsons[language] = languageJson;
                     delete this._cacheLanguagesLoaders[language];
                     if (emitOnLoad) {
@@ -190,45 +229,5 @@ export class TranslateService {
                 });
         }
         return this._cacheLanguagesLoaders[language];
-    }
-
-    public activateLanguage(language:string) : boolean {
-        if (this._cacheLanguagesJsons[language]) {
-            if (language !== this._activeLanguage) {
-                this._activeLanguage = language;
-                this._languageChangedObserver.next(this._activeLanguage);
-            }
-            return true;
-        }
-        return false;
-    }
-
-    public loadAndActivateLanguage(language:string) : void {
-
-        const loadLanguageObservable = this.loadLanguageJsonFile(language, false);
-        loadLanguageObservable.subscribe(() => {
-            this.activateLanguage(language);
-        }, () => {});
-    }
-
-    public translate(phraseKey:string, args:ITranslateArgs={}, language:string=this._activeLanguage) : string {
-        const phrase:string = (this._cacheLanguagesJsons[language] || {})[phraseKey] || '';
-        let translated:string;
-        if (typeof(phrase) === 'string') {
-            translated = phrase
-                .replace(
-                    /(^|[^\\]|\\\\)\{\{(\w+)\}\}/g,
-                    (m, p1, p2) => `${p1}${args[p2]||''}`
-                )
-                .replace('\\{{', '{{')
-                .replace('\\\\', '\\');
-        }
-        return translated;
-    }
-
-    public createPhraseTranslator(phraseKey?:string, args?:ITranslateArgs, language?:string) : PhraseTranslator {
-        const phraseTranslator = new PhraseTranslator(this);
-        phraseTranslator.changeParams(phraseKey, args, language);
-        return phraseTranslator;
     }
 }

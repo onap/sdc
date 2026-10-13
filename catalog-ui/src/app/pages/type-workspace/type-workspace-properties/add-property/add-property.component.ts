@@ -19,15 +19,15 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {PropertyBEModel} from "../../../../models/properties-inputs/property-be-model";
-import {AbstractControl, FormControl, FormGroup, ValidationErrors, Validators} from "@angular/forms";
-import {PROPERTY_DATA} from "../../../../utils/constants";
-import {DataTypeService} from "../../../../services/data-type.service";
-import {DataTypeModel} from "../../../../models/data-types";
-import {Subscription} from "rxjs";
-import {ToscaTypeHelper} from "../../../../utils/tosca-type-helper";
-import {SchemaProperty, SchemaPropertyGroupModel} from "../../../../models/schema-property";
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { Subscription } from 'rxjs';
+import { DataTypeModel } from '../../../../models/data-types';
+import { PropertyBEModel } from '../../../../models/properties-inputs/property-be-model';
+import { SchemaProperty, SchemaPropertyGroupModel } from '../../../../models/schema-property';
+import { DataTypeService } from '../../../../services/data-type.service';
+import { PROPERTY_DATA } from '../../../../utils/constants';
+import { ToscaTypeHelper } from '../../../../utils/tosca-type-helper';
 
 @Component({
     selector: 'app-add-property',
@@ -41,11 +41,6 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
     @Input() model: string;
 
     @Output() onValidityChange: EventEmitter<PropertyValidationEvent> = new EventEmitter<PropertyValidationEvent>();
-
-    private validConstraints: boolean = true;
-    private valueChangesSub: Subscription;
-    private descriptionForm: FormControl = new FormControl(undefined);
-    private requiredForm: FormControl = new FormControl(false);
     nameForm: FormControl = new FormControl(undefined, [Validators.required]);
     typeForm: FormControl = new FormControl(undefined, Validators.required);
     schemaForm: FormControl = new FormControl(undefined, (control: AbstractControl): ValidationErrors | null => {
@@ -59,14 +54,14 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
     defaultValueForm: FormControl = new FormControl(undefined);
     constraintsForm: FormControl = new FormControl(undefined);
     formGroup: FormGroup = new FormGroup({
-        'name': this.nameForm,
-        'description': this.descriptionForm,
-        'type': this.typeForm,
-        'required': this.requiredForm,
-        'schema': this.schemaForm,
-        'defaultValue': this.defaultValueForm,
-        'hasDefaultValue': this.hasDefaultValueForm,
-        'constraints': this.constraintsForm,
+        name: this.nameForm,
+        description: this.descriptionForm,
+        type: this.typeForm,
+        required: this.requiredForm,
+        schema: this.schemaForm,
+        defaultValue: this.defaultValueForm,
+        hasDefaultValue: this.hasDefaultValueForm,
+        constraints: this.constraintsForm,
     });
 
     isLoading: boolean = false;
@@ -75,6 +70,11 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
     dataTypeMap: Map<string, DataTypeModel>;
     dataType: DataTypeModel;
     schemaTypeList: string[];
+
+    private validConstraints: boolean = true;
+    private valueChangesSub: Subscription;
+    private descriptionForm: FormControl = new FormControl(undefined);
+    private requiredForm: FormControl = new FormControl(false);
 
     constructor(private dataTypeService: DataTypeService) {
     }
@@ -106,6 +106,72 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
         if (this.property) {
             this.property.constraints = [];
         }
+    }
+
+    public isTypeSimple(): boolean {
+        return ToscaTypeHelper.isTypeSimple(this.typeForm.value);
+    }
+
+    public isTypeList(): boolean {
+        return ToscaTypeHelper.isTypeList(this.typeForm.value);
+    }
+
+    public isTypeMap(): boolean {
+        return ToscaTypeHelper.isTypeMap(this.typeForm.value);
+    }
+
+    public isTypeComplex(): boolean {
+        return ToscaTypeHelper.isTypeComplex(this.typeForm.value);
+    }
+
+    onPropertyValueChange($event: any): void {
+        this.defaultValueForm.setValue($event.value);
+    }
+
+    showDefaultValue(): boolean {
+        if (this.readOnly) {
+            return this.defaultValueForm.value != undefined && this.dataTypeMap && this.typeForm.valid && this.schemaForm.valid;
+        }
+        return this.dataTypeMap && this.typeForm.valid && this.schemaForm.valid;
+    }
+
+    getDataType(type: string): DataTypeModel {
+        return this.dataTypeMap.get(type);
+    }
+
+    buildSchemaGroupProperty(): SchemaPropertyGroupModel {
+        const schemaProperty = new SchemaProperty();
+        schemaProperty.type = this.schemaForm.value;
+        return new SchemaPropertyGroupModel(schemaProperty);
+    }
+
+    onConstraintChange = (constraints: any): void => {
+        if (this.property) {
+            if (!this.property.constraints) {
+                this.property.constraints = [];
+            }
+            this.property.constraints = constraints.constraints;
+        }
+
+        this.constraintsForm.setValue(constraints.constraints);
+
+        this.validConstraints = constraints.valid;
+        const formValid = constraints.valid && this.findInvalidControls().length === 0;
+        this.onValidityChange.emit({
+            isValid: formValid,
+            property: formValid ? this.buildPropertyFromForm() : undefined
+        });
+    }
+
+    findInvalidControls() {
+        const invalid = [];
+        const controls = this.formGroup.controls;
+        for (const name in controls) {
+            if (controls[name].invalid) {
+                invalid.push(name);
+            }
+        }
+        return invalid;
     }
 
     private updateDataType(): void {
@@ -150,7 +216,7 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
         const promise = this.dataTypeService.findAllDataTypesByModel(this.model);
         promise.then((dataTypeMap: Map<string, DataTypeModel>) => {
             this.dataTypeMap = dataTypeMap;
-            const nonPrimitiveTypes: string[] = Array.from(dataTypeMap.keys()).filter(type => {
+            const nonPrimitiveTypes: string[] = Array.from(dataTypeMap.keys()).filter((type) => {
                 return primitiveTypes.indexOf(type) === -1;
             });
             nonPrimitiveTypes.sort((a, b) => a.localeCompare(b));
@@ -163,7 +229,7 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
 
     private emitValidityChange(): void {
         const isValid: boolean = this.formGroup.valid;
-        this.findInvalidControls().forEach(name => console.error("Validation error in field: " + name));
+        this.findInvalidControls().forEach((name) => console.error('Validation error in field: ' + name));
         this.onValidityChange.emit({
             isValid: isValid && this.validConstraints,
             property: isValid ? this.buildPropertyFromForm() : this.nameForm.value
@@ -186,39 +252,8 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
         return property;
     }
 
-    public isTypeSimple(): boolean {
-        return ToscaTypeHelper.isTypeSimple(this.typeForm.value);
-    }
-
-    public isTypeList(): boolean {
-        return ToscaTypeHelper.isTypeList(this.typeForm.value);
-    }
-
-    public isTypeMap(): boolean {
-        return ToscaTypeHelper.isTypeMap(this.typeForm.value);
-    }
-
-    public isTypeComplex(): boolean {
-        return ToscaTypeHelper.isTypeComplex(this.typeForm.value);
-    }
-
     private isTypeRange() {
         return ToscaTypeHelper.isTypeRange(this.typeForm.value);
-    }
-
-    onPropertyValueChange($event: any): void {
-        this.defaultValueForm.setValue($event.value);
-    }
-
-    showDefaultValue(): boolean {
-        if (this.readOnly) {
-            return this.defaultValueForm.value != undefined && this.dataTypeMap && this.typeForm.valid && this.schemaForm.valid;
-        }
-        return this.dataTypeMap && this.typeForm.valid && this.schemaForm.valid;
-    }
-
-    getDataType(type: string): DataTypeModel {
-        return this.dataTypeMap.get(type);
     }
 
     private resetDefaultValue(): void {
@@ -228,41 +263,6 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
         } else if (this.isTypeList() || this.isTypeRange()) {
             this.defaultValueForm.setValue([]);
         }
-    }
-
-    buildSchemaGroupProperty(): SchemaPropertyGroupModel {
-        const schemaProperty = new SchemaProperty();
-        schemaProperty.type = this.schemaForm.value
-        return new SchemaPropertyGroupModel(schemaProperty);
-    }
-
-    onConstraintChange = (constraints: any): void => {
-        if (this.property) {
-            if (!this.property.constraints) {
-                this.property.constraints = [];
-            }
-            this.property.constraints = constraints.constraints;
-        }
-
-        this.constraintsForm.setValue(constraints.constraints);
-
-        this.validConstraints = constraints.valid;
-        let formValid = constraints.valid && this.findInvalidControls().length === 0;
-        this.onValidityChange.emit({
-            isValid: formValid,
-            property: formValid ? this.buildPropertyFromForm() : undefined
-        });
-    }
-
-    findInvalidControls() {
-        const invalid = [];
-        const controls = this.formGroup.controls;
-        for (const name in controls) {
-            if (controls[name].invalid) {
-                invalid.push(name);
-            }
-        }
-        return invalid;
     }
 }
 

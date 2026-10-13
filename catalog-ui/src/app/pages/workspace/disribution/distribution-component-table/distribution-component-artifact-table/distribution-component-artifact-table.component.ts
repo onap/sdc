@@ -48,13 +48,13 @@ export class DistributionComponentArtifactTableComponent implements OnInit {
                 if (artifact && artifact['statuses']) {
                     artifact['statuses'].forEach((status) => {
                         if (!status.errorReason || status.errorReason === 'null') {
-                            status.errorReason = ''
+                            status.errorReason = '';
                         }
-                    })
+                    });
                 }
             });
         }
-        return artifacts
+        return artifacts;
     }
 
     private copyToClipboard(urlToCopy: any) {

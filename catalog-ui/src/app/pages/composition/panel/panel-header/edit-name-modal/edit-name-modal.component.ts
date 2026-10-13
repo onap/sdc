@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input } from '@angular/core';
 
 @Component({
     selector: 'edit-name-modal',
@@ -7,19 +7,17 @@ import { Component, Input } from "@angular/core";
 })
 export class EditNameModalComponent {
 
-    @Input() name:String;
+    @Input() name: String;
     @Input() validityChangedCallback: Function;
 
-    pattern:string = "^[\\s\\w\&_.:-]{1,1024}$"
-    constructor(){
+    pattern: string = '^[\\s\\w\&_.:-]{1,1024}$';
+    constructor() {
     }
 
-    validityChanged = (value):void => {
-        if(this.validityChangedCallback) {
+    validityChanged = (value): void => {
+        if (this.validityChangedCallback) {
             this.validityChangedCallback(value);
         }
     }
-
-
 
 }

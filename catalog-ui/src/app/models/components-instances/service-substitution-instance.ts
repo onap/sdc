@@ -18,13 +18,12 @@
  */
 
 'use strict';
-import {ComponentInstance} from "./component-instance";
+import { ComponentInstance } from './component-instance';
 
 export class ServiceSubstitutionInstance extends ComponentInstance {
 
-    constructor(componentInstance?:ServiceSubstitutionInstance) {
+    constructor(componentInstance?: ServiceSubstitutionInstance) {
         super(componentInstance);
-        this.iconSprite = "sprite-services-icons";
+        this.iconSprite = 'sprite-services-icons';
     }
 }
-

@@ -18,19 +18,19 @@
  * ============LICENSE_END=========================================================
  */
 
-import {NO_ERRORS_SCHEMA, SimpleChange} from '@angular/core';
-import {ComponentFixture} from '@angular/core/testing';
-import {ConfigureFn, configureTests} from '../../../../jest/test-config.helper';
-import {ContentAfterLastDotPipe} from '../../../pipes/content-after-last-dot.pipe';
-import {KeysPipe} from '../../../pipes/keys.pipe';
-import {SearchFilterPipe} from '../../../pipes/search-filter.pipe';
-import {ModalService} from '../../../services/modal.service';
-import {AttributeRowSelectedEvent, AttributesTableComponent} from './attributes-table.component';
-import {AttributesService} from "../../../services/attributes.service";
-import {AttributeFEModel} from "../../../models/attributes-outputs/attribute-fe-model";
-import {AttributeBEModel} from "app/models/attributes-outputs/attribute-be-model";
-import {DerivedFEAttribute} from "../../../models/attributes-outputs/derived-fe-attribute";
-import {PropertiesOrderByPipe} from "app/pipes/properties-order-by.pipe";
+import { NO_ERRORS_SCHEMA, SimpleChange } from '@angular/core';
+import { ComponentFixture } from '@angular/core/testing';
+import { AttributeBEModel } from 'app/models/attributes-outputs/attribute-be-model';
+import { PropertiesOrderByPipe } from 'app/pipes/properties-order-by.pipe';
+import { ConfigureFn, configureTests } from '../../../../jest/test-config.helper';
+import { AttributeFEModel } from '../../../models/attributes-outputs/attribute-fe-model';
+import { DerivedFEAttribute } from '../../../models/attributes-outputs/derived-fe-attribute';
+import { ContentAfterLastDotPipe } from '../../../pipes/content-after-last-dot.pipe';
+import { KeysPipe } from '../../../pipes/keys.pipe';
+import { SearchFilterPipe } from '../../../pipes/search-filter.pipe';
+import { AttributesService } from '../../../services/attributes.service';
+import { ModalService } from '../../../services/modal.service';
+import { AttributeRowSelectedEvent, AttributesTableComponent } from './attributes-table.component';
 
 describe('attributes-table component', () => {
 

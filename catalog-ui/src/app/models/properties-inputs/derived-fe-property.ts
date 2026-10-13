@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,24 +18,23 @@
  * ============LICENSE_END=========================================================
  */
 
-import * as _ from "lodash";
-import { SchemaPropertyGroupModel, SchemaProperty } from '../schema-property';
-import {DerivedPropertyType, PropertyBEModel} from './property-be-model';
-import {PropertyFEModel} from './property-fe-model';
-import {SubPropertyToscaFunction} from "../sub-property-tosca-function";
-import {ToscaFunction} from "../tosca-function";
-import {PROPERTY_TYPES} from 'app/utils/constants';
-import { UUID } from "angular2-uuid";
-
+import { UUID } from 'angular2-uuid';
+import { PROPERTY_TYPES } from 'app/utils/constants';
+import * as _ from 'lodash';
+import { SchemaProperty, SchemaPropertyGroupModel } from '../schema-property';
+import { SubPropertyToscaFunction } from '../sub-property-tosca-function';
+import { ToscaFunction } from '../tosca-function';
+import { DerivedPropertyType, PropertyBEModel } from './property-be-model';
+import { PropertyFEModel } from './property-fe-model';
 
 export class DerivedFEProperty extends PropertyBEModel {
     valueObj: any;
     valueObjIsValid: boolean;
     valueObjOrig: any;
     valueObjIsChanged: boolean;
-    value: any
+    value: any;
     parentName: string;
-    propertiesName: string; //"network_assignments#ipv4_subnet#use_ipv4 =  parentPath + name
+    propertiesName: string; // "network_assignments#ipv4_subnet#use_ipv4 =  parentPath + name
     derivedDataType: DerivedPropertyType;
     toscaFunction: ToscaFunction;
     isDeclared: boolean;
@@ -46,29 +45,29 @@ export class DerivedFEProperty extends PropertyBEModel {
     canBeDeclared: boolean;
     mapKey: string;
     mapKeyError: string;
-    mapInlist: boolean
+    mapInlist: boolean;
     inputName: string;
     parentMapKey: string;
     toscaPath: string[];
 
-    constructor(property: PropertyBEModel, parentName?: string, createChildOfListOrMap?: boolean, key?:string, value?:any) {
-        if (!createChildOfListOrMap) { //creating a standard derived prop
+    constructor(property: PropertyBEModel, parentName?: string, createChildOfListOrMap?: boolean, key?: string, value?: any) {
+        if (!createChildOfListOrMap) { // creating a standard derived prop
             super(property);
             this.toscaPath = [];
             this.parentName = parentName ? parentName : null;
             this.propertiesName = (parentName) ? parentName + '#' + property.name : property.name;
-            this.canBeDeclared = true; //defaults to true
+            this.canBeDeclared = true; // defaults to true
             if (property instanceof DerivedFEProperty) {
                 this.toscaPath = property.toscaPath != null ? property.toscaPath : [];
             } else {
                 this.toscaPath = property.parentToscaPath != null ? property.parentToscaPath : property.parentToscaPath;
             }
             if (this.toscaPath.length == 0 && parentName != null && parentName.indexOf('#') != -1) {
-                let lastparent = parentName.split('#');
+                const lastparent = parentName.split('#');
                 this.toscaPath.push(lastparent[lastparent.length - 1]);
             }
             this.toscaPath.push(property.name);
-        } else { //creating a direct child of list or map (ie. Item that can be deleted, with UUID instead of name)
+        } else { // creating a direct child of list or map (ie. Item that can be deleted, with UUID instead of name)
             super(null);
             let toscaPathCopy = null;
             if (property instanceof DerivedFEProperty) {
@@ -76,27 +75,27 @@ export class DerivedFEProperty extends PropertyBEModel {
             } else {
                 toscaPathCopy = property.parentToscaPath != null ? property.parentToscaPath.toString() : null;
             }
-            this.toscaPath = toscaPathCopy != null ? toscaPathCopy.split(",") : [];
+            this.toscaPath = toscaPathCopy != null ? toscaPathCopy.split(',') : [];
             this.isChildOfListOrMap = true;
             this.canBeDeclared = false;
             this.name = UUID.UUID();
             this.parentName = parentName;
             this.propertiesName = parentName + '#' + this.name;
-            
+
             if (property.type == PROPERTY_TYPES.LIST) {
-                let parentKey : string = null;
+                let parentKey: string = null;
                 if (property instanceof DerivedFEProperty) {
                     if (property.valueObj != '') {
                         if (key != '') {
-                            let listIndex = Number(key);
+                            const listIndex = Number(key);
                             if (!isNaN(listIndex)) {
                                 this.toscaPath.push(key);
                             } else {
-                               let newIndex = Object.keys(property.valueObj).findIndex(valueKey => (valueKey == key));
+                               const newIndex = Object.keys(property.valueObj).findIndex((valueKey) => (valueKey == key));
                                this.toscaPath.push(newIndex.toString());
                             }
                         } else {
-                            let toscaIndex = Object.keys(property.valueObj).sort().reverse()[0];
+                            const toscaIndex = Object.keys(property.valueObj).sort().reverse()[0];
                             this.toscaPath.push((Number(toscaIndex) + 1).toString());
                         }
                     } else {
@@ -106,12 +105,12 @@ export class DerivedFEProperty extends PropertyBEModel {
                     if (property instanceof PropertyFEModel && property.valueObj != '') {
                         if (key != '') {
                             parentKey = key;
-                        }else{
-                            let toscaIndex = Object.keys(property.valueObj).sort().reverse()[0];
+                        } else {
+                            const toscaIndex = Object.keys(property.valueObj).sort().reverse()[0];
                             parentKey = (Number(toscaIndex) + 1).toString();
                         }
                     } else {
-                        parentKey = "0";
+                        parentKey = '0';
                         if (property instanceof PropertyFEModel) {
                             parentKey = (property.flattenedChildren.length).toString();
                         }
@@ -123,12 +122,12 @@ export class DerivedFEProperty extends PropertyBEModel {
                 }
                 this.mapKeyError = null;
                 this.type = property.schema.property.type;
-                if (this.type == PROPERTY_TYPES.MAP){
+                if (this.type == PROPERTY_TYPES.MAP) {
                     this.mapInlist = true;
                     this.parentMapKey = parentKey;
                 }
                 this.schema = new SchemaPropertyGroupModel(new SchemaProperty(property.schema.property));
-            } else { //map
+            } else { // map
                 if (key) {
                     this.mapKey = key;
                     this.mapKeyError = null;
@@ -137,7 +136,7 @@ export class DerivedFEProperty extends PropertyBEModel {
                     this.mapKeyError = 'Key cannot be empty.';
                 }
                 this.type = property.type;
-                if (property.schema.property.type == PROPERTY_TYPES.MAP){
+                if (property.schema.property.type == PROPERTY_TYPES.MAP) {
                     const schProp = new SchemaProperty();
                     schProp.isSimpleType = true;
                     schProp.isDataType = false;
@@ -154,8 +153,8 @@ export class DerivedFEProperty extends PropertyBEModel {
                     this.schema = new SchemaPropertyGroupModel(new SchemaProperty(property.schema.property));
                 }
                 if (this.toscaPath != null) {
-                    let lastIndex = this.toscaPath[this.toscaPath.length - 1];
-                    if(this.mapKey != lastIndex){
+                    const lastIndex = this.toscaPath[this.toscaPath.length - 1];
+                    if (this.mapKey != lastIndex) {
                         this.toscaPath.push(this.mapKey);
                     }
                 } else {
@@ -169,9 +168,9 @@ export class DerivedFEProperty extends PropertyBEModel {
             this.updateValueObjOrig();
         }
         this.parentToscaPath = this.toscaPath;
-        if(property.subPropertyToscaFunctions != null){
-            property.subPropertyToscaFunctions.forEach((item : SubPropertyToscaFunction) => {
-                if(item.subPropertyPath.toString() === this.toscaPath.toString() && this.uniqueId == null){
+        if (property.subPropertyToscaFunctions != null) {
+            property.subPropertyToscaFunctions.forEach((item: SubPropertyToscaFunction) => {
+                if (item.subPropertyPath.toString() === this.toscaPath.toString() && this.uniqueId == null) {
                     this.toscaFunction = item.toscaFunction;
                 }
             });
@@ -185,7 +184,7 @@ export class DerivedFEProperty extends PropertyBEModel {
         return (this.mapKeyError) ? this.name : this.mapKey;
     }
 
-    public updateValueObj(valueObj:any, isValid:boolean) {
+    public updateValueObj(valueObj: any, isValid: boolean) {
         this.valueObj = PropertyFEModel.cleanValueObj(valueObj);
         this.valueObjIsValid = isValid;
         this.valueObjIsChanged = this.hasValueObjChanged();
@@ -202,6 +201,5 @@ export class DerivedFEProperty extends PropertyBEModel {
 
 }
 export class DerivedFEPropertyMap {
-    [parentPath: string]: Array<DerivedFEProperty>;
+    [parentPath: string]: DerivedFEProperty[];
 }
-

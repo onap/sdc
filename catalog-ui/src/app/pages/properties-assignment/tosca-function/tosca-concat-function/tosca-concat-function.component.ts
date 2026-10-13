@@ -1,15 +1,15 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {FormArray, FormControl, FormGroup, Validators} from "@angular/forms";
-import {ToscaConcatFunction} from "../../../../models/tosca-concat-function";
-import {ToscaFunctionParameter} from "../../../../models/tosca-function-parameter";
-import {ToscaStringParameter} from "../../../../models/tosca-string-parameter";
-import {ToscaFunctionType} from "../../../../models/tosca-function-type.enum";
-import {PropertyBEModel} from "../../../../models/properties-inputs/property-be-model";
-import {PROPERTY_TYPES} from "../../../../utils/constants";
-import {InstanceFeDetails} from "../../../../models/instance-fe-details";
-import {ToscaFunctionValidationEvent} from "../tosca-function.component";
-import {ToscaFunction} from "../../../../models/tosca-function";
-import {CustomToscaFunction} from "../../../../models/default-custom-functions";
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
+import { CustomToscaFunction } from '../../../../models/default-custom-functions';
+import { InstanceFeDetails } from '../../../../models/instance-fe-details';
+import { PropertyBEModel } from '../../../../models/properties-inputs/property-be-model';
+import { ToscaConcatFunction } from '../../../../models/tosca-concat-function';
+import { ToscaFunction } from '../../../../models/tosca-function';
+import { ToscaFunctionParameter } from '../../../../models/tosca-function-parameter';
+import { ToscaFunctionType } from '../../../../models/tosca-function-type.enum';
+import { ToscaStringParameter } from '../../../../models/tosca-string-parameter';
+import { PROPERTY_TYPES } from '../../../../utils/constants';
+import { ToscaFunctionValidationEvent } from '../tosca-function.component';
 
 @Component({
     selector: 'app-tosca-concat-function',
@@ -20,79 +20,30 @@ export class ToscaConcatFunctionComponent implements OnInit {
 
     @Input() toscaConcatFunction: ToscaConcatFunction;
     @Input() componentInstanceMap: Map<string, InstanceFeDetails> = new Map<string, InstanceFeDetails>();
-    @Input() customToscaFunctions: Array<CustomToscaFunction> = [];
+    @Input() customToscaFunctions: CustomToscaFunction[] = [];
     @Output() onValidFunction: EventEmitter<ToscaConcatFunction> = new EventEmitter<ToscaConcatFunction>();
     @Output() onValidityChange: EventEmitter<ToscaConcatFunctionValidationEvent> = new EventEmitter<ToscaConcatFunctionValidationEvent>();
 
     concatParameterFormArray: FormArray = new FormArray([], Validators.minLength(2));
     formGroup: FormGroup = new FormGroup(
         {
-            'concatParameterList': this.concatParameterFormArray
+            concatParameterList: this.concatParameterFormArray
         }
     );
 
     parameters: ToscaFunctionParameter[] = [];
-    propertyInputList: Array<PropertyBEModel> = [];
-    stringProperty: PropertyBEModel
+    propertyInputList: PropertyBEModel[] = [];
+    stringProperty: PropertyBEModel;
 
-    STRING_FUNCTION_TYPE = ToscaFunctionType.STRING
+    STRING_FUNCTION_TYPE = ToscaFunctionType.STRING;
 
     constructor() {
         this.stringProperty = new PropertyBEModel();
-        this.stringProperty.type = PROPERTY_TYPES.STRING
+        this.stringProperty.type = PROPERTY_TYPES.STRING;
     }
 
     ngOnInit() {
         this.initForm();
-    }
-
-    private initForm(): void {
-        this.formGroup.valueChanges.subscribe(() => {
-            this.onValidityChange.emit({
-                isValid: this.formGroup.valid,
-                toscaConcatFunction: this.formGroup.valid ? this.buildConcatFunctionFromForm() : undefined
-            })
-            if (this.formGroup.valid) {
-                this.onValidFunction.emit(this.buildConcatFunctionFromForm());
-            }
-        });
-        if (!this.toscaConcatFunction) {
-            return;
-        }
-        if (this.toscaConcatFunction.parameters) {
-            this.parameters = Array.from(this.toscaConcatFunction.parameters);
-            for (const parameter of this.parameters) {
-                if (parameter.type !== PROPERTY_TYPES.STRING) {
-                    const propertyBEModel = this.createStringProperty(parameter.value);
-                    propertyBEModel.toscaFunction = <ToscaFunction> parameter;
-                    this.propertyInputList.push(propertyBEModel);
-                    this.concatParameterFormArray.push(
-                        new FormControl(parameter, [Validators.required, Validators.minLength(1)])
-                    );
-                } else {
-                    this.propertyInputList.push(undefined);
-                    this.concatParameterFormArray.push(
-                        new FormControl(parameter.value, [Validators.required, Validators.minLength(1)])
-                    );
-                }
-            }
-        }
-    }
-
-    private buildConcatFunctionFromForm(): ToscaConcatFunction {
-        const toscaConcatFunction1 = new ToscaConcatFunction();
-        this.concatParameterFormArray.controls.forEach(control => {
-            const value = control.value;
-            if (typeof value === 'string') {
-                const stringParameter = new ToscaStringParameter();
-                stringParameter.value = value;
-                toscaConcatFunction1.parameters.push(stringParameter);
-            } else {
-                toscaConcatFunction1.parameters.push(control.value);
-            }
-        });
-
-        return toscaConcatFunction1;
     }
 
     addFunction(): void {
@@ -105,7 +56,7 @@ export class ToscaConcatFunctionComponent implements OnInit {
 
     addStringParameter(): void {
         const toscaStringParameter = new ToscaStringParameter();
-        toscaStringParameter.value = ''
+        toscaStringParameter.value = '';
         this.parameters.push(toscaStringParameter);
         this.propertyInputList.push(undefined);
         this.concatParameterFormArray.push(
@@ -128,14 +79,63 @@ export class ToscaConcatFunctionComponent implements OnInit {
 
     onFunctionValidityChange(event: ToscaFunctionValidationEvent, index: number): void {
         if (event.isValid && event.toscaFunction) {
-            this.concatParameterFormArray.controls[index].setValue(event.toscaFunction)
+            this.concatParameterFormArray.controls[index].setValue(event.toscaFunction);
         } else {
             this.concatParameterFormArray.controls[index].setValue(undefined);
         }
     }
+
+    private initForm(): void {
+        this.formGroup.valueChanges.subscribe(() => {
+            this.onValidityChange.emit({
+                isValid: this.formGroup.valid,
+                toscaConcatFunction: this.formGroup.valid ? this.buildConcatFunctionFromForm() : undefined
+            });
+            if (this.formGroup.valid) {
+                this.onValidFunction.emit(this.buildConcatFunctionFromForm());
+            }
+        });
+        if (!this.toscaConcatFunction) {
+            return;
+        }
+        if (this.toscaConcatFunction.parameters) {
+            this.parameters = Array.from(this.toscaConcatFunction.parameters);
+            for (const parameter of this.parameters) {
+                if (parameter.type !== PROPERTY_TYPES.STRING) {
+                    const propertyBEModel = this.createStringProperty(parameter.value);
+                    propertyBEModel.toscaFunction = (parameter as ToscaFunction);
+                    this.propertyInputList.push(propertyBEModel);
+                    this.concatParameterFormArray.push(
+                        new FormControl(parameter, [Validators.required, Validators.minLength(1)])
+                    );
+                } else {
+                    this.propertyInputList.push(undefined);
+                    this.concatParameterFormArray.push(
+                        new FormControl(parameter.value, [Validators.required, Validators.minLength(1)])
+                    );
+                }
+            }
+        }
+    }
+
+    private buildConcatFunctionFromForm(): ToscaConcatFunction {
+        const toscaConcatFunction1 = new ToscaConcatFunction();
+        this.concatParameterFormArray.controls.forEach((control) => {
+            const value = control.value;
+            if (typeof value === 'string') {
+                const stringParameter = new ToscaStringParameter();
+                stringParameter.value = value;
+                toscaConcatFunction1.parameters.push(stringParameter);
+            } else {
+                toscaConcatFunction1.parameters.push(control.value);
+            }
+        });
+
+        return toscaConcatFunction1;
+    }
 }
 
 export interface ToscaConcatFunctionValidationEvent {
-    isValid: boolean,
-    toscaConcatFunction: ToscaConcatFunction,
+    isValid: boolean;
+    toscaConcatFunction: ToscaConcatFunction;
 }

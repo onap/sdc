@@ -18,16 +18,16 @@
  * ============LICENSE_END=========================================================
  */
 
-import {Component} from '@angular/core';
-import {DataTypesMap} from 'app/models/data-types-map';
-import {DropdownValue} from 'app/components/ui/form-components/dropdown/ui-element-dropdown.component';
-import {DataTypeService} from 'app/services/data-type.service';
-import {PROPERTY_DATA} from 'app/utils/constants';
+import { Component } from '@angular/core';
+import { DropdownValue } from 'app/components/ui/form-components/dropdown/ui-element-dropdown.component';
+import { DataTypesMap } from 'app/models/data-types-map';
+import { DataTypeService } from 'app/services/data-type.service';
+import { PROPERTY_DATA } from 'app/utils/constants';
 import * as _ from 'lodash';
-import {PROPERTY_TYPES} from '../../../utils/constants';
-import {AttributeBEModel} from "../../../models/attributes-outputs/attribute-be-model";
-import {Validation} from "../../../models/validation-config";
-import {WorkspaceService} from "../../workspace/workspace.service";
+import { AttributeBEModel } from '../../../models/attributes-outputs/attribute-be-model';
+import { Validation } from '../../../models/validation-config';
+import { PROPERTY_TYPES } from '../../../utils/constants';
+import { WorkspaceService } from '../../workspace/workspace.service';
 
 @Component({
   selector: 'attribute-creator',
@@ -37,7 +37,7 @@ import {WorkspaceService} from "../../workspace/workspace.service";
 
 export class AttributeCreatorComponent {
 
-  validation:Validation;
+  validation: Validation;
   typesAttributes: DropdownValue[];
   typesSchemaAttributes: DropdownValue[];
   attributeModel: AttributeBEModel;

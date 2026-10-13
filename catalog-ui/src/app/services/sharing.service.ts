@@ -18,25 +18,25 @@
  * ============LICENSE_END=========================================================
  */
 
-import {Injectable} from "@angular/core";
-import {Dictionary} from 'app/utils/dictionary';
+import { Injectable } from '@angular/core';
+import { Dictionary } from 'app/utils/dictionary';
 
 @Injectable()
 export class SharingService {
-    private uuidMap:Dictionary<string, string> = new Dictionary<string,string>();
+    private uuidMap: Dictionary<string, string> = new Dictionary<string, string>();
 
     constructor() {
     }
 
-    public getUuidValue(uniqueId:string): string {
+    public getUuidValue(uniqueId: string): string {
         return this.uuidMap.getValue(uniqueId);
     }
 
-    public addUuidValue(uniqueId:string, uuid:string): void {
+    public addUuidValue(uniqueId: string, uuid: string): void {
         this.uuidMap.setValue(uniqueId, uuid);
     }
 
-    public getUuidMap() :Dictionary<string, string> {
+    public getUuidMap(): Dictionary<string, string> {
         return this.uuidMap;
     }
 }

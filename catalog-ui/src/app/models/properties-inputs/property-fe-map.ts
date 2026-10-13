@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,15 +19,15 @@
  */
 
 'use strict';
-import {PropertyBEModel} from './property-be-model';
-import {PropertyFEModel} from './property-fe-model';
+import { PropertyBEModel } from './property-be-model';
+import { PropertyFEModel } from './property-fe-model';
 
 export class InstanceBePropertiesMap {
-    [instanceId: string]: Array<PropertyBEModel>;
+    [instanceId: string]: PropertyBEModel[];
 }
 
 export class InstanceFePropertiesMap {
-    [instanceId: string]: Array<PropertyFEModel>;
+    [instanceId: string]: PropertyFEModel[];
 }
 
 export class InstancePropertiesAPIMap {
@@ -37,8 +37,8 @@ export class InstancePropertiesAPIMap {
     policyProperties: InstanceBePropertiesMap;
 
     constructor(inputsMapData: InstanceBePropertiesMap, propertiesMapData: InstanceBePropertiesMap, groupPropertiesMapData: InstanceBePropertiesMap, policyPropertiesMapData: InstanceBePropertiesMap) {
-        this.componentInstanceInputsMap = inputsMapData ? inputsMapData: new InstanceBePropertiesMap();
-        this.componentInstanceProperties = propertiesMapData ? propertiesMapData: new InstanceBePropertiesMap();
+        this.componentInstanceInputsMap = inputsMapData ? inputsMapData : new InstanceBePropertiesMap();
+        this.componentInstanceProperties = propertiesMapData ? propertiesMapData : new InstanceBePropertiesMap();
         this.groupProperties = groupPropertiesMapData ? groupPropertiesMapData : new InstanceBePropertiesMap();
         this.policyProperties = policyPropertiesMapData ? policyPropertiesMapData : new InstanceBePropertiesMap();
     }

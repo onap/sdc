@@ -1,5 +1,5 @@
-import {Pipe, PipeTransform} from "@angular/core";
-import {ServiceContainerToUpgradeUiObject} from "../../automated-upgrade-models/ui-component-to-upgrade";
+import { Pipe, PipeTransform } from '@angular/core';
+import { ServiceContainerToUpgradeUiObject } from '../../automated-upgrade-models/ui-component-to-upgrade';
 
 /*
  This filter needs to return all not upgraded components sorted by name first, after that all upgraded components sorted by name
@@ -11,14 +11,8 @@ import {ServiceContainerToUpgradeUiObject} from "../../automated-upgrade-models/
 })
 export class UpgradeListItemOrderPipe implements PipeTransform {
 
-    private orderByName = (firstName:string, secondName:string):number => {
-        var textA = firstName.toLocaleLowerCase();
-        var textB = secondName.toLocaleLowerCase();
-        return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
-    }
-
-    transform(array:Array<ServiceContainerToUpgradeUiObject>):Array<ServiceContainerToUpgradeUiObject> {
-        array.sort((first:ServiceContainerToUpgradeUiObject, second:ServiceContainerToUpgradeUiObject) => {
+    transform(array: ServiceContainerToUpgradeUiObject[]): ServiceContainerToUpgradeUiObject[] {
+        array.sort((first: ServiceContainerToUpgradeUiObject, second: ServiceContainerToUpgradeUiObject) => {
             if (first.isLock && second.isLock) {
                 return this.orderByName(first.name, second.name);
             } else if (first.isLock) {
@@ -38,5 +32,11 @@ export class UpgradeListItemOrderPipe implements PipeTransform {
             }
         });
         return array;
+    }
+
+    private orderByName = (firstName: string, secondName: string): number => {
+        let textA = firstName.toLocaleLowerCase();
+        let textB = secondName.toLocaleLowerCase();
+        return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
     }
 }

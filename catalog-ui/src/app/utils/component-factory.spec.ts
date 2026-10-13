@@ -18,8 +18,8 @@
  * ============LICENSE_END=========================================================
  */
 
-import {ComponentFactory} from './component-factory';
-import {ComponentType} from './constants';
+import { ComponentFactory } from './component-factory';
+import { ComponentType } from './constants';
 
 describe('ComponentFactory', () => {
     let factory: ComponentFactory;
@@ -43,7 +43,7 @@ describe('ComponentFactory', () => {
 
     it('is created with no static $inject property', () => {
         // Regression guard: AngularJS-style $inject must be removed in the @Injectable migration
-        expect((ComponentFactory as any)['$inject']).toBeUndefined();
+        expect((ComponentFactory as any).$inject).toBeUndefined();
     });
 
     it('createEmptyComponent(RESOURCE) returns a component whose componentType is RESOURCE', () => {

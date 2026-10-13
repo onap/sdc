@@ -19,13 +19,12 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {ToscaFunctionParameter} from "./tosca-function-parameter";
-import {ToscaFunctionType} from "./tosca-function-type.enum";
+import { ToscaFunctionParameter } from './tosca-function-parameter';
+import { ToscaFunctionType } from './tosca-function-type.enum';
 
 export class ToscaStringParameter implements ToscaFunctionParameter {
     type: ToscaFunctionType = ToscaFunctionType.STRING;
     value: string;
-
 
     constructor(toscaStringParameter?: ToscaStringParameter) {
         if (toscaStringParameter) {

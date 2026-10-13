@@ -18,30 +18,30 @@
  * ============LICENSE_END=========================================================
  */
 
-import * as _ from "lodash";
 import { Component as NgComponent, Inject } from '@angular/core';
-import { NavigationService } from "../../services/navigation.service";
-import { SdcUiCommon, SdcUiServices } from "onap-ui-angular";
-import {CacheService} from 'app/services/cache.service';
-import {CatalogService} from 'app/services/catalog.service';
-import { SdcConfigToken, ISdcConfig } from "../../config/sdc-config.config";
-import { SdcMenuToken, IAppMenu } from "../../config/sdc-menu.config";
-import {IConfigStatuses} from 'app/models/app-config';
-import {CatalogSelectorTypes, ICatalogSelector} from 'app/models/catalog-selector';
-import {ICategoryBase, IMainCategory, ISubCategory} from 'app/models/category';
-import {Component} from 'app/models/components/component';
-import { ResourceNamePipe } from "../../pipes/resource-name.pipe";
-import { EntityFilterPipe, IEntityFilterObject, ISearchFilter} from "../../pipes/entity-filter.pipe";
-import {DEFAULT_MODEL_NAME, States} from "app/utils/constants";
-import {DataTypeCatalogComponent} from "../../models/data-type-catalog-component";
+import { IConfigStatuses } from 'app/models/app-config';
+import { CatalogSelectorTypes, ICatalogSelector } from 'app/models/catalog-selector';
+import { ICategoryBase, IMainCategory, ISubCategory } from 'app/models/category';
+import { Component } from 'app/models/components/component';
+import { CacheService } from 'app/services/cache.service';
+import { CatalogService } from 'app/services/catalog.service';
+import { DEFAULT_MODEL_NAME, States } from 'app/utils/constants';
+import * as _ from 'lodash';
+import { SdcUiCommon, SdcUiServices } from 'onap-ui-angular';
+import { ISdcConfig, SdcConfigToken } from '../../config/sdc-config.config';
+import { IAppMenu, SdcMenuToken } from '../../config/sdc-menu.config';
+import { DataTypeCatalogComponent } from '../../models/data-type-catalog-component';
+import { EntityFilterPipe, IEntityFilterObject, ISearchFilter } from '../../pipes/entity-filter.pipe';
+import { ResourceNamePipe } from '../../pipes/resource-name.pipe';
+import { NavigationService } from '../../services/navigation.service';
 
 interface Gui {
-    onComponentSubTypesClick:Function;
-    onComponentTypeClick:Function;
-    onCategoryClick:Function;
-    onStatusClick:Function;
-    onModelClick:Function;
-    changeFilterTerm:Function;
+    onComponentSubTypesClick: Function;
+    onComponentTypeClick: Function;
+    onCategoryClick: Function;
+    onStatusClick: Function;
+    onModelClick: Function;
+    changeFilterTerm: Function;
 }
 
 interface IFilterParams {
@@ -55,8 +55,8 @@ interface IFilterParams {
 }
 
 interface ICheckboxesFilterMap {
-    [key: string]: Array<string>;
-    _main: Array<string>;
+    [key: string]: string[];
+    _main: string[];
 }
 
 interface ICheckboxesFilterKeys {
@@ -70,38 +70,38 @@ interface ICategoriesMap {
     [key: string]: {
         category: ICategoryBase,
         parent: ICategoryBase
-    }
+    };
 }
 
 @NgComponent({
     selector: 'catalog',
     templateUrl: './catalog.component.html',
-    styleUrls:['./catalog.component.less']
+    styleUrls: ['./catalog.component.less']
 })
 export class CatalogComponent {
-    public checkboxesFilter:IEntityFilterObject;
-    public checkboxesFilterKeys:ICheckboxesFilterKeys;
-    public gui:Gui;
-    public categories:Array<IMainCategory>;
-    public models: Array<any> = new Array();
-    public filteredCategories:Array<IMainCategory>;
-    public confStatus:IConfigStatuses;
-    public componentTypes:{[key:string]: Array<string>};
-    public catalogItems:Array<Component | DataTypeCatalogComponent>;
-    public catalogFilteredItems:Array<Component | DataTypeCatalogComponent>;
-    public catalogFilteredSlicedItems:Array<Component | DataTypeCatalogComponent>;
-    public expandedSection:Array<string>;
-    public version:string;
-    public sortBy:string;
-    public reverse:boolean;
-    public filterParams:IFilterParams;
-    public search:ISearchFilter;
+    public checkboxesFilter: IEntityFilterObject;
+    public checkboxesFilterKeys: ICheckboxesFilterKeys;
+    public gui: Gui;
+    public categories: IMainCategory[];
+    public models: any[] = new Array();
+    public filteredCategories: IMainCategory[];
+    public confStatus: IConfigStatuses;
+    public componentTypes: {[key: string]: string[]};
+    public catalogItems: Array<Component | DataTypeCatalogComponent>;
+    public catalogFilteredItems: Array<Component | DataTypeCatalogComponent>;
+    public catalogFilteredSlicedItems: Array<Component | DataTypeCatalogComponent>;
+    public expandedSection: string[];
+    public version: string;
+    public sortBy: string;
+    public reverse: boolean;
+    public filterParams: IFilterParams;
+    public search: ISearchFilter;
 
-    //this is for UI paging
-    public numberOfItemToDisplay:number;
+    // this is for UI paging
+    public numberOfItemToDisplay: number;
 
     public selectedCatalogItem: ICatalogSelector;
-    public catalogSelectorItems: Array<ICatalogSelector>;
+    public catalogSelectorItems: ICatalogSelector[];
     public showCatalogSelector: boolean;
 
     public typesChecklistModel: SdcUiCommon.ChecklistModel;
@@ -109,7 +109,7 @@ export class CatalogComponent {
     public statusChecklistModel: SdcUiCommon.ChecklistModel;
     public modelsChecklistModel: SdcUiCommon.ChecklistModel;
 
-    private defaultFilterParams:IFilterParams = {
+    private defaultFilterParams: IFilterParams = {
         components: [],
         categories: [],
         statuses: [],
@@ -118,15 +118,15 @@ export class CatalogComponent {
         term: '',
         active: true
     };
-    private categoriesMap:ICategoriesMap;
+    private categoriesMap: ICategoriesMap;
 
     constructor(
-        @Inject(SdcConfigToken) private sdcConfig:ISdcConfig,
-        @Inject(SdcMenuToken) public sdcMenu:IAppMenu,
+        @Inject(SdcConfigToken) private sdcConfig: ISdcConfig,
+        @Inject(SdcMenuToken) public sdcMenu: IAppMenu,
         private navigationService: NavigationService,
-        private cacheService:CacheService,
-        private catalogService:CatalogService,
-        private resourceNamePipe:ResourceNamePipe,
+        private cacheService: CacheService,
+        private catalogService: CatalogService,
+        private resourceNamePipe: ResourceNamePipe,
         private loaderService: SdcUiServices.LoaderService
     ) {}
 
@@ -138,34 +138,133 @@ export class CatalogComponent {
         this.initCatalogData(); // Async task to get catalog from server.
     }
 
-    private initLeftSwitch = ():void => {
+    public selectLeftSwitchItem(item: ICatalogSelector): void {
+        if (this.selectedCatalogItem.value !== item.value) {
+            this.selectedCatalogItem = item;
+            switch (item.value) {
+                case CatalogSelectorTypes.Active:
+                    this.getActiveCatalogItems(true);
+                    break;
+
+                case CatalogSelectorTypes.Archive:
+                    this.getArchiveCatalogItems(true);
+                    break;
+            }
+            this.changeFilterParams({active: (item.value === CatalogSelectorTypes.Active)});
+        }
+    }
+
+    public sectionClick(section: string): void {
+        const index: number = this.expandedSection.indexOf(section);
+        if (index !== -1) {
+            this.expandedSection.splice(index, 1);
+        } else {
+            this.expandedSection.push(section);
+        }
+    }
+
+    // default sort by descending last update. default for alphabetical = ascending
+    public order(sortBy: string): void {
+        this.changeFilterParams({
+            order: (this.filterParams.order[0] === sortBy)
+                ? [sortBy, !this.filterParams.order[1]]
+                : [sortBy, sortBy === 'lastUpdateDate']
+        });
+    }
+
+    public goToComponent(component: Component | DataTypeCatalogComponent): void {
+        if (component instanceof DataTypeCatalogComponent) {
+            this.navigationService.navigate(States.TYPE_WORKSPACE,  {type: component.getComponentSubType().toLowerCase(), id: component.uniqueId});
+        } else {
+            this.navigationService.navigate(States.WORKSPACE_GENERAL, {id: component.uniqueId, type: component.componentType.toLowerCase()});
+        }
+    }
+
+    // Will print the number of elements found in catalog
+    public getNumOfElements(num: number): string {
+        if (!num || num === 0) {
+            return `No <b>${this.selectedCatalogItem.header}</b> Elements found`;
+        } else if (num === 1) {
+            return `1 <b>${this.selectedCatalogItem.header}</b> Element found`;
+        } else {
+            return num + ` <b>${this.selectedCatalogItem.header}</b> Elements found`;
+        }
+    }
+
+    public initGui(): void {
+        this.gui = ({} as Gui);
+
+        /**
+         * Select | unselect sub resource when resource is clicked | unclicked.
+         * @param type
+         */
+        this.gui.onComponentTypeClick = (): void => {
+            this.changeFilterParams({
+                components: this.makeFilterParamsFromCheckboxes(this.typesChecklistModel)
+            });
+        };
+
+        this.gui.onCategoryClick = (): void => {
+            this.changeFilterParams({
+                categories: this.makeFilterParamsFromCheckboxes(this.categoriesChecklistModel)
+            });
+        };
+
+        this.gui.onStatusClick = (statusChecklistItem: SdcUiCommon.ChecklistItemModel) => {
+            this.changeFilterParams({
+                statuses: this.makeFilterParamsFromCheckboxes(this.statusChecklistModel)
+            });
+        };
+
+        this.gui.changeFilterTerm = (filterTerm: string) => {
+            this.changeFilterParams({
+                term: filterTerm
+            });
+        };
+
+        this.gui.onModelClick = (): void => {
+            this.changeFilterParams({
+                models: this.makeFilterParamsFromCheckboxes(this.modelsChecklistModel)
+            });
+        };
+    }
+
+    public raiseNumberOfElementToDisplay(): void {
+        if (!this.catalogFilteredItems) {
+            this.numberOfItemToDisplay = 0;
+        } else {
+            this.numberOfItemToDisplay = this.catalogFilteredItems.length;
+            this.catalogFilteredSlicedItems = this.catalogFilteredItems.slice(0, this.numberOfItemToDisplay);
+        }
+    }
+
+    private initLeftSwitch = (): void => {
         this.showCatalogSelector = false;
 
         this.catalogSelectorItems = [
-            {value: CatalogSelectorTypes.Active, title: "Active Items", header: "Active"},
-            {value: CatalogSelectorTypes.Archive, title: "Archive", header: "Archived"}
+            {value: CatalogSelectorTypes.Active, title: 'Active Items', header: 'Active'},
+            {value: CatalogSelectorTypes.Archive, title: 'Archive', header: 'Archived'}
         ];
         // set active items is default
         this.selectedCatalogItem = this.catalogSelectorItems[0];
-    };
+    }
 
-    private initCatalogData = ():void => {
-        if(this.selectedCatalogItem.value === CatalogSelectorTypes.Archive){
+    private initCatalogData = (): void => {
+        if (this.selectedCatalogItem.value === CatalogSelectorTypes.Archive) {
             this.getArchiveCatalogItems();
         } else {
             this.getActiveCatalogItems();
         }
-    };
+    }
 
-
-    private initScopeMembers = ():void => {
+    private initScopeMembers = (): void => {
         this.numberOfItemToDisplay = 0;
         this.categories = this.makeSortedCategories(this.cacheService.get('serviceCategories').concat(this.cacheService.get('resourceCategories')))
-            .map((cat) => <IMainCategory>cat);
+            .map((cat) => cat as IMainCategory);
 
-        var modelList = this.cacheService.get('models');
-        modelList.sort((o:any, o1:any) => new String(o.modelType).localeCompare(o1.modelType));
-        modelList.forEach(m => {
+        const modelList = this.cacheService.get('models');
+        modelList.sort((o: any, o1: any) => new String(o.modelType).localeCompare(o1.modelType));
+        modelList.forEach((m) => {
             if (m.derivedFrom) {
                 this.models[m.derivedFrom].push(m.name);
             } else {
@@ -174,9 +273,9 @@ export class CatalogComponent {
         });
         this.models[DEFAULT_MODEL_NAME] = [];
         this.confStatus = this.sdcMenu.statuses;
-        this.expandedSection = ["type", "category", "status", "model"];
+        this.expandedSection = ['type', 'category', 'status', 'model'];
         this.catalogItems = [];
-        this.search = {FilterTerm: ""};
+        this.search = {FilterTerm: ''};
         this.categoriesMap = this.initCategoriesMap();
         this.initCheckboxesFilter();
         this.initCheckboxesFilterKeys();
@@ -185,7 +284,7 @@ export class CatalogComponent {
         this.version = this.cacheService.get('version');
         this.sortBy = 'lastUpdateDate';
         this.reverse = true;
-    };
+    }
 
     private buildCheckboxLists() {
         this.buildChecklistModelForTypes();
@@ -194,14 +293,14 @@ export class CatalogComponent {
         this.buildChecklistModelForModels();
     }
 
-    private getTestIdForCheckboxByText = ( text: string ):string => {
+    private getTestIdForCheckboxByText = ( text: string ): string => {
         return 'checkbox-' + text.toLowerCase().replace(/ /g, '');
     }
 
     private buildChecklistModelForTypes() {
         this.componentTypes = {
-            Resource: ['VF', 'VFC', 'CR', 'PNF', 'CP', 'VL'],
-            Service: null,
+            'Resource': ['VF', 'VFC', 'CR', 'PNF', 'CP', 'VL'],
+            'Service': null,
             'TOSCA Type': ['Data Type']
         };
         this.typesChecklistModel = new SdcUiCommon.ChecklistModel(this.checkboxesFilterKeys.componentTypes._main,
@@ -231,7 +330,7 @@ export class CatalogComponent {
                     (cat.subcategories || []).map((scat) => {
                         this.checkboxesFilterKeys.categories[scat.uniqueId] = this.checkboxesFilterKeys.categories[scat.uniqueId] || [];
                         const groupingsChecklistModel = new SdcUiCommon.ChecklistModel(this.checkboxesFilterKeys.categories[scat.uniqueId],
-                            (scat.groupings || []).map(gcat =>
+                            (scat.groupings || []).map((gcat) =>
                                 new SdcUiCommon.ChecklistItemModel(gcat.name, false, this.checkboxesFilterKeys.categories[scat.uniqueId].indexOf(gcat.uniqueId) !== -1, null, this.getTestIdForCheckboxByText(gcat.uniqueId), gcat.uniqueId))
                         );
                         return new SdcUiCommon.ChecklistItemModel(scat.name, false, this.checkboxesFilterKeys.categories[cat.uniqueId].indexOf(scat.uniqueId) !== -1, groupingsChecklistModel, this.getTestIdForCheckboxByText(scat.uniqueId), scat.uniqueId);
@@ -245,7 +344,7 @@ export class CatalogComponent {
     private buildChecklistModelForModels() {
         this.modelsChecklistModel = new SdcUiCommon.ChecklistModel(this.checkboxesFilterKeys.models._main,
             Object.keys(this.models).map((modelName) => {
-                var modelList = this.models[modelName];
+                const modelList = this.models[modelName];
                 modelList.unshift(modelName);
                 return new SdcUiCommon.ChecklistItemModel(
                     modelName,
@@ -261,18 +360,18 @@ export class CatalogComponent {
         // For statuses checklist model, use the statuses keys as values. On applying filtering map the statuses keys to statuses values.
         this.statusChecklistModel = new SdcUiCommon.ChecklistModel(this.checkboxesFilterKeys.statuses._main,
             Object.keys(this.confStatus).map((sKey) => new SdcUiCommon.ChecklistItemModel(
-                this.confStatus[sKey].name, 
-                false, 
-                this.checkboxesFilterKeys.statuses._main.indexOf(sKey) !== -1, 
-                null, 
-                this.getTestIdForCheckboxByText(sKey), 
+                this.confStatus[sKey].name,
+                false,
+                this.checkboxesFilterKeys.statuses._main.indexOf(sKey) !== -1,
+                null,
+                this.getTestIdForCheckboxByText(sKey),
                 sKey))
         );
     }
 
     private initCheckboxesFilter() {
         // Checkboxes filter init
-        this.checkboxesFilter = <IEntityFilterObject>{};
+        this.checkboxesFilter = ({} as IEntityFilterObject);
         this.checkboxesFilter.selectedComponentTypes = [];
         this.checkboxesFilter.selectedResourceSubTypes = [];
         this.checkboxesFilter.selectedToscaTypes = [];
@@ -283,14 +382,14 @@ export class CatalogComponent {
 
     private initCheckboxesFilterKeys() {
         // init checkboxes filter keys (for checklists values):
-        this.checkboxesFilterKeys = <ICheckboxesFilterKeys>{};
+        this.checkboxesFilterKeys = ({} as ICheckboxesFilterKeys);
         this.checkboxesFilterKeys.componentTypes = { _main: [] };
         this.checkboxesFilterKeys.categories = { _main: [] };
         this.checkboxesFilterKeys.statuses = { _main: [] };
         this.checkboxesFilterKeys.models = { _main: [] };
     }
 
-    private initCategoriesMap(categoriesList?:(ICategoryBase)[], parentCategory:ICategoryBase=null): ICategoriesMap {
+    private initCategoriesMap(categoriesList?: (ICategoryBase)[], parentCategory: ICategoryBase= null): ICategoriesMap {
         categoriesList = (categoriesList) ? categoriesList : this.categories;
 
         // Init categories map
@@ -299,45 +398,19 @@ export class CatalogComponent {
                 category: cat,
                 parent: parentCategory
             };
-            const catChildren = ((<IMainCategory>cat).subcategories)
-                ? (<IMainCategory>cat).subcategories
-                : (((<ISubCategory>cat).groupings)
-                    ? (<ISubCategory>cat).groupings
+            const catChildren = ((cat as IMainCategory).subcategories)
+                ? (cat as IMainCategory).subcategories
+                : (((cat as ISubCategory).groupings)
+                    ? (cat as ISubCategory).groupings
                     : null);
             if (catChildren) {
                 Object.assign(acc, this.initCategoriesMap(catChildren, cat));
             }
             return acc;
-        }, <ICategoriesMap>{});
+        }, {} as ICategoriesMap);
     }
 
-    public selectLeftSwitchItem(item: ICatalogSelector): void {
-        if (this.selectedCatalogItem.value !== item.value) {
-            this.selectedCatalogItem = item;
-            switch (item.value) {
-                case CatalogSelectorTypes.Active:
-                    this.getActiveCatalogItems(true);
-                    break;
-
-                case CatalogSelectorTypes.Archive:
-                    this.getArchiveCatalogItems(true);
-                    break;
-            }
-            this.changeFilterParams({active: (item.value === CatalogSelectorTypes.Active)});
-        }
-    }
-
-    public sectionClick(section: string): void {
-        let index: number = this.expandedSection.indexOf(section);
-        if (index !== -1) {
-            this.expandedSection.splice(index, 1);
-        } else {
-            this.expandedSection.push(section);
-        }
-    }
-
-
-    private makeFilterParamsFromCheckboxes(checklistModel:SdcUiCommon.ChecklistModel): Array<string> {
+    private makeFilterParamsFromCheckboxes(checklistModel: SdcUiCommon.ChecklistModel): string[] {
         return checklistModel.checkboxes.reduce((acc, chbox) => {
             if (checklistModel.selectedValues.indexOf(chbox.value) !== -1) {
                 acc.push(chbox.value);
@@ -348,89 +421,12 @@ export class CatalogComponent {
         }, []);
     }
 
-    //default sort by descending last update. default for alphabetical = ascending
-    public order(sortBy: string): void {
-        this.changeFilterParams({
-            order: (this.filterParams.order[0] === sortBy)
-                ? [sortBy, !this.filterParams.order[1]]
-                : [sortBy, sortBy === 'lastUpdateDate']
-        });
-    }
-
-
-    public goToComponent(component: Component | DataTypeCatalogComponent): void {
-        if (component instanceof DataTypeCatalogComponent) {
-            this.navigationService.navigate(States.TYPE_WORKSPACE,  {type: component.getComponentSubType().toLowerCase(), id: component.uniqueId});
-        } else {
-            this.navigationService.navigate(States.WORKSPACE_GENERAL, {id: component.uniqueId, type: component.componentType.toLowerCase()});
-        }
-    }
-
-
-    // Will print the number of elements found in catalog
-    public getNumOfElements(num:number):string {
-        if (!num || num === 0) {
-            return `No <b>${this.selectedCatalogItem.header}</b> Elements found`;
-        } else if (num === 1) {
-            return `1 <b>${this.selectedCatalogItem.header}</b> Element found`;
-        } else {
-            return num + ` <b>${this.selectedCatalogItem.header}</b> Elements found`;
-        }
-    }
-
-    public initGui(): void {
-        this.gui = <Gui>{};
-
-        /**
-         * Select | unselect sub resource when resource is clicked | unclicked.
-         * @param type
-         */
-        this.gui.onComponentTypeClick = (): void => {
-            this.changeFilterParams({
-                components: this.makeFilterParamsFromCheckboxes(this.typesChecklistModel)
-            });
-        };
-
-        this.gui.onCategoryClick = (): void => {
-            this.changeFilterParams({
-                categories: this.makeFilterParamsFromCheckboxes(this.categoriesChecklistModel)
-            });
-        };
-
-        this.gui.onStatusClick = (statusChecklistItem: SdcUiCommon.ChecklistItemModel) => {
-            this.changeFilterParams({
-                statuses: this.makeFilterParamsFromCheckboxes(this.statusChecklistModel)
-            });
-        };
-
-        this.gui.changeFilterTerm = (filterTerm: string) => {
-            this.changeFilterParams({
-                term: filterTerm
-            });
-        };
- 
-        this.gui.onModelClick = (): void => {
-            this.changeFilterParams({
-                models: this.makeFilterParamsFromCheckboxes(this.modelsChecklistModel)
-            });
-        };
-    }
-
-    public raiseNumberOfElementToDisplay(): void {
-        if (!this.catalogFilteredItems) {
-            this.numberOfItemToDisplay = 0;
-        } else {
-            this.numberOfItemToDisplay = this.catalogFilteredItems.length;
-            this.catalogFilteredSlicedItems = this.catalogFilteredItems.slice(0, this.numberOfItemToDisplay);
-        }
-    }
-
     private isDefaultFilter = (): boolean => {
         return _.isEqual(this.defaultFilterParams, this.filterParams);
     }
 
-    private componentShouldReload = ():boolean => {
-        let breadcrumbsValid: boolean = (this.navigationService.getCurrentStateName() === this.cacheService.get('breadcrumbsComponentsState') && this.cacheService.contains('breadcrumbsComponents'));
+    private componentShouldReload = (): boolean => {
+        const breadcrumbsValid: boolean = (this.navigationService.getCurrentStateName() === this.cacheService.get('breadcrumbsComponentsState') && this.cacheService.contains('breadcrumbsComponents'));
         return !breadcrumbsValid || this.isDefaultFilter();
     }
 
@@ -438,53 +434,53 @@ export class CatalogComponent {
         if (forceReload || this.componentShouldReload()) {
             this.loaderService.activate();
 
-            let onSuccess = (followedResponse:Array<Component | DataTypeCatalogComponent>):void => {
+            const onSuccess = (followedResponse: Array<Component | DataTypeCatalogComponent>): void => {
                 this.updateCatalogItems(followedResponse);
                 this.loaderService.deactivate();
-                this.cacheService.set('breadcrumbsComponentsState', this.navigationService.getCurrentStateName());  //catalog
+                this.cacheService.set('breadcrumbsComponentsState', this.navigationService.getCurrentStateName());  // catalog
                 this.cacheService.set('breadcrumbsComponents', followedResponse);
-                
+
             };
 
-            let onError = ():void => {
+            const onError = (): void => {
                 console.info('Failed to load catalog CatalogViewModel::getActiveCatalogItems');
                 this.loaderService.deactivate();
             };
             this.catalogService.getCatalog().subscribe(onSuccess, onError);
         } else {
-            let cachedComponents = this.cacheService.get('breadcrumbsComponents');
+            const cachedComponents = this.cacheService.get('breadcrumbsComponents');
             this.updateCatalogItems(cachedComponents);
         }
     }
 
     private getArchiveCatalogItems(forceReload?: boolean): void {
-        if(forceReload || !this.cacheService.contains("archiveComponents")) {
+        if (forceReload || !this.cacheService.contains('archiveComponents')) {
             this.loaderService.activate();
-            let onSuccess = (followedResponse:Array<Component>):void => {
-                this.cacheService.set("archiveComponents", followedResponse);
+            const onSuccess = (followedResponse: Component[]): void => {
+                this.cacheService.set('archiveComponents', followedResponse);
                 this.loaderService.deactivate();
                 this.updateCatalogItems(followedResponse);
             };
 
-            let onError = ():void => {
+            const onError = (): void => {
                 console.info('Failed to load catalog CatalogViewModel::getArchiveCatalogItems');
                 this.loaderService.deactivate();
             };
 
             this.catalogService.getArchiveCatalog().subscribe(onSuccess, onError);
         } else {
-            let archiveCache = this.cacheService.get("archiveComponents");
+            const archiveCache = this.cacheService.get('archiveComponents');
             this.updateCatalogItems(archiveCache);
         }
     }
 
-    private updateCatalogItems = (items:Array<Component | DataTypeCatalogComponent>):void => {
+    private updateCatalogItems = (items: Array<Component | DataTypeCatalogComponent>): void => {
         this.catalogItems = items;
         this.catalogItems.forEach(this.addFilterTermToComponent);
         this.filterCatalogItems();
     }
 
-    private applyFilterParamsToView(filterParams:IFilterParams) {
+    private applyFilterParamsToView(filterParams: IFilterParams) {
         // reset checkboxes filter
         this.initCheckboxesFilter();
 
@@ -512,7 +508,7 @@ export class CatalogComponent {
         this.catalogFilteredSlicedItems = this.catalogFilteredItems.slice(0, this.numberOfItemToDisplay);
     }
 
-    private applyFilterParamsToCheckboxes(checklistModel:SdcUiCommon.ChecklistModel, filterParamsList:Array<string>) {
+    private applyFilterParamsToCheckboxes(checklistModel: SdcUiCommon.ChecklistModel, filterParamsList: string[]) {
         checklistModel.checkboxes.forEach((chbox) => {
             // if checkbox is checked, then add it to selected values if not there, and select all sub checkboxes
             if (filterParamsList.indexOf(chbox.value) !== -1 && checklistModel.selectedValues.indexOf(chbox.value) === -1) {
@@ -526,31 +522,31 @@ export class CatalogComponent {
         });
     }
 
-    private applyFilterParamsComponents(filterParams:IFilterParams) {
+    private applyFilterParamsComponents(filterParams: IFilterParams) {
         this.applyFilterParamsToCheckboxes(this.typesChecklistModel, filterParams.components);
         this.checkboxesFilter.selectedComponentTypes = this.checkboxesFilterKeys.componentTypes._main;
         Object.keys(this.checkboxesFilterKeys.componentTypes).forEach((chKey) => {
             if (chKey !== '_main') {
                 if (chKey === 'TOSCA Type') {
-                    this.checkboxesFilter['selectedToscaTypes'] = this.checkboxesFilterKeys.componentTypes[chKey].map((st) => st.substr(chKey.length + 1));
+                    this.checkboxesFilter.selectedToscaTypes = this.checkboxesFilterKeys.componentTypes[chKey].map((st) => st.substr(chKey.length + 1));
                 } else if (chKey === 'Resource') {
                     this.checkboxesFilter['selected' + chKey + 'SubTypes'] = this.checkboxesFilterKeys.componentTypes[chKey].map((st) => st.substr(chKey.length + 1));
                 }
             }
         });
 
-        let selectedCatalogIndex = filterParams.active ? CatalogSelectorTypes.Active : CatalogSelectorTypes.Archive;
+        const selectedCatalogIndex = filterParams.active ? CatalogSelectorTypes.Active : CatalogSelectorTypes.Archive;
         this.selectedCatalogItem = this.catalogSelectorItems[selectedCatalogIndex];
     }
 
-    private applyFilterParamsCategories(filterParams:IFilterParams) {
+    private applyFilterParamsCategories(filterParams: IFilterParams) {
         this.applyFilterParamsToCheckboxes(this.categoriesChecklistModel, filterParams.categories);
-        this.checkboxesFilter.selectedCategoriesModel = <Array<string>>_.flatMap(this.checkboxesFilterKeys.categories);
+        this.checkboxesFilter.selectedCategoriesModel = (_.flatMap(this.checkboxesFilterKeys.categories) as string[]);
     }
 
     private applyFilterParamsStatuses(filterParams: IFilterParams) {
         this.applyFilterParamsToCheckboxes(this.statusChecklistModel, filterParams.statuses);
-        this.checkboxesFilter.selectedStatuses = _.reduce(_.flatMap(this.checkboxesFilterKeys.statuses), (stats, st:string) => [...stats, ...this.confStatus[st].values], []);
+        this.checkboxesFilter.selectedStatuses = _.reduce(_.flatMap(this.checkboxesFilterKeys.statuses), (stats, st: string) => [...stats, ...this.confStatus[st].values], []);
     }
 
     private applyFilterParamsModels(filterParams: IFilterParams) {
@@ -597,7 +593,7 @@ export class CatalogComponent {
                         newVal = params[k];
                         break;
                     case 'filter.active':
-                        newVal = (params[k] === "true" || params[k] === true)? true : false;
+                        newVal = (params[k] === 'true' || params[k] === true) ? true : false;
                         break;
                     default:
                         // unknown filter key
@@ -612,7 +608,7 @@ export class CatalogComponent {
         this.changeFilterParams(this.filterParams, true);
     }
 
-    private changeFilterParams(changedFilterParams, rebuild:boolean = false) {
+    private changeFilterParams(changedFilterParams, rebuild: boolean = false) {
         const newParams = {};
         Object.keys(changedFilterParams).forEach((k) => {
             let newVal;
@@ -630,7 +626,7 @@ export class CatalogComponent {
                     newVal = changedFilterParams[k] ? changedFilterParams[k] : null;
                     break;
                 case 'active':
-                    newVal = (changedFilterParams[k] === "true" || changedFilterParams[k] === true);
+                    newVal = (changedFilterParams[k] === 'true' || changedFilterParams[k] === true);
                     break;
                 default:
                     return;
@@ -650,13 +646,13 @@ export class CatalogComponent {
                 // rebuild the checkboxes to show selected
                 this.buildCheckboxLists();
             }
-        }).catch(function (err) {
-            console.log(err.name + ":", err.message);
+        }).catch(function(err) {
+            console.log(err.name + ':', err.message);
         });
         this.applyFilterParamsToView(this.filterParams);
     }
 
-    private makeFilteredCategories(categories:Array<IMainCategory>, selectedTypes:Array<string>=[]): Array<IMainCategory> {
+    private makeFilteredCategories(categories: IMainCategory[], selectedTypes: string[]= []): IMainCategory[] {
         let filteredCategories = categories.slice();
 
         const filteredMainTypes = selectedTypes.reduce((acc, st) => {
@@ -674,39 +670,39 @@ export class CatalogComponent {
                 return acc;
             }, []);
 
-            filteredCategories = _.intersectionBy(filteredCategories, filteredTypesCategories, c => c.uniqueId);
+            filteredCategories = _.intersectionBy(filteredCategories, filteredTypesCategories, (c) => c.uniqueId);
         }
 
         return filteredCategories;
     }
 
-    private makeSortedCategories(categories:Array<IMainCategory|ISubCategory|ICategoryBase>, sortBy?:any): Array<IMainCategory|ISubCategory|ICategoryBase> {
+    private makeSortedCategories(categories: Array<IMainCategory|ISubCategory|ICategoryBase>, sortBy?: any): Array<IMainCategory|ISubCategory|ICategoryBase> {
         sortBy = (sortBy !== undefined) ? sortBy : ['name'];
-        let sortedCategories = categories.map(cat => Object.assign({}, cat));  // copy each object in the array
+        let sortedCategories = categories.map((cat) => Object.assign({}, cat));  // copy each object in the array
         sortedCategories = _.sortBy(sortedCategories, sortBy);
 
         // inner sort of subcategories and groupings
         sortedCategories.forEach((cat) => {
-            if ('subcategories' in cat && cat['subcategories'] && cat['subcategories'].length > 0) {
-                cat['subcategories'] = this.makeSortedCategories(cat['subcategories'], sortBy);
+            if ('subcategories' in cat && cat.subcategories && cat.subcategories.length > 0) {
+                cat.subcategories = this.makeSortedCategories(cat.subcategories, sortBy);
             }
-            if ('groupings' in cat && cat['groupings'] && cat['groupings'].length > 0) {
-                cat['groupings'] = this.makeSortedCategories(cat['groupings'], sortBy);
+            if ('groupings' in cat && cat.groupings && cat.groupings.length > 0) {
+                cat.groupings = this.makeSortedCategories(cat.groupings, sortBy);
             }
         });
 
         return sortedCategories;
     }
 
-    private addFilterTermToComponent(component:Component | DataTypeCatalogComponent) {
+    private addFilterTermToComponent(component: Component | DataTypeCatalogComponent) {
         if (component instanceof Component) {
             component.filterTerm = component.name + ' ' + component.description + ' ' + component.tags.toString() + ' ' + component.version;
             component.filterTerm = component.filterTerm.toLowerCase();
         }
     }
 
-    private makeFilteredItems(catalogItems:Array<Component | DataTypeCatalogComponent>, filter:IEntityFilterObject, search:ISearchFilter, sortBy:string, reverse:boolean) {
-        let filteredComponents:Array<Component | DataTypeCatalogComponent> = catalogItems;
+    private makeFilteredItems(catalogItems: Array<Component | DataTypeCatalogComponent>, filter: IEntityFilterObject, search: ISearchFilter, sortBy: string, reverse: boolean) {
+        let filteredComponents: Array<Component | DataTypeCatalogComponent> = catalogItems;
 
         // common entity filter
         // --------------------------------------------------------------------------
@@ -718,7 +714,7 @@ export class CatalogComponent {
         if (sortBy) {
             switch (sortBy) {
                 case 'resourceName':
-                    filteredComponents = _.sortBy(filteredComponents, cat => this.resourceNamePipe.transform(cat.name));
+                    filteredComponents = _.sortBy(filteredComponents, (cat) => this.resourceNamePipe.transform(cat.name));
                     break;
                 default:
                     filteredComponents = _.sortBy(filteredComponents, [sortBy]);

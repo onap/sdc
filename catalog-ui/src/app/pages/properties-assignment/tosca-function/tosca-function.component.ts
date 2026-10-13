@@ -17,28 +17,28 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
-import {ComponentMetadata} from 'app/models/component-metadata';
-import {DerivedFEProperty} from 'app/models/properties-inputs/derived-fe-property';
-import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
-import {PropertyDeclareAPIModel} from 'app/models/properties-inputs/property-declare-api-model';
-import {TopologyTemplateService} from "../../../services/component-services/topology-template.service";
-import {WorkspaceService} from "../../workspace/workspace.service";
-import {ToscaGetFunctionType} from "../../../models/tosca-get-function-type";
-import {InstanceFeDetails} from "../../../models/instance-fe-details";
-import {ToscaGetFunction} from "../../../models/tosca-get-function";
-import {FormControl, FormGroup, Validators} from "@angular/forms";
-import {ToscaFunctionType} from "../../../models/tosca-function-type.enum";
-import {ToscaGetFunctionValidationEvent} from "./tosca-get-function/tosca-get-function.component";
-import {ToscaFunction} from "../../../models/tosca-function";
-import {ToscaConcatFunctionValidationEvent} from "./tosca-concat-function/tosca-concat-function.component";
-import {ToscaCustomFunctionValidationEvent} from "./tosca-custom-function/tosca-custom-function.component";
-import {PROPERTY_TYPES} from "../../../utils/constants";
-import {YamlFunctionValidationEvent} from "./yaml-function/yaml-function.component";
-import {ToscaConcatFunction} from "../../../models/tosca-concat-function";
-import {ToscaCustomFunction} from "../../../models/tosca-custom-function";
-import {YamlFunction} from "../../../models/yaml-function";
-import {CustomToscaFunction} from "../../../models/default-custom-functions";
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { ComponentMetadata } from 'app/models/component-metadata';
+import { DerivedFEProperty } from 'app/models/properties-inputs/derived-fe-property';
+import { PropertyBEModel } from 'app/models/properties-inputs/property-be-model';
+import { PropertyDeclareAPIModel } from 'app/models/properties-inputs/property-declare-api-model';
+import { CustomToscaFunction } from '../../../models/default-custom-functions';
+import { InstanceFeDetails } from '../../../models/instance-fe-details';
+import { ToscaConcatFunction } from '../../../models/tosca-concat-function';
+import { ToscaCustomFunction } from '../../../models/tosca-custom-function';
+import { ToscaFunction } from '../../../models/tosca-function';
+import { ToscaFunctionType } from '../../../models/tosca-function-type.enum';
+import { ToscaGetFunction } from '../../../models/tosca-get-function';
+import { ToscaGetFunctionType } from '../../../models/tosca-get-function-type';
+import { YamlFunction } from '../../../models/yaml-function';
+import { TopologyTemplateService } from '../../../services/component-services/topology-template.service';
+import { PROPERTY_TYPES } from '../../../utils/constants';
+import { WorkspaceService } from '../../workspace/workspace.service';
+import { ToscaConcatFunctionValidationEvent } from './tosca-concat-function/tosca-concat-function.component';
+import { ToscaCustomFunctionValidationEvent } from './tosca-custom-function/tosca-custom-function.component';
+import { ToscaGetFunctionValidationEvent } from './tosca-get-function/tosca-get-function.component';
+import { YamlFunctionValidationEvent } from './yaml-function/yaml-function.component';
 
 @Component({
     selector: 'tosca-function',
@@ -51,10 +51,10 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
     @Input() overridingType: PROPERTY_TYPES;
     @Input() inToscaFunction: ToscaFunction;
     @Input() componentInstanceMap: Map<string, InstanceFeDetails> = new Map<string, InstanceFeDetails>();
-    @Input() customToscaFunctions: Array<CustomToscaFunction> = [];
+    @Input() customToscaFunctions: CustomToscaFunction[] = [];
     @Input() allowClear: boolean = true;
     @Input() compositionMap: boolean = false;
-    @Input() compositionMapKey: string = "";
+    @Input() compositionMapKey: string = '';
     @Input() complexListKey: string = null;
     @Output() onValidFunction: EventEmitter<ToscaGetFunction> = new EventEmitter<ToscaGetFunction>();
     @Output() onValidityChange: EventEmitter<ToscaFunctionValidationEvent> = new EventEmitter<ToscaFunctionValidationEvent>();
@@ -62,14 +62,14 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
     toscaFunctionForm: FormControl = new FormControl(undefined, [Validators.required]);
     toscaFunctionTypeForm: FormControl = new FormControl(undefined, Validators.required);
     formGroup: FormGroup = new FormGroup({
-        'toscaFunction': this.toscaFunctionForm,
-        'toscaFunctionType': this.toscaFunctionTypeForm,
+        toscaFunction: this.toscaFunctionForm,
+        toscaFunctionType: this.toscaFunctionTypeForm,
     });
 
     isLoading: boolean = false;
     toscaFunction: ToscaFunction;
-    toscaFunctions: Array<string> = [];
-    toscaCustomFunctions: Array<String> = [];
+    toscaFunctions: string[] = [];
+    toscaCustomFunctions: String[] = [];
 
     private isInitialized: boolean = false;
     private componentMetadata: ComponentMetadata;
@@ -105,152 +105,28 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
         }
     }
 
-    private validate(): boolean {
-        return (!this.toscaFunctionForm.value && !this.toscaFunctionTypeForm.value) || this.formGroup.valid;
-    }
-
-    private initToscaFunction(): void {
-        if (this.compositionMap && this.property.subPropertyToscaFunctions) {
-            let keyToFind = [this.compositionMapKey];
-            if (this.complexListKey != null) {
-                keyToFind = [this.complexListKey,this.compositionMapKey];
-            }       
-            let subPropertyToscaFunction;
-            this.property.subPropertyToscaFunctions.forEach(subToscaFunction => {
-                if (subToscaFunction.subPropertyPath.toString() == keyToFind.toString()) {
-                    subPropertyToscaFunction = subToscaFunction;
-                }
-            });
-
-            if (subPropertyToscaFunction){
-                this.toscaFunction = subPropertyToscaFunction.toscaFunction;
-                this.toscaFunctionForm.setValue(this.toscaFunction);
-                let type = this.toscaFunction.type;
-                if (type == ToscaFunctionType.CUSTOM) {
-                    let name = (subPropertyToscaFunction.toscaFunction as ToscaCustomFunction).name;
-                    let customToscaFunc = this.customToscaFunctions.find(custToscFunc => _.isEqual(custToscFunc.name, name))
-                    if (customToscaFunc) {
-                        this.toscaFunctionTypeForm.setValue(name);
-                    } else {
-                        this.toscaFunctionTypeForm.setValue("other");
-                    }
-                } else {
-                    this.toscaFunctionTypeForm.setValue(type);
-                }
-            }
-            return;
-        }
-	    if (this.property instanceof PropertyDeclareAPIModel && this.property.subPropertyToscaFunctions && (<PropertyDeclareAPIModel> this.property).propertiesName){
-	        let propertiesPath = (<PropertyDeclareAPIModel> this.property).propertiesName.split("#");
-            if (propertiesPath.length > 1){
-                let keyToFind = (<DerivedFEProperty>this.property.input).toscaPath;
-                let subPropertyToscaFunction = this.property.subPropertyToscaFunctions.find(subPropertyToscaFunction => this.areEqual(subPropertyToscaFunction.subPropertyPath, keyToFind.length > 0 ? keyToFind : propertiesPath.slice(1)));
-
-                if (subPropertyToscaFunction){
-	                this.toscaFunction = subPropertyToscaFunction.toscaFunction;
-                    this.toscaFunctionForm.setValue(this.toscaFunction);
-                    let type = this.toscaFunction.type;
-                    if (type == ToscaFunctionType.CUSTOM) {
-                        let name = (subPropertyToscaFunction.toscaFunction as ToscaCustomFunction).name;
-                        let customToscaFunc = this.customToscaFunctions.find(custToscFunc => _.isEqual(custToscFunc.name, name))
-                        if (customToscaFunc) {
-                            this.toscaFunctionTypeForm.setValue(name);
-                        } else {
-                            this.toscaFunctionTypeForm.setValue("other");
-                        }
-                    } else {
-                        this.toscaFunctionTypeForm.setValue(type);
-                    }
-                }
-                return;
-            }
-        }
-        if (!this.property.isToscaFunction()) {
-            return;
-        }
-
-        this.toscaFunctionForm.setValue(this.inToscaFunction ? this.inToscaFunction : this.property.toscaFunction);
-        let type = this.property.toscaFunction.type ? this.property.toscaFunction.type : this.toscaFunctionForm.value.type;
-        if (type == ToscaFunctionType.CUSTOM) {
-            let name = (this.toscaFunctionForm.value as ToscaCustomFunction).name;
-            let customToscaFunc = this.customToscaFunctions.find(custToscFunc => _.isEqual(custToscFunc.name, name))
-            if (customToscaFunc) {
-                this.toscaFunctionTypeForm.setValue(name);
-            } else {
-                this.toscaFunctionTypeForm.setValue("other");
-            }
-        } else {
-            this.toscaFunctionTypeForm.setValue(this.inToscaFunction ? this.inToscaFunction.type : type);
-        }
-    }
-
-    private areEqual(array1: string[], array2: string[]): boolean {
-	    return array1.length === array2.length && array1.every(function(value, index) { return value === array2[index]})
-    }
-
-    private loadToscaFunctions(): void {
-        this.toscaFunctions = [];
-        this.toscaFunctions.push(ToscaFunctionType.GET_ATTRIBUTE);
-        this.toscaFunctions.push(ToscaFunctionType.GET_INPUT);
-        this.toscaFunctions.push(ToscaFunctionType.GET_PROPERTY);
-        if ((this.property.type === PROPERTY_TYPES.STRING || this.property.type === PROPERTY_TYPES.ANY) && this.overridingType === undefined) {
-            this.toscaFunctions.push(ToscaFunctionType.CONCAT);
-        }
-        this.loadCustomToscaFunctions();
-    }
-
-    private loadCustomToscaFunctions(): void {
-        if (!this.customToscaFunctions.find(custToscFunc => _.isEqual(custToscFunc.name, "other"))) {
-            let other = new CustomToscaFunction();
-            other.name = "other";
-            other.type = ToscaFunctionType.CUSTOM;
-            this.customToscaFunctions.push(other);
-        }
-        this.toscaCustomFunctions = [];
-        for (let func of this.customToscaFunctions) {
-            this.toscaCustomFunctions.push(func.name);
-        }
-    }
-
     getCustomToscaFunction(): CustomToscaFunction {
-        let funcName = this.formGroup.get('toscaFunctionType').value;
-        return this.customToscaFunctions.find(custToscFunc => _.isEqual(custToscFunc.name, funcName));
+        const funcName = this.formGroup.get('toscaFunctionType').value;
+        return this.customToscaFunctions.find((custToscFunc) => _.isEqual(custToscFunc.name, funcName));
     }
 
-    getCustomFunctionName():string {
-        let toscaFunctionType: CustomToscaFunction = this.getCustomToscaFunction();
-        let name = toscaFunctionType.name;
+    getCustomFunctionName(): string {
+        const toscaFunctionType: CustomToscaFunction = this.getCustomToscaFunction();
+        const name = toscaFunctionType.name;
         return name == 'other' ? '' : name;
     }
 
-    getCustomFunctionType():string {
-        let toscaFunctionType: CustomToscaFunction = this.getCustomToscaFunction();
+    getCustomFunctionType(): string {
+        const toscaFunctionType: CustomToscaFunction = this.getCustomToscaFunction();
         return toscaFunctionType.type;
     }
 
     isDefaultCustomFunction(): boolean {
-        let toscaFunctionType: CustomToscaFunction = this.getCustomToscaFunction();
-        if (toscaFunctionType.name === "other") {
+        const toscaFunctionType: CustomToscaFunction = this.getCustomToscaFunction();
+        if (toscaFunctionType.name === 'other') {
             return false;
         }
-        return this.customToscaFunctions.filter(e => e.name === toscaFunctionType.name).length > 0;
-    }
-
-    private resetForm(): void {
-        this.formGroup.reset();
-        this.toscaFunction = undefined;
-    }
-
-    private isGetPropertySelected(): boolean {
-        return this.formGroup.get('toscaFunctionType').value === ToscaGetFunctionType.GET_PROPERTY;
-    }
-
-    private isGetAttributeSelected(): boolean {
-        return this.formGroup.get('toscaFunctionType').value === ToscaGetFunctionType.GET_ATTRIBUTE;
-    }
-
-    private isGetInputSelected(): boolean {
-        return this.formGroup.get('toscaFunctionType').value === ToscaGetFunctionType.GET_INPUT;
+        return this.customToscaFunctions.filter((e) => e.name === toscaFunctionType.name).length > 0;
     }
 
     isConcatSelected(): boolean {
@@ -258,7 +134,7 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
     }
 
     isCustomSelected(): boolean {
-        let toscaFunctionType: CustomToscaFunction = this.getCustomToscaFunction();
+        const toscaFunctionType: CustomToscaFunction = this.getCustomToscaFunction();
         return toscaFunctionType && (toscaFunctionType.type === ToscaFunctionType.CUSTOM || toscaFunctionType.type === ToscaFunctionType.GET_INPUT);
     }
 
@@ -319,10 +195,134 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
         this.toscaFunctionForm.reset();
     }
 
+    private validate(): boolean {
+        return (!this.toscaFunctionForm.value && !this.toscaFunctionTypeForm.value) || this.formGroup.valid;
+    }
+
+    private initToscaFunction(): void {
+        if (this.compositionMap && this.property.subPropertyToscaFunctions) {
+            let keyToFind = [this.compositionMapKey];
+            if (this.complexListKey != null) {
+                keyToFind = [this.complexListKey, this.compositionMapKey];
+            }
+            let subPropertyToscaFunction;
+            this.property.subPropertyToscaFunctions.forEach((subToscaFunction) => {
+                if (subToscaFunction.subPropertyPath.toString() == keyToFind.toString()) {
+                    subPropertyToscaFunction = subToscaFunction;
+                }
+            });
+
+            if (subPropertyToscaFunction) {
+                this.toscaFunction = subPropertyToscaFunction.toscaFunction;
+                this.toscaFunctionForm.setValue(this.toscaFunction);
+                const type = this.toscaFunction.type;
+                if (type == ToscaFunctionType.CUSTOM) {
+                    const name = (subPropertyToscaFunction.toscaFunction as ToscaCustomFunction).name;
+                    const customToscaFunc = this.customToscaFunctions.find((custToscFunc) => _.isEqual(custToscFunc.name, name));
+                    if (customToscaFunc) {
+                        this.toscaFunctionTypeForm.setValue(name);
+                    } else {
+                        this.toscaFunctionTypeForm.setValue('other');
+                    }
+                } else {
+                    this.toscaFunctionTypeForm.setValue(type);
+                }
+            }
+            return;
+        }
+	       if (this.property instanceof PropertyDeclareAPIModel && this.property.subPropertyToscaFunctions && (this.property as PropertyDeclareAPIModel).propertiesName) {
+	        const propertiesPath = (this.property as PropertyDeclareAPIModel).propertiesName.split('#');
+         if (propertiesPath.length > 1) {
+                const keyToFind = (this.property.input as DerivedFEProperty).toscaPath;
+                const subPropertyToscaFunction = this.property.subPropertyToscaFunctions.find((subPropertyToscaFunction) => this.areEqual(subPropertyToscaFunction.subPropertyPath, keyToFind.length > 0 ? keyToFind : propertiesPath.slice(1)));
+
+                if (subPropertyToscaFunction) {
+	                this.toscaFunction = subPropertyToscaFunction.toscaFunction;
+                 this.toscaFunctionForm.setValue(this.toscaFunction);
+                 const type = this.toscaFunction.type;
+                 if (type == ToscaFunctionType.CUSTOM) {
+                        const name = (subPropertyToscaFunction.toscaFunction as ToscaCustomFunction).name;
+                        const customToscaFunc = this.customToscaFunctions.find((custToscFunc) => _.isEqual(custToscFunc.name, name));
+                        if (customToscaFunc) {
+                            this.toscaFunctionTypeForm.setValue(name);
+                        } else {
+                            this.toscaFunctionTypeForm.setValue('other');
+                        }
+                    } else {
+                        this.toscaFunctionTypeForm.setValue(type);
+                    }
+                }
+                return;
+            }
+        }
+        if (!this.property.isToscaFunction()) {
+            return;
+        }
+
+        this.toscaFunctionForm.setValue(this.inToscaFunction ? this.inToscaFunction : this.property.toscaFunction);
+        const type = this.property.toscaFunction.type ? this.property.toscaFunction.type : this.toscaFunctionForm.value.type;
+        if (type == ToscaFunctionType.CUSTOM) {
+            const name = (this.toscaFunctionForm.value as ToscaCustomFunction).name;
+            const customToscaFunc = this.customToscaFunctions.find((custToscFunc) => _.isEqual(custToscFunc.name, name));
+            if (customToscaFunc) {
+                this.toscaFunctionTypeForm.setValue(name);
+            } else {
+                this.toscaFunctionTypeForm.setValue('other');
+            }
+        } else {
+            this.toscaFunctionTypeForm.setValue(this.inToscaFunction ? this.inToscaFunction.type : type);
+        }
+    }
+
+    private areEqual(array1: string[], array2: string[]): boolean {
+	    return array1.length === array2.length && array1.every(function(value, index) { return value === array2[index]; });
+    }
+
+    private loadToscaFunctions(): void {
+        this.toscaFunctions = [];
+        this.toscaFunctions.push(ToscaFunctionType.GET_ATTRIBUTE);
+        this.toscaFunctions.push(ToscaFunctionType.GET_INPUT);
+        this.toscaFunctions.push(ToscaFunctionType.GET_PROPERTY);
+        if ((this.property.type === PROPERTY_TYPES.STRING || this.property.type === PROPERTY_TYPES.ANY) && this.overridingType === undefined) {
+            this.toscaFunctions.push(ToscaFunctionType.CONCAT);
+        }
+        this.loadCustomToscaFunctions();
+    }
+
+    private loadCustomToscaFunctions(): void {
+        if (!this.customToscaFunctions.find((custToscFunc) => _.isEqual(custToscFunc.name, 'other'))) {
+            const other = new CustomToscaFunction();
+            other.name = 'other';
+            other.type = ToscaFunctionType.CUSTOM;
+            this.customToscaFunctions.push(other);
+        }
+        this.toscaCustomFunctions = [];
+        for (const func of this.customToscaFunctions) {
+            this.toscaCustomFunctions.push(func.name);
+        }
+    }
+
+    private resetForm(): void {
+        this.formGroup.reset();
+        this.toscaFunction = undefined;
+    }
+
+    private isGetPropertySelected(): boolean {
+        return this.formGroup.get('toscaFunctionType').value === ToscaGetFunctionType.GET_PROPERTY;
+    }
+
+    private isGetAttributeSelected(): boolean {
+        return this.formGroup.get('toscaFunctionType').value === ToscaGetFunctionType.GET_ATTRIBUTE;
+    }
+
+    private isGetInputSelected(): boolean {
+        return this.formGroup.get('toscaFunctionType').value === ToscaGetFunctionType.GET_INPUT;
+    }
+
     private emitValidityChange(): void {
         const isValid: boolean = this.validate();
         this.onValidityChange.emit({
-            isValid: isValid,
+            isValid,
             toscaFunction: isValid ? this.buildFunctionFromForm() : undefined
         });
     }

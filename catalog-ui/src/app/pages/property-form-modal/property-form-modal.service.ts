@@ -18,19 +18,19 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
+import { Component } from 'app/models/components/component';
+import { PropertyModel } from 'app/models/properties';
+import { InputBEModel } from 'app/models/properties-inputs/input-be-model';
+import { InputFEModel } from 'app/models/properties-inputs/input-fe-model';
+import { CompositionService } from 'app/pages/composition/composition.service';
+import { WorkspaceService } from 'app/pages/workspace/workspace.service';
+import { ComponentInstanceService } from 'app/services/component-instance-services/component-instance.service';
+import { ComponentService } from 'app/services/component-services/component.service';
+import { TopologyTemplateService } from 'app/services/component-services/topology-template.service';
 import * as _ from 'lodash';
-import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
-import {Component} from 'app/models/components/component';
-import {PropertyModel} from 'app/models/properties';
-import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
-import {InputFEModel} from 'app/models/properties-inputs/input-fe-model';
-import {ComponentService} from 'app/services/component-services/component.service';
-import {ComponentInstanceService} from 'app/services/component-instance-services/component-instance.service';
-import {TopologyTemplateService} from 'app/services/component-services/topology-template.service';
-import {CompositionService} from 'app/pages/composition/composition.service';
-import {WorkspaceService} from 'app/pages/workspace/workspace.service';
+import { Observable } from 'rxjs/Observable';
 
 /**
  * Everything the save routing needs, assembled by the component from its reactive form + the launch inputs.
@@ -96,14 +96,14 @@ export class PropertyFormModalService {
         if (ctx.propertyOwnerType === 'group') {
             return this.componentInstanceService
                 .updateComponentGroupInstanceProperties(metadata.componentType, metadata.uniqueId, ctx.propertyOwnerId, [property])
-                .map((propertiesFromBE) => this.onPropertySuccess(ctx, <PropertyModel>propertiesFromBE[0]));
+                .map((propertiesFromBE) => this.onPropertySuccess(ctx, propertiesFromBE[0] as PropertyModel));
         }
 
         // Branch 4: policy owner (old VM lines 404-411).
         if (ctx.propertyOwnerType === 'policy') {
             return this.componentInstanceService
                 .updateComponentPolicyInstanceProperties(metadata.componentType, metadata.uniqueId, ctx.propertyOwnerId, [property])
-                .map((propertiesFromBE) => this.onPropertySuccess(ctx, <PropertyModel>propertiesFromBE[0]));
+                .map((propertiesFromBE) => this.onPropertySuccess(ctx, propertiesFromBE[0] as PropertyModel));
         }
 
         // Branch 5a: instance value-owner (old VM lines 414-419).
@@ -115,6 +115,17 @@ export class PropertyFormModalService {
         // Branch 5b: plain property add/update (old VM lines 420-428 -> addOrUpdateProperty).
         return this.addOrUpdateProperty(ctx, property)
             .map((propertyFromBE) => this.onPropertySuccess(ctx, propertyFromBE));
+    }
+
+    // Ported verbatim from property-form-view-model.ts:638-647.
+    public deleteProperty(componentType: string, componentId: string, propertyId: string): Observable<void> {
+        const onSuccess = (): void => {
+            console.debug('Property deleted');
+        };
+        const onFailed = (): void => {
+            console.debug('Failed to delete property');
+        };
+        return this.topologyTemplateService.deleteProperty(componentType, componentId, propertyId).map(onSuccess, onFailed);
     }
 
     // Old VM onPropertySuccess (lines 389-398), minus the modal-close: keep the shared filteredProperties
@@ -136,10 +147,10 @@ export class PropertyFormModalService {
                             newProperty.path.shift();
                         }
                         // find exist instance property in parent component for update the new value ( find bu uniqueId & path)
-                        const existProperty: PropertyModel = <PropertyModel>_.find(this.compositionService.componentInstancesProperties[newProperty.resourceInstanceUniqueId], {
+                        const existProperty: PropertyModel = _.find(this.compositionService.componentInstancesProperties[newProperty.resourceInstanceUniqueId], {
                             uniqueId: newProperty.uniqueId,
                             path: newProperty.path
-                        });
+                        }) as PropertyModel;
                         const index = this.compositionService.componentInstancesProperties[newProperty.resourceInstanceUniqueId].indexOf(existProperty);
                         this.compositionService.componentInstancesProperties[newProperty.resourceInstanceUniqueId][index] = newProperty;
                     }
@@ -160,23 +171,12 @@ export class PropertyFormModalService {
         } else {
             const onSuccess = (newProperty: PropertyModel): PropertyModel => {
                 // find exist instance property in parent component for update the new value ( find bu uniqueId )
-                const existProperty: PropertyModel = <PropertyModel>_.find(ctx.filteredProperties, {uniqueId: newProperty.uniqueId});
+                const existProperty: PropertyModel = _.find(ctx.filteredProperties, {uniqueId: newProperty.uniqueId}) as PropertyModel;
                 const propertyIndex = ctx.filteredProperties.indexOf(existProperty);
                 ctx.filteredProperties[propertyIndex] = newProperty;
                 return newProperty;
             };
             return this.topologyTemplateService.updateProperty(metadata.componentType, metadata.uniqueId, property).map(onSuccess);
         }
-    }
-
-    // Ported verbatim from property-form-view-model.ts:638-647.
-    public deleteProperty(componentType: string, componentId: string, propertyId: string): Observable<void> {
-        const onSuccess = (): void => {
-            console.debug('Property deleted');
-        };
-        const onFailed = (): void => {
-            console.debug('Failed to delete property');
-        };
-        return this.topologyTemplateService.deleteProperty(componentType, componentId, propertyId).map(onSuccess, onFailed);
     }
 }

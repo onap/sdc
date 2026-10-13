@@ -14,16 +14,16 @@
  * permissions and limitations under the License.
  */
 
-import {HttpClient} from '@angular/common/http';
-import {Inject, Injectable} from '@angular/core';
-import {Response} from '@angular/http';
-import {CapabilityTypeModel, CapabilityTypesMap} from 'app/models/capability-types';
-import {IComponentsArray} from 'app/models/components-array';
-import {NodeTypesMap} from 'app/models/node-types';
-import {RelationshipTypesMap} from 'app/models/relationship-types';
-import {Observable} from 'rxjs/Observable';
-import {ISdcConfig, SdcConfigToken} from '../config/sdc-config.config';
+import { HttpClient } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
+import { Response } from '@angular/http';
+import { CapabilityTypeModel, CapabilityTypesMap } from 'app/models/capability-types';
+import { IComponentsArray } from 'app/models/components-array';
+import { NodeTypesMap } from 'app/models/node-types';
+import { RelationshipTypesMap } from 'app/models/relationship-types';
 import 'rxjs/add/operator/toPromise';
+import { Observable } from 'rxjs/Observable';
+import { ISdcConfig, SdcConfigToken } from '../config/sdc-config.config';
 
 @Injectable()
 export class ToscaTypesService {
@@ -35,24 +35,23 @@ export class ToscaTypesService {
   }
 
   async fetchRelationshipTypes(modelName: string): Promise<RelationshipTypesMap> {
-    if(modelName) {
+    if (modelName) {
       return this.http.get<RelationshipTypesMap>(this.baseUrl + 'relationshipTypes', {params: {model: modelName}}).toPromise();
     }
     return this.http.get<RelationshipTypesMap>(this.baseUrl + 'relationshipTypes').toPromise();
   }
 
   async fetchNodeTypes(modelName: string): Promise<NodeTypesMap> {
-    if(modelName) {
+    if (modelName) {
       return this.http.get<NodeTypesMap>(this.baseUrl + 'nodeTypes', {params: {model: modelName}}).toPromise();
     }
     return this.http.get<NodeTypesMap>(this.baseUrl + 'nodeTypes').toPromise();
   }
 
     async fetchCapabilityTypes(modelName: string): Promise<CapabilityTypesMap> {
-    if(modelName) {
+    if (modelName) {
       return this.http.get<CapabilityTypesMap>(this.baseUrl + 'capabilityTypes', {params: {model: modelName}}).toPromise();
     }
     return this.http.get<CapabilityTypesMap>(this.baseUrl + 'capabilityTypes').toPromise();
     }
 }
-

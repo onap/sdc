@@ -1,22 +1,21 @@
-import { async, ComponentFixture } from '@angular/core/testing';
-import { ConfigureFn, configureTests } from '../../../../../../jest/test-config.helper';
-import { NgxsModule, Store } from '@ngxs/store';
-import { WorkspaceState } from '../../../../../store/states/workspace.state';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { ArtifactsTabComponent } from './artifacts-tab.component';
-import { CompositionService } from '../../../composition.service';
-import { WorkspaceService } from '../../../../workspace/workspace.service';
-import { ComponentInstanceService } from '../../../../../services/component-instance-services/component-instance.service';
-import { TopologyTemplateService } from '../../../../../services/component-services/topology-template.service';
+import { async, ComponentFixture } from '@angular/core/testing';
+import { NgxsModule, Store } from '@ngxs/store';
+import { Observable } from 'rxjs';
+import { ConfigureFn, configureTests } from '../../../../../../jest/test-config.helper';
 import { ArtifactsService } from '../../../../../components/forms/artifacts-form/artifacts.service';
 import { ArtifactModel } from '../../../../../models/artifacts';
-import { ArtifactType } from '../../../../../utils/constants';
-import { FullComponentInstance } from '../../../../../models/components-instances/full-component-instance';
 import { ComponentInstance } from '../../../../../models/components-instances/component-instance';
+import { FullComponentInstance } from '../../../../../models/components-instances/full-component-instance';
 import { Component } from '../../../../../models/components/component';
+import { ComponentInstanceService } from '../../../../../services/component-instance-services/component-instance.service';
+import { TopologyTemplateService } from '../../../../../services/component-services/topology-template.service';
 import { GetInstanceArtifactsByTypeAction } from '../../../../../store/actions/instance-artifacts.actions';
-import { Observable } from 'rxjs';
-
+import { WorkspaceState } from '../../../../../store/states/workspace.state';
+import { ArtifactType } from '../../../../../utils/constants';
+import { WorkspaceService } from '../../../../workspace/workspace.service';
+import { CompositionService } from '../../../composition.service';
+import { ArtifactsTabComponent } from './artifacts-tab.component';
 
 describe('artifact-tab component', () => {
 
@@ -32,13 +31,13 @@ describe('artifact-tab component', () => {
         async(() => {
             compositionMockService = {
                 updateInstance:  jest.fn()
-            }
+            };
 
             artifactsServiceMockService = {
                 deleteArtifact: jest.fn(),
                 openUpdateEnvParams: jest.fn(),
                 openArtifactModal: jest.fn()
-            }
+            };
 
             const configure: ConfigureFn = (testBed) => {
                 testBed.configureTestingModule({
@@ -75,14 +74,12 @@ describe('artifact-tab component', () => {
         expect(fixture).toMatchSnapshot();
     });
 
-
     it ('should get API Artifacts as Title', () => {
         const artifactType = ArtifactType.SERVICE_API;
 
         const res = fixture.componentInstance.getTitle(artifactType);
         expect(res).toBe('API Artifacts');
     });
-
 
     it ('should get Deployment Artifacts as Title', () => {
         const artifactType = ArtifactType.DEPLOYMENT;
@@ -106,14 +103,13 @@ describe('artifact-tab component', () => {
         expect(res).toBe('SomeString Artifacts');
     });
 
-
     it ('should return isLicenseArtifact false', () => {
         const artifact = new ArtifactModel();
         const componentInstance = new ComponentInstance();
         const component = new Component();
         fixture.componentInstance.component = new FullComponentInstance(componentInstance, component);
 
-        let res = fixture.componentInstance.isLicenseArtifact(artifact);
+        const res = fixture.componentInstance.isLicenseArtifact(artifact);
         expect(res).toBe(false);
     });
 
@@ -184,7 +180,7 @@ describe('artifact-tab component', () => {
     it ('on updateEnvParams -> openUpdateEnvParams is being called from artifactService when isComponentInstanceSelected = false', () => {
         const artifact = new ArtifactModel();
 
-        const topologyTemplateType: string = undefined
+        const topologyTemplateType: string = undefined;
         const topologyTemplateId: string = undefined;
 
         const component = new Component();
@@ -219,7 +215,6 @@ describe('artifact-tab component', () => {
         fixture.componentInstance.isViewOnly = isViewOnly;
         fixture.componentInstance.addOrUpdate(artifact);
 
-
         expect(artifactsServiceMockService.openArtifactModal).toHaveBeenCalledWith(topologyTemplateId, topologyTemplateType, artifact, type, isViewOnly, component.uniqueId, undefined);
     });
 
@@ -243,13 +238,12 @@ describe('artifact-tab component', () => {
         expect(artifactsServiceMockService.openArtifactModal).toHaveBeenCalledWith(topologyTemplateId, topologyTemplateType, artifact, type, isViewOnly);
     });
 
-
     it ('verify allowDeleteAndUpdateArtifact return false since isViewOnly=true', () => {
         const artifact = new ArtifactModel();
         fixture.componentInstance.isViewOnly = true;
 
         const res = fixture.componentInstance.allowDeleteAndUpdateArtifact(artifact);
-        expect(res).toBe(false)
+        expect(res).toBe(false);
     });
 
     it ('verify allowDeleteAndUpdateArtifact return artifact.isFromCsar since isViewOnly=false && artifactGroupType = DEPLOYMENT', () => {
@@ -275,7 +269,7 @@ describe('artifact-tab component', () => {
         fixture.componentInstance.isViewOnly = false;
 
         const res = fixture.componentInstance.allowDeleteAndUpdateArtifact(artifact);
-        expect(res).toBe(true )
+        expect(res).toBe(true );
     });
 
     it('verify action on loadArtifacts in case isComponentInstanceSelected = true', () => {
@@ -292,7 +286,7 @@ describe('artifact-tab component', () => {
             componentId: 'topologyTemplateId',
             instanceId: 'uniqueId',
             artifactType: 'type'
-        }))
+        }));
 
         fixture.componentInstance.store.dispatch = jest.fn(() => Observable.of(true));
         fixture.componentInstance.loadArtifacts();

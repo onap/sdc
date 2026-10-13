@@ -22,28 +22,28 @@
  * Created by obarda on 2/4/2016.
  */
 'use strict';
-import * as _ from "lodash";
-import {ILegacyServiceService} from "../../services/legacy/service.service";
-import {ArtifactGroupModel} from '../artifacts';
-import {Distribution, DistributionComponent} from '../distribution';
-import {Component} from './component';
-import {ArtifactGroupType} from "../../utils/constants";
-import {FileUploadModel} from "../file-upload-model";
-import {ComponentMetadata} from "../component-metadata";
-import {ForwardingPath} from "app/models/forwarding-path";
+import { ForwardingPath } from 'app/models/forwarding-path';
+import * as _ from 'lodash';
+import { ILegacyServiceService } from '../../services/legacy/service.service';
+import { ArtifactGroupType } from '../../utils/constants';
+import { ArtifactGroupModel } from '../artifacts';
+import { ComponentMetadata } from '../component-metadata';
+import { Distribution, DistributionComponent } from '../distribution';
+import { FileUploadModel } from '../file-upload-model';
+import { Component } from './component';
 
 export class Service extends Component {
 
-    public serviceApiArtifacts:ArtifactGroupModel;
-    public componentService:ILegacyServiceService;
-    public ecompGeneratedNaming:boolean;
-    public namingPolicy:string;
-    public serviceType:string;
-    public serviceRole:string;
-    public serviceFunction:string;
-    public environmentContext:string;
-    public instantiationType:string;
-    public forwardingPaths:{ [key:string]:ForwardingPath } = {};
+    public serviceApiArtifacts: ArtifactGroupModel;
+    public componentService: ILegacyServiceService;
+    public ecompGeneratedNaming: boolean;
+    public namingPolicy: string;
+    public serviceType: string;
+    public serviceRole: string;
+    public serviceFunction: string;
+    public environmentContext: string;
+    public instantiationType: string;
+    public forwardingPaths: { [key: string]: ForwardingPath } = {};
     public payloadData: string;
     public payloadName: string;
     public importedFile: FileUploadModel;
@@ -54,7 +54,7 @@ export class Service extends Component {
     public csarPackageType: string;
     public packageId: string;
 
-    constructor(componentService:ILegacyServiceService, component?:Service) {
+    constructor(componentService: ILegacyServiceService, component?: Service) {
         super(componentService, component);
         this.ecompGeneratedNaming = true;
         if (component) {
@@ -78,10 +78,10 @@ export class Service extends Component {
             }
         }
         this.componentService = componentService;
-        this.iconSprite = "sprite-services-icons";
+        this.iconSprite = 'sprite-services-icons';
     }
 
-    public isService = ():boolean => true;
+    public isService = (): boolean => true;
 
     public importComponentOnServer = (): Promise<Component> => {
         return new Promise<Component>((resolve, reject) => {
@@ -100,21 +100,21 @@ export class Service extends Component {
                     reject(error);
                 });
         });
-    };
+    }
 
-    public getDistributionsList = ():Promise<Array<Distribution>> => {
+    public getDistributionsList = (): Promise<Distribution[]> => {
         return this.componentService.getDistributionsList(this.uuid);
-    };
+    }
 
-    public getDistributionsComponent = (distributionId:string):Promise<Array<DistributionComponent>> => {
+    public getDistributionsComponent = (distributionId: string): Promise<DistributionComponent[]> => {
         return this.componentService.getDistributionComponents(distributionId);
-    };
+    }
 
-    public markAsDeployed = (distributionId:string):Promise<any> => {
+    public markAsDeployed = (distributionId: string): Promise<any> => {
         return this.componentService.markAsDeployed(this.uniqueId, distributionId);
-    };
+    }
 
-    public getArtifactsByType = (artifactGroupType:string):ArtifactGroupModel => {
+    public getArtifactsByType = (artifactGroupType: string): ArtifactGroupModel => {
         switch (artifactGroupType) {
             case ArtifactGroupType.DEPLOYMENT:
                 return this.deploymentArtifacts;
@@ -123,9 +123,9 @@ export class Service extends Component {
             case ArtifactGroupType.SERVICE_API:
                 return this.serviceApiArtifacts;
         }
-    };
+    }
 
-    getTypeUrl():string {
+    getTypeUrl(): string {
         return 'services/';
     }
 
@@ -141,21 +141,21 @@ export class Service extends Component {
         this.setComponentDisplayData();
     }
 
-    setComponentDisplayData():void {
+    setComponentDisplayData(): void {
         this.filterTerm = this.name + ' ' + this.description + ' ' + (this.tags ? this.tags.toString() : '') + ' ' + this.version;
         if (this.categories && this.categories[0]) {
             this.mainCategory = this.categories[0].name;
             this.selectedCategory = this.mainCategory;
         }
-        this.iconSprite = "sprite-services-icons";
+        this.iconSprite = 'sprite-services-icons';
     }
 
     public isSubstituteCandidate(): boolean {
         return !!this.derivedFromGenericType;
     }
 
-    public toJSON = ():any => {
-        let temp = _.cloneDeep(this);
+    public toJSON = (): any => {
+        const temp = _.cloneDeep(this);
         temp.componentService = undefined;
         temp.filterTerm = undefined;
         temp.iconSprite = undefined;
@@ -168,6 +168,5 @@ export class Service extends Component {
         temp.groupInstances = undefined;
         temp.policies = undefined;
         return temp;
-    };
+    }
 }
-

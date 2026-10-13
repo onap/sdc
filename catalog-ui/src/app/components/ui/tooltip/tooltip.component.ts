@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,14 +19,24 @@
  */
 
 import {
-    Directive, ComponentRef, ViewContainerRef, ComponentFactoryResolver, Input, HostListener
-} from "@angular/core";
-import {TooltipContentComponent} from "./tooltip-content.component";
+    ComponentFactoryResolver, ComponentRef, Directive, HostListener, Input, ViewContainerRef
+} from '@angular/core';
+import { TooltipContentComponent } from './tooltip-content.component';
 
 @Directive ({
-    selector: "[tooltip]"
+    selector: '[tooltip]'
 })
 export class TooltipComponent {
+
+    // -------------------------------------------------------------------------
+    // Inputs / Outputs
+    // -------------------------------------------------------------------------
+
+    @Input('tooltip') content: string|TooltipContentComponent;
+    @Input() tooltipDisabled: boolean;
+    @Input() tooltipAnimation: boolean = true;
+    @Input() tooltipPlacement: 'top'|'bottom'|'left'|'right' = 'bottom';
+    @Input() tooltipDelay: number = 1500;
 
     // -------------------------------------------------------------------------
     // Properties
@@ -45,32 +55,22 @@ export class TooltipComponent {
     }
 
     // -------------------------------------------------------------------------
-    // Inputs / Outputs
-    // -------------------------------------------------------------------------
-
-    @Input("tooltip") content: string|TooltipContentComponent;
-    @Input() tooltipDisabled: boolean;
-    @Input() tooltipAnimation: boolean = true;
-    @Input() tooltipPlacement: "top"|"bottom"|"left"|"right" = "bottom";
-    @Input() tooltipDelay: number = 1500;
-
-    // -------------------------------------------------------------------------
     // Public Methods
     // -------------------------------------------------------------------------
 
-    @HostListener("mouseenter")
+    @HostListener('mouseenter')
     show(): void {
-        if(this.tooltipDisabled || this.visible || this.content === "") {
+        if (this.tooltipDisabled || this.visible || this.content === '') {
             return;
         }
         if (this.tooltipDelay && !this.delayInProgress) {
             this.delayInProgress = true;
-            setTimeout(() => { this.delayInProgress && this.show() }, this.tooltipDelay);
+            setTimeout(() => { this.delayInProgress && this.show(); }, this.tooltipDelay);
             return;
         }
 
         this.visible = true;
-        if (typeof this.content === "string") {
+        if (typeof this.content === 'string') {
             const factory = this.resolver.resolveComponentFactory(TooltipContentComponent);
             if (!this.visible) {
                 return;
@@ -90,7 +90,7 @@ export class TooltipComponent {
         }
     }
 
-    @HostListener("mouseleave")
+    @HostListener('mouseleave')
     hide(): void {
         this.delayInProgress = false;
         if (!this.visible) {
@@ -106,4 +106,3 @@ export class TooltipComponent {
         }
     }
 }
-

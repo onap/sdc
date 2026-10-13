@@ -1,16 +1,16 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture } from '@angular/core/testing';
-import {PluginsConfiguration} from 'app/models/plugins-config';
+import { PluginsConfiguration } from 'app/models/plugins-config';
 import { Observable } from 'rxjs';
 import { Mock } from 'ts-mockery';
 import { ConfigureFn, configureTests } from '../../../../jest/test-config.helper';
-import { MenuItem, MenuItemGroup } from '../../../utils/menu-handler';
 import { SdcConfigToken } from '../../../config/sdc-config.config';
 import { AuthenticationService } from '../../../services/authentication.service';
+import { NavigationService } from '../../../services/navigation.service';
 import { TranslateModule } from '../../../shared/translator/translate.module';
 import { TranslateService } from '../../../shared/translator/translate.service';
+import { MenuItem, MenuItemGroup } from '../../../utils/menu-handler';
 import { TopNavComponent } from './top-nav.component';
-import { NavigationService } from '../../../services/navigation.service';
 
 describe('artifact form component', () => {
 
@@ -36,7 +36,7 @@ describe('artifact form component', () => {
         displayRoles :  new Array<string>()
     };
 
-    let roleToReturn = designerUser;
+    const roleToReturn = designerUser;
 
     const map1 =  new Map();
     map1.otherValue =  pluginDisplayOptions;

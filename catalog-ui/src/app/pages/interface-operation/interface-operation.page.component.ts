@@ -19,34 +19,34 @@
 *  ============LICENSE_END=========================================================
 *  Modifications Copyright (C) 2026 Deutsche Telekom AG.
 */
-import * as _ from "lodash";
-import {Component, Inject} from '@angular/core';
-import {Component as IComponent} from 'app/models/components/component';
+import { Component, Inject } from '@angular/core';
+import { Component as IComponent } from 'app/models/components/component';
+import * as _ from 'lodash';
 
-import {ISdcConfig, SdcConfigToken} from "app/config/sdc-config.config";
-import {TranslateService} from "app/shared/translator/translate.service";
+import { ISdcConfig, SdcConfigToken } from 'app/config/sdc-config.config';
+import { TranslateService } from 'app/shared/translator/translate.service';
 
-import {Observable} from "rxjs/Observable";
+import { Observable } from 'rxjs/Observable';
 
-import {ModalComponent} from 'onap-ui-angular/dist/modals/modal.component';
-import {ModalService} from 'app/services/modal.service';
-import {CapabilitiesGroup, Capability} from 'app/models/capability';
-import {InterfaceModel, OperationModel, WORKFLOW_ASSOCIATION_OPTIONS} from 'app/models/operation';
-import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
+import { CapabilitiesGroup, Capability } from 'app/models/capability';
+import { InterfaceModel, OperationModel, WORKFLOW_ASSOCIATION_OPTIONS } from 'app/models/operation';
+import { InputBEModel } from 'app/models/properties-inputs/input-be-model';
+import { ModalService } from 'app/services/modal.service';
+import { ModalComponent } from 'onap-ui-angular/dist/modals/modal.component';
 
-import {ComponentService} from 'app/services/component-services/component.service';
-import {PluginsService} from 'app/services/plugins.service';
-import {WorkflowService} from 'app/services/workflow.service';
-import {NavigationService} from 'app/services/navigation.service';
-import {WorkspaceService} from 'app/pages/workspace/workspace.service';
-import {WorkspaceMode} from 'app/utils/constants';
+import { WorkspaceService } from 'app/pages/workspace/workspace.service';
+import { ComponentService } from 'app/services/component-services/component.service';
+import { NavigationService } from 'app/services/navigation.service';
+import { PluginsService } from 'app/services/plugins.service';
+import { WorkflowService } from 'app/services/workflow.service';
+import { WorkspaceMode } from 'app/utils/constants';
 
 import {
     OperationCreatorComponent,
     OperationCreatorInput
 } from 'app/pages/interface-operation/operation-creator/operation-creator.component';
-import {SdcUiCommon, SdcUiServices} from 'onap-ui-angular';
-import {IModalButtonComponent, IModalConfig} from 'onap-ui-angular/dist/common';
+import { SdcUiCommon, SdcUiServices } from 'onap-ui-angular';
+import { IModalButtonComponent, IModalConfig } from 'onap-ui-angular/dist/common';
 
 export class UIOperationModel extends OperationModel {
     isCollapsed: boolean = true;
@@ -93,15 +93,15 @@ class ModalTranslation {
     deleteText: Function;
 
     constructor(private TranslateService: TranslateService) {
-        this.TranslateService.languageChangedObservable.subscribe(lang => {
-            this.CREATE_TITLE = this.TranslateService.translate("INTERFACE_CREATE_TITLE");
+        this.TranslateService.languageChangedObservable.subscribe((lang) => {
+            this.CREATE_TITLE = this.TranslateService.translate('INTERFACE_CREATE_TITLE');
             this.EDIT_TITLE = this.TranslateService.translate('INTERFACE_EDIT_TITLE');
-            this.DELETE_TITLE = this.TranslateService.translate("INTERFACE_DELETE_TITLE");
-            this.CANCEL_BUTTON = this.TranslateService.translate("INTERFACE_CANCEL_BUTTON");
-            this.SAVE_BUTTON = this.TranslateService.translate("INTERFACE_SAVE_BUTTON");
-            this.CREATE_BUTTON = this.TranslateService.translate("INTERFACE_CREATE_BUTTON");
-            this.DELETE_BUTTON = this.TranslateService.translate("INTERFACE_DELETE_BUTTON");
-            this.deleteText = (operationName) => this.TranslateService.translate("INTERFACE_DELETE_TEXT", {operationName});
+            this.DELETE_TITLE = this.TranslateService.translate('INTERFACE_DELETE_TITLE');
+            this.CANCEL_BUTTON = this.TranslateService.translate('INTERFACE_CANCEL_BUTTON');
+            this.SAVE_BUTTON = this.TranslateService.translate('INTERFACE_SAVE_BUTTON');
+            this.CREATE_BUTTON = this.TranslateService.translate('INTERFACE_CREATE_BUTTON');
+            this.DELETE_BUTTON = this.TranslateService.translate('INTERFACE_DELETE_BUTTON');
+            this.deleteText = (operationName) => this.TranslateService.translate('INTERFACE_DELETE_TEXT', {operationName});
         });
     }
 }
@@ -408,7 +408,7 @@ export class InterfaceOperationComponent {
                         oldInterf = interf;
                         oldOpIndex = _.findIndex(interf.operations, (el) => el.uniqueId === op.uniqueId);
                     }
-                })
+                });
             });
             oldInterf.operations.splice(oldOpIndex, 1);
 

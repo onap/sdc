@@ -32,12 +32,12 @@
  * Each behavior is ported from the old GeneralViewModel (general-view-model.ts) / general-view.html
  * which is the behavioral spec.
  */
-import {GeneralTabComponent} from '../general-tab.component';
-import {GeneralFormService} from '../general-form.service';
-import {ComponentMetadataService} from '../component-metadata.service';
-import {NavigationService} from '../../../../services/navigation.service';
-import {of} from 'rxjs';
-import {Subject} from 'rxjs/Subject';
+import { of } from 'rxjs';
+import { Subject } from 'rxjs/Subject';
+import { NavigationService } from '../../../../services/navigation.service';
+import { ComponentMetadataService } from '../component-metadata.service';
+import { GeneralFormService } from '../general-form.service';
+import { GeneralTabComponent } from '../general-tab.component';
 
 function makeComponent(overrides: any = {}) {
     return Object.assign({

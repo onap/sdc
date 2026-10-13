@@ -19,17 +19,17 @@
  */
 
 import { Injectable } from '@angular/core';
-import {ButtonModel} from '../models/button';
-import {Component} from '../models/components/component';
-import {ModalModel} from '../models/modal';
-import {DisplayModule} from '../models/modules/base-module';
-import {PropertyModel} from '../models/properties';
-import {InputFEModel} from '../models/properties-inputs/input-fe-model';
-import { ComponentMetadata } from '../models/component-metadata';
-import { ModalService } from 'app/services/modal.service';
-import { PropertyFormModalComponent } from 'app/pages/property-form-modal/property-form-modal.component';
 import { IconsModalComponent } from 'app/components/modals/icons-modal/icons-modal.component';
 import { ModulePropertyModalComponent } from 'app/pages/module-property-modal/module-property-modal.component';
+import { PropertyFormModalComponent } from 'app/pages/property-form-modal/property-form-modal.component';
+import { ModalService } from 'app/services/modal.service';
+import { ButtonModel } from '../models/button';
+import { ComponentMetadata } from '../models/component-metadata';
+import { Component } from '../models/components/component';
+import { ModalModel } from '../models/modal';
+import { DisplayModule } from '../models/modules/base-module';
+import { PropertyModel } from '../models/properties';
+import { InputFEModel } from '../models/properties-inputs/input-fe-model';
 
 export interface IModalsHandler {
 

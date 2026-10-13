@@ -22,17 +22,17 @@
  */
 
 import { Component, HostListener } from '@angular/core';
+import { GenericBrowserDomAdapter } from '@angular/platform-browser/src/browser/generic_browser_adapter';
 import { Select } from '@ngxs/store';
 import { LeftPaletteComponent, LeftPaletteMetadataTypes } from 'app/models/components/display-component';
 import { Point } from 'app/models/graph/point';
-import { WorkspaceState } from 'app/store/states/workspace.state';
 import Dictionary = _.Dictionary;
 import { EventListenerService } from 'app/services/event-listener.service';
+import { WorkspaceState } from 'app/store/states/workspace.state';
 import { GRAPH_EVENTS } from 'app/utils/constants';
 import { DndDropEvent } from 'ngx-drag-drop/ngx-drag-drop';
+import { PolicyMetadata } from '../../../models/policy-metadata';
 import { CompositionPaletteService } from './services/palette.service';
-import {PolicyMetadata} from "../../../models/policy-metadata";
-import {GenericBrowserDomAdapter} from "@angular/platform-browser/src/browser/generic_browser_adapter";
 
 @Component({
     selector: 'composition-palette',
@@ -40,8 +40,6 @@ import {GenericBrowserDomAdapter} from "@angular/platform-browser/src/browser/ge
     styleUrls: ['./palette.component.less']
 })
 export class PaletteComponent {
-
-    constructor(private compositionPaletteService: CompositionPaletteService, private eventListenerService: EventListenerService) {}
 
     @Select(WorkspaceState.isViewOnly) isViewOnly$: boolean;
     public paletteElements: Dictionary<Dictionary<LeftPaletteComponent[]>>;
@@ -53,6 +51,8 @@ export class PaletteComponent {
     // to be recorded wherever numberOfElements is recomputed rather than in the search handler.
     public searchText: string;
     private openAccordion: boolean = false;
+
+    constructor(private compositionPaletteService: CompositionPaletteService, private eventListenerService: EventListenerService) {}
 
     ngOnInit() {
         this.isPaletteLoading = true;
@@ -78,7 +78,7 @@ export class PaletteComponent {
             for (const category in this.paletteElements) {
                 for (const subCategory in this.paletteElements[category]) {
                     const subCategoryToCheck = this.paletteElements[category][subCategory];
-                    const res = subCategoryToCheck.filter((item) => item.searchFilterTerms.toLowerCase().indexOf(searchText) >= 0)
+                    const res = subCategoryToCheck.filter((item) => item.searchFilterTerms.toLowerCase().indexOf(searchText) >= 0);
                     if (res.length > 0) {
                         if (paletteElementsAfterSearch[category] == null) {
                             paletteElementsAfterSearch[category] = {};
@@ -102,6 +102,44 @@ export class PaletteComponent {
         }
     }
 
+    @HostListener('document:dragover', ['$event'])
+    public onDrag(event) {
+        this.position.x = event.clientX;
+        this.position.y = event.clientY;
+    }
+
+    // ---------------------------------------Palette Events-----------------------------------------//
+
+    public onDraggableMoved = (event: DragEvent) => {
+          const draggedElement = document.getElementById('draggable_element');
+          draggedElement.style.top = (this.position.y - 80) + 'px';
+          draggedElement.style.left = (this.position.x - 30) + 'px';
+          this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_PALETTE_COMPONENT_DRAG_ACTION, this.position);
+    }
+
+    public onDragStart = (event, draggedElement: LeftPaletteComponent) => { // Applying the dragged svg component to the draggable element
+
+        this.paletteDraggedElement = draggedElement;
+        event.dataTransfer.dropEffect = 'copy';
+        const hiddenImg = document.createElement('span');
+        event.dataTransfer.setDragImage(hiddenImg, 0, 0);
+    }
+
+    public onDrop = (event: DndDropEvent) => {
+        const draggedElement = document.getElementById('draggable_element');
+        draggedElement.style.top = '-9999px';
+        if (draggedElement.classList.contains('valid-drag')) {
+            if (!event.data) {
+                event.data = this.paletteDraggedElement;
+            }
+            this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_PALETTE_COMPONENT_DROP, event);
+        } else {
+            console.log('INVALID drop');
+        }
+        this.paletteDraggedElement = undefined;
+
+    }
+
     private countLeftPalleteElements(leftPalleteElements: Dictionary<Dictionary<LeftPaletteComponent[]>>) {
         // Use _ & flat map
         let counter = 0;
@@ -111,45 +149,6 @@ export class PaletteComponent {
             }
         }
         return counter;
-    }
-
-    @HostListener('document:dragover', ['$event'])
-    public onDrag(event) {
-        this.position.x = event.clientX;
-        this.position.y = event.clientY;
-    }
-    
-    //---------------------------------------Palette Events-----------------------------------------//
-
-    public onDraggableMoved = (event:DragEvent) => {  
-          let draggedElement = document.getElementById("draggable_element");
-          draggedElement.style.top = (this.position.y - 80) + "px";
-          draggedElement.style.left = (this.position.x - 30) + "px";
-          this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_PALETTE_COMPONENT_DRAG_ACTION, this.position);
-    }
-
-    public onDragStart = (event, draggedElement:LeftPaletteComponent) => { // Applying the dragged svg component to the draggable element
-        
-        this.paletteDraggedElement = draggedElement;
-        event.dataTransfer.dropEffect = "copy";
-        let hiddenImg = document.createElement("span");
-        event.dataTransfer.setDragImage(hiddenImg, 0, 0);
-    }
-
-
-    public onDrop = (event:DndDropEvent) => {
-        let draggedElement = document.getElementById("draggable_element");
-        draggedElement.style.top = "-9999px";
-        if(draggedElement.classList.contains('valid-drag')) {
-            if(!event.data){
-                event.data = this.paletteDraggedElement;
-            }
-            this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_PALETTE_COMPONENT_DROP, event);
-        } else {
-            console.log("INVALID drop");
-        }
-        this.paletteDraggedElement = undefined;
-        
     }
 
 }

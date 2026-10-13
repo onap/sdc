@@ -19,10 +19,10 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {YamlFunction} from "../../../../models/yaml-function";
-import {FormControl, FormGroup, Validators, AbstractControl, ValidationErrors, ValidatorFn} from "@angular/forms";
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import * as jsYaml from 'js-yaml';
+import { YamlFunction } from '../../../../models/yaml-function';
 
 @Component({
     selector: 'app-yaml-function',
@@ -37,7 +37,7 @@ export class YamlFunctionComponent implements OnInit {
     yamlValueForm: FormControl = new FormControl('', [Validators.minLength(1), YamlValidator()]);
     formGroup: FormGroup = new FormGroup(
         {
-            'value': this.yamlValueForm
+            value: this.yamlValueForm
         }
     );
 

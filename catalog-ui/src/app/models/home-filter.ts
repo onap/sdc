@@ -1,25 +1,24 @@
-import { IEntityFilterObject, ISearchFilter } from "app/pipes/entity-filter.pipe";
+import { IEntityFilterObject, ISearchFilter } from 'app/pipes/entity-filter.pipe';
 
 export interface IHomeFilterParams {
     'filter.term': string;
     'filter.distributed': string;
-    'filter.status': string
+    'filter.status': string;
 }
 
-
-export class HomeFilter implements IEntityFilterObject{
-    selectedStatuses: Array<string>;
-    distributed: Array<string>;
+export class HomeFilter implements IEntityFilterObject {
+    selectedStatuses: string[];
+    distributed: string[];
     search: ISearchFilter;
 
     constructor(params = {}) {
-        this.search = { filterTerm : params['filter.term'] || "" };
-        this.selectedStatuses = params['filter.status']? params['filter.status'].split(',') : [];
-        this.distributed = params['filter.distributed']? params['filter.distributed'].split(',') : []
-        
+        this.search = { filterTerm : params['filter.term'] || '' };
+        this.selectedStatuses = params['filter.status'] ? params['filter.status'].split(',') : [];
+        this.distributed = params['filter.distributed'] ? params['filter.distributed'].split(',') : [];
+
     }
 
-    public toUrlParam = ():IHomeFilterParams => {
+    public toUrlParam = (): IHomeFilterParams => {
         return {
             'filter.term': this.search.filterTerm,
             'filter.distributed': this.distributed && this.distributed.join(',') || null,

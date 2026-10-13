@@ -20,32 +20,32 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import {TypeWorkspaceGeneralComponent} from './type-workspace-general.component';
-import {ReactiveFormsModule} from "@angular/forms";
-import {TranslateModule} from "../../../shared/translator/translate.module";
-import {TranslateService} from "../../../shared/translator/translate.service";
-import {SdcUiComponentsModule} from "onap-ui-angular/dist";
-import {Observable} from "rxjs/Observable";
-import {DataTypeModel} from "../../../models/data-types";
-import {DataTypeService} from "../../../services/data-type.service";
-import {ModelService} from "../../../services/model.service";
-import {TypeWorkspaceService} from "../type-workspace.service";
-import {NavigationService} from "../../../services/navigation.service";
+import { ReactiveFormsModule } from '@angular/forms';
+import { SdcUiComponentsModule } from 'onap-ui-angular/dist';
+import { Observable } from 'rxjs/Observable';
+import { DataTypeModel } from '../../../models/data-types';
+import { DataTypeService } from '../../../services/data-type.service';
+import { ModelService } from '../../../services/model.service';
+import { NavigationService } from '../../../services/navigation.service';
+import { TranslateModule } from '../../../shared/translator/translate.module';
+import { TranslateService } from '../../../shared/translator/translate.service';
+import { TypeWorkspaceService } from '../type-workspace.service';
+import { TypeWorkspaceGeneralComponent } from './type-workspace-general.component';
 
 describe('TypeWorkspaceGeneralComponent', () => {
   let component: TypeWorkspaceGeneralComponent;
   let fixture: ComponentFixture<TypeWorkspaceGeneralComponent>;
   let dataTypeServiceMock: Partial<DataTypeService>;
   let modelServiceMock: Partial<ModelService>;
-  let translateServiceMock: Partial<TranslateService> = {
-    'translate': jest.fn()
+  const translateServiceMock: Partial<TranslateService> = {
+    translate: jest.fn()
   };
 
-  let importedFileMock: File = null;
-  let stateParamsMock: any = {
-      'importedFile': importedFileMock
+  const importedFileMock: File = null;
+  const stateParamsMock: any = {
+      importedFile: importedFileMock
   };
 
   beforeEach(async(() => {

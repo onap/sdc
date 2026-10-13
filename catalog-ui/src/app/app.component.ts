@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-import { Component, OnInit, ViewContainerRef} from '@angular/core';
+import { Component, OnInit, ViewContainerRef } from '@angular/core';
 import { AuthenticationService } from './services/authentication.service';
 import { RouteMetadataService } from './services/route-metadata.service';
 
@@ -28,7 +28,7 @@ import { RouteMetadataService } from './services/route-metadata.service';
 export class AppComponent implements OnInit {
 
   constructor(auth: AuthenticationService, public viewContainerRef: ViewContainerRef,
-              private routeMetadataService: RouteMetadataService){
+              private routeMetadataService: RouteMetadataService) {
 
   }
 

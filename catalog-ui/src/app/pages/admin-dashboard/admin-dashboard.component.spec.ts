@@ -1,6 +1,6 @@
-import {Subject} from 'rxjs/Subject';
-import {AdminDashboardComponent} from './admin-dashboard.component';
-import {SdcConfigToken} from 'app/config/sdc-config.config';
+import { SdcConfigToken } from 'app/config/sdc-config.config';
+import { Subject } from 'rxjs/Subject';
+import { AdminDashboardComponent } from './admin-dashboard.component';
 
 // ---------------------------------------------------------------------------
 // Factory

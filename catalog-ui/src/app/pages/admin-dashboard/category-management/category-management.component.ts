@@ -18,15 +18,15 @@
  * ============LICENSE_END=========================================================
  */
 
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
-import {ButtonModel} from 'app/models/button';
-import {ModalModel} from 'app/models/modal';
-import {IMainCategory, ISubCategory} from 'app/models/category';
-import {CacheService} from 'app/services/cache.service';
-import {ModalService} from 'app/services/modal.service';
-import {TranslateService} from 'app/shared/translator/translate.service';
-import {ValidationUtils} from 'app/utils/validation-utils';
-import {AddCategoryModalComponent} from '../add-category-modal/add-category-modal.component';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ButtonModel } from 'app/models/button';
+import { IMainCategory, ISubCategory } from 'app/models/category';
+import { ModalModel } from 'app/models/modal';
+import { CacheService } from 'app/services/cache.service';
+import { ModalService } from 'app/services/modal.service';
+import { TranslateService } from 'app/shared/translator/translate.service';
+import { ValidationUtils } from 'app/utils/validation-utils';
+import { AddCategoryModalComponent } from '../add-category-modal/add-category-modal.component';
 
 @Component({
     selector: 'category-management',
@@ -40,14 +40,14 @@ export class CategoryManagementComponent implements OnInit {
     readonly RESOURCE: string = 'resource';
 
     type: string;
-    categoriesToShow: Array<IMainCategory> = [];
+    categoriesToShow: IMainCategory[] = [];
     selectedCategory: IMainCategory = null;
     selectedSubCategory: ISubCategory = null;
     namePattern: RegExp;
     isLoading: boolean = false;
 
-    private serviceCategories: Array<IMainCategory> = [];
-    private resourceCategories: Array<IMainCategory> = [];
+    private serviceCategories: IMainCategory[] = [];
+    private resourceCategories: IMainCategory[] = [];
     private modalInstance: any;
 
     constructor(private cacheService: CacheService,

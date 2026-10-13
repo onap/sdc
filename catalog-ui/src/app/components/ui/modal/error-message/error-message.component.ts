@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,7 +22,7 @@
  * Created by ngordon on 7/30/2017.
  */
 import { Component, Input } from '@angular/core';
-import {ServerErrorResponse} from 'app/models/server-error-response';
+import { ServerErrorResponse } from 'app/models/server-error-response';
 
 @Component({
     selector: 'error-message',

@@ -18,9 +18,9 @@
  * ============LICENSE_END=========================================================
  */
 
-import {NavigationEnd, NavigationStart} from '@angular/router';
-import {Subject} from 'rxjs/Subject';
-import {RouteMetadataService} from './route-metadata.service';
+import { NavigationEnd, NavigationStart } from '@angular/router';
+import { Subject } from 'rxjs/Subject';
+import { RouteMetadataService } from './route-metadata.service';
 
 /**
  * These assertions ARE the gate for `bodyClass` and `document.title` at the unit level — the router

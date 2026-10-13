@@ -1,25 +1,24 @@
-import {ArtifactGroupModel} from 'app/models/artifacts';
-import {AttributeModel} from 'app/models/attributes';
-import {CapabilitiesGroup} from 'app/models/capability';
-import {IMainCategory} from 'app/models/category';
-import {Component} from 'app/models/components/component';
-import {Resource} from 'app/models/components/resource';
-import {Service} from 'app/models/components/service';
-import {ComponentInstance} from 'app/models/components-instances/component-instance';
-import {RequirementsGroup} from 'app/models/requirement';
-import {ComponentType} from '../../utils/constants';
+import { ArtifactGroupModel } from 'app/models/artifacts';
+import { AttributeModel } from 'app/models/attributes';
+import { CapabilitiesGroup } from 'app/models/capability';
+import { IMainCategory } from 'app/models/category';
+import { ComponentInstance } from 'app/models/components-instances/component-instance';
+import { Component } from 'app/models/components/component';
+import { Resource } from 'app/models/components/resource';
+import { Service } from 'app/models/components/service';
+import { RequirementsGroup } from 'app/models/requirement';
 import * as _ from 'lodash';
-
+import { ComponentType } from '../../utils/constants';
 
 export class FullComponentInstance extends ComponentInstance {
     public contactId: string;
     public componentType: string;
     public interfaces: any;
-    public tags: Array<string>;
+    public tags: string[];
     public version: string;
     public allVersions: any;
     public highestVersion: boolean;
-    public categories: Array<IMainCategory>;
+    public categories: IMainCategory[];
     public creationDate: number;
     public creatorFullName: string;
     public vendorName: string;
@@ -33,12 +32,12 @@ export class FullComponentInstance extends ComponentInstance {
     public isResourceInstance: boolean;
     public directives: string[];
 
-    //service
+    // service
     public serviceApiArtifacts: ArtifactGroupModel;
     public serviceType: string;
     public serviceRole: string;
 
-    //resource
+    // resource
     public csarUUID: string;
     public isCsarComponent: boolean;
     public csarVersion: string;
@@ -49,7 +48,7 @@ export class FullComponentInstance extends ComponentInstance {
     public capabilities: CapabilitiesGroup;
     public requirements: RequirementsGroup;
 
-    public attributes: Array<AttributeModel>;
+    public attributes: AttributeModel[];
 
     constructor(componentInstance: ComponentInstance, originComponent: Component) {
         super(componentInstance);
@@ -81,16 +80,16 @@ export class FullComponentInstance extends ComponentInstance {
         if (originComponent.componentType === ComponentType.SERVICE || originComponent.componentType
             === ComponentType.SERVICE_PROXY || originComponent.componentType === ComponentType.SERVICE_SUBSTITUTION) {
             this.isServiceInstance = true;
-            this.serviceApiArtifacts = (<Service>originComponent).serviceApiArtifacts;
-            this.serviceType = (<Service>originComponent).serviceType;
-            this.serviceRole = (<Service>originComponent).serviceRole;
+            this.serviceApiArtifacts = (originComponent as Service).serviceApiArtifacts;
+            this.serviceType = (originComponent as Service).serviceType;
+            this.serviceRole = (originComponent as Service).serviceRole;
         }
         if (originComponent.componentType === ComponentType.RESOURCE) {
             this.isResourceInstance = true;
-            this.csarUUID = (<Resource>originComponent).csarUUID;
+            this.csarUUID = (originComponent as Resource).csarUUID;
             this.isCsarComponent = !!this.csarUUID;
-            this.resourceType = (<Resource>originComponent).resourceType;
-            this.resourceVendorModelNumber = (<Resource>originComponent).resourceVendorModelNumber;
+            this.resourceType = (originComponent as Resource).resourceType;
+            this.resourceVendorModelNumber = (originComponent as Resource).resourceVendorModelNumber;
         }
     }
 

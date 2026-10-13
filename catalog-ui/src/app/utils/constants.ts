@@ -26,9 +26,9 @@
 export let DEFAULT_ICON = 'defaulticon';
 export let CP_END_POINT = 'CpEndPoint';
 export let CHANGE_COMPONENT_CSAR_VERSION_FLAG = 'changeComponentCsarVersion';
-export let PREVIOUS_CSAR_COMPONENT = 'previousCsarComponent'
-export let CATEGORY_SERVICE_METADATA_KEYS = ["Naming Policy", "Service Type", "Service Function", "Service Role"];
-export let DEFAULT_MODEL_NAME = "SDC AID";
+export let PREVIOUS_CSAR_COMPONENT = 'previousCsarComponent';
+export let CATEGORY_SERVICE_METADATA_KEYS = ['Naming Policy', 'Service Type', 'Service Function', 'Service Role'];
+export let DEFAULT_MODEL_NAME = 'SDC AID';
 
 export class GeneralStatus {
     static OK = 'OK';
@@ -39,8 +39,8 @@ export class ComponentType {
     static SERVICE = 'SERVICE';
     static RESOURCE = 'RESOURCE';
     static RESOURCE_INSTANCE = 'RESOURCE_INSTANCE';
-    static SERVICE_PROXY = 'ServiceProxy'
-    static SERVICE_SUBSTITUTION = 'ServiceSubstitution'
+    static SERVICE_PROXY = 'ServiceProxy';
+    static SERVICE_SUBSTITUTION = 'ServiceSubstitution';
 }
 
 export class ToscaType {
@@ -51,7 +51,7 @@ export class Icon {
     static DEFAULT_ICON = 'defaulticon';
     static DATATYPE_ICON = 'securityrules';
     static SERVICE_TYPE_60 = 'services_60';
-    static COLOR_LIGHTBLUE = 'lightBlue'
+    static COLOR_LIGHTBLUE = 'lightBlue';
     static COLOR_WHITE = 'white';
     static COLOR_PURPLE = 'purple';
     static RESOURCE_TYPE_24 = 'resources_24';
@@ -77,7 +77,6 @@ export class ServerTypeUrl {
     }
 }
 
-
 export class ResourceType {
     static VF = 'VF';
     static VL = 'VL';
@@ -93,7 +92,7 @@ export class ResourceType {
 export class SdcElementType {
     static GROUP = 'GROUP';
     static POLICY = 'POLICY';
-    static SERVICE_PROXY = 'ServiceProxy'
+    static SERVICE_PROXY = 'ServiceProxy';
 }
 
 export class ComponentState {
@@ -112,38 +111,38 @@ export class DistributionStatus {
 }
 
 export class ArtifactGroupType {
-    static DEPLOYMENT = "DEPLOYMENT";
-    static INFORMATION = "INFORMATIONAL";
-    static SERVICE_API = "SERVICE_API";
-    static TOSCA = "TOSCA";
+    static DEPLOYMENT = 'DEPLOYMENT';
+    static INFORMATION = 'INFORMATIONAL';
+    static SERVICE_API = 'SERVICE_API';
+    static TOSCA = 'TOSCA';
 }
 
 export class ArtifactType {
 
-    static DEPLOYMENT = "DEPLOYMENT";
-    static INFORMATION = "INFORMATIONAL";
-    static SERVICE_API = "SERVICE_API";
-    static HEAT_ENV = "HEAT_ENV";
-    static HEAT = "HEAT";
-    static HEAT_VOL = "HEAT_VOL";
-    static HEAT_NET = "HEAT_NET";
-    static VF_LICENSE = "VF_LICENSE";
-    static PM_DICTIONARY = "PM_DICTIONARY";
-    static CERTIFICATE = "CERTIFICATE";
-    static LICENSE = "LICENSE";
-    static CONFIG_TEMPLATE = "CONFIG_TEMPLATE";
-    static MAPPING_TEMPLATE = "MAPPING_TEMPLATE";    
-    static VENDOR_LICENSE = "VENDOR_LICENSE";
+    static DEPLOYMENT = 'DEPLOYMENT';
+    static INFORMATION = 'INFORMATIONAL';
+    static SERVICE_API = 'SERVICE_API';
+    static HEAT_ENV = 'HEAT_ENV';
+    static HEAT = 'HEAT';
+    static HEAT_VOL = 'HEAT_VOL';
+    static HEAT_NET = 'HEAT_NET';
+    static VF_LICENSE = 'VF_LICENSE';
+    static PM_DICTIONARY = 'PM_DICTIONARY';
+    static CERTIFICATE = 'CERTIFICATE';
+    static LICENSE = 'LICENSE';
+    static CONFIG_TEMPLATE = 'CONFIG_TEMPLATE';
+    static MAPPING_TEMPLATE = 'MAPPING_TEMPLATE';
+    static VENDOR_LICENSE = 'VENDOR_LICENSE';
     static THIRD_PARTY_RESERVED_TYPES = {
-        WORKFLOW: "WORKFLOW",
-        NETWORK_CALL_FLOW: "NETWORK_CALL_FLOW",
-        AAI_SERVICE_MODEL: "AAI_SERVICE_MODEL",
-        AAI_VF_MODEL: "AAI_VF_MODEL",
-        AAI_VF_MODULE_MODEL: "AAI_VF_MODULE_MODEL",
-        AAI_VF_INSTANCE_MODEL: "AAI_VF_INSTANCE_MODEL"
+        WORKFLOW: 'WORKFLOW',
+        NETWORK_CALL_FLOW: 'NETWORK_CALL_FLOW',
+        AAI_SERVICE_MODEL: 'AAI_SERVICE_MODEL',
+        AAI_VF_MODEL: 'AAI_VF_MODEL',
+        AAI_VF_MODULE_MODEL: 'AAI_VF_MODULE_MODEL',
+        AAI_VF_INSTANCE_MODEL: 'AAI_VF_INSTANCE_MODEL'
     };
-    static TOSCA = {TOSCA_TEMPLATE: "TOSCA_TEMPLATE", TOSCA_CSAR: "TOSCA_CSAR"};
-    static VES_EVENTS = "VES_EVENTS";
+    static TOSCA = {TOSCA_TEMPLATE: 'TOSCA_TEMPLATE', TOSCA_CSAR: 'TOSCA_CSAR'};
+    static VES_EVENTS = 'VES_EVENTS';
 }
 
 export class SEVERITY {
@@ -183,9 +182,9 @@ export class PROPERTY_DATA {
     public static SIMPLE_TYPES_COMPARABLE = [PROPERTY_TYPES.STRING, PROPERTY_TYPES.INTEGER, PROPERTY_TYPES.FLOAT];
     public static SCHEMA_TYPES = [PROPERTY_TYPES.LIST, PROPERTY_TYPES.MAP];
     public static SCALAR_TYPES = [PROPERTY_TYPES.SCALAR_BITRATE, PROPERTY_TYPES.SCALAR_FREQUENCY, PROPERTY_TYPES.SCALAR_SIZE, PROPERTY_TYPES.SCALAR_TIME, PROPERTY_TYPES.SCALAR_UNIT];
-    public static ROOT_DATA_TYPE = "tosca.datatypes.Root";
-    public static OPENECOMP_ROOT = "org.openecomp.datatypes.Root";
-    public static SUPPLEMENTAL_DATA = "supplemental_data";
+    public static ROOT_DATA_TYPE = 'tosca.datatypes.Root';
+    public static OPENECOMP_ROOT = 'org.openecomp.datatypes.Root';
+    public static SUPPLEMENTAL_DATA = 'supplemental_data';
     public static SOURCES = [SOURCES.A_AND_AI, SOURCES.ORDER, SOURCES.RUNTIME];
     public static COMPARABLE_TYPES = [PROPERTY_TYPES.STRING, PROPERTY_TYPES.INTEGER, PROPERTY_TYPES.FLOAT, PROPERTY_TYPES.TIMESTAMP, PROPERTY_TYPES.SCALAR_BITRATE, PROPERTY_TYPES.SCALAR_FREQUENCY, PROPERTY_TYPES.SCALAR_SIZE, PROPERTY_TYPES.SCALAR_TIME, PROPERTY_TYPES.SCALAR_UNIT];
 }
@@ -241,7 +240,6 @@ export class ImagesUrl {
     public static CLOSE_MODULE_HOVER_ICON = '/assets/styles/images/resource-icons/closeModuleHover.png';
 }
 
-
 export class CanvasHandleTypes {
     public static ADD_EDGE = 'add-edge';
     public static TAG_AVAILABLE = 'tag-available';
@@ -278,10 +276,10 @@ export class GraphColors {
 }
 
 export class GraphTransactionLogText {
-    public static REMOVE_TEMP_LINK = "remove tempLink";
-    public static DELETE_LINK = "delete link";
-    public static ADD_LINK = "delete link";
-    public static ADD_NODE = "adding node";
+    public static REMOVE_TEMP_LINK = 'remove tempLink';
+    public static DELETE_LINK = 'delete link';
+    public static ADD_LINK = 'delete link';
+    public static ADD_NODE = 'adding node';
 }
 
 export class GraphUIObjects {
@@ -308,7 +306,6 @@ export class GraphUIObjects {
     // public static COMPOSITION_RIGHT_PANEL_OFFSET = 300;
 }
 
-
 export class States {
     public static WORKSPACE = 'workspace';
     public static WORKSPACE_GENERAL = 'workspace.general';
@@ -334,24 +331,23 @@ export class States {
 }
 
 export class EVENTS {
-    static LEFT_PALETTE_UPDATE_EVENT = "leftPanelUpdateEvent";
-    static ON_CSAR_LOADING = "onCsarLoading";
-    static DOWNLOAD_ARTIFACT_FINISH_EVENT = "downloadArtifactFinishEvent";
-    static ON_WORKSPACE_SAVE_BUTTON_CLICK = "onWorkspaceSaveButtonClick";
-    static ON_WORKSPACE_SAVE_BUTTON_SUCCESS = "onWorkspaceSaveButtonSuccess";
-    static ON_WORKSPACE_SAVE_BUTTON_ERROR = "onWorkspaceSaveButtonError";
-    static ON_WORKSPACE_UNSAVED_CHANGES = "onWorkspaceUnsavedChanges";
-    static ON_CHECKOUT = "onCheckout";
-    static ON_LIFECYCLE_CHANGE_WITH_SAVE = "onLifecycleChangeWithSave";
-    static ON_LIFECYCLE_CHANGE = "onCheckout";
+    static LEFT_PALETTE_UPDATE_EVENT = 'leftPanelUpdateEvent';
+    static ON_CSAR_LOADING = 'onCsarLoading';
+    static DOWNLOAD_ARTIFACT_FINISH_EVENT = 'downloadArtifactFinishEvent';
+    static ON_WORKSPACE_SAVE_BUTTON_CLICK = 'onWorkspaceSaveButtonClick';
+    static ON_WORKSPACE_SAVE_BUTTON_SUCCESS = 'onWorkspaceSaveButtonSuccess';
+    static ON_WORKSPACE_SAVE_BUTTON_ERROR = 'onWorkspaceSaveButtonError';
+    static ON_WORKSPACE_UNSAVED_CHANGES = 'onWorkspaceUnsavedChanges';
+    static ON_CHECKOUT = 'onCheckout';
+    static ON_LIFECYCLE_CHANGE_WITH_SAVE = 'onLifecycleChangeWithSave';
+    static ON_LIFECYCLE_CHANGE = 'onCheckout';
 
-    //Loader events
-    static SHOW_LOADER_EVENT = "showLoaderEvent";
-    static HIDE_LOADER_EVENT = "hideLoaderEvent";
+    // Loader events
+    static SHOW_LOADER_EVENT = 'showLoaderEvent';
+    static HIDE_LOADER_EVENT = 'hideLoaderEvent';
     static UPDATE_PANEL = 'updatePanel';
     static ON_DISTRIBUTION_SUCCESS = 'onDistributionSuccess';
 }
-
 
 export class UNIQUE_GROUP_PROPERTIES_NAME {
     public static MIN_VF_MODULE_INSTANCES = 'min_vf_module_instances';
@@ -364,19 +360,18 @@ export class UNIQUE_GROUP_PROPERTIES_NAME {
     public static VOLUME_GROUP = 'volume_group';
 }
 
-
 export class GRAPH_EVENTS {
     static ON_COMPOSITION_GRAPH_DATA_LOADED = 'onCompositionGraphDataLoaded';
     static ON_DEPLOYMENT_GRAPH_DATA_LOADED = 'onDeploymentGraphDataLoaded';
-    static ON_NODE_SELECTED = "onNodeSelected";
-    static ON_ZONE_INSTANCE_SELECTED = "onZoneInstanceSelected";
-    static ON_GRAPH_BACKGROUND_CLICKED = "onGraphBackgroundClicked";
+    static ON_NODE_SELECTED = 'onNodeSelected';
+    static ON_ZONE_INSTANCE_SELECTED = 'onZoneInstanceSelected';
+    static ON_GRAPH_BACKGROUND_CLICKED = 'onGraphBackgroundClicked';
     static ON_PALETTE_COMPONENT_DRAG_START = 'onPaletteComponentDragStart';
     static ON_PALETTE_COMPONENT_DRAG_ACTION = 'onPaletteComponentDragAction';
     static ON_PALETTE_COMPONENT_DROP = 'onPaletteComponentDrop';
     static ON_COMPONENT_INSTANCE_NAME_CHANGED = 'onComponentInstanceNameChanged';
-    static ON_COMPONENT_INSTANCE_REQUIREMENT_EXTERNAL_CHANGED = 'onComponentInstanceRequirementExternalChanged'
-    static ON_COMPONENT_INSTANCE_CAPABILITY_EXTERNAL_CHANGED = 'onComponentInstanceCapabilityExternalChanged'
+    static ON_COMPONENT_INSTANCE_REQUIREMENT_EXTERNAL_CHANGED = 'onComponentInstanceRequirementExternalChanged';
+    static ON_COMPONENT_INSTANCE_CAPABILITY_EXTERNAL_CHANGED = 'onComponentInstanceCapabilityExternalChanged';
     static ON_ZONE_INSTANCE_NAME_CHANGED = 'onZoneInstanceNameChanged';
     static ON_DELETE_COMPONENT_INSTANCE = 'onDeleteComponentInstance';
     static ON_DELETE_ZONE_INSTANCE = 'onDeleteZoneInstance';
@@ -402,43 +397,42 @@ export class SUBSTITUTION_FILTER_EVENTS {
     static ON_SUBSTITUTION_FILTER_CHANGE = 'onSubstitutionFilterChange';
 }
 
-
 export class COMPONENT_FIELDS {
-    static COMPONENT_INSTANCES_PROPERTIES = "componentInstancesProperties";
-    static COMPONENT_INSTANCES_INPUTS = "componentInstancesInputs";
-    static COMPONENT_INSTANCES_ATTRIBUTES = "componentInstancesAttributes";
-    static COMPONENT_INSTANCES_OUTPUTS = "componentInstancesOutputs";
-    static COMPONENT_ATTRIBUTES = "attributes";
-    static COMPONENT_INSTANCES = "componentInstances";
-    static COMPONENT_INSTANCES_RELATION = "componentInstancesRelations";
-    static COMPONENT_INPUTS = "inputs";
-    static COMPONENT_OUTPUTS = "outputs";
-    static COMPONENT_METADATA = "metadata";
-    static COMPONENT_DEPLOYMENT_ARTIFACTS = "deploymentArtifacts";
-    static COMPONENT_INFORMATIONAL_ARTIFACTS = "artifacts";
-    static COMPONENT_PROPERTIES = "properties";
-    static COMPONENT_CAPABILITIES = "capabilities";
-    static COMPONENT_CAPABILITIES_PROPERTIES = "instanceCapabiltyProperties";
-    static COMPONENT_REQUIREMENTS = "requirements";
-    static COMPONENT_TOSCA_ARTIFACTS = "toscaArtifacts";
-    static COMPONENT_POLICIES = "policies";
-    static COMPONENT_GROUPS = "groups";
-    static COMPONENT_INTERFACE_OPERATIONS = "interfaces";
-    static COMPONENT_INSTANCES_INTERFACES = "componentInstancesInterfaces";
-    static COMPONENT_NON_EXCLUDED_GROUPS = "nonExcludedGroups";
-    static COMPONENT_NON_EXCLUDED_POLICIES = "nonExcludedPolicies";
-    static FORWARDING_PATHS = "forwardingPaths";
-    static SERVICE_API_ARTIFACT = "serviceApiArtifacts";
+    static COMPONENT_INSTANCES_PROPERTIES = 'componentInstancesProperties';
+    static COMPONENT_INSTANCES_INPUTS = 'componentInstancesInputs';
+    static COMPONENT_INSTANCES_ATTRIBUTES = 'componentInstancesAttributes';
+    static COMPONENT_INSTANCES_OUTPUTS = 'componentInstancesOutputs';
+    static COMPONENT_ATTRIBUTES = 'attributes';
+    static COMPONENT_INSTANCES = 'componentInstances';
+    static COMPONENT_INSTANCES_RELATION = 'componentInstancesRelations';
+    static COMPONENT_INPUTS = 'inputs';
+    static COMPONENT_OUTPUTS = 'outputs';
+    static COMPONENT_METADATA = 'metadata';
+    static COMPONENT_DEPLOYMENT_ARTIFACTS = 'deploymentArtifacts';
+    static COMPONENT_INFORMATIONAL_ARTIFACTS = 'artifacts';
+    static COMPONENT_PROPERTIES = 'properties';
+    static COMPONENT_CAPABILITIES = 'capabilities';
+    static COMPONENT_CAPABILITIES_PROPERTIES = 'instanceCapabiltyProperties';
+    static COMPONENT_REQUIREMENTS = 'requirements';
+    static COMPONENT_TOSCA_ARTIFACTS = 'toscaArtifacts';
+    static COMPONENT_POLICIES = 'policies';
+    static COMPONENT_GROUPS = 'groups';
+    static COMPONENT_INTERFACE_OPERATIONS = 'interfaces';
+    static COMPONENT_INSTANCES_INTERFACES = 'componentInstancesInterfaces';
+    static COMPONENT_NON_EXCLUDED_GROUPS = 'nonExcludedGroups';
+    static COMPONENT_NON_EXCLUDED_POLICIES = 'nonExcludedPolicies';
+    static FORWARDING_PATHS = 'forwardingPaths';
+    static SERVICE_API_ARTIFACT = 'serviceApiArtifacts';
 }
 
 export class SERVICE_FIELDS {
-    static FORWARDING_PATHS = "forwardingPaths";
-    static NODE_FILTER = "nodeFilter";
-    static SUBSTITUTION_FILTER = "substitutionFilter";
+    static FORWARDING_PATHS = 'forwardingPaths';
+    static NODE_FILTER = 'nodeFilter';
+    static SUBSTITUTION_FILTER = 'substitutionFilter';
 }
 
 export class API_QUERY_PARAMS {
-    static INCLUDE = "include";
+    static INCLUDE = 'include';
 }
 
 export enum TargetOrMemberType {
@@ -447,15 +441,15 @@ export enum TargetOrMemberType {
 }
 
 export class CANVAS_TAG_MODE {
-    static POLICY_TAGGING = "policy-tagging";
-    static POLICY_TAGGING_HOVER = "policy-tagging-hover";
-    static GROUP_TAGGING = "group-tagging";
-    static GROUP_TAGGING_HOVER = "group-tagging-hover";
+    static POLICY_TAGGING = 'policy-tagging';
+    static POLICY_TAGGING_HOVER = 'policy-tagging-hover';
+    static GROUP_TAGGING = 'group-tagging';
+    static GROUP_TAGGING_HOVER = 'group-tagging-hover';
 }
 
 export class DROPDOWN_OPTION_TYPE {
-    static SIMPLE = "Simple";
-    static HEADER = "Header";
-    static DISABLE = "Disable";
-    static HORIZONTAL_LINE = "HorizontalLine";
+    static SIMPLE = 'Simple';
+    static HEADER = 'Header';
+    static DISABLE = 'Disable';
+    static HORIZONTAL_LINE = 'HorizontalLine';
 }

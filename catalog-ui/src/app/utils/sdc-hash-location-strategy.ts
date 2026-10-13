@@ -18,8 +18,8 @@
  * ============LICENSE_END=========================================================
  */
 
-import {HashLocationStrategy} from '@angular/common';
-import {Injectable} from '@angular/core';
+import { HashLocationStrategy } from '@angular/common';
+import { Injectable } from '@angular/core';
 
 const NG1_HASH_PREFIX = '!';
 

@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-import {UnsavedChangesGuard} from './unsaved-changes.guard';
+import { UnsavedChangesGuard } from './unsaved-changes.guard';
 
 describe('UnsavedChangesGuard', () => {
     let guard: UnsavedChangesGuard;

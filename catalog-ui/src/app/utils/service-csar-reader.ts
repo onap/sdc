@@ -18,25 +18,25 @@
  * ============LICENSE_END=========================================================
  */
 
-import {ServiceCsar, ToscaMetaEntry} from '../models/service-csar';
-import {load} from 'js-yaml';
-import {ComponentType} from "./constants";
+import { load } from 'js-yaml';
+import { ServiceCsar, ToscaMetaEntry } from '../models/service-csar';
+import { ComponentType } from './constants';
 
 export class ServiceCsarReader {
 
     private serviceCsar = new ServiceCsar();
 
     public read(serviceCsarBlob: Blob): Promise<ServiceCsar> {
-        const jsZip = require("jszip");
+        const jsZip = require('jszip');
         return new Promise<ServiceCsar>((resolve, reject) => {
-            jsZip.loadAsync(serviceCsarBlob).then(async zip => {
+            jsZip.loadAsync(serviceCsarBlob).then(async (zip) => {
                 try {
-                    const toscaMetaFileContent = await zip.file("TOSCA-Metadata/TOSCA.meta").async("string");
+                    const toscaMetaFileContent = await zip.file('TOSCA-Metadata/TOSCA.meta').async('string');
                     this.readToscaMeta(toscaMetaFileContent);
-                    const entryDefinitionFileContent = await zip.file(this.serviceCsar.entryDefinitionFileName).async("string");
+                    const entryDefinitionFileContent = await zip.file(this.serviceCsar.entryDefinitionFileName).async('string');
                     this.readServiceMetadata(entryDefinitionFileContent);
                     if (zip.file(this.serviceCsar.interfaceDefinitionFileName) != null) {
-                        const interfaceDefinitionFileContent = await zip.file(this.serviceCsar.interfaceDefinitionFileName).async("string");
+                        const interfaceDefinitionFileContent = await zip.file(this.serviceCsar.interfaceDefinitionFileName).async('string');
                         this.readSubstitutionNodeFromInterfaceDefinitionFile(interfaceDefinitionFileContent);
                     } else {
                         this.readSubstitutionNodeFromMainTemplateFile(entryDefinitionFileContent);
@@ -52,12 +52,12 @@ export class ServiceCsarReader {
         });
     }
 
-    private readToscaMeta(toscaMetaFileContent:string) {
-        let fileEntities:Array<string> = toscaMetaFileContent.replace("\r", "").split("\n");
-        for(let entity of fileEntities.filter(e => e)) {
-            let mapEntry:Array<string> = entity.split(":");
-            let key:string = mapEntry[0].trim();
-            let value:string = mapEntry[1].trim();
+    private readToscaMeta(toscaMetaFileContent: string) {
+        const fileEntities: string[] = toscaMetaFileContent.replace('\r', '').split('\n');
+        for (const entity of fileEntities.filter((e) => e)) {
+            const mapEntry: string[] = entity.split(':');
+            const key: string = mapEntry[0].trim();
+            const value: string = mapEntry[1].trim();
             this.serviceCsar.toscaMeta.dataMap.set(key, value);
         }
         this.readEntryDefinitionFileName();
@@ -68,9 +68,9 @@ export class ServiceCsarReader {
         this.serviceCsar.entryDefinitionFileName = this.serviceCsar.toscaMeta.getEntry(ToscaMetaEntry.ENTRY_DEFINITIONS);
     }
     private readInterfaceDefinitionFileName() {
-        let fileNameArray:Array<string> = this.serviceCsar.entryDefinitionFileName.split(".");
-        fileNameArray.splice(fileNameArray.length - 1, 0, "-interface.");
-        this.serviceCsar.interfaceDefinitionFileName = fileNameArray.join("");
+        const fileNameArray: string[] = this.serviceCsar.entryDefinitionFileName.split('.');
+        fileNameArray.splice(fileNameArray.length - 1, 0, '-interface.');
+        this.serviceCsar.interfaceDefinitionFileName = fileNameArray.join('');
     }
 
     private readServiceMetadata(entryDefinitionFileContent) {
@@ -80,8 +80,8 @@ export class ServiceCsarReader {
 
     private readSubstitutionNodeFromInterfaceDefinitionFile(interfaceDefinitionFileContent) {
         const nodeTypes = load(interfaceDefinitionFileContent).node_types;
-        let nodeType = Object.keys(nodeTypes).values().next().value;
-        this.serviceCsar.substitutionNodeType = nodeTypes[nodeType]["derived_from"];
+        const nodeType = Object.keys(nodeTypes).values().next().value;
+        this.serviceCsar.substitutionNodeType = nodeTypes[nodeType].derived_from;
     }
 
     private readSubstitutionNodeFromMainTemplateFile(entryDefinitionFileContent) {
@@ -91,62 +91,62 @@ export class ServiceCsarReader {
         }
     }
 
-    private setMetadata = (metadata:object) : void => {
-        let extraServiceMetadata: Map<string, string> = new Map<string, string>();
+    private setMetadata = (metadata: object): void => {
+        const extraServiceMetadata: Map<string, string> = new Map<string, string>();
         this.serviceCsar.serviceMetadata.componentType = ComponentType.SERVICE;
-        this.serviceCsar.serviceMetadata.serviceType = "Service";
-        Object.keys(metadata).forEach(variable => {
-            switch(variable) {
-                case "description": {
+        this.serviceCsar.serviceMetadata.serviceType = 'Service';
+        Object.keys(metadata).forEach((variable) => {
+            switch (variable) {
+                case 'description': {
                     this.serviceCsar.serviceMetadata.description = metadata[variable];
                     break;
                 }
-                case "name": {
+                case 'name': {
                     this.serviceCsar.serviceMetadata.name = metadata[variable];
                     break;
                 }
-                case "model": {
+                case 'model': {
                     this.serviceCsar.serviceMetadata.model = metadata[variable];
                     break;
                 }
-                case "category": {
+                case 'category': {
                     this.serviceCsar.serviceMetadata.selectedCategory = metadata[variable];
                     break;
                 }
-                case "serviceRole": {
+                case 'serviceRole': {
                     this.serviceCsar.serviceMetadata.serviceRole = metadata[variable];
                     break;
                 }
-                case "serviceFunction": {
+                case 'serviceFunction': {
                     this.serviceCsar.serviceMetadata.serviceFunction = metadata[variable];
                     break;
                 }
-                case "environmentContext": {
+                case 'environmentContext': {
                     if (metadata[variable] != null) {
                         this.serviceCsar.serviceMetadata.environmentContext = metadata[variable];
                     }
                     break;
                 }
-                case "instantiationType": {
+                case 'instantiationType': {
                     if (metadata[variable] != null) {
                         this.serviceCsar.serviceMetadata.instantiationType = metadata[variable];
                     }
                     break;
                 }
-                case "ecompGeneratedNaming": {
+                case 'ecompGeneratedNaming': {
                     if (metadata[variable] != null) {
-                        this.serviceCsar.serviceMetadata.ecompGeneratedNaming = metadata[variable] == "false" ? false : true;
+                        this.serviceCsar.serviceMetadata.ecompGeneratedNaming = metadata[variable] == 'false' ? false : true;
                     }
                     break;
                 }
-                case "namingPolicy": {
-                    if (metadata["ecompGeneratedNaming"] != "false") {
+                case 'namingPolicy': {
+                    if (metadata.ecompGeneratedNaming != 'false') {
                         this.serviceCsar.serviceMetadata.namingPolicy = metadata[variable];
                     }
                     break;
                 }
                 default: {
-                    extraServiceMetadata.set(variable, metadata[variable])
+                    extraServiceMetadata.set(variable, metadata[variable]);
                     break;
                 }
             }

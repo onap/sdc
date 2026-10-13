@@ -18,12 +18,12 @@
  * ============LICENSE_END=========================================================
  */
 
-import {Inject, Injectable} from '@angular/core';
-import {ActivatedRouteSnapshot, CanDeactivate, Router, RouterStateSnapshot} from '@angular/router';
-import {SdcUiCommon, SdcUiServices} from 'onap-ui-angular';
-import {IModalButtonComponent} from 'onap-ui-angular/dist/common';
-import {IAppMenu, SdcMenuToken} from '../config/sdc-menu.config';
-import {WorkspaceService} from '../pages/workspace/workspace.service';
+import { Inject, Injectable } from '@angular/core';
+import { ActivatedRouteSnapshot, CanDeactivate, Router, RouterStateSnapshot } from '@angular/router';
+import { SdcUiCommon, SdcUiServices } from 'onap-ui-angular';
+import { IModalButtonComponent } from 'onap-ui-angular/dist/common';
+import { IAppMenu, SdcMenuToken } from '../config/sdc-menu.config';
+import { WorkspaceService } from '../pages/workspace/workspace.service';
 
 /**
  * Port of the `unsavedChanges` half of ui-router's `onStateChangeStart` (app.ts:693-696 →
@@ -76,7 +76,7 @@ export class UnsavedChangesFlagGuard implements CanDeactivate<any> {
      * so by then `unsavedChanges` is already false and this is never reached.
      */
     private isLeavingAsset(currentRoute: ActivatedRouteSnapshot, nextState: RouterStateSnapshot): boolean {
-        return currentRoute.params['id'] != this.findParam(nextState.root, 'id');
+        return currentRoute.params.id != this.findParam(nextState.root, 'id');
     }
 
     private findParam(snapshot: ActivatedRouteSnapshot, key: string): any {

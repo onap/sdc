@@ -1,13 +1,13 @@
-import {Input, Component, OnInit} from "@angular/core";
-import {Requirement, RequirementUI} from "../../../../models/requirement";
-import {RequirementsEditorComponent} from "./requirements-editor/requirements-editor.component";
-import {WorkspaceService} from "../../workspace.service";
-import {TopologyTemplateService} from "../../../../services/component-services/topology-template.service";
-import {ReqAndCapabilitiesService} from "../req-and-capabilities.service";
-import {EventListenerService} from "../../../../services/event-listener.service";
-import {ModalComponent} from "onap-ui-angular/dist/modals/modal.component";
-import {SdcUiCommon, SdcUiServices} from "onap-ui-angular";
-import sortedIndexBy = require("lodash/sortedIndexBy");
+import { Component, Input, OnInit } from '@angular/core';
+import sortedIndexBy = require('lodash/sortedIndexBy');
+import { SdcUiCommon, SdcUiServices } from 'onap-ui-angular';
+import { ModalComponent } from 'onap-ui-angular/dist/modals/modal.component';
+import { Requirement, RequirementUI } from '../../../../models/requirement';
+import { TopologyTemplateService } from '../../../../services/component-services/topology-template.service';
+import { EventListenerService } from '../../../../services/event-listener.service';
+import { WorkspaceService } from '../../workspace.service';
+import { ReqAndCapabilitiesService } from '../req-and-capabilities.service';
+import { RequirementsEditorComponent } from './requirements-editor/requirements-editor.component';
 
 @Component({
     selector: 'requirements',
@@ -15,21 +15,18 @@ import sortedIndexBy = require("lodash/sortedIndexBy");
     styleUrls: ['../../../../../assets/styles/table-style.less', './requirements.component.less']
 })
 
-
-
 export class RequirementsComponent implements OnInit {
-    @Input() public requirements: Array<RequirementUI>;
+    @Input() public requirements: RequirementUI[];
     private customModalInstance: ModalComponent;
 
     constructor(
         private workspaceService: WorkspaceService,
         private loaderService: SdcUiServices.LoaderService,
         private topologyTemplateService: TopologyTemplateService,
-        private reqAndCapabilitiesService : ReqAndCapabilitiesService,
+        private reqAndCapabilitiesService: ReqAndCapabilitiesService,
         private modalService: SdcUiServices.ModalService,
         private eventListenerService: EventListenerService) {
     }
-
 
     ngOnInit(): void {
         let isCreatedManually: RequirementUI[] = [];
@@ -45,11 +42,9 @@ export class RequirementsComponent implements OnInit {
 
     }
 
-
-
     editRequirement(req) {
 
-        let modalConfig = {
+        const modalConfig = {
             size: 'md',
             title: 'Update Requirement',
             type: SdcUiCommon.ModalType.custom,
@@ -57,13 +52,13 @@ export class RequirementsComponent implements OnInit {
                 {
                     id: 'saveButton',
                     text: ('Update'),
-                    size: "'x-small'",
+                    size: '\'x-small\'',
                     callback: () => this.updateRequirement(),
                     closeModal: true
                 },
-                {text: "Cancel", size: "'x-small'", closeModal: true}]
+                {text: 'Cancel', size: '\'x-small\'', closeModal: true}]
         };
-        let modalInputs = {
+        const modalInputs = {
             requirement: req,
             relationshipTypesList: this.reqAndCapabilitiesService.getRelationsShipeTypeList(),
             nodeTypesList: this.reqAndCapabilitiesService.getNodeTypesList(),
@@ -77,26 +72,26 @@ export class RequirementsComponent implements OnInit {
 
     }
 
+    getRowClass(row) {
+        if (!row.isCreatedManually) {
+            return {
+                importedFromFile: true
+            };
+        }
+    }
+
     private updateRequirement() {
         const requirement = this.customModalInstance.innerModalContent.instance.requirementData;
         this.loaderService.activate();
         if (requirement.uniqueId) {
-            this.topologyTemplateService.updateRequirement(this.workspaceService.metadata.getTypeUrl(), this.workspaceService.metadata.uniqueId, requirement).subscribe(result => {
-                    let index = this.requirements.findIndex(req => result[0].uniqueId === req.uniqueId);
+            this.topologyTemplateService.updateRequirement(this.workspaceService.metadata.getTypeUrl(), this.workspaceService.metadata.uniqueId, requirement).subscribe((result) => {
+                    const index = this.requirements.findIndex((req) => result[0].uniqueId === req.uniqueId);
                     this.requirements[index] = new RequirementUI(result[0], this.workspaceService.metadata.uniqueId);
                     this.eventListenerService.notifyObservers('REQUIREMENTS_UPDATED');
                     this.loaderService.deactivate();
                 }, () => {
                 this.loaderService.deactivate();
                 });
-        }
-    }
-
-    getRowClass(row) {
-        if (!row.isCreatedManually) {
-            return {
-                'importedFromFile': true
-            };
         }
     }
 

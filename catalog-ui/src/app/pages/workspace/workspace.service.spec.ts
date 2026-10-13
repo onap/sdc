@@ -1,9 +1,9 @@
-import {TestBed} from '@angular/core/testing';
-import {WorkspaceService} from './workspace.service';
-import {CacheService} from '../../services/cache.service';
-import {ComponentState, ComponentType, Role, WorkspaceMode} from '../../utils/constants';
-import {createMockComponent, createServiceComponent} from '../../../jest/mocks/workspace-component.mock';
-import {createMockUser} from '../../../jest/mocks/user-data.mock';
+import { TestBed } from '@angular/core/testing';
+import { createMockUser } from '../../../jest/mocks/user-data.mock';
+import { createMockComponent, createServiceComponent } from '../../../jest/mocks/workspace-component.mock';
+import { CacheService } from '../../services/cache.service';
+import { ComponentState, ComponentType, Role, WorkspaceMode } from '../../utils/constants';
+import { WorkspaceService } from './workspace.service';
 
 describe('WorkspaceService', () => {
     let service: WorkspaceService;
@@ -13,7 +13,7 @@ describe('WorkspaceService', () => {
     beforeEach(() => {
         cacheServiceMock = {
             get: jest.fn((key) => {
-                if (key === 'user') return designer;
+                if (key === 'user') { return designer; }
                 return undefined;
             }),
             set: jest.fn(),

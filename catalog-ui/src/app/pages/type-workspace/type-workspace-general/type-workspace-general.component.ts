@@ -20,21 +20,21 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {FormControl, FormGroup, Validators} from "@angular/forms";
-import {DataTypeModel} from "../../../models/data-types";
-import {DEFAULT_MODEL_NAME} from "app/utils/constants";
-import {TypeWorkspaceService} from "../type-workspace.service";
-import {ServiceDataTypeReader} from "../../../utils/service-data-type-reader";
-import {TranslateService} from "../../../shared/translator/translate.service";
-import {SdcUiServices} from "onap-ui-angular/dist";
-import {ModelService} from "../../../services/model.service";
-import {NavigationService} from "../../../services/navigation.service";
-import {Model} from "../../../models/model";
-import {DataTypesMap} from "../../../models/data-types-map";
-import {DataTypeService} from "../../../services/data-type.service";
-import {Observable} from "rxjs/Observable";
-import {IDropDownOption} from "onap-ui-angular/dist/form-elements/dropdown/dropdown-models";
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { DEFAULT_MODEL_NAME } from 'app/utils/constants';
+import { SdcUiServices } from 'onap-ui-angular/dist';
+import { IDropDownOption } from 'onap-ui-angular/dist/form-elements/dropdown/dropdown-models';
+import { Observable } from 'rxjs/Observable';
+import { DataTypeModel } from '../../../models/data-types';
+import { DataTypesMap } from '../../../models/data-types-map';
+import { Model } from '../../../models/model';
+import { DataTypeService } from '../../../services/data-type.service';
+import { ModelService } from '../../../services/model.service';
+import { NavigationService } from '../../../services/navigation.service';
+import { TranslateService } from '../../../shared/translator/translate.service';
+import { ServiceDataTypeReader } from '../../../utils/service-data-type-reader';
+import { TypeWorkspaceService } from '../type-workspace.service';
 
 @Component({
   selector: 'app-type-workspace-general',
@@ -47,13 +47,13 @@ export class TypeWorkspaceGeneralComponent implements OnInit {
   @Input() dataType: DataTypeModel = new DataTypeModel();
   @Output() onImportedType = new EventEmitter<any>();
   importedFile: File;
-  models: Array<Model>;
+  models: Model[];
   selectedModelName: string;
   dataTypes: DataTypesMap;
   derivedFromName: string;
   dataTypeMap$: Observable<Map<string, DataTypeModel>>;
   dataTypeMap: Map<string, DataTypeModel>;
-  typeOptions: Array<IDropDownOption>;
+  typeOptions: IDropDownOption[];
   DEFAULT_MODEL_NAME = DEFAULT_MODEL_NAME;
 
   type: FormControl = new FormControl(undefined, [Validators.required, Validators.minLength(1), Validators.maxLength(300)]);
@@ -61,10 +61,10 @@ export class TypeWorkspaceGeneralComponent implements OnInit {
   description: FormControl = new FormControl(undefined, [Validators.required, Validators.minLength(1)]);
   model: FormControl = new FormControl(undefined, [Validators.required]);
   formGroup: FormGroup = new FormGroup({
-    'type': this.type,
-    'description': this.description,
-    'model': this.model,
-    'derivedFrom': this.derivedFrom
+    type: this.type,
+    description: this.description,
+    model: this.model,
+    derivedFrom: this.derivedFrom
   });
 
   constructor(private typeWorkspaceService: TypeWorkspaceService,
@@ -79,9 +79,9 @@ export class TypeWorkspaceGeneralComponent implements OnInit {
   ngOnInit(): void {
       this.getImportedFile();
       if (!this.isViewOnly) {
-          console.log("file size: " + this.importedFile.size);
-          console.log("file type: " + this.importedFile.type);
-          console.log("file lastModifiedDate: " + this.importedFile.lastModifiedDate);
+          console.log('file size: ' + this.importedFile.size);
+          console.log('file type: ' + this.importedFile.type);
+          console.log('file lastModifiedDate: ' + this.importedFile.lastModifiedDate);
 
           new ServiceDataTypeReader().read(this.importedFile).then(
               (serviceType) => {
@@ -89,19 +89,18 @@ export class TypeWorkspaceGeneralComponent implements OnInit {
                   this.dataType.modificationTime = this.importedFile.lastModifiedDate;
                   this.dataType.creationTime = this.importedFile.lastModifiedDate;
                   this.derivedFromName = serviceType.derivedFromName;
-                  this.dataType.uniqueId = this.dataType.model ? this.dataType.model + "." + this.dataType.name : this.dataType.name + ".datatype";
+                  this.dataType.uniqueId = this.dataType.model ? this.dataType.model + '.' + this.dataType.name : this.dataType.name + '.datatype';
                   this.typeWorkspaceService.dataType = this.dataType;
                   this.onImportedType.emit(this.dataType);
 
                   this.models = [];
                   this.modelService.getDataTypeModels(this.derivedFromName).subscribe((modelsFound: any) => {
-                      modelsFound.sort().forEach(modelName => {
-                          let model:Model;
-                          if (modelName === null || "" === modelName) {
-                              model = new Model({"name": DEFAULT_MODEL_NAME, "derivedFrom": "", "modelType": "normative"});
-                          }
-                          else {
-                              model = new Model({"name": modelName, "derivedFrom": "", "modelType": "normative"});
+                      modelsFound.sort().forEach((modelName) => {
+                          let model: Model;
+                          if (modelName === null || '' === modelName) {
+                              model = new Model({name: DEFAULT_MODEL_NAME, derivedFrom: '', modelType: 'normative'});
+                          } else {
+                              model = new Model({name: modelName, derivedFrom: '', modelType: 'normative'});
                           }
                           this.models.push(model);
                       });
@@ -114,8 +113,8 @@ export class TypeWorkspaceGeneralComponent implements OnInit {
                   const errorMsg = this.translateService.translate('IMPORT_DATA_TYPE_FAILURE_MESSAGE_TEXT');
                   console.error(errorMsg, error);
                   const errorDetails = {
-                      'Error': error.reason,
-                      'Details': error.message
+                      Error: error.reason,
+                      Details: error.message
                   };
                   console.error(error.reason);
                   this.modalServiceSdcUI.openErrorDetailModal('Error', errorMsg,
@@ -123,23 +122,23 @@ export class TypeWorkspaceGeneralComponent implements OnInit {
                   this.navigationService.navigate('dashboard');
               });
       }
-    this.initForm();
+      this.initForm();
   }
 
   onModelChange(): void {
-    this.selectedModelName = this.models.filter(x => x.name == this.model.value).pop().name;
-    console.log("selected model: " + this.selectedModelName);
-    this.dataType.model = new Model({"name": this.selectedModelName, "derivedFrom": "", "modelType": "normative"});
+    this.selectedModelName = this.models.filter((x) => x.name == this.model.value).pop().name;
+    console.log('selected model: ' + this.selectedModelName);
+    this.dataType.model = new Model({name: this.selectedModelName, derivedFrom: '', modelType: 'normative'});
     this.dataType.uniqueId = this.dataType.model.name === DEFAULT_MODEL_NAME ?
-        this.dataType.name + ".datatype" : this.dataType.model.name + "." + this.dataType.name + ".datatype";
+        this.dataType.name + '.datatype' : this.dataType.model.name + '.' + this.dataType.name + '.datatype';
     this.typeWorkspaceService.dataType.derivedFromName = this.derivedFromName;
     this.typeWorkspaceService.dataType = this.dataType;
     this.typeWorkspaceService.dataType.model = this.dataType.model;
   }
 
   private getImportedFile(): void {
-      let importedFile = this.navigationService.getParam('importedFile');
-      this.importedFile = <File>importedFile;
+      const importedFile = this.navigationService.getParam('importedFile');
+      this.importedFile = (importedFile as File);
       this.typeWorkspaceService.importFile = this.importedFile;
       if (this.importedFile) {
           this.isViewOnly = false;

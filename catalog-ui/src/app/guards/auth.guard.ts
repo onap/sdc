@@ -19,16 +19,16 @@
  * ============LICENSE_END=========================================================
  */
 
-import {Injectable} from '@angular/core';
-import {ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot} from '@angular/router';
-import {Observable} from 'rxjs/Observable';
+import { Injectable } from '@angular/core';
+import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot } from '@angular/router';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/switchMap';
-import {IUserProperties} from '../models/user';
-import {Role} from '../utils/constants';
-import {AuthenticationService} from '../services/authentication.service';
-import {NavigationService} from '../services/navigation.service';
+import { Observable } from 'rxjs/Observable';
+import { IUserProperties } from '../models/user';
+import { AuthenticationService } from '../services/authentication.service';
+import { NavigationService } from '../services/navigation.service';
+import { Role } from '../utils/constants';
 
 /**
  * The single authorisation gate. Besides the permission check it absorbs three behaviours that used
@@ -77,7 +77,7 @@ export class AuthGuard implements CanActivate {
             return false;
         }
 
-        const requiredRoles: string[] = route.data && route.data['permissions'];
+        const requiredRoles: string[] = route.data && route.data.permissions;
         if (!requiredRoles || !requiredRoles.length || requiredRoles.indexOf(user.role) !== -1) {
             return true;
         }

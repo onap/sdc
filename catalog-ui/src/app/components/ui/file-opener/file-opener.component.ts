@@ -1,4 +1,4 @@
-import {Component, Input, Output, EventEmitter, SimpleChanges} from "@angular/core";
+import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
 
 @Component({
     selector: 'file-opener',
@@ -16,14 +16,14 @@ export class FileOpenerComponent {
         this.onFileUpload = new EventEmitter<any>();
     }
 
-    public ngOnChanges(changes:SimpleChanges) {
+    public ngOnChanges(changes: SimpleChanges) {
         if (changes.extensions) {
             this.extensionsWithDot = this.getExtensionsWithDot(changes.extensions.currentValue);
         }
     }
 
     public onFileSelect(event) {
-        const importFile:any = event.target.files[0];
+        const importFile: any = event.target.files[0];
         const reader = new FileReader();
         reader.readAsBinaryString(importFile);
         reader.onload = () => {
@@ -36,10 +36,10 @@ export class FileOpenerComponent {
         };
     }
 
-    public getExtensionsWithDot(extensions:string):string {
+    public getExtensionsWithDot(extensions: string): string {
         extensions = extensions || this.extensions || '';
         return extensions.split(',')
-            .map(ext => '.' + ext.toString())
+            .map((ext) => '.' + ext.toString())
             .join(',');
     }
 }

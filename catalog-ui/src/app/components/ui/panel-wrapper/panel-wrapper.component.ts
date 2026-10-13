@@ -1,8 +1,8 @@
-import {Component} from "@angular/core";
-import {Select, Store} from "@ngxs/store";
-import {Subscription} from "rxjs/Subscription";
-import {GraphState} from "../../../pages/composition/common/store/graph.state";
-import {OnSidebarOpenOrCloseAction} from "../../../pages/composition/common/store/graph.actions";
+import { Component } from '@angular/core';
+import { Select, Store } from '@ngxs/store';
+import { Subscription } from 'rxjs/Subscription';
+import { OnSidebarOpenOrCloseAction } from '../../../pages/composition/common/store/graph.actions';
+import { GraphState } from '../../../pages/composition/common/store/graph.state';
 
 @Component({
     selector: 'panel-wrapper-component',
@@ -12,7 +12,7 @@ import {OnSidebarOpenOrCloseAction} from "../../../pages/composition/common/stor
 export class PanelWrapperComponent {
     @Select(GraphState.withSidebar) withSidebar$: boolean;
 
-    tabs: Array<any>;
+    tabs: any[];
     subscription: Subscription;
 
     constructor(public store: Store) {

@@ -18,16 +18,16 @@
  * ============LICENSE_END=========================================================
  */
 
-import {CommonLinkBase} from "../common-base-link";
-import {ForwardingPathLink} from "app/models/forwarding-path-link";
+import { ForwardingPathLink } from 'app/models/forwarding-path-link';
+import { CommonLinkBase } from '../common-base-link';
 
 export class CompositionCiServicePathLink extends CommonLinkBase {
     static LINK_TYPE = 'service-path-link';
-    forwardingPathLink:ForwardingPathLink;
-    pathId:string;
-    pathName:string;
+    forwardingPathLink: ForwardingPathLink;
+    pathId: string;
+    pathName: string;
 
-    constructor(forwardingPathLink:ForwardingPathLink) {
+    constructor(forwardingPathLink: ForwardingPathLink) {
         super();
         this.type = CompositionCiServicePathLink.LINK_TYPE;
         this.classes = 'service-path-link';
@@ -35,6 +35,5 @@ export class CompositionCiServicePathLink extends CommonLinkBase {
         this.pathName = '';
         this.forwardingPathLink = forwardingPathLink;
     }
-
 
 }

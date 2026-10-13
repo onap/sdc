@@ -20,44 +20,44 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import {TypeWorkspaceComponent} from './type-workspace.component';
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {TranslateModule} from "../../shared/translator/translate.module";
-import {UiElementsModule} from "../../components/ui/ui-elements.module";
-import {DataTypeService} from "../../services/data-type.service";
-import {TranslateService} from "../../shared/translator/translate.service";
-import {WorkspaceMenuComponent} from "./workspace-menu/workspace-menu.component";
-import {TypeWorkspaceGeneralComponent} from "./type-workspace-general/type-workspace-general.component";
-import {LayoutModule} from "../../components/layout/layout.module";
-import {CacheService} from "../../services/cache.service";
-import {IAppMenu, SdcMenuToken} from "../../config/sdc-menu.config";
-import {AuthenticationService} from "../../services/authentication.service";
-import {ISdcConfig, SdcConfigToken} from "../../config/sdc-config.config";
-import {States} from "../../utils/constants";
-import {IUserProperties} from "../../models/user";
-import {Observable} from "rxjs/Observable";
-import {TypeWorkspacePropertiesComponent} from "./type-workspace-properties/type-workspace-properties.component";
-import {TypeWorkspaceToscaArtifactPageComponent} from "./type-workspace-tosca-artifacts/type-workspace-tosca-artifact-page.component";
-import {NgxDatatableModule} from "@swimlane/ngx-datatable";
-import {SvgIconModule} from "onap-ui-angular/dist/svg-icon/svg-icon.module";
-import {SdcUiServices} from "onap-ui-angular/dist";
-import {NO_ERRORS_SCHEMA} from "@angular/core";
-import {TypeWorkspaceService} from "./type-workspace.service";
-import {ModelService} from "../../services/model.service";
-import {NavigationService} from "../../services/navigation.service";
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { SdcUiServices } from 'onap-ui-angular/dist';
+import { SvgIconModule } from 'onap-ui-angular/dist/svg-icon/svg-icon.module';
+import { Observable } from 'rxjs/Observable';
+import { LayoutModule } from '../../components/layout/layout.module';
+import { UiElementsModule } from '../../components/ui/ui-elements.module';
+import { ISdcConfig, SdcConfigToken } from '../../config/sdc-config.config';
+import { IAppMenu, SdcMenuToken } from '../../config/sdc-menu.config';
+import { IUserProperties } from '../../models/user';
+import { AuthenticationService } from '../../services/authentication.service';
+import { CacheService } from '../../services/cache.service';
+import { DataTypeService } from '../../services/data-type.service';
+import { ModelService } from '../../services/model.service';
+import { NavigationService } from '../../services/navigation.service';
+import { TranslateModule } from '../../shared/translator/translate.module';
+import { TranslateService } from '../../shared/translator/translate.service';
+import { States } from '../../utils/constants';
+import { TypeWorkspaceGeneralComponent } from './type-workspace-general/type-workspace-general.component';
+import { TypeWorkspacePropertiesComponent } from './type-workspace-properties/type-workspace-properties.component';
+import { TypeWorkspaceToscaArtifactPageComponent } from './type-workspace-tosca-artifacts/type-workspace-tosca-artifact-page.component';
+import { TypeWorkspaceComponent } from './type-workspace.component';
+import { TypeWorkspaceService } from './type-workspace.service';
+import { WorkspaceMenuComponent } from './workspace-menu/workspace-menu.component';
 
 describe('TypeWorkspaceComponent', () => {
   let component: TypeWorkspaceComponent;
   let fixture: ComponentFixture<TypeWorkspaceComponent>;
-  let translateServiceMock: Partial<TranslateService> = {
-    'languageChangedObservable': Observable.of(),
-    'translate': jest.fn()
+  const translateServiceMock: Partial<TranslateService> = {
+    languageChangedObservable: Observable.of(),
+    translate: jest.fn()
   };
   let dataTypeServiceMock: Partial<DataTypeService>;
-  let cacheService: Partial<CacheService> = {
-    'get': jest.fn(param => {
+  const cacheService: Partial<CacheService> = {
+    get: jest.fn((param) => {
       if (param === 'version') {
         return 'version';
       }
@@ -66,25 +66,25 @@ describe('TypeWorkspaceComponent', () => {
       }
     })
   };
-  let sdcMenuMock: Partial<IAppMenu> = {
-    'component_workspace_menu_option': {
-      "DataType": [
-          {"text": "General", "action": "onMenuItemPressed", "state": "general"}
+  const sdcMenuMock: Partial<IAppMenu> = {
+    component_workspace_menu_option: {
+      DataType: [
+          {text: 'General', action: 'onMenuItemPressed', state: 'general'}
       ]
     }
   };
   let sdcConfigMock: Partial<ISdcConfig>;
-  let user: Partial<IUserProperties> = {
-    'role': 'DESIGNER'
-  }
-  let authenticationService: Partial<AuthenticationService> = {
-    'getLoggedinUser': jest.fn(() => {
+  const user: Partial<IUserProperties> = {
+    role: 'DESIGNER'
+  };
+  const authenticationService: Partial<AuthenticationService> = {
+    getLoggedinUser: jest.fn(() => {
       return user;
     })
   };
-  let importedFileMock: File = null;
-  let stateParamsMock: any = {
-      'importedFile': importedFileMock
+  const importedFileMock: File = null;
+  const stateParamsMock: any = {
+      importedFile: importedFileMock
   };
   let modelServiceMock: Partial<ModelService>;
 

@@ -18,12 +18,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-import {ChangeDetectionStrategy, Component as NgComponent, Inject, OnInit} from '@angular/core';
+import { ChangeDetectionStrategy, Component as NgComponent, Inject, OnInit } from '@angular/core';
+import { IMainCategory, ISubCategory } from 'app/models/category';
+import { Component } from 'app/models/components/component';
+import { AvailableIconsService } from 'app/services/available-icons.service';
+import { ResourceType } from 'app/utils/constants';
 import * as _ from 'lodash';
-import {AvailableIconsService} from 'app/services/available-icons.service';
-import {IMainCategory, ISubCategory} from 'app/models/category';
-import {Component} from 'app/models/components/component';
-import {ResourceType} from 'app/utils/constants';
 
 /**
  * Angular replacement for the AngularJS IconsModalViewModel (view-models/modals/icons-modal/icons-modal-view.ts).

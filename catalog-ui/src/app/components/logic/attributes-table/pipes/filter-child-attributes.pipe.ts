@@ -18,21 +18,21 @@
  * ============LICENSE_END=========================================================
  */
 
-import {Pipe, PipeTransform} from '@angular/core';
-import {DerivedFEAttribute} from "../../../../models/attributes-outputs/derived-fe-attribute";
+import { Pipe, PipeTransform } from '@angular/core';
+import { DerivedFEAttribute } from '../../../../models/attributes-outputs/derived-fe-attribute';
 
 @Pipe({
   name: 'filterChildAttributes',
 })
 export class FilterChildAttributesPipe implements PipeTransform {
-  public transform(childAttributes: Array<DerivedFEAttribute>, parentId: string) {
-    if (!parentId || !childAttributes) return childAttributes;
+  public transform(childAttributes: DerivedFEAttribute[], parentId: string) {
+    if (!parentId || !childAttributes) { return childAttributes; }
 
-    let validParents: Array<string> = [parentId];
+    const validParents: string[] = [parentId];
     while (parentId.lastIndexOf('#') > 0) {
       parentId = parentId.substring(0, parentId.lastIndexOf('#'));
       validParents.push(parentId);
     }
-    return childAttributes.filter(derivedAttrib => validParents.indexOf(derivedAttrib.parentName) > -1);
+    return childAttributes.filter((derivedAttrib) => validParents.indexOf(derivedAttrib.parentName) > -1);
   }
 }

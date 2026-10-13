@@ -19,10 +19,10 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {ToscaFunction} from "./tosca-function";
-import {ToscaFunctionType} from "./tosca-function-type.enum";
-import {ToscaFunctionParameter} from "./tosca-function-parameter";
 import * as jsYaml from 'js-yaml';
+import { ToscaFunction } from './tosca-function';
+import { ToscaFunctionParameter } from './tosca-function-parameter';
+import { ToscaFunctionType } from './tosca-function-type.enum';
 
 export class YamlFunction implements ToscaFunction, ToscaFunctionParameter {
     type = ToscaFunctionType.YAML;

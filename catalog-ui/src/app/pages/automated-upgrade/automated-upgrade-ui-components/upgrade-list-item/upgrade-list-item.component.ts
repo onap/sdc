@@ -1,5 +1,5 @@
-import {Component, Input, Output, EventEmitter} from "@angular/core";
-import {ServiceContainerToUpgradeUiObject, AutomatedUpgradeInstanceType} from "../../automated-upgrade-models/ui-component-to-upgrade";
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { AutomatedUpgradeInstanceType, ServiceContainerToUpgradeUiObject } from '../../automated-upgrade-models/ui-component-to-upgrade';
 
 @Component({
     selector: 'upgrade-list-item',
@@ -8,16 +8,15 @@ import {ServiceContainerToUpgradeUiObject, AutomatedUpgradeInstanceType} from ".
 })
 export class UpgradeListItemComponent {
 
-    @Input() componentToUpgrade:ServiceContainerToUpgradeUiObject;
+    @Input() componentToUpgrade: ServiceContainerToUpgradeUiObject;
     @Input() disabled: boolean;
-    @Output() onCheckedChange:EventEmitter<any> = new EventEmitter<any>();
+    @Output() onCheckedChange: EventEmitter<any> = new EventEmitter<any>();
 
     constructor() {
     }
 
-    onComponentChecked = ():void => {
+    onComponentChecked = (): void => {
         this.onCheckedChange.emit();
     }
-    
-    
+
 }

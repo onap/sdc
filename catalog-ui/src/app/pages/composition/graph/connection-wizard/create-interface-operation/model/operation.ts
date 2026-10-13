@@ -17,17 +17,16 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {PropertyAssignment} from "../../../../../../models/properties-inputs/property-assignment";
+import { PropertyAssignment } from '../../../../../../models/properties-inputs/property-assignment';
 
 export class Operation {
   interfaceType: string;
   operationType: string;
   implementation: string;
   description: string;
-  inputs: Array<PropertyAssignment>;
+  inputs: PropertyAssignment[];
 
-
-  constructor(operation?:Operation) {
+  constructor(operation?: Operation) {
     if (operation) {
       this.interfaceType = operation.interfaceType;
       this.operationType = operation.operationType;

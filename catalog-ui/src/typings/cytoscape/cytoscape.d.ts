@@ -43,7 +43,7 @@
 
 // import {CommonLinkBase} from "../../app/models/graph/graph-links/common-base-link";
 // import {CommonNodeBase} from "../../app/models/graph/nodes/base-common-node";
-declare module Cy {
+declare namespace Cy {
     /**
      * See http://js.cytoscape.org/#selectors for details about writing selectors.
      */
@@ -71,11 +71,11 @@ declare module Cy {
     type Scratchpad = any;
 
     interface CollectionElements extends CollectionEdges, CollectionNodes, CollectionFirstElement {
-        //Intentionally empty.
+        // Intentionally empty.
     }
 
     interface Extent {
-        x1: number, y1: number, x2: number, y2: number, w: number, h: number
+        x1: number; y1: number; x2: number; y2: number; w: number; h: number;
     }
 
     interface CollectionEdges extends Collection, CollectionFirstEdge,
@@ -91,7 +91,7 @@ declare module Cy {
     }
 
     interface CollectionFirstElement extends CollectionFirstEdge, CollectionFirstNode {
-        //Intentionally empty.
+        // Intentionally empty.
     }
 
     interface CollectionFirstEdge extends CollectionFirst,
@@ -136,8 +136,8 @@ declare module Cy {
     }
 
     interface CollectionEvents {
-        //TODO: http://js.cytoscape.org/#collection/events
-        //TODO: http://js.cytoscape.org/#collection/events
+        // TODO: http://js.cytoscape.org/#collection/events
+        // TODO: http://js.cytoscape.org/#collection/events
 
        // on(event:string, callback: () => void);
 
@@ -145,12 +145,12 @@ declare module Cy {
     }
 
     interface CollectionData {
-        //http://js.cytoscape.org/#collection/data
+        // http://js.cytoscape.org/#collection/data
 
         //    The following fields are immutable:
-        //id: The id field is used to uniquely identify an element in the graph.
-        //source & target : These fields define an edge's relationship to nodes, and this relationship can not be changed after creation.
-        //parent: The parent field defines the parent (compound) node.
+        // id: The id field is used to uniquely identify an element in the graph.
+        // source & target : These fields define an edge's relationship to nodes, and this relationship can not be changed after creation.
+        // parent: The parent field defines the parent (compound) node.
 
         /**
          * Remove developer-defined data associated with the elements.
@@ -179,7 +179,7 @@ declare module Cy {
         jsons(): string[];
     }
     interface CollectionNodesMetadata {
-        //http://js.cytoscape.org/#collection/metadata
+        // http://js.cytoscape.org/#collection/metadata
 
         /**
          * Get the maximum degree of the nodes in the collection.
@@ -242,7 +242,7 @@ declare module Cy {
         h: number;
     }
     interface CollectionPosition {
-        //http://js.cytoscape.org/#collection/position--dimensions
+        // http://js.cytoscape.org/#collection/position--dimensions
 
         /**
          * Get the bounding box of the elements in model coordinates.
@@ -271,7 +271,7 @@ declare module Cy {
         renderedBoundingbox(options?: BoundingBoxOptions): BoundingBox;
     }
     interface CollectionNodesPosition {
-        //http://js.cytoscape.org/#collection/position--dimensions
+        // http://js.cytoscape.org/#collection/position--dimensions
 
         /**
          * Set the positions functionally.
@@ -431,7 +431,6 @@ declare module Cy {
          */
         flashClass(classes: string, duration?: number): CollectionElements;
 
-
         /**
          * Get a name-value pair object containing visual style properties and their values for the element.
          */
@@ -464,7 +463,6 @@ declare module Cy {
          * @param name The name of the visual style property to get.
          */
         bypass(name: string): Css.ElementCss;
-
 
         /**
          * Set the specified visual style property for the elements.
@@ -585,7 +583,7 @@ declare module Cy {
             postion?: Position,
             renderedPosition?: Position,
             style?: Css.ElementCss
-        }, options?: {
+        },      options?: {
             duration?: number,
             queue?: boolean,
             complete?: () => void,
@@ -679,16 +677,22 @@ declare module Cy {
         every(test: (ele: CollectionElements, i: number, eles: CollectionElements) => boolean, thisArg?: any): boolean;
     }
     interface CollectionIteration {
+        /**
+         * Get an element at a particular index in the collection.
+         *
+         * @param index The index of the element to get.
+         */
+        [index: number]: CollectionElements;
+        /**
+         * Get the number of elements in the collection.
+         */
+        length: number;
         // http://js.cytoscape.org/#collection/iteration
 
         /**
          * Get the number of elements in the collection.
          */
         size(): number;
-        /**
-         * Get the number of elements in the collection.
-         */
-        length: number;
 
         /**
          * Get whether the collection is empty, meaning it has no elements.
@@ -732,12 +736,6 @@ declare module Cy {
          * @param index The index of the element to get.
          */
         eq(index: number): CollectionElements;
-        /**
-         * Get an element at a particular index in the collection.
-         *
-         * @param index The index of the element to get.
-         */
-        [index: number]: CollectionElements;
         /**
          * Get the first element in the collection.
          */
@@ -821,18 +819,29 @@ declare module Cy {
         // http://js.cytoscape.org/#collection/building--filtering
 
         union: CollectionBuildingUnion;
-        //[index: "u"]: CollectionBuildingUnion;
+        // [index: "u"]: CollectionBuildingUnion;
         add: CollectionBuildingUnion;
-        //[index: "+"]: CollectionBuildingUnion;
+        // [index: "+"]: CollectionBuildingUnion;
         or: CollectionBuildingUnion;
-        //[index: "|"]: CollectionBuildingUnion;
+        // [index: "|"]: CollectionBuildingUnion;
 
         difference: CollectionBuildingDifference;
-        //[index: "\\"]: CollectionBuildingDifference;
+        // [index: "\\"]: CollectionBuildingDifference;
         not: CollectionBuildingDifference;
-        //[index: "!"]: CollectionBuildingDifference;
+
+        intersection: CollectionBuildingIntersection;
+        intersect: CollectionBuildingIntersection;
+        and: CollectionBuildingIntersection;
+        // [index: "n"]: CollectionBuildingIntersection;
+        // [index: "&"]: CollectionBuildingIntersection;
+        // [index: "."]: CollectionBuildingIntersection;
+
+        symmetricDifference: CollectionSymmetricDifference;
+        symdiff: CollectionSymmetricDifference;
+        xor: CollectionSymmetricDifference;
+        // [index: "!"]: CollectionBuildingDifference;
         relativeComplement(): CollectionBuildingDifference;
-        //[index: "-"]: CollectionBuildingDifference;
+        // [index: "-"]: CollectionBuildingDifference;
 
         /**
          * Get all elements in the graph that are not in the calling collection.
@@ -846,22 +855,11 @@ declare module Cy {
          * Get all elements in the graph that are not in the calling collection.
          */
         complement(): CollectionElements;
+        // [index: "^"]: CollectionSymmetricDifference;
+        // [index: "(+)"]: CollectionSymmetricDifference;
+        // [index: "(-)"]: CollectionSymmetricDifference;
 
-        intersection: CollectionBuildingIntersection;
-        intersect: CollectionBuildingIntersection;
-        and: CollectionBuildingIntersection;
-        //[index: "n"]: CollectionBuildingIntersection;
-        //[index: "&"]: CollectionBuildingIntersection;
-        //[index: "."]: CollectionBuildingIntersection;
-
-        symmetricDifference: CollectionSymmetricDifference;
-        symdiff: CollectionSymmetricDifference;
-        xor: CollectionSymmetricDifference;
-        //[index: "^"]: CollectionSymmetricDifference;
-        //[index: "(+)"]: CollectionSymmetricDifference;
-        //[index: "(-)"]: CollectionSymmetricDifference;
-
-        //[index: string]: CollectionBuildingDifference |CollectionBuildingUnion | CollectionBuildingIntersection | CollectionSymmetricDifference;
+        // [index: string]: CollectionBuildingDifference |CollectionBuildingUnion | CollectionBuildingIntersection | CollectionSymmetricDifference;
 
         /**
          * Perform a traditional left/right diff on the two collections.
@@ -1336,8 +1334,7 @@ declare module Cy {
                  weight?: (edge: CollectionEdges) => number,
                  directed?: boolean): SearchDijkstraResult;
 
-
-        //TODO: continue here: http://js.cytoscape.org/#collection/algorithms/eles.dijkstra
+        // TODO: continue here: http://js.cytoscape.org/#collection/algorithms/eles.dijkstra
     }
     interface CollectionNodesCompound {
         // http://js.cytoscape.org/#collection/compound-nodes
@@ -1423,7 +1420,7 @@ declare module Cy {
 
     }
     interface CollectionFirstData {
-        //http://js.cytoscape.org/#collection/data
+        // http://js.cytoscape.org/#collection/data
 
         /**
          * Get all data for the element.
@@ -1494,11 +1491,10 @@ declare module Cy {
          */
         isEdge(): boolean;
 
-
-        cy(): Cy.Instance
+        cy(): Cy.Instance;
     }
     interface CollectionFirstEdgeData {
-        //http://js.cytoscape.org/#collection/data
+        // http://js.cytoscape.org/#collection/data
 
         /**
          * Get whether the edge is a loop (i.e. source same as target).
@@ -1511,7 +1507,7 @@ declare module Cy {
         isSimple(): boolean;
     }
     interface CollectionFirstNodeMetadata {
-        //http://js.cytoscape.org/#collection/metadata
+        // http://js.cytoscape.org/#collection/metadata
 
         /**
          * Get the degree of a node.
@@ -1538,8 +1534,8 @@ declare module Cy {
          */
         outdegree(includeLoops: boolean): number;
     }
-    interface CollectionFirstNodePosition extends CollectionPosition{
-        //http://js.cytoscape.org/#collection/position--dimensions
+    interface CollectionFirstNodePosition extends CollectionPosition {
+        // http://js.cytoscape.org/#collection/position--dimensions
 
         /**
          * Get the (model) position of a node.
@@ -1710,7 +1706,7 @@ declare module Cy {
         relativePoint(pos: Position): CollectionNodes;
     }
     interface CollectionFirstPosition {
-        //http://js.cytoscape.org/#collection/position--dimensions
+        // http://js.cytoscape.org/#collection/position--dimensions
 
         /**
          * Get the width of the element.
@@ -1774,38 +1770,38 @@ declare module Cy {
          */
         hasClass(className: string): boolean;
 
-        ///**
-        //* Get a name-value pair object containing visual style properties and their values for the element.
-        //*/
-        //style(): Css.ElementCss;
-        ///**
-        // * Get a particular style property value.
-        // *
-        // * @param name The name of the visual style property to get.
-        // */
-        //style(name: string): Css.ElementCss;
-
-        ///**
+        /// **
         // * Get a name-value pair object containing visual style properties and their values for the element.
         // */
-        //css(): Css.ElementCss;
-        ///**
+        // style(): Css.ElementCss;
+        /// **
         // * Get a particular style property value.
         // *
         // * @param name The name of the visual style property to get.
         // */
-        //css(name: string): Css.ElementCss;
+        // style(name: string): Css.ElementCss;
 
-        ///**
+        /// **
         // * Get a name-value pair object containing visual style properties and their values for the element.
         // */
-        //bypass(): Css.ElementCss;
-        ///**
+        // css(): Css.ElementCss;
+        /// **
         // * Get a particular style property value.
         // *
         // * @param name The name of the visual style property to get.
         // */
-        //bypass(name: string): Css.ElementCss;
+        // css(name: string): Css.ElementCss;
+
+        /// **
+        // * Get a name-value pair object containing visual style properties and their values for the element.
+        // */
+        // bypass(): Css.ElementCss;
+        /// **
+        // * Get a particular style property value.
+        // *
+        // * @param name The name of the visual style property to get.
+        // */
+        // bypass(name: string): Css.ElementCss;
 
         /**
          * Get a name-value pair object containing rendered visual style properties and their values for the element.
@@ -1893,7 +1889,6 @@ declare module Cy {
 
     interface ElementDefinition {
 
-
         group?: ElementGroup;
         data:  any;
         /**
@@ -1975,8 +1970,8 @@ declare module Cy {
         css: Css.ElementCss;
     }
 
-    export module Css {
-        //TODO: http://js.cytoscape.org/#style
+    export namespace Css {
+        // TODO: http://js.cytoscape.org/#style
 
         type Colour = string;
 
@@ -1991,31 +1986,31 @@ declare module Cy {
             height?: number;
             shape?: Shape;
             backgroundColor?: Colour;
-            "background-color"?: any;
-            "background-blacken"?: number;
-            "background-opacity"?: number;
-            "background-image"?: any;
-            "background-width"?: number;
-            "background-height"?: number;
-            "border-width"?: number;
-            "border-style"?: Style;
-            "border-color"?: Colour;
-            "border-opacity"?: number;
-            "label"?: string;
-            "events"?: string;
-            "text-events"?: string;
-            "text-valign"? :string;
-            "text-halign"? :string;
-            "text-margin-y"? :any;
-            "active-bg-size"?: number;
-            "background-fit"?: string;
-            "background-clip"?: string;
-            "background-image-opacity"?: number;
-            "overlay-color"?: string;
-            "font-size"? :number;
-            "font-family"? :string;
-            "background-position-x"? :number;
-            "background-position-y"? :number;
+            'background-color'?: any;
+            'background-blacken'?: number;
+            'background-opacity'?: number;
+            'background-image'?: any;
+            'background-width'?: number;
+            'background-height'?: number;
+            'border-width'?: number;
+            'border-style'?: Style;
+            'border-color'?: Colour;
+            'border-opacity'?: number;
+            'label'?: string;
+            'events'?: string;
+            'text-events'?: string;
+            'text-valign'?: string;
+            'text-halign'?: string;
+            'text-margin-y'?: any;
+            'active-bg-size'?: number;
+            'background-fit'?: string;
+            'background-clip'?: string;
+            'background-image-opacity'?: number;
+            'overlay-color'?: string;
+            'font-size'?: number;
+            'font-family'?: string;
+            'background-position-x'?: number;
+            'background-position-y'?: number;
             'overlay-opacity'?: number;
             'text-border-width'?: number;
             'text-border-color'?: string;
@@ -2023,38 +2018,38 @@ declare module Cy {
         }
 
         export interface SelectionBox {
-            "selection-box-color"?: string
-            "selection-box-border-color"?: string
-            "selection-box-border-width"?: number
-            "selection-box-opacity"?: number
+            'selection-box-color'?: string;
+            'selection-box-border-color'?: string;
+            'selection-box-border-width'?: number;
+            'selection-box-opacity'?: number;
 
         }
 
         export interface CompoundNodeCss extends NodeCss {
-            "padding-left"?: number;
-            "padding-right"?: number;
-            "padding-top"?: number;
-            "padding-bottom"?: number;
-            "compound-sizing-wrt-labels"?: string;
+            'padding-left'?: number;
+            'padding-right'?: number;
+            'padding-top'?: number;
+            'padding-bottom'?: number;
+            'compound-sizing-wrt-labels'?: string;
         }
 
         export interface EdgeCss {
 
-            "line-color"?: string;
-            "target-arrow-color"?: string;
-            "target-arrow-shape"?: string;
-            "curve-style"?: string;
-            "control-point-step-size"?: number;
-            "control-point-distances"?: string,
-            "control-point-weights"?: string,
-            "segment-distances"?: string,
-            "segment-weights"?: string
-            "line-style"? : string
+            'line-color'?: string;
+            'target-arrow-color'?: string;
+            'target-arrow-shape'?: string;
+            'curve-style'?: string;
+            'control-point-step-size'?: number;
+            'control-point-distances'?: string;
+            'control-point-weights'?: string;
+            'segment-distances'?: string;
+            'segment-weights'?: string;
+            'line-style'?: string;
         }
 
         export interface ElementCss extends NodeCss, CompoundNodeCss, EdgeCss, SelectionBox {
         }
-        //export interface ElementCss extends CSSStyleDeclaration { }
+        // export interface ElementCss extends CSSStyleDeclaration { }
     }
 
     interface Renderer {
@@ -2164,15 +2159,15 @@ declare module Cy {
          */
         destroy(): void;
 
-        scratch(namespace?:string): any;
-        removeScratch(namespace:string):void;
+        scratch(namespace?: string): any;
+        removeScratch(namespace: string): void;
     }
 
     interface EventObject {
         /**
          * Holds a reference to the originator of the event (core or element)
          */
-        cyTarget: any; //CollectionElements or Cy.Instance;
+        cyTarget: any; // CollectionElements or Cy.Instance;
         data: any;
     }
 
@@ -2247,7 +2242,7 @@ declare module Cy {
          */
         bind(eventsMap: {
             [value: string]: (evt: EventObject, data?: any) => void
-        }, selector?: Selector, data?: any);
+        },   selector?: Selector, data?: any);
 
         /**
          * Bind to events that occur in the graph.
@@ -2282,7 +2277,7 @@ declare module Cy {
          */
         listen(eventsMap: {
             [value: string]: (evt: EventObject) => void
-        }, selector?: Selector, data?: any);
+        },     selector?: Selector, data?: any);
 
         /**
          * Bind to events that occur in the graph.
@@ -2317,7 +2312,7 @@ declare module Cy {
          */
         addListener(eventsMap: {
             [value: string]: (evt: EventObject) => void
-        }, selector?: Selector, data?: any);
+        },          selector?: Selector, data?: any);
 
         /**
          * Bind to events that occur in the graph, and trigger the handler only once.
@@ -2352,7 +2347,7 @@ declare module Cy {
          */
         one(eventsMap: {
             [value: string]: (evt: EventObject) => void
-        }, selector?: Selector, data?: any);
+        },  selector?: Selector, data?: any);
 
         /**
          * Remove event handlers.
@@ -2369,7 +2364,7 @@ declare module Cy {
          */
         off(eventsMap: {
             [value: string]: (evt: EventObject) => void
-        }, selector?: Selector): void;
+        },  selector?: Selector): void;
 
         /**
          * Remove event handlers.
@@ -2386,7 +2381,7 @@ declare module Cy {
          */
         unbind(eventsMap: {
             [value: string]: (evt: EventObject) => void
-        }, selector?: Selector): void;
+        },     selector?: Selector): void;
 
         /**
          * Remove event handlers.
@@ -2403,7 +2398,7 @@ declare module Cy {
          */
         unlisten(eventsMap: {
             [value: string]: (evt: EventObject) => void
-        }, selector?: Selector): void;
+        },       selector?: Selector): void;
 
         /**
          * Remove event handlers.
@@ -2421,7 +2416,7 @@ declare module Cy {
          */
         removeListener(eventsMap: {
             [value: string]: (evt: EventObject) => void
-        }, selector?: Selector): void;
+        },             selector?: Selector): void;
 
         /**
          * Trigger one or more events.
@@ -2715,7 +2710,7 @@ declare module Cy {
             center?: {
                 eles: Collection
             }
-        }, options?: {
+        },      options?: {
             duration?: number,
             queue?: boolean,
             complete?: () => void,
@@ -2745,13 +2740,13 @@ declare module Cy {
     }
 
     interface InstanceLayout {
-        //TODO: http://js.cytoscape.org/#core/layout
+        // TODO: http://js.cytoscape.org/#core/layout
         layout(layout: LayoutOptions): void;
 
     }
 
     interface InstanceStyle {
-        //TODO: http://js.cytoscape.org/#core/style
+        // TODO: http://js.cytoscape.org/#core/style
     }
 
     interface InstanceExport {
@@ -2794,7 +2789,7 @@ declare module Cy {
     }
 
     interface LayoutInstance {
-        //TODO: http://js.cytoscape.org/#layouts/layout-manipulation
+        // TODO: http://js.cytoscape.org/#layouts/layout-manipulation
 
         /**
          * Start running the layout.
@@ -3045,7 +3040,7 @@ declare module Cy {
          * A boolean indicating whether to include shadows in the bounding box (default true).
          */
 
-        includeShadows: boolean
+        includeShadows: boolean;
     }
 
     interface ZoomOptions {
@@ -3093,7 +3088,7 @@ declare module Cy {
     }
 }
 
-declare module "cytoscape" {
+declare module 'cytoscape' {
     export = cytoscape;
 }
 

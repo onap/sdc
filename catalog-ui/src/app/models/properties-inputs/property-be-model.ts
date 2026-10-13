@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,17 +18,17 @@
  * ============LICENSE_END=========================================================
  */
 
-import {PROPERTY_DATA, PROPERTY_TYPES} from 'app/utils/constants';
-import {SchemaProperty, SchemaPropertyGroupModel} from '../schema-property';
-import {ToscaPresentationData} from '../tosca-presentation';
-import {PropertyInputDetail} from './property-input-detail';
-import {Metadata} from '../metadata';
-import {SubPropertyToscaFunction} from "../sub-property-tosca-function";
-import {ToscaFunction} from "../tosca-function";
-import {ToscaGetFunction} from "../tosca-get-function";
-import {ToscaGetFunctionTypeConverter} from "../tosca-get-function-type-converter";
-import {ToscaGetFunctionDto} from "../tosca-get-function-dto";
+import { PROPERTY_DATA, PROPERTY_TYPES } from 'app/utils/constants';
 import * as _ from 'lodash';
+import { Metadata } from '../metadata';
+import { SchemaProperty, SchemaPropertyGroupModel } from '../schema-property';
+import { SubPropertyToscaFunction } from '../sub-property-tosca-function';
+import { ToscaFunction } from '../tosca-function';
+import { ToscaGetFunction } from '../tosca-get-function';
+import { ToscaGetFunctionDto } from '../tosca-get-function-dto';
+import { ToscaGetFunctionTypeConverter } from '../tosca-get-function-type-converter';
+import { ToscaPresentationData } from '../tosca-presentation';
+import { PropertyInputDetail } from './property-input-detail';
 
 export enum DerivedPropertyType {
     SIMPLE,
@@ -41,7 +41,7 @@ export class PropertyPolicyDetail {
     policyId: string;
     propertyName: string;
     constructor(propertyPolicy?: PropertyPolicyDetail) {
-        if(propertyPolicy) {
+        if (propertyPolicy) {
             this.policyId = propertyPolicy.policyId;
             this.propertyName = propertyPolicy.propertyName;
         }
@@ -117,7 +117,7 @@ export class PropertyBEModel {
             if (property.toscaFunction) {
                 this.toscaFunction = property.toscaFunction;
             } else if (property.toscaGetFunction) {
-                //support for legacy tosca function
+                // support for legacy tosca function
                 const toscaGetFunction1 = new ToscaGetFunction();
                 toscaGetFunction1.type = ToscaGetFunctionTypeConverter.convertToToscaFunctionType(property.toscaGetFunction.functionType);
                 toscaGetFunction1.propertyUniqueId = property.toscaGetFunction.propertyUniqueId;
@@ -184,6 +184,25 @@ export class PropertyBEModel {
         return undefined;
     }
 
+    /**
+     * Checks whether the property value is a TOSCA function (e.g. get_input, get_property, get_attribute, concat, etc.)
+     */
+    public isToscaFunction(): boolean {
+        return this.toscaFunction != null;
+    }
+
+    /**
+     * Gets the schema type, if there is a schema. Otherwise, returns undefined.
+     *
+     * @return the schema type.
+     */
+    public getSchemaType(): string {
+        if (this.schema && this.schema.property) {
+            return this.schema.property.type;
+        }
+        return undefined;
+    }
+
     private parseDefaultSimpleValue() {
         switch (this.type) {
             case PROPERTY_TYPES.INTEGER:
@@ -206,24 +225,4 @@ export class PropertyBEModel {
                 return this.defaultValue;
         }
     }
-
-    /**
-     * Checks whether the property value is a TOSCA function (e.g. get_input, get_property, get_attribute, concat, etc.)
-     */
-    public isToscaFunction(): boolean {
-        return this.toscaFunction != null;
-    }
-
-    /**
-     * Gets the schema type, if there is a schema. Otherwise, returns undefined.
-     *
-     * @return the schema type.
-     */
-    public getSchemaType(): string {
-        if (this.schema && this.schema.property) {
-            return this.schema.property.type;
-        }
-        return undefined;
-    }
 }
-

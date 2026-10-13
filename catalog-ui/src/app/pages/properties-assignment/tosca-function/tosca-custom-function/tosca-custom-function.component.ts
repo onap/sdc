@@ -19,20 +19,20 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {FormArray, FormControl, FormGroup, Validators} from "@angular/forms";
-import {ToscaCustomFunction} from "../../../../models/tosca-custom-function";
-import {ToscaFunctionParameter} from "../../../../models/tosca-function-parameter";
-import {ToscaStringParameter} from "../../../../models/tosca-string-parameter";
-import {ToscaFunctionType} from "../../../../models/tosca-function-type.enum";
-import {PropertyBEModel} from "../../../../models/properties-inputs/property-be-model";
-import {PROPERTY_TYPES} from "../../../../utils/constants";
-import {InstanceFeDetails} from "../../../../models/instance-fe-details";
-import {ToscaFunctionValidationEvent} from "../tosca-function.component";
-import {ToscaFunction} from "../../../../models/tosca-function";
-import {ToscaGetFunction} from "../../../../models/tosca-get-function";
-import {CustomToscaFunction} from "../../../../models/default-custom-functions";
-import {ToscaGetFunctionValidationEvent} from "../tosca-get-function/tosca-get-function.component";
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
+import { CustomToscaFunction } from '../../../../models/default-custom-functions';
+import { InstanceFeDetails } from '../../../../models/instance-fe-details';
+import { PropertyBEModel } from '../../../../models/properties-inputs/property-be-model';
+import { ToscaCustomFunction } from '../../../../models/tosca-custom-function';
+import { ToscaFunction } from '../../../../models/tosca-function';
+import { ToscaFunctionParameter } from '../../../../models/tosca-function-parameter';
+import { ToscaFunctionType } from '../../../../models/tosca-function-type.enum';
+import { ToscaGetFunction } from '../../../../models/tosca-get-function';
+import { ToscaStringParameter } from '../../../../models/tosca-string-parameter';
+import { PROPERTY_TYPES } from '../../../../utils/constants';
+import { ToscaFunctionValidationEvent } from '../tosca-function.component';
+import { ToscaGetFunctionValidationEvent } from '../tosca-get-function/tosca-get-function.component';
 
 @Component({
     selector: 'app-tosca-custom-function',
@@ -43,7 +43,7 @@ export class ToscaCustomFunctionComponent implements OnInit {
 
     @Input() toscaCustomFunction: ToscaCustomFunction;
     @Input() componentInstanceMap: Map<string, InstanceFeDetails> = new Map<string, InstanceFeDetails>();
-    @Input() customToscaFunctions: Array<CustomToscaFunction> = [];
+    @Input() customToscaFunctions: CustomToscaFunction[] = [];
     @Input() name: string;
     @Input() type: ToscaFunctionType;
     @Input() propertyType: string;
@@ -58,13 +58,13 @@ export class ToscaCustomFunctionComponent implements OnInit {
     customParameterFormArray: FormArray = new FormArray([], Validators.minLength(1));
     formGroup: FormGroup = new FormGroup(
         {
-            'customParameterList': this.customParameterFormArray,
-            'customName': this.customFunctionFormName
+            customParameterList: this.customParameterFormArray,
+            customName: this.customFunctionFormName
         }
     );
 
     parameters: ToscaFunctionParameter[] = [];
-    propertyInputList: Array<PropertyBEModel> = [];
+    propertyInputList: PropertyBEModel[] = [];
     previousType: ToscaFunctionType;
 
     STRING_FUNCTION_TYPE = ToscaFunctionType.STRING;
@@ -90,6 +90,63 @@ export class ToscaCustomFunctionComponent implements OnInit {
         this.previousType = this.type;
     }
 
+    addFunction(): void {
+        this.propertyInputList.push(this.createProperty());
+        this.parameters.push({} as ToscaFunctionParameter);
+        this.customParameterFormArray.push(
+            new FormControl(undefined, [Validators.required, Validators.minLength(1)])
+        );
+    }
+
+    addStringParameter(): void {
+        const toscaStringParameter = new ToscaStringParameter();
+        toscaStringParameter.value = '';
+        this.propertyInputList.push(undefined);
+        this.customParameterFormArray.push(
+            new FormControl('', [Validators.required, Validators.minLength(1)])
+        );
+        this.parameters.push(toscaStringParameter);
+        console.log(this.customParameterFormArray);
+    }
+
+    removeParameter(position): void {
+        this.propertyInputList.splice(position, 1);
+        this.parameters.splice(position, 1);
+        this.customParameterFormArray.removeAt(position);
+    }
+
+    createProperty(value?: any): PropertyBEModel {
+        const property = new PropertyBEModel();
+        if (this.type === this.GET_INPUT) {
+            property.type = this.overridingType ? this.overridingType.toString() : this.propertyType;
+            if (this.propertySchemaType) {
+                property.schemaType = this.propertySchemaType;
+            }
+        } else {
+            property.type = PROPERTY_TYPES.ANY;
+        }
+
+        property.value = value ? value : undefined;
+        return property;
+    }
+
+    onFunctionValidityChange(event: ToscaFunctionValidationEvent, index: number): void {
+        if (event.isValid && event.toscaFunction) {
+            this.customParameterFormArray.controls[index].setValue(event.toscaFunction);
+        } else {
+            this.customParameterFormArray.controls[index].setValue(undefined);
+        }
+    }
+
+    onGetFunctionValidityChange(event: ToscaGetFunctionValidationEvent, index: number): void {
+        if (event.isValid && event.toscaGetFunction) {
+            this.customParameterFormArray.controls[index].setValue(event.toscaGetFunction);
+        } else {
+            this.customParameterFormArray.controls[index].setValue(undefined);
+        }
+        this.emitOnValidityChange();
+    }
+
     private initForm(): void {
         this.formGroup.valueChanges.subscribe(() => {
             this.emitOnValidityChange();
@@ -108,7 +165,7 @@ export class ToscaCustomFunctionComponent implements OnInit {
         }
         if (this.toscaCustomFunction.parameters) {
             this.name = this.toscaCustomFunction.name;
-            this.customFunctionFormName.setValue(this.name)
+            this.customFunctionFormName.setValue(this.name);
             this.parameters = Array.from(this.toscaCustomFunction.parameters);
             for (const parameter of this.parameters) {
                 if (this.type === this.GET_INPUT) {
@@ -133,7 +190,7 @@ export class ToscaCustomFunctionComponent implements OnInit {
 
     private addToscaFunctionToParameters(parameter: ToscaFunctionParameter) {
         const propertyBEModel = this.createProperty(parameter.value);
-        propertyBEModel.toscaFunction = <ToscaFunction> parameter;
+        propertyBEModel.toscaFunction = (parameter as ToscaFunction);
         this.propertyInputList.push(propertyBEModel);
         this.customParameterFormArray.push(
             new FormControl(parameter, [Validators.required, Validators.minLength(1)])
@@ -143,7 +200,7 @@ export class ToscaCustomFunctionComponent implements OnInit {
     private buildCustomFunctionFromForm(): ToscaCustomFunction {
         const toscaCustomFunction1 = new ToscaCustomFunction();
         toscaCustomFunction1.name = this.customFunctionFormName.value;
-        this.customParameterFormArray.controls.forEach(control => {
+        this.customParameterFormArray.controls.forEach((control) => {
             const value = control.value;
             if (!value) {
                 return;
@@ -164,68 +221,11 @@ export class ToscaCustomFunctionComponent implements OnInit {
         this.onValidityChange.emit({
             isValid: this.formGroup.valid,
             toscaCustomFunction: this.formGroup.valid ? this.buildCustomFunctionFromForm() : undefined
-        })
-    }
-
-    addFunction(): void {
-        this.propertyInputList.push(this.createProperty());
-        this.parameters.push({} as ToscaFunctionParameter);
-        this.customParameterFormArray.push(
-            new FormControl(undefined, [Validators.required, Validators.minLength(1)])
-        );
-    }
-
-    addStringParameter(): void {
-        const toscaStringParameter = new ToscaStringParameter();
-        toscaStringParameter.value = '';
-        this.propertyInputList.push(undefined);
-        this.customParameterFormArray.push(
-            new FormControl('', [Validators.required, Validators.minLength(1)])
-        );
-        this.parameters.push(toscaStringParameter);
-        console.log(this.customParameterFormArray)
-    }
-
-    removeParameter(position): void {
-        this.propertyInputList.splice(position, 1);
-        this.parameters.splice(position, 1);
-        this.customParameterFormArray.removeAt(position);
-    }
-
-    createProperty(value?: any): PropertyBEModel {
-        const property = new PropertyBEModel();
-        if (this.type === this.GET_INPUT) {
-            property.type = this.overridingType ? this.overridingType.toString() : this.propertyType;
-            if (this.propertySchemaType) {
-                property.schemaType = this.propertySchemaType;
-            }
-        } else {
-            property.type = PROPERTY_TYPES.ANY;
-        }
-        
-        property.value = value ? value : undefined;
-        return property;
-    }
-
-    onFunctionValidityChange(event: ToscaFunctionValidationEvent, index: number): void {
-        if (event.isValid && event.toscaFunction) {
-            this.customParameterFormArray.controls[index].setValue(event.toscaFunction)
-        } else {
-            this.customParameterFormArray.controls[index].setValue(undefined);
-        }
-    }
-
-    onGetFunctionValidityChange(event: ToscaGetFunctionValidationEvent, index: number): void {
-        if (event.isValid && event.toscaGetFunction) {
-            this.customParameterFormArray.controls[index].setValue(event.toscaGetFunction);
-        } else {
-            this.customParameterFormArray.controls[index].setValue(undefined);
-        }
-        this.emitOnValidityChange();
+        });
     }
 }
 
 export interface ToscaCustomFunctionValidationEvent {
-    isValid: boolean,
-    toscaCustomFunction: ToscaCustomFunction,
+    isValid: boolean;
+    toscaCustomFunction: ToscaCustomFunction;
 }

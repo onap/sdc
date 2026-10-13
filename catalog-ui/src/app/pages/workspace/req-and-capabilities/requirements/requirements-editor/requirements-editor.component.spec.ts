@@ -18,15 +18,15 @@
  * ============LICENSE_END=========================================================
  */
 
-import {async, ComponentFixture} from '@angular/core/testing';
-import {By} from '@angular/platform-browser';
-import {SdcUiComponentsModule} from 'onap-ui-angular';
-import {Observable} from 'rxjs/Observable';
+import { async, ComponentFixture } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
+import { SdcUiComponentsModule } from 'onap-ui-angular';
 import 'rxjs/add/observable/of';
-import {ConfigureFn, configureTests} from '../../../../../../jest/test-config.helper';
-import {TranslatePipe} from '../../../../../shared/translator/translate.pipe';
-import {TranslateService} from '../../../../../shared/translator/translate.service';
-import {RequirementsEditorComponent} from './requirements-editor.component';
+import { Observable } from 'rxjs/Observable';
+import { ConfigureFn, configureTests } from '../../../../../../jest/test-config.helper';
+import { TranslatePipe } from '../../../../../shared/translator/translate.pipe';
+import { TranslateService } from '../../../../../shared/translator/translate.service';
+import { RequirementsEditorComponent } from './requirements-editor.component';
 
 describe('requirements editor component', () => {
 
@@ -51,7 +51,7 @@ describe('requirements editor component', () => {
     };
 
     const buildFixture = (requirement: any) => {
-        const configure: ConfigureFn = testBed => {
+        const configure: ConfigureFn = (testBed) => {
             testBed.configureTestingModule({
                 declarations: [RequirementsEditorComponent, TranslatePipe],
                 imports: [SdcUiComponentsModule],
@@ -61,7 +61,7 @@ describe('requirements editor component', () => {
                 set: {providers: [{provide: TranslateService, useValue: translateServiceMock}]}
             });
         };
-        return configureTests(configure).then(testBed => {
+        return configureTests(configure).then((testBed) => {
             fixture = testBed.createComponent(RequirementsEditorComponent);
             fixture.componentInstance.input = {
                 requirement,
@@ -79,8 +79,8 @@ describe('requirements editor component', () => {
     // sdc-dropdown takes testId as an @Input and re-emits it on its inner div, not on its host.
     const dropdownOf = (testId: string) =>
         fixture.debugElement.queryAll(By.css('sdc-dropdown'))
-            .map(element => element.componentInstance)
-            .filter(instance => instance.testId === testId)[0];
+            .map((element) => element.componentInstance)
+            .filter((instance) => instance.testId === testId)[0];
 
     const fieldOf = (testId: string): HTMLInputElement =>
         fixture.nativeElement.querySelector(`div.sdc-dropdown[data-tests-id="${testId}"] input.sdc-input__input`);

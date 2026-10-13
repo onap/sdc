@@ -18,12 +18,12 @@
  * ============LICENSE_END=========================================================
  */
 
-import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
-import {InstanceFeDetails} from '../../../models/instance-fe-details';
-import {InstanceFeAttributesMap} from "../../../models/attributes-outputs/attribute-fe-map";
-import {AttributeFEModel} from "../../../models/attributes-outputs/attribute-fe-model";
-import {AttributesService} from "../../../services/attributes.service";
-import {DerivedFEAttribute} from "../../../models/attributes-outputs/derived-fe-attribute";
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { InstanceFeAttributesMap } from '../../../models/attributes-outputs/attribute-fe-map';
+import { AttributeFEModel } from '../../../models/attributes-outputs/attribute-fe-model';
+import { DerivedFEAttribute } from '../../../models/attributes-outputs/derived-fe-attribute';
+import { InstanceFeDetails } from '../../../models/instance-fe-details';
+import { AttributesService } from '../../../services/attributes.service';
 
 @Component({
   selector: 'attributes-table',
@@ -46,7 +46,7 @@ export class AttributesTableComponent implements OnChanges {
   @Output('attributeChanged') emitter: EventEmitter<AttributeFEModel> = new EventEmitter<AttributeFEModel>();
   @Output() selectAttributeRow: EventEmitter<AttributeRowSelectedEvent> = new EventEmitter<AttributeRowSelectedEvent>();
   @Output() updateCheckedAttributeCount: EventEmitter<boolean> = new EventEmitter<boolean>(); // only for hasDeclareOption
-  @Output() updateCheckedChildAttributeCount: EventEmitter<boolean> = new EventEmitter<boolean>();//only for hasDeclareListOption
+  @Output() updateCheckedChildAttributeCount: EventEmitter<boolean> = new EventEmitter<boolean>(); // only for hasDeclareListOption
   @Output() deleteAttribute: EventEmitter<AttributeFEModel> = new EventEmitter<AttributeFEModel>();
 
   sortBy: string;

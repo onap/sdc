@@ -18,35 +18,35 @@
  * ============LICENSE_END=========================================================
  */
 
-import * as _ from "lodash";
-import {PROPERTY_DATA, PROPERTY_TYPES} from 'app/utils/constants';
 import {
   AttributeBEModel,
   DerivedAttributeType
-} from "app/models/attributes-outputs/attribute-be-model";
-import {DerivedFEAttribute} from "app/models/attributes-outputs/derived-fe-attribute";
+} from 'app/models/attributes-outputs/attribute-be-model';
+import { DerivedFEAttribute } from 'app/models/attributes-outputs/derived-fe-attribute';
+import { PROPERTY_DATA, PROPERTY_TYPES } from 'app/utils/constants';
+import * as _ from 'lodash';
 
 export class AttributeFEModel extends AttributeBEModel {
 
   expandedChildAttributeId: string;
-  flattenedChildren: Array<DerivedFEAttribute>;
+  flattenedChildren: DerivedFEAttribute[];
   isDeclared: boolean;
   isDisabled: boolean;
   isSelected: boolean;
-  isSimpleType: boolean; //for convenience only - we can really just check if derivedDataType == derivedPropertyTypes.SIMPLE to know if the attrib is simple
+  isSimpleType: boolean; // for convenience only - we can really just check if derivedDataType == derivedPropertyTypes.SIMPLE to know if the attrib is simple
   attributesName: string;
   uniqueId: string;
-  valueObj: any; //this is the only value we relate to in the html templates
+  valueObj: any; // this is the only value we relate to in the html templates
   valueObjValidation: any;
   valueObjIsValid: boolean;
-  valueObjOrig: any; //this is valueObj representation as saved in server
+  valueObjOrig: any; // this is valueObj representation as saved in server
   valueObjIsChanged: boolean;
   derivedDataType: DerivedAttributeType;
   origName: string;
 
   constructor(attribute: AttributeBEModel) {
     super(attribute);
-    this.value = attribute.value ? attribute.value : attribute.defaultValue;//In FE if a attribute doesn't have value - display the default value
+    this.value = attribute.value ? attribute.value : attribute.defaultValue; // In FE if a attribute doesn't have value - display the default value
     this.isSimpleType = PROPERTY_DATA.SIMPLE_TYPES.indexOf(this.type) > -1;
     this.setNonDeclared();
     this.derivedDataType = this.getDerivedAttributeType();
@@ -58,6 +58,71 @@ export class AttributeFEModel extends AttributeBEModel {
     this.origName = this.name;
   }
 
+  static stringifyValueObj(valueObj: any, attributeType: PROPERTY_TYPES, derivedAttributeType: DerivedAttributeType): string {
+    // if valueObj is null, return null
+    if (valueObj === null || valueObj === undefined) {
+      return null;
+    }
+
+    // If type is JSON, need to try parsing it before we stringify it so that it appears property in TOSCA - change per Bracha due to AMDOCS
+    // TODO: handle this.derivedDataType == DerivedAttributeType.MAP
+    if (derivedAttributeType == DerivedAttributeType.LIST && attributeType == PROPERTY_TYPES.JSON) {
+      try {
+        return JSON.stringify(valueObj.map((item) => (typeof item == 'string') ? JSON.parse(item) : item));
+      } catch (e) {
+      }
+    }
+
+    // if type is anything but string, then stringify valueObj
+    if ((typeof valueObj) !== 'string') {
+      return JSON.stringify(valueObj);
+    }
+
+    // return string value as is
+    return valueObj;
+  }
+
+  static parseValueObj(value: string, attributeType: PROPERTY_TYPES, derivedAttributeType: DerivedAttributeType, defaultValue?: string): any {
+    let valueObj;
+    if (derivedAttributeType === DerivedAttributeType.SIMPLE) {
+      valueObj = value || defaultValue || null;  // use null for empty value object
+      if (valueObj &&
+          attributeType !== PROPERTY_TYPES.STRING &&
+          attributeType !== PROPERTY_TYPES.JSON &&
+          PROPERTY_DATA.SCALAR_TYPES.indexOf(attributeType as string) == -1) {
+        valueObj = JSON.parse(value);  // the value object contains the real value ans not the value as string
+      }
+    } else if (derivedAttributeType == DerivedAttributeType.LIST) {
+      valueObj = _.merge([], JSON.parse(defaultValue || '[]'), JSON.parse(value || '[]'));  // value object should be merged value and default value. Value takes higher precedence. Set value object to empty obj if undefined.
+    } else {
+      valueObj = _.merge({}, JSON.parse(defaultValue || '{}'), JSON.parse(value || '{}'));  // value object should be merged value and default value. Value takes higher precedence. Set value object to empty obj if undefined.
+    }
+    return valueObj;
+  }
+
+  static cleanValueObj(valueObj: any, unsetEmpty?: boolean): any {
+    // By default - unsetEmpty undefined - will make valueObj cleaned (no null or empty objects, but array will keep null or empty objects).
+    if (valueObj === undefined || valueObj === null || valueObj === '') {
+      return null;
+    }
+    if (valueObj instanceof Array) {
+      const cleanArr = valueObj.map((v) => AttributeFEModel.cleanValueObj(v)).filter((v) => v !== null);
+      valueObj.splice(0, valueObj.length, ...cleanArr);
+    } else if (valueObj instanceof Object) {
+      Object.keys(valueObj).forEach((k) => {
+        // clean each item in the valueObj (by default, unset empty objects)
+        valueObj[k] = AttributeFEModel.cleanValueObj(valueObj[k], unsetEmpty !== undefined ? unsetEmpty : true);
+        if (valueObj[k] === null) {
+          delete valueObj[k];
+        }
+      });
+      // if unsetEmpty flag is true and valueObj is empty
+      if (unsetEmpty && !Object.keys(valueObj).length) {
+        return null;
+      }
+    }
+    return valueObj;
+  }
 
   public updateValueObj(valueObj: any, isValid: boolean) {
     this.valueObj = AttributeFEModel.cleanValueObj(valueObj);
@@ -100,22 +165,22 @@ export class AttributeFEModel extends AttributeBEModel {
   }
 
   public setNonDeclared = (childPath?: string): void => {
-    if (!childPath) { //un-declaring a child attrib
+    if (!childPath) { // un-declaring a child attrib
       this.isDeclared = false;
     } else {
-      let childProp: DerivedFEAttribute = this.flattenedChildren.find(child => child.attributesName == childPath);
+      const childProp: DerivedFEAttribute = this.flattenedChildren.find((child) => child.attributesName == childPath);
       childProp.isDeclared = false;
     }
   }
 
   public setAsDeclared = (childNameToDeclare?: string): void => {
-    if (!childNameToDeclare) { //declaring a child attrib
+    if (!childNameToDeclare) { // declaring a child attrib
       this.isSelected = false;
       this.isDeclared = true;
     } else {
-      let childProp: DerivedFEAttribute = this.flattenedChildren.find(child => child.attributesName == childNameToDeclare);
+      const childProp: DerivedFEAttribute = this.flattenedChildren.find((child) => child.attributesName == childNameToDeclare);
       if (!childProp) {
-        console.log("ERROR: Unabled to find child: " + childNameToDeclare, this);
+        console.log('ERROR: Unabled to find child: ' + childNameToDeclare, this);
         return;
       }
       childProp.isSelected = false;
@@ -123,7 +188,7 @@ export class AttributeFEModel extends AttributeBEModel {
     }
   }
 
-  //For expand-collapse functionality - used within HTML template
+  // For expand-collapse functionality - used within HTML template
   public updateExpandedChildAttributeId = (childAttributeId: string): void => {
     if (childAttributeId.lastIndexOf('#') > -1) {
       this.expandedChildAttributeId = (this.expandedChildAttributeId == childAttributeId) ? (childAttributeId.substring(0, childAttributeId.lastIndexOf('#'))) : childAttributeId;
@@ -133,18 +198,17 @@ export class AttributeFEModel extends AttributeBEModel {
   }
 
   public getIndexOfChild = (childPropName: string): number => {
-    return this.flattenedChildren.findIndex(attrib => attrib.attributesName.indexOf(childPropName) === 0);
+    return this.flattenedChildren.findIndex((attrib) => attrib.attributesName.indexOf(childPropName) === 0);
   }
 
   public getCountOfChildren = (childPropName: string): number => {
-    let matchingChildren: Array<DerivedFEAttribute> = this.flattenedChildren.filter(attrib => attrib.attributesName.indexOf(childPropName) === 0) || [];
+    const matchingChildren: DerivedFEAttribute[] = this.flattenedChildren.filter((attrib) => attrib.attributesName.indexOf(childPropName) === 0) || [];
     return matchingChildren.length;
   }
 
-
   /* Updates parent valueObj when a child attrib's value has changed */
   public childPropUpdated = (childProp: DerivedFEAttribute): void => {
-    let parentNames = this.getParentNamesArray(childProp.attributesName, []);
+    const parentNames = this.getParentNamesArray(childProp.attributesName, []);
     if (parentNames.length) {
       const childPropName = parentNames.join('.');
       // unset value only if is null and valid, and not in a list
@@ -169,7 +233,7 @@ export class AttributeFEModel extends AttributeBEModel {
         this.valueObjIsChanged = this.hasValueObjChanged();
       }
     }
-  };
+  }
 
   childPropMapKeyUpdated = (childProp: DerivedFEAttribute, newMapKey: string, forceValidate: boolean = false) => {
     if (!childProp.isChildOfListOrMap || childProp.derivedDataType !== DerivedAttributeType.MAP) {
@@ -229,98 +293,32 @@ export class AttributeFEModel extends AttributeBEModel {
       this.valueObjIsValid = newMapKeyIsValid && this.calculateValueObjIsValid();
       this.valueObjIsChanged = this.hasValueObjChanged();
     }
-  };
+  }
 
   /* Returns array of individual parents for given attrib path, with list/map UUIDs replaced with index/mapkey */
-  public getParentNamesArray = (parentPropName: string, parentNames?: Array<string>, noHashKeys: boolean = false): Array<string> => {
+  public getParentNamesArray = (parentPropName: string, parentNames?: string[], noHashKeys: boolean = false): string[] => {
     parentNames = parentNames || [];
-    if (parentPropName.indexOf("#") == -1) {
+    if (parentPropName.indexOf('#') == -1) {
       return parentNames;
-    } //finished recursing parents. return
+    } // finished recursing parents. return
 
-    let parentAttrib: DerivedFEAttribute = this.flattenedChildren.find(attrib => attrib.attributesName === parentPropName);
+    const parentAttrib: DerivedFEAttribute = this.flattenedChildren.find((attrib) => attrib.attributesName === parentPropName);
     let nameToInsert: string = parentAttrib.name;
 
     if (parentAttrib.isChildOfListOrMap) {
       if (!noHashKeys && parentAttrib.derivedDataType == DerivedAttributeType.MAP) {
         nameToInsert = parentAttrib.getActualMapKey();
-      } else { //LIST
-        let siblingProps = this.flattenedChildren.filter(attrib => attrib.parentName == parentAttrib.parentName).map(attrib => attrib.attributesName);
+      } else { // LIST
+        const siblingProps = this.flattenedChildren.filter((attrib) => attrib.parentName == parentAttrib.parentName).map((attrib) => attrib.attributesName);
         nameToInsert = siblingProps.indexOf(parentAttrib.attributesName).toString();
       }
     }
 
-    parentNames.splice(0, 0, nameToInsert); //add attrib name to array
-    return this.getParentNamesArray(parentAttrib.parentName, parentNames, noHashKeys); //continue recursing
+    parentNames.splice(0, 0, nameToInsert); // add attrib name to array
+    return this.getParentNamesArray(parentAttrib.parentName, parentNames, noHashKeys); // continue recursing
   }
 
   public hasValueObjChanged() {
     return !_.isEqual(this.valueObj, this.valueObjOrig);
-  }
-
-  static stringifyValueObj(valueObj: any, attributeType: PROPERTY_TYPES, derivedAttributeType: DerivedAttributeType): string {
-    // if valueObj is null, return null
-    if (valueObj === null || valueObj === undefined) {
-      return null;
-    }
-
-    //If type is JSON, need to try parsing it before we stringify it so that it appears property in TOSCA - change per Bracha due to AMDOCS
-    //TODO: handle this.derivedDataType == DerivedAttributeType.MAP
-    if (derivedAttributeType == DerivedAttributeType.LIST && attributeType == PROPERTY_TYPES.JSON) {
-      try {
-        return JSON.stringify(valueObj.map(item => (typeof item == 'string') ? JSON.parse(item) : item));
-      } catch (e) {
-      }
-    }
-
-    // if type is anything but string, then stringify valueObj
-    if ((typeof valueObj) !== 'string') {
-      return JSON.stringify(valueObj);
-    }
-
-    // return string value as is
-    return valueObj;
-  }
-
-  static parseValueObj(value: string, attributeType: PROPERTY_TYPES, derivedAttributeType: DerivedAttributeType, defaultValue?: string): any {
-    let valueObj;
-    if (derivedAttributeType === DerivedAttributeType.SIMPLE) {
-      valueObj = value || defaultValue || null;  // use null for empty value object
-      if (valueObj &&
-          attributeType !== PROPERTY_TYPES.STRING &&
-          attributeType !== PROPERTY_TYPES.JSON &&
-          PROPERTY_DATA.SCALAR_TYPES.indexOf(<string>attributeType) == -1) {
-        valueObj = JSON.parse(value);  // the value object contains the real value ans not the value as string
-      }
-    } else if (derivedAttributeType == DerivedAttributeType.LIST) {
-      valueObj = _.merge([], JSON.parse(defaultValue || '[]'), JSON.parse(value || '[]'));  // value object should be merged value and default value. Value takes higher precedence. Set value object to empty obj if undefined.
-    } else {
-      valueObj = _.merge({}, JSON.parse(defaultValue || '{}'), JSON.parse(value || '{}'));  // value object should be merged value and default value. Value takes higher precedence. Set value object to empty obj if undefined.
-    }
-    return valueObj;
-  }
-
-  static cleanValueObj(valueObj: any, unsetEmpty?: boolean): any {
-    // By default - unsetEmpty undefined - will make valueObj cleaned (no null or empty objects, but array will keep null or empty objects).
-    if (valueObj === undefined || valueObj === null || valueObj === '') {
-      return null;
-    }
-    if (valueObj instanceof Array) {
-      const cleanArr = valueObj.map((v) => AttributeFEModel.cleanValueObj(v)).filter((v) => v !== null);
-      valueObj.splice(0, valueObj.length, ...cleanArr)
-    } else if (valueObj instanceof Object) {
-      Object.keys(valueObj).forEach((k) => {
-        // clean each item in the valueObj (by default, unset empty objects)
-        valueObj[k] = AttributeFEModel.cleanValueObj(valueObj[k], unsetEmpty !== undefined ? unsetEmpty : true);
-        if (valueObj[k] === null) {
-          delete valueObj[k];
-        }
-      });
-      // if unsetEmpty flag is true and valueObj is empty
-      if (unsetEmpty && !Object.keys(valueObj).length) {
-        return null;
-      }
-    }
-    return valueObj;
   }
 }

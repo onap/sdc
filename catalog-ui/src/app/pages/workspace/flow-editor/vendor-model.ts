@@ -17,8 +17,8 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-import {ArtifactGroupModel} from 'app/models/artifacts';
-import {ComponentInstance} from 'app/models/components-instances/component-instance';
+import { ArtifactGroupModel } from 'app/models/artifacts';
+import { ComponentInstance } from 'app/models/components-instances/component-instance';
 
 /**
  * A single actor/lane in the sequence-diagram flow editor. For network-call-flow the

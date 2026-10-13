@@ -18,9 +18,9 @@
  * ============LICENSE_END=========================================================
  */
 
-import {Component, Input, ViewEncapsulation} from "@angular/core";
-import {GabService, IServerResponse} from "../../../services/gab.service";
-import {PathsAndNamesDefinition} from "../../../models/paths-and-names";
+import { Component, Input, ViewEncapsulation } from '@angular/core';
+import { PathsAndNamesDefinition } from '../../../models/paths-and-names';
+import { GabService, IServerResponse } from '../../../services/gab.service';
 
 const COLUMN_PREFIX: string = 'col';
 
@@ -62,12 +62,12 @@ export class GenericArtifactBrowserComponent {
   loadArtifacts() {
     this.addNewColumn = false;
     this.columnsFilters = new Map<string, string>();
-    let paths: string[] = this.pathsandnames.map(item => item.path);
+    const paths: string[] = this.pathsandnames.map((item) => item.path);
     this.gabService.getArtifact(this.artifactid, this.resourceid, paths)
     .subscribe(
-        response => {
+        (response) => {
           // let typedServerResponse: IServerResponse = response.json() as IServerResponse;
-          this.normalizeDataForNgxDatatable(response['data']);
+          this.normalizeDataForNgxDatatable(response.data);
         },
         () => {
             this.ready = false;
@@ -84,19 +84,19 @@ export class GenericArtifactBrowserComponent {
     this.loadArtifacts();
   }
 
-  canBeDeleted(name: string){
-    return this.originColumns.filter(function(column){
+  canBeDeleted(name: string) {
+    return this.originColumns.filter(function(column) {
       return column.name === name;
     }).length === 0;
   }
 
   deleteColumn(col: ColumnDefinition) {
-    this.pathsandnames = this.pathsandnames.filter(function(pathandname){
+    this.pathsandnames = this.pathsandnames.filter(function(pathandname) {
       return pathandname.friendlyName != col.name;
     });
-    this.columns = this.columns.filter(function(column){
+    this.columns = this.columns.filter(function(column) {
       return column != col;
-    })
+    });
   }
 
   hideAddNewColumn() {
@@ -107,8 +107,8 @@ export class GenericArtifactBrowserComponent {
     this.addNewColumn = true;
   }
 
-  isSearchable(columnName){
-    let selectedPathAndName = this.pathsandnames.filter(function(pathandname){
+  isSearchable(columnName) {
+    const selectedPathAndName = this.pathsandnames.filter(function(pathandname) {
       return pathandname.friendlyName === columnName;
     })[0];
     return selectedPathAndName.searchable;
@@ -124,51 +124,58 @@ export class GenericArtifactBrowserComponent {
     });
 
     // update the rows
-    this.rows = temp_rows
+    this.rows = temp_rows;
     this.updateTotalRowsCount();
     this.page.pageNumber = 0;
     this.setRowsForCurrentPage();
   }
 
+  setPage(pageInfo) {
+    if (typeof this.rows !== 'undefined' ) {
+      this.page.pageNumber = pageInfo.offset;
+      this.setRowsForCurrentPage();
+    }
+  }
+
   private updateSingleColumnFilter(value, column, rows) {
-    return rows.filter(function (obj) {
+    return rows.filter(function(obj) {
       const row = obj[column];
       return row !== undefined && row.toLowerCase().indexOf(value) !== -1 || !value;
     });
   }
 
   private normalizeDataForNgxDatatable(data: [{ [key: string]: string }]) {
-    let result: NormalizationResult = this.getNormalizationResult(data, this.pathsandnames);
+    const result: NormalizationResult = this.getNormalizationResult(data, this.pathsandnames);
     this.rows = result.rows;
     this.originRows = result.rows;
     this.columns = result.columns;
     this.updateTotalRowsCount();
-    if (!this.originColumns){
+    if (!this.originColumns) {
       this.originColumns = [...result.columns];
     }
   }
 
   private getNormalizationResult(data: [{ [key: string]: string }],
                                  pathsAndNames: PathsAndNamesDefinition[]): NormalizationResult {
-    //Prepare column names and column data property names
-    let mappingsPathToProp = new Map<string, string>();
-    let columnsDefinitions = this.normalizeColumns(pathsAndNames, mappingsPathToProp);
+    // Prepare column names and column data property names
+    const mappingsPathToProp = new Map<string, string>();
+    const columnsDefinitions = this.normalizeColumns(pathsAndNames, mappingsPathToProp);
 
-    //Convert rows from { "string": "string" } to { prop : "string" } format
-    //This is required by NgxDatatable component
-    let arrayOfRows = this.normalizeRows(data, mappingsPathToProp);
+    // Convert rows from { "string": "string" } to { prop : "string" } format
+    // This is required by NgxDatatable component
+    const arrayOfRows = this.normalizeRows(data, mappingsPathToProp);
 
     return new NormalizationResult(arrayOfRows, columnsDefinitions);
   }
 
   private normalizeColumns(pathsAndNames: PathsAndNamesDefinition[], mappingsPathToProp: Map<string, string>) {
-    let columnsDefinitions: ColumnDefinition[] = [];
+    const columnsDefinitions: ColumnDefinition[] = [];
     let index: number = 1;
 
-    pathsAndNames.forEach(function (col) {
-      let columnDataPropertyName: string = COLUMN_PREFIX + index;
+    pathsAndNames.forEach(function(col) {
+      const columnDataPropertyName: string = COLUMN_PREFIX + index;
       mappingsPathToProp.set(col.path, columnDataPropertyName);
-      let cell: ColumnDefinition = new ColumnDefinition(col.friendlyName, columnDataPropertyName);
+      const cell: ColumnDefinition = new ColumnDefinition(col.friendlyName, columnDataPropertyName);
       columnsDefinitions.push(cell);
       index += 1;
     });
@@ -176,12 +183,12 @@ export class GenericArtifactBrowserComponent {
   }
 
   private normalizeRows(data: [{ [key: string]: string }], mappingsPathToProp: Map<string, string>) {
-    let arrayOfRows = [];
-    data.forEach(function (col) {
-      let row = {};
-      for (let key in col) {
+    const arrayOfRows = [];
+    data.forEach(function(col) {
+      const row = {};
+      for (const key in col) {
         if (col.hasOwnProperty(key)) {
-          let columnNameAsProp = mappingsPathToProp.get(key);
+          const columnNameAsProp = mappingsPathToProp.get(key);
           row[columnNameAsProp] = col[key];
         }
       }
@@ -194,13 +201,6 @@ export class GenericArtifactBrowserComponent {
   private updateTotalRowsCount() {
     this.page.totalElements =  this.rows.length;
     this.page.totalPages = Math.ceil(this.page.totalElements / this.page.size);
-  }
-
-  setPage(pageInfo) {
-    if (typeof this.rows !== 'undefined' ) {
-      this.page.pageNumber = pageInfo.offset;
-      this.setRowsForCurrentPage();
-    }
   }
 
   private setRowsForCurrentPage() {
@@ -230,4 +230,3 @@ export class ColumnDefinition {
   constructor(public name: string, public prop: string) {
   }
 }
-

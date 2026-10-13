@@ -1,7 +1,7 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import {Capability} from 'app/models/capability';
-import {Match} from 'app/models/graph/match-relation';
+import { Capability } from 'app/models/capability';
+import { Match } from 'app/models/graph/match-relation';
 import { ConfigureFn, configureTests } from '../../../../../../jest/test-config.helper';
 import { Requirement } from '../../../../../models/requirement';
 import { ConnectionWizardService } from '../connection-wizard.service';
@@ -34,11 +34,11 @@ describe('from-node-step component', () => {
         getOptionalCapabilitiesByInstanceUniqueId: jest.fn().mockReturnValue(10)
     };
 
-    let expectedConnectionWizardServiceMock = connectionWizardServiceMockWithoutSelectedMatch;
+    const expectedConnectionWizardServiceMock = connectionWizardServiceMockWithoutSelectedMatch;
 
     beforeEach(
         async(() => {
-            const configure: ConfigureFn = testBed => {
+            const configure: ConfigureFn = (testBed) => {
                 testBed.configureTestingModule({
                     declarations: [FromNodeStepComponent],
                     imports: [],
@@ -49,12 +49,11 @@ describe('from-node-step component', () => {
                 });
             };
 
-            configureTests(configure).then(testBed => {
+            configureTests(configure).then((testBed) => {
                 fixture = testBed.createComponent(FromNodeStepComponent);
             });
         })
     );
-
 
     it('should match current snapshot', () => {
         expect(fixture).toMatchSnapshot();

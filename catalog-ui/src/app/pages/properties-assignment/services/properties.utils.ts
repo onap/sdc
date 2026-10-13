@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,23 +18,23 @@
  * ============LICENSE_END=========================================================
  */
 
-import * as _ from "lodash";
-import {Injectable} from '@angular/core';
-import {DataTypeModel} from 'app/models/data-types';
-import {DerivedFEProperty} from 'app/models/properties-inputs/derived-fe-property';
-import {InputFEModel} from 'app/models/properties-inputs/input-fe-model';
-import {DerivedPropertyType, PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
-import {InstanceBePropertiesMap, InstanceFePropertiesMap} from 'app/models/properties-inputs/property-fe-map';
-import {PropertyFEModel} from 'app/models/properties-inputs/property-fe-model';
-import {DataTypeService} from "app/services/data-type.service";
-import {PropertiesService} from "app/services/properties.service";
-import {PROPERTY_TYPES} from 'app/utils/constants';
-import { SubPropertyToscaFunction } from "app/models/sub-property-tosca-function";
+import { Injectable } from '@angular/core';
+import { DataTypeModel } from 'app/models/data-types';
+import { DerivedFEProperty } from 'app/models/properties-inputs/derived-fe-property';
+import { InputFEModel } from 'app/models/properties-inputs/input-fe-model';
+import { DerivedPropertyType, PropertyBEModel } from 'app/models/properties-inputs/property-be-model';
+import { InstanceBePropertiesMap, InstanceFePropertiesMap } from 'app/models/properties-inputs/property-fe-map';
+import { PropertyFEModel } from 'app/models/properties-inputs/property-fe-model';
+import { SubPropertyToscaFunction } from 'app/models/sub-property-tosca-function';
+import { DataTypeService } from 'app/services/data-type.service';
+import { PropertiesService } from 'app/services/properties.service';
+import { PROPERTY_TYPES } from 'app/utils/constants';
+import * as _ from 'lodash';
 
 @Injectable()
 export class PropertiesUtils {
 
-    constructor(private dataTypeService:DataTypeService, private propertiesService: PropertiesService) {}
+    constructor(private dataTypeService: DataTypeService, private propertiesService: PropertiesService) {}
 
     /**
      * Entry point when getting properties from server
@@ -44,39 +44,38 @@ export class PropertiesUtils {
      * 3. Initialize valueObj (which also creates any new list/map flattened children as needed)
      * Returns InstanceFePropertiesMap
      */
-    public convertPropertiesMapToFEAndCreateChildren = (instancePropertiesMap:InstanceBePropertiesMap, isVF:boolean, inputs?:Array<InputFEModel>, model?:string): InstanceFePropertiesMap => {
-        let instanceFePropertiesMap:InstanceFePropertiesMap = new InstanceFePropertiesMap();
-        _.forEach(instancePropertiesMap, (properties:Array<PropertyBEModel>, instanceId:string) => {
-            let propertyFeArray: Array<PropertyFEModel> = [];
+    public convertPropertiesMapToFEAndCreateChildren = (instancePropertiesMap: InstanceBePropertiesMap, isVF: boolean, inputs?: InputFEModel[], model?: string): InstanceFePropertiesMap => {
+        const instanceFePropertiesMap: InstanceFePropertiesMap = new InstanceFePropertiesMap();
+        _.forEach(instancePropertiesMap, (properties: PropertyBEModel[], instanceId: string) => {
+            const propertyFeArray: PropertyFEModel[] = [];
             _.forEach(properties, (property: PropertyBEModel) => {
-	
+
                 if (this.dataTypeService.getDataTypeByModelAndTypeName(model, property.type)) { // if type not exist in data types remove property from list
 
-                    let newFEProp: PropertyFEModel = new PropertyFEModel(property); //Convert property to FE
+                    const newFEProp: PropertyFEModel = new PropertyFEModel(property); // Convert property to FE
                     if (!newFEProp.parentUniqueId) {
                         newFEProp.parentUniqueId = instanceId;
                     }
-                    this.initValueObjectRef(newFEProp); //initialize valueObj AND creates flattened children
+                    this.initValueObjectRef(newFEProp); // initialize valueObj AND creates flattened children
                     propertyFeArray.push(newFEProp);
-                    newFEProp.updateExpandedChildPropertyId(newFEProp.name); //display only the first level of children
+                    newFEProp.updateExpandedChildPropertyId(newFEProp.name); // display only the first level of children
                     this.dataTypeService.checkForCustomBehavior(newFEProp);
 
-                    //if this prop (or any children) are declared, set isDeclared and disable checkbox on parents/children
+                    // if this prop (or any children) are declared, set isDeclared and disable checkbox on parents/children
                     if (newFEProp.getInputValues && newFEProp.getInputValues.length) {
-                        newFEProp.getInputValues.forEach(propInputDetail => {
+                        newFEProp.getInputValues.forEach((propInputDetail) => {
                             let inputPath = propInputDetail.inputPath;
-                            if (!inputPath) { //TODO: this is a workaround until Marina adds inputPath
-                                let input = inputs.find(input => input.uniqueId == propInputDetail.inputId);
-                                if (!input) { console.log("CANNOT FIND INPUT FOR " + propInputDetail.inputId); return; }
-                                else inputPath = input.inputPath;
+                            if (!inputPath) { // TODO: this is a workaround until Marina adds inputPath
+                                const input = inputs.find((input) => input.uniqueId == propInputDetail.inputId);
+                                if (!input) { console.log('CANNOT FIND INPUT FOR ' + propInputDetail.inputId); return; } else { inputPath = input.inputPath; }
                             }
-                            if (inputPath == newFEProp.name) inputPath = undefined; // if not complex we need to remove the inputPath from FEModel so we not look for a child
-                            newFEProp.setAsDeclared(inputPath); //if a path is sent, its a child prop. this param is optional
+                            if (inputPath == newFEProp.name) { inputPath = undefined; } // if not complex we need to remove the inputPath from FEModel so we not look for a child
+                            newFEProp.setAsDeclared(inputPath); // if a path is sent, its a child prop. this param is optional
                             this.propertiesService.disableRelatedProperties(newFEProp, inputPath);
                         });
                     }
                     if (newFEProp.getPolicyValues && newFEProp.getPolicyValues.length) {
-                        newFEProp.setAsDeclared(newFEProp.inputPath); //if a path is sent, its a child prop. this param is optional
+                        newFEProp.setAsDeclared(newFEProp.inputPath); // if a path is sent, its a child prop. this param is optional
                         this.propertiesService.disableRelatedProperties(newFEProp, newFEProp.inputPath);
                     }
                 }
@@ -88,51 +87,36 @@ export class PropertiesUtils {
     }
 
     public convertAddPropertyBAToPropertyFE = (property: PropertyBEModel): PropertyFEModel => {
-        const newFEProp: PropertyFEModel = new PropertyFEModel(property); //Convert property to FE
+        const newFEProp: PropertyFEModel = new PropertyFEModel(property); // Convert property to FE
         this.initValueObjectRef(newFEProp);
-        newFEProp.updateExpandedChildPropertyId(newFEProp.name); //display only the first level of children
+        newFEProp.updateExpandedChildPropertyId(newFEProp.name); // display only the first level of children
         this.dataTypeService.checkForCustomBehavior(newFEProp);
         return newFEProp;
     }
 
-    public createListOrMapChildren = (property:PropertyFEModel | DerivedFEProperty, key: string, valueObj: any): Array<DerivedFEProperty> => {
-        let newProps: Array<DerivedFEProperty> = [];
-        let parentProp = new DerivedFEProperty(property, property.propertiesName, true, key, valueObj);
+    public createListOrMapChildren = (property: PropertyFEModel | DerivedFEProperty, key: string, valueObj: any): DerivedFEProperty[] => {
+        const newProps: DerivedFEProperty[] = [];
+        const parentProp = new DerivedFEProperty(property, property.propertiesName, true, key, valueObj);
         newProps.push(parentProp);
 
         if (!property.schema.property.isSimpleType) {
-            let additionalChildren:Array<DerivedFEProperty> = this.createFlattenedChildren(property.schema.property.type, parentProp.propertiesName, key, parentProp.toscaPath);
+            const additionalChildren: DerivedFEProperty[] = this.createFlattenedChildren(property.schema.property.type, parentProp.propertiesName, key, parentProp.toscaPath);
             this.assignFlattenedChildrenValues(parentProp.valueObj, additionalChildren, parentProp.propertiesName);
-            additionalChildren.forEach(prop => {
+            additionalChildren.forEach((prop) => {
                 prop.canBeDeclared = false;
                 if (property.subPropertyToscaFunctions != null) {
-                    const subToscaFunctArray : SubPropertyToscaFunction[] = property.subPropertyToscaFunctions;
-                    subToscaFunctArray.forEach(subToscaFunct => {
+                    const subToscaFunctArray: SubPropertyToscaFunction[] = property.subPropertyToscaFunctions;
+                    subToscaFunctArray.forEach((subToscaFunct) => {
                         if (subToscaFunct.subPropertyPath.toString() === prop.toscaPath.toString()) {
                             prop.toscaFunction = subToscaFunct.toscaFunction;
                         }
                     });
-                    
+
                 }
             });
             newProps.push(...additionalChildren);
         }
         return newProps;
-    }
-
-    /**
-     * Creates derivedFEProperties of a specified type and returns them.
-     */
-    private createFlattenedChildren = (type: string, parentName: string, key: string, toscaPath?: string[]):Array<DerivedFEProperty> => {
-        let tempProps: Array<DerivedFEProperty> = [];
-        let dataTypeObj: DataTypeModel = this.dataTypeService.getDataTypeByTypeName(type);
-        this.dataTypeService.getDerivedDataTypeProperties(dataTypeObj, tempProps, parentName, toscaPath);
-        if (key != '') {
-            tempProps.forEach(tempDervObj => {
-                tempDervObj.mapKey = key;
-            });
-        }
-        return _.sortBy(tempProps, ['propertiesName']);
     }
 
     /* Sets the valueObj of parent property and its children.
@@ -141,7 +125,7 @@ export class PropertiesUtils {
     public initValueObjectRef = (property: PropertyFEModel): void => {
         let index: number;
         property.resetValueObjValidation();
-        if (property.isDeclared) { //if property is declared, it gets a simple input instead. List and map values and pseudo-children will be handled in property component
+        if (property.isDeclared) { // if property is declared, it gets a simple input instead. List and map values and pseudo-children will be handled in property component
             property.valueObj = property.value || property.defaultValue || null;  // use null for empty value object
             if (property.valueObj && typeof property.valueObj == 'object') {
                 property.valueObj = JSON.stringify(property.valueObj);
@@ -150,21 +134,21 @@ export class PropertiesUtils {
             property.valueObj = property.getValueObj();
             if (property.derivedDataType == DerivedPropertyType.LIST || property.derivedDataType == DerivedPropertyType.MAP) {
                 if (property.flattenedChildren && property.flattenedChildren.length > 0) {
-                    index = property.flattenedChildren.indexOf(property.flattenedChildren.find(prop => prop.propertiesName == property.expandedChildPropertyId));
+                    index = property.flattenedChildren.indexOf(property.flattenedChildren.find((prop) => prop.propertiesName == property.expandedChildPropertyId));
                 }
                 property.flattenedChildren = [];
                 Object.keys(property.valueObj).forEach((key) => {
                     property.flattenedChildren.push(...this.createListOrMapChildren(property, key, property.valueObj[key]));
                     const lastCreatedChild = property.flattenedChildren.slice(-1)[0];
-                    if (property.schemaType == PROPERTY_TYPES.MAP && property.valueObj[key]){
-                        const nestedValue:object = property.valueObj[key];
+                    if (property.schemaType == PROPERTY_TYPES.MAP && property.valueObj[key]) {
+                        const nestedValue: object = property.valueObj[key];
                         Object.keys(nestedValue).forEach((keyNested) => {
                             property.flattenedChildren.push(...this.createListOrMapChildren(lastCreatedChild, keyNested, nestedValue[keyNested]));
                         });
                     }
                     if (property.flattenedChildren && property.subPropertyToscaFunctions) {
                         property.flattenedChildren.forEach((prop, index) => {
-                            property.subPropertyToscaFunctions.forEach(subPropertyToscaFunction => {
+                            property.subPropertyToscaFunctions.forEach((subPropertyToscaFunction) => {
                                 const toscaFunctionPath = subPropertyToscaFunction.subPropertyPath.join('#');
                                 if (subPropertyToscaFunction.subPropertyPath.toString() === prop.toscaPath.toString()) {
                                     prop.toscaFunction = subPropertyToscaFunction.toscaFunction;
@@ -174,7 +158,7 @@ export class PropertiesUtils {
                     }
                 });
             } else if (property.derivedDataType === DerivedPropertyType.COMPLEX) {
-                property.flattenedChildren = this.createFlattenedChildren(property.type, property.name, "");
+                property.flattenedChildren = this.createFlattenedChildren(property.type, property.name, '');
                 this.assignFlattenedChildrenValues(property.valueObj, property.flattenedChildren, property.name);
                 this.setFlattenedChildernToscaFunction(property.subPropertyToscaFunctions, property.flattenedChildren, property.name);
                 property.flattenedChildren.forEach((childProp) => {
@@ -185,19 +169,19 @@ export class PropertiesUtils {
                 property.valueObj = JSON.stringify(property.getValueObj());
             }
         }
-        if (typeof index === "number" && property.flattenedChildren && property.flattenedChildren.length > 0) {
+        if (typeof index === 'number' && property.flattenedChildren && property.flattenedChildren.length > 0) {
             property.expandedChildPropertyId = property.flattenedChildren[index].propertiesName;
         }
         property.updateValueObjOrig();
-    };
+    }
 
-    public setFlattenedChildernToscaFunction = (subPropertyToscaFunctions: SubPropertyToscaFunction[], derivedPropArray: Array<DerivedFEProperty>, topLevelPropertyName: string) => {
-        if (!subPropertyToscaFunctions || !derivedPropArray || !topLevelPropertyName){
+    public setFlattenedChildernToscaFunction = (subPropertyToscaFunctions: SubPropertyToscaFunction[], derivedPropArray: DerivedFEProperty[], topLevelPropertyName: string) => {
+        if (!subPropertyToscaFunctions || !derivedPropArray || !topLevelPropertyName) {
             return;
         }
         derivedPropArray.forEach((prop, index) => {
             const subPropertyPath = prop.propertiesName.substring(prop.propertiesName.indexOf(topLevelPropertyName) + topLevelPropertyName.length + 1);
-            subPropertyToscaFunctions.forEach(subPropertyToscaFunction => {
+            subPropertyToscaFunctions.forEach((subPropertyToscaFunction) => {
                 const toscaFunctionPath = subPropertyToscaFunction.subPropertyPath.join('#');
                 if (subPropertyPath === toscaFunctionPath || subPropertyToscaFunction.subPropertyPath.toString() === prop.toscaPath.toString()) {
                     prop.toscaFunction = subPropertyToscaFunction.toscaFunction;
@@ -211,20 +195,20 @@ export class PropertiesUtils {
     * Then, convert any neccessary strings to objects, and vis-versa
     * For list or map property, creates new children props if valueObj has values
     */
-    public assignFlattenedChildrenValues = (parentValueJSON: any, derivedPropArray: Array<DerivedFEProperty>, parentName: string) => {
-        if (!derivedPropArray || !parentName) return;
-        let propsToPushMap: Map<number, Array<DerivedFEProperty>> = new Map<number, Array<DerivedFEProperty>>();
+    public assignFlattenedChildrenValues = (parentValueJSON: any, derivedPropArray: DerivedFEProperty[], parentName: string) => {
+        if (!derivedPropArray || !parentName) { return; }
+        const propsToPushMap: Map<number, DerivedFEProperty[]> = new Map<number, DerivedFEProperty[]>();
         derivedPropArray.forEach((prop, index) => {
 
-            let propNameInObj = prop.propertiesName.substring(prop.propertiesName.indexOf(parentName) + parentName.length + 1).split('#').join('.'); //extract everything after parent name
-            prop.valueObj = _.get(parentValueJSON, propNameInObj, prop.value || prop.defaultValue || null); //assign value -first value of parent if exists. If not, prop.value if not, prop.defaultvalue
+            const propNameInObj = prop.propertiesName.substring(prop.propertiesName.indexOf(parentName) + parentName.length + 1).split('#').join('.'); // extract everything after parent name
+            prop.valueObj = _.get(parentValueJSON, propNameInObj, prop.value || prop.defaultValue || null); // assign value -first value of parent if exists. If not, prop.value if not, prop.defaultvalue
             prop.value = (prop.valueObj !== null && (typeof prop.valueObj) != 'string') ? JSON.stringify(prop.valueObj) : prop.valueObj;
 
-            if ((prop.isDeclared || prop.type == PROPERTY_TYPES.STRING || prop.type == PROPERTY_TYPES.JSON)) { //Stringify objects of items that are declared or from type string/json
+            if ((prop.isDeclared || prop.type == PROPERTY_TYPES.STRING || prop.type == PROPERTY_TYPES.JSON)) { // Stringify objects of items that are declared or from type string/json
                 prop.valueObj = (prop.valueObj !== null && typeof prop.valueObj == 'object') ? JSON.stringify(prop.valueObj) : prop.valueObj;
-            } else if(prop.type == PROPERTY_TYPES.INTEGER || prop.type == PROPERTY_TYPES.FLOAT || prop.type == PROPERTY_TYPES.BOOLEAN){ //parse ints and non-string simple types
+            } else if (prop.type == PROPERTY_TYPES.INTEGER || prop.type == PROPERTY_TYPES.FLOAT || prop.type == PROPERTY_TYPES.BOOLEAN) { // parse ints and non-string simple types
                 prop.valueObj = (prop.valueObj !== null && typeof prop.valueObj == PROPERTY_TYPES.STRING) ? JSON.parse(prop.valueObj) : prop.valueObj;
-            } else { //parse strings that should be objects
+            } else { // parse strings that should be objects
                 if (prop.derivedDataType == DerivedPropertyType.COMPLEX) {
                     prop.valueObj = (prop.valueObj === null || typeof prop.valueObj != 'object') ? JSON.parse(prop.valueObj || '{}') : prop.valueObj;
                 } else if (prop.derivedDataType == DerivedPropertyType.LIST) {
@@ -235,9 +219,9 @@ export class PropertiesUtils {
                     }
                 }
                 if ((prop.derivedDataType == DerivedPropertyType.LIST || prop.derivedDataType == DerivedPropertyType.MAP) && typeof prop.valueObj == 'object' && prop.valueObj !== null && Object.keys(prop.valueObj).length) {
-                    let newProps: Array<DerivedFEProperty> = [];
+                    const newProps: DerivedFEProperty[] = [];
                     Object.keys(prop.valueObj).forEach((key) => {
-                        newProps.push(...this.createListOrMapChildren(prop, key, prop.valueObj[key]));//create new children, assign their values, and then add to array
+                        newProps.push(...this.createListOrMapChildren(prop, key, prop.valueObj[key])); // create new children, assign their values, and then add to array
                     });
                     propsToPushMap[index + 1] = newProps;
                 }
@@ -246,21 +230,36 @@ export class PropertiesUtils {
             prop.valueObj = PropertyFEModel.cleanValueObj(prop.valueObj);
         });
 
-        //add props after we're done looping (otherwise our loop gets messed up). Push in reverse order, so we dont mess up indexes.
+        // add props after we're done looping (otherwise our loop gets messed up). Push in reverse order, so we dont mess up indexes.
         Object.keys(propsToPushMap).reverse().forEach((indexToInsert) => {
-            derivedPropArray.splice(+indexToInsert, 0, ...propsToPushMap[indexToInsert]); //slacker parsing
+            derivedPropArray.splice(+indexToInsert, 0, ...propsToPushMap[indexToInsert]); // slacker parsing
         });
     }
 
     public resetPropertyValue = (property: PropertyFEModel, newValue: string, nestedPath?: string): void => {
         property.value = newValue;
         if (nestedPath) {
-            let newProp = property.flattenedChildren.find(prop => prop.propertiesName == nestedPath);
+            const newProp = property.flattenedChildren.find((prop) => prop.propertiesName == nestedPath);
             newProp && this.assignFlattenedChildrenValues(JSON.parse(newValue), [newProp], property.name);
             property.updateValueObjOrig();
         } else {
             this.initValueObjectRef(property);
         }
+    }
+
+    /**
+     * Creates derivedFEProperties of a specified type and returns them.
+     */
+    private createFlattenedChildren = (type: string, parentName: string, key: string, toscaPath?: string[]): DerivedFEProperty[] => {
+        const tempProps: DerivedFEProperty[] = [];
+        const dataTypeObj: DataTypeModel = this.dataTypeService.getDataTypeByTypeName(type);
+        this.dataTypeService.getDerivedDataTypeProperties(dataTypeObj, tempProps, parentName, toscaPath);
+        if (key != '') {
+            tempProps.forEach((tempDervObj) => {
+                tempDervObj.mapKey = key;
+            });
+        }
+        return _.sortBy(tempProps, ['propertiesName']);
     }
 
 }

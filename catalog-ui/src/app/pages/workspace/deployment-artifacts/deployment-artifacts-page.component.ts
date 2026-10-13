@@ -1,22 +1,22 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {Select, Store} from '@ngxs/store';
-import {ArtifactModel} from 'app/models/artifacts';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { Select, Store } from '@ngxs/store';
+import { ArtifactModel } from 'app/models/artifacts';
 import * as _ from 'lodash';
-import {SdcUiCommon, SdcUiServices} from 'onap-ui-angular';
-import {Observable} from 'rxjs';
-import {map} from 'rxjs/operators';
-import {GabConfig} from '../../../models/gab-config';
-import {PathsAndNamesDefinition} from '../../../models/paths-and-names';
-import {GenericArtifactBrowserComponent} from '../../../components/logic/generic-artifact-browser/generic-artifact-browser.component';
-import {ArtifactGroupType, ArtifactType} from '../../../utils/constants';
-import {ArtifactsService} from '../../../components/forms/artifacts-form/artifacts.service';
-import {PopoverContentComponent} from '../../../components/ui/popover/popover-content.component';
-import {CacheService} from '../../../services/cache.service';
-import {TranslateService} from '../../../shared/translator/translate.service';
-import {GetArtifactsByTypeAction} from '../../../store/actions/artifacts.action';
-import {ArtifactsState} from '../../../store/states/artifacts.state';
-import {WorkspaceState, WorkspaceStateModel} from '../../../store/states/workspace.state';
-import {WorkspaceService} from '../workspace.service';
+import { SdcUiCommon, SdcUiServices } from 'onap-ui-angular';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { ArtifactsService } from '../../../components/forms/artifacts-form/artifacts.service';
+import { GenericArtifactBrowserComponent } from '../../../components/logic/generic-artifact-browser/generic-artifact-browser.component';
+import { PopoverContentComponent } from '../../../components/ui/popover/popover-content.component';
+import { GabConfig } from '../../../models/gab-config';
+import { PathsAndNamesDefinition } from '../../../models/paths-and-names';
+import { CacheService } from '../../../services/cache.service';
+import { TranslateService } from '../../../shared/translator/translate.service';
+import { GetArtifactsByTypeAction } from '../../../store/actions/artifacts.action';
+import { ArtifactsState } from '../../../store/states/artifacts.state';
+import { WorkspaceState, WorkspaceStateModel } from '../../../store/states/workspace.state';
+import { ArtifactGroupType, ArtifactType } from '../../../utils/constants';
+import { WorkspaceService } from '../workspace.service';
 
 export interface IPoint {
     x: number;
@@ -40,21 +40,6 @@ export class DeploymentArtifactsPageComponent implements OnInit {
     @ViewChild('informationArtifactsTable') table: any;
     @ViewChild('popoverForm') popoverContentComponent: PopoverContentComponent;
 
-    constructor(private workspaceService: WorkspaceService,
-                private artifactsService: ArtifactsService,
-                private store: Store,
-                private popoverService: SdcUiServices.PopoverService,
-                private cacheService: CacheService,
-                private modalService: SdcUiServices.ModalService,
-                private translateService: TranslateService) {
-    }
-
-    private getEnvArtifact = (heatArtifact: ArtifactModel, artifacts: ArtifactModel[]): ArtifactModel => {
-        return _.find(artifacts, (item: ArtifactModel) => {
-            return item.generatedFromId === heatArtifact.uniqueId;
-        });
-    };
-
     // we need to sort the artifact in a way that the env artifact is always under the artifact he is connected to- this is cause of the way the ngx databale work
     private sortArtifacts = ((artifacts) => {
         const sortedArtifacts = [];
@@ -70,6 +55,15 @@ export class DeploymentArtifactsPageComponent implements OnInit {
         return sortedArtifacts;
     });
 
+    constructor(private workspaceService: WorkspaceService,
+                private artifactsService: ArtifactsService,
+                private store: Store,
+                private popoverService: SdcUiServices.PopoverService,
+                private cacheService: CacheService,
+                private modalService: SdcUiServices.ModalService,
+                private translateService: TranslateService) {
+    }
+
     ngOnInit(): void {
         this.componentId = this.workspaceService.metadata.uniqueId;
         this.componentType = this.workspaceService.metadata.componentType;
@@ -80,7 +74,7 @@ export class DeploymentArtifactsPageComponent implements OnInit {
             componentId: this.componentId,
             artifactType: ArtifactGroupType.DEPLOYMENT
         }));
-        this.deploymentArtifacts$ = this.store.select(ArtifactsState.getArtifactsByType).pipe(map((filterFn) => filterFn(ArtifactType.DEPLOYMENT))).pipe(map(artifacts => {
+        this.deploymentArtifacts$ = this.store.select(ArtifactsState.getArtifactsByType).pipe(map((filterFn) => filterFn(ArtifactType.DEPLOYMENT))).pipe(map((artifacts) => {
             return this.sortArtifacts(artifacts);
         }));
     }
@@ -93,18 +87,24 @@ export class DeploymentArtifactsPageComponent implements OnInit {
 
     public addOrUpdateArtifact = (artifact: ArtifactModel, isViewOnly: boolean) => {
         this.artifactsService.openArtifactModal(this.componentId, this.componentType, artifact, ArtifactGroupType.DEPLOYMENT, isViewOnly, null, this.resourceType);
-    };
+    }
 
     public deleteArtifact = (artifactToDelete) => {
         this.artifactsService.deleteArtifact(this.componentType, this.componentId, artifactToDelete);
     }
 
-    private openPopOver = (title: string, content: string, positionOnPage: IPoint, location: string) => {
-        this.popoverService.createPopOver(title, content, positionOnPage, location);
-    }
-
     public updateEnvParams = (artifact: ArtifactModel, isViewOnly: boolean) => {
         this.artifactsService.openUpdateEnvParams(this.componentType, this.componentId, artifact );
+    }
+
+    private getEnvArtifact = (heatArtifact: ArtifactModel, artifacts: ArtifactModel[]): ArtifactModel => {
+        return _.find(artifacts, (item: ArtifactModel) => {
+            return item.generatedFromId === heatArtifact.uniqueId;
+        });
+    }
+
+    private openPopOver = (title: string, content: string, positionOnPage: IPoint, location: string) => {
+        this.popoverService.createPopOver(title, content, positionOnPage, location);
     }
 
     private openGenericArtifactBrowserModal = (artifact: ArtifactModel): void => {
@@ -136,7 +136,6 @@ export class DeploymentArtifactsPageComponent implements OnInit {
                 pathsandnamesArr = gabConfig.pathsAndNamesDefinitions;
             }
         }
-
 
         if (noConfig) {
             // Was openAlertModal, which exists only on SDC's own services/modal.service.ts, not

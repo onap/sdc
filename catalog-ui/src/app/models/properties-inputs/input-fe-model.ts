@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,27 +18,27 @@
  * ============LICENSE_END=========================================================
  */
 
-import * as _ from "lodash";
-import { SchemaPropertyGroupModel, SchemaProperty } from "../schema-property";
-import {PropertyFEModel} from './property-fe-model';
-import {PROPERTY_DATA} from "../../utils/constants";
-import {InputBEModel} from "./input-be-model";
-import {DerivedPropertyType} from "./property-be-model";
-import { Metadata } from "app/models/metadata";
-import { MetadataEntry } from "app/models/metadata-entry";
+import { Metadata } from 'app/models/metadata';
+import { MetadataEntry } from 'app/models/metadata-entry';
+import * as _ from 'lodash';
+import { PROPERTY_DATA } from '../../utils/constants';
+import { SchemaProperty, SchemaPropertyGroupModel } from '../schema-property';
+import { InputBEModel } from './input-be-model';
+import { DerivedPropertyType } from './property-be-model';
+import { PropertyFEModel } from './property-fe-model';
 
 export class InputFEModel extends InputBEModel {
     isSimpleType: boolean;
     relatedPropertyValue: any;
     relatedPropertyName: string;
-    defaultValueObj:any;
-    defaultValueObjIsValid:boolean;
-    defaultValueObjOrig:any;
-    defaultValueObjIsChanged:boolean;
+    defaultValueObj: any;
+    defaultValueObjIsValid: boolean;
+    defaultValueObjOrig: any;
+    defaultValueObjIsChanged: boolean;
     derivedDataType: DerivedPropertyType;
     requiredOrig: boolean;
     metadataOrig: Metadata;
-    metadataIsValid:boolean;
+    metadataIsValid: boolean;
     metadataEntries: MetadataEntry[] = [];
     metadataMapKeyError: string;
 
@@ -46,7 +46,7 @@ export class InputFEModel extends InputBEModel {
         super(input);
         if (input) {
             this.isSimpleType = PROPERTY_DATA.SIMPLE_TYPES.indexOf(this.type) > -1;
-            let relatedProperty = input.properties && input.properties[0] || input.inputs && input.inputs[0];
+            const relatedProperty = input.properties && input.properties[0] || input.inputs && input.inputs[0];
             if (relatedProperty) {
                 this.relatedPropertyValue = relatedProperty.value;
                 this.relatedPropertyName = relatedProperty.name;
@@ -58,16 +58,16 @@ export class InputFEModel extends InputBEModel {
             this.requiredOrig = this.required;
             this.metadataOrig = _.cloneDeep(input.metadata);
             this.metadataIsValid = true;
-			
-            if (input.metadata){
-                for (let key of Object.keys(input.metadata)){
+
+            if (input.metadata) {
+                for (const key of Object.keys(input.metadata)) {
                     this.metadataEntries.push(new MetadataEntry(key, input.metadata[key]));
                 }
             }
         }
     }
 
-    public updateDefaultValueObj(defaultValueObj:any, isValid:boolean) {
+    public updateDefaultValueObj(defaultValueObj: any, isValid: boolean) {
         this.defaultValueObj = PropertyFEModel.cleanValueObj(defaultValueObj);
         this.defaultValueObjIsValid = isValid;
         this.defaultValueObjIsChanged = this.hasDefaultValueChanged();
@@ -98,13 +98,13 @@ export class InputFEModel extends InputBEModel {
         return this.required !== this.requiredOrig;
     }
 
-    public updateMetadataKey(metadataEntry: MetadataEntry, newKey){
-        if (!newKey){
+    public updateMetadataKey(metadataEntry: MetadataEntry, newKey) {
+        if (!newKey) {
 	        this.metadataIsValid = false;
-            this.metadataMapKeyError = 'Key cannot be empty.';
-            metadataEntry.key = newKey;
-            return;
-        } else if (metadataEntry.metaDataMapKey != newKey && this.metadata[newKey]){
+         this.metadataMapKeyError = 'Key cannot be empty.';
+         metadataEntry.key = newKey;
+         return;
+        } else if (metadataEntry.metaDataMapKey != newKey && this.metadata[newKey]) {
             this.metadataIsValid = false;
             this.metadataMapKeyError = 'This key already exists!!.';
             metadataEntry.key = newKey;
@@ -113,37 +113,37 @@ export class InputFEModel extends InputBEModel {
         this.metadataIsValid = true;
         this.metadataMapKeyError = null;
 
-        if(metadataEntry.metaDataMapKey != newKey){
+        if (metadataEntry.metaDataMapKey != newKey) {
             this.metadata[newKey] = _.cloneDeep(this.metadata[metadataEntry.metaDataMapKey]);
             delete this.metadata[metadataEntry.metaDataMapKey];
             metadataEntry.metaDataMapKey = newKey;
         }
-        metadataEntry.key = newKey;  
+        metadataEntry.key = newKey;
     }
 
-   	public updateMetadataValue(metadataEntry: MetadataEntry, value: string){
+   	public updateMetadataValue(metadataEntry: MetadataEntry, value: string) {
         metadataEntry.value = value;
         this.metadata[metadataEntry.key] = value;
    	}
 
-    public addMetadataEntry(metadataEntry: MetadataEntry){
+    public addMetadataEntry(metadataEntry: MetadataEntry) {
         this.metadataEntries.push(metadataEntry);
-        if (!this.metadata){
+        if (!this.metadata) {
             this.metadata = new Metadata;
         }
         this.metadata[metadataEntry.key] = metadataEntry.value;
     }
-	
-    public deleteMetadataEntry(metadataEntry: MetadataEntry){
-        let metadataEntryIndex = this.metadataEntries.findIndex(item => item.key === metadataEntry.key);
-        if (metadataEntryIndex != -1){
+
+    public deleteMetadataEntry(metadataEntry: MetadataEntry) {
+        const metadataEntryIndex = this.metadataEntries.findIndex((item) => item.key === metadataEntry.key);
+        if (metadataEntryIndex != -1) {
             this.metadataEntries.splice(metadataEntryIndex, 1);
         }
         delete this.metadata[metadataEntry.key];
     }
 
     public resetMetadata = (): void => {
-        if (!this.metadataOrig){
+        if (!this.metadataOrig) {
           return;
         }
 
@@ -151,11 +151,11 @@ export class InputFEModel extends InputBEModel {
         this.metadataIsValid = true;
 
         this.metadataEntries = [];
-        for (let key of Object.keys(this.metadata)){
+        for (const key of Object.keys(this.metadata)) {
             this.metadataEntries.push(new MetadataEntry(key, this.metadata[key]));
         }
     }
-    
+
     hasMetadataChanged(): boolean {
         return !_.isEqual(this.metadata, this.metadataOrig);
     }

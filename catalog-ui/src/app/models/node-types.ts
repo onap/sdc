@@ -14,7 +14,7 @@
  * permissions and limitations under the License.
  */
 
-import {ComponentMetadata} from "./component-metadata";
+import { ComponentMetadata } from './component-metadata';
 
 export class NodeTypesMap {
     nodeTypesMap: NodeTypesMapData;

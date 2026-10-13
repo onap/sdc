@@ -18,7 +18,7 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-import {Component, Inject, OnInit} from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-modal-import-type',
@@ -27,7 +27,7 @@ import {Component, Inject, OnInit} from '@angular/core';
 })
 export class ModalImportTypeComponent implements OnInit {
 
-  file:File = null;
+  file: File = null;
 
   constructor() {}
 
@@ -40,7 +40,7 @@ export class ModalImportTypeComponent implements OnInit {
 
   public onImportDataType(file: any): void {
     if (file && file.filename) {
-        console.log("file: " + file.filename);
+        console.log('file: ' + file.filename);
     }
   }
 

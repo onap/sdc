@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 import { Mock } from 'ts-mockery';
-import {CapabilitiesGroup, Capability} from '../../../../models/capability';
-import {ComponentInstance} from '../../../../models/components-instances/component-instance';
-import {CompositionCiLinkBase} from '../../../../models/graph/graph-links/composition-graph-links/composition-ci-link-base';
-import {CompositionCiNodeCp} from '../../../../models/graph/nodes/composition-graph-nodes/composition-ci-node-cp';
-import {CompositionCiNodeVf} from '../../../../models/graph/nodes/composition-graph-nodes/composition-ci-node-vf';
-import {CompositionCiNodeVl} from '../../../../models/graph/nodes/composition-graph-nodes/composition-ci-node-vl';
-import {Requirement, RequirementsGroup} from '../../../../models/requirement';
+import { CapabilitiesGroup, Capability } from '../../../../models/capability';
+import { ComponentInstance } from '../../../../models/components-instances/component-instance';
+import { CompositionCiLinkBase } from '../../../../models/graph/graph-links/composition-graph-links/composition-ci-link-base';
+import { CompositionCiNodeCp } from '../../../../models/graph/nodes/composition-graph-nodes/composition-ci-node-cp';
+import { CompositionCiNodeVf } from '../../../../models/graph/nodes/composition-graph-nodes/composition-ci-node-vf';
+import { CompositionCiNodeVl } from '../../../../models/graph/nodes/composition-graph-nodes/composition-ci-node-vl';
+import { Requirement, RequirementsGroup } from '../../../../models/requirement';
 import { MatchCapabilitiesRequirementsUtils } from './match-capability-requirement-utils';
 
 describe('match capability requirements utils service ', () => {
@@ -315,7 +315,7 @@ describe('match capability requirements utils service ', () => {
             expect(matchingNodes).toHaveLength(0);
         });
 
-        it('should detect fulfilled connection with compute node', () => {
+       it('should detect fulfilled connection with compute node', () => {
             const nodes = [nodeBlockStorage, nodeCompute, nodeVl];
             let matchingNodes: any;
 

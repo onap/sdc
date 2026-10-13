@@ -18,11 +18,11 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-import {Observable} from 'rxjs/Observable';
+import { PropertyModel } from 'app/models/properties';
+import { InputFEModel } from 'app/models/properties-inputs/input-fe-model';
 import 'rxjs/add/observable/of';
-import {PropertyModel} from 'app/models/properties';
-import {InputFEModel} from 'app/models/properties-inputs/input-fe-model';
-import {PropertyFormModalService, PropertyFormModalSaveContext} from './property-form-modal.service';
+import { Observable } from 'rxjs/Observable';
+import { PropertyFormModalSaveContext, PropertyFormModalService } from './property-form-modal.service';
 
 function makeProperty(overrides: any = {}): PropertyModel {
     return new PropertyModel(Object.assign({

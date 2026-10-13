@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,8 +18,8 @@
  * ============LICENSE_END=========================================================
  */
 
-import { Component, Input, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
-//import { trigger, state, style, transition, animate, keyframes } from '@angular/animations';
+import { Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
+// import { trigger, state, style, transition, animate, keyframes } from '@angular/animations';
 
 @Component({
     selector: 'checkbox',
@@ -36,15 +36,14 @@ import { Component, Input, Output, EventEmitter, ViewEncapsulation } from '@angu
     // ]
 })
 export class CheckboxComponent  {
-    
+
     @Input() checkboxStyle: string;
     @Input() label: string;
     @Input() checked: boolean;
     @Input() disabled: boolean;
     @Output() checkedChange: EventEmitter<any> = new EventEmitter<any>();
 
-    toggleState(newValue:boolean) {
+    toggleState(newValue: boolean) {
         this.checkedChange.emit(newValue);
     }
 }
-

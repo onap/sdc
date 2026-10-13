@@ -18,15 +18,14 @@
  * ============LICENSE_END=========================================================
  */
 
-import {Component, OnInit} from "@angular/core";
-import {Component as ComponentData} from 'app/models/components/component';
-import {Plugin} from 'app/models/plugins-config';
-import {IUserProperties} from 'app/models/user';
-import {CacheService} from 'app/services/cache.service';
-import {PluginsService} from 'app/services/plugins.service';
-import {NavigationService} from "../../../services/navigation.service";
-import {WorkspaceService} from "../../workspace/workspace.service";
-
+import { Component, OnInit } from '@angular/core';
+import { Component as ComponentData } from 'app/models/components/component';
+import { Plugin } from 'app/models/plugins-config';
+import { IUserProperties } from 'app/models/user';
+import { CacheService } from 'app/services/cache.service';
+import { PluginsService } from 'app/services/plugins.service';
+import { NavigationService } from '../../../services/navigation.service';
+import { WorkspaceService } from '../../workspace/workspace.service';
 
 @Component({
     selector: 'plugin-context-view',
@@ -62,7 +61,7 @@ export class PluginContextViewPageComponent implements OnInit {
         this.queryParams = {
             userId: this.user.userId,
             userRole: this.user.role,
-            displayType: "context",
+            displayType: 'context',
             contextType: this.component.getComponentSubType(),
             uuid: this.component.uuid,
             componentId: this.component.uniqueId,
@@ -84,6 +83,5 @@ export class PluginContextViewPageComponent implements OnInit {
             this.isLoading = false;
         }
     }
-
 
 }

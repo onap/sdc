@@ -1,9 +1,9 @@
 /**
  * Created by rc2122 on 5/31/2018.
  */
-import { Component, Input } from "@angular/core";
-import {ValidationConfiguration} from 'app/models/validation-config';
-import { Subject } from "rxjs/Subject";
+import { Component, Input } from '@angular/core';
+import { ValidationConfiguration } from 'app/models/validation-config';
+import { Subject } from 'rxjs/Subject';
 
 @Component({
     selector: 'comment-modal',
@@ -13,13 +13,13 @@ import { Subject } from "rxjs/Subject";
 
 export class CommentModalComponent {
 
-    @Input() message:string;
+    @Input() message: string;
     onValidationChange: Subject<boolean> = new Subject();
-    //@Input() showComment:boolean;
-    comment = {"text": ''};
+    // @Input() showComment:boolean;
+    comment = {text: ''};
     commentValidationPattern = ValidationConfiguration.validation.validationPatterns.comment;
 
-    onValidityChange = (isValid: boolean):void => {
+    onValidityChange = (isValid: boolean): void => {
         this.onValidationChange.next(isValid);
     }
 }

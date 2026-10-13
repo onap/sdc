@@ -34,12 +34,12 @@
  *    isShowFileBrowse to FALSE and enabled it in only four narrow cases. The native picker also
  *    never wrote component.importedFile, so a selected file could not reach the create payload.
  */
-import {of} from 'rxjs';
-import {Subject} from 'rxjs/Subject';
-import {ComponentMetadataService} from '../component-metadata.service';
-import {GeneralFormService} from '../general-form.service';
-import {GeneralTabComponent} from '../general-tab.component';
-import {NavigationService} from '../../../../services/navigation.service';
+import { of } from 'rxjs';
+import { Subject } from 'rxjs/Subject';
+import { NavigationService } from '../../../../services/navigation.service';
+import { ComponentMetadataService } from '../component-metadata.service';
+import { GeneralFormService } from '../general-form.service';
+import { GeneralTabComponent } from '../general-tab.component';
 
 const RESOURCE_CATEGORIES = [
     {name: 'Generic', models: null, subcategories: [{name: 'Abstract'}, {name: 'Database'}]},

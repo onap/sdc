@@ -13,14 +13,14 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -- */
-import {Provider, InjectionToken} from "@angular/core";
-import {getSdcConfig, ISdcConfig} from "./sdc-config.config.factory";
+import { InjectionToken, Provider } from '@angular/core';
+import { getSdcConfig, ISdcConfig } from './sdc-config.config.factory';
 
 export { ISdcConfig };
 
 export const SdcConfigToken = new InjectionToken('SdcConfigToken');
 
-export const SdcConfig:Provider = {
+export const SdcConfig: Provider = {
     provide: SdcConfigToken,
     useFactory: getSdcConfig
 };

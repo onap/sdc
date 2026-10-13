@@ -17,22 +17,22 @@
 *  ============LICENSE_END=========================================================
 */
 
-import {Component, ComponentRef, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
-import {ButtonModel} from 'app/models/button';
-import {ComponentInstance} from 'app/models/components-instances/component-instance';
-import {ModalModel} from 'app/models/modal';
-import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
-import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
-import {ModalComponent} from 'app/components/ui/modal/modal.component';
-import {FilterType, ServiceDependenciesEditorComponent} from 'app/pages/service-dependencies-editor/service-dependencies-editor.component';
-import {ModalService} from 'app/services/modal.service';
-import {TranslateService} from 'app/shared/translator/translate.service';
-import {ComponentMetadata} from '../../../models/component-metadata';
-import {TopologyTemplateService} from '../../../services/component-services/topology-template.service';
-import {ToscaFilterConstraintType} from "../../../models/tosca-filter-constraint-type.enum";
-import {FilterConstraint} from "app/models/filter-constraint";
-import {PropertyFilterConstraintUi} from "../../../models/ui-models/property-filter-constraint-ui";
-import {FilterConstraintHelper, ConstraintOperatorType} from "../../../utils/filter-constraint-helper";
+import { Component, ComponentRef, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
+import { ModalComponent } from 'app/components/ui/modal/modal.component';
+import { ButtonModel } from 'app/models/button';
+import { ComponentInstance } from 'app/models/components-instances/component-instance';
+import { FilterConstraint } from 'app/models/filter-constraint';
+import { ModalModel } from 'app/models/modal';
+import { InputBEModel } from 'app/models/properties-inputs/input-be-model';
+import { PropertyBEModel } from 'app/models/properties-inputs/property-be-model';
+import { FilterType, ServiceDependenciesEditorComponent } from 'app/pages/service-dependencies-editor/service-dependencies-editor.component';
+import { ModalService } from 'app/services/modal.service';
+import { TranslateService } from 'app/shared/translator/translate.service';
+import { ComponentMetadata } from '../../../models/component-metadata';
+import { ToscaFilterConstraintType } from '../../../models/tosca-filter-constraint-type.enum';
+import { PropertyFilterConstraintUi } from '../../../models/ui-models/property-filter-constraint-ui';
+import { TopologyTemplateService } from '../../../services/component-services/topology-template.service';
+import { ConstraintOperatorType, FilterConstraintHelper } from '../../../utils/filter-constraint-helper';
 
 class I18nTexts {
   static addSubstitutionFilterTxt: string;
@@ -112,16 +112,6 @@ export class SubstitutionFilterComponent implements OnInit, OnChanges {
     }
   }
 
-  private loadSubstitutionFilter = (): void => {
-    this.topologyTemplateService.getSubstitutionFilterConstraints(this.compositeService.componentType, this.compositeService.uniqueId)
-    .subscribe((response) => {
-      if(response.substitutionFilters) {
-        this.constraintProperties = response.substitutionFilters.properties;
-        this.buildConstraintPropertyLabels();
-      }
-    });
-  }
-
   onAddSubstitutionFilter = (constraintType: string): void => {
     const cancelButton: ButtonModel = new ButtonModel(I18nTexts.modalCancel, 'outline white', this.modalService.closeCurrentModal);
     const saveButton: ButtonModel = new ButtonModel(I18nTexts.modalCreate, 'blue', () => this.createSubstitutionFilter(constraintType), this.getDisabled);
@@ -131,13 +121,13 @@ export class SubstitutionFilterComponent implements OnInit, OnChanges {
         this.modalInstance,
         ServiceDependenciesEditorComponent,
         {
-          'currentServiceName': this.currentServiceInstance.name,
-          'operatorTypes': this.operatorTypes,
-          'compositeServiceName': this.compositeService.name,
-          'parentServiceInputs': this.parentServiceInputs,
-          'parentServiceProperties': this.parentServiceProperties,
-          'selectedInstanceProperties': this.selectedInstanceProperties,
-          'filterType': FilterType.PROPERTY
+          currentServiceName: this.currentServiceInstance.name,
+          operatorTypes: this.operatorTypes,
+          compositeServiceName: this.compositeService.name,
+          parentServiceInputs: this.parentServiceInputs,
+          parentServiceProperties: this.parentServiceProperties,
+          selectedInstanceProperties: this.selectedInstanceProperties,
+          filterType: FilterType.PROPERTY
         }
     );
     this.modalInstance.instance.open();
@@ -171,14 +161,14 @@ export class SubstitutionFilterComponent implements OnInit, OnChanges {
         this.modalInstance,
         ServiceDependenciesEditorComponent,
         {
-          'filterConstraint': selectedFilterConstraint,
-          'currentServiceName': this.currentServiceInstance.name,
-          'operatorTypes': this.operatorTypes,
-          'compositeServiceName': this.compositeService.name,
-          'parentServiceInputs': this.parentServiceInputs,
-          'parentServiceProperties': this.parentServiceProperties,
-          'selectedInstanceProperties': this.selectedInstanceProperties,
-          'filterType': FilterType.PROPERTY
+          filterConstraint: selectedFilterConstraint,
+          currentServiceName: this.currentServiceInstance.name,
+          operatorTypes: this.operatorTypes,
+          compositeServiceName: this.compositeService.name,
+          parentServiceInputs: this.parentServiceInputs,
+          parentServiceProperties: this.parentServiceProperties,
+          selectedInstanceProperties: this.selectedInstanceProperties,
+          filterType: FilterType.PROPERTY
         }
     );
     this.modalInstance.instance.open();
@@ -197,7 +187,7 @@ export class SubstitutionFilterComponent implements OnInit, OnChanges {
       this.emitEventOnChanges(constraintType, response);
       this.isLoading = false;
     }, (error) => {
-      console.error("Failed to Update Substitution Filter on the component with id: ", this.compositeService.uniqueId, error);
+      console.error('Failed to Update Substitution Filter on the component with id: ', this.compositeService.uniqueId, error);
       this.isLoading = false;
     });
     this.modalService.closeCurrentModal();
@@ -214,7 +204,7 @@ export class SubstitutionFilterComponent implements OnInit, OnChanges {
       this.emitEventOnChanges(constraintType, response);
       this.isLoading = false;
     }, (error) => {
-      console.error("Failed to Delete Substitution Filter on the component with id: ",
+      console.error('Failed to Delete Substitution Filter on the component with id: ',
           this.compositeService.uniqueId, error);
       this.isLoading = false;
     });
@@ -228,6 +218,16 @@ export class SubstitutionFilterComponent implements OnInit, OnChanges {
   openDeleteModal = (constraintType: string, index: number): void => {
     this.modalService.createActionModal(I18nTexts.deleteSubstitutionFilterTxt, I18nTexts.deleteSubstitutionFilterMsg,
         I18nTexts.modalDelete, () => this.onDeleteSubstitutionFilter(constraintType, index), I18nTexts.modalCancel).instance.open();
+  }
+
+  private loadSubstitutionFilter = (): void => {
+    this.topologyTemplateService.getSubstitutionFilterConstraints(this.compositeService.componentType, this.compositeService.uniqueId)
+    .subscribe((response) => {
+      if (response.substitutionFilters) {
+        this.constraintProperties = response.substitutionFilters.properties;
+        this.buildConstraintPropertyLabels();
+      }
+    });
   }
 
   private emitEventOnChanges(constraintType: string, response): void {
@@ -244,8 +244,8 @@ export class SubstitutionFilterComponent implements OnInit, OnChanges {
       return;
     }
     this.constraintProperties.forEach(
-        constraint => this.constraintPropertyLabels.push(FilterConstraintHelper.buildFilterConstraintLabel(constraint))
-    )
+        (constraint) => this.constraintPropertyLabels.push(FilterConstraintHelper.buildFilterConstraintLabel(constraint))
+    );
   }
 
 }

@@ -22,11 +22,11 @@ import * as _ from 'lodash';
 // supplies via script-loader (lodash.min.js); Jest has no such global.
 (window as any)._ = _;
 
+import { WorkspaceMode } from 'app/utils/constants';
 import 'rxjs/add/observable/forkJoin';
 import 'rxjs/add/observable/of';
-import {Observable} from 'rxjs/Observable';
-import {WorkspaceMode} from 'app/utils/constants';
-import {InterfaceDefinitionComponent} from './interface-definition.page.component';
+import { Observable } from 'rxjs/Observable';
+import { InterfaceDefinitionComponent } from './interface-definition.page.component';
 
 function makeComponent(overrides: any = {}) {
     return Object.assign({

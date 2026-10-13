@@ -18,8 +18,8 @@
  * ============LICENSE_END=========================================================
  */
 
-import {Component, EventEmitter, Input, Output, ViewChild, ViewEncapsulation} from "@angular/core";
-import {PathsAndNamesDefinition} from "../../../models/paths-and-names";
+import { Component, EventEmitter, Input, Output, ViewChild, ViewEncapsulation } from '@angular/core';
+import { PathsAndNamesDefinition } from '../../../models/paths-and-names';
 
 @Component({
   selector: 'gab-column-provider',
@@ -46,9 +46,9 @@ export class GenericArtifactBrowserColumnProviderComponent {
     const tmp = event.target.value;
     if (tmp && !this.columnsContainsName(tmp)) {
       this.name = tmp;
-      this.generalForm.form.controls['name'].setErrors(null);
+      this.generalForm.form.controls.name.setErrors(null);
     } else {
-      this.generalForm.form.controls['name'].setErrors({incorrect: true});
+      this.generalForm.form.controls.name.setErrors({incorrect: true});
     }
   }
 
@@ -56,9 +56,9 @@ export class GenericArtifactBrowserColumnProviderComponent {
     const tmp = event.target.value;
     if (tmp && !this.columnsContainsPath(tmp)) {
       this.path = tmp;
-      this.generalForm.form.controls['path'].setErrors(null);
+      this.generalForm.form.controls.path.setErrors(null);
     } else {
-      this.generalForm.form.controls['path'].setErrors({incorrect: true});
+      this.generalForm.form.controls.path.setErrors({incorrect: true});
     }
   }
 
@@ -77,17 +77,17 @@ export class GenericArtifactBrowserColumnProviderComponent {
 
   private updateColumnFilter = (name: string, prop: string): void => {
     this.pathsAndNames.push(new PathsAndNamesDefinition(prop, name, true));
-    this.generalForm.form.controls['name'].setValue("");
-    this.generalForm.form.controls['path'].setValue("");
+    this.generalForm.form.controls.name.setValue('');
+    this.generalForm.form.controls.path.setValue('');
   }
 
   private columnsContainsName = (name: string): boolean => {
-    const columnDefinitions = this.pathsAndNames.filter(column => column.friendlyName.toLowerCase() === name.toLowerCase());
+    const columnDefinitions = this.pathsAndNames.filter((column) => column.friendlyName.toLowerCase() === name.toLowerCase());
     return columnDefinitions.length > 0;
   }
 
   private columnsContainsPath = (path: string): boolean => {
-    const columnDefinitions = this.pathsAndNames.filter(column => column.path.toLowerCase() === path.toLowerCase());
+    const columnDefinitions = this.pathsAndNames.filter((column) => column.path.toLowerCase() === path.toLowerCase());
     return columnDefinitions.length > 0;
   }
 

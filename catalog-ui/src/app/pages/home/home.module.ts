@@ -1,13 +1,13 @@
-import { NgModule } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { HomeComponent } from "./home.component";
-import { LayoutModule } from "../../components/layout/layout.module";
-import { UiElementsModule } from "../../components/ui/ui-elements.module";
-import { GlobalPipesModule } from "../../pipes/global-pipes.module";
-import { TranslateModule } from "../../shared/translator/translate.module";
-import { SdcUiComponentsModule } from "onap-ui-angular";
-import { ResourceService } from "../../services/component-services/resource.service";
-import {ModalImportTypeComponent} from "../../components/ui/modal-import-type/modal-import-type.component";
+import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { SdcUiComponentsModule } from 'onap-ui-angular';
+import { LayoutModule } from '../../components/layout/layout.module';
+import { ModalImportTypeComponent } from '../../components/ui/modal-import-type/modal-import-type.component';
+import { UiElementsModule } from '../../components/ui/ui-elements.module';
+import { GlobalPipesModule } from '../../pipes/global-pipes.module';
+import { ResourceService } from '../../services/component-services/resource.service';
+import { TranslateModule } from '../../shared/translator/translate.module';
+import { HomeComponent } from './home.component';
 
 @NgModule({
     declarations: [

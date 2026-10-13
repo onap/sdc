@@ -19,10 +19,10 @@
  * ============LICENSE_END=========================================================
  */
 
-import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/throw';
-import {AuthGuard} from './auth.guard';
+import { Observable } from 'rxjs/Observable';
+import { AuthGuard } from './auth.guard';
 
 /**
  * The guard absorbed three behaviours that used to live in the ui-router run block's

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,25 +17,25 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-import {CompositionCiNodeBase} from "./composition-ci-node-base";
-import {ComponentInstance} from "../../../components-instances/component-instance";
-import {ImageCreatorService} from "app/pages/composition/graph/common/image-creator.service";
-import { ImagesUrl, GraphUIObjects} from "../../../../utils/constants";
+import { ImageCreatorService } from 'app/pages/composition/graph/common/image-creator.service';
+import { GraphUIObjects, ImagesUrl } from '../../../../utils/constants';
+import { ComponentInstance } from '../../../components-instances/component-instance';
+import { CompositionCiNodeBase } from './composition-ci-node-base';
 
 export class CompositionCiNodeVf extends CompositionCiNodeBase {
 
-    constructor(instance:ComponentInstance,
-                imageCreator:ImageCreatorService) {
+    constructor(instance: ComponentInstance,
+                imageCreator: ImageCreatorService) {
         super(instance, imageCreator);
         this.initVf();
     }
 
-    private initVf():void {
+    private initVf(): void {
         this.imagesPath = this.imagesPath + ImagesUrl.RESOURCE_ICONS;
         this.img = this.imagesPath + this.componentInstance.icon + '.png';
         this.imgWidth = GraphUIObjects.DEFAULT_RESOURCE_WIDTH;
         this.classes = 'vf-node';
-        if(this.archived){
+        if (this.archived) {
             this.classes = this.classes + ' archived';
             return;
         }

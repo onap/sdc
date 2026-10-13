@@ -23,7 +23,7 @@
 // that webpack's script-loader supplies in the browser but Jest does not. The global must be
 // seeded BEFORE the component module is evaluated, which an ES import (hoisted above all
 // statements) cannot guarantee — hence require().
-import {ChangeDetectionStrategy} from '@angular/core';
+import { ChangeDetectionStrategy } from '@angular/core';
 
 (window as any)._ = require('lodash');
 // tslint:disable-next-line:no-var-requires

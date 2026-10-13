@@ -20,27 +20,27 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {NgModule} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {TypeWorkspaceComponent} from "./type-workspace.component";
-import {TypeWorkspaceService} from "./type-workspace.service";
-import {WorkspaceMenuComponent} from "./workspace-menu/workspace-menu.component";
-import {CacheService} from "../../services/cache.service";
-import {UiElementsModule} from "../../components/ui/ui-elements.module";
-import {LayoutModule} from "../../components/layout/layout.module";
-import {TypeWorkspaceGeneralComponent} from './type-workspace-general/type-workspace-general.component';
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {TranslateModule} from "../../shared/translator/translate.module";
-import {DataTypeService} from "../../services/data-type.service";
+import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { AutoCompleteModule } from 'onap-ui-angular/dist/autocomplete/autocomplete.module';
+import { SvgIconModule } from 'onap-ui-angular/dist/svg-icon/svg-icon.module';
+import { LayoutModule } from '../../components/layout/layout.module';
+import { UiElementsModule } from '../../components/ui/ui-elements.module';
+import { CacheService } from '../../services/cache.service';
+import { DataTypeService } from '../../services/data-type.service';
+import { ModalService } from '../../services/modal.service';
+import { TranslateModule } from '../../shared/translator/translate.module';
+import { InterfaceOperationHandlerModule } from '../composition/interface-operations/operation-creator/interface-operation-handler.module';
+import { ConstraintsModule } from '../properties-assignment/constraints/constraints.module';
+import { TypeWorkspaceGeneralComponent } from './type-workspace-general/type-workspace-general.component';
+import { AddPropertyComponent } from './type-workspace-properties/add-property/add-property.component';
 import { TypeWorkspacePropertiesComponent } from './type-workspace-properties/type-workspace-properties.component';
-import {NgxDatatableModule} from "@swimlane/ngx-datatable";
-import {SvgIconModule} from "onap-ui-angular/dist/svg-icon/svg-icon.module";
-import {TypeWorkspaceToscaArtifactPageComponent} from "./type-workspace-tosca-artifacts/type-workspace-tosca-artifact-page.component";
-import {ModalService} from "../../services/modal.service";
-import {AddPropertyComponent} from './type-workspace-properties/add-property/add-property.component';
-import {InterfaceOperationHandlerModule} from "../composition/interface-operations/operation-creator/interface-operation-handler.module";
-import {AutoCompleteModule} from "onap-ui-angular/dist/autocomplete/autocomplete.module";
-import {ConstraintsModule} from "../properties-assignment/constraints/constraints.module";
+import { TypeWorkspaceToscaArtifactPageComponent } from './type-workspace-tosca-artifacts/type-workspace-tosca-artifact-page.component';
+import { TypeWorkspaceComponent } from './type-workspace.component';
+import { TypeWorkspaceService } from './type-workspace.service';
+import { WorkspaceMenuComponent } from './workspace-menu/workspace-menu.component';
 
 @NgModule({
    imports: [

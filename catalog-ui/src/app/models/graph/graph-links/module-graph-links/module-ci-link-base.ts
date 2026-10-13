@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,9 +20,9 @@
 /**
  * Created by obarda on 6/29/2016.
  */
-import {Relationship, RelationshipModel} from '../../relationship';
-import {CommonCiLinkBase, ICommonCiLinkBase} from '../common-ci-link-base';
-import {GraphColors} from "../../../../utils/constants";
+import { GraphColors } from '../../../../utils/constants';
+import { Relationship, RelationshipModel } from '../../relationship';
+import { CommonCiLinkBase, ICommonCiLinkBase } from '../common-ci-link-base';
 
 export interface IModuleCiLinkBase extends ICommonCiLinkBase {
 
@@ -30,7 +30,7 @@ export interface IModuleCiLinkBase extends ICommonCiLinkBase {
 
 export class ModuleCiLinkBase extends CommonCiLinkBase implements IModuleCiLinkBase {
 
-    constructor(relation?:RelationshipModel, singleRelationship?:Relationship) {
+    constructor(relation?: RelationshipModel, singleRelationship?: Relationship) {
         super(relation, singleRelationship);
         this.color = GraphColors.BASE_LINK;
     }

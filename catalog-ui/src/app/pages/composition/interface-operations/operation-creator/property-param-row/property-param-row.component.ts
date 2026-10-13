@@ -19,8 +19,8 @@
 *  ============LICENSE_END=========================================================
 */
 
-import {Component, Input} from '@angular/core';
-import {PropertyOperationParameter} from "../../../../../models/interface-operation";
+import { Component, Input } from '@angular/core';
+import { PropertyOperationParameter } from '../../../../../models/interface-operation';
 
 @Component({
   selector: 'property-param-row',

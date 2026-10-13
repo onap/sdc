@@ -1,6 +1,6 @@
-import { NgModule } from "@angular/core";
-import {CommonModule} from "@angular/common";
-import { ServicePathsListComponent } from "./service-paths-list.component";
+import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { ServicePathsListComponent } from './service-paths-list.component';
 
 @NgModule({
     declarations: [

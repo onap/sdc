@@ -17,18 +17,18 @@
 *  ============LICENSE_END=========================================================
 */
 
-import {PropertyBEModel} from "./properties-inputs/property-be-model";
+import { PropertyBEModel } from './properties-inputs/property-be-model';
 
 export class ToscaArtifactModel {
   type: string;
   file: string;
-  repository: string
-  description: string
+  repository: string;
+  description: string;
   deploy_path: string;
   artifact_version: string;
   checksum: string;
   checksum_algorithm: string;
-  propertiesData: Array<PropertyBEModel>;
+  propertiesData: PropertyBEModel[];
 
   constructor(param?: any) {
     this.type = param.type;

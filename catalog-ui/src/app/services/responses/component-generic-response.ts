@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,134 +22,134 @@
  * Created by ob0695 on 4/18/2017.
  */
 
-import {ArtifactGroupModel} from 'app/models/artifacts';
-import {AttributeModel, AttributesGroup} from 'app/models/attributes';
-import {CapabilitiesGroup} from 'app/models/capability';
-import {ComponentMetadata} from 'app/models/component-metadata';
-import {ComponentInstance} from 'app/models/components-instances/component-instance';
-import {RelationshipModel} from 'app/models/graph/relationship';
-import {Module} from 'app/models/modules/base-module';
-import {OperationModel} from 'app/models/operation';
-import {PropertiesGroup, PropertyModel} from 'app/models/properties';
-import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
-import {RequirementsGroup} from 'app/models/requirement';
-import {CommonUtils} from 'app/utils/common-utils';
-import {Serializable} from "../utils/serializable";
-import { PolicyInstance } from "app/models/graph/zones/policy-instance";
-import { GroupInstance } from "../../models/graph/zones/group-instance";
-import { InputsGroup } from "../../models/inputs";
-import { InterfaceModel } from "../../models/operation";
-import { OutputBEModel } from "app/models/attributes-outputs/output-be-model";
-import {Model} from "../../models/model";
+import { ArtifactGroupModel } from 'app/models/artifacts';
+import { AttributeModel, AttributesGroup } from 'app/models/attributes';
+import { OutputBEModel } from 'app/models/attributes-outputs/output-be-model';
+import { CapabilitiesGroup } from 'app/models/capability';
+import { ComponentMetadata } from 'app/models/component-metadata';
+import { ComponentInstance } from 'app/models/components-instances/component-instance';
+import { RelationshipModel } from 'app/models/graph/relationship';
+import { PolicyInstance } from 'app/models/graph/zones/policy-instance';
+import { Module } from 'app/models/modules/base-module';
+import { OperationModel } from 'app/models/operation';
+import { PropertiesGroup, PropertyModel } from 'app/models/properties';
+import { InputBEModel } from 'app/models/properties-inputs/input-be-model';
+import { RequirementsGroup } from 'app/models/requirement';
+import { CommonUtils } from 'app/utils/common-utils';
+import { GroupInstance } from '../../models/graph/zones/group-instance';
+import { InputsGroup } from '../../models/inputs';
+import { Model } from '../../models/model';
+import { InterfaceModel } from '../../models/operation';
+import { Serializable } from '../utils/serializable';
 
 export class ComponentGenericResponse  implements Serializable<ComponentGenericResponse> {
 
     public metadata: ComponentMetadata;
-    public deploymentArtifacts:ArtifactGroupModel;
-    public artifacts:ArtifactGroupModel;
-    public toscaArtifacts:ArtifactGroupModel;
-    public componentInstancesProperties:PropertiesGroup;
-    public componentInstancesInputs:InputsGroup;
-    public componentInstancesAttributes:AttributesGroup;
-    public componentInstancesRelations:Array<RelationshipModel>;
-    public componentInstances:Array<ComponentInstance>;
-    public componentInstancesInterfaces: Map<string, Array<InterfaceModel>>;
-    public inputs:Array<InputBEModel>;
-    public outputs:Array<OutputBEModel>;
-    public capabilities:CapabilitiesGroup;
-    public requirements:RequirementsGroup;
-    public properties:Array<PropertyModel>;
-    public attributes:Array<AttributeModel>;
-    public policies:Array<PolicyInstance>;
-    public groupInstances: Array<GroupInstance>;
-    public modules:Array<Module>;
-    public interfaces:any;
-    public interfaceOperations:Array<OperationModel>;
-    public additionalInformation:any;
-    public derivedList:Array<any>;
-    public nodeFilterforNode: Array<any>;
+    public deploymentArtifacts: ArtifactGroupModel;
+    public artifacts: ArtifactGroupModel;
+    public toscaArtifacts: ArtifactGroupModel;
+    public componentInstancesProperties: PropertiesGroup;
+    public componentInstancesInputs: InputsGroup;
+    public componentInstancesAttributes: AttributesGroup;
+    public componentInstancesRelations: RelationshipModel[];
+    public componentInstances: ComponentInstance[];
+    public componentInstancesInterfaces: Map<string, InterfaceModel[]>;
+    public inputs: InputBEModel[];
+    public outputs: OutputBEModel[];
+    public capabilities: CapabilitiesGroup;
+    public requirements: RequirementsGroup;
+    public properties: PropertyModel[];
+    public attributes: AttributeModel[];
+    public policies: PolicyInstance[];
+    public groupInstances: GroupInstance[];
+    public modules: Module[];
+    public interfaces: any;
+    public interfaceOperations: OperationModel[];
+    public additionalInformation: any;
+    public derivedList: any[];
+    public nodeFilterforNode: any[];
     public substitutionFilters: any;
     public derivedFromGenericType;
     public derivedFromGenericVersion;
-    public model:string;
+    public model: string;
 
-    deserialize (response): ComponentGenericResponse {
+    deserialize(response): ComponentGenericResponse {
 
-        if(response.componentInstancesProperties) {
+        if (response.componentInstancesProperties) {
             this.componentInstancesProperties = new PropertiesGroup(response.componentInstancesProperties);
         }
-        if(response.componentInstancesInputs) {
+        if (response.componentInstancesInputs) {
             this.componentInstancesInputs = response.componentInstancesInputs;
         }
-        if(response.componentInstancesAttributes) {
+        if (response.componentInstancesAttributes) {
             this.componentInstancesAttributes = new AttributesGroup(response.componentInstancesAttributes);
         }
-        if(response.componentInstances) {
+        if (response.componentInstances) {
             this.componentInstances = CommonUtils.initComponentInstances(response.componentInstances);
         }
-        if(response.componentInstancesRelations) {
+        if (response.componentInstancesRelations) {
             this.componentInstancesRelations = CommonUtils.initComponentInstanceRelations(response.componentInstancesRelations);
         }
-        if(response.deploymentArtifacts) {
+        if (response.deploymentArtifacts) {
             this.deploymentArtifacts = new ArtifactGroupModel(response.deploymentArtifacts);
         }
-        if(response.inputs) {
+        if (response.inputs) {
             this.inputs = CommonUtils.initInputs(response.inputs);
         }
         if (response.outputs) {
             this.outputs = CommonUtils.initOutputs(response.outputs);
         }
-        if(response.attributes) {
+        if (response.attributes) {
             this.attributes = CommonUtils.initAttributes(response.attributes);
         }
-        if(response.artifacts) {
+        if (response.artifacts) {
             this.artifacts = new ArtifactGroupModel(response.artifacts);
         }
-        if(response.properties) {
+        if (response.properties) {
             this.properties = CommonUtils.initProperties(response.properties);
         }
-        if(response.capabilities) {
+        if (response.capabilities) {
             this.capabilities = new CapabilitiesGroup(response.capabilities);
         }
-        if(response.requirements) {
+        if (response.requirements) {
             this.requirements = new RequirementsGroup(response.requirements);
         }
-        if(response.toscaArtifacts) {
+        if (response.toscaArtifacts) {
             this.toscaArtifacts = new ArtifactGroupModel(response.toscaArtifacts);
         }
-        if(response.interfaces) {
+        if (response.interfaces) {
             this.interfaces = CommonUtils.initInterfaces(response.interfaces);
             this.interfaceOperations = CommonUtils.initInterfaceOperations(response.interfaces);
         }
         if (response.componentInstancesInterfaces) {
             this.componentInstancesInterfaces = new Map();
-            for (let resourceId in response.componentInstancesInterfaces) {
+            for (const resourceId in response.componentInstancesInterfaces) {
                 this.componentInstancesInterfaces[resourceId] = CommonUtils.initInterfaces(response.componentInstancesInterfaces[resourceId]);
             }
         }
-        if(response.metadata) {
+        if (response.metadata) {
             this.metadata = new ComponentMetadata().deserialize(response.metadata);
         }
-        if(response.groups) {
+        if (response.groups) {
             this.modules = CommonUtils.initModules(response.groups);
-            this.groupInstances = CommonUtils.initGroups(response.groups)
+            this.groupInstances = CommonUtils.initGroups(response.groups);
         }
-        if(response.policies) {
+        if (response.policies) {
             this.policies = CommonUtils.initPolicies(response.policies);
         }
-        if(response.nodeFilterforNode) {
+        if (response.nodeFilterforNode) {
             this.nodeFilterforNode = response.nodeFilterforNode;
         }
-        if(response.substitutionFilters) {
+        if (response.substitutionFilters) {
             this.substitutionFilters = response.substitutionFilters;
         }
-        if(response.derivedFromGenericType) {
+        if (response.derivedFromGenericType) {
             this.derivedFromGenericType = response.derivedFromGenericType;
         }
-        if(response.derivedFromGenericVersion) {
+        if (response.derivedFromGenericVersion) {
             this.derivedFromGenericVersion = response.derivedFromGenericVersion;
         }
-        if(response.model) {
+        if (response.model) {
             this.model = response.model;
         }
         return this;

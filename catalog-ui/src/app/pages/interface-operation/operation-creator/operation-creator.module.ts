@@ -1,14 +1,14 @@
-import {NgModule} from "@angular/core";
-import {CommonModule} from "@angular/common";
+import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 
-import {FormsModule} from "@angular/forms";
-import {FormElementsModule} from "app/components/ui/form-components/form-elements.module";
-import {TranslateModule} from "app/shared/translator/translate.module";
+import { FormsModule } from '@angular/forms';
+import { FormElementsModule } from 'app/components/ui/form-components/form-elements.module';
+import { TranslateModule } from 'app/shared/translator/translate.module';
 
 import { SdcUiComponentsModule } from 'onap-ui-angular';
 import { UiElementsModule } from '../../../components/ui/ui-elements.module';
-import {OperationCreatorComponent} from "./operation-creator.component";
-import {ParamRowComponent} from './param-row/param-row.component';
+import { OperationCreatorComponent } from './operation-creator.component';
+import { ParamRowComponent } from './param-row/param-row.component';
 
 @NgModule({
     declarations: [

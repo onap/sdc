@@ -13,18 +13,17 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -- */
-  
-  
-declare const __ENV__:string;
+
+declare const __ENV__: string;
 
 export interface ISdcConfig {
-    [index:string]: any
+    [index: string]: any;
 }
 
-export function getSdcConfig() : ISdcConfig {
-    let sdcConfig:ISdcConfig = {};
+export function getSdcConfig(): ISdcConfig {
+    let sdcConfig: ISdcConfig = {};
 
-    if (__ENV__==='prod') {
+    if (__ENV__ === 'prod') {
         sdcConfig = require('../../../configurations/prod.js');
     } else {
         sdcConfig = require('../../../configurations/dev.js');

@@ -1,18 +1,18 @@
 
 import { Component, Input } from '@angular/core';
 import { Store } from '@ngxs/store';
-import {CapabilitiesGroup, Capability} from 'app/models/capability';
-import {Component as TopologyTemplate} from 'app/models/components/component';
-import {ComponentInstance} from 'app/models/components-instances/component-instance';
-import {FullComponentInstance} from 'app/models/components-instances/full-component-instance';
-import {InputsGroup} from 'app/models/inputs';
-import {InterfaceModel} from 'app/models/operation';
-import {PropertiesGroup} from 'app/models/properties';
-import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
+import { CapabilitiesGroup, Capability } from 'app/models/capability';
+import { ComponentInstance } from 'app/models/components-instances/component-instance';
+import { FullComponentInstance } from 'app/models/components-instances/full-component-instance';
+import { Component as TopologyTemplate } from 'app/models/components/component';
+import { InputsGroup } from 'app/models/inputs';
+import { InterfaceModel } from 'app/models/operation';
+import { PropertiesGroup } from 'app/models/properties';
+import { InputBEModel } from 'app/models/properties-inputs/input-be-model';
 import { ComponentMetadata } from '../../../../../models/component-metadata';
 import { ServiceInstanceObject } from '../../../../../models/service-instance-properties-and-interfaces';
-import { EventListenerService } from '../../../../../services/event-listener.service';
 import { TopologyTemplateService } from '../../../../../services/component-services/topology-template.service';
+import { EventListenerService } from '../../../../../services/event-listener.service';
 import { ComponentGenericResponse } from '../../../../../services/responses/component-generic-response';
 import { WorkspaceService } from '../../../../workspace/workspace.service';
 import { SelectedComponentType } from '../../../common/store/graph.actions';
@@ -62,12 +62,12 @@ export class ServiceConsumptionTabComponent {
         });
     }
 
-    private buildInstancesCapabilitiesMap = (componentInstances: Array<ComponentInstance>): void => {
+    private buildInstancesCapabilitiesMap = (componentInstances: ComponentInstance[]): void => {
         this.instancesCapabilitiesMap = new Map();
         let flattenCapabilities = [];
         _.forEach(componentInstances, (componentInstance) => {
             flattenCapabilities = CapabilitiesGroup.getFlattenedCapabilities(componentInstance.capabilities);
-            this.instancesCapabilitiesMap[componentInstance.uniqueId] = _.filter(flattenCapabilities, cap => cap.properties && cap.ownerId === componentInstance.uniqueId);
+            this.instancesCapabilitiesMap[componentInstance.uniqueId] = _.filter(flattenCapabilities, (cap) => cap.properties && cap.ownerId === componentInstance.uniqueId);
         });
     }
 

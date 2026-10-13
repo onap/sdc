@@ -18,9 +18,9 @@
  */
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { DynamicComponentService } from '../../../services/dynamic-component.service';
+import { ModalService } from '../../../services/modal.service';
 import { DeclareInputComponent } from './declare-input.component';
-import {ModalService} from "../../../services/modal.service";
-import {DynamicComponentService} from "../../../services/dynamic-component.service";
 
 describe('DeclareInputComponent', () => {
   let component: DeclareInputComponent;

@@ -20,17 +20,17 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-import {Store} from "@ngxs/store";
-import {Injectable} from "@angular/core";
-import {UpdateIsViewOnly} from "../../store/actions/workspace.action";
+import { Injectable } from '@angular/core';
+import { Store } from '@ngxs/store';
+import { UpdateIsViewOnly } from '../../store/actions/workspace.action';
 
 @Injectable()
 export class WorkspaceNg1BridgeService {
 
     constructor(private store: Store) {
-    };
+    }
 
-    public updateIsViewOnly = (isViewOnly: boolean):void => {
+    public updateIsViewOnly = (isViewOnly: boolean): void => {
         this.store.dispatch(new UpdateIsViewOnly(isViewOnly));
     }
 

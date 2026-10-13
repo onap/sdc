@@ -1,9 +1,9 @@
-import {Component} from "@angular/core";
-import {Plugin} from 'app/models/plugins-config';
-import {IUserProperties} from 'app/models/user';
-import {CacheService} from 'app/services/cache.service';
-import {PluginsService} from 'app/services/plugins.service';
-import {NavigationService} from "../../../services/navigation.service";
+import { Component } from '@angular/core';
+import { Plugin } from 'app/models/plugins-config';
+import { IUserProperties } from 'app/models/user';
+import { CacheService } from 'app/services/cache.service';
+import { PluginsService } from 'app/services/plugins.service';
+import { NavigationService } from '../../../services/navigation.service';
 
 @Component({
     selector: 'plugin-tab-view',
@@ -33,7 +33,7 @@ export class PluginTabViewPageComponent {
         this.queryParams = {
             userId: this.user.userId,
             userRole: this.user.role,
-            displayType: "tab",
+            displayType: 'tab',
             parentUrl: window.location.origin,
             eventsClientId: this.plugin.pluginId
         };

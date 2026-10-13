@@ -19,11 +19,11 @@
  * ============LICENSE_END=========================================================
  */
 
-import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {Observable} from 'rxjs/Observable';
-import {IMainCategory, ISubCategory} from 'app/models/category';
-import {CategoryManagementService} from '../services/category-management.service';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { IMainCategory, ISubCategory } from 'app/models/category';
+import { Observable } from 'rxjs/Observable';
+import { CategoryManagementService } from '../services/category-management.service';
 
 @Component({
     selector: 'add-category-modal',

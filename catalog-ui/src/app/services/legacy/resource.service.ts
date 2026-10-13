@@ -23,22 +23,22 @@
  * Created by obarda on 2/4/2016.
  */
 'use strict';
-import * as _ from "lodash";
-import {Inject, Injectable} from "@angular/core";
-import {HttpClient} from "@angular/common/http";
-import {ILegacyComponentService, LegacyComponentService} from "./component.service";
-import {IAppConfigurtaion} from '../../models/app-config';
-import {Component} from '../../models/components/component';
-import {Resource} from '../../models/components/resource';
-import {PropertyModel} from '../../models/properties';
+import { HttpClient } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
+import * as _ from 'lodash';
+import { SdcConfigToken } from '../../config/sdc-config.config';
+import { IAppConfigurtaion } from '../../models/app-config';
+import { Component } from '../../models/components/component';
+import { Resource } from '../../models/components/resource';
+import { PropertyModel } from '../../models/properties';
+import { DataTypesService } from '../data-types.service';
 // Direct imports to avoid loading the services-ng2 barrel which causes a circular dep
 // at module-load time once @Injectable emits type metadata (emitDecoratorMetadata).
-import {SharingService} from "../sharing.service";
-import {DataTypesService} from "../data-types.service";
-import {SdcConfigToken} from "../../config/sdc-config.config";
+import { SharingService } from '../sharing.service';
+import { ILegacyComponentService, LegacyComponentService } from './component.service';
 
 export interface ILegacyResourceService extends ILegacyComponentService {
-    updateResourceGroupProperties(uniqueId:string, groupId:string, properties:Array<PropertyModel>):Promise<Array<PropertyModel>>
+    updateResourceGroupProperties(uniqueId: string, groupId: string, properties: PropertyModel[]): Promise<PropertyModel[]>;
 }
 
 /**
@@ -62,11 +62,11 @@ export class LegacyResourceService extends LegacyComponentService implements ILe
     }
 
     createComponentObject = (component: Component): Component => {
-        return new Resource(this, <Resource>component);
-    };
+        return new Resource(this, component as Resource);
+    }
 
-    updateResourceGroupProperties = (uniqueId: string, groupId: string, properties: Array<PropertyModel>): Promise<Array<PropertyModel>> => {
+    updateResourceGroupProperties = (uniqueId: string, groupId: string, properties: PropertyModel[]): Promise<PropertyModel[]> => {
         return this.http.put(this.url(uniqueId, 'groups', groupId, 'properties'), JSON.stringify(properties)).toPromise()
             .then((updated: any) => _.map(updated, (p: PropertyModel) => new PropertyModel(p))) as any;
-    };
+    }
 }

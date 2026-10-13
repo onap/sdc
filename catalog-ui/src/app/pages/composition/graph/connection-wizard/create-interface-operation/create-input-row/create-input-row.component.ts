@@ -17,10 +17,10 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {PropertyAssignment} from "../../../../../../models/properties-inputs/property-assignment";
-import {FormControl, FormGroup, Validators} from "@angular/forms";
-import {filter} from "rxjs/operators";
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { filter } from 'rxjs/operators';
+import { PropertyAssignment } from '../../../../../../models/properties-inputs/property-assignment';
 
 @Component({
   selector: 'app-create-input-row',

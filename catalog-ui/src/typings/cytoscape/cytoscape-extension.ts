@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,7 +21,7 @@
 /**
  * Created by obarda on 12/21/2016.
  */
-declare module Cy {
+declare namespace Cy {
 
     interface Instance {
 
@@ -29,25 +29,22 @@ declare module Cy {
         collapseAll(options?: ExpandCollapseOptions);
     }
 
-
-
     interface CollectionNodes {
 
         qtip(tooltipOptions: TooltipOption);
     }
 
-
     interface TooltipOption {
         content?: string | Function;
         position?: any;
         style?: any;
-        show?:any;
-        hide?:any;
+        show?: any;
+        hide?: any;
         includeLabels?: boolean;
     }
 
     interface ExpandCollapseOptions {
-        layoutBy:any;
+        layoutBy: any;
         fisheye: boolean;
         undoable: boolean;
         expandCueImage: string;

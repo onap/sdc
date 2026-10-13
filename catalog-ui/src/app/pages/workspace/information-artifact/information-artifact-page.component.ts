@@ -1,15 +1,15 @@
-import {Component, OnInit, ViewChild} from "@angular/core";
-import {WorkspaceService} from "../workspace.service";
-import * as _ from "lodash";
-import {ArtifactGroupType, ArtifactType} from "../../../utils/constants";
-import {ArtifactsService} from "../../../components/forms/artifacts-form/artifacts.service";
-import {GetArtifactsByTypeAction} from "../../../store/actions/artifacts.action";
-import {Select, Store} from "@ngxs/store";
-import {Observable} from "rxjs";
-import {ArtifactsState} from "../../../store/states/artifacts.state";
-import {map} from "rxjs/operators";
-import {WorkspaceState} from "../../../store/states/workspace.state";
-import {ArtifactModel} from "../../../models/artifacts";
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { Select, Store } from '@ngxs/store';
+import * as _ from 'lodash';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { ArtifactsService } from '../../../components/forms/artifacts-form/artifacts.service';
+import { ArtifactModel } from '../../../models/artifacts';
+import { GetArtifactsByTypeAction } from '../../../store/actions/artifacts.action';
+import { ArtifactsState } from '../../../store/states/artifacts.state';
+import { WorkspaceState } from '../../../store/states/workspace.state';
+import { ArtifactGroupType, ArtifactType } from '../../../utils/constants';
+import { WorkspaceService } from '../workspace.service';
 
 @Component({
     selector: 'information-artifact-page',
@@ -42,12 +42,12 @@ export class InformationArtifactPageComponent implements OnInit {
             artifactType: ArtifactGroupType.INFORMATION
         }));
 
-        let artifacts = this.store.select(ArtifactsState.getArtifactsByType).pipe(map(filterFn => filterFn(ArtifactType.INFORMATION)));
-        this.informationArtifacts$ = artifacts.pipe(map(artifacts => _.filter(artifacts, (artifact) => {
+        const artifacts = this.store.select(ArtifactsState.getArtifactsByType).pipe(map((filterFn) => filterFn(ArtifactType.INFORMATION)));
+        this.informationArtifacts$ = artifacts.pipe(map((artifacts) => _.filter(artifacts, (artifact) => {
             return artifact.esId;
         })));
 
-        this.informationArtifactsAsButtons$ = artifacts.pipe(map(artifacts => _.filter(artifacts, (artifact) => {
+        this.informationArtifactsAsButtons$ = artifacts.pipe(map((artifacts) => _.filter(artifacts, (artifact) => {
             return !artifact.esId;
         })));
     }
@@ -60,10 +60,10 @@ export class InformationArtifactPageComponent implements OnInit {
 
     public addOrUpdateArtifact = (artifact?: ArtifactModel, isViewOnly?: boolean) => {
         this.artifactsService.openArtifactModal(this.componentId, this.componentType, artifact, ArtifactGroupType.INFORMATION, isViewOnly, null, this.resourceType);
-    };
+    }
 
     public deleteArtifact = (artifactToDelete) => {
-      this.artifactsService.deleteArtifact(this.componentType, this.componentId, artifactToDelete)
-    };
+      this.artifactsService.deleteArtifact(this.componentType, this.componentId, artifactToDelete);
+    }
 
 }

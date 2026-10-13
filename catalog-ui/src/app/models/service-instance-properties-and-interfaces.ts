@@ -13,16 +13,16 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {InputModel} from 'app/models/inputs';
-import {InterfaceModel} from 'app/models/operation';
-import {PropertyModel} from 'app/models/properties';
+import { InputModel } from 'app/models/inputs';
+import { InterfaceModel } from 'app/models/operation';
+import { PropertyModel } from 'app/models/properties';
 
 export class ServiceInstanceObject {
     id: string;
     name: string;
-    properties: Array<PropertyModel> = [];
-    inputs: Array<InputModel> = [];
-    interfaces: Array<InterfaceModel> = [];
+    properties: PropertyModel[] = [];
+    inputs: InputModel[] = [];
+    interfaces: InterfaceModel[] = [];
 
     constructor(input?: any) {
         if (input) {
@@ -30,7 +30,7 @@ export class ServiceInstanceObject {
             this.name = input.name;
             this.properties = input.properties;
             this.inputs = input.inputs;
-            this.interfaces = _.map(input.interfaces, interf => new InterfaceModel(interf));
+            this.interfaces = _.map(input.interfaces, (interf) => new InterfaceModel(interf));
         }
     }
 }

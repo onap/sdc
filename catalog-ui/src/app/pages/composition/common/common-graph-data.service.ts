@@ -1,20 +1,20 @@
-import {Injectable} from "@angular/core";
+import { Injectable } from '@angular/core';
 import 'rxjs/add/observable/forkJoin';
-import {ComponentInstance} from "../../../models/components-instances/component-instance";
-import {SelectedComponentType} from "./store/graph.actions";
-import {RelationshipModel} from "../../../models/graph/relationship";
+import { ComponentInstance } from '../../../models/components-instances/component-instance';
+import { RelationshipModel } from '../../../models/graph/relationship';
+import { SelectedComponentType } from './store/graph.actions';
 
 @Injectable()
 export class CommonGraphDataService {
 
-    public componentInstances: Array<ComponentInstance>;
+    public componentInstances: ComponentInstance[];
     public componentInstancesRelations: RelationshipModel[];
     public selectedComponentType: SelectedComponentType;
 
     constructor() {
     }
 
-    //------------------------ RELATIONS ---------------------------------//
+    // ------------------------ RELATIONS ---------------------------------//
     public setRelations = (componentInstancesRelations: RelationshipModel[]) => {
         this.componentInstancesRelations = this.componentInstancesRelations;
     }
@@ -33,8 +33,8 @@ export class CommonGraphDataService {
         });
     }
 
-    //---------------------------- COMPONENT INSTANCES ------------------------------------//
-    public getComponentInstances = (): Array<ComponentInstance> => {
+    // ---------------------------- COMPONENT INSTANCES ------------------------------------//
+    public getComponentInstances = (): ComponentInstance[] => {
         return this.componentInstances;
     }
 
@@ -47,7 +47,7 @@ export class CommonGraphDataService {
     }
 
     public updateInstance = (instance: ComponentInstance) => {
-        this.componentInstances = this.componentInstances.map(componentInstance => instance.uniqueId === componentInstance.uniqueId? instance : componentInstance);
+        this.componentInstances = this.componentInstances.map((componentInstance) => instance.uniqueId === componentInstance.uniqueId ? instance : componentInstance);
     }
 
     public deleteComponentInstance(instanceToDelete: string) {
@@ -56,7 +56,7 @@ export class CommonGraphDataService {
         });
     }
 
-    //----------------------------SELECTED COMPONENT -----------------------//
+    // ----------------------------SELECTED COMPONENT -----------------------//
 
     public setSelectedComponentType = (selectedType: SelectedComponentType) => {
         this.selectedComponentType = selectedType;

@@ -3,32 +3,32 @@
  */
 import { AfterViewInit, Component, ElementRef, HostBinding, Input } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
-import {ButtonModel} from 'app/models/button';
-import {Capability} from 'app/models/capability';
-import {Component as TopologyTemplate} from 'app/models/components/component';
-import {LeftPaletteComponent} from 'app/models/components/display-component';
-import {ComponentInstance} from 'app/models/components-instances/component-instance';
-import {ConnectRelationModel} from 'app/models/graph/connect-relation-model';
-import {LinkMenu} from 'app/models/graph/link-menu';
-import {Match} from 'app/models/graph/match-relation';
-import {CompositionCiNodeBase} from 'app/models/graph/nodes/composition-graph-nodes/composition-ci-node-base';
-import {Point} from 'app/models/graph/point';
-import {Relationship} from 'app/models/graph/relationship';
-import {GroupInstance} from 'app/models/graph/zones/group-instance';
-import {PolicyInstance} from 'app/models/graph/zones/policy-instance';
-import {Zone} from 'app/models/graph/zones/zone';
-import {ZoneInstance, ZoneInstanceAssignmentType, ZoneInstanceMode, ZoneInstanceType} from 'app/models/graph/zones/zone-instance';
-import {ModalModel} from 'app/models/modal';
-import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
-import {Requirement} from 'app/models/requirement';
-import {StepModel} from 'app/models/wizard-step';
+import { ButtonModel } from 'app/models/button';
+import { Capability } from 'app/models/capability';
+import { ComponentInstance } from 'app/models/components-instances/component-instance';
+import { Component as TopologyTemplate } from 'app/models/components/component';
+import { LeftPaletteComponent } from 'app/models/components/display-component';
 import { ForwardingPath } from 'app/models/forwarding-path';
+import { ConnectRelationModel } from 'app/models/graph/connect-relation-model';
+import { CompositionCiServicePathLink } from 'app/models/graph/graph-links/composition-graph-links/composition-ci-service-path-link';
+import { LinkMenu } from 'app/models/graph/link-menu';
+import { Match } from 'app/models/graph/match-relation';
+import { CompositionCiNodeBase } from 'app/models/graph/nodes/composition-graph-nodes/composition-ci-node-base';
 // NodesFactory is deep-imported (not via the 'app/models' barrel) to avoid a
 // barrel↔nodes-factory circular dependency that leaves this @Injectable's
 // constructor param metadata undefined under JIT ("Can't resolve all parameters").
 import { NodesFactory } from 'app/models/graph/nodes/nodes-factory';
-import { CompositionCiServicePathLink } from 'app/models/graph/graph-links/composition-graph-links/composition-ci-service-path-link';
+import { Point } from 'app/models/graph/point';
+import { Relationship } from 'app/models/graph/relationship';
+import { GroupInstance } from 'app/models/graph/zones/group-instance';
+import { PolicyInstance } from 'app/models/graph/zones/policy-instance';
+import { Zone } from 'app/models/graph/zones/zone';
+import { ZoneInstance, ZoneInstanceAssignmentType, ZoneInstanceMode, ZoneInstanceType } from 'app/models/graph/zones/zone-instance';
+import { ModalModel } from 'app/models/modal';
+import { PropertyBEModel } from 'app/models/properties-inputs/property-be-model';
+import { Requirement } from 'app/models/requirement';
 import { UIZoneInstanceObject } from 'app/models/ui-models/ui-zone-instance-object';
+import { StepModel } from 'app/models/wizard-step';
 import { CompositionService } from 'app/pages/composition/composition.service';
 import { CommonGraphUtils } from 'app/pages/composition/graph/common/common-graph-utils';
 import { ComponentInstanceNodesStyle } from 'app/pages/composition/graph/common/style/component-instances-nodes-style';
@@ -37,18 +37,19 @@ import { ConnectionWizardHeaderComponent } from 'app/pages/composition/graph/con
 import { ConnectionWizardService } from 'app/pages/composition/graph/connection-wizard/connection-wizard.service';
 import { FromNodeStepComponent } from 'app/pages/composition/graph/connection-wizard/from-node-step/from-node-step.component';
 import { PropertiesStepComponent } from 'app/pages/composition/graph/connection-wizard/properties-step/properties-step.component';
+import { RelationshipOperationsStepComponent } from 'app/pages/composition/graph/connection-wizard/relationship-operations-step/relationship-operations-step.component';
 import { ToNodeStepComponent } from 'app/pages/composition/graph/connection-wizard/to-node-step/to-node-step.component';
 import { WorkspaceService } from 'app/pages/workspace/workspace.service';
 import { ComponentInstanceService } from 'app/services/component-instance-services/component-instance.service';
 import { TopologyTemplateService } from 'app/services/component-services/topology-template.service';
+import { EventListenerService } from 'app/services/event-listener.service';
 import { ModalService } from 'app/services/modal.service';
 import { ComponentGenericResponse } from 'app/services/responses/component-generic-response';
 import { ServiceGenericResponse } from 'app/services/responses/service-generic-response';
 import { WorkspaceState } from 'app/store/states/workspace.state';
-import {EventListenerService} from 'app/services/event-listener.service';
-import {ComponentInstanceFactory} from 'app/utils/component-instance-factory';
-import {EVENTS, SdcElementType} from 'app/utils/constants';
-import { ComponentType, GRAPH_EVENTS, GraphColors, DEPENDENCY_EVENTS , SUBSTITUTION_FILTER_EVENTS} from 'app/utils/constants';
+import { ComponentInstanceFactory } from 'app/utils/component-instance-factory';
+import { EVENTS, SdcElementType } from 'app/utils/constants';
+import { ComponentType, DEPENDENCY_EVENTS, GRAPH_EVENTS, GraphColors , SUBSTITUTION_FILTER_EVENTS } from 'app/utils/constants';
 import * as _ from 'lodash';
 import { DndDropEvent } from 'ngx-drag-drop/ngx-drag-drop';
 import { SdcUiServices } from 'onap-ui-angular';
@@ -66,7 +67,6 @@ import {
 import { CompositionGraphLinkUtils } from './utils/composition-graph-links-utils';
 import { CompositionGraphPaletteUtils } from './utils/composition-graph-palette-utils';
 import { ServicePathGraphUtils } from './utils/composition-graph-service-path-utils';
-import { RelationshipOperationsStepComponent } from "app/pages/composition/graph/connection-wizard/relationship-operations-step/relationship-operations-step.component";
 
 declare const window: any;
 
@@ -83,16 +83,16 @@ export class CompositionGraphComponent implements AfterViewInit {
     @Input() topologyTemplate: TopologyTemplate;
     @HostBinding('attr.data-tests-id') dataTestId: string;
     @Input() testId: string;
+    public zoneTagMode: string;
+    public zones: Zone[];
+    public componentInstanceNames: string[];
 
     // tslint:disable:variable-name
     private _cy: Cy.Instance;
-    public zoneTagMode: string;
     private activeZoneInstance: ZoneInstance;
-    public zones: Zone[];
     private currentlyClickedNodePosition: Cy.Position;
     private dragElement: JQuery;
     private dragComponent: ComponentInstance;
-    public componentInstanceNames: string[];
     private topologyTemplateId: string;
     private topologyTemplateType: string;
 
@@ -183,7 +183,7 @@ export class CompositionGraphComponent implements AfterViewInit {
     }
 
     public onDrop = (dndEvent: DndDropEvent) => {
-        if (dndEvent.data.categoryType=="POLICY" || dndEvent.data.categoryType=="GROUP"){
+        if (dndEvent.data.categoryType == 'POLICY' || dndEvent.data.categoryType == 'GROUP') {
             this.compositionGraphPaletteUtils.addPolicyOrGroupFromPalette(dndEvent);
             return;
         }
@@ -390,7 +390,7 @@ export class CompositionGraphComponent implements AfterViewInit {
     }
 
     private loadCompositionData = () => {
-        console.log("Loading composition data....")
+        console.log('Loading composition data....');
         this.loaderService.activate();
         this.topologyTemplateService.getComponentCompositionData(this.topologyTemplateId, this.topologyTemplateType).subscribe((response: ComponentGenericResponse) => {
             if (this.topologyTemplateType === ComponentType.SERVICE) {
@@ -640,15 +640,15 @@ export class CompositionGraphComponent implements AfterViewInit {
             selectedNode.data('displayName', selectedNode.data().getDisplayName()); // abbreviated
         });
 
-        this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_COMPONENT_INSTANCE_REQUIREMENT_EXTERNAL_CHANGED, (uniqueId:string, requirement:Requirement) => {
+        this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_COMPONENT_INSTANCE_REQUIREMENT_EXTERNAL_CHANGED, (uniqueId: string, requirement: Requirement) => {
             this._cy.getElementById(uniqueId).data().componentInstance.requirements[requirement.capability]
-                .find(r => r.uniqueId === requirement.uniqueId).external = requirement.external;
+                .find((r) => r.uniqueId === requirement.uniqueId).external = requirement.external;
         });
 
         this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_COMPONENT_INSTANCE_CAPABILITY_EXTERNAL_CHANGED,
             (uniqueId: string, capability: Capability) => {
                 const graphCapability = this._cy.getElementById(uniqueId).data()
-                    .componentInstance.capabilities[capability.type].find(cap => cap.uniqueId === capability.uniqueId);
+                    .componentInstance.capabilities[capability.type].find((cap) => cap.uniqueId === capability.uniqueId);
                 graphCapability.external = capability.external;
             }
         );

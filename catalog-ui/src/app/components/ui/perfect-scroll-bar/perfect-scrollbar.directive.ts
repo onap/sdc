@@ -1,4 +1,4 @@
-import {Directive, Input, ElementRef} from '@angular/core';
+import { Directive, ElementRef, Input } from '@angular/core';
 import * as PerfectScrollbar from 'perfect-scrollbar';
 
 interface IPerfectScrollbarOptions {
@@ -23,7 +23,7 @@ export class PerfectScrollbarDirective {
     private psOptions: IPerfectScrollbarOptions;
     private updatingPS: boolean;
 
-    constructor(public elemRef:ElementRef) {
+    constructor(public elemRef: ElementRef) {
         console.log('PSbar: Constructor');
         this.psOptions = Object.assign({}, this.perfectScrollbarOptions);
         this.updatingPS = false;
