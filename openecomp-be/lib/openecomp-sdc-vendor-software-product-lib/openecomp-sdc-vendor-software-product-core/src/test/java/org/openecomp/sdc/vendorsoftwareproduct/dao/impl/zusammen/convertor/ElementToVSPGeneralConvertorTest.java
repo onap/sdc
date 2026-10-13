@@ -99,6 +99,21 @@ class ElementToVSPGeneralConvertorTest {
         assertVspDetails(actualVspDetails, defaultInfo);
     }
 
+    @Test
+    void convertItemTakesTheNameFromTheItemInfo() {
+        final Info itemInfo = new Info();
+        itemInfo.setName("aVsp");
+        itemInfo.addProperty(VENDOR_ID.getValue(), "aVlmId");
+        final Item item = new Item();
+        item.setId(new Id("anId"));
+        item.setInfo(itemInfo);
+
+        final VspDetails vspDetails = elementToVSPGeneralConvertor.convert(item);
+
+        assertEquals("aVsp", vspDetails.getName());
+        assertEquals("aVlmId", vspDetails.getVendorId());
+    }
+
     private void assertVspDetails(final VspDetails vspDetails, final Info info) {
         assertEquals(vspDetails.getName(), info.getProperty(NAME.getValue()));
         assertEquals(vspDetails.getDescription(), info.getProperty(DESCRIPTION.getValue()));
