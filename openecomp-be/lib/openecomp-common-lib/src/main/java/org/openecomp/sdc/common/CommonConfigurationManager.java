@@ -113,7 +113,10 @@ public class CommonConfigurationManager {
                 "'. Using defaults");
             return defaultValue;
         }
-        Object value = section.get(name);
+        return valueOrDefault(name, section.get(name), defaultValue);
+    }
+
+    private <T> T valueOrDefault(String name, Object value, T defaultValue) {
         try {
             return value == null ? defaultValue : (T) value;
         } catch (ClassCastException e) {
@@ -135,7 +138,8 @@ public class CommonConfigurationManager {
     }
 
     /**
-     * This method can be used to access a specific configuration parameter in the configuration in the yamlSection predefined in the constructor.
+     * This method can be used to access a specific configuration parameter in the configuration in the yamlSection predefined in the constructor,
+     * or at the top level of the file when no yamlSection was given.
      *
      * @param name         The name of the config
      * @param defaultValue A default value
@@ -143,6 +147,9 @@ public class CommonConfigurationManager {
      * @return The value found or the default value if not found
      */
     public <T> T getConfigValue(String name, T defaultValue) {
+        if (yamlSection == null) {
+            return configuration == null ? defaultValue : valueOrDefault(name, ((Map<String, ?>) configuration).get(name), defaultValue);
+        }
         return this.getConfigValue(yamlSection, name, defaultValue);
     }
 }
