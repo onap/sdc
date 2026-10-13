@@ -47,6 +47,9 @@ public class ElementToVSPGeneralConvertor extends ElementConvertor<VspDetails> {
         }
         var vspDetails = mapInfoToVspDetails(item.getInfo());
         vspDetails.setId(item.getId().getValue());
+        if (vspDetails.getName() == null) {
+            vspDetails.setName(item.getInfo().getName());
+        }
         return vspDetails;
     }
 
