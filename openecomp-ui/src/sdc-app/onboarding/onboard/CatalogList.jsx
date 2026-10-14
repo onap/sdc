@@ -1,5 +1,6 @@
 /*
  * Copyright © 2016-2018 European Support Limited
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +15,7 @@
  * limitations under the License.
  */
 import React from 'react';
+import classnames from 'classnames';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import { SVGIcon } from 'onap-ui-react';
 
@@ -25,7 +27,13 @@ const SoftwareProductListHeader = ({ selectedVendor, onBack }) => (
     </div>
 );
 
-const CatalogList = ({ children, onAddVLM, onAddVSP, vendorPageOptions }) => (
+const CatalogList = ({
+    children,
+    onAddVLM,
+    onAddVSP,
+    canAddVSP = true,
+    vendorPageOptions
+}) => (
     <div className="catalog-list">
         {vendorPageOptions && (
             <SoftwareProductListHeader
@@ -50,6 +58,11 @@ const CatalogList = ({ children, onAddVLM, onAddVSP, vendorPageOptions }) => (
                             dataTestId={'catalog-add-new-vsp'}
                             className="vsp-type"
                             title={i18n('CREATE NEW VSP')}
+                            disabledReason={
+                                canAddVSP
+                                    ? undefined
+                                    : i18n('Create and submit a VLM first')
+                            }
                         />
                     )}
                 </div>
@@ -59,19 +72,75 @@ const CatalogList = ({ children, onAddVLM, onAddVSP, vendorPageOptions }) => (
     </div>
 );
 
-const CreateItemTile = ({ onClick, dataTestId, title, className = '' }) => {
-    //TODO check for buttons
-    return (
-        <div
-            className={`create-catalog-item tile ${className}`}
-            onClick={onClick}
-            data-test-id={dataTestId}>
-            <div className="create-item-plus-icon">
-                <SVGIcon name="plus" />
+class CreateItemTile extends React.Component {
+    state = { showHint: false };
+
+    showHint = () => this.setState({ showHint: true });
+
+    hideHint = () => this.setState({ showHint: false });
+
+    activate = () => {
+        const { disabledReason, onClick } = this.props;
+        if (disabledReason) {
+            this.showHint();
+        } else {
+            onClick();
+        }
+    };
+
+    onKeyDown = e => {
+        if (e.key === 'Escape') {
+            this.hideHint();
+        } else if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            this.activate();
+        }
+    };
+
+    render() {
+        const {
+            dataTestId,
+            title,
+            className = '',
+            disabledReason
+        } = this.props;
+        const disabled = !!disabledReason;
+        const hintId = `${dataTestId}-hint`;
+        return (
+            <div
+                className={classnames('create-catalog-item tile', className, {
+                    disabled
+                })}
+                role="button"
+                tabIndex={0}
+                aria-disabled={disabled || undefined}
+                aria-describedby={disabled ? hintId : undefined}
+                onClick={this.activate}
+                onKeyDown={this.onKeyDown}
+                onMouseEnter={disabled ? this.showHint : undefined}
+                onMouseLeave={disabled ? this.hideHint : undefined}
+                onFocus={disabled ? this.showHint : undefined}
+                onBlur={disabled ? this.hideHint : undefined}
+                data-test-id={dataTestId}>
+                <div className="create-item-plus-icon">
+                    <SVGIcon name="plus" />
+                </div>
+                <div className="create-item-text">{title}</div>
+                {disabled && (
+                    // aria-hidden keeps the hint out of the button's name;
+                    // aria-describedby still reads it as the description.
+                    <div
+                        id={hintId}
+                        aria-hidden="true"
+                        className={classnames('create-item-hint', {
+                            visible: this.state.showHint
+                        })}>
+                        {disabledReason}
+                    </div>
+                )}
             </div>
-            <div className="create-item-text">{title}</div>
-        </div>
-    );
-};
+        );
+    }
+}
 
 export default CatalogList;

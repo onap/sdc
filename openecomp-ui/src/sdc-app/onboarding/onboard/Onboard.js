@@ -101,6 +101,7 @@ export const mapStateToProps = ({
 
     return {
         isArchived: filter.itemStatus === catalogItemStatuses.ARCHIVED,
+        canAddVSP: finalizedLicenseModelList.length > 0,
         finalizedLicenseModelList,
         finalizedSoftwareProductList,
         licenseModelList,

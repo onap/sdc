@@ -29,6 +29,7 @@ const WorkspaceView = props => {
         onMigrate,
         filteredItems: { vspList, vlmList },
         isArchived,
+        canAddVSP,
         activeTabName
     } = props;
     const handleSelectVSP = (item, users) =>
@@ -46,6 +47,7 @@ const WorkspaceView = props => {
                 users={users}
                 onAddVLM={!isArchived ? onAddLicenseModelClick : undefined}
                 onAddVSP={!isArchived ? onAddSoftwareProductClick : undefined}
+                canAddVSP={canAddVSP}
                 onSelectVLM={handleSelectVLM}
                 onSelectVSP={handleSelectVSP}
                 onMigrate={onMigrate}

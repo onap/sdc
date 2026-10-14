@@ -32,6 +32,7 @@ const VendorList = ({
     onMigrate,
     users,
     isArchived,
+    canAddVSP,
     activeTabName
 }) => {
     const showAddButtons = !isArchived;
@@ -42,7 +43,8 @@ const VendorList = ({
     return (
         <CatalogList
             onAddVLM={showAddButtons ? onAddVLM : false}
-            onAddVSP={showAddButtons ? onAddVSP : false}>
+            onAddVSP={showAddButtons ? onAddVSP : false}
+            canAddVSP={canAddVSP}>
             {filterCatalogItemsByType({
                 items: licenseModelList,
                 filter: filter[activeTabName]

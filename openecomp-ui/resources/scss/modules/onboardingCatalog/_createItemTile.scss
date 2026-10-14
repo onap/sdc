@@ -18,11 +18,12 @@
         flex-direction: row;
         align-items: center;
         justify-content: center;
-        &.disabled {
-            color: $gray;
-            .create-item-plus-icon {
-                fill: $gray;
-            }
+        &:focus {
+            outline: 2px solid $blue;
+            outline-offset: 2px;
+        }
+        &:focus:not(:focus-visible) {
+            outline: none;
         }
         &:hover {
             box-shadow: 0.3px 5px 12.8px 1.3px rgba(24, 24, 25, 0.15);
@@ -72,6 +73,47 @@
         .create-item-text {
             width: 140px;
             @extend .heading-5-semibold;
+        }
+        &.disabled {
+            position: relative;
+            cursor: not-allowed;
+            &:hover {
+                box-shadow: none;
+                border-color: $tlv-light-gray;
+            }
+            .create-item-text {
+                color: $gray;
+            }
+            .create-item-plus-icon {
+                fill: $gray;
+            }
+        }
+        .create-item-hint {
+            display: none;
+            position: absolute;
+            left: calc(100% + 10px);
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 2;
+            padding: 4px 8px;
+            white-space: nowrap;
+            background-color: $dark-gray;
+            color: $white;
+            @extend .body-3;
+            cursor: default;
+            &.visible {
+                display: block;
+            }
+            &:before {
+                content: '';
+                position: absolute;
+                left: -6px;
+                top: 50%;
+                margin-top: -6px;
+                border: 6px solid transparent;
+                border-left: 0;
+                border-right-color: $dark-gray;
+            }
         }
     }
 }

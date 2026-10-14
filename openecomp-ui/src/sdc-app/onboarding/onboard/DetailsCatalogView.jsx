@@ -53,6 +53,7 @@ class DetailsCatalogView extends React.Component {
         onSelectVSP: PropTypes.func.isRequired,
         onAddVLM: PropTypes.func,
         onAddVSP: PropTypes.func,
+        canAddVSP: PropTypes.bool,
         filter: PropTypes.object.isRequired,
         activeTabName: PropTypes.string
     };
@@ -62,6 +63,7 @@ class DetailsCatalogView extends React.Component {
             isEqual(nextProps.VLMList, this.props.VLMList) &&
             isEqual(nextProps.VSPList, this.props.VSPList) &&
             isEqual(nextProps.users, this.props.users) &&
+            nextProps.canAddVSP === this.props.canAddVSP &&
             isEqual(nextProps.filter, this.props.filter);
         return !shouldUpdate;
     }
@@ -72,6 +74,7 @@ class DetailsCatalogView extends React.Component {
             users,
             onAddVSP,
             onAddVLM,
+            canAddVSP,
             onSelectVLM,
             onSelectVSP,
             filter,
@@ -79,7 +82,10 @@ class DetailsCatalogView extends React.Component {
             activeTabName
         } = this.props;
         return (
-            <CatalogList onAddVLM={onAddVLM} onAddVSP={onAddVSP}>
+            <CatalogList
+                onAddVLM={onAddVLM}
+                onAddVSP={onAddVSP}
+                canAddVSP={canAddVSP}>
                 {renderCatalogItems({
                     items: VLMList,
                     type: catalogItemTypes.LICENSE_MODEL,

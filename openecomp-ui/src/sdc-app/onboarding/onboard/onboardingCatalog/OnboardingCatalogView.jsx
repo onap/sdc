@@ -46,6 +46,7 @@ class OnboardingCatalogView extends React.Component {
             onMigrate,
             filteredItems,
             isArchived,
+            canAddVSP,
             activeTabName
         } = this.props;
 
@@ -61,6 +62,7 @@ class OnboardingCatalogView extends React.Component {
                         users={users}
                         onAddVLM={!isArchived && onAddLicenseModelClick}
                         onAddVSP={!isArchived && onAddSoftwareProductClick}
+                        canAddVSP={canAddVSP}
                         onSelectVLM={(item, users) =>
                             onSelectLicenseModel(
                                 item,
@@ -89,6 +91,7 @@ class OnboardingCatalogView extends React.Component {
                         licenseModelList={vlmList}
                         users={users}
                         onAddVSP={onAddSoftwareProductClick}
+                        canAddVSP={canAddVSP}
                         onAddVLM={onAddLicenseModelClick}
                         onSelectVSP={(item, users) =>
                             onSelectSoftwareProduct(
