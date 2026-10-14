@@ -29,13 +29,13 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import org.jsoup.nodes.Entities;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.exception.NotFoundException;
 import org.openecomp.sdc.fe.config.ConfigurationManager;
 import org.openecomp.sdc.fe.config.FeEcompErrorManager;
 import org.openecomp.sdc.fe.config.WorkspaceConfiguration;
 import org.openecomp.sdc.fe.impl.PluginStatusBL;
-import org.owasp.esapi.ESAPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,7 +98,7 @@ public class ConfigServlet extends LoggingServlet {
     public Response getPluginOnlineState(@PathParam("pluginId") String pluginId, @Context final HttpServletRequest request) {
         try {
             logFeRequest(request);
-            pluginId = ESAPI.encoder().encodeForHTML(pluginId);
+            pluginId = Entities.escape(pluginId);
             ServletContext context = request.getSession().getServletContext();
             PluginStatusBL pluginStatusBL = (PluginStatusBL) context.getAttribute(Constants.PLUGIN_BL_COMPONENT);
             String result = pluginStatusBL.getPluginAvailability(pluginId);
