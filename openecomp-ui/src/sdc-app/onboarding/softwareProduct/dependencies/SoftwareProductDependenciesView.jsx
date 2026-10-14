@@ -1,5 +1,6 @@
 /*!
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +29,7 @@ import {
 const TableActionRow = ({
     onAction,
     actionIcon,
+    actionAriaLabel,
     showAction,
     dependency,
     sourceOptions,
@@ -42,7 +44,8 @@ const TableActionRow = ({
             hasError={dependency.hasCycle}
             hasErrorIndication
             showAction={showAction}
-            actionIcon={actionIcon}>
+            actionIcon={actionIcon}
+            actionAriaLabel={actionAriaLabel}>
             <SelectActionTableCell
                 options={sourceOptions}
                 selected={dependency.sourceId}
@@ -165,6 +168,7 @@ export default class SoftwareProductDependenciesView extends React.Component {
                         <TableActionRow
                             key={newDependency.id}
                             actionIcon="plusCircle"
+                            actionAriaLabel={i18n('Add Dependency')}
                             onAction={() => onAddDependency(newDependency)}
                             dependency={newDependency}
                             componentsOptions={componentsOptions}
@@ -193,6 +197,7 @@ export default class SoftwareProductDependenciesView extends React.Component {
                         <TableActionRow
                             key={dependency.id}
                             actionIcon="trashO"
+                            actionAriaLabel={i18n('Delete Dependency')}
                             onAction={() => onDeleteDependency(dependency)}
                             dependency={dependency}
                             componentsOptions={componentsOptions}

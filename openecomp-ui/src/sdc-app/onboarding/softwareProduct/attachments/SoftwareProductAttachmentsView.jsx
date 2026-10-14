@@ -1,5 +1,6 @@
 /*!
  * Copyright © 2016-2018 European Support Limited
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -111,6 +112,7 @@ class HeatScreenView extends Component {
                                 : undefined
                         }
                         data-test-id="download-heat"
+                        ariaLabel={i18n('Download HEAT')}
                     />
                     <SVGIcon
                         name="upload"
@@ -124,6 +126,7 @@ class HeatScreenView extends Component {
                                       this.refs.hiddenImportFileInput.click(evt)
                         }
                         data-test-id="upload-heat"
+                        ariaLabel={i18n('Upload New HEAT')}
                     />
                     <input
                         ref="hiddenImportFileInput"

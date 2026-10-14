@@ -3,7 +3,7 @@
         <span class="palette-elements-count-value">{{numberOfElements}}</span>
     </div>
 
-    <sdc-filter-bar placeholder="Search..." (valueChange)="onSearchChanged($event)" testId="searchAsset"></sdc-filter-bar>
+    <sdc-filter-bar placeHolder="Search..." (valueChange)="onSearchChanged($event)" testId="searchAsset"></sdc-filter-bar>
 
     <div class="palette-elements-list">
         <sdc-loader [global]="false" name="palette-loader" testId="palette-loader" [active]="this.isPaletteLoading" [class.inactive]="!this.isPaletteLoading"></sdc-loader>

@@ -1,5 +1,6 @@
 /*
  * Copyright © 2016-2018 European Support Limited
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +19,7 @@ import PropTypes from 'prop-types';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import SVGIcon from 'onap-ui-react/lib/components/SVGIcon.js';
+import i18n from 'nfvo-utils/i18n/i18n.js';
 
 class CustomInput extends React.Component {
     static propTypes = {
@@ -51,6 +53,7 @@ class CustomInput extends React.Component {
                         }}
                         name="close"
                         className="clear-input"
+                        ariaLabel={i18n('Clear date')}
                     />
                 )}
                 <SVGIcon name="calendar" />

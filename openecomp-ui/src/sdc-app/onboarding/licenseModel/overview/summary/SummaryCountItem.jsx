@@ -1,5 +1,6 @@
 /*!
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +16,7 @@
  */
 import React from 'react';
 import { SVGIcon } from 'onap-ui-react';
+import i18n from 'nfvo-utils/i18n/i18n.js';
 
 function SummaryCountItem({
     name,
@@ -45,6 +47,7 @@ function SummaryCountItem({
                 disabled={isReadOnlyMode}
                 className={isReadOnlyMode ? 'disabled' : ''}
                 color="secondary"
+                ariaLabel={i18n('Add {name}', { name })}
                 onClick={onAdd}
                 data-test-id={
                     'vlm-summary-vendor-add-btn-' +

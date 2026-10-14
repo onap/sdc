@@ -19,6 +19,7 @@ import '../../resources/scss/onboarding.scss';
 import 'dox-sequence-diagram-ui/src/main/webapp/res/sdc-sequencer.scss';
 
 import 'core-js/fn/array/includes.js';
+import 'nfvo-utils/dialogShim.js';
 import OnboardingPunchOut from './onboarding/OnboardingPunchOut.jsx';
 import FlowsPunchOut from './flows/FlowsPunchOut.jsx';
 

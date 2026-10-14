@@ -33,10 +33,14 @@
             background-color: @sdcui_color_silver;
             border-bottom: none;
         }
-        &[disabled] {
-            opacity: 0.3;
-            cursor: default;
-        }
+    }
+    // The li is the visual cell; the tab button inside it must fill it to stay the whole click target.
+    .sdc-tab__button {
+        flex: 1 1 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
     }
     &.sdc-tabs-header {
         .sdc-tab {

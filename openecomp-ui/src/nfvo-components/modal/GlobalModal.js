@@ -1,5 +1,6 @@
 /*
  * Copyright © 2016-2017 European Support Limited
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -154,7 +155,10 @@ export class GlobalModalView extends React.Component {
                 show={show}
                 type={type}
                 size={modalComponentProps && modalComponentProps.size}>
-                <ModalHeader type={type} onClose={onClose}>
+                <ModalHeader
+                    type={type}
+                    onClose={onClose}
+                    closeAriaLabel={i18n('Close')}>
                     <ModalTitle>{title}</ModalTitle>
                 </ModalHeader>
                 <ModalBody className={bodyClassName}>

@@ -1,5 +1,6 @@
 /*
  * Copyright © 2016-2018 European Support Limited
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,6 +73,7 @@ const CatalogItemDetails = ({
             headerColor={color}
             iconName={contentIconName}
             iconColor={color}
+            ariaLabel={`${headerText} ${name}`}
             onClick={onClick}
             dataTestId={catalogItemTypeClass}>
             <TileInfo data-test-id="catalog-item-content">
@@ -80,7 +82,8 @@ const CatalogItemDetails = ({
                         <TooltipWrapper
                             className="with-overlay"
                             tooltipClassName="tile-super-info"
-                            dataTestId="catalog-item-vendor-name">
+                            dataTestId="catalog-item-vendor-name"
+                            onClick={onClick}>
                             {vendorName}
                         </TooltipWrapper>
                     </TileInfoLine>
@@ -89,7 +92,8 @@ const CatalogItemDetails = ({
                     <TooltipWrapper
                         className="with-overlay"
                         tooltipClassName="catalog-tile-tooltip"
-                        dataTestId="catalog-item-name">
+                        dataTestId="catalog-item-name"
+                        onClick={onClick}>
                         {name}
                     </TooltipWrapper>
                 </TileInfoLine>

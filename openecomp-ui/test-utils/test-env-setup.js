@@ -14,3 +14,6 @@ var localStorageMock = (function() {
 })();
 
 Object.defineProperty(window, 'localStorage', { value: localStorageMock });
+
+// jsdom has no dialog API; production gets the same shim from punch-outs.js.
+require('../src/nfvo-utils/dialogShim.js');

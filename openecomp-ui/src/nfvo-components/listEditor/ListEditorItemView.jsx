@@ -1,5 +1,6 @@
 /*!
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,6 +57,7 @@ class ListEditorItem extends React.Component {
                         {onEdit && (
                             <SVGIcon
                                 name="sliders"
+                                ariaLabel={i18n('Edit')}
                                 onClick={() => this.onClickedItem(onEdit)}
                             />
                         )}
@@ -64,6 +66,7 @@ class ListEditorItem extends React.Component {
                                 <SVGIcon
                                     name="trashO"
                                     data-test-id="delete-list-item"
+                                    ariaLabel={i18n('Delete')}
                                     onClick={() => this.onClickedItem(onDelete)}
                                 />
                             )}

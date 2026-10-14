@@ -227,9 +227,8 @@ public final class DataTestIdEnum {
         // Matches every "add an artifact" control on the Informational Artifacts screen: the always-present
         // svg-icon-label (information-artifact-page.component.html:3, testId add-information-artifact-button)
         // plus one sdc-button per artifact placeholder (same file, line 74, testId add_artifact_<displayName>).
-        // Cannot be anchored on //button: svg-icon-label renders a <div>.
         ADD_OTHER_ARTIFACT_BUTTON(
-            "//*[@data-tests-id='add-information-artifact-button' or starts-with(@data-tests-id, 'add_artifact_')]");
+            "//button[@data-tests-id='add-information-artifact-button' or starts-with(@data-tests-id, 'add_artifact_')]");
 
         private final String value;
 

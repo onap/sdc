@@ -50,12 +50,14 @@
             border-radius: 6px 6px 0 0;
         }
         .vsp-overlay-detail {
+            @include button-reset($font: false);
+            @include focus-ring;
             @extend .body-2;
             &:hover {
                 color: $link-blue;
             }
             text-transform: none;
-            @include ellipsis(auto, block);
+            @include ellipsis(100%, block);
             border-bottom: 1px solid $tlv-light-gray;
             cursor: pointer;
             padding: 5px 0 5px 0;
@@ -64,6 +66,8 @@
             }
         }
         .vsp-overlay-see-more {
+            @include button-reset;
+            @include focus-ring;
             color: $link-blue;
             cursor: pointer;
             margin-top: 12px;

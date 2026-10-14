@@ -101,8 +101,8 @@ public class AttributesPage extends ComponentPage {
         ATTRIBUTES_DIV("workspace-attributes", "//div[@class='%s']"),
         ADD_BTN("svg-icon-label", "//span[contains(@class,'%s') and contains(text(), 'Add')]"),
         ATTRIBUTES_NAME_SPAN("//div[@data-tests-id='attrib-name_%s']"),
-        EDIT_BTN("//div[contains(@class,'svg-icon') and @data-tests-id='edit_%s']"),
-        DELETE_BTN("//div[contains(@class,'svg-icon') and @data-tests-id='delete_%s']"),
+        EDIT_BTN("//button[contains(@class,'svg-icon-wrapper') and @data-tests-id='edit_%s']"),
+        DELETE_BTN("//button[contains(@class,'svg-icon-wrapper') and @data-tests-id='delete_%s']"),
         DELETE_ATTRIBUTE_CONFIRM_BTN("delete-modal-button-ok", "//button[@data-tests-id='%s']");
 
         @Getter

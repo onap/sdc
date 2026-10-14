@@ -97,15 +97,15 @@ public class CompositionDetailSideBarComponent extends AbstractPageObject {
         DETAIL_HEADER("w-sdc-designer-sidebar-head", "//div[@data-tests-id='%s']"),
         DETAIL_COMPONENT_NAME_DIV("selectedCompTitle", "//div[@data-tests-id='%s']"),
         TAB_LIST("sdc-tabs-list", "//ul[@class='%s']/li"),
-        INFORMATION_TAB("detail-tab-information", "//li[@data-tests-id='%s']"),
-        INPUTS_TAB("detail-tab-inputs", "//li[@data-tests-id='%s']"),
-        DEPLOYMENT_ARTIFACTS_TAB("detail-tab-deployment-artifacts", "//li[@data-tests-id='%s']"),
-        INFORMATION_ARTIFACTS_TAB("detail-tab-information-artifacts", "//li[@data-tests-id='%s']"),
-        REQUIREMENTS_CAPABILITIES_TAB("detail-tab-requirements-capabilities", "//li[@data-tests-id='%s']"),
-        API_ARTIFACTS_TAB("detail-tab-api-artifacts", "//li[@data-tests-id='%s']"),
-        INTERFACE_OPERATIONS_TAB("detail-tab-interface-operations", "//li[@data-tests-id='%s']"),
-        SUBSTITUTION_FILTER_TAB("detail-tab-substitution-filter", "//li[@data-tests-id='%s']"),
-        DIRECTIVE_NODE_FILTER_TAB("detail-tab-directives-node-filter", "//li[@data-tests-id='%s']");
+        INFORMATION_TAB("detail-tab-information", "//li[@data-tests-id='%s']/button[@role='tab']"),
+        INPUTS_TAB("detail-tab-inputs", "//li[@data-tests-id='%s']/button[@role='tab']"),
+        DEPLOYMENT_ARTIFACTS_TAB("detail-tab-deployment-artifacts", "//li[@data-tests-id='%s']/button[@role='tab']"),
+        INFORMATION_ARTIFACTS_TAB("detail-tab-information-artifacts", "//li[@data-tests-id='%s']/button[@role='tab']"),
+        REQUIREMENTS_CAPABILITIES_TAB("detail-tab-requirements-capabilities", "//li[@data-tests-id='%s']/button[@role='tab']"),
+        API_ARTIFACTS_TAB("detail-tab-api-artifacts", "//li[@data-tests-id='%s']/button[@role='tab']"),
+        INTERFACE_OPERATIONS_TAB("detail-tab-interface-operations", "//li[@data-tests-id='%s']/button[@role='tab']"),
+        SUBSTITUTION_FILTER_TAB("detail-tab-substitution-filter", "//li[@data-tests-id='%s']/button[@role='tab']"),
+        DIRECTIVE_NODE_FILTER_TAB("detail-tab-directives-node-filter", "//li[@data-tests-id='%s']/button[@role='tab']");
 
         @Getter
         private final String id;

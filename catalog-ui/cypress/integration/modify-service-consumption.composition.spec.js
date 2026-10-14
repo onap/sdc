@@ -33,7 +33,7 @@ describe('Test modify service consumption in service consumption tab', () => {
         cy.window().its('testBridge').invoke('selectComponentInstance', ['childservice_proxy']);
 
         // Click on operation consumption Tab
-        cy.get('.component-details-panel-tabs sdc-tabs ul').children('li[ng-reflect-text="Service Consumption"]').trigger('click', { force: true });
+        cy.get('.component-details-panel-tabs sdc-tabs ul').children('li[ng-reflect-text="Service Consumption"]').children('button.sdc-tab__button').trigger('click', { force: true });
         //update operation property value
         cy.get('.operation-data').trigger('click', { force: true });
         cy.get('.operation-input-name').trigger('click', { force: true });

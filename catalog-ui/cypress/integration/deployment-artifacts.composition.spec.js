@@ -34,7 +34,7 @@ describe('Deployment Artifacts', () => {
         cy.window().its('testBridge').invoke('selectComponentInstance', ['VSP1']);
 
         console.log('Click on Deployment Artifacts Tab');
-        cy.get('.component-details-panel-tabs sdc-tabs ul').children('li[ng-reflect-text="Deployment Artifacts"]').trigger('click', { force: true });
+        cy.get('.component-details-panel-tabs sdc-tabs ul').children('li[ng-reflect-text="Deployment Artifacts"]').children('button.sdc-tab__button').trigger('click', { force: true });
 
         console.log('Click on edit artifact - base_ldsa (modal should be opened');
         cy.get('[data-tests-id="edit-parameters-of-base_ldsa"]').click({ force: true }); // edit icon is not visible until we hover on it so we force to click here
@@ -72,7 +72,7 @@ describe('Deployment Artifacts', () => {
         cy.window().its('testBridge').invoke('selectComponentInstance', ['VSP1']);
 
         console.log('Click on Deployment Artifacts Tab');
-        cy.get('.component-details-panel-tabs sdc-tabs ul').children('li[ng-reflect-text="Deployment Artifacts"]').trigger('click', { force: true });
+        cy.get('.component-details-panel-tabs sdc-tabs ul').children('li[ng-reflect-text="Deployment Artifacts"]').children('button.sdc-tab__button').trigger('click', { force: true });
 
         console.log('Click on edit artifact - base_ldsa (modal should be opened');
         cy.get('[data-tests-id="view-parameters-of-base_ldsa"]').click({ force: true }); // edit icon is not visible until we hover on it so we force to click here

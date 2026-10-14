@@ -47,7 +47,7 @@ describe('Test dependencies rule in service dependencies tab', () => {
         cy.window().its('testBridge').invoke('selectComponentInstance', ['childservice_proxy']);
 
         // Click on Service Proxy
-        cy.get('.component-details-panel-tabs sdc-tabs ul').children('li[ng-reflect-text="Service Dependencies"]').trigger('click', { force: true });
+        cy.get('.component-details-panel-tabs sdc-tabs ul').children('li[ng-reflect-text="Service Dependencies"]').children('button.sdc-tab__button').trigger('click', { force: true });
          cy.wait(100);
         //Add new rule
         cy.get('[data-tests-id="add-rule-button"]').trigger('click', { force: true });

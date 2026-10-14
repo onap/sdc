@@ -8,6 +8,7 @@
          [class.active]="searchQuery && searchQuery.length">
         <sdc-search-bar class="canvas-search-bar"
               [placeHolder]="placeholder"
+              ariaLabel="Search"
               (onSearchClicked)="onSearchClicked($event)"
               [size]="'medium'"
               [value]="searchQuery"

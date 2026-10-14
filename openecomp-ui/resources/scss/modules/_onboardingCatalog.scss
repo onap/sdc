@@ -43,7 +43,13 @@ $transitionLength: 0.6s;
                     justify-content: space-between;
                     overflow: initial;
                     .sdc-tile-info-line {
+                        // Above the header button's stretched ::after, which would otherwise
+                        // swallow the hover that shows the full, ellipsised name. The
+                        // consumer forwards its mouse click to the tile's action.
                         .with-overlay {
+                            position: relative;
+                            z-index: 1;
+                            cursor: pointer;
                             line-height: 1.2em;
                             @include ellipsis($width: initial, $max-width: 100%);
                         }

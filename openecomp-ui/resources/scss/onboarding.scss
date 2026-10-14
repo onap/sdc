@@ -145,6 +145,12 @@ div[data-onboardingroot].tooltip {
         right: 30px;
         top: 50px;
     }
+    // Inside a modal dialog: the dialog has no transform, so fixed stays relative to the
+    // viewport and escapes the dialog's overflow clipping.
+    &.in-dialog {
+        position: fixed;
+        z-index: 1;
+    }
 }
 
 .onboarding-loader {

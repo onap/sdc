@@ -37,29 +37,27 @@ interface TabScan {
 }
 
 const COMPOSITION_READY = '[data-tests-id^="leftPalette.category."]';
-const COMPOSITION_KNOWN = ['aria-command-name', 'aria-tab-name', 'label'];
-
 const VF_TABS: TabScan[] = [
     { tab: 'general', ready: SEL.name, known: [] },
     { tab: 'deployment_artifacts', ready: 'deployment-artifact-page ngx-datatable', known: [] },
     { tab: 'information_artifacts', ready: 'information-artifact-page ngx-datatable', known: [] },
     { tab: 'tosca_artifacts', ready: 'tosca-artifact-page datatable-body-row', known: [] },
     { tab: 'properties_assignment', ready: '[data-tests-id="Inputs"]', known: [] },
-    { tab: 'composition', ready: COMPOSITION_READY, known: COMPOSITION_KNOWN },
+    { tab: 'composition', ready: COMPOSITION_READY, known: [] },
     { tab: 'activity_log', ready: 'activity-log ngx-datatable', known: [] },
     { tab: 'req_and_capabilities', ready: 'req-and-capabilities datatable-body-row', seed: 'compute', known: [] },
     { tab: 'attributes_outputs', ready: '[data-tests-id="Outputs"]', known: [] },
-    { tab: 'deployment', ready: 'deployment-page #sdc-tab-0', known: ['aria-tab-name'] },
+    { tab: 'deployment', ready: 'deployment-page #sdc-tab-0', known: [] },
     { tab: 'interface_operation', ready: '.workspace-interface-operation', known: [] },
 ];
 
 const SERVICE_TABS: TabScan[] = [
     { tab: 'general', ready: SEL.name, known: [] },
-    { tab: 'composition', ready: COMPOSITION_READY, known: COMPOSITION_KNOWN },
+    { tab: 'composition', ready: COMPOSITION_READY, known: [] },
     { tab: 'properties_assignment', ready: '[data-tests-id="Inputs"]', known: ['label', 'select-name'] },
     { tab: 'activity_log', ready: 'activity-log ngx-datatable', known: [] },
     { tab: 'tosca_artifacts', ready: 'tosca-artifact-page datatable-body-row', known: [] },
-    { tab: 'management_workflow', ready: '.flow-editor-punch-out-host > *', known: ['region'] },
+    { tab: 'management_workflow', ready: '.flow-editor-punch-out-host > *', known: [] },
 ];
 
 async function openTab(page: Page, asset: CreatedAsset, scan: TabScan): Promise<void> {

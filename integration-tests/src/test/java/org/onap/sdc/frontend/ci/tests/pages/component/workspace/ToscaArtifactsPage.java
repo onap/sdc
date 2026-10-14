@@ -69,7 +69,7 @@ public class ToscaArtifactsPage extends ComponentPage {
         MAIN_DIV("w-sdc-main-right-container", "//div[@class='%s']"),
         TITLE_DIV("tab-title", "//div[contains(@class,'%s') and contains(text(), 'TOSCA Artifacts')]"),
         DATA_TABLE_BODY("//datatable-body"),
-        DOWNLOAD_LINK("//div[contains(@data-tests-id,'download_%s')]");
+        DOWNLOAD_LINK("//button[contains(@data-tests-id,'download_%s')]");
 
         @Getter
         private String id;

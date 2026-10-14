@@ -1,5 +1,6 @@
 ﻿/*
  * Copyright 2017 Huawei Technologies Co., Ltd.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,6 +39,7 @@ function VNFAction({
             <SVGIcon
                 name="download"
                 color="positive"
+                ariaLabel={i18n('Download CSAR')}
                 onClick={() => {
                     downloadCSAR(id, currSoftwareProduct);
                 }}

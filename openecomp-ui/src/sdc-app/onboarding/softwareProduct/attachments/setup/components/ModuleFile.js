@@ -1,5 +1,6 @@
 /*
  * Copyright © 2016-2018 European Support Limited
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +16,7 @@
  */
 import React from 'react';
 import { SVGIcon } from 'onap-ui-react';
+import i18n from 'nfvo-utils/i18n/i18n.js';
 import NameEditInput from './NameEditInput.js';
 import SelectWithFileType from './SelectWithFileType';
 import { fileTypes } from '../HeatSetupConstants.js';
@@ -92,6 +94,7 @@ class ModuleFile extends React.Component {
                             {!this.state.isInNameEdit && (
                                 <SVGIcon
                                     name="pencil"
+                                    ariaLabel={i18n('Rename module')}
                                     onClick={() =>
                                         this.setState({ isInNameEdit: true })
                                     }
@@ -106,6 +109,7 @@ class ModuleFile extends React.Component {
                         name="trashO"
                         onClick={() => onModuleDelete(name)}
                         data-test-id="module-delete"
+                        ariaLabel={i18n('Delete module')}
                     />
                 </div>
                 <div className="modules-list-item-selectors">

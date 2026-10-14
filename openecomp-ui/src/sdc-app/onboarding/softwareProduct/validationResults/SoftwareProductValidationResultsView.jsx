@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2019 Vodafone Group
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -150,7 +151,10 @@ class SoftwareProductValidationResultsView extends React.Component {
             );
         } else {
             return (
-                <Accordion key={indexKey} defaultExpanded>
+                <Accordion
+                    key={indexKey}
+                    defaultExpanded
+                    title={i18n('Error details')}>
                     {this.renderJSON(result)}
                 </Accordion>
             );

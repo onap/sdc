@@ -100,7 +100,7 @@ public class AttributeModal extends AbstractPageObject {
         ATTRIBUTE_NAME_INPUT("//input[@data-tests-id='attributeName']"),
         DESCRIPTION_INPUT("//textarea[@data-tests-id='description']"),
         ATTRIBUTE_TYPE_LI("//li[@data-tests-id='%s']"),
-        ATTRIBUT_TYPE_ICON("//div[@data-tests-id='attributeType-icon']"),
+        ATTRIBUT_TYPE_ICON("//button[@data-tests-id='attributeType-icon']"),
         DROPDOWN_RESULTS("//ul[contains(@class,'dropdown-results')]"),
         ATTRIBUTE_TYPE_DIV("//div[@data-tests-id='attributeType']"),
         DEFAULT_VALUE_INPUT("//input[@data-tests-id='defaultValue']"),

@@ -38,6 +38,7 @@ function renderErrorOrCheck({ hasError, overlayMsg }) {
 const SelectActionTableRow = ({
     children,
     actionIcon,
+    actionAriaLabel,
     onAction,
     showAction,
     hasError,
@@ -57,6 +58,8 @@ const SelectActionTableRow = ({
                 name={actionIcon}
                 data-test-id={`select-action-table-${actionIcon}`}
                 onClick={onAction}
+                ariaLabel={actionAriaLabel}
+                disabled={!showAction}
                 iconClassName={showAction ? '' : 'hideDelete'}
             />
         )}

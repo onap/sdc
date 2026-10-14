@@ -1,5 +1,6 @@
 /*
  * Copyright © 2016-2018 European Support Limited
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +22,13 @@ import { migrationStatusMapper } from './OnboardingCatalogConstants.js';
 const VspOverlayItem = ({ vsp, onClick }) => {
     const handleClick = () => onClick(vsp);
     return (
-        <div key={vsp.id} className="vsp-overlay-detail" onClick={handleClick}>
+        <button
+            type="button"
+            key={vsp.id}
+            className="vsp-overlay-detail"
+            onClick={handleClick}>
             {i18n(vsp.name)}
-        </div>
+        </button>
     );
 };
 
@@ -67,9 +72,12 @@ const VSPOverlay = ({ VSPList, onSelectVSP, onSeeMore, onMigrate }) => {
                     ))}
                 </div>
                 {VSPList.length > 5 && (
-                    <div className="vsp-overlay-see-more" onClick={onSeeMore}>
+                    <button
+                        type="button"
+                        className="vsp-overlay-see-more"
+                        onClick={onSeeMore}>
                         {i18n('See More')}
-                    </div>
+                    </button>
                 )}
             </div>
         </div>

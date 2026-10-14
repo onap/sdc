@@ -1,6 +1,7 @@
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2019 Nordix Foundation
+ *  Modifications Copyright (C) 2026 Deutsche Telekom AG
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,6 +30,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,9 +65,19 @@ public class TopNavComponent extends AbstractPageObject {
     }
 
     /**
-     * Clicks on home link inside the first breadcrumb arrow.
+     * Clicks on the home link: inside the first breadcrumb arrow when the top nav shows breadcrumbs,
+     * otherwise the HOME item of the plain top-level menu (the onboarding pages render that one).
      */
     public HomePage clickOnHome() {
+        final By arrowLocator = By.xpath(XpathSelector.ARROW_DROPDOWN.getXpath());
+        final By mainMenuHomeLocator = By.xpath(XpathSelector.MAIN_MENU_LINK_HOME.getXpath());
+        getWait().until(ExpectedConditions.or(
+            ExpectedConditions.visibilityOfElementLocated(arrowLocator),
+            ExpectedConditions.visibilityOfElementLocated(mainMenuHomeLocator)));
+        if (findElements(arrowLocator).isEmpty()) {
+            waitToBeClickable(mainMenuHomeLocator).click();
+            return new HomePage(webDriver, this);
+        }
         hoverToBreadcrumbArrow(0);
         final By homeButtonLocator = By.xpath(XpathSelector.SUB_MENU_BUTTON_HOME.getXpath());
         waitForElementVisibility(homeButtonLocator);

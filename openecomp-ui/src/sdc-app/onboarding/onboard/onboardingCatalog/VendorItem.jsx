@@ -1,5 +1,6 @@
 /*!
  * Copyright © 2016-2018 European Support Limited
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,12 +51,16 @@ class VendorItem extends React.Component {
         let { vendor, onSelectVSP, shouldShowOverlay, onMigrate } = this.props;
         let { softwareProductList = [], name } = vendor;
         return (
-            <Tile iconName="vendor" onClick={this.handleSeeMore}>
+            <Tile
+                iconName="vendor"
+                ariaLabel={name}
+                onClick={this.handleSeeMore}>
                 <TileInfo align="center">
                     <TileInfoLine type="title">
                         <TooltipWrapper
                             className="with-overlay"
-                            dataTestId="catalog-item-name">
+                            dataTestId="catalog-item-name"
+                            onClick={this.handleSeeMore}>
                             {name}
                         </TooltipWrapper>
                     </TileInfoLine>

@@ -52,7 +52,7 @@ public class CompositionElementsComponent extends AbstractPageObject {
         searchElementInput.sendKeys(elementName);
         new Actions(webDriver).pause(Duration.ofSeconds(1)).perform();
         try {
-            final WebElement accordionElement = waitForElementVisibility("//div[@class='sdc-accordion-header']");
+            final WebElement accordionElement = waitForElementVisibility("//button[@class='sdc-accordion-header']");
             final String aClass = accordionElement.getAttribute("class");
             if (!aClass.contains("open")) {
                 accordionElement.click();

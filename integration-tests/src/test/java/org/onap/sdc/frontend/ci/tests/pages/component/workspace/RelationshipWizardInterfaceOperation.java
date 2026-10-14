@@ -105,7 +105,7 @@ public class RelationshipWizardInterfaceOperation extends AbstractPageObject {
 
     @AllArgsConstructor
     private enum XpathSelector {
-        INTERFACE_AND_OPERATION_SVG_ICON("//div[@data-tests-id='%s']"),
+        INTERFACE_AND_OPERATION_SVG_ICON("//button[@data-tests-id='%s']"),
         INTERFACE_AND_OPERATION_DROPDOWN("//li[@class='sdc-dropdown__option ng-star-inserted' and contains(text(), '%s')]"),
         INTERFACE_OPERATION_DESCRIPTION_INPUT("//input[@data-tests-id='interface-operation-description']"),
         INTERFACE_OPERATION_IMPLEMENTATION_NAME_INPUT("//input[@id='implementationInput']"),
