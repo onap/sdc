@@ -59,6 +59,36 @@ test.describe('SDC sanity', () => {
         await expect(page.locator(SEL.catalogButton)).toBeVisible();
     });
 
+    test('Catalog loading mask covers the Active Items selector', async ({ sdcPage }) => {
+        let releaseCatalog: () => void = () => {};
+        const catalogReady = new Promise<void>(resolve => { releaseCatalog = resolve; });
+        await sdcPage.route(/\/catalog\/?(?:\?|$)/, async route => {
+            await catalogReady;
+            await route.fulfill({ json: { resources: [], services: [] } });
+        });
+
+        try {
+            await sdcPage.locator(SEL.catalogButton).click();
+            const selector = sdcPage.locator('.i-sdc-designer-leftbar-section-left-switch-header');
+            await expect(selector).toBeVisible();
+            await expect(sdcPage.locator('.sdc-loader-global-wrapper')).toBeVisible();
+            await expect.poll(() => selector.evaluate(element => {
+                const bounds = element.getBoundingClientRect();
+                const topElement = document.elementFromPoint(
+                    bounds.left + bounds.width / 2, bounds.top + bounds.height / 2);
+                return !!topElement && !!topElement.closest('.sdc-loader-global-wrapper');
+            })).toBe(true);
+        } finally {
+            releaseCatalog();
+        }
+
+        await expect(sdcPage.locator('.sdc-loader-global-wrapper')).toBeHidden();
+        await sdcPage.locator('.i-sdc-designer-leftbar-section-left-switch-header').click();
+        await expect(sdcPage.locator('.sdc-catalog-selector-wrapper')).toBeVisible();
+        await expect(sdcPage.locator('.sdc-catalog-selector-item')).toHaveText(['Active Items', 'Archive']);
+        await sdcPage.locator('.sdc-catalog-selector-item').filter({ hasText: 'Archive' }).click({ trial: true });
+    });
+
     /**
      * The '#!' hash prefix is a contract, not cosmetics: every bookmark, all 70 Cypress URL
      * lines and the Selenium URL builders encode it. AngularJS supplies it today; after CR 2
