@@ -22,7 +22,7 @@
         <div *ngIf="!component.isResource() && !component.isService()">{{component.getComponentSubType()}}</div>
     </div>
 
-    <div class='sdc-tile-content' data-tests-id="dashboard-Elements" (click)="tileClicked()">
+    <div class='sdc-tile-content' sdcKeyboardClick data-tests-id="dashboard-Elements" (click)="tileClicked()">
         <div class='sdc-tile-content-icon'>
             <div [ngClass]="[component.iconSprite, component.icon]"
                  [ngClass]="{'sprite-resource-icons': component.isResource(), 'sprite-services-icons': component.isService()}"

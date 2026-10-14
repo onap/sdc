@@ -1,12 +1,14 @@
 <div class="sdc-catalog-container">
     <main id="main-content" class="w-sdc-main-container" *ngIf="user">
 
-        <div id="dashboard-main-scroll" infiniteScroll class="w-sdc-main-right-container" (infiniteScroll)="raiseNumberOfElementToDisplay()" [infiniteScrollDistance]="100">
+        <div id="dashboard-main-scroll" tabindex="0" role="region" aria-label="Dashboard items" infiniteScroll class="w-sdc-main-right-container" (infiniteScroll)="raiseNumberOfElementToDisplay()" [infiniteScrollDistance]="100">
 
             <div class='w-sdc-row-flex-items'>
 
                 <!-- ADD Component -->
                 <div *ngIf="user.role === 'DESIGNER'" class="w-sdc-dashboard-card-new"
+                     tabindex="0" role="group" aria-label="Add"
+                     (focusin)="setDisplayActions(true)" (focusout)="onCardFocusOut($event)"
                      (mouseleave)="setDisplayActions(false)"
                      (mouseover)="setDisplayActions(true)">
                     <div class="w-sdc-dashboard-card-new-content" data-tests-id="AddButtonsArea">
@@ -22,6 +24,8 @@
 
                 <!-- Import Component -->
                 <div *ngIf="user.role === 'DESIGNER'" class="w-sdc-dashboard-card-new"
+                     tabindex="0" role="group" aria-label="Import"
+                     (focusin)="setDisplayActions(true)" (focusout)="onCardFocusOut($event)"
                      (mouseleave)="setDisplayActions(false)"
                      (mouseover)="setDisplayActions(true)">
                     <div class="w-sdc-dashboard-card-new-content" data-tests-id="importButtonsArea"  >

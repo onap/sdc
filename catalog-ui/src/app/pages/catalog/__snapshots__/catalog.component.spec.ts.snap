@@ -28,6 +28,7 @@ exports[`catalog component should match current snapshot of catalog component 1`
     >
       <div
         class="i-sdc-designer-leftbar-section-left-switch-header"
+        sdckeyboardclick=""
       >
         <div
           class="i-sdc-designer-leftbar-section-left-switch-header-text"
@@ -53,6 +54,7 @@ exports[`catalog component should match current snapshot of catalog component 1`
           >
             <div
               class="i-sdc-designer-leftbar-section-title pointer"
+              sdckeyboardclick=""
             >
               <span
                 class="i-sdc-designer-leftbar-section-title-icon"
@@ -75,6 +77,7 @@ exports[`catalog component should match current snapshot of catalog component 1`
           >
             <div
               class="i-sdc-designer-leftbar-section-title pointer"
+              sdckeyboardclick=""
             >
               <span
                 class="i-sdc-designer-leftbar-section-title-icon"
@@ -97,6 +100,7 @@ exports[`catalog component should match current snapshot of catalog component 1`
           >
             <div
               class="i-sdc-designer-leftbar-section-title pointer"
+              sdckeyboardclick=""
             >
               <span
                 class="i-sdc-designer-leftbar-section-title-icon"
@@ -119,6 +123,7 @@ exports[`catalog component should match current snapshot of catalog component 1`
           >
             <div
               class="i-sdc-designer-leftbar-section-title pointer"
+              sdckeyboardclick=""
             >
               <span
                 class="i-sdc-designer-leftbar-section-title-icon"
@@ -139,8 +144,11 @@ exports[`catalog component should match current snapshot of catalog component 1`
         </div>
       </div>
       <div
+        aria-label="Catalog items"
         class="w-sdc-main-right-container w-sdc-catalog-main"
         infinitescroll=""
+        role="region"
+        tabindex="0"
       >
         <div
           class="catalog-top-bar"
@@ -160,6 +168,7 @@ exports[`catalog component should match current snapshot of catalog component 1`
             <a
               class="w-sdc-dashboard-catalog-sort"
               data-tests-id="sort-by-last-update"
+              sdckeyboardclick="link"
             >
               
             </a>
@@ -168,6 +177,7 @@ exports[`catalog component should match current snapshot of catalog component 1`
             <a
               class="w-sdc-dashboard-catalog-sort"
               data-tests-id="sort-by-alphabetical"
+              sdckeyboardclick="link"
             >
               
             </a>

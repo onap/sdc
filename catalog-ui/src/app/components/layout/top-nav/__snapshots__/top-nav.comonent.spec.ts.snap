@@ -32,12 +32,14 @@ exports[`artifact form component should match current snapshot of top-nav compon
       class="top-search"
     >
       <input
+        aria-label="Search"
         class="search-text"
         data-tests-id="main-menu-input-search"
         placeholder="Search"
         type="text"
       />
       <span
+        aria-hidden="true"
         class="w-sdc-search-icon magnification"
       />
     </div>

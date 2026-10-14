@@ -302,6 +302,14 @@ export class HomeComponent implements OnInit {
         this.displayActions = display !== undefined ? display : !this.displayActions;
     }
 
+    public onCardFocusOut(event: FocusEvent): void {
+        const card = event.currentTarget as HTMLElement;
+        const next = event.relatedTarget as Node;
+        if (!next || !card.contains(next)) {
+            this.setDisplayActions(false);
+        }
+    }
+
     private _getTotalCounts(tmpFolder): number {
         let total: number = 0;
         if (tmpFolder.dist !== undefined) {

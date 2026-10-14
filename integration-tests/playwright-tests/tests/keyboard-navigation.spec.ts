@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-import { test, expect, gotoCold, currentRoute } from './fixtures/sdc';
+import { test, expect, SEL, gotoCold, currentRoute } from './fixtures/sdc';
 
 test.describe('keyboard navigation', () => {
     for (const route of ['/catalog', '/dashboard', '/onboardVendor']) {
@@ -34,4 +34,34 @@ test.describe('keyboard navigation', () => {
             await expect(sdcPage.locator('#main-content')).toBeFocused();
         });
     }
+
+    test('top-nav menu is reachable and operable by keyboard', async ({ sdcPage }) => {
+        await gotoCold(sdcPage, '/dashboard');
+        const catalog = sdcPage.locator(SEL.catalogButton);
+        await catalog.focus();
+        await expect(catalog).toBeFocused();
+        await sdcPage.keyboard.press('Enter');
+        await expect.poll(() => currentRoute(sdcPage)).toBe('/catalog');
+        await expect(sdcPage.locator(SEL.catalogView)).toBeAttached();
+    });
+
+    test('dashboard ADD card reveals its buttons on focus and keeps them while tabbing in', async ({ sdcPage }) => {
+        await gotoCold(sdcPage, '/dashboard');
+        await sdcPage.locator('.w-sdc-dashboard-card-new').first().focus();
+        const add = sdcPage.locator('[data-tests-id="createServiceButton"]');
+        await expect(add).toBeVisible();
+        await sdcPage.keyboard.press('Tab');
+        await expect(sdcPage.locator('[data-tests-id="createResourceButton"]')).toBeFocused();
+        await expect(add).toBeVisible();
+    });
+
+    test('catalog filter sections toggle with the keyboard', async ({ sdcPage }) => {
+        await gotoCold(sdcPage, '/catalog');
+        const title = sdcPage.locator('.i-sdc-designer-leftbar-section-title').first();
+        await title.waitFor({ timeout: 60_000 });
+        const before = await title.getAttribute('aria-expanded');
+        await title.focus();
+        await sdcPage.keyboard.press('Enter');
+        await expect(title).not.toHaveAttribute('aria-expanded', before as string);
+    });
 });

@@ -107,6 +107,18 @@ describe('home component', () => {
         expect(fixture).toMatchSnapshot();
     });
 
+    it('keeps actions shown while focus moves inside a card and hides them when it leaves', () => {
+        const component = TestBed.createComponent(HomeComponent).componentInstance;
+        const card = document.createElement('div');
+        const inner = document.createElement('button');
+        card.appendChild(inner);
+        component.setDisplayActions(true);
+        component.onCardFocusOut({ currentTarget: card, relatedTarget: inner } as any);
+        expect(component.displayActions).toBe(true);
+        component.onCardFocusOut({ currentTarget: card, relatedTarget: document.body } as any);
+        expect(component.displayActions).toBe(false);
+    });
+
     it('should call on home component openCreateModal with null imported file', () => {
         const component = TestBed.createComponent(HomeComponent);
         let componentType:string = 'test';

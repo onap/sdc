@@ -1,6 +1,7 @@
 <div class="sdc-catalog-container">
     <main id="main-content" class="w-sdc-main-container">
-        <div class="i-sdc-designer-leftbar-section-left-switch-header"
+        <div class="i-sdc-designer-leftbar-section-left-switch-header" sdcKeyboardClick
+             [attr.aria-expanded]="showCatalogSelector"
              (click)="showCatalogSelector=!showCatalogSelector">
             <div class="i-sdc-designer-leftbar-section-left-switch-header-text">
                 {{selectedCatalogItem.title}}
@@ -8,7 +9,7 @@
             <div class="i-sdc-designer-leftbar-section-left-switch-header-icon sprite-new arrow-up-small">&nbsp;</div>
 
             <div class="sdc-catalog-selector-wrapper" *ngIf="showCatalogSelector">
-                <div class="sdc-catalog-selector-item"
+                <div class="sdc-catalog-selector-item" sdcKeyboardClick
                      *ngFor="let leftSwitchItem of catalogSelectorItems"
                      (click)="selectLeftSwitchItem(leftSwitchItem)">
                     <span>{{leftSwitchItem.title}}</span>
@@ -21,7 +22,9 @@
             <div class="sdc-catalog-leftbar-container">
                 <!-- Model -->
                 <div class="sdc-catalog-model-filter-container">
-                    <div class="i-sdc-designer-leftbar-section-title pointer" (click)="sectionClick('model')"
+                    <div class="i-sdc-designer-leftbar-section-title pointer" sdcKeyboardClick
+                         [attr.aria-expanded]="expandedSection.indexOf('model') !== -1"
+                         (click)="sectionClick('model')"
                          [ngClass]="{'expanded': expandedSection.indexOf('model') !== -1}">
                         <span class="i-sdc-designer-leftbar-section-title-icon"></span>
                         <span class="i-sdc-designer-leftbar-section-title-text"
@@ -34,7 +37,8 @@
                 </div>
                 <!-- Type -->
                 <div class="sdc-catalog-type-filter-container">
-                    <div class="i-sdc-designer-leftbar-section-title pointer"
+                    <div class="i-sdc-designer-leftbar-section-title pointer" sdcKeyboardClick
+                         [attr.aria-expanded]="expandedSection.indexOf('type') !== -1"
                          (click)="sectionClick('type')"
                          [ngClass]="{'expanded': expandedSection.indexOf('type') !== -1}">
                         <span class="i-sdc-designer-leftbar-section-title-icon"></span>
@@ -48,7 +52,9 @@
                 </div>
 
                 <div class="sdc-catalog-categories-filter-container">
-                    <div class="i-sdc-designer-leftbar-section-title pointer" (click)="sectionClick('category')"
+                    <div class="i-sdc-designer-leftbar-section-title pointer" sdcKeyboardClick
+                         [attr.aria-expanded]="expandedSection.indexOf('category') !== -1"
+                         (click)="sectionClick('category')"
                          [ngClass]="{'expanded': expandedSection.indexOf('category') !== -1}">
                         <span class="i-sdc-designer-leftbar-section-title-icon"></span>
                         <span class="i-sdc-designer-leftbar-section-title-text" data-tests-id="categoriesFilterTitle">Categories</span>
@@ -61,7 +67,9 @@
 
                 <!-- STATUS -->
                 <div class="sdc-catalog-status-filter-container">
-                    <div class="i-sdc-designer-leftbar-section-title pointer" (click)="sectionClick('status')"
+                    <div class="i-sdc-designer-leftbar-section-title pointer" sdcKeyboardClick
+                         [attr.aria-expanded]="expandedSection.indexOf('status') !== -1"
+                         (click)="sectionClick('status')"
                          [ngClass]="{'expanded': expandedSection.indexOf('status') !== -1}">
                         <span class="i-sdc-designer-leftbar-section-title-icon"></span>
                         <span class="i-sdc-designer-leftbar-section-title-text"
@@ -78,7 +86,8 @@
         </div>
 
         <!-- RIGHT SIDE -->
-        <div class="w-sdc-main-right-container w-sdc-catalog-main" infiniteScroll
+        <div class="w-sdc-main-right-container w-sdc-catalog-main" tabindex="0" role="region"
+             aria-label="Catalog items" infiniteScroll
              (infiniteScroll)="raiseNumberOfElementToDisplay()" [infiniteScrollDistance]="100">
                 <!-- HEADER -->
                 <div class="catalog-top-bar">
@@ -90,12 +99,12 @@
                         <span class="w-sdc-dashboard-catalog-header-order1">{{'SORT_CAPTION'|translate}}</span>&nbsp;&nbsp;
                         <a class="w-sdc-dashboard-catalog-sort" data-tests-id="sort-by-last-update"
                            [ngClass]="{'blue' : sortBy==='lastUpdateDate'}"
-                           (click)="order('lastUpdateDate')">{{'SORT_BY_UPDATE_DATE'|translate}}</a>&nbsp;
+                           sdcKeyboardClick="link" (click)="order('lastUpdateDate')">{{'SORT_BY_UPDATE_DATE'|translate}}</a>&nbsp;
                         <span *ngIf="sortBy === 'lastUpdateDate'" class="w-sdc-catalog-sort-arrow"
                               [ngClass]="{'down': reverse, 'up':!reverse}"></span>
                         <a class="w-sdc-dashboard-catalog-sort" data-tests-id="sort-by-alphabetical"
                            [ngClass]="{'blue' : sortBy!=='lastUpdateDate'}"
-                           (click)="order('resourceName')">{{'SORT_ALPHABETICAL'|translate}}</a>&nbsp;
+                           sdcKeyboardClick="link" (click)="order('resourceName')">{{'SORT_ALPHABETICAL'|translate}}</a>&nbsp;
                         <span *ngIf="sortBy !== 'lastUpdateDate'" class="w-sdc-catalog-sort-arrow"
                               [ngClass]="{'down': reverse, 'up':!reverse}"></span>
                     </div>

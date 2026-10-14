@@ -1,6 +1,7 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
+import { SdcUiComponentsModule } from "onap-ui-angular";
 import { TranslateModule } from "../../shared/translator/translate.module";
 import { TopNavComponent } from "./top-nav/top-nav.component";
 
@@ -11,6 +12,7 @@ import { TopNavComponent } from "./top-nav/top-nav.component";
     imports: [
         CommonModule,
         FormsModule,
+        SdcUiComponentsModule,
         TranslateModule
     ],
     exports: [
