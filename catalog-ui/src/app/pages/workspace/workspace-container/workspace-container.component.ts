@@ -785,11 +785,11 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
                 (item: MenuItem) => this.isMenuState(item, stateNameShort) && item.params && item.params.path === path)
                 || selectedItem;
         }
-        let selectedIndex = selectedItem ? this.leftBarTabs.menuItems.indexOf(selectedItem) : 0;
         if (this.isComposition) {
-            selectedIndex = -1;
+            selectedItem = _.find(this.leftBarTabs.menuItems,
+                (item: MenuItem) => !!item.state && item.state.indexOf(States.WORKSPACE_COMPOSITION) === 0) || selectedItem;
         }
-        this.leftBarTabs.selectedIndex = selectedIndex;
+        this.leftBarTabs.selectedIndex = selectedItem ? this.leftBarTabs.menuItems.indexOf(selectedItem) : 0;
     }
 
     private initMenuItems(): void {

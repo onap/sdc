@@ -20,6 +20,7 @@
 @import '../../../../assets/styles/variables.less';
 @import '../../../../assets/styles/variables-old.less';
 @import '../../../../assets/styles/mixins_old.less';
+@import '../../../../assets/styles/button-reset.less';
 .sdc-workspace-general-step {
     display: flex;
     flex-direction: column;
@@ -33,20 +34,8 @@
         padding: 0;
         flex-grow: 10;
         .i-sdc-form-file-upload{
-            input[type="button"] {
-                cursor: pointer;
-                display: block;
-                filter: alpha(opacity=0);
-                width: 100px;
-                height: 30px;
-                opacity: 0;
-                position: absolute;
-                right: 0;
-                text-align: right;
-                top: 0;
-            }
-
             .file-upload-browse-btn {
+                .sdc-button-reset();
                 .noselect;
                 .bg_n;
                 color:#191919;

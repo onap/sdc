@@ -161,7 +161,7 @@ public class ResourcePropertiesAssignmentPage extends ComponentPage {
         TITLE_DIV("tab-title", "//div[contains(@class,'%s') and contains(text(), 'Properties Assignment')]"),
         PROPERTIES_TAB("//*[contains(@data-tests-id, 'Properties') and contains(@class, 'tab')]"),
         INPUT_TAB("//*[contains(@data-tests-id, 'Inputs') and contains(@class, 'tab')]"),
-        DECLARE_NOTIFIFICATION("//div[@data-tests-id='Inputs']/div[contains(@class, 'tab-indication')]");
+        DECLARE_NOTIFIFICATION("//button[@data-tests-id='Inputs']/span[contains(@class, 'tab-indication')]");
 
         @Getter
         private String id;

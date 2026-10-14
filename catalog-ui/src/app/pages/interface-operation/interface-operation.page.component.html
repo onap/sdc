@@ -23,33 +23,33 @@
 <div class="interface-operation">
     <loader [display]="isLoading" [size]="'large'" [relative]="true"></loader>
 
-    <div
+    <button
+        type="button"
         class="top-add-btn add-btn"
         *ngIf="!isListEmpty()"
-        [ngClass]="{'disabled': readonly}"
+        [disabled]="readonly"
+        [class.disabled]="readonly"
         data-tests-id="add-operation"
         (click)="onEditOperation()">
         {{ 'INTERFACE_ADD_OPERATION' | translate }}
-    </div>
+    </button>
 
     <div class="operation-list">
 
         <div
             class="empty-list-container"
             *ngIf="isListEmpty() && !isLoading">
-            <div
+            <button
+                type="button"
                 class="empty-list-add-btn"
                 data-tests-id="add-operation"
-                [ngClass]="{'disabled': readonly}"
+                [disabled]="readonly"
+                [class.disabled]="readonly"
                 (click)="onEditOperation()">
-                <svg-icon
-                    name="plus-circle"
-                    mode="primary"
-                    size="x_large"
-                    [disabled]="readonly">
-                </svg-icon>
-                <div class="button-text">{{ 'INTERFACE_ADD_OPERATION' | translate }}</div>
-            </div>
+                <!-- onap-ui-common's plus-circle, inlined: the <svg-icon> host renders a div, which a button may not hold. -->
+                <span class="empty-list-add-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><g fill-rule="evenodd" transform="translate(1 1)"><path d="M11,0 C4.9,0 0,4.9 0,11 C0,17.1 4.9,22 11,22 C17.1,22 22,17.1 22,11 C22,4.9 17.1,0 11,0 M15,10 L12,10 L12,7 C12,6.4 11.6,6 11,6 C10.4,6 10,6.4 10,7 L10,10 L7,10 C6.4,10 6,10.4 6,11 C6,11.6 6.4,12 7,12 L10,12 L10,15 C10,15.6 10.4,16 11,16 C11.6,16 12,15.6 12,15 L12,12 L15,12 C15.6,12 16,11.6 16,11 C16,10.4 15.6,10 15,10"/></g></svg></span>
+                <span class="button-text">{{ 'INTERFACE_ADD_OPERATION' | translate }}</span>
+            </button>
         </div>
 
         <div *ngIf="!isListEmpty()">
@@ -142,7 +142,8 @@
                                     name="trash-o"
                                     mode="info"
                                     size="small"
-                                    [clickable]="true">
+                                    [clickable]="true"
+                                    ariaLabel="Delete {{operation.name}}">
                                 </svg-icon>
                             </span>
                         </span>

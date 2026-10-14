@@ -125,3 +125,15 @@ describe('group members tab component', () => {
         expect(optionalMembersToAdd).toHaveLength(3);
     });
 });
+
+describe('group-members-tab template', () => {
+    // tslint:disable-next-line:no-var-requires
+    const template: string = require('./group-members-tab.component.html');
+    const doc = new DOMParser().parseFromString(`<body>${template}</body>`, 'text/html');
+
+    // A sidebar section is not the page's main heading.
+    it('titles the section with an h2, keeping its class', () => {
+        expect(doc.querySelectorAll('h1').length).toBe(0);
+        expect(doc.querySelector('h2').className).toBe('w-sdc-designer-sidebar-section-title');
+    });
+});

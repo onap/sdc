@@ -6,7 +6,7 @@
         <div class="tlv-loader-back"></div>
         <div class="tlv-loader large"></div>
     </div>
-    <div id="main-content" role="main" class="w-sdc-main-container">
+    <main id="main-content" class="w-sdc-main-container">
         <div class="w-sdc-left-sidebar" *ngIf="component && !isComposition">
             <div class="menu-header" [title]="menuComponentTitle">
                 {{menuComponentTitle}}
@@ -53,6 +53,7 @@
                     <select *ngIf="!isCreateMode()"
                             class="version-selector"
                             data-tests-id="versionHeader"
+                            aria-label="Version"
                             [(ngModel)]="changeVersion.selectedVersion"
                             [class.disabled]="unsavedChanges"
                             (change)="onVersionChanged(changeVersion.selectedVersion.versionId)">
@@ -76,7 +77,7 @@
                 </div>
                 <div class="sdc-workspace-top-bar-buttons">
                     <span *ngIf="!isCreateMode() && !component.isLatestVersion() && !showLatestVersion()" [class.disabled]="unsavedChanges">
-                        Switch to the&nbsp;<a data-tests-id="latest-version" (click)="getLatestVersion()">latest version</a>
+                        Switch to the&nbsp;<button type="button" class="latest-version-link" data-tests-id="latest-version" [disabled]="unsavedChanges" (click)="getLatestVersion()">latest version</button>
                     </span>
                     <button *ngIf="showUpgradeServicesButton()"
                             (click)="openAutomatedUpgradeModal()"
@@ -104,30 +105,33 @@
                             [disabled]="!isValidForm || isDisableMode() || isLoading || unsavedChanges"
                             class="tlv-btn outline green"
                             data-tests-id="create/save">Create</button>
-                    <!-- The three sprite spans below carry the label text the AngularJS original had, kept
-                         because `.sdc-workspace-top-bar-buttons > span.sprite-new` text-indents it out of
+                    <!-- The sprite buttons below carry the label text the AngularJS original had, kept
+                         because `.sdc-workspace-top-bar-buttons > .sprite-new` text-indents it out of
                          the 24px box (workspace.less). `sdc-smart-tooltip` from the deleted AngularJS
                          directives is substituted by the shipped library's [sdc-tooltip]; the deleted
                          `prevent-double-click` directive has no replacement and no remaining users. -->
-                    <span *ngIf="showDeleteVersionButton()"
-                          (click)="changeLifecycleState('deleteVersion')"
-                          [class.disabled]="!isValidForm || isDisableMode() || isViewMode() || unsavedChanges"
-                          class="sprite-new delete-btn"
-                          data-tests-id="delete_version"
-                          sdc-tooltip [tooltip-text]="'Delete'">Delete</span>
-                    <span *ngIf="showDeleteArchivedButton()"
-                          (click)="deleteArchivedComponent()"
-                          class="sprite-new delete-btn"
-                          data-tests-id="delete_archive_version"
-                          sdc-tooltip [tooltip-text]="'Delete Component'">Delete</span>
-                    <span *ngIf="showArchiveButton()"
-                          (click)="archiveComponent()"
-                          [class.disabled]="!component.isLatestVersion()"
-                          class="sprite-new archive-btn"
-                          data-tests-id="archive-component-button"
-                          sdc-tooltip [tooltip-text]="'Archive'">Archive</span>
+                    <button type="button" *ngIf="showDeleteVersionButton()"
+                            (click)="changeLifecycleState('deleteVersion')"
+                            [disabled]="!isValidForm || isDisableMode() || isViewMode() || unsavedChanges"
+                            [class.disabled]="!isValidForm || isDisableMode() || isViewMode() || unsavedChanges"
+                            class="sprite-new delete-btn"
+                            data-tests-id="delete_version"
+                            sdc-tooltip [tooltip-text]="'Delete'">Delete</button>
+                    <button type="button" *ngIf="showDeleteArchivedButton()"
+                            aria-label="Delete component"
+                            (click)="deleteArchivedComponent()"
+                            class="sprite-new delete-btn"
+                            data-tests-id="delete_archive_version"
+                            sdc-tooltip [tooltip-text]="'Delete Component'">Delete</button>
+                    <button type="button" *ngIf="showArchiveButton()"
+                            (click)="archiveComponent()"
+                            [disabled]="!component.isLatestVersion()"
+                            [class.disabled]="!component.isLatestVersion()"
+                            class="sprite-new archive-btn"
+                            data-tests-id="archive-component-button"
+                            sdc-tooltip [tooltip-text]="'Archive'">Archive</button>
                     <span class="delimiter"></span>
-                    <span class="sprite-new x-btn" (click)="goToBreadcrumbHome()" [class.disabled]="unsavedChanges">Close</span>
+                    <button type="button" class="sprite-new x-btn" [disabled]="unsavedChanges" (click)="goToBreadcrumbHome()" [class.disabled]="unsavedChanges">Close</button>
                 </div>
             </div>
             <div class="w-sdc-main-container-body-content-header" *ngIf="!isComposition && !isDeployment && !isPlugins">
@@ -139,5 +143,5 @@
           </div>
         </div>
         <top-nav *ngIf="component" [hideSearch]="true" [menuModel]="breadcrumbsModel" [version]="version" [unsavedChanges]="unsavedChanges" [unsavedChangesCallback]="unsavedChangesCallback"></top-nav>
-    </div>
+    </main>
 </div>

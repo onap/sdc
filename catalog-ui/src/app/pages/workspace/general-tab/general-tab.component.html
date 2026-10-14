@@ -207,9 +207,10 @@
                  [class.error]="isImportedFileInvalid()">
               <span class="i-sdc-form-file-name"
                     data-tests-id="filename">{{component?.importedFile?.filename || 'Browse to select file'}}</span>
-              <div class="i-sdc-form-file-upload-x-btn"
-                   *ngIf="component?.importedFile?.filename && !isFileBrowseDisabled()"
-                   (click)="clearImportedFile()"></div>
+              <button type="button" class="i-sdc-form-file-upload-x-btn"
+                      *ngIf="component?.importedFile?.filename && !isFileBrowseDisabled()"
+                      aria-label="Clear file"
+                      (click)="clearImportedFile()"></button>
               <label class="i-sdc-form-file-upload-label">
                 <input type="file"
                        name="fileElement"
@@ -233,14 +234,12 @@
             <div class="i-sdc-form-file-upload i-sdc-form-input">
               <span class="i-sdc-form-file-name"
                     data-tests-id="filename">{{component?.importedFile?.filename || ''}}</span>
-              <input type="button"
-                     [class.disabled]="!isEditMode() && component?.vspArchived"
-                     [attr.disabled]="component?.vspArchived ? '' : null"
-                     name="fileElement"/>
-              <div class="file-upload-browse-btn"
-                   [class.disabled]="!isEditMode() && !component?.vspArchived"
-                   (click)="openOnBoardingModal()"
-                   data-tests-id="browseButton">Browse</div>
+              <button type="button" class="file-upload-browse-btn"
+                      aria-label="Browse VSP"
+                      [disabled]="!isEditMode() && !component?.vspArchived"
+                      [class.disabled]="!isEditMode() && !component?.vspArchived"
+                      (click)="openOnBoardingModal()"
+                      data-tests-id="browseButton">Browse</button>
             </div>
           </div>
 

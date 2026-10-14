@@ -1,0 +1,76 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * SDC
+ * ================================================================================
+ * Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
+
+// Strips a native <button> down to its content, so markup that was a div or span keeps its look.
+// Call it before the element's own rules, at the same specificity.
+.sdc-button-reset() {
+    .sdc-sprite-button-reset();
+    background: none;
+}
+
+// The `background` shorthand would also clear a sprite's background-image and -position, which
+// come from lower-specificity sprite classes, so sprite buttons only drop the background colour.
+.sdc-sprite-button-reset() {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: transparent;
+    border: 0;
+    margin: 0;
+    padding: 0;
+    font: inherit;
+    color: inherit;
+    text-align: inherit;
+    line-height: inherit;
+    cursor: pointer;
+
+    &:disabled {
+        cursor: default;
+    }
+}
+
+// Only the button chrome. Bootstrap 3 already sets color and font to inherit and margin to 0 on
+// every button at element specificity, so a shared class rule (e.g. the global .add-btn) still
+// gives the button its colour, font and margins; the full reset would out-specify that rule.
+.sdc-button-chrome-reset() {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: none;
+    border: 0;
+    padding: 0;
+    text-align: inherit;
+    cursor: pointer;
+
+    &:disabled {
+        cursor: default;
+    }
+}
+
+// A button that keeps the look of the Bootstrap 3 link it replaces.
+.sdc-link-button() {
+    .sdc-button-reset();
+    color: #337ab7;
+
+    &:hover, &:focus {
+        color: #23527c;
+        text-decoration: underline;
+    }
+}

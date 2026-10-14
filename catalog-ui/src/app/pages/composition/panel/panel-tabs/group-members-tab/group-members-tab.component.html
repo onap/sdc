@@ -14,7 +14,7 @@
   ~ limitations under the License.
   -->
  
-<h1 class="w-sdc-designer-sidebar-section-title" tooltip="Members">Members
+<h2 class="w-sdc-designer-sidebar-section-title" tooltip="Members">Members
     <svg-icon-label *ngIf="!isViewOnly"
                     class="add-members-btn"
                     name="plus-circle-o"
@@ -25,7 +25,7 @@
                     clickable="true"
                     (click)="openAddMembersModal()">
     </svg-icon-label>
-</h1>
+</h2>
 <div class="expand-collapse-content">
     <ul>
         <li *ngFor="let member of members; let i = index" class="component-details-panel-large-item"

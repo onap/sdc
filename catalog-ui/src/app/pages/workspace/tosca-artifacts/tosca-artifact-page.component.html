@@ -1,6 +1,6 @@
 <div class="tosca-artifact-page">
     <loader [display]="isLoading" [relative]="true"></loader>
-    <ngx-datatable
+    <ngx-datatable sdcDatatableA11y="TOSCA artifacts"
             columnMode="flex"
             [headerHeight]="40"
             [rowHeight]="35"
@@ -23,7 +23,8 @@
                 <div class="expand-collapse-cell">
                     <svg-icon [clickable]="true" class="expand-collapse-icon"
                               [name]="expanded ? 'caret1-up-o': 'caret1-down-o'" [mode]="'primary'"
-                              [size]="'medium'"></svg-icon>
+                              [size]="'medium'" ariaLabel="Show details of {{row.artifactDisplayName}}"
+                              [attr.aria-expanded]="!!expanded"></svg-icon>
                     <span>{{row.artifactDisplayName }}</span>
                 </div>
             </ng-template>

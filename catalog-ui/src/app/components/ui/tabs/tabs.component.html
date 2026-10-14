@@ -1,5 +1,6 @@
 <!--
   ~ Copyright (C) 2018 AT&T Intellectual Property. All rights reserved.
+  ~ Modifications Copyright (C) 2026 Deutsche Telekom AG.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -14,12 +15,16 @@
   ~ limitations under the License.
   -->
 
-<div class="tabs {{tabStyle}}">
+<div class="tabs {{tabStyle}}" role="tablist">
 <ng-container *ngFor="let tab of tabs">
-    <div class="tab" *ngIf="tab.show" (click)="selectTab(tab)" [class.active]="tab.active" [attr.data-tests-id]="tab.title" [ngStyle]="{'color': tab.highlight}">
+    <button type="button" class="tab" *ngIf="tab.show" role="tab"
+            [attr.id]="tab.tabId" [attr.aria-controls]="tab.panelId"
+            [attr.aria-selected]="!!tab.active" [attr.tabindex]="tab.active ? 0 : -1"
+            (click)="selectTab(tab)" (keydown)="onTabKeydown($event, tab)"
+            [class.active]="tab.active" [attr.data-tests-id]="tab.title" [ngStyle]="{'color': tab.highlight}">
         {{tab.title}}
-        <div class="tab-indication" *ngIf="tab.indication" [@indicatorAnimation]="tab.indication">{{tab.indication}}</div>
-    </div>
+        <span class="tab-indication" *ngIf="tab.indication" [@indicatorAnimation]="tab.indication">{{tab.indication}}</span>
+    </button>
 </ng-container>
 </div>
 <div class="tab-content-container">

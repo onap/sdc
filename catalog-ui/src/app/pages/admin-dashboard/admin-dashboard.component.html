@@ -16,14 +16,16 @@
 <div class="sdc-admin-container">
 
     <nav class="sdc-admin-top-bar-menu">
-        <button class="sdc-admin-top-bar-menu-tab"
+        <button type="button" class="sdc-admin-top-bar-menu-tab"
                 data-tests-id="usermanagmenttab"
                 [class.selected]="isSelected('USER_MANAGEMENT')"
+                [attr.aria-current]="isSelected('USER_MANAGEMENT') ? 'page' : null"
                 (click)="moveToTab('USER_MANAGEMENT')">{{'USER_MANAGEMENT' | translate}}
         </button>
-        <button class="sdc-admin-top-bar-menu-tab"
+        <button type="button" class="sdc-admin-top-bar-menu-tab"
                 data-tests-id="categorymanagmenttab"
                 [class.selected]="isSelected('CATEGORY_MANAGEMENT')"
+                [attr.aria-current]="isSelected('CATEGORY_MANAGEMENT') ? 'page' : null"
                 (click)="moveToTab('CATEGORY_MANAGEMENT')">{{'CATEGORY_MANAGEMENT' | translate}}
         </button>
         <a [href]="monitorUrl" target="_blank" *ngIf="monitorUrl">
@@ -33,9 +35,9 @@
         </a>
     </nav>
 
-    <div class="sdc-admin-body">
+    <main id="main-content" class="sdc-admin-body">
         <user-management *ngIf="isSelected('USER_MANAGEMENT')"></user-management>
         <category-management *ngIf="isSelected('CATEGORY_MANAGEMENT')"></category-management>
-    </div>
+    </main>
 
 </div>

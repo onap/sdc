@@ -14,6 +14,6 @@
   ~ limitations under the License.
   -->
   
-<select name='{{name}}' [(ngModel)]="value" (change)="onChange()"  [ngClass]="{'disabled':readonly}" [attr.data-tests-id]="'value-' + testId">
+<select name='{{name}}' [(ngModel)]="value" (change)="onChange()"  [ngClass]="{'disabled':readonly}" [attr.data-tests-id]="'value-' + testId" [attr.aria-label]="ariaLabel">
   <option *ngFor="let ddvalue of values" [ngValue]="ddvalue.label != undefined ? ddvalue.value : ddvalue" [hidden]="ddvalue.hidden" [selected] = "ddvalue.selected || ddvalue.value === value">{{ddvalue.label||ddvalue}}</option>
 </select>

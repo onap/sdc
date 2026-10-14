@@ -1,5 +1,5 @@
 <div class="capabilities-properties-table">
-    <ngx-datatable #componentsMetadataTable
+    <ngx-datatable sdcDatatableA11y="Capability properties" #componentsMetadataTable
         columnMode="flex" 
         [headerHeight]="40"  
         [rowHeight]="35" 
@@ -8,7 +8,7 @@
         <ngx-datatable-column *ngFor="let column of capabilityPropertiesColumns" [ngSwitch]="column.prop" [resizeable]="false" 
             [draggable]="false" name={{column.name}} [flexGrow]="column.flexGrow">
             <ng-template ngx-datatable-cell-template let-row="row" *ngSwitchCase="'name'">
-                <a data-tests-id="row[column.prop]" sdc-tooltip [tooltip-text]="row[column.prop]" (click)="updateProperty(row)">{{row[column.prop]}}</a>
+                <button type="button" class="edit-property" data-tests-id="row[column.prop]" sdc-tooltip [tooltip-text]="row[column.prop]" (click)="updateProperty(row)">{{row[column.prop]}}</button>
             </ng-template>
             <ng-template ngx-datatable-cell-template let-row="row" *ngSwitchCase="'schema'">
                 <span *ngIf="row[column.prop] && row[column.prop].property" data-tests-id="row[column.prop].property.type" 

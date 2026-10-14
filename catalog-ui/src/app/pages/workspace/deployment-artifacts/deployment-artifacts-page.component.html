@@ -2,7 +2,7 @@
     <svg-icon-label *ngIf="!state.isViewOnly" class="add-artifact-btn" [clickable]="true" [mode]="'primary'" [labelPlacement]="'right'"
                     [label]="'Add'" [name]="'plus'"
                     (click)="addOrUpdateArtifact()"></svg-icon-label>
-    <ngx-datatable
+    <ngx-datatable sdcDatatableA11y="Deployment artifacts"
             columnMode="flex"
             [headerHeight]="40"
             [footerHeight]="'undefined'"

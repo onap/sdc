@@ -9,7 +9,7 @@
                 [size]="'medium'" (click)="capabilitiesTable.rowDetail.collapseAllRows()">
         </svg-icon>
     </div>
-    <ngx-datatable #capabilitiesTable 
+    <ngx-datatable sdcDatatableA11y="Capabilities" #capabilitiesTable 
         columnMode="flex" 
         [headerHeight]="40"  
         [rowHeight]="35" 
@@ -29,7 +29,12 @@
                                 [name]="expanded ? 'caret1-up-o': 'caret1-down-o'" [mode]="'primary'"
                                 [size]="'medium'" ariaLabel="Show details of {{row.name}}" [attr.aria-expanded]="!!expanded"
                                 (click)="expendRow(row)"></svg-icon>
-                    <span data-tests-id="row.name" sdc-tooltip [tooltip-text]="row.name" [tooltip-placement]="3" (click)="editCapability(row)">{{row.name}}</span>
+                    <button type="button" class="edit-capability" *ngIf="row.isCreatedManually; else importedName" data-tests-id="row.name"
+                            sdc-tooltip [tooltip-text]="row.name" [tooltip-placement]="3" [attr.aria-label]="'Edit ' + row.name"
+                            (click)="editCapability(row)">{{row.name}}</button>
+                    <ng-template #importedName>
+                        <span data-tests-id="row.name" sdc-tooltip [tooltip-text]="row.name" [tooltip-placement]="3">{{row.name}}</span>
+                    </ng-template>
                 </div>
             </ng-template>
         </ngx-datatable-column>

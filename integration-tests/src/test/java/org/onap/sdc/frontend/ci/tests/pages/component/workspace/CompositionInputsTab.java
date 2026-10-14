@@ -42,7 +42,7 @@ public class CompositionInputsTab extends AbstractPageObject {
     @AllArgsConstructor
     @Getter
     private enum XpathSelector {
-        INPUTS_TAB("//properties-tab[.//header[contains(text(), 'Inputs')]]");
+        INPUTS_TAB("//properties-tab[.//*[@expandcollapseheader][contains(text(), 'Inputs')]]");
 
         private final String xPath;
 

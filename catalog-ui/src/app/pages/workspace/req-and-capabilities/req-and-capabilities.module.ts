@@ -1,5 +1,6 @@
 import {NgModule} from "@angular/core";
 import {SdcUiComponentsModule} from "onap-ui-angular";
+import { DatatableA11yModule } from '../../../components/ui/datatable-a11y/datatable-a11y.module';
 
 import {NgxDatatableModule} from "@swimlane/ngx-datatable";
 import { ReqAndCapabilitiesComponent } from "./req-and-capabilities.component";
@@ -27,6 +28,7 @@ import {ToscaTypesService} from "../../../services/tosca-types.service";
         CommonModule,
         SdcUiComponentsModule,
         NgxDatatableModule,
+        DatatableA11yModule,
         TranslateModule
     ],
     exports: [

@@ -37,6 +37,7 @@ import {Role, WorkspaceMode} from 'app/utils/constants';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/throw';
 import {Observable} from 'rxjs/Observable';
+import { unlabelledControls } from '../../../../jest/a11y-helpers';
 
 function makeComponent(overrides: any = {}) {
     return {
@@ -428,5 +429,54 @@ describe('top-bar template', () => {
 
     it('labels the upgrade button per component kind', () => {
         expect(template).toContain(`component.isResource() ? 'Upgrade Services' : 'Update Services'`);
+    });
+
+    describe('keyboard operation', () => {
+        const doc = new DOMParser().parseFromString(`<body>${template}</body>`, 'text/html');
+        const sprites = Array.from(doc.querySelectorAll('.sdc-workspace-top-bar-buttons > .sprite-new'));
+        const latestVersion = doc.querySelector('[data-tests-id="latest-version"]');
+
+        it('names the version select', () => {
+            expect(unlabelledControls(template)).not.toContain('select versionHeader');
+            expect(doc.querySelector('select[data-tests-id="versionHeader"]').getAttribute('aria-label')).toBe('Version');
+        });
+
+        it('finds the four sprite buttons and the latest-version control', () => {
+            expect(sprites.map((el) => el.getAttribute('data-tests-id') || el.className)).toEqual(
+                ['delete_version', 'delete_archive_version', 'archive-component-button', 'sprite-new x-btn']);
+            expect(latestVersion).not.toBeNull();
+        });
+
+        it('makes every sprite a native button', () => {
+            sprites.forEach((el) => {
+                expect(el.tagName).toBe('BUTTON');
+                expect(el.getAttribute('type')).toBe('button');
+                expect(el.hasAttribute('sdckeyboardclick')).toBe(false);
+            });
+        });
+
+        it('makes latest-version a native button', () => {
+            expect(latestVersion.tagName).toBe('BUTTON');
+            expect(latestVersion.getAttribute('type')).toBe('button');
+            expect(latestVersion.hasAttribute('sdckeyboardclick')).toBe(false);
+            expect(latestVersion.textContent.trim()).toBe('latest version');
+        });
+
+        // `.disabled` only stops the mouse (pointer-events: none); the keyboard needs `disabled`.
+        it('disables each control exactly when it looks disabled', () => {
+            sprites.forEach((el) => expect(el.getAttribute('[disabled]')).toBe(el.getAttribute('[class.disabled]')));
+            expect(latestVersion.getAttribute('[disabled]'))
+                .toBe(latestVersion.parentElement.getAttribute('[class.disabled]'));
+            expect(latestVersion.getAttribute('[disabled]')).toBe('unsavedChanges');
+        });
+
+        it('tells the two Delete buttons apart', () => {
+            expect(doc.querySelector('[data-tests-id="delete_archive_version"]').getAttribute('aria-label')).toBe('Delete component');
+        });
+
+        // Cypress asserts the visible text.
+        it('keeps the text labels', () => {
+            expect(sprites.map((el) => el.textContent.trim())).toEqual(['Delete', 'Delete', 'Archive', 'Close']);
+        });
     });
 });

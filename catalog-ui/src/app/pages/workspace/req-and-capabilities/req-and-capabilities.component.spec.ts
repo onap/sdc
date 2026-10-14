@@ -125,3 +125,17 @@ describe('req and capabilities component', () => {
         expect(fixture.componentInstance.instanceRef.instance.capabilities[0].type).toBe("tosca.capabilities.Node");
     });
 });
+
+describe('req and capabilities template', () => {
+    const template: string = require('./req-and-capabilities.component.html');
+    const doc = new DOMParser().parseFromString(`<body>${template}</body>`, 'text/html');
+
+    it('renders Add Requirement and Add Capability as native buttons', () => {
+        const adds = Array.from(doc.querySelectorAll('.addTitle'));
+        expect(adds.map((el) => el.textContent.trim())).toEqual(['Add Requirement', 'Add Capability']);
+        adds.forEach((el) => {
+            expect(el.tagName).toBe('BUTTON');
+            expect(el.getAttribute('type')).toBe('button');
+        });
+    });
+});

@@ -23,7 +23,7 @@
 <div class="sdc-workspace-container">
 
   <loader class="loader" [display]="isLoading"></loader>
-  <div class="w-sdc-main-container">
+  <main id="main-content" class="w-sdc-main-container">
     <app-workspace-menu [menuHeader]="dataType.name"
                         (onMenuUpdate)="onMenuUpdate($event)"
                         (onClick)="onMenuClick($event)">
@@ -36,15 +36,16 @@
         <div class="sdc-workspace-top-bar-buttons">
           <button *ngIf="!isViewOnly" (click)="createImportType()" class="tlv-btn outline green" data-tests-id="create/save">Create</button>
 
-          <span *ngIf="!dataType.normative && isViewOnly"
+          <button type="button" *ngIf="!dataType.normative && isViewOnly"
             class="sprite-new delete-btn"
             data-tests-id="delete"
             sdc-smart-tooltip="Delete Type"
             (click)="deleteDataType()"
-            [title]="'DELETE_LABEL' | translate"></span>
+            [title]="'DELETE_LABEL' | translate"
+            [attr.aria-label]="'DELETE_LABEL' | translate"></button>
 
           <span class="delimiter"></span>
-          <span class="sprite-new x-btn" (click)="goToBreadcrumbHome()" sdc-smart-tooltip="Close" [title]="'CLOSE_LABEL' | translate"></span>
+          <button type="button" class="sprite-new x-btn" (click)="goToBreadcrumbHome()" sdc-smart-tooltip="Close" [title]="'CLOSE_LABEL' | translate" [attr.aria-label]="'CLOSE_LABEL' | translate"></button>
         </div>
       </div>
 
@@ -63,6 +64,6 @@
       </div>
 
     </div>
-  </div>
+  </main>
   <top-nav [hideSearch]="true" [menuModel]="breadcrumbsModel" [version]="sdcVersion" [unsavedChanges]="false"></top-nav>
 </div>

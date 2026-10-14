@@ -1,7 +1,7 @@
 <div class="w-sdc-designer-sidebar-tab-content artifacts">
     <div class="w-sdc-designer-sidebar-section">
         <ng2-expand-collapse state="0">
-            <header sdc-tooltip tooltip-text="{{title}}">{{title}}</header>
+            <span expandCollapseHeader sdc-tooltip tooltip-text="{{title}}">{{title}}</span>
             <content class="artifacts-container">
                 <div class="w-sdc-designer-sidebar-section-content">
                     <div class="i-sdc-designer-sidebar-section-content-item" *ngFor="let artifact of artifacts$ | async">

@@ -18,6 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 import {NgModule} from "@angular/core";
+import { DatatableA11yModule } from '../../ui/datatable-a11y/datatable-a11y.module';
 import {GenericArtifactBrowserComponent} from "./generic-artifact-browser.component";
 import {NgxDatatableModule} from "@swimlane/ngx-datatable";
 import {GabService} from "../../../services/gab.service";
@@ -35,6 +36,7 @@ import {UiElementsModule} from "../../ui/ui-elements.module";
         BrowserModule,
         FormsModule,
         NgxDatatableModule,
+        DatatableA11yModule,
         UiElementsModule
     ],
     entryComponents: [ //need to add anything that will be dynamically created

@@ -47,13 +47,16 @@ exports[`filter-properties-assignemnt component should match current snapshot of
         />
       </div>
     </form>
-  </popover-content><div
+  </popover-content><button
+    aria-label="Filter properties"
     class="open-filter-button"
+    type="button"
   >
-    <div
+    <span
+      aria-hidden="true"
       class="sprite-new filter-icon"
       data-tests-id="filter-button"
     />
-  </div>
+  </button>
 </filter-properties-assignment>
 `;

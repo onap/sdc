@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,6 +65,45 @@ export class Tabs implements AfterContentInit {
         });
         tab.active = true;
         this.tabChanged.emit(tab);
+    }
+
+    /**
+     * Manual activation: arrows, Home and End only move focus; Enter or Space selects through the
+     * native button's click, except when held or on the active tab. Selecting on arrow or re-selecting
+     * would run the consumers' (tabChanged) guards, which open an unsaved-changes modal.
+     */
+    onTabKeydown(event: KeyboardEvent, tab: Tab) {
+        if (event.target !== event.currentTarget || event.altKey || event.ctrlKey || event.metaKey) {
+            return;
+        }
+        if ((event.key === 'Enter' || event.key === ' ' || event.key === 'Spacebar') && (event.repeat || tab.active)) {
+            event.preventDefault();
+            return;
+        }
+        const visible: Tab[] = this.tabs.filter((t) => t.show);
+        const current: number = visible.indexOf(tab);
+        let target: number;
+        switch (event.key) {
+            case 'ArrowRight':
+            case 'Right':
+                target = (current + 1) % visible.length;
+                break;
+            case 'ArrowLeft':
+            case 'Left':
+                target = (current - 1 + visible.length) % visible.length;
+                break;
+            case 'Home':
+                target = 0;
+                break;
+            case 'End':
+                target = visible.length - 1;
+                break;
+            default:
+                return;
+        }
+        event.preventDefault();
+        const tabList: HTMLElement = (event.currentTarget as HTMLElement).parentElement;
+        (tabList.children[target] as HTMLElement).focus();
     }
 
     triggerTabChange(tabTitle) {

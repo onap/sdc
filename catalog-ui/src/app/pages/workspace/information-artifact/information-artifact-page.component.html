@@ -2,7 +2,7 @@
     <svg-icon-label class="add-artifact-btn" [clickable]="true" [mode]="'primary'" [labelPlacement]="'right'"
                     [label]="'Add'" [name]="'plus'" [testId]="'add-information-artifact-button'"
                     (click)="addOrUpdateArtifact()"></svg-icon-label>
-    <ngx-datatable
+    <ngx-datatable sdcDatatableA11y="Informational artifacts"
             columnMode="flex"
             [headerHeight]="40"
             [reorderable]="false"
@@ -23,7 +23,8 @@
                 <div class="expand-collapse-cell">
                     <svg-icon [clickable]="true" class="expand-collapse-icon"
                               [name]="expanded ? 'caret1-up-o': 'caret1-down-o'" [mode]="'primary'"
-                              [size]="'medium'"></svg-icon>
+                              [size]="'medium'" ariaLabel="Show details of {{row.artifactDisplayName}}"
+                              [attr.aria-expanded]="!!expanded"></svg-icon>
                     <span [attr.data-tests-id]="'artifactDisplayName_' + row.artifactDisplayName">{{row.artifactDisplayName }}</span>
                 </div>
             </ng-template>

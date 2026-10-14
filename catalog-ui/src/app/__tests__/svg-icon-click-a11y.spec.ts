@@ -55,7 +55,7 @@ describe('svg-icon click sites', () => {
         expect(templateHtml(path.join(appDir, 'components/ui/download-artifact/download-artifact.component.ts'))).toContain('<svg-icon');
     });
 
-    it('make every clicked icon a named keyboard button', () => {
+    it('make every clicked or clickable icon a named keyboard button', () => {
         const problems = sources(appDir).reduce((found: string[], file: string) =>
             found.concat(unnamedClickableIcons(templateHtml(file)).map((p) => `${path.relative(appDir, file)}: ${p}`)), []);
         expect(problems).toEqual([]);
@@ -84,7 +84,15 @@ describe('unnamedClickableIcons', () => {
 
     });
 
-    it('ignores icons without a click handler', () => {
+    it('ignores icons that are neither clicked nor clickable', () => {
         expect(unnamedClickableIcons('<svg-icon name="x"></svg-icon>')).toEqual([]);
+        expect(unnamedClickableIcons('<svg-icon name="x" [clickable]="false"></svg-icon>')).toEqual([]);
+    });
+
+    // The row toggles come from an ancestor's handler, but `clickable` still makes the icon a tab stop.
+    it('rejects a clickable icon without a (click) of its own when it has no name', () => {
+        expect(unnamedClickableIcons('<svg-icon name="x" [clickable]="true"></svg-icon>')).toEqual(
+            ['no ariaLabel: <svg-icon name="x" [clickable]="true">']);
+        expect(unnamedClickableIcons('<svg-icon name="x" [clickable]="true" ariaLabel="Show details"></svg-icon>')).toEqual([]);
     });
 });

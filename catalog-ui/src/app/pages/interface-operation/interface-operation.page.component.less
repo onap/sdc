@@ -1,10 +1,12 @@
 @import '../../../assets/styles/variables.less';
 @import '../../../assets/styles/override.less';
+@import '../../../assets/styles/button-reset.less';
 
 .interface-operation {
     font-size: 14px;
 
     .top-add-btn {
+        .sdc-button-chrome-reset();
         position: relative;
         top: -31px;
         text-transform: uppercase;
@@ -37,6 +39,7 @@
             justify-content: center;
 
             .empty-list-add-btn {
+                .sdc-button-reset();
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
@@ -57,6 +60,23 @@
                         border: 1px solid @sdcui_color_blue;
                         cursor: pointer;
                     }
+                }
+
+                // Mirrors svg-icon mode="primary" size="x_large", dimmed like svg-icon[disabled].
+                .empty-list-add-icon {
+                    display: inline-flex;
+                    width: 36px;
+                    height: 36px;
+                    fill: @sdcui_color_blue;
+
+                    > svg {
+                        width: 100%;
+                        height: 100%;
+                    }
+                }
+
+                &.disabled .empty-list-add-icon {
+                    opacity: .7;
                 }
 
                 .button-text {

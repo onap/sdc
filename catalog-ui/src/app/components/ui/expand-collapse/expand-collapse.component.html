@@ -1,5 +1,6 @@
 <!--
  ~ Copyright (C) 2018 AT&T Intellectual Property. All rights reserved.
+  ~ Modifications Copyright (C) 2026 Deutsche Telekom AG.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -15,13 +16,17 @@
   -->
   
 <div class="expand-collapse-container">
-    <h1 class="expand-collapse-title" [ngClass]="{'expanded': state == 0, 'collapsed': state == 1}"
-        tooltip="{{titleTooltip}}" (click)="toggleState()">{{caption}}
-        <ng-content select="header"></ng-content>
-        <svg-icon name="caret1-down-o" mode="info" size="small" class="expand-collapse-title-icon"></svg-icon>
-    </h1>
+    <h2 class="expand-collapse-heading">
+        <button type="button" class="expand-collapse-title" [ngClass]="{'expanded': state == 0, 'collapsed': state == 1}"
+                [attr.aria-expanded]="state == 0" [attr.aria-controls]="contentId"
+                tooltip="{{titleTooltip}}" (click)="toggleState()">{{caption}}
+            <ng-content select="[expandCollapseHeader]"></ng-content>
+            <!-- onap-ui-common's caret1-down-o, inlined: the <svg-icon> host renders a div, which a button may not hold. -->
+            <span class="expand-collapse-title-icon" aria-hidden="true"><span class="expand-collapse-title-chevron"><svg viewBox="-1 -4 14 14" focusable="false"><path d="M5.2998,6.7002 C5.4998,6.9002 5.7998,7.0002 5.9998,7.0002 C6.1998,7.0002 6.4998,6.9002 6.6998,6.7002 L11.6998,1.7002 C12.0998,1.3002 12.0998,0.7002 11.6998,0.3002 C11.2998,-0.0998 10.6998,-0.0998 10.2998,0.3002 L5.9998,4.6002 L1.6998,0.3002 C1.2998,-0.0998 0.6998,-0.0998 0.2998,0.3002 C-0.1002,0.7002 -0.1002,1.3002 0.2998,1.7002 L5.2998,6.7002 Z"/></svg></span></span>
+        </button>
+    </h2>
 
-    <div class="expand-collapse-content" [ngClass]="{'expanded': state === 0, 'collapsed': state === 1}">
+    <div class="expand-collapse-content" [attr.id]="contentId" [ngClass]="{'expanded': state === 0, 'collapsed': state === 1}">
         <ng-content></ng-content>
         <ng-content select="content"></ng-content>
     </div>

@@ -80,3 +80,33 @@ describe('InterfaceOperationComponent', () => {
         expect(comp.component.uniqueId).toBe('abc');
     });
 });
+
+describe('InterfaceOperationComponent template', () => {
+    // tslint:disable-next-line:no-var-requires
+    const template: string = require('./interface-operation.page.component.html');
+    const doc = new DOMParser().parseFromString(`<body>${template}</body>`, 'text/html');
+
+    // The global `.disabled` class only stops the mouse; a native disabled button also stops the
+    // keyboard, and axe exempts it from color-contrast as an inactive control.
+    it('renders both Add Operation controls as native buttons disabled when read-only', () => {
+        const adds = Array.from(doc.querySelectorAll('[data-tests-id="add-operation"]'));
+        expect(adds.map((el) => el.className)).toEqual(['top-add-btn add-btn', 'empty-list-add-btn']);
+        adds.forEach((el) => {
+            expect(el.tagName).toBe('BUTTON');
+            expect(el.getAttribute('type')).toBe('button');
+            expect(el.getAttribute('[disabled]')).toBe('readonly');
+            expect(el.getAttribute('[class.disabled]')).toBe('readonly');
+        });
+    });
+
+    // A button may hold phrasing content only; the svg-icon host renders a div.
+    it('keeps the plus icon a decorative inline svg inside the empty-list button', () => {
+        const add = doc.querySelector('.empty-list-add-btn');
+        expect(add.querySelectorAll('div, svg-icon').length).toBe(0);
+        const icon = add.querySelector('.empty-list-add-icon');
+        expect(icon.tagName).toBe('SPAN');
+        expect(icon.getAttribute('aria-hidden')).toBe('true');
+        expect(icon.querySelector('svg path')).not.toBeNull();
+        expect(add.querySelector('.button-text').tagName).toBe('SPAN');
+    });
+});

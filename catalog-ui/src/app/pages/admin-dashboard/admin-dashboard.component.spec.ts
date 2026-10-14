@@ -138,3 +138,25 @@ describe('AdminDashboardComponent', () => {
         expect(cdr.detectChanges).not.toHaveBeenCalled();
     });
 });
+
+describe('AdminDashboardComponent template', () => {
+    // tslint:disable-next-line:no-var-requires
+    const template: string = require('./admin-dashboard.component.html');
+    const doc = new DOMParser().parseFromString(`<body>${template}</body>`, 'text/html');
+
+    // The global skip link focuses #main-content; every other page supplies it.
+    it('wraps the body in the skip-link target landmark', () => {
+        const main = doc.getElementById('main-content');
+        expect(main.tagName).toBe('MAIN');
+        expect(main.className).toBe('sdc-admin-body');
+    });
+
+    it('marks the selected top-bar tab as the current page', () => {
+        const tabs = Array.from(doc.querySelectorAll('.sdc-admin-top-bar-menu-tab'));
+        expect(tabs.map((el) => el.getAttribute('[attr.aria-current]'))).toEqual([
+            `isSelected('USER_MANAGEMENT') ? 'page' : null`,
+            `isSelected('CATEGORY_MANAGEMENT') ? 'page' : null`
+        ]);
+        tabs.forEach((el) => expect(el.getAttribute('type')).toBe('button'));
+    });
+});

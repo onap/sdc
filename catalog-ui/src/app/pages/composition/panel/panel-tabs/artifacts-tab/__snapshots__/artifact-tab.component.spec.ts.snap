@@ -28,11 +28,12 @@ exports[`artifact-tab component should match current snapshot of artifact-tab co
       <ng2-expand-collapse
         state="0"
       >
-        <header
+        <span
+          expandcollapseheader=""
           sdc-tooltip=""
         >
           
-        </header>
+        </span>
         <content
           class="artifacts-container"
         >

@@ -1,5 +1,6 @@
 @import '../../../assets/styles/variables';
 @import '../../../assets/styles/mixins';
+@import '../../../assets/styles/button-reset';
 @ng2-shadow-gray: #f8f8f8;
 @ng2-light-gray: #eaeaea;
 @ng2-medium-gray: #d2d2d2;
@@ -78,10 +79,14 @@
                 height: 32px;
                 margin: 0;
                 padding: 2px 20px 4px 10px;
-                outline: none;
                 font-style: italic;
                 color:@ng2-med-dark-gray;
                 width: auto;
+
+                &:focus {
+                    outline: 2px solid @main_color_b;
+                    outline-offset: 1px;
+                }
 
                 &::-moz-placeholder { color:@ng2-med-dark-gray;}
                 &::-webkit-input-placeholder{ color:@ng2-med-dark-gray;}
@@ -106,6 +111,7 @@
         }
 
         .clear-filter{
+            .sdc-button-reset();
             cursor: pointer;
             color:#056bae; // Darkened from #009fdb to meet WCAG AA 4.5:1 contrast
             font-family: @font-opensans-medium-italic;
@@ -139,7 +145,7 @@
         margin: 0px 0 0 1em;
         overflow-x:auto;
         .add-btn{
-
+            .sdc-button-chrome-reset();
             align-self: flex-end;
             margin-top: 10px;
             margin-bottom: 19px;
@@ -180,7 +186,7 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
-        .a_13_r;
+        .b_13_r;
         text-transform: uppercase;
 
         &.hierarchy-header {

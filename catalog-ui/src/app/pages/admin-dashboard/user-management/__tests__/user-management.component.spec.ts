@@ -262,3 +262,44 @@ describe('UserManagementComponent', () => {
         expect(translateService.translate).not.toHaveBeenCalled();
     });
 });
+
+describe('UserManagementComponent template', () => {
+    // tslint:disable-next-line:no-var-requires
+    const template: string = require('../user-management.component.html');
+    const doc = new DOMParser().parseFromString(`<body>${template}</body>`, 'text/html');
+
+    it('associates the Search User label with its input', () => {
+        const label = doc.querySelector('.sdc-user-management-top-bar-search-text');
+        const input = doc.querySelector('[data-tests-id="searchbox"]');
+        expect(label.getAttribute('for')).toBe(input.id);
+        expect(input.id).toBeTruthy();
+    });
+
+    it('renders the clear-search control as a named native button, and the magnifier as decoration', () => {
+        const clear = doc.querySelector('.w-sdc-search-icon.cancel');
+        expect(clear.tagName).toBe('BUTTON');
+        expect(clear.getAttribute('type')).toBe('button');
+        expect(clear.getAttribute('aria-label')).toBe('Clear search');
+        expect(clear.getAttribute('*ngif')).toBe('searchTerm');
+        expect(clear.getAttribute('(click)')).toBe(`onSearchChange('')`);
+        const magnifier = doc.querySelector('.w-sdc-search-icon.magnification');
+        expect(magnifier.tagName).toBe('SPAN');
+        expect(magnifier.getAttribute('aria-hidden')).toBe('true');
+        expect(magnifier.hasAttribute('(click)')).toBe(false);
+    });
+
+    // reverse === false sorts ascending (refresh() returns `reverse ? -cmp : cmp`).
+    it('sorts with a native button inside each header cell, naming the sort state', () => {
+        const header = doc.querySelector('.sdc-user-management-table-header');
+        expect(header.getAttribute('[attr.data-tests-id]')).toBe(`'th' + header.title`);
+        expect(header.hasAttribute('(click)')).toBe(false);
+        const button = header.querySelector('button');
+        expect(button.getAttribute('type')).toBe('button');
+        expect(button.getAttribute('(click)')).toBe('sort(header.property)');
+        expect(button.textContent).toContain('{{header.title}}');
+        const state = button.querySelector('.sr-only');
+        expect(state.getAttribute('*ngif')).toBe('sortBy === header.property');
+        expect(state.textContent).toBe(`{{reverse ? ', sorted descending' : ', sorted ascending'}}`);
+        expect(button.querySelector('.sdc-user-management-table-header-sort-arrow').getAttribute('aria-hidden')).toBe('true');
+    });
+});

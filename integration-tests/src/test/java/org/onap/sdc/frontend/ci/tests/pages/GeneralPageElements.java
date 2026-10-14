@@ -258,7 +258,7 @@ public class GeneralPageElements {
 
     public static void clickDeleteFile() throws Exception {
         SetupCDTest.getExtendTest().log(Status.INFO, "Clicking on delete file X-button ...");
-        GeneralUIUtils.clickOnAreaJS(GeneralUIUtils.getWebElementBy(By.cssSelector("div[class='i-sdc-form-file-upload-x-btn']")));
+        GeneralUIUtils.clickOnAreaJS(GeneralUIUtils.getWebElementBy(By.cssSelector("button[class='i-sdc-form-file-upload-x-btn']")));
         GeneralUIUtils.ultimateWait();
     }
 

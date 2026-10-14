@@ -55,6 +55,9 @@ export const SIM_PASSWORD = '123123a';
 /** cs0008 = Carlos Santana, role DESIGNER. The role every workspace test needs. */
 export const DESIGNER_USER = 'cs0008';
 
+/** jh0003, role ADMIN — the only simulator user the adminDashboard route admits. */
+export const ADMIN_USER = 'jh0003';
+
 /**
  * True when SDC_BASE_URL points at the webpack dev server rather than the webseal-simulator
  * (:8285). The dev server injects its own auth cookies and serves a built-in /login page, but it
@@ -120,6 +123,9 @@ export const SEL = {
      * wrong one inside the workspace produces a 60 s click timeout, not a helpful failure.
      */
     homeBreadcrumb: '[data-tests-id="breadcrumbs-button-0"]',
+
+    /** AuthGuard sends ADMIN straight to /adminDashboard, which renders no top-nav at all. */
+    adminUserManagementTab: '[data-tests-id="usermanagmenttab"]',
 
     /** Workspace left sidebar — General tab entry. `workspace-container.component.html:18`. */
     generalSideMenu: '[data-tests-id="GeneralLeftSideMenu"]',
@@ -270,10 +276,11 @@ export async function settles(page: Page, timeoutMs = 30_000): Promise<boolean> 
  * modal mid-flow; the dev-server plugins-config case is prevented at source by stubPluginsConfig().
  */
 export async function dismissTransientModal(page: Page): Promise<void> {
-    const okBtn = page.locator(`${SEL.okButton}, button:has-text('OK')`);
+    const okBtn = page.locator(`${SEL.okButton}, ${SEL.warningModal} button:has-text('OK')`)
+        .filter({ visible: true });
     if (await okBtn.count()) {
         await okBtn.first().click({ timeout: 3_000 }).catch(() => { /* modal closed itself */ });
-        await page.waitForTimeout(500);
+        await expect(okBtn).toHaveCount(0, { timeout: 5_000 });
     }
 }
 
@@ -312,7 +319,8 @@ export async function login(page: Page, userId: string = DESIGNER_USER): Promise
     await page.locator('input[name="password"]').fill(SIM_PASSWORD);
     await page.locator('input[value="Login"]').click();
     await page.waitForURL('**/sdc1**', { timeout: 30_000 });
-    await expect(page.locator(SEL.homeButton)).toBeVisible({ timeout: 30_000 });
+    const shell = userId === ADMIN_USER ? SEL.adminUserManagementTab : SEL.homeButton;
+    await expect(page.locator(shell)).toBeVisible({ timeout: 30_000 });
 }
 
 // ---------------------------------------------------------------------------
@@ -401,6 +409,71 @@ export async function currentRoute(page: Page): Promise<string> {
 }
 
 // ---------------------------------------------------------------------------
+// Accessibility ratchet
+// ---------------------------------------------------------------------------
+
+export const AXE_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'];
+
+export async function axeRuleIds(page: Page): Promise<{ ids: string[]; detail: string[] }> {
+    await page.addScriptTag({ path: require.resolve('axe-core/axe.min.js') });
+    return page.evaluate(async (tags) => {
+        const r = await (window as any).axe.run(document, { runOnly: { type: 'tag', values: tags } });
+        return {
+            ids: r.violations.map((v: any) => v.id).sort(),
+            detail: r.violations.map((v: any) =>
+                `${v.id}: ${v.nodes.slice(0, 5).map((n: any) => n.target.join(' ')).join(' | ')}`),
+        };
+    }, AXE_TAGS);
+}
+
+/**
+ * Fails on any violation not in `known` AND on any `known` rule that no longer fires, so a fix must
+ * shorten the list and a regression in one rule cannot hide behind another rule's entry.
+ */
+export async function expectAxeRatchet(page: Page, known: string[]): Promise<void> {
+    await dismissTransientModal(page);
+    const { ids, detail } = await axeRuleIds(page);
+    expect(ids.filter(id => known.indexOf(id) === -1), `new violations:\n${detail.join('\n')}`)
+        .toEqual([]);
+    expect(known.filter(id => ids.indexOf(id) === -1),
+        'these rules pass now: remove them from KNOWN').toEqual([]);
+}
+
+/**
+ * catalog-ui's full-viewport and per-table `<loader>` overlays and openecomp-ui's backdrop. All are
+ * torn down, not hidden, and their translucent backdrops make axe misjudge the contrast underneath.
+ */
+export async function loaderGone(page: Page): Promise<void> {
+    await expect(page.locator('.sdc-loader-global-wrapper, .tlv-loader, .onboarding-loader-backdrop'))
+        .toHaveCount(0, { timeout: 30_000 });
+}
+
+/**
+ * Counts the page's requests from now on. `settled()` resolves once none has been in flight for
+ * `quietMs`. Playwright's own 'networkidle' load state cannot do this after an in-page hash change:
+ * it was reached at the first page load and resolves immediately ever after.
+ */
+export function trackNetworkQuiet(page: Page, quietMs = 750): { settled(): Promise<void>; dispose(): void } {
+    let inFlight = 0;
+    let lastChange = Date.now();
+    const started = () => { inFlight++; lastChange = Date.now(); };
+    const ended = () => { inFlight = Math.max(0, inFlight - 1); lastChange = Date.now(); };
+    page.on('request', started);
+    page.on('requestfinished', ended);
+    page.on('requestfailed', ended);
+    return {
+        settled: () => expect.poll(() => inFlight === 0 && Date.now() - lastChange >= quietMs,
+            { timeout: 30_000, intervals: [100], message: 'the page never stopped issuing requests' })
+            .toBe(true),
+        dispose: () => {
+            page.off('request', started);
+            page.off('requestfinished', ended);
+            page.off('requestfailed', ended);
+        },
+    };
+}
+
+// ---------------------------------------------------------------------------
 // Asset creation via the REST API
 // ---------------------------------------------------------------------------
 
@@ -408,6 +481,12 @@ export interface CreatedAsset {
     id: string;
     name: string;
     type: 'resource' | 'service';
+}
+
+export interface OnboardingItem {
+    id: string;
+    versionId: string;
+    name: string;
 }
 
 /**
@@ -552,6 +631,85 @@ export class SdcApi {
             .delete(this.url(`/catalog/${collection}/${asset.id}`), { headers: this.headers })
             .catch(() => { /* best-effort cleanup; a leaked test asset must not fail the suite */ });
     }
+
+    private onboardingUrl(path: string): string {
+        return `${this.baseUrl}/sdc1/feProxy/onboarding-api/v1.0${path}`;
+    }
+
+    /** Onboarding creates answer 200, not 201, and carry the id as `itemId` + `version.id`. */
+    private async onboardingItem(
+        resp: APIResponse, name: string, collection: 'vendor-license-models' | 'vendor-software-products',
+    ): Promise<OnboardingItem> {
+        const body = await resp.json().catch(() => ({}));
+        if (resp.status() !== 200) {
+            expect(resp.status(), `${collection} creation failed: ${JSON.stringify(body)}`).toBe(200);
+        }
+        const id: string = body.itemId;
+        const versionId: string = body.version && body.version.id;
+        expect(id && versionId, `${collection} creation returned no itemId/version.id`).toBeTruthy();
+        const probe = this.onboardingUrl(`/${collection}/${id}/versions/${versionId}`);
+        await expect.poll(async () => (await this.request.get(probe, { headers: this.headers })).status(),
+            { timeout: 30_000, message: `${name} (${id}) was created but never became readable` })
+            .toBe(200);
+        return { id, versionId, name };
+    }
+
+    /** An empty VLM: no LA/FG/EP/LKG. VendorLicenseFacadeImpl.validate() lets it be submitted as is. */
+    async createVlm(namePrefix = 'PwVlm'): Promise<OnboardingItem> {
+        const name = namePrefix + Date.now();
+        const resp = await this.request.post(this.onboardingUrl('/vendor-license-models'), {
+            headers: this.headers,
+            data: { vendorName: name, description: 'created by the Playwright suite', iconRef: 'icon' },
+        });
+        return this.onboardingItem(resp, name, 'vendor-license-models');
+    }
+
+    async submitVlm(vlm: OnboardingItem): Promise<void> {
+        const resp = await this.request.put(
+            this.onboardingUrl(`/vendor-license-models/${vlm.id}/versions/${vlm.versionId}/actions`),
+            { headers: this.headers, data: { action: 'Submit', submitRequest: { message: 'Submit' } } });
+        if (resp.status() !== 200) {
+            expect(resp.status(), `submitting ${vlm.name} failed: ${await resp.text()}`).toBe(200);
+        }
+    }
+
+    /** A NetworkPackage VSP with no package uploaded, owned by `vlm`. */
+    async createVsp(vlm: OnboardingItem, namePrefix = 'PwVsp'): Promise<OnboardingItem> {
+        const name = namePrefix + Date.now();
+        const resp = await this.request.post(this.onboardingUrl('/vendor-software-products'), {
+            headers: this.headers,
+            data: {
+                name,
+                description: 'created by the Playwright suite',
+                category: 'resourceNewCategory.generic',
+                subCategory: 'resourceNewCategory.generic.abstract',
+                vendorName: vlm.name,
+                vendorId: vlm.id,
+                onboardingMethod: 'NetworkPackage',
+                icon: 'icon',
+                licensingData: {},
+            },
+        });
+        return this.onboardingItem(resp, name, 'vendor-software-products');
+    }
+
+    /** Drops one normative Compute onto a VF, so req_and_capabilities has rows to render. */
+    async addComputeInstance(vf: CreatedAsset): Promise<void> {
+        const r = await this.request.get(
+            this.url('/catalog/resources/resourceName/Compute/resourceVersion/1.0'), { headers: this.headers });
+        expect(r.status(), 'normative Compute 1.0 is not readable').toBe(200);
+        const compute = await r.json();
+        const resp = await this.request.post(this.url(`/catalog/resources/${vf.id}/resourceInstance`), {
+            headers: this.headers,
+            data: {
+                componentUid: compute.uniqueId, componentVersion: '1.0', name: 'Compute',
+                originType: 'VFC', icon: compute.icon, posX: '200', posY: '200',
+            },
+        });
+        if (resp.status() !== 201) {
+            expect(resp.status(), `adding Compute to ${vf.name} failed: ${await resp.text()}`).toBe(201);
+        }
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -559,20 +717,24 @@ export class SdcApi {
 // ---------------------------------------------------------------------------
 
 interface SdcFixtures {
-    /** A page already logged in as cs0008 (DESIGNER) with the SDC shell rendered. */
+    /** Simulator user `sdcPage` logs in as. Override per describe with `test.use({ sdcUser: ADMIN_USER })`. */
+    sdcUser: string;
+    /** A page already logged in as `sdcUser` (cs0008, DESIGNER, by default) with the SDC shell rendered. */
     sdcPage: Page;
     /** REST client for creating/deleting assets out-of-band. */
     api: SdcApi;
 }
 
 export const test = base.extend<SdcFixtures>({
-    sdcPage: async ({ page }, use) => {
+    sdcUser: [DESIGNER_USER, { option: true }],
+
+    sdcPage: async ({ page, sdcUser }, use) => {
         // Must be registered BEFORE login: the request fires during app bootstrap, and a route
         // added afterwards would miss it. See stubPluginsConfig() for why this is dev-server only.
         if (IS_DEV_SERVER) {
             await stubPluginsConfig(page);
         }
-        await login(page);
+        await login(page, sdcUser);
         await use(page);
     },
 

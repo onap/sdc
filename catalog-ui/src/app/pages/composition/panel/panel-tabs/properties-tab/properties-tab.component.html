@@ -1,5 +1,5 @@
 <ng2-expand-collapse state="0">
-    <header sdc-tooltip tooltip-text="{{input.title}}">{{input.title}}</header>
+    <span expandCollapseHeader sdc-tooltip tooltip-text="{{input.title}}">{{input.title}}</span>
     <content>
     <div class="w-sdc-designer-sidebar-section">
         <div *ngIf="properties">
@@ -98,7 +98,7 @@
 </ng2-expand-collapse>
 
 <ng2-expand-collapse state="0">
-    <header sdc-tooltip tooltip-text="Occurrences">OCCURRENCES</header>
+    <span expandCollapseHeader sdc-tooltip tooltip-text="Occurrences">OCCURRENCES</span>
     <content>
     <div class="w-sdc-designer-sidebar-section">
        <div *ngIf="isUnboundedChecked != null">

@@ -157,12 +157,17 @@ describe('updateSelectedMenuItem', () => {
         expect((comp as any).leftBarTabs.selectedIndex).toBe(1);
     });
 
-    it('clears the selection on the full-bleed composition tab', () => {
-        const {comp} = createComponent();
-        (comp as any).leftBarTabs = {menuItems: [{state: 'workspace.general'}]};
-        (comp as any).isComposition = true;
-        (comp as any).updateSelectedMenuItem('workspace.composition');
-        expect((comp as any).leftBarTabs.selectedIndex).toBe(-1);
+    // The breadcrumb renders menuItems[selectedIndex].text, so it needs the composition item to
+    // have a name. The menu item's state carries a panel-tab suffix the URL may not, which the
+    // AngularJS shell absorbed by comparing only the first two segments.
+    ['workspace.composition', 'workspace.composition.details', 'workspace.composition.properties'].forEach((state) => {
+        it(`selects the composition menu item on ${state}`, () => {
+            const {comp} = createComponent();
+            (comp as any).leftBarTabs = {menuItems: [{state: 'workspace.general'}, {state: 'workspace.composition.details'}]};
+            (comp as any).isComposition = true;
+            (comp as any).updateSelectedMenuItem(state);
+            expect((comp as any).leftBarTabs.selectedIndex).toBe(1);
+        });
     });
 
     it('selects the deployment menu item', () => {
@@ -262,5 +267,21 @@ describe('change detection strategy', () => {
         expect(annotations.length).toBeGreaterThan(0);
         expect(annotations[0].changeDetection).toBe(ChangeDetectionStrategy.Default);
         expect(annotations[0].changeDetection).not.toBe(ChangeDetectionStrategy.OnPush);
+    });
+});
+
+describe('main landmark', () => {
+    // tslint:disable-next-line:no-var-requires
+    const template: string = require('./workspace-container.component.html');
+    const doc = new DOMParser().parseFromString(`<body>${template}</body>`, 'text/html');
+
+    // axe's landmark-banner-is-top-level only exempts a <header> inside a NATIVE <main>; a
+    // role="main" div is itself a landmark, so every projected expand-collapse <header> would fail.
+    it('is a native <main> carrying the skip-link target', () => {
+        const main = doc.getElementById('main-content');
+        expect(main.tagName.toLowerCase()).toBe('main');
+        expect(main.className).toBe('w-sdc-main-container');
+        expect(main.hasAttribute('role')).toBe(false);
+        expect(doc.querySelectorAll('[role="main"], main').length).toBe(1);
     });
 });

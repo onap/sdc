@@ -139,3 +139,20 @@ describe('filter-properties-assignemnt component', () => {
     });
 
 });
+describe('filter-properties-assignment template', () => {
+    // tslint:disable-next-line:no-var-requires
+    const template: string = require('./filter-properties-assignment.component.html');
+    const doc = new DOMParser().parseFromString(`<body>${template}</body>`, 'text/html');
+
+    // [popover] toggles on the host's click, which a native button also fires on Enter and Space.
+    it('opens the filter popover from a named native button', () => {
+        const opener = doc.querySelector('.open-filter-button');
+        expect(opener.tagName).toBe('BUTTON');
+        expect(opener.getAttribute('type')).toBe('button');
+        expect(opener.getAttribute('[popover]')).toBe('filterPopover');
+        expect(opener.getAttribute('aria-label')).toBe('Filter properties');
+        const icon = opener.querySelector('[data-tests-id="filter-button"]');
+        expect(icon.tagName).toBe('SPAN');
+        expect(icon.getAttribute('aria-hidden')).toBe('true');
+    });
+});

@@ -2,22 +2,23 @@
     <div *ngIf="serviceHasDistibutions" class="w-sdc-distribution-view-header">
         <div class="w-sdc-distribution-view-title" data-tests-id="DistributionsLabel">DISTRIBUTION <span class="blue-font" data-tests-id="totalArtifacts">[{{distributions.length}}]</span></div>
         <div class="header-spacer"></div>
-        <input type="text" value="GeeksForGeeks" id="inputForCopyToClipboard" [ngStyle]="{'z-index': '-2', 'width': '25px'}">
+        <input type="text" value="GeeksForGeeks" id="inputForCopyToClipboard" aria-hidden="true" tabindex="-1" [ngStyle]="{'z-index': '-2', 'width': '25px'}">
         <div class="top-search">
             <input type="text"
                    style="width: auto;"
                    class="search-text"
                    data-tests-id="searchTextbox"
+                   aria-label="Search distributions"
                    placeholder="Search"
                    (keyup)="updateFilter($event)"/>
         </div>
-        <div class="sprite-new refresh-btn" data-tests-id="refreshButton" (click)="refreshDistributions()" title="Refresh"></div>
+        <button type="button" class="sprite-new refresh-btn" data-tests-id="refreshButton" aria-label="Refresh" (click)="refreshDistributions()" title="Refresh"></button>
     </div>
     <div class="w-sdc-distribution-view-header w-sdc-distribution-view-title" data-tests-id="noDistributionsLabel" *ngIf="!serviceHasDistibutions">No Distributions To Present</div>
 </div>
 
 <div *ngIf="serviceHasDistibutions">
-    <ngx-datatable
+    <ngx-datatable sdcDatatableA11y="Distributions"
             [columnMode]="'flex'"
             [rowHeight]="'auto'"
             [reorderable]="false"
@@ -61,7 +62,7 @@
             <ng-template ngx-datatable-cell-template let-row="row">
                 <div>
                     <span class="statusIcon">
-                        <svg-icon [clickable]="true" class="expand-collapse-icon"
+                        <svg-icon class="expand-collapse-icon"
                         [name]= "getIconName(row.deployementStatus)" [mode]="'primary'"
                         [size]="'medium'"></svg-icon>
                     </span>
@@ -70,7 +71,8 @@
                     </span>
                     <span class="btnMarkAsDistributed" (click)="markDeploy(row.distributionID, row.deployementStatus)">
                             <svg-icon [clickable]="true" [name]= "'success'" [mode]="getIconMode(row.deployementStatus)"
-                                      [size]="'medium'"></svg-icon>
+                                      [size]="'medium'" ariaLabel="Mark {{row.distributionID}} as deployed"
+                                      [disabled]="row.deployementStatus !== 'Distributed'"></svg-icon>
                     </span>
                 </div>
             </ng-template>

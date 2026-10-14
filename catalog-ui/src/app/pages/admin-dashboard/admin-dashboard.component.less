@@ -24,12 +24,15 @@
             position: relative;
             padding: 0px 10px 0px 10px;
             border: none;
-            outline: none;
             margin-right: 15px;
 
+            &:focus {
+                outline: 2px solid @main_color_b;
+                outline-offset: -2px;
+            }
+
             &.selected {
-                outline: none;
-                border-bottom: solid 4px @color_t;
+                border-bottom: solid 4px @main_color_b;
             }
         }
 

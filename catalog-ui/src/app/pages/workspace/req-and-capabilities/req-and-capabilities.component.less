@@ -1,3 +1,5 @@
+@import '../../../../assets/styles/button-reset';
+
 .req-and-cap-filter {
     width: 336px;
     float: right;
@@ -5,11 +7,17 @@
 }
 
 .addTitle {
+    .sdc-button-reset();
     float: right;
     text-transform: uppercase;
     font-family: OpenSans-Semibold, sans-serif;
     color: #056bae; // Darkened from #009fdb to meet WCAG AA 4.5:1 contrast
     cursor: pointer;
+
+    &:focus {
+        outline: 2px solid #056bae;
+        outline-offset: 1px;
+    }
 }
 
 :host ::ng-deep .sdc-tabs {

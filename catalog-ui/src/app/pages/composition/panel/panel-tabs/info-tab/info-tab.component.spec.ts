@@ -105,3 +105,13 @@ describe('InfoTabComponent', () => {
     });
 
 });
+
+describe('info-tab template', () => {
+    // tslint:disable-next-line:no-var-requires
+    const template: string = require('./info-tab.component.html');
+    const doc = new DOMParser().parseFromString(`<body>${template}</body>`, 'text/html');
+
+    it('names the instance version select', () => {
+        expect(doc.querySelector('select[data-tests-id="changeVersion"]').getAttribute('aria-label')).toBe('Instance version');
+    });
+});

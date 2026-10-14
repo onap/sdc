@@ -87,7 +87,7 @@ public class AttributesTabComponent extends AbstractPageObject {
         INSTANCE_SPAN("//div[contains(@class,'table-rows-header')]"),
         SET_INPUT_NAME_FIELD("//*[@id=\"myText\"]"),
         INPUT_NAME_SAVE_BTN("//button[@data-tests-id='Save']"),
-        ADDED_OUTPUT_NOTIFICATION("tab-indication", "//div[@data-tests-id='Outputs']/div[contains(@class, '%s')]");
+        ADDED_OUTPUT_NOTIFICATION("tab-indication", "//button[@data-tests-id='Outputs']/span[contains(@class, '%s')]");
 
         @Getter
         private String id;

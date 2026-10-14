@@ -21,6 +21,7 @@
  */
 
 import {NgModule} from '@angular/core';
+import { DatatableA11yModule } from '../../components/ui/datatable-a11y/datatable-a11y.module';
 import {CommonModule} from '@angular/common';
 import {TypeWorkspaceComponent} from "./type-workspace.component";
 import {TypeWorkspaceService} from "./type-workspace.service";
@@ -52,6 +53,7 @@ import {ConstraintsModule} from "../properties-assignment/constraints/constraint
         FormsModule,
         InterfaceOperationHandlerModule,
         NgxDatatableModule,
+        DatatableA11yModule,
         SvgIconModule,
         AutoCompleteModule,
         ConstraintsModule

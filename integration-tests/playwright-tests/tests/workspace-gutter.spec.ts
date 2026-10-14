@@ -39,7 +39,7 @@
  *    rather than as absolute pixel values, so the test survives a theme or sidebar-width change and
  *    still fails on a lost gutter.
  *
- * 2. THE TOP BAR. `.sdc-workspace-top-bar-buttons > span.sprite-new` hides its "Close" label with
+ * 2. THE TOP BAR. `.sdc-workspace-top-bar-buttons > button.sprite-new` hides its "Close" label with
  *    `text-indent: 100%`, which pushes the text out of the sprite's 24px box but does NOT remove it
  *    — it still counts toward scrollWidth. That inflated the flex row past the bar and tripped the
  *    bar's own `overflow-x: auto`, giving a stray scrollbar and a truncated "✕ Clo…" at the right
@@ -82,7 +82,7 @@ async function measure(page): Promise<Layout> {
         const sidebar = document.querySelector(sidebarSel) as HTMLElement;
         const bar = document.querySelector(barSel) as HTMLElement;
         const buttons = document.querySelector(buttonsSel) as HTMLElement;
-        const close = document.querySelector(`${buttonsSel} > span.sprite-new`) as HTMLElement;
+        const close = document.querySelector(`${buttonsSel} > button.sprite-new`) as HTMLElement;
 
         // Only elements that were actually laid out: a 0x0 box carries no positional information and
         // would drag the minimum to 0, turning a real gutter loss into a pass.

@@ -49,6 +49,7 @@ export class DropdownValue {
 export class UiElementDropDownComponent extends UiElementBase implements UiElementBaseInterface  {
   
   @Input() values: DropdownValue[];
+  @Input() ariaLabel: string;
 
   constructor() {
     super();

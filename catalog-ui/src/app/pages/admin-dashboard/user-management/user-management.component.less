@@ -4,6 +4,7 @@
 @import '../../../../assets/styles/variables.less';
 @import '../../../../assets/styles/variables-old.less';
 @import '../../../../assets/styles/mixins_old.less';
+@import '../../../../assets/styles/button-reset.less';
 
 .sdc-user-management-top-bar {
     display: flex;
@@ -34,6 +35,10 @@
             right: 11px;
             top: 49px;
         }
+
+        button.w-sdc-search-icon {
+            .sdc-sprite-button-reset();
+        }
     }
 }
 
@@ -45,12 +50,25 @@
         width: 100%;
         border: 1px solid @color_m;
         .head {
-            .bg_m;
+            background-color: @color_y;
             .head-row {
                 .c_18;
                 font-weight: bold;
+                padding: 0;
 
                 border-right: 1px solid @border_color_d;
+
+                .sdc-user-management-table-header-button {
+                    .sdc-button-reset();
+                    width: 100%;
+                    height: 100%;
+                    padding: 5px;
+
+                    &:focus {
+                        outline: 2px solid @color_c;
+                        outline-offset: -3px;
+                    }
+                }
 
                 .sdc-user-management-table-header-sort-arrow {
                     display: inline-block;
@@ -74,7 +92,7 @@
                 }
             }
             .sdc-user-management-table-header:hover {
-                .bg_j;
+                background-color: @color_w;
             }
 
         }
@@ -123,7 +141,7 @@
 
             }
             .data-row:hover {
-                .bg_j;
+                background-color: @color_k;
             }
 
         }

@@ -16,6 +16,7 @@ exports[`tosca artifacts page should match current snapshot of tosca artifact pa
     <ngx-datatable
       class="ngx-datatable"
       columnmode="flex"
+      sdcdatatablea11y="TOSCA artifacts"
     >
       <div
         visibilityobserver=""

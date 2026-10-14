@@ -18,6 +18,7 @@ exports[`informational artifacts page should match current snapshot of informati
     <ngx-datatable
       class="ngx-datatable"
       columnmode="flex"
+      sdcdatatablea11y="Informational artifacts"
     >
       <div
         visibilityobserver=""

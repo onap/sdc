@@ -42,7 +42,7 @@ public class CompositionDeploymentArtifactsTab extends AbstractPageObject {
     @AllArgsConstructor
     @Getter
     private enum XpathSelector {
-        DEPLOYMENT_ARTIFACTS_TAB("//artifacts-tab[.//header[contains(text(), 'Deployment Artifacts')]]");
+        DEPLOYMENT_ARTIFACTS_TAB("//artifacts-tab[.//*[@expandcollapseheader][contains(text(), 'Deployment Artifacts')]]");
 
         private final String xpath;
 

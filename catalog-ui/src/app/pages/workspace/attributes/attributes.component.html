@@ -30,7 +30,7 @@
         </svg-icon-label>
     </div>
 
-    <ngx-datatable
+    <ngx-datatable sdcDatatableA11y="Attributes"
         columnMode="flex"
         [footerHeight]="0"
         [limit]="50"
@@ -53,7 +53,8 @@
                     <svg-icon [clickable]="true" class="expand-collapse-icon"
                               [name]="expanded ? 'caret1-up-o': 'caret1-down-o'"
                               [mode]="'primary'"
-                              [size]="'medium'"></svg-icon>
+                              [size]="'medium'" ariaLabel="Show details of {{row.name}}"
+                              [attr.aria-expanded]="!!expanded"></svg-icon>
                     <span>{{ row.name }}</span>
                 </div>
             </ng-template>

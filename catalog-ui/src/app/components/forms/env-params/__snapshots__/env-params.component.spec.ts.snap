@@ -21,6 +21,7 @@ exports[`environment parameters component should match current snapshot of env-p
     <sdc-filter-bar />
   </div><ngx-datatable
     class="material ngx-datatable"
+    sdcdatatablea11y="Environment parameters"
   >
     <div
       visibilityobserver=""

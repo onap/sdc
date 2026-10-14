@@ -22,11 +22,12 @@ exports[`InfoTabComponent can load instance 1`] = `
   <ng2-expand-collapse
     state="0"
   >
-    <header
+    <span
+      expandcollapseheader=""
       tooltip="General Information"
     >
       General Info
-    </header>
+    </span>
     <content
       class="general-info-container"
     >

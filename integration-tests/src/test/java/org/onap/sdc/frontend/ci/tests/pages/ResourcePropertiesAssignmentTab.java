@@ -375,7 +375,7 @@ public class ResourcePropertiesAssignmentTab extends AbstractPageObject {
         SET_INPUT_NAME_FIELD("//*[@id=\"myText\"]"),
         PROPERTY_SAVE_BTN("properties-save-button", "//button[@data-tests-id='%s']"),
         PROPERTY_ADD_RIGHT_COLUMN_DIV("right-column", "//div[@class='%s']"),
-        PROPERTY_ADD_BTN("add-btn", "//div[contains(@class,'%s')]"),
+        PROPERTY_ADD_BTN("add-btn", "//button[contains(concat(' ',normalize-space(@class),' '),' %s ')]"),
         PROPERTY_ADD_VALUE_COMPLEX_TYPE("//a[contains(@data-tests-id, 'add-to-list-%s')]"),
         INPUT_PROPERTY_COMPLEX_TYPE_KEY("//input[contains(@data-tests-id, 'value-prop-key-%s')]"),
         INPUT_PROPERTY_COMPLEX_TYPE_VALUE("//input[contains(@data-tests-id, 'value-prop-%s')]"),
@@ -386,7 +386,7 @@ public class ResourcePropertiesAssignmentTab extends AbstractPageObject {
         PROPERTY_NAMES("//*[contains(@data-tests-id, 'propertyName')]"),
         DECLARE_INPUT_BTN("declare-button declare-input", "//button[@data-tests-id='%s']"),
         INPUT_NAME_SAVE_BTN("//button[@data-tests-id='Save']"),
-        COMPOSITION_TAB("Composition", "//div[contains(@class,'tab') and contains(text(), '%s')]"),
+        COMPOSITION_TAB("Composition", "//button[contains(concat(' ',normalize-space(@class),' '),' tab ') and contains(text(), '%s')]"),
         INSTANCE_SPAN("//span[@data-tests-id='%s']");
 
         @Getter

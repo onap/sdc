@@ -46,13 +46,14 @@ const isClickable = (el: Element) => {
 };
 
 /**
- * svg-icon / svg-icon-label elements with a (click) handler that onap-ui-angular would render
- * without role=button + tabindex, or without an accessible name.
+ * svg-icon / svg-icon-label elements that onap-ui-angular renders as a tab stop with no accessible
+ * name, or that have a (click) handler but are not rendered as a keyboard button. `clickable`
+ * alone makes the icon role=button tabindex=0, with or without a (click) of its own.
  */
 export function unnamedClickableIcons(html: string): string[] {
     const doc = new DOMParser().parseFromString(`<body>${html}</body>`, 'text/html');
     return Array.from(doc.querySelectorAll('svg-icon, svg-icon-label'))
-        .filter((el) => el.hasAttribute('(click)'))
+        .filter((el) => el.hasAttribute('(click)') || isClickable(el))
         .map((el) => {
             const problems: string[] = [];
             if (!isClickable(el)) {

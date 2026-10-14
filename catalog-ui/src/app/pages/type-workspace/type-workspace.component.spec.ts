@@ -127,3 +127,26 @@ describe('TypeWorkspaceComponent', () => {
     expect(component).toBeTruthy();
   });
 });
+
+describe('TypeWorkspaceComponent template', () => {
+  // tslint:disable-next-line:no-var-requires
+  const template: string = require('./type-workspace.component.html');
+  const doc = new DOMParser().parseFromString(`<body>${template}</body>`, 'text/html');
+
+  it('wraps the page in the skip-link target', () => {
+    const main = doc.getElementById('main-content');
+    expect(main.tagName.toLowerCase()).toBe('main');
+    expect(main.className).toBe('w-sdc-main-container');
+  });
+
+  // These two sprites have no text content, so the name has to come from aria-label.
+  [['delete', `'DELETE_LABEL' | translate`], ['close', `'CLOSE_LABEL' | translate`]].forEach(([which, label]) => {
+    it(`makes the ${which} sprite a named native button`, () => {
+      const sprite = doc.querySelector(`.sdc-workspace-top-bar-buttons > .sprite-new.${which === 'delete' ? 'delete-btn' : 'x-btn'}`);
+      expect(sprite.tagName).toBe('BUTTON');
+      expect(sprite.getAttribute('type')).toBe('button');
+      expect(sprite.hasAttribute('sdckeyboardclick')).toBe(false);
+      expect(sprite.getAttribute('[attr.aria-label]')).toBe(label);
+    });
+  });
+});

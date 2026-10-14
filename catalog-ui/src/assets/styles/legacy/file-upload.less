@@ -26,7 +26,6 @@
         flex-grow: 999;
         text-align: left;
         padding: 3px 10px;
-        opacity: 0.6;
         width: 80%;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -35,6 +34,7 @@
     }
 
     .i-sdc-form-file-upload-x-btn{
+        .sdc-sprite-button-reset();
         flex-grow: 1;
         .sprite;
         .sprite.small-x-btn-black;
@@ -50,6 +50,11 @@
         height: 100%;
         .bg_n;
         .b_9;
+
+        &:focus-within .file-upload-browse-btn {
+            outline: 2px solid @main_color_b;
+            outline-offset: -2px;
+        }
 
         .file-upload-browse-btn {
             .noselect;

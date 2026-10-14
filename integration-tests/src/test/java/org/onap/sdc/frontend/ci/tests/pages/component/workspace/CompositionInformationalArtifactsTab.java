@@ -42,7 +42,7 @@ public class CompositionInformationalArtifactsTab extends AbstractPageObject {
     @AllArgsConstructor
     @Getter
     private enum XpathSelector {
-        INFORMATIONAL_ARTIFACTS_TAB("//artifacts-tab[.//header[contains(text(), 'Informational Artifacts')]]");
+        INFORMATIONAL_ARTIFACTS_TAB("//artifacts-tab[.//*[@expandcollapseheader][contains(text(), 'Informational Artifacts')]]");
 
         private final String xpath;
 

@@ -20,6 +20,7 @@
 import { NgModule } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { BrowserModule } from "@angular/platform-browser";
+import { DatatableA11yModule } from '../../../components/ui/datatable-a11y/datatable-a11y.module';
 import { CompositionPanelComponent } from "./composition-panel.component";
 import { CompositionPanelHeaderModule } from "app/pages/composition/panel/panel-header/panel-header.module";
 import { SdcUiComponentsModule } from "onap-ui-angular";
@@ -77,6 +78,7 @@ import {CompositionService} from "../composition.service";
         AddElementsModule,
         TranslateModule,
         NgxDatatableModule,
+        DatatableA11yModule,
         ServiceDependenciesModule,
         ServiceConsumptionModule,
         SubstitutionFilterModule,

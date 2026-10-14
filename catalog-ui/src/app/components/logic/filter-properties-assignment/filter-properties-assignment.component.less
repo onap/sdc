@@ -1,4 +1,5 @@
 @import '../../../../assets/styles/variables';
+@import '../../../../assets/styles/button-reset';
 form{
     margin: 0 20px;
     .field{
@@ -22,6 +23,10 @@ form{
 }
 
 .open-filter-button{
+    .sdc-button-reset();
+    // Keeps the icon at the top-left, where it sat in the div; a button centres its content.
+    display: flex;
+    align-items: flex-start;
     cursor: pointer;
     width: 32px;
     height: 34px;

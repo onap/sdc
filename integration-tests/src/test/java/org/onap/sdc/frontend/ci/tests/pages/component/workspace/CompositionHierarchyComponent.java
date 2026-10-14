@@ -53,8 +53,8 @@ public class CompositionHierarchyComponent extends AbstractPageObject {
     @AllArgsConstructor
     private enum XpathSelector {
         MAIN_ELEMENT("right-column", "//div[@class='%s']"),
-        COMPOSITION_TAB("Composition", "//div[contains(@class,'tab') and contains(text(), '%s')]"),
-        STRUCTURE_TAB(" Structure", "//div[contains(@class,'tab') and contains(text(), '%s')]"),
+        COMPOSITION_TAB("Composition", "//button[contains(concat(' ',normalize-space(@class),' '),' tab ') and contains(text(), '%s')]"),
+        STRUCTURE_TAB(" Structure", "//button[contains(concat(' ',normalize-space(@class),' '),' tab ') and contains(text(), '%s')]"),
         SELF_SPAN("SELF", "//span[@data-tests-id='%s']"),
         INSTANCE_SPAN("//span[@data-tests-id='%s']");
 

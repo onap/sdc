@@ -4,7 +4,7 @@
     .bg_p;
 
     .add-btn {
-        .f-color.a;
+        color: @main_color_b;
         .f-type._12_m;
         .hand;
         float: right;
@@ -18,7 +18,8 @@
 
         }
         &:hover {
-            .f-color.b;
+            color: darken(@main_color_b, 10%);
+            text-decoration: underline;
             &:before {
                 .sprite-new;
                 .plus-icon-hover;
@@ -130,6 +131,8 @@
                     .hand;
 
                     &.sprite-new {
+                        .sdc-sprite-button-reset();
+                        margin-right: 10px;
                         text-indent: 100%;
                         // `text-indent: 100%` only pushes the label ("Close") out of the sprite's 24px
                         // box, it does not remove it: the text still contributes to scrollWidth (61px
@@ -137,10 +140,18 @@
                         // trips the bar's own `overflow-x: auto` (:97) — a stray scrollbar under the top
                         // bar and a truncated "✕ Clo…" at the right edge. The clip is what hides it.
                         overflow: hidden;
+
+                        &:focus {
+                            outline: 2px solid @main_color_b;
+                            outline-offset: 1px;
+                        }
                     }
                     &.disabled, &:hover.disabled {
                         pointer-events: none;
                     }
+                }
+                .latest-version-link {
+                    .sdc-link-button();
                 }
                 .delimiter {
                     height: 32px;

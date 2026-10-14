@@ -73,8 +73,8 @@
             </div>
             <div class="header">
                 <div class="search-filter-container" [class.without-filter]="isInputsTabSelected || isPoliciesTabSelected">
-                    <span *ngIf="displayClearSearch && isPropertiesTabSelected" (click)="clickOnClearSearch()" class="clear-filter" data-tests-id="clear-filter-button">Clear All</span>
-                    <input type="text" class="search-box" placeholder="Search" [(ngModel)]="searchQuery" data-tests-id="search-box"/>
+                    <button type="button" *ngIf="displayClearSearch && isPropertiesTabSelected" (click)="clickOnClearSearch()" class="clear-filter" data-tests-id="clear-filter-button">Clear All</button>
+                    <input type="text" class="search-box" placeholder="Search" aria-label="Search properties" [(ngModel)]="searchQuery" data-tests-id="search-box"/>
                     <span class="sprite search-icon" data-tests-id="search-button"></span>
                     <filter-properties-assignment *ngIf="isPropertiesTabSelected" #advanceSearch class="advance-search" [componentType]="component.componentType" (searchProperties)="searchPropertiesInstances($event)"></filter-properties-assignment>
                 </div>
@@ -89,10 +89,11 @@
             </div>
         </div>
         <div class="right-column">
-            <div *ngIf="!isReadonly && !isInputsTabSelected" class="add-btn"
-                 (click)="addProperty(component.model)" data-tests-id="properties-add-button" [ngClass]="{'disabled': !showAddProperties()}" >Add Property</div>
-            <div *ngIf="!isReadonly && isInputsTabSelected" class="add-btn"
-                 (click)="addInput()" [ngClass]="{'disabled': !isSelf()}">Add Input</div>
+            <button type="button" *ngIf="!isReadonly && !isInputsTabSelected" class="add-btn"
+                    (click)="addProperty(component.model)" data-tests-id="properties-add-button"
+                    [disabled]="!showAddProperties()" [class.disabled]="!showAddProperties()">Add Property</button>
+            <button type="button" *ngIf="!isReadonly && isInputsTabSelected" class="add-btn"
+                    (click)="addInput()" [disabled]="!isSelf()" [class.disabled]="!isSelf()">Add Input</button>
             <tabs #hierarchyNavTabs tabStyle="simple-tabs" class="gray-border">
                 <tab tabTitle="Composition">
                     <div class="hierarchy-nav-container">

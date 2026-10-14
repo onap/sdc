@@ -90,3 +90,38 @@ describe('DistributionComponent', () => {
     expect(fixture.componentInstance.distributions.length).toBe(2);
   });
 });
+
+describe('DistributionComponent template', () => {
+  // tslint:disable-next-line:no-var-requires
+  const template: string = require('./distribution.component.html');
+  const doc = new DOMParser().parseFromString(`<body>${template}</body>`, 'text/html');
+
+  // The status icon has no handler, so it must not be a tab stop.
+  it('renders the status icon as decoration', () => {
+    const icon = doc.querySelector('.statusIcon svg-icon');
+    expect(icon.hasAttribute('[clickable]')).toBe(false);
+    expect(icon.hasAttribute('clickable')).toBe(false);
+  });
+
+  // markDeploy() is a no-op unless the row is Distributed.
+  it('names Mark as deployed and disables it unless the row is Distributed', () => {
+    const icon = doc.querySelector('.btnMarkAsDistributed svg-icon');
+    expect(icon.getAttribute('arialabel')).toBe('Mark {{row.distributionID}} as deployed');
+    expect(icon.getAttribute('[disabled]')).toBe(`row.deployementStatus !== 'Distributed'`);
+  });
+
+  it('keeps the clipboard buffer out of the tab order and the accessibility tree', () => {
+    const buffer = doc.getElementById('inputForCopyToClipboard');
+    expect(buffer.getAttribute('aria-hidden')).toBe('true');
+    expect(buffer.getAttribute('tabindex')).toBe('-1');
+  });
+
+  it('makes Refresh a named native button and names the search box', () => {
+    const refresh = doc.querySelector('[data-tests-id="refreshButton"]');
+    expect(refresh.tagName).toBe('BUTTON');
+    expect(refresh.getAttribute('type')).toBe('button');
+    expect(refresh.hasAttribute('sdckeyboardclick')).toBe(false);
+    expect(refresh.getAttribute('aria-label')).toBe('Refresh');
+    expect(doc.querySelector('[data-tests-id="searchTextbox"]').getAttribute('aria-label')).toBe('Search distributions');
+  });
+});

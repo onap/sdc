@@ -116,3 +116,33 @@ describe('PropertiesAssignmentComponent', () => {
         expect(component.instanceFePropertiesMap[componentUniqueId].map((p) => p.name)).toEqual(['existing', 'my_prop']);
     });
 });
+
+describe('PropertiesAssignmentComponent template', () => {
+    // tslint:disable-next-line:no-var-requires
+    const template: string = require('./properties-assignment.page.component.html');
+    const doc = new DOMParser().parseFromString(`<body>${template}</body>`, 'text/html');
+
+    // The placeholder vanishes once the user types, so it cannot be the only name.
+    it('names the search box', () => {
+        expect(doc.querySelector('[data-tests-id="search-box"]').getAttribute('aria-label')).toBe('Search properties');
+    });
+
+    it('renders Clear All as a native button', () => {
+        const clear = doc.querySelector('[data-tests-id="clear-filter-button"]');
+        expect(clear.tagName).toBe('BUTTON');
+        expect(clear.getAttribute('type')).toBe('button');
+        expect(clear.textContent.trim()).toBe('Clear All');
+    });
+
+    // The global `.disabled` class only stops the mouse; `disabled` also stops the keyboard.
+    it('renders Add Property and Add Input as native buttons disabled exactly when they look disabled', () => {
+        const adds = Array.from(doc.querySelectorAll('.right-column > .add-btn'));
+        expect(adds.map((el) => el.textContent.trim())).toEqual(['Add Property', 'Add Input']);
+        adds.forEach((el) => {
+            expect(el.tagName).toBe('BUTTON');
+            expect(el.getAttribute('type')).toBe('button');
+            expect(el.getAttribute('[disabled]')).toBe(el.getAttribute('[class.disabled]'));
+        });
+        expect(adds.map((el) => el.getAttribute('[disabled]'))).toEqual(['!showAddProperties()', '!isSelf()']);
+    });
+});

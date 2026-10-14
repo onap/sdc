@@ -77,7 +77,7 @@ test.describe('workspace top-bar controls', () => {
 
             // Exactly ONE element may carry this id. The lifecycle-button loop also has a
             // 'deleteVersion' entry, and suppressing it with [hidden] instead of filtering it out
-            // of the array leaves a 0x0 button in the DOM ahead of the sprite span; Selenium and
+            // of the array leaves a 0x0 button in the DOM ahead of the sprite button; Selenium and
             // Playwright both resolve the FIRST match, so the real control becomes unreachable
             // while every static gate stays green.
             await expect(sdcPage.locator(TESTS_IDS.deleteVersion)).toHaveCount(1);
@@ -86,7 +86,7 @@ test.describe('workspace top-bar controls', () => {
             expect(del, 'delete_version must render on a checked-out component').not.toBeNull();
             expect(del!.width).toBeGreaterThan(0);
             expect(del!.height).toBeGreaterThan(0);
-            // The control is a sprite span, so a missing background-image means an invisible button.
+            // The control is a sprite button, so a missing background-image means an invisible button.
             expect(del!.hasSprite).toBe(true);
             expect(del!.hitSelf).toBe(true);
 

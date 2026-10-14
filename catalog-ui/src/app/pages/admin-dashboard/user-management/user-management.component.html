@@ -22,16 +22,17 @@
 
 <div class="sdc-user-management-top-bar">
     <div class="sdc-user-management-top-bar-search-container">
-        <label class="sdc-user-management-top-bar-search-text">Search User</label>
+        <label class="sdc-user-management-top-bar-search-text" for="um-search">Search User</label>
         <input type="text"
+               id="um-search"
                class="sdc-user-management-top-bar-form-input"
                placeholder="Search user by name, userId, email or role"
                [(ngModel)]="searchTerm"
                (ngModelChange)="onSearchChange($event)"
                data-tests-id="searchbox" />
-        <span class="w-sdc-search-icon"
-              [ngClass]="{'cancel': searchTerm, 'magnification': !searchTerm}"
-              (click)="onSearchChange('')"></span>
+        <button type="button" class="w-sdc-search-icon cancel" *ngIf="searchTerm"
+                aria-label="Clear search" (click)="onSearchChange('')"></button>
+        <span class="w-sdc-search-icon magnification" *ngIf="!searchTerm" aria-hidden="true"></span>
     </div>
 </div>
 
@@ -41,11 +42,12 @@
         <div class="head sdc-user-management-flex-container">
             <div class="sdc-user-management-table-header head-row hand sdc-user-management-flex-item"
                  *ngFor="let header of tableHeadersList"
-                 [attr.data-tests-id]="'th' + header.title"
-                 (click)="sort(header.property)">{{header.title}}
-                <span *ngIf="sortBy === header.property"
-                      class="sdc-user-management-table-header-sort-arrow"
-                      [ngClass]="{'down': reverse, 'up': !reverse}"> </span>
+                 [attr.data-tests-id]="'th' + header.title">
+                <button type="button" class="sdc-user-management-table-header-button"
+                        (click)="sort(header.property)">{{header.title}}<span *ngIf="sortBy === header.property"
+                          class="sdc-user-management-table-header-sort-arrow" aria-hidden="true"
+                          [ngClass]="{'down': reverse, 'up': !reverse}"></span><span *ngIf="sortBy === header.property"
+                          class="sr-only">{{reverse ? ', sorted descending' : ', sorted ascending'}}</span></button>
             </div>
         </div>
 

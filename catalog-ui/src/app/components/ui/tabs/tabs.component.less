@@ -1,4 +1,5 @@
 @import '../../../../assets/styles/variables';
+@import '../../../../assets/styles/button-reset';
 
 .tab {
     height: 100%;
@@ -11,9 +12,19 @@
 }
 
 .tab {
+    .sdc-button-reset();
+    // A button centres its content vertically; a flex column lays the title, the indication and
+    // the :after underline out top-down as the div did.
+    display: flex;
+    flex-direction: column;
     flex: 1 0 auto;
     cursor: pointer;
     padding: .5em;
+
+    &:focus {
+        outline: 2px solid @main_color_b;
+        outline-offset: 1px;
+    }
 }
 
 .tab-content-container {
@@ -31,7 +42,7 @@
 .tabs{
     &.round-tabs .tab{
         background-color: #f8f8f8;
-        color: #767676; // Darkened from #959595 to meet WCAG AA 4.5:1 contrast
+        color: @main_color_s;
         border: solid 1px #d2d2d2;
         border-bottom:none;
         border-left:none;
@@ -50,7 +61,7 @@
         .tab-indication {
             position: absolute;
             top: -10px;
-            background-color: #009fdb;
+            background-color: @main_color_b;
             right: 10px;
             padding: 2px 0;
             border-radius: 15px;

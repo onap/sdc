@@ -356,15 +356,21 @@ test('...', async ({ sdcPage, api }) => { ... });
 | `tests/workspace-gutter.spec.ts` | the tab content gutter vs the sidebar, and top-bar overflow |
 | `tests/workspace-tab-title.spec.ts` | every titled tab's heading is visible and not painted over (SDC-4879) |
 | `tests/workspace-topbar-controls.spec.ts` | the 5 top-bar controls the AngularJS removal dropped: they render, are hit-testable, and reach the BE |
+| `tests/accessibility.spec.ts` | axe ratchet on pages that need no data (dashboard, catalog, onboarding landing, CREATE forms, admin); read-only |
+| `tests/accessibility-workspace.spec.ts` | axe ratchet on every VF and Service workspace tab; **creates a `PwAxeVf…`/`PwAxeSvc…` asset per test** |
 
 ### Fixtures
 
 - **`sdcPage`** — a page already logged in as `cs0008` (DESIGNER) with the shell rendered, and
-  the dev-server modal dismissed if applicable.
+  the dev-server modal dismissed if applicable. `test.use({ sdcUser: ADMIN_USER })` logs in as
+  `jh0003` instead, who lands on the admin dashboard.
 - **`api`** — an `SdcApi` over Playwright's `APIRequestContext` for creating assets out of band.
   Deliberately *not* the page's `$http`: an in-page POST adds a pending request that the settle
   predicate then blocks on, which is what made the earlier specs racy. It also survives CR 3,
   since there is no AngularJS injector left to reach.
+
+  `createVlm()` / `submitVlm()` / `createVsp()` do the same for onboarding items, and
+  `addComputeInstance()` drops a normative Compute onto a VF.
 
   `createVf()` / `createService()` **poll until the new asset reads back** before returning.
   JanusGraph/Cassandra gives no read-after-write guarantee across the BE's transactions, so a `201`

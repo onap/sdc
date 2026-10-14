@@ -1,5 +1,5 @@
 <div class="requirements-table">
-    <ngx-datatable #capabilitiesTable 
+    <ngx-datatable sdcDatatableA11y="Requirements" #capabilitiesTable 
         columnMode="flex" 
         [headerHeight]="40"  
         [rowHeight]="35"
@@ -7,7 +7,12 @@
         [rows]="requirements">
         <ngx-datatable-column  name="Name" [flexGrow]="1" [resizeable]="false" >
             <ng-template ngx-datatable-cell-template let-row="row">
-                <span [ngStyle]="{'cursor':row.isCreatedManually ? 'pointer' : 'null' }" data-tests-id="row.name" sdc-tooltip [tooltip-text]="row.name" [tooltip-placement]="3" (click)="editRequirement(row)">{{row.name}}</span>
+                <button type="button" class="edit-requirement" *ngIf="row.isCreatedManually; else importedName" data-tests-id="row.name"
+                        sdc-tooltip [tooltip-text]="row.name" [tooltip-placement]="3" [attr.aria-label]="'Edit ' + row.name"
+                        (click)="editRequirement(row)">{{row.name}}</button>
+                <ng-template #importedName>
+                    <span data-tests-id="row.name" sdc-tooltip [tooltip-text]="row.name" [tooltip-placement]="3">{{row.name}}</span>
+                </ng-template>
             </ng-template>
         </ngx-datatable-column>
         <ngx-datatable-column  name="Capability" [flexGrow]="1" [resizeable]="false">
