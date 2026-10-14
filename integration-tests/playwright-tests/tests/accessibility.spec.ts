@@ -34,7 +34,7 @@ const KNOWN: Record<PageName, string[]> = {
     dashboard: ['color-contrast'],
     catalog: ['color-contrast', 'scrollable-region-focusable'],
     onboardVendor: ['color-contrast', 'select-name'],
-    serviceCreateGeneral: ['color-contrast', 'label', 'select-name'],
+    serviceCreateGeneral: ['color-contrast'],
 };
 
 const OPEN: Record<PageName, (p: Page) => Promise<void>> = {

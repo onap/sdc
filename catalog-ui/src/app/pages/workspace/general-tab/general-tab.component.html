@@ -39,8 +39,8 @@
             <div class="name-and-category-fields">
               <!-- NAME -->
               <div class="i-sdc-form-item" [class.error]="form.get('name').invalid && form.get('name').touched">
-                <label class="i-sdc-form-label required">Name</label>
-                <input class="i-sdc-form-input"
+                <label class="i-sdc-form-label required" for="gt-name">Name</label>
+                <input id="gt-name" class="i-sdc-form-input"
                        [class.view-mode]="isViewMode()"
                        formControlName="name"
                        type="text"
@@ -58,8 +58,8 @@
 
               <!-- MODEL -->
               <div class="i-sdc-form-item">
-                <label class="i-sdc-form-label required">Model</label>
-                <select class="i-sdc-form-select"
+                <label class="i-sdc-form-label required" for="gt-model">Model</label>
+                <select id="gt-model" class="i-sdc-form-select"
                         [class.view-mode]="isViewMode()"
                         formControlName="model"
                         (change)="onModelChange()"
@@ -72,8 +72,8 @@
 
               <!-- CATEGORIES -->
               <div class="i-sdc-form-item" [class.error]="form.get('category').invalid && form.get('category').touched">
-                <label class="i-sdc-form-label required">Category</label>
-                <select class="i-sdc-form-select"
+                <label class="i-sdc-form-label required" for="gt-category">Category</label>
+                <select id="gt-category" class="i-sdc-form-select"
                         [class.view-mode]="isViewMode()"
                         formControlName="category"
                         (change)="onCategoryChange()"
@@ -110,15 +110,15 @@
                Version") or a free-text <input>. The data-tests-id is the key name so Selenium can
                address it (e.g. data-tests-id="ETSI Version").
                Note: Angular 5 has no keyvalue pipe (added 6.1); we iterate categorySpecificMetadataEntries. -->
-          <ng-container *ngFor="let entry of categorySpecificMetadataEntries">
+          <ng-container *ngFor="let entry of categorySpecificMetadataEntries; let mi = index">
             <div *ngIf="entry.value !== null && entry.value !== undefined
                         && isMetadataKeyForComponentCategory(entry.key)
                         && !isCategoryServiceMetadataKey(entry.key)"
                  class="i-sdc-form-item">
               <!-- select variant: key has a fixed set of valid values -->
               <ng-container *ngIf="getMetadataKeyValidValues(entry.key).length > 0">
-                <label class="i-sdc-form-label" [class.required]="isMetadataKeyMandatory(entry.key)">{{getMetadataDisplayName(entry.key)}}</label>
-                <select class="i-sdc-form-select"
+                <label class="i-sdc-form-label" [attr.for]="'gt-meta-' + mi" [class.required]="isMetadataKeyMandatory(entry.key)">{{getMetadataDisplayName(entry.key)}}</label>
+                <select class="i-sdc-form-select" [attr.id]="'gt-meta-' + mi"
                         [class.view-mode]="isViewMode()"
                         [attr.name]="entry.key"
                         [attr.data-tests-id]="entry.key"
@@ -130,8 +130,8 @@
               </ng-container>
               <!-- input variant: free-text key -->
               <ng-container *ngIf="getMetadataKeyValidValues(entry.key).length === 0">
-                <label class="i-sdc-form-label" [class.required]="isMetadataKeyMandatory(entry.key)">{{getMetadataDisplayName(entry.key)}}</label>
-                <input class="i-sdc-form-input" type="text"
+                <label class="i-sdc-form-label" [attr.for]="'gt-meta-' + mi" [class.required]="isMetadataKeyMandatory(entry.key)">{{getMetadataDisplayName(entry.key)}}</label>
+                <input class="i-sdc-form-input" type="text" [attr.id]="'gt-meta-' + mi"
                        [class.view-mode]="isViewMode()"
                        [value]="entry.value"
                        (input)="onCategoryMetadataChange(entry.key, $event.target.value)"
@@ -144,9 +144,9 @@
 
           <!-- TAGS -->
           <div class="i-sdc-form-item">
-            <label class="i-sdc-form-label">Tags</label>
+            <label class="i-sdc-form-label" for="gt-tag">Tags</label>
             <div class="tags-box">
-              <input type="text"
+              <input id="gt-tag" type="text"
                      class="new-tag-input"
                      [class.view-mode]="isViewMode()"
                      [(ngModel)]="newTag"
@@ -182,8 +182,8 @@
           <!-- DESCRIPTION -->
           <div class="i-sdc-form-item description-field"
                [class.error]="form.get('description').invalid && form.get('description').touched">
-            <label class="i-sdc-form-label required">Description</label>
-            <textarea class="description"
+            <label class="i-sdc-form-label required" for="gt-description">Description</label>
+            <textarea id="gt-description" class="description"
                       [class.view-mode]="isViewMode()"
                       formControlName="description"
                       maxlength="1024"
@@ -246,8 +246,8 @@
 
           <!-- CONTACT ID -->
           <div class="i-sdc-form-item" [class.error]="form.get('contactId').invalid && form.get('contactId').touched">
-            <label class="i-sdc-form-label required">Contact ID</label>
-            <input class="i-sdc-form-input" type="text"
+            <label class="i-sdc-form-label required" for="gt-contact-id">Contact ID</label>
+            <input id="gt-contact-id" class="i-sdc-form-input" type="text"
                    [class.view-mode]="isViewMode()"
                    formControlName="contactId"
                    maxlength="50"
@@ -262,8 +262,8 @@
           <!-- VENDOR NAME (resource only) -->
           <div class="i-sdc-form-item" *ngIf="component?.isResource()"
                [class.error]="form.get('vendorName').invalid && form.get('vendorName').touched">
-            <label class="i-sdc-form-label required">Vendor Name</label>
-            <input class="i-sdc-form-input" type="text"
+            <label class="i-sdc-form-label required" for="gt-vendor-name">Vendor Name</label>
+            <input id="gt-vendor-name" class="i-sdc-form-input" type="text"
                    [class.view-mode]="isViewMode()"
                    formControlName="vendorName"
                    maxlength="60"
@@ -278,8 +278,8 @@
           <!-- VENDOR RELEASE (resource only) -->
           <div class="i-sdc-form-item" *ngIf="component?.isResource()"
                [class.error]="form.get('vendorRelease').invalid && form.get('vendorRelease').touched">
-            <label class="i-sdc-form-label required">Vendor Release</label>
-            <input class="i-sdc-form-input" type="text"
+            <label class="i-sdc-form-label required" for="gt-vendor-release">Vendor Release</label>
+            <input id="gt-vendor-release" class="i-sdc-form-input" type="text"
                    [class.view-mode]="isViewMode()"
                    formControlName="vendorRelease"
                    maxlength="25"
@@ -294,8 +294,8 @@
           <!-- RESOURCE VENDOR MODEL NUMBER (resource only) -->
           <div class="i-sdc-form-item" *ngIf="component?.isResource()"
                [class.error]="form.get('resourceVendorModelNumber').invalid && form.get('resourceVendorModelNumber').touched">
-            <label class="i-sdc-form-label">Vendor Model Number</label>
-            <input class="i-sdc-form-input" type="text"
+            <label class="i-sdc-form-label" for="gt-vendor-model-number">Vendor Model Number</label>
+            <input id="gt-vendor-model-number" class="i-sdc-form-input" type="text"
                    [class.view-mode]="isViewMode()"
                    formControlName="resourceVendorModelNumber"
                    maxlength="65"
@@ -307,8 +307,8 @@
 
           <!-- ECOMP GENERATED NAMING (service only) -->
           <div class="i-sdc-form-item" *ngIf="component?.isService()">
-            <label class="i-sdc-form-label">Generated Naming</label>
-            <select class="i-sdc-form-select"
+            <label class="i-sdc-form-label" for="gt-generated-naming">Generated Naming</label>
+            <select id="gt-generated-naming" class="i-sdc-form-select"
                     [class.view-mode]="isViewMode()"
                     formControlName="ecompGeneratedNaming"
                     (change)="onEcompGeneratedNamingChange()"
@@ -320,8 +320,8 @@
 
           <!-- NAMING POLICY (service only) — read-only when generated naming is off (old ng-readonly) -->
           <div class="i-sdc-form-item" *ngIf="component?.isService()">
-            <label class="i-sdc-form-label">Naming Policy</label>
-            <input class="i-sdc-form-input" type="text"
+            <label class="i-sdc-form-label" for="gt-naming-policy">Naming Policy</label>
+            <input id="gt-naming-policy" class="i-sdc-form-input" type="text"
                    [class.view-mode]="isViewMode() || !form.get('ecompGeneratedNaming').value"
                    formControlName="namingPolicy"
                    maxlength="100"
@@ -334,8 +334,8 @@
 
           <!-- SERVICE TYPE (service only) -->
           <div class="i-sdc-form-item" *ngIf="component?.isService()">
-            <label class="i-sdc-form-label">Service Type</label>
-            <input class="i-sdc-form-input" type="text"
+            <label class="i-sdc-form-label" for="gt-service-type">Service Type</label>
+            <input id="gt-service-type" class="i-sdc-form-input" type="text"
                    [class.view-mode]="isViewMode()"
                    formControlName="serviceType"
                    maxlength="256"
@@ -347,11 +347,11 @@
 
           <!-- SERVICE ROLE (service only) — dropdown of the category's valid values + "Others" free-text -->
           <div class="i-sdc-form-item" *ngIf="component?.isService()">
-            <label class="i-sdc-form-label">Service Role</label>
+            <label class="i-sdc-form-label" for="gt-service-role">Service Role</label>
             <!-- When the category defines a Service Role metadata key, render its validValues (+Others);
                  otherwise fall back to a plain free-text input bound to the form control. -->
             <ng-container *ngIf="getMetadataKeyValidValues('Service Role').length > 0; else serviceRoleFreeText">
-              <select class="i-sdc-form-input"
+              <select id="gt-service-role" class="i-sdc-form-input"
                       [class.view-mode]="isViewMode()"
                       name="roleOption"
                       data-tests-id="roleOption"
@@ -360,14 +360,14 @@
                       (change)="setServiceRole($event.target.value)">
                 <option *ngFor="let val of getMetadataKeyValidValues('Service Role')" [value]="val">{{val}}</option>
               </select>
-              <input *ngIf="othersRoleFlag" class="i-sdc-form-input" type="text"
+              <input *ngIf="othersRoleFlag" class="i-sdc-form-input" type="text" aria-label="Service Role (other)"
                      [class.view-mode]="isViewMode()"
                      formControlName="serviceRole"
                      maxlength="256"
                      data-tests-id="serviceRole"/>
             </ng-container>
             <ng-template #serviceRoleFreeText>
-              <input class="i-sdc-form-input" type="text"
+              <input id="gt-service-role" class="i-sdc-form-input" type="text"
                      [class.view-mode]="isViewMode()"
                      formControlName="serviceRole"
                      maxlength="256"
@@ -377,9 +377,9 @@
 
           <!-- SERVICE FUNCTION (service only) — dropdown of the category's valid values + "Others" free-text -->
           <div class="i-sdc-form-item" *ngIf="component?.isService()">
-            <label class="i-sdc-form-label">Service Function</label>
+            <label class="i-sdc-form-label" for="gt-service-function">Service Function</label>
             <ng-container *ngIf="getMetadataKeyValidValues('Service Function').length > 0; else serviceFunctionFreeText">
-              <select class="i-sdc-form-input"
+              <select id="gt-service-function" class="i-sdc-form-input"
                       [class.view-mode]="isViewMode()"
                       name="functionOption"
                       data-tests-id="functionOption"
@@ -388,14 +388,14 @@
                       (change)="setServiceFunction($event.target.value)">
                 <option *ngFor="let val of getMetadataKeyValidValues('Service Function')" [value]="val">{{val}}</option>
               </select>
-              <input *ngIf="othersFlag" class="i-sdc-form-input" type="text"
+              <input *ngIf="othersFlag" class="i-sdc-form-input" type="text" aria-label="Service Function (other)"
                      [class.view-mode]="isViewMode()"
                      formControlName="serviceFunction"
                      maxlength="256"
                      data-tests-id="serviceFunction"/>
             </ng-container>
             <ng-template #serviceFunctionFreeText>
-              <input class="i-sdc-form-input" type="text"
+              <input id="gt-service-function" class="i-sdc-form-input" type="text"
                      [class.view-mode]="isViewMode()"
                      formControlName="serviceFunction"
                      maxlength="256"
@@ -405,8 +405,8 @@
 
           <!-- ENVIRONMENT CONTEXT (service only) -->
           <div class="i-sdc-form-item" *ngIf="component?.isService()">
-            <label class="i-sdc-form-label">Environment Context</label>
-            <select class="i-sdc-form-select"
+            <label class="i-sdc-form-label" for="gt-environment-context">Environment Context</label>
+            <select id="gt-environment-context" class="i-sdc-form-select"
                     [class.view-mode]="isViewMode()"
                     formControlName="environmentContext"
                     data-tests-id="environmentContext">
@@ -418,8 +418,8 @@
 
           <!-- INSTANTIATION TYPE (service only) -->
           <div class="i-sdc-form-item" *ngIf="component?.isService()">
-            <label class="i-sdc-form-label">Instantiation Type</label>
-            <select class="i-sdc-form-select"
+            <label class="i-sdc-form-label" for="gt-instantiation-type">Instantiation Type</label>
+            <select id="gt-instantiation-type" class="i-sdc-form-select"
                     [class.view-mode]="isViewMode()"
                     formControlName="instantiationType"
                     [attr.disabled]="isInstantiationTypeDisabled() ? '' : null"
@@ -432,8 +432,8 @@
           <div class="w-sdc-form-columns-wrapper" *ngIf="component?.isService()">
             <div class="w-sdc-form-column">
               <div class="i-sdc-form-item">
-                <label class="i-sdc-form-label">Substitution Node Type</label>
-                <select class="i-sdc-form-select"
+                <label class="i-sdc-form-label" for="gt-base-type">Substitution Node Type</label>
+                <select id="gt-base-type" class="i-sdc-form-select"
                         [class.view-mode]="isViewMode()"
                         name="baseType"
                         [attr.disabled]="isBaseTypeDisabled() ? '' : null"
@@ -452,8 +452,8 @@
             </div>
             <div class="w-sdc-form-column">
               <div class="i-sdc-form-item" *ngIf="component?.derivedFromGenericType">
-                <label class="i-sdc-form-label">Substitution Node Type Version</label>
-                <select class="i-sdc-form-select"
+                <label class="i-sdc-form-label" for="gt-base-type-version">Substitution Node Type Version</label>
+                <select id="gt-base-type-version" class="i-sdc-form-select"
                         [class.view-mode]="isViewMode()"
                         name="baseTypeVersion"
                         [attr.disabled]="isBaseTypeDisabled() ? '' : null"
