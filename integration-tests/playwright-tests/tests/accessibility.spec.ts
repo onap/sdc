@@ -31,10 +31,10 @@ const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-prac
 type PageName = 'dashboard' | 'catalog' | 'onboardVendor' | 'serviceCreateGeneral';
 
 const KNOWN: Record<PageName, string[]> = {
-    dashboard: ['color-contrast'],
-    catalog: ['color-contrast', 'scrollable-region-focusable'],
+    dashboard: [],
+    catalog: ['scrollable-region-focusable'],
     onboardVendor: ['color-contrast', 'select-name'],
-    serviceCreateGeneral: ['color-contrast'],
+    serviceCreateGeneral: [],
 };
 
 const OPEN: Record<PageName, (p: Page) => Promise<void>> = {
