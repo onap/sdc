@@ -17,7 +17,7 @@
                 </div>
                 <span sdc-tooltip [tooltip-text]="row.artifactDisplayName" [tooltip-placement]="3" [attr.data-tests-id]="'artifactDisplayName_' + row.artifactDisplayName">{{row.artifactDisplayName}}</span>
                 <span *ngIf="row.description && row.description.length > 0" class="info">
-                    <svg-icon [clickable]="true" [name]="'comment'" [mode]="'primary2'" ariaLabel="Show description" (click)="openPopOver('Description',row.description,{x:$event.pageX , y:$event.pageY },'bottom')"></svg-icon>
+                    <svg-icon [clickable]="true" [name]="'comment'" [mode]="'primary2'" ariaLabel="Show description" (click)="openPopOver('Description',row.description,$event,'bottom')"></svg-icon>
                 </span>
             </ng-template>
         </ngx-datatable-column>

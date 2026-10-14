@@ -14,14 +14,10 @@ import {PopoverContentComponent} from '../../../components/ui/popover/popover-co
 import {CacheService} from '../../../services/cache.service';
 import {TranslateService} from '../../../shared/translator/translate.service';
 import {GetArtifactsByTypeAction} from '../../../store/actions/artifacts.action';
+import {popoverAnchor} from '../../../utils/popover-anchor';
 import {ArtifactsState} from '../../../store/states/artifacts.state';
 import {WorkspaceState, WorkspaceStateModel} from '../../../store/states/workspace.state';
 import {WorkspaceService} from '../workspace.service';
-
-export interface IPoint {
-    x: number;
-    y: number;
-}
 
 @Component({
     selector: 'deployment-artifact-page',
@@ -99,8 +95,8 @@ export class DeploymentArtifactsPageComponent implements OnInit {
         this.artifactsService.deleteArtifact(this.componentType, this.componentId, artifactToDelete);
     }
 
-    private openPopOver = (title: string, content: string, positionOnPage: IPoint, location: string) => {
-        this.popoverService.createPopOver(title, content, positionOnPage, location);
+    private openPopOver = (title: string, content: string, event: MouseEvent, location: string) => {
+        this.popoverService.createPopOver(title, content, popoverAnchor(event, 'page'), location);
     }
 
     public updateEnvParams = (artifact: ArtifactModel, isViewOnly: boolean) => {

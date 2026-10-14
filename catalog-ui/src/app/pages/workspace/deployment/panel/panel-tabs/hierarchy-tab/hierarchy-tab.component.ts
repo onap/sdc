@@ -10,6 +10,7 @@ import {ModulesService} from "../../../../../../services/modules.service";
 import * as _ from "lodash";
 import {ModalsHandler} from "../../../../../../utils/modals-handler";
 import {ComponentFactory} from "../../../../../../utils/component-factory";
+import {popoverAnchor} from "../../../../../../utils/popover-anchor";
 import {Select, Store} from "@ngxs/store";
 import { SdcUiServices } from "onap-ui-angular";
 import { EditModuleName } from "../edit-module-name/edit-module-name.component";
@@ -130,7 +131,7 @@ export class HierarchyTabComponent {
     }
 
     public openEditModuleNamePopup($event) {
-        const editModuleNameInstance = this.popoverService.createPopOverWithInnerComponent('Edit Module Name', '', {x:$event.x , y:$event.y }, EditModuleName, {selectModule: _.cloneDeep(this.selectedModule)}, 'top');
+        const editModuleNameInstance = this.popoverService.createPopOverWithInnerComponent('Edit Module Name', '', popoverAnchor($event, 'client'), EditModuleName, {selectModule: _.cloneDeep(this.selectedModule)}, 'top');
         editModuleNameInstance.innerPopoverContent.instance.clickButtonEvent.subscribe((newHeatName) => {
             if(newHeatName != null){
                 this.selectedModule.heatName = newHeatName;

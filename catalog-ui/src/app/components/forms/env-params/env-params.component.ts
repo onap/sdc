@@ -23,11 +23,7 @@ import { SdcUiCommon, SdcUiServices } from 'onap-ui-angular';
 import { Subject } from 'rxjs/Rx';
 import { ArtifactModel } from '../../../models/artifacts';
 import { CacheService } from '../../../services/cache.service';
-
-export interface IPoint {
-    x: number;
-    y: number;
-}
+import { popoverAnchor } from '../../../utils/popover-anchor';
 
 @Component({
     selector: 'env-params',
@@ -81,8 +77,8 @@ export class EnvParamsComponent implements OnInit {
         this.artifact.heatParameters = temp;
     }
 
-    private openPopOver = (title: string, content: string, positionOnPage: IPoint, location: string) => {
-        this.popoverService.createPopOver(title, content, positionOnPage, location);
+    private openPopOver = (title: string, content: string, event: MouseEvent, location: string) => {
+        this.popoverService.createPopOver(title, content, popoverAnchor(event, 'page'), location);
     }
 
     private onValidityChange = (isValid: boolean): void => {

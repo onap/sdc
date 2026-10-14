@@ -9,6 +9,7 @@ import { IUserProperties } from '../../../models/user';
 
 import { Resource } from '../../../models/components/resource';
 import { ComponentType } from '../../../utils/constants';
+import { popoverAnchor } from '../../../utils/popover-anchor';
 import { CacheService } from '../../../services/cache.service';
 import { FileUtilsService } from '../../../services/file-utils.service';
 import { OnboardingService } from '../../../services/onboarding.service';
@@ -175,10 +176,7 @@ export class OnboardingModalComponent implements OnInit {
     }
 
     openPopover = ($event: any, popoverContent): void => {
-        this.popoverService.createPopOver('', this.translateService.translate(popoverContent), {
-            x: $event.pageX,
-            y: $event.pageY
-        }, 'bottom');
+        this.popoverService.createPopOver('', this.translateService.translate(popoverContent), popoverAnchor($event, 'page'), 'bottom');
     }
 
     private initOnboardingComponentsList = (): void => {
