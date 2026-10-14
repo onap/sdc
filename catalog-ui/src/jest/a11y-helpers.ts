@@ -32,3 +32,37 @@ export function unlabelledControls(html: string): string[] {
         .filter((el) => labelled.indexOf(attr(el, 'id')) === -1)
         .map((el) => `${el.tagName.toLowerCase()} ${attr(el, 'data-tests-id') || el.getAttribute('formcontrolname') || ''}`);
 }
+
+const EMPTY_VALUES = ['', '\'\'', '""'];
+
+const hasValue = (el: Element, name: string) => [name, '[' + name + ']']
+    .map((attrName) => el.getAttribute(attrName.toLowerCase()))
+    .some((value) => value !== null && EMPTY_VALUES.indexOf(value.trim()) === -1);
+
+const isClickable = (el: Element) => {
+    const bound = el.getAttribute('[clickable]');
+    const plain = el.getAttribute('clickable');
+    return (bound !== null && bound.trim() !== 'false') || plain === 'true' || (plain !== null && plain.indexOf('{{') !== -1);
+};
+
+/**
+ * svg-icon / svg-icon-label elements with a (click) handler that onap-ui-angular would render
+ * without role=button + tabindex, or without an accessible name.
+ */
+export function unnamedClickableIcons(html: string): string[] {
+    const doc = new DOMParser().parseFromString(`<body>${html}</body>`, 'text/html');
+    return Array.from(doc.querySelectorAll('svg-icon, svg-icon-label'))
+        .filter((el) => el.hasAttribute('(click)'))
+        .map((el) => {
+            const problems: string[] = [];
+            if (!isClickable(el)) {
+                problems.push('not clickable');
+            }
+            const named = hasValue(el, 'ariaLabel') || (el.tagName.toLowerCase() === 'svg-icon-label' && hasValue(el, 'label'));
+            if (!named) {
+                problems.push('no ariaLabel');
+            }
+            return problems.length ? `${problems.join(', ')}: ${el.outerHTML.split('>')[0]}>` : '';
+        })
+        .filter((problem) => !!problem);
+}
