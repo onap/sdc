@@ -24,7 +24,7 @@
                                     attr.data-tests-id="value_{{property.name}}">{{property.value}}</span>
                         </div>
                         <div class="property-buttons">
-                            <svg-icon *ngIf="!isViewOnly && (isPropertyOwner() && !property.readonly)" name="trash-o" clickable="true" size="medium" mode="info" testId="delete_{{property.name}}" (click)="deleteProperty(property)"></svg-icon>
+                            <svg-icon *ngIf="!isViewOnly && (isPropertyOwner() && !property.readonly)" name="trash-o" clickable="true" size="medium" mode="info" testId="delete_{{property.name}}" ariaLabel="Delete {{property.name}}" (click)="deleteProperty(property)"></svg-icon>
                         </div>
                     </div>
                 </div>

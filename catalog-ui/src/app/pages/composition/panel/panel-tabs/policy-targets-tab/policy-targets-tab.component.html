@@ -22,6 +22,7 @@
                     size="medium"
                     label="ADD"
                     labelPlacement="right"
+                    clickable="true"
                     (click)="openAddTargetModal()">
     </svg-icon-label>
 </h1>
@@ -36,6 +37,7 @@
                             size="small"
                             class="component-details-panel-item-delete"
                             data-tests-id="delete_target" 
+                            ariaLabel="Delete {{target.name}}"
                             (click)="deleteTarget(target)"></svg-icon-label>
         </li>
     </ul>

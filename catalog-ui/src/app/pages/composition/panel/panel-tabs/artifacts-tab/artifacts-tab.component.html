@@ -23,6 +23,7 @@
                                     <svg-icon
                                             *ngIf="!isViewOnly && !artifact.isFromCsar && artifact.artifactName"
                                             name="trash-o" clickable="true" size="medium" mode="info"
+                                            ariaLabel="Delete {{artifact.artifactDisplayName}}"
                                             class="artifact-button" testId="delete_{{artifact.artifactDisplayName}}"
                                             (click)="delete(artifact)"></svg-icon>
 
@@ -34,6 +35,7 @@
                                             testId="edit-parameters-of-{{artifact.artifactDisplayName}}"
                                             (click)="updateEnvParams(artifact)"
                                             tooltip="Edit ENV Params"
+                                            ariaLabel="Edit ENV Params"
                                     ></svg-icon>
 
                                     <!--Display env parameters VIEW button for Instance -->
@@ -44,6 +46,7 @@
                                             testId="view-parameters-of-{{artifact.artifactDisplayName}}"
                                             (click)="viewEnvParams(artifact)"
                                             tooltip="View ENV Params"
+                                            ariaLabel="View ENV Params"
                                     ></svg-icon>
 
                                     <!--Display env parameters edit button for VF -->
@@ -52,7 +55,8 @@
                                             name="indesign_status" clickable="true" size="medium" mode="info"
                                             class="artifact-button"
                                             testId="edit-parameters-of-{{artifact.artifactDisplayName}}"
-                                            (click)="updateEnvParams(artifact)"></svg-icon>
+                                            (click)="updateEnvParams(artifact)"
+                                            ariaLabel="Edit ENV Params"></svg-icon>
 
 
                                     <download-artifact *ngIf="artifact.esId && 'deployment' != type"
@@ -88,7 +92,8 @@
                                                       name="edit-o" clickable="true" size="medium"
                                                       mode="info" class="artifact-button edit-pencil"
                                                       testId="edit_{{artifact.artifactDisplayName}}"
-                                                      (click)="addOrUpdate(envArtifactOf(artifact))"></svg-icon>
+                                                      (click)="addOrUpdate(envArtifactOf(artifact))"
+                                                      ariaLabel="Edit {{artifact.artifactDisplayName}} (ENV)"></svg-icon>
 
                                             <download-artifact [artifact]="envArtifactOf(artifact)"
                                                                class="artifact-button"

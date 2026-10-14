@@ -14,10 +14,10 @@
     </div>
 
     <svg-icon-label *ngIf="!isViewOnly && !isTopologyTemplateSelected && !selectedComponent.archived" name="edit-file-o"
-                    clickable="true" size="small" class="rename-instance" data-tests-id="renameInstance"
+                    clickable="true" ariaLabel="Rename instance" size="small" class="rename-instance" data-tests-id="renameInstance"
                     (click)="renameInstance()"></svg-icon-label>
     <svg-icon-label *ngIf="!isViewOnly && !isTopologyTemplateSelected && !selectedComponent.archived" name="trash-o"
-                    clickable="true" size="small" class="delete-instance" data-tests-id="deleteInstance"
+                    clickable="true" ariaLabel="Delete instance" size="small" class="delete-instance" data-tests-id="deleteInstance"
                     (click)="deleteInstance()"></svg-icon-label>
 
 </div>

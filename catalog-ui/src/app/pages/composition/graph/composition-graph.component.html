@@ -25,16 +25,16 @@
     <!--</service-path>-->
 
     <svg-icon  *ngIf="!(isViewOnly$ | async) && topologyTemplate.isService()" class="zoom-icons" [mode]="'primary2'" [size]="'medium'" [backgroundShape]="'rectangle'"
-               [backgroundColor]="'silver'" [name]="'browse'" [clickable]="true" [testId]="'pathsMenuBtn'"
+               [backgroundColor]="'silver'" [name]="'browse'" [clickable]="true" [testId]="'pathsMenuBtn'" ariaLabel="Service paths"
                (click)="openServicePathMenu($event)"></svg-icon>
     <svg-icon class="zoom-icons" [mode]="'primary2'" [size]="'medium'" [backgroundShape]="'rectangle'"
-              [backgroundColor]="'silver'" [name]="'expand-o'" [clickable]="true"
+              [backgroundColor]="'silver'" [name]="'expand-o'" [clickable]="true" ariaLabel="Zoom to fit"
               (click)="zoomAllWithoutSidebar()"></svg-icon>
     <svg-icon class="zoom-icons" [mode]="'primary2'" [size]="'medium'" [backgroundShape]="'rectangle'"
-              [backgroundColor]="'silver'" [name]="'plus'" [clickable]="true"
+              [backgroundColor]="'silver'" [name]="'plus'" [clickable]="true" ariaLabel="Zoom in"
               (click)="zoom(true)"></svg-icon>
     <svg-icon class="zoom-icons" [mode]="'primary2'" [size]="'medium'" [backgroundShape]="'rectangle'"
-              [backgroundColor]="'silver'" [name]="'minus'" [clickable]="true"
+              [backgroundColor]="'silver'" [name]="'minus'" [clickable]="true" ariaLabel="Zoom out"
               (click)="zoom(false)"></svg-icon>
 </div>
 
