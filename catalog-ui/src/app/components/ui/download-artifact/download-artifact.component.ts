@@ -11,7 +11,7 @@ import { ComponentInstanceService } from "app/services/component-instance-servic
 @Component({
     selector: 'download-artifact',
     template: `
-	<svg-icon [mode]="'primary2'" [disabled]="disabled" [clickable]="!disabled" [name]="iconType" [testId]="testId" mode="info" clickable="true" size="medium" (click)="download($event)"></svg-icon>
+	<svg-icon [mode]="'primary2'" [disabled]="disabled" [clickable]="!disabled" [name]="iconType" [testId]="testId" mode="info" clickable="true" size="medium" ariaLabel="Download {{artifact?.artifactDisplayName}}" (click)="download($event)"></svg-icon>
 `
 })
 export class DownloadArtifactComponent {

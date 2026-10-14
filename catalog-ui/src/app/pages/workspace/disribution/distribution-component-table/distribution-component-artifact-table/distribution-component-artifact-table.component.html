@@ -23,7 +23,7 @@
           <span class="urlValue">
             <svg-icon [clickable]="true" class="expand-collapse-icon"
             [name]="expanded ? 'caret1-up-o': 'caret1-down-o'" [mode]="'primary'"
-            [size]="'medium'" (click)="expandRow(row)" [attr.data-tests-id]="generateDataTestID('expandIcon_compID_', componentName, row.name)"></svg-icon>
+            [size]="'medium'" ariaLabel="Show details of {{row.name}}" [attr.aria-expanded]="!!expanded" (click)="expandRow(row)" [attr.data-tests-id]="generateDataTestID('expandIcon_compID_', componentName, row.name)"></svg-icon>
           </span>
           <span class="urlValue ellipsisCell" [attr.data-tests-id]="generateDataTestID('compID_',componentName, row.name)" sdc-tooltip [tooltip-placement]="3" [tooltip-text]="componentName">
             {{ componentName }}
@@ -42,7 +42,7 @@
           <span class="urlValue ellipsisCell" id="urlCell" [attr.data-tests-id]="generateDataTestID('url_',componentName, row.name)">{{ row.url }}</span>
           <span class="urlCopyIcon" title="Copy URL">
               <svg-icon-label [clickable]="true" [mode]="'primary'" [labelPlacement]="'right'"
-              [label]="" [name]="'copy-o'" [testId]="'copyToClipboard'"
+              [label]="" [name]="'copy-o'" [testId]="'copyToClipboard'" ariaLabel="Copy URL"
               (click)="copyToClipboard(row.url)">
               </svg-icon-label>
           </span>

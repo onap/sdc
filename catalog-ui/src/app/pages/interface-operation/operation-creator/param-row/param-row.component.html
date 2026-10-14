@@ -91,6 +91,7 @@
         size="small"
         [attr.data-tests-id]="'param-remove-' + (param.name || 'unnamed')"
         (click)="onRemoveParam(param)"
-        [clickable]="true">
+        [clickable]="true"
+        ariaLabel="Delete parameter">
   </svg-icon>
 </div>

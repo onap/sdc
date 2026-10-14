@@ -31,7 +31,8 @@
             <ng-template ngx-datatable-cell-template let-row="row">
                 <div class="download-artifact-button">
                     <svg-icon [mode]="'primary2'" [disabled]="disabled" [clickable]="!disabled" [name]="iconType"
-                              [testId]="testId" mode="info" clickable="true" size="medium" (click)="download($event)">
+                              [testId]="testId" mode="info" clickable="true" size="medium"
+                              ariaLabel="Download {{row.artifactDisplayName}}" (click)="download($event)">
                     </svg-icon>
                 </div>
             </ng-template>

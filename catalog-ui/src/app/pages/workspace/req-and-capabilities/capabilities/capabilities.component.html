@@ -1,11 +1,11 @@
 <div class="capabilities-table">
     <div class="expand-collapse-all-rows">
         <svg-icon class="selected-all-capabilities" 
-            [mode]="'primary'"  [clickable]="true" [name]="'expand-o'"
+            [mode]="'primary'"  [clickable]="true" [name]="'expand-o'" ariaLabel="Expand all"
                 [size]="'medium'" (click)="capabilitiesTable.rowDetail.expandAllRows()">
         </svg-icon>
          <svg-icon class="unselected-all-capabilities"
-            [mode]="'primary'"  [clickable]="true" [name]="'minimize-o'"
+            [mode]="'primary'"  [clickable]="true" [name]="'minimize-o'" ariaLabel="Collapse all"
                 [size]="'medium'" (click)="capabilitiesTable.rowDetail.collapseAllRows()">
         </svg-icon>
     </div>
@@ -27,7 +27,8 @@
                 <div class="expand-collapse-cell">
                     <svg-icon [clickable]="true" class="expand-collapse-icon"
                                 [name]="expanded ? 'caret1-up-o': 'caret1-down-o'" [mode]="'primary'"
-                                [size]="'medium'" (click)="expendRow(row)"></svg-icon>
+                                [size]="'medium'" ariaLabel="Show details of {{row.name}}" [attr.aria-expanded]="!!expanded"
+                                (click)="expendRow(row)"></svg-icon>
                     <span data-tests-id="row.name" sdc-tooltip [tooltip-text]="row.name" [tooltip-placement]="3" (click)="editCapability(row)">{{row.name}}</span>
                 </div>
             </ng-template>

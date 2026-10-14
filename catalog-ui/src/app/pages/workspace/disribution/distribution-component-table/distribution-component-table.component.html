@@ -18,7 +18,8 @@
     <div class="componentSummary" *ngIf="!isModal">
       <svg-icon [clickable]="true" class="expand-collapse-icon"
                 [name]="isExpanded(component) ? 'caret1-up-o': 'caret1-down-o'" [mode]="'primary'"
-                [size]="'medium'" [attr.data-tests-id]="generateExpandDataTestID(component)" (click)="expandRow(component)"></svg-icon>
+                [size]="'medium'" [attr.data-tests-id]="generateExpandDataTestID(component)"
+                ariaLabel="Show details of {{component}}" [attr.aria-expanded]="isExpanded(component)" (click)="expandRow(component)"></svg-icon>
 
 
       <span class="rightVerticalSeperatorComponent titleSummaryFontSettings" [attr.data-tests-id]="generateTotalComponentArtifactsLabel(component, '')">{{ component }} <span class="blue" data-tests-id="totalComponentArtifactsValue">{{ getTotalArtifactsForDistributionID(rowDistributionID, component) }}</span></span>
@@ -34,7 +35,8 @@
     <div class="componentSummary" *ngIf="isModal">
       <svg-icon [clickable]="true" class="expand-collapse-icon"
                 [name]="isExpanded(component) ? 'caret1-up-o': 'caret1-down-o'" [mode]="'primary'"
-                [size]="'medium'" [attr.data-tests-id]="generateExpandDataTestID(component+'_ForModal')" (click)="expandRow(component)"></svg-icon>
+                [size]="'medium'" [attr.data-tests-id]="generateExpandDataTestID(component+'_ForModal')"
+                ariaLabel="Show details of {{component}}" [attr.aria-expanded]="isExpanded(component)" (click)="expandRow(component)"></svg-icon>
       <span data-tests-id="modalComponentLabel"><a>{{ component }} <span class="blue" data-tests-id="modalComponentValue">{{ getLengthArtifactsForDistributionIDByStatus(rowDistributionID, statusFilter, component) }} </span></a></span>
     </div>
 

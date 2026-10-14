@@ -33,6 +33,7 @@ import { SdcUiServices } from 'onap-ui-angular';
         [testId]="testId" mode="info"
         (click)="fileUpload.click()"
         clickable="true"
+        ariaLabel="Upload {{artifact?.artifactDisplayName}}"
         size="medium"
     ></svg-icon>
     <input

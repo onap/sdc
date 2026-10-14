@@ -54,10 +54,12 @@
                     <svg-icon class="action-icon" *ngIf="!row.isThirdParty()" [mode]="'primary2'"
                               [disabled]="isViewOnly$ | async" [name]="'edit-o'"
                               testId="edit_{{row.artifactDisplayName}}" clickable="true" size="medium"
+                              ariaLabel="Edit {{row.artifactDisplayName}}"
                               (click)="addOrUpdateArtifact(row)"></svg-icon>
                     <svg-icon class="action-icon" *ngIf="!row.isThirdParty()" [mode]="'primary2'"
                               [disabled]="isViewOnly$ | async" [name]="'trash-o'"
-                              testId="delete_{{row.artifactDisplayName}}" clickable="true" size="medium" (click)="deleteArtifact(row)"></svg-icon>
+                              testId="delete_{{row.artifactDisplayName}}" clickable="true" size="medium"
+                              ariaLabel="Delete {{row.artifactDisplayName}}" (click)="deleteArtifact(row)"></svg-icon>
                     <download-artifact class="action-icon" [disabled]="isViewOnly$ | async" [artifact]="row"
                                        [componentId]="componentId"
                                        [componentType]="componentType"

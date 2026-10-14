@@ -35,7 +35,8 @@
             <li *ngFor="let element of existingElements" class="elements-list-item">
                 <span>{{element.name}}</span>
                 <svg-icon-label name="trash-o" clickable="true" size="small" class="elements-list-item-delete"
-                                data-tests-id="delete_target" (click)="removeElement(element)"></svg-icon-label>
+                                data-tests-id="delete_target" ariaLabel="Delete {{element.name}}"
+                                (click)="removeElement(element)"></svg-icon-label>
             </li>
         </ul>
         <div *ngIf="existingElements.length===0" class="add-element-no-data">

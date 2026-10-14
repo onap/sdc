@@ -18,7 +18,7 @@
         <ng-template let-row="row" ngx-datatable-cell-template prop="name">
             {{row.name}}
             <span *ngIf="row.description.length > 0" class="info">
-                <svg-icon [name]="'comment'" (click)="openPopOver('',row.description,{x:$event.pageX , y:$event.pageY },'bottom')"></svg-icon>
+                <svg-icon [name]="'comment'" [clickable]="true" ariaLabel="Show description" (click)="openPopOver('',row.description,{x:$event.pageX , y:$event.pageY },'bottom')"></svg-icon>
             </span>
         </ng-template>
     </ngx-datatable-column>

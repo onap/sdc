@@ -2,6 +2,7 @@
     <div class="search-wrapper">
         <span class="sub-title-wrapper">
             <svg-icon class="info-button" 
+                [clickable]="true" ariaLabel="Show information"
                 (click) = "openPopover($event, 'ON_BOARDING_GENERAL_INFO')"
                 [name]="'info-circle-o'" [mode]="'primary'"
                 [size]="'medium'"></svg-icon>
@@ -54,6 +55,7 @@
                     </span>
                     <span class="row-details-metadata3">
                         <svg-icon class="info-button" 
+                        [clickable]="true" ariaLabel="Show information"
                         (click) = "openPopover($event, isCsarComponentExists ? 'ON_BOARDING_UPDATE_INFO' : 'ON_BOARDING_IMPORT_INFO')"
                         [name]="'info-circle-o'" [mode]="'primary'"
                         [size]="'medium'"></svg-icon>
@@ -73,7 +75,7 @@
                           >
                         </sdc-button>
                             <svg-icon class="download-file-btn" sdc-tooltip [tooltip-text]="'Download-csar'"
-                                [mode]="'primary'"  [clickable]="true" [name]="'download-o'" 
+                                [mode]="'primary'"  [clickable]="true" ariaLabel="Download CSAR" [name]="'download-o'" 
                                 [testId]="'download-csar'" [size]="'medium'" (click)="downloadCsar(row.packageId)">
                             </svg-icon>
                         </div>

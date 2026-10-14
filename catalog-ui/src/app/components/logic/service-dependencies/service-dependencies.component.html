@@ -8,6 +8,7 @@
           (click)="onRemoveDirective()" data-tests-id="delete-input-button" *ngIf="!readonly">
     </span>
     <svg-icon-label name="edit-file-o" size="small" class="directive-edit-icon" data-tests-id="directive-edit-icon" 
+          clickable="true" ariaLabel="Edit directive"
           (click)="onEditDirectives()" *ngIf="!readonly">
     </svg-icon-label>
   </div>

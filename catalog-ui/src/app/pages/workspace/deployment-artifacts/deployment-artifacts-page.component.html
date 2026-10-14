@@ -17,7 +17,7 @@
                 </div>
                 <span sdc-tooltip [tooltip-text]="row.artifactDisplayName" [tooltip-placement]="3" [attr.data-tests-id]="'artifactDisplayName_' + row.artifactDisplayName">{{row.artifactDisplayName}}</span>
                 <span *ngIf="row.description && row.description.length > 0" class="info">
-                    <svg-icon [clickable]="true" [name]="'comment'" [mode]="'primary2'" (click)="openPopOver('Description',row.description,{x:$event.pageX , y:$event.pageY },'bottom')"></svg-icon>
+                    <svg-icon [clickable]="true" [name]="'comment'" [mode]="'primary2'" ariaLabel="Show description" (click)="openPopOver('Description',row.description,{x:$event.pageX , y:$event.pageY },'bottom')"></svg-icon>
                 </span>
             </ng-template>
         </ngx-datatable-column>
@@ -47,15 +47,19 @@
                     <!--                    Edit HEAT_ENV / HEAT_NESTED / HEAT_ARTIFACT / VF_LICENSE-->
                     <svg-icon *ngIf="(row.artifactType !== 'HEAT' && row.artifactType !== 'HEAT_VOL' && row.artifactType !== 'HEAT_NET') && !state.isViewOnly" class="action-icon" [mode]="'primary2'" [name]="'edit-o'"
                               testId="edit_{{row.artifactDisplayName}}" clickable="true" size="medium"
+                              ariaLabel="Edit {{row.artifactDisplayName}}"
                               (click)="addOrUpdateArtifact(row, state.isViewOnly)"></svg-icon>
                     <!--                    Edit HEAT-->
                     <svg-icon *ngIf="(row.artifactType === 'HEAT' || row.artifactType === 'HEAT_VOL' || row.artifactType === 'HEAT_NET') && !state.isViewOnly" class="action-icon" [mode]="'primary2'" [name]="'indesign_status'"
                               testId="update_heat_params_{{row.artifactDisplayName}}" clickable="true" size="medium"
+                              ariaLabel="Edit HEAT parameters of {{row.artifactDisplayName}}"
                               (click)="updateEnvParams(row, state.isViewOnly)"></svg-icon>
                     <svg-icon *ngIf="!row.isFromCsar && !state.isViewOnly" class="action-icon" [mode]="'primary2'" [name]="'trash-o'"
-                              testId="delete_{{row.artifactDisplayName}}" clickable="true" size="medium" (click)="deleteArtifact(row)"></svg-icon>
+                              testId="delete_{{row.artifactDisplayName}}" clickable="true" size="medium"
+                              ariaLabel="Delete {{row.artifactDisplayName}}" (click)="deleteArtifact(row)"></svg-icon>
                     <svg-icon *ngIf="row.isGenericBrowseable()" class="action-icon" [mode]="'primary2'" [name]="'search-o'"
-                              testId="gab-{{row.artifactDisplayName}}" clickable="true" size="medium" (click)="openGenericArtifactBrowserModal(row)"></svg-icon>
+                              testId="gab-{{row.artifactDisplayName}}" clickable="true" size="medium"
+                              ariaLabel="Browse {{row.artifactDisplayName}}" (click)="openGenericArtifactBrowserModal(row)"></svg-icon>
                     <!--Download-->
                     <download-artifact class="action-icon" [artifact]="row"
                                        [componentId]="componentId"

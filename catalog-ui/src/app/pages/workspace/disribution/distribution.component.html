@@ -38,7 +38,8 @@
                 <div class="expand-collapse-cell">
                    <a><svg-icon [clickable]="true" class="expand-collapse-icon"
                               [name]="expanded ? 'caret1-up-o': 'caret1-down-o'" [mode]="'primary'"
-                              [size]="'medium'" (click)="expandRow(row, expanded)" [attr.data-tests-id]="generateDataTestID('expandIcon_', row.distributionID, isModal)"></svg-icon></a>
+                              [size]="'medium'" ariaLabel="Show details of {{row.distributionID}}" [attr.aria-expanded]="!!expanded"
+                              (click)="expandRow(row, expanded)" [attr.data-tests-id]="generateDataTestID('expandIcon_', row.distributionID, isModal)"></svg-icon></a>
 
                 </div>
                 <div class="distributionIDBlock">

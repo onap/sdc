@@ -25,6 +25,7 @@
             [label]="'Add'"
             [labelPlacement]="'right'"
             [labelClassName]="'externalActionLabel'"
+            [clickable]="true"
             (click)="onAddAttribute()">
         </svg-icon-label>
     </div>
@@ -78,6 +79,7 @@
                               [mode]="'primary2'"
                               [name]="'edit-o'"
                               [testId]="'edit_'+row.name"
+                              ariaLabel="Edit {{row.name}}"
                               [size]="'medium'"
                               (click)="onEditAttribute($event, row)">
                     </svg-icon>
@@ -85,6 +87,7 @@
                               [mode]="'primary2'"
                               [name]="'trash-o'"
                               [testId]="'delete_'+row.name"
+                              ariaLabel="Delete {{row.name}}"
                               [size]="'medium'"
                               (click)="onDeleteAttribute($event, row)">
                     </svg-icon>
