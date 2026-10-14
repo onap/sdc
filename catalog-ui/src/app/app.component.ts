@@ -39,4 +39,18 @@ export class AppComponent implements OnInit {
     this.routeMetadataService.start();
   }
 
+  // The href is kept for axe's skip-link rule, but following it would set location.hash, which
+  // SdcHashLocationStrategy reads as the unknown route 'main-content' and redirects to the dashboard.
+  public skipToMain(event: Event): void {
+    event.preventDefault();
+    const target = document.getElementById('main-content');
+    if (!target) {
+      return;
+    }
+    if (!target.hasAttribute('tabindex')) {
+      target.setAttribute('tabindex', '-1');
+    }
+    target.focus();
+  }
+
 }

@@ -24,12 +24,12 @@
         <div class="tlv-loader-back"></div>
         <div class="tlv-loader large"></div>
     </div>
-    <div class="w-sdc-main-container">
+    <main id="main-content" class="w-sdc-main-container">
         <!-- React "onboarding/vendor" punch-out (onboarding wizard) is mounted into this host
              imperatively via PunchOutRegistry.render. The host must NOT be behind *ngIf so it
              exists when ngAfterViewInit fires. -->
         <div class="onboard-vendor-punch-out-host"></div>
-    </div>
+    </main>
     <top-nav
         [topLvlSelectedIndex]="2"
         [menuModel]="topNavMenuModel"

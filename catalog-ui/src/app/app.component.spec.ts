@@ -59,4 +59,28 @@ describe('AppComponent', () => {
         expect(routeMetadataService.start).toHaveBeenCalled();
     });
 
+    it('skipToMain focuses #main-content without touching the hash', () => {
+        const component = TestBed.createComponent(AppComponent).componentInstance;
+        const main = document.createElement('main');
+        main.id = 'main-content';
+        document.body.appendChild(main);
+        const hashBefore = window.location.hash;
+        const ev = { preventDefault: jest.fn() } as any;
+
+        component.skipToMain(ev);
+
+        expect(ev.preventDefault).toHaveBeenCalled();
+        expect(document.activeElement).toBe(main);
+        expect(main.getAttribute('tabindex')).toBe('-1');
+        expect(window.location.hash).toBe(hashBefore);
+        document.body.removeChild(main);
+    });
+
+    it('skipToMain is a no-op when the page has no #main-content', () => {
+        const component = TestBed.createComponent(AppComponent).componentInstance;
+        const ev = { preventDefault: jest.fn() } as any;
+        expect(() => component.skipToMain(ev)).not.toThrow();
+        expect(ev.preventDefault).toHaveBeenCalled();
+    });
+
 });

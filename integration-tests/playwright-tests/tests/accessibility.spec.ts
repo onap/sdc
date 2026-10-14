@@ -33,7 +33,7 @@ type PageName = 'dashboard' | 'catalog' | 'onboardVendor' | 'serviceCreateGenera
 const KNOWN: Record<PageName, string[]> = {
     dashboard: ['color-contrast'],
     catalog: ['color-contrast', 'scrollable-region-focusable'],
-    onboardVendor: ['color-contrast', 'region', 'select-name', 'skip-link'],
+    onboardVendor: ['color-contrast', 'select-name'],
     serviceCreateGeneral: ['color-contrast', 'label', 'select-name'],
 };
 
