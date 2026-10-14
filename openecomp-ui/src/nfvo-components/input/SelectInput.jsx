@@ -1,5 +1,6 @@
 /*!
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,9 +29,27 @@
  */
 import React, { Component } from 'react';
 import Select from 'react-select';
+import Value from 'react-select/lib/Value.js';
+import uniqueId from 'lodash/uniqueId.js';
+
+// react-select 1.x gives each selected value role="option" outside any
+// listbox, which is invalid ARIA; keep the markup minus that role.
+class SelectedValue extends Value {
+    renderLabel() {
+        if (this.props.onClick || this.props.value.href) {
+            return super.renderLabel();
+        }
+        return (
+            <span className="Select-value-label" id={this.props.id}>
+                {this.props.children}
+            </span>
+        );
+    }
+}
 
 class SelectInput extends Component {
     inputValue = [];
+    inputId = this.props.id || uniqueId('select-input-');
 
     render() {
         let { label, value, ...other } = this.props;
@@ -42,11 +61,17 @@ class SelectInput extends Component {
                 {...dataTestId}
                 className="validation-input-wrapper dropdown-multi-select">
                 <div className="form-group">
-                    {label && <label className="control-label">{label}</label>}
+                    {label && (
+                        <label className="control-label" htmlFor={this.inputId}>
+                            {label}
+                        </label>
+                    )}
                     <Select
                         ref="_myInput"
                         onChange={value => this.onSelectChanged(value)}
+                        valueComponent={SelectedValue}
                         {...other}
+                        id={this.inputId}
                         value={value}
                     />
                 </div>

@@ -59,7 +59,7 @@ const SERVICE_TABS: TabScan[] = [
     { tab: 'properties_assignment', ready: '[data-tests-id="Inputs"]', known: ['label', 'select-name'] },
     { tab: 'activity_log', ready: 'activity-log ngx-datatable', known: [] },
     { tab: 'tosca_artifacts', ready: 'tosca-artifact-page datatable-body-row', known: [] },
-    { tab: 'management_workflow', ready: '.flow-editor-punch-out-host > *', known: ['label', 'region'] },
+    { tab: 'management_workflow', ready: '.flow-editor-punch-out-host > *', known: ['region'] },
 ];
 
 async function openTab(page: Page, asset: CreatedAsset, scan: TabScan): Promise<void> {

@@ -52,7 +52,7 @@
         .vsp-overlay-detail {
             @extend .body-2;
             &:hover {
-                color: $blue;
+                color: $link-blue;
             }
             text-transform: none;
             @include ellipsis(auto, block);
@@ -64,7 +64,7 @@
             }
         }
         .vsp-overlay-see-more {
-            color: $blue;
+            color: $link-blue;
             cursor: pointer;
             margin-top: 12px;
             align-self: center;

@@ -16,9 +16,10 @@
         display: flex;
         flex-direction: row;
         .onboard-header-tab {
+            @include button-reset($font: false);
+            @include focus-ring;
             @extend .body-1-semibold;
             margin-right: 40px;
-            cursor: pointer;
             display: flex;
             padding-bottom: 5px;
             align-items: flex-end;

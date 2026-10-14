@@ -45,7 +45,7 @@ $desktop-min-width: 1824px;
 
 $loader-background: #e1e4e6;
 
-$action-button-active-bg: #0091c7;
+$action-button-active-bg: darken($link-blue, 14%);
 $action-button-active-border: #006186;
-$action-button-hover-bg: #1ec2ff;
+$action-button-hover-bg: darken($link-blue, 7%);
 $action-button-hover-border: #0091c8;

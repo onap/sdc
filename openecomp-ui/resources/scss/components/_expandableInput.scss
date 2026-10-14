@@ -4,6 +4,8 @@
     .expandable-input-wrapper {
         display: flex;
         &.closed {
+            @include button-reset;
+            @include focus-ring;
             .svg-icon {
                 &.__search {
                     height: 17px;
@@ -21,6 +23,11 @@
         &.opened {
             .svg-icon-wrapper {
                 margin-left: 3px;
+            }
+            .expandable-input-close-btn {
+                @include button-reset;
+                @include focus-ring;
+                display: flex;
             }
             .svg-icon {
                 &.__search {

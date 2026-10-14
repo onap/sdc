@@ -1,5 +1,6 @@
 /*!
  * Copyright © 2016-2018 European Support Limited
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -157,20 +158,25 @@ function NavigationMenuItem(props) {
 
 function NavigationLink(props) {
     const { item, activeItemId, onClick } = props;
-    // todo should this be button
+    const isGroup = item.items && item.items.length > 0;
+    const isSelected = item.id === activeItemId;
     return (
-        <div
+        <button
+            type="button"
             key={'navAction_' + item.id}
             className={classnames('navigation-group-item-name', {
-                selected: item.id === activeItemId,
+                selected: isSelected,
                 disabled: item.disabled,
                 'bold-name': item.expanded,
                 hidden: item.hidden
             })}
+            disabled={item.disabled}
+            aria-current={isSelected ? 'page' : undefined}
+            aria-expanded={isGroup ? !!item.expanded : undefined}
             onClick={event => onClick(event, item)}
             data-test-id={'navbar-group-item-' + getItemDataTestId(item.id)}>
             {item.name}
-        </div>
+        </button>
     );
 }
 

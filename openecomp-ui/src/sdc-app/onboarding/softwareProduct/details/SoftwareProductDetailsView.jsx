@@ -355,6 +355,7 @@ const RegionsSection = props => (
         <GridItem>
             <InputOptions
                 data-test-id="vsp-regions"
+                aria-label={i18n('Regions')}
                 type="select"
                 isMultiSelect={true}
                 onInputChange={() => {}}

@@ -8,6 +8,8 @@
     &.workspace-header {
         @extend .heading-1;
         color: $link-blue;
+        font-weight: inherit;
+        line-height: inherit;
     }
     .catalog-header-tabs {
         display: flex;
@@ -18,7 +20,9 @@
         }
         .catalog-header-tab {
             @extend .heading-1;
-            cursor: pointer;
+            margin: 0;
+            font-weight: inherit;
+            line-height: inherit;
             padding: 0 15px 0 15px;
             display: flex;
             align-items: center;

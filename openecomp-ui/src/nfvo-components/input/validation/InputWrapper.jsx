@@ -1,5 +1,6 @@
 /*!
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +21,11 @@ import Checkbox from 'react-bootstrap/lib/Checkbox.js';
 import { Radio } from 'onap-ui-react';
 import FormGroup from 'react-bootstrap/lib/FormGroup.js';
 import FormControl from 'react-bootstrap/lib/FormControl.js';
+import uniqueId from 'lodash/uniqueId.js';
 
 class InputWrapper extends React.Component {
+    inputId = this.props.id || uniqueId('input-wrapper-');
+
     state = {
         value: this.props.value,
         checked: this.props.checked,
@@ -45,13 +49,16 @@ class InputWrapper extends React.Component {
         const { groupClassName, ...inputProps } = this.props;
         return (
             <FormGroup
+                controlId={this.inputId}
                 className={classNames('form-group', [groupClassName], {
                     required: validations.required,
                     'has-error': hasError
                 })}>
                 {label &&
                     (type !== 'checkbox' && type !== 'radio') && (
-                        <label className="control-label">{label}</label>
+                        <label className="control-label" htmlFor={this.inputId}>
+                            {label}
+                        </label>
                     )}
                 {(type === 'text' || type === 'number') && (
                     <FormControl
@@ -63,6 +70,7 @@ class InputWrapper extends React.Component {
                         value={value || ''}
                         ref={input => (this.inputWrapper = input)}
                         type={type}
+                        aria-label={this.props['aria-label']}
                         data-test-id={this.props['data-test-id']}
                     />
                 )}

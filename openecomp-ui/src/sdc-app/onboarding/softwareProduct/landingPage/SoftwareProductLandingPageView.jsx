@@ -1,6 +1,7 @@
 /*
  * Copyright © 2016-2018 European Support Limited
  * Modifications Copyright (C) 2021 Nordix Foundation.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -164,6 +165,7 @@ class SoftwareProductLandingPageView extends React.Component {
                     disableClick={true}
                     ref="fileInput"
                     name="fileInput"
+                    inputProps={{ 'aria-label': i18n('Upload VSP package') }}
                     accept=".zip, .csar">
                     <div className="draggable-wrapper">
                         <div className="software-product-landing-view-top">
@@ -431,41 +433,52 @@ const LicenseAgreementWithExternal = ({
     return (
         <div className="missing-license">
             <form>
-                <input
-                    type="radio"
-                    value="INTERNAL"
-                    id="INTERNAL"
-                    onChange={event =>
-                        licenceChange(
-                            event,
-                            currentSoftwareProduct,
-                            onLicenseChange
-                        )
-                    }
-                    checked={currentSoftwareProduct.licenseType === 'INTERNAL'}
-                    name="license"
-                />
-                <div className="description licenceLabel">
-                    {i18n('Internal license')}
-                </div>
-                <br />
-                <input
-                    type="radio"
-                    value="EXTERNAL"
-                    id="EXTERNAL"
-                    onChange={event =>
-                        licenceChange(
-                            event,
-                            currentSoftwareProduct,
-                            onLicenseChange
-                        )
-                    }
-                    checked={currentSoftwareProduct.licenseType === 'EXTERNAL'}
-                    name="license"
-                />
-                <div className="description licenceLabel">
-                    {i18n('External license')}
-                </div>
+                <fieldset>
+                    <legend className="sr-only">{i18n('License type')}</legend>
+                    <input
+                        type="radio"
+                        value="INTERNAL"
+                        id="INTERNAL"
+                        onChange={event =>
+                            licenceChange(
+                                event,
+                                currentSoftwareProduct,
+                                onLicenseChange
+                            )
+                        }
+                        checked={
+                            currentSoftwareProduct.licenseType === 'INTERNAL'
+                        }
+                        name="license"
+                    />
+                    <label
+                        htmlFor="INTERNAL"
+                        className="description licenceLabel">
+                        {i18n('Internal license')}
+                    </label>
+                    <br />
+                    <input
+                        type="radio"
+                        value="EXTERNAL"
+                        id="EXTERNAL"
+                        onChange={event =>
+                            licenceChange(
+                                event,
+                                currentSoftwareProduct,
+                                onLicenseChange
+                            )
+                        }
+                        checked={
+                            currentSoftwareProduct.licenseType === 'EXTERNAL'
+                        }
+                        name="license"
+                    />
+                    <label
+                        htmlFor="EXTERNAL"
+                        className="description licenceLabel">
+                        {i18n('External license')}
+                    </label>
+                </fieldset>
             </form>
         </div>
     );

@@ -1,5 +1,6 @@
 /*
  * Copyright © 2016-2018 European Support Limited
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +18,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import OnboardingCatalogView from './onboardingCatalog/OnboardingCatalogView.jsx';
 import WorkspaceView from './workspace/WorkspaceView.jsx';
-import { tabsMapping } from './OnboardConstants.js';
+import {
+    tabsMapping,
+    onboardTabIds,
+    ONBOARD_TABPANEL_ID
+} from './OnboardConstants.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import classnames from 'classnames';
 import ExpandableInput from 'nfvo-components/input/ExpandableInput.jsx';
@@ -25,26 +30,78 @@ import objectValues from 'lodash/values.js';
 import { catalogItemTypes } from './onboardingCatalog/OnboardingCatalogConstants.js';
 import NotificationsView from 'sdc-app/onboarding/userNotifications/NotificationsView.jsx';
 import Filter from 'sdc-app/onboarding/onboard/filter/Filter.jsx';
-const OnboardHeaderTabs = ({ onTabClick, activeTab }) => (
-    <div className="onboard-header-tabs">
-        <div
-            className={classnames('onboard-header-tab', {
-                active: activeTab === tabsMapping.WORKSPACE
-            })}
-            onClick={() => onTabClick(tabsMapping.WORKSPACE)}
-            data-test-id="onboard-workspace-tab">
-            {i18n('WORKSPACE')}
-        </div>
-        <div
-            className={classnames('onboard-header-tab', {
-                active: activeTab === tabsMapping.CATALOG
-            })}
-            onClick={() => onTabClick(tabsMapping.CATALOG)}
-            data-test-id="onboard-onboard-tab">
-            {i18n('ONBOARD CATALOG')}
-        </div>
-    </div>
-);
+const onboardTabs = [tabsMapping.WORKSPACE, tabsMapping.CATALOG];
+
+export class OnboardHeaderTabs extends React.Component {
+    static propTypes = {
+        activeTab: PropTypes.number,
+        onTabClick: PropTypes.func.isRequired
+    };
+
+    tabButtons = {};
+
+    handleKeyDown(e, index) {
+        const last = onboardTabs.length - 1;
+        let next;
+        switch (e.key) {
+            case 'ArrowRight':
+                next = index === last ? 0 : index + 1;
+                break;
+            case 'ArrowLeft':
+                next = index === 0 ? last : index - 1;
+                break;
+            case 'Home':
+                next = 0;
+                break;
+            case 'End':
+                next = last;
+                break;
+            default:
+                return;
+        }
+        e.preventDefault();
+        const tab = onboardTabs[next];
+        this.tabButtons[tab].focus();
+        this.props.onTabClick(tab);
+    }
+
+    render() {
+        const { activeTab, onTabClick } = this.props;
+        const labels = {
+            [tabsMapping.WORKSPACE]: i18n('WORKSPACE'),
+            [tabsMapping.CATALOG]: i18n('ONBOARD CATALOG')
+        };
+        return (
+            <div
+                className="onboard-header-tabs"
+                role="tablist"
+                aria-label={i18n('Onboarding views')}>
+                {onboardTabs.map((tab, index) => {
+                    const isActive = activeTab === tab;
+                    return (
+                        <button
+                            key={tab}
+                            type="button"
+                            role="tab"
+                            id={onboardTabIds[tab]}
+                            ref={button => (this.tabButtons[tab] = button)}
+                            aria-selected={isActive}
+                            aria-controls={ONBOARD_TABPANEL_ID}
+                            tabIndex={isActive ? 0 : -1}
+                            className={classnames('onboard-header-tab', {
+                                active: isActive
+                            })}
+                            onClick={() => onTabClick(tab)}
+                            onKeyDown={e => this.handleKeyDown(e, index)}
+                            data-test-id={onboardTabIds[tab]}>
+                            {labels[tab]}
+                        </button>
+                    );
+                })}
+            </div>
+        );
+    }
+}
 
 const OnboardHeader = ({ onSearch, activeTab, onTabClick, searchValue }) => (
     <div className="onboard-header">

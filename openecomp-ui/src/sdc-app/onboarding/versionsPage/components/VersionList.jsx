@@ -1,5 +1,6 @@
 /*!
  * Copyright © 2016-2018 European Support Limited
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -123,35 +124,42 @@ const VersionListItem = ({
             ) : (
                 <div className="version-item-field item-actions">
                     <div className="version-item-field item-select">
-                        <SVGIcon
-                            name="check-circle"
+                        <button
+                            type="button"
+                            className="version-item-action"
                             data-test-id="versions-page-select-version"
+                            aria-label={i18n('Go to this Version')}
                             onClick={e => {
                                 e.stopPropagation();
                                 onNavigateToVersion();
-                            }}
-                            label={i18n('Go to this Version')}
-                            labelPosition="right"
-                        />
+                            }}>
+                            <SVGIcon
+                                name="check-circle"
+                                label={i18n('Go to this Version')}
+                                labelPosition="right"
+                            />
+                        </button>
                     </div>
                     <div className="version-item-field item-create">
                         {!isHeader &&
                             isCollaborator &&
                             additionalInfo.OptionalCreationMethods.length > 0 &&
                             onCreateVersion && (
-                                <SVGIcon
-                                    name="plus-circle"
+                                <button
+                                    type="button"
+                                    className="version-item-action"
                                     data-test-id="versions-page-create-version"
+                                    aria-label={i18n('Create New Version')}
                                     onClick={e => {
                                         e.stopPropagation();
                                         onCreateVersion();
-                                    }}
-                                    label={i18n('Create New Version')}
-                                    labelPosition="right"
-                                    disabled={
-                                        !isCollaborator || !onCreateVersion
-                                    }
-                                />
+                                    }}>
+                                    <SVGIcon
+                                        name="plus-circle"
+                                        label={i18n('Create New Version')}
+                                        labelPosition="right"
+                                    />
+                                </button>
                             )}
                     </div>
                 </div>

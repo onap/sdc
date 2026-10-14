@@ -1,5 +1,6 @@
 /*
  * Copyright © 2016-2018 European Support Limited
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +17,11 @@
 import React from 'react';
 import DetailsCatalogView from '../DetailsCatalogView.jsx';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import { tabsMapping } from 'sdc-app/onboarding/onboard/OnboardConstants.js';
+import {
+    tabsMapping,
+    onboardTabIds,
+    ONBOARD_TABPANEL_ID
+} from 'sdc-app/onboarding/onboard/OnboardConstants.js';
 
 const WorkspaceView = props => {
     let {
@@ -37,10 +42,14 @@ const WorkspaceView = props => {
     const handleSelectVLM = (item, users) =>
         onSelectLicenseModel(item, users, tabsMapping.WORKSPACE);
     return (
-        <div className="catalog-wrapper workspace-view">
-            <div className="catalog-header workspace-header">
+        <div
+            className="catalog-wrapper workspace-view"
+            role="tabpanel"
+            id={ONBOARD_TABPANEL_ID}
+            aria-labelledby={onboardTabIds[tabsMapping.WORKSPACE]}>
+            <h1 className="catalog-header workspace-header">
                 {i18n('WORKSPACE')}
-            </div>
+            </h1>
             <DetailsCatalogView
                 VLMList={vlmList}
                 VSPList={vspList}

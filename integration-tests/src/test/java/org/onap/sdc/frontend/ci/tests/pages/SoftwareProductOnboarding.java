@@ -71,7 +71,7 @@ public class SoftwareProductOnboarding extends AbstractPageObject {
     }
 
     public void submit() {
-        findSubElement(wrappingElement, XpathSelector.BNT_SUBMIT.getXpath()).click();
+        waitToBeClickable(XpathSelector.BNT_SUBMIT.getXpath()).click();
         vspCommitModal.isLoaded();
         vspCommitModal.fillCommentWithDefaulMessage();
         vspCommitModal.submit();
@@ -95,10 +95,10 @@ public class SoftwareProductOnboarding extends AbstractPageObject {
         PAGE_MAIN_DIV("software-product-view", DIV_CLASS_XPATH_FORMAT),
         UPLOAD_CSAR("upload-btn", "//input[@data-test-id='%s']"),
         FILE_INPUT("fileInput", "//input[@name='%s']"),
-        NAV_BAR_GROUP_ITEM_ATTACHMENT("navbar-group-item-SOFTWARE_PRODUCT_ATTACHMENTS", DIV_DATA_TEST_ID_XPATH_FORMAT),
-        BNT_SUBMIT("vc-submit-btn", DIV_DATA_TEST_ID_XPATH_FORMAT),
+        NAV_BAR_GROUP_ITEM_ATTACHMENT("navbar-group-item-SOFTWARE_PRODUCT_ATTACHMENTS", "//button[@data-test-id='%s']"),
+        BNT_SUBMIT("vc-submit-btn", "//button[@data-test-id='%s']"),
         NAV_BAR_GROUP_NAME_XPATH("navbar-group-name", DIV_DATA_TEST_ID_XPATH_FORMAT),
-        SELECTED_NAV_BAR_GROUP_ITEM("navigation-group-item-name selected", DIV_CLASS_XPATH_FORMAT),
+        SELECTED_NAV_BAR_GROUP_ITEM("navigation-group-item-name selected", "//button[@class='%s']"),
         ONBOARDING_LOADER_DIV("onboarding-loader-backdrop", DIV_CLASS_XPATH_FORMAT),
         ATTACHMENT_VIEW("vsp-attachments-view", DIV_CLASS_XPATH_FORMAT);
 

@@ -4,7 +4,7 @@
 
     .limit-editor-title {
         padding: 10px 50px;
-        background-color: $blue;
+        background-color: $link-blue;
         color: $white;
     }
     .list-editor-view-add-title {
@@ -77,7 +77,7 @@
                         &.limit-name {
                             .text.name {
                                 @extend .body-1-semibold;
-                                color: $blue;
+                                color: $link-blue;
                                 text-transform: uppercase;
                                 margin-left: 45px;
                             }

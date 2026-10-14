@@ -3,6 +3,7 @@
  *  ============LICENSE_START=======================================================
  *  Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  *  Modifications Copyright (C) 2021 Nordix Foundation.
+ *  Modifications Copyright (C) 2026 Deutsche Telekom AG
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -196,11 +197,11 @@
                         padding: 15px 55px;
                     }
                     .drag-text {
-                        color: $blue;
+                        color: $link-blue;
                         @extend .body-1-semibold;
                     }
                     .upload-status-text {
-                        color: $blue;
+                        color: $link-blue;
                         @extend .body-1-semibold;
                     }
                     .or-text {
@@ -216,7 +217,7 @@
                         width: 50%;
                         cursor: pointer;
                         .searchRepo-text {
-                            color: $blue;
+                            color: $link-blue;
                             @extend .body-1-semibold;
                             width: 72px;
                             line-height: 24px;
@@ -231,7 +232,7 @@
                             }
                             &.__positive {
                                 fill: $blue;
-                                color: $blue;
+                                color: $link-blue;
                             }
                         }
                     }
@@ -249,6 +250,16 @@
     .licenceLabel {
         float: right;
         margin-left: 5px;
+        margin-bottom: 0;
+        font-weight: inherit;
+        cursor: pointer;
+    }
+    .missing-license input[type='radio'] {
+        width: 24px;
+        height: 24px;
+        margin: 0 3px 0 0;
+        vertical-align: middle;
+        cursor: pointer;
     }
 }
 

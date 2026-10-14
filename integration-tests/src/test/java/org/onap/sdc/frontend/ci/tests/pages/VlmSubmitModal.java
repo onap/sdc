@@ -58,7 +58,7 @@ public class VlmSubmitModal extends AbstractPageObject {
     @AllArgsConstructor
     private enum XpathSelector {
         MODAL_DIV("sdc-modal", "//div[contains(@class, '%s')]"),
-        SUBMIT_BTN("vc-submit-btn", "//div[@data-test-id='%s']"),
+        SUBMIT_BTN("vc-submit-btn", "//button[@data-test-id='%s']"),
         SUCCESS_MODAL_DIV("sdc-modal-type-info", "//div[contains(@class, '%s')]"),
         MODAL_CANCEL_BTN("sdc-modal-cancel-button", "//button[@data-test-id='%s']");
 

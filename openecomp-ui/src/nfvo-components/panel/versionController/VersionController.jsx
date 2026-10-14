@@ -1,5 +1,6 @@
 /*!
  * Copyright © 2016-2018 European Support Limited
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -135,13 +136,15 @@ class VersionController extends React.Component {
                         <div className="vc-separator" />
                         <NotificationsView />
                         {onClose && (
-                            <div
+                            <button
+                                type="button"
                                 className="vc-nav-item-close"
+                                aria-label={i18n('Close')}
                                 onClick={() => onClose()}
                                 data-test-id="vc-cancel-btn">
                                 {' '}
                                 X
-                            </div>
+                            </button>
                         )}
                     </div>
                 </div>
@@ -206,6 +209,7 @@ function VersionSelector(props) {
                     )
                 }
                 value={version.id}
+                aria-label={i18n('Version')}
                 data-test-id="vc-versions-select-box">
                 {viewableVersions &&
                     viewableVersions.map(viewVersion => {
@@ -227,12 +231,13 @@ function VersionSelector(props) {
                     } ${version.status}`}</option>
                 )}
             </select>
-            <span
+            <button
+                type="button"
                 onClick={onMoreVersionsClick}
                 className="version-selector-more-versions"
                 data-test-id="vc-versions-page-link">
                 {i18n('Versions Page')}
-            </span>
+            </button>
         </div>
     );
 }

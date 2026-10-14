@@ -1,5 +1,6 @@
 /*!
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,16 +21,23 @@ import ListEditorView from 'nfvo-components/listEditor/ListEditorView.jsx';
 import { SVGIcon } from 'onap-ui-react';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 
-function ActivityLogSortableCellHeader({ isHeader, data, isDes, onSort }) {
-    //TODO check icon sdc-ui
+function ActivityLogSortableCellHeader({
+    isHeader,
+    data,
+    isAscending,
+    onSort
+}) {
     if (isHeader) {
         return (
-            <span className="date-header" onClick={onSort}>
+            <button type="button" className="date-header" onClick={onSort}>
                 <span>{data}</span>
                 <span
-                    className={`header-sort-arrow ${isDes ? 'up' : 'down'}`}
+                    aria-hidden="true"
+                    className={`header-sort-arrow ${
+                        isAscending ? 'up' : 'down'
+                    }`}
                 />
-            </span>
+            </button>
         );
     }
     return (
@@ -80,53 +88,65 @@ function ActivityLogStatus({ status, isHeader }) {
     );
 }
 
-export function ActivityListItem({ activity, isHeader, isDes, onSort }) {
+export function ActivityListItem({ activity, isHeader, isAscending, onSort }) {
     let { type, timestamp, comment, user, status } = activity;
+    const Cell = isHeader ? 'th' : 'td';
+    const scope = isHeader ? 'col' : undefined;
     return (
-        <li
+        <tr
             className={`activity-list-item ${isHeader ? 'header' : ''}`}
             data-test-id="activity-list-item">
-            <div
+            <Cell
+                scope={scope}
+                aria-sort={
+                    isHeader
+                        ? isAscending ? 'ascending' : 'descending'
+                        : undefined
+                }
                 className="table-cell activity-date"
                 data-test-id="activity-date">
                 <ActivityLogSortableCellHeader
                     isHeader={isHeader}
                     data={timestamp}
-                    isDes={isDes}
+                    isAscending={isAscending}
                     onSort={onSort}
                 />
-            </div>
-            <div
+            </Cell>
+            <Cell
+                scope={scope}
                 className="table-cell activity-action"
                 data-test-id="activity-action">
                 {i18n(type)}
-            </div>
-            <div
+            </Cell>
+            <Cell
+                scope={scope}
                 className="table-cell activity-comment"
                 title={isHeader ? '' : comment}
                 data-test-id="activity-comment">
                 <span>{i18n(comment)}</span>
-            </div>
-            <div
+            </Cell>
+            <Cell
+                scope={scope}
                 className="table-cell activity-username"
                 data-test-id="activity-username">
                 {isHeader
                     ? i18n(activity.user)
                     : `${i18n(user.name)} (${user.id})`}
-            </div>
-            <div
+            </Cell>
+            <Cell
+                scope={scope}
                 className="table-cell activity-status"
                 data-test-id="activity-status">
                 <ActivityLogStatus isHeader={isHeader} status={status} />
-            </div>
-        </li>
+            </Cell>
+        </tr>
     );
 }
 
 class ActivityLogView extends Component {
     state = {
         localFilter: '',
-        sortDescending: true
+        sortAscending: true
     };
 
     render() {
@@ -136,31 +156,44 @@ class ActivityLogView extends Component {
                     title={i18n('Activity Log')}
                     filterValue={this.state.localFilter}
                     onFilter={filter => this.setState({ localFilter: filter })}>
-                    <ActivityListItem
-                        activity={{
-                            timestamp: 'Date',
-                            type: 'Action',
-                            comment: 'Comment',
-                            user: 'Username',
-                            status: 'Status'
-                        }}
-                        isDes={this.state.sortDescending}
-                        onSort={() =>
-                            this.setState({
-                                sortDescending: !this.state.sortDescending
-                            })
-                        }
-                        isHeader
-                    />
-                    {this.sortActivities(
-                        this.filterActivities(),
-                        this.state.sortDescending
-                    ).map(activity => (
-                        <ActivityListItem
-                            key={activity.id}
-                            activity={activity}
-                        />
-                    ))}
+                    {/* An array, because ListEditorView shows the filter only for children with a length */}
+                    {[
+                        <table
+                            key="activity-log-table"
+                            className="activity-log-table"
+                            aria-label={i18n('Activity Log')}>
+                            <thead>
+                                <ActivityListItem
+                                    activity={{
+                                        timestamp: 'Date',
+                                        type: 'Action',
+                                        comment: 'Comment',
+                                        user: 'Username',
+                                        status: 'Status'
+                                    }}
+                                    isAscending={this.state.sortAscending}
+                                    onSort={() =>
+                                        this.setState({
+                                            sortAscending: !this.state
+                                                .sortAscending
+                                        })
+                                    }
+                                    isHeader
+                                />
+                            </thead>
+                            <tbody>
+                                {this.sortActivities(
+                                    this.filterActivities(),
+                                    this.state.sortAscending
+                                ).map(activity => (
+                                    <ActivityListItem
+                                        key={activity.id}
+                                        activity={activity}
+                                    />
+                                ))}
+                            </tbody>
+                        </table>
+                    ]}
                 </ListEditorView>
             </div>
         );
@@ -183,12 +216,11 @@ class ActivityLogView extends Component {
         }
     }
 
-    sortActivities(activities) {
-        if (this.state.sortDescending) {
-            return activities.sort((a, b) => a.timestamp - b.timestamp);
-        } else {
-            return activities.reverse();
-        }
+    sortActivities(activities, ascending) {
+        const sorted = [...activities].sort(
+            (a, b) => a.timestamp - b.timestamp
+        );
+        return ascending ? sorted : sorted.reverse();
     }
 }
 

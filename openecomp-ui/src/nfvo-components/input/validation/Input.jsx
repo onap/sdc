@@ -1,5 +1,6 @@
 /*
  * Copyright © 2016-2018 European Support Limited
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +24,11 @@ import FormControl from 'react-bootstrap/lib/FormControl.js';
 import Overlay from 'react-bootstrap/lib/Overlay.js';
 import Tooltip from 'react-bootstrap/lib/Tooltip.js';
 import Datepicker from 'nfvo-components/datepicker/Datepicker.jsx';
+import uniqueId from 'lodash/uniqueId.js';
 
 class Input extends React.Component {
+    inputId = this.props.id || uniqueId('validation-input-');
+
     state = {
         value: this.props.value,
         checked: this.props.checked,
@@ -70,13 +74,18 @@ class Input extends React.Component {
         return (
             <div className={wrapperClassName}>
                 <FormGroup
+                    controlId={this.inputId}
                     className={classNames('form-group', [groupClassName], {
                         required: isRequired,
                         'has-error': !isValid
                     })}>
                     {label &&
                         (type !== 'checkbox' && type !== 'radio') && (
-                            <label className="control-label">{label}</label>
+                            <label
+                                className="control-label"
+                                htmlFor={this.inputId}>
+                                {label}
+                            </label>
                         )}
                     {type === 'text' && (
                         <FormControl

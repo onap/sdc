@@ -47,11 +47,15 @@
                 .navigation-group-item-name {
                     @include ellipsis;
                     white-space: normal;
+                    @include button-reset;
+                    @include focus-ring(-2px);
+                    display: block;
+                    width: 100%;
                     &.selected {
                         @extend .body-1-semibold;
                         border-left: 4px solid $blue;
                         padding-left: 18px;
-                        color: $blue;
+                        color: $link-blue;
                     }
                     &.bold-name {
                         @extend .body-1-semibold;

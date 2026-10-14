@@ -1,5 +1,6 @@
 /*!
  * Copyright © 2016-2018 European Support Limited
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,38 +22,48 @@ import { SVGIcon } from 'onap-ui-react';
 import Overlay from 'nfvo-components/overlay/Overlay.jsx';
 import Permissions from './Permissions.jsx';
 
-const VCButton = ({ name, tooltipText, disabled, onClick, dataTestId }) => {
-    let onClickAction = disabled ? () => {} : onClick;
-    return (
-        <div
-            className={`action-button-wrapper ${
-                disabled ? 'disabled' : 'clickable'
-            }`}
-            onClick={onClickAction}>
-            <div className="action-buttons-svg">
-                <SVGIcon
-                    label={tooltipText}
-                    labelPosition="bottom"
-                    labelClassName="action-button-label"
-                    data-test-id={dataTestId}
-                    name={name}
-                    disabled={disabled}
-                />
-            </div>
-        </div>
-    );
-};
+const VCButton = ({
+    name,
+    tooltipText,
+    disabled,
+    onClick,
+    dataTestId,
+    expanded
+}) => (
+    <button
+        type="button"
+        className={`action-button-wrapper ${
+            disabled ? 'disabled' : 'clickable'
+        }`}
+        disabled={disabled}
+        aria-label={tooltipText}
+        aria-expanded={expanded}
+        data-test-id={dataTestId}
+        onClick={onClick}>
+        <span className="action-buttons-svg">
+            <SVGIcon
+                label={tooltipText}
+                labelPosition="bottom"
+                labelClassName="action-button-label"
+                name={name}
+                disabled={disabled}
+            />
+        </span>
+    </button>
+);
 
 const Separator = () => <div className="vc-separator" />;
 
 const SubmitButton = ({ onClick, disabled }) => (
-    <div
+    <button
+        type="button"
         onClick={() => onClick()}
+        disabled={disabled}
         data-test-id="vc-submit-btn"
         className={`vc-submit-button ${disabled ? 'disabled' : ''}`}>
         <SVGIcon name="check" iconClassName="vc-v-submit" disabled={disabled} />
         {i18n('Submit')}
-    </div>
+    </button>
 );
 
 const ActionButtons = ({
@@ -87,8 +98,9 @@ const ActionButtons = ({
                 disabled={isManual}
                 dataTestId="vc-permission-btn"
                 onClick={onClickPermissions}
+                expanded={!!showPermissions}
                 name="version-controller-permissions"
-                tooltipText={i18n('Permissons')}
+                tooltipText={i18n('Permissions')}
             />
             {showPermissions && (
                 <Overlay>

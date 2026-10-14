@@ -14,7 +14,7 @@ $message-info-icon-size: 16px;
             color: $text-black;
         }
         &.selectedRow {
-            background-color: $blue;
+            background-color: $link-blue;
             color: $white;
             .svg-icon-wrapper {
                 &.__positive {

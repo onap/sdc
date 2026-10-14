@@ -1,5 +1,6 @@
 /*!
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +22,7 @@ import classNames from 'classnames';
 import Select from 'nfvo-components/input/SelectInput.jsx';
 import Overlay from 'react-bootstrap/lib/Overlay.js';
 import Tooltip from 'react-bootstrap/lib/Tooltip.js';
+import uniqueId from 'lodash/uniqueId.js';
 
 export const other = { OTHER: 'Other' };
 
@@ -50,6 +52,8 @@ class InputOptions extends React.Component {
         isValid: PropTypes.bool,
         disabled: PropTypes.bool
     };
+
+    inputId = this.props.id || uniqueId('input-options-');
 
     state = {
         otherInputDisabled: !this.props.otherValue
@@ -109,10 +113,16 @@ class InputOptions extends React.Component {
                         required: isRequired,
                         'has-error': !isValid
                     })}>
-                    {label && <label className="control-label">{label}</label>}
+                    {label && (
+                        <label className="control-label" htmlFor={this.inputId}>
+                            {label}
+                        </label>
+                    )}
                     {isMultiSelect && otherInputDisabled ? (
                         <Select
                             {...dataTestId}
+                            id={this.inputId}
+                            aria-label={this.props['aria-label']}
                             ref={input => (this.input = input)}
                             value={currentMultiSelectedEnum}
                             className="options-input"
@@ -135,6 +145,8 @@ class InputOptions extends React.Component {
                             })}>
                             <select
                                 {...dataTestId}
+                                id={this.inputId}
+                                aria-label={this.props['aria-label']}
                                 ref={input => (this.input = input)}
                                 label={label}
                                 className="form-control input-options-select"

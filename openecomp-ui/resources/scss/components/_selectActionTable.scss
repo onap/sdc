@@ -122,13 +122,13 @@
                             text-overflow: ellipsis;
                             border-bottom: 1px solid $light-gray;
                             &:hover {
-                                background-color: $blue;
+                                background-color: $link-blue;
                                 color: $white;
                                 &.is-focused {
-                                    background-color: $blue;
+                                    background-color: $link-blue;
                                 }
                                 &.is-focused {
-                                    background-color: $blue;
+                                    background-color: $link-blue;
                                 }
                             }
                             &.is-selected {

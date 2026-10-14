@@ -26,8 +26,9 @@
             height: 30px;
 
             .version-selector-more-versions {
-                color: $blue;
-                cursor: pointer;
+                @include button-reset;
+                @include focus-ring;
+                color: $link-blue;
             }
 
             .version-selector {
@@ -93,6 +94,13 @@
                 height: 100%;
 
                 .vc-submit-button {
+                    @include button-reset;
+                    @include focus-ring;
+                    // A button is border-box and centres its content vertically;
+                    // this keeps the 94x30 content box and the top-aligned label.
+                    box-sizing: content-box;
+                    display: flex;
+                    align-items: baseline;
                     border: 1px solid $dark-gray;
                     width: 94px;
                     height: 30px;
@@ -125,6 +133,8 @@
                 }
 
                 .action-button-wrapper {
+                    @include button-reset;
+                    @include focus-ring(-2px);
                     display: flex;
                     align-items: center;
                     height: 70px;
@@ -186,7 +196,7 @@
 
                         .permissions-overlay-header {
                             text-align: left;
-                            color: $blue;
+                            color: $link-blue;
                             padding-bottom: 15px;
                             padding-top: 15px;
                             border-bottom: 1px solid $light-gray;
@@ -266,11 +276,15 @@
                         }
                         .permissions-overlay-footer {
                             .manage-permissions-btn {
+                                @include button-reset($font: false);
+                                @include focus-ring(-2px);
                                 @extend .body-2-semibold;
+                                display: block;
+                                width: 100%;
                                 margin-top: 20px;
                                 padding-top: 10px;
                                 padding-bottom: 10px;
-                                color: $blue;
+                                color: $link-blue;
                                 text-align: center;
                                 cursor: pointer;
                                 background-color: $tlv-gray;
@@ -281,6 +295,8 @@
             }
         }
         .vc-nav-item-close {
+            @include button-reset($font: false);
+            @include focus-ring;
             display: flex;
             padding-left: 18px;
             padding-top: 3px;

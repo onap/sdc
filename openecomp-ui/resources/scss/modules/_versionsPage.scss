@@ -46,7 +46,7 @@
             @extend .heading-1;
             text-transform: uppercase;
             margin-bottom: 29px;
-            color: $blue;
+            color: $link-blue;
             display: flex;
             .archived-title {
                 @extend .body-3;
@@ -66,6 +66,11 @@
             align-self: center;
             .deprecate-btn {
                 margin-left: 10px;
+            }
+            .deprecate-icon-btn {
+                @include button-reset;
+                @include focus-ring;
+                display: flex;
             }
             .svg-icon-wrapper {
                 &:hover {
@@ -169,9 +174,10 @@
                 }
 
                 .manage-permissions {
-                    color: $blue;
+                    @include button-reset;
+                    @include focus-ring;
+                    color: $link-blue;
                     margin-left: auto;
-                    cursor: pointer;
 
                     &:hover {
                         color: $dark-blue;
@@ -200,6 +206,9 @@
                 padding-right: 10px;
 
                 .version-tree-full-screen {
+                    @include button-reset;
+                    @include focus-ring;
+                    display: flex;
                     margin-left: auto;
                 }
             }
@@ -326,9 +335,15 @@
                     flex: 0 1 auto;
                     margin-right: 0;
 
+                    .version-item-action {
+                        @include button-reset;
+                        @include focus-ring;
+                        display: flex;
+                    }
+
                     .svg-icon-wrapper {
                         fill: $blue;
-                        color: $blue;
+                        color: $link-blue;
 
                         &[disabled] {
                             cursor: default;

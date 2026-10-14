@@ -120,7 +120,7 @@ describe('Activity Log Module Tests', function() {
 
         const firstInstance = wrapper.find(ActivityListItem).at(1);
         const firstInstanceProps = firstInstance.props();
-        expect(firstInstanceProps.activity.timestamp).toEqual(secondTimestamp); // Default sorting is descending
+        expect(firstInstanceProps.activity.timestamp).toEqual(secondTimestamp); // Default sorting is ascending
 
         const header = wrapper.find(ActivityListItem).at(0);
 

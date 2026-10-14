@@ -25,7 +25,7 @@
     @extend .heading-1;
     @extend .text-uppercase !optional;
     margin-bottom: 20px;
-    color: $blue;
+    color: $link-blue;
 }
 .sdc-modal {
     .sdc-modal__wrapper.sdc-modal-type-error {

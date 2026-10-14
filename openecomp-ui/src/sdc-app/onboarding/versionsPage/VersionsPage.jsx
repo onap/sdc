@@ -1,5 +1,6 @@
 /*!
  * Copyright © 2016-2018 European Support Limited
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,13 +45,19 @@ const ArchiveRestoreButton = ({
                 </Button>
             </div>
         ) : (
-            <SVGIcon
+            <button
+                type="button"
+                className="deprecate-icon-btn"
                 data-test-id="deprecate-action-btn"
-                name="archiveBox"
                 title={i18n('Archive')}
-                color="secondary"
-                onClick={deprecateAction}
-            />
+                aria-label={i18n('Archive')}
+                onClick={deprecateAction}>
+                <SVGIcon
+                    name="archiveBox"
+                    color="secondary"
+                    className="clickable"
+                />
+            </button>
         )}
     </div>
 );
@@ -140,9 +147,10 @@ class VersionsPage extends React.Component {
                                 {i18n('Version Tree')}
                             </div>
                             {this.state.showExpanded && (
-                                <SVGIcon
-                                    name="expand"
+                                <button
+                                    type="button"
                                     className="version-tree-full-screen"
+                                    aria-label={i18n('Expand version tree')}
                                     onClick={() =>
                                         onTreeFullScreen({
                                             name: 'versions-tree-popup',
@@ -159,8 +167,9 @@ class VersionsPage extends React.Component {
                                             scrollable: true,
                                             toWiden: true
                                         })
-                                    }
-                                />
+                                    }>
+                                    <SVGIcon name="expand" />
+                                </button>
                             )}
                         </div>
                         <Tree

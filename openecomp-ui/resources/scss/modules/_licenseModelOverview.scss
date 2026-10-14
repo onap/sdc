@@ -135,7 +135,7 @@ $lkg-ep-color: $light-blue;
                             .description-save {
                                 cursor: pointer;
                                 flex: 1;
-                                color: $blue;
+                                color: $link-blue;
                                 &:hover {
                                     background-color: $white;
                                 }
@@ -198,7 +198,7 @@ $lkg-ep-color: $light-blue;
                     .summary-name-and-count {
                         &:hover {
                             cursor: pointer;
-                            color: $blue;
+                            color: $link-blue;
                         }
                     }
                 }
@@ -430,13 +430,13 @@ $lkg-ep-color: $light-blue;
 
                         .vlm-list-item-title {
                             .item-name {
-                                color: $fg-color;
+                                color: $link-blue;
                             }
                         }
                         .list-item-section {
                             &:first-child {
                                 display: flex;
-                                color: $fg-color;
+                                color: $link-blue;
                                 min-width: $arrow-element-width;
                             }
                         }

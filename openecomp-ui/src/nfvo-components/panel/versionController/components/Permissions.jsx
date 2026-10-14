@@ -1,5 +1,6 @@
 /*!
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,14 +77,15 @@ const Permissions = ({
             </div>
             <div className="permissions-overlay-footer">
                 {owner.userId === userInfo.userId && (
-                    <div
+                    <button
+                        type="button"
                         onClick={() => {
                             onClosePermissions();
                             onManagePermissions();
                         }}
                         className="manage-permissions-btn">
                         {i18n('Manage Permissions')}
-                    </div>
+                    </button>
                 )}
             </div>
         </div>

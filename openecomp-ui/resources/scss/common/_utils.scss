@@ -310,3 +310,33 @@ $browserPrefixes: webkit moz o ms;
     $string: 'calc(' + $percent + ' + ' + $value + ')';
     #{$property}: unquote($string);
 }
+
+// Pass $font: false when the same rule @extends a typography class: the
+// extended selector is emitted earlier, so font: inherit here would win.
+@mixin button-reset($font: true) {
+    appearance: none;
+    background: none;
+    border: 0;
+    margin: 0;
+    padding: 0;
+    @if $font {
+        font: inherit;
+    }
+    line-height: inherit;
+    color: inherit;
+    text-align: inherit;
+    cursor: pointer;
+    &:disabled {
+        cursor: default;
+    }
+}
+
+@mixin focus-ring($offset: 2px) {
+    &:focus {
+        outline: 2px solid $link-blue;
+        outline-offset: $offset;
+    }
+    &:focus:not(:focus-visible) {
+        outline: none;
+    }
+}

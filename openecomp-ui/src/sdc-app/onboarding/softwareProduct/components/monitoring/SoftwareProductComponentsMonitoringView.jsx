@@ -1,5 +1,6 @@
 /*
  * Copyright © 2016-2017 European Support Limited
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +17,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Dropzone from 'react-dropzone';
+import i18n from 'nfvo-utils/i18n/i18n.js';
 import { Button } from 'onap-ui-react';
 import DraggableUploadFileBox from 'nfvo-components/fileupload/DraggableUploadFileBox.jsx';
 import {
@@ -72,6 +74,11 @@ class SoftwareProductComponentsMonitoringView extends Component {
                 disableClick={true}
                 ref={refAndName}
                 name={refAndName}
+                inputProps={{
+                    'aria-label': i18n('Upload {type} file', {
+                        type: typeDisplayName
+                    })
+                }}
                 accept=".zip">
                 <div className="draggable-wrapper">
                     <div className="section-title">{typeDisplayName}</div>

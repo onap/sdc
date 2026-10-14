@@ -67,8 +67,8 @@ public class OnboardHeaderComponent extends AbstractPageObject {
     @AllArgsConstructor
     private enum XpathSelector {
         MAIN_DIV("onboard-header", "//div[contains(@class, '%s')]"),
-        WORKSPACE_TAB_DIV("onboard-workspace-tab", "//div[@data-test-id='%s']"),
-        ONBOARD_TAB_DIV("onboard-onboard-tab", "//div[@data-test-id='%s']");
+        WORKSPACE_TAB_DIV("onboard-workspace-tab", "//button[@data-test-id='%s']"),
+        ONBOARD_TAB_DIV("onboard-onboard-tab", "//button[@data-test-id='%s']");
 
         @Getter
         private final String id;

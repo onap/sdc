@@ -11,7 +11,7 @@
                 padding-top: 10px;
                 margin-top: 0;
                 &.sdc-tab-active {
-                    color: $blue;
+                    color: $link-blue;
                     font-weight: bold;
                 }
             }
@@ -54,7 +54,7 @@
         }
         .abort-btn {
             fill: $blue;
-            color: $blue;
+            color: $link-blue;
             &:hover {
                 color: $light-blue;
                 fill: $light-blue;
@@ -103,7 +103,7 @@
                 padding-left: 32px;
                 cursor: pointer;
                 &.tree-header-title-selected {
-                    color: $blue;
+                    color: $link-blue;
                 }
             }
             .tree-header-title {
@@ -196,7 +196,7 @@
                     }
 
                     &.tree-node-clicked {
-                        color: $blue;
+                        color: $link-blue;
                         &:after {
                             background: $tlv-gray;
                             height: 40px;

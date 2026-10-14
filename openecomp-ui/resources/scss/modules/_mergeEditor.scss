@@ -25,7 +25,7 @@ $selected-color: $blue;
     .grid-section {
         &.conflict-titles-section {
             @extend .body-1;
-            background-color: $blue;
+            background-color: $link-blue;
             height: 33px;
             padding-top: 6px;
             padding-bottom: 3px;

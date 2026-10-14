@@ -1,5 +1,6 @@
 /*!
  * Copyright © 2016-2018 European Support Limited
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +20,13 @@ export const tabsMapping = {
     WORKSPACE: 1,
     CATALOG: 2
 };
+
+export const onboardTabIds = {
+    [tabsMapping.WORKSPACE]: 'onboard-workspace-tab',
+    [tabsMapping.CATALOG]: 'onboard-onboard-tab'
+};
+
+export const ONBOARD_TABPANEL_ID = 'onboard-tabpanel';
 
 export const searchValueObj = {
     WORKSPACE: '',

@@ -1,5 +1,6 @@
 /*
  * Copyright © 2016-2018 European Support Limited
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,14 +19,18 @@ import i18n from 'nfvo-utils/i18n/i18n.js';
 import DetailsCatalogView from 'sdc-app/onboarding/onboard/DetailsCatalogView.jsx';
 import VendorCatalogView from './VendorCatalogView.jsx';
 import { tabsMapping } from './OnboardingCatalogConstants.js';
-import { tabsMapping as WCTabsMapping } from 'sdc-app/onboarding/onboard/OnboardConstants.js';
+import {
+    tabsMapping as WCTabsMapping,
+    onboardTabIds,
+    ONBOARD_TABPANEL_ID
+} from 'sdc-app/onboarding/onboard/OnboardConstants.js';
 
 const CatalogHeader = () => (
     <div className="catalog-header">
         <div className="catalog-header-tabs">
-            <div className="catalog-header-tab active">
+            <h1 className="catalog-header-tab active">
                 {i18n('ONBOARD CATALOG')}
-            </div>
+            </h1>
         </div>
     </div>
 );
@@ -122,7 +127,11 @@ class OnboardingCatalogView extends React.Component {
     render() {
         const { selectedVendor, catalogActiveTab: activeTab } = this.props;
         return (
-            <div className="catalog-wrapper">
+            <div
+                className="catalog-wrapper"
+                role="tabpanel"
+                id={ONBOARD_TABPANEL_ID}
+                aria-labelledby={onboardTabIds[WCTabsMapping.CATALOG]}>
                 {!selectedVendor && <CatalogHeader />}
                 {this.renderViewByTab(activeTab)}
             </div>

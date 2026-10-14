@@ -358,6 +358,7 @@ test('...', async ({ sdcPage, api }) => { ... });
 | `tests/workspace-topbar-controls.spec.ts` | the 5 top-bar controls the AngularJS removal dropped: they render, are hit-testable, and reach the BE |
 | `tests/accessibility.spec.ts` | axe ratchet on pages that need no data (dashboard, catalog, onboarding landing, CREATE forms, admin); read-only |
 | `tests/accessibility-workspace.spec.ts` | axe ratchet on every VF and Service workspace tab; **creates a `PwAxeVf…`/`PwAxeSvc…` asset per test** |
+| `tests/accessibility-onboarding.spec.ts` | axe ratchet on the VLM and VSP versions pages and inner screens; **creates a submitted `PwAxeVlm…` (and a `PwAxeVsp…`) per test** |
 
 ### Fixtures
 

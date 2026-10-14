@@ -1,5 +1,6 @@
 /*!
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -86,12 +87,13 @@ const Contributors = ({
             )}
             {currentUser.userId === owner.userId &&
                 !isManual && (
-                    <span
+                    <button
+                        type="button"
                         className="manage-permissions"
                         onClick={onManagePermissions}
                         data-test-id="versions-page-manage-permissions">
                         {i18n('Manage Permissions')}
-                    </span>
+                    </button>
                 )}
         </div>
     );

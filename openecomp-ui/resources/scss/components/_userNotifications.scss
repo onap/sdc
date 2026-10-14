@@ -1,6 +1,8 @@
 .onboarding-notifications {
     margin-left: 10px;
     .notifications-icon {
+        @include button-reset;
+        @include focus-ring;
         display: flex;
         @extend .clickable;
         .notifications-count {
@@ -30,7 +32,7 @@
 
         .user-notifications {
             .notifications-title {
-                color: $blue;
+                color: $link-blue;
                 @extend .heading-5-semibold;
                 @extend .text-uppercase !optional;
                 padding: 13px 20px 10px 20px;
@@ -85,7 +87,7 @@
                             margin: 11px 0 8px 0;
                             .more-less {
                                 font-size: $icon-font-size;
-                                color: $blue;
+                                color: $link-blue;
                             }
                         }
                         .date {
@@ -101,7 +103,7 @@
                         width: 74px;
                         height: 28px;
                         color: $white;
-                        background-color: $blue;
+                        background-color: $link-blue;
                         border-radius: 2px;
                         text-align: center;
                         line-height: 2;

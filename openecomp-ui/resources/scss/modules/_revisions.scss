@@ -24,7 +24,7 @@
         .list-editor-view-title {
             @extend .heading-5;
             text-transform: none;
-            color: $blue;
+            color: $link-blue;
         }
     }
 
@@ -60,7 +60,7 @@
             @extend .body-2;
             .more-less {
                 @extend .body-3;
-                color: $blue;
+                color: $link-blue;
                 margin-left: 5px;
             }
         }

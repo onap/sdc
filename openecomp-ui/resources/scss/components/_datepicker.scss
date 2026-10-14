@@ -121,7 +121,7 @@
             .react-datepicker__day--selected,
             .react-datepicker__day--keyboard-selected {
                 @extend .body-1;
-                background-color: $blue;
+                background-color: $link-blue;
                 color: $white;
             }
             .react-datepicker__day {
@@ -139,7 +139,7 @@
                 &.react-datepicker__day--keyboard-selected,
                 &.react-datepicker__day--range-start,
                 &.react-datepicker__day--range-end {
-                    background-color: $blue;
+                    background-color: $link-blue;
                     color: $white;
                 }
                 &.react-datepicker__day--selecting-range-start,
@@ -150,7 +150,7 @@
                 &.react-datepicker__day--selecting-range-start.react-datepicker__day--range-start,
                 &.react-datepicker__day--selecting-range-end.react-datepicker__day--range-end,
                 &.react-datepicker__day--selecting-range-start.react-datepicker__day--keyboard-selected {
-                    background-color: $blue;
+                    background-color: $link-blue;
                     color: $white;
                 }
             }

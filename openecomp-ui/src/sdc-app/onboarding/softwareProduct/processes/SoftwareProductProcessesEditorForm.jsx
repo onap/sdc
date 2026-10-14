@@ -1,5 +1,6 @@
 /*
  * Copyright © 2016-2018 European Support Limited
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -95,7 +96,10 @@ class SoftwareProductProcessesEditorForm extends React.Component {
                                 multiple={false}
                                 disableClick={true}
                                 ref="processEditorFileInput"
-                                name="processEditorFileInput">
+                                name="processEditorFileInput"
+                                inputProps={{
+                                    'aria-label': i18n('Upload process file')
+                                }}>
                                 <GridSection hasLastColSet={true}>
                                     <GridItem colSpan={2}>
                                         <Input

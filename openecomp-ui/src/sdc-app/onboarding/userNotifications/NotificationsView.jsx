@@ -1,5 +1,6 @@
 /*!
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +20,7 @@ import PropTypes from 'prop-types';
 import enhanceWithClickOutside from 'react-click-outside';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
+import i18n from 'nfvo-utils/i18n/i18n.js';
 import { SVGIcon } from 'onap-ui-react';
 import Overlay from 'nfvo-components/overlay/Overlay.jsx';
 import UserNotifications from 'sdc-app/onboarding/userNotifications/UserNotifications.jsx';
@@ -97,9 +99,21 @@ class NotificationsView extends React.Component {
         } = notifications;
 
         return (
-            <div className="onboarding-notifications">
-                <div
+            <div
+                className="onboarding-notifications"
+                onKeyDown={e => this.handleKeyDown(e)}>
+                <button
+                    type="button"
                     className="notifications-icon"
+                    ref={button => (this.bellButton = button)}
+                    aria-label={
+                        numOfNotSeenNotifications > 0
+                            ? i18n('Notifications, {count} unread', {
+                                  count: numOfNotSeenNotifications
+                              })
+                            : i18n('Notifications')
+                    }
+                    aria-expanded={!!showNotificationsOverlay}
                     onClick={() => this.onNotificationIconClick()}>
                     <SVGIcon
                         name={
@@ -109,13 +123,14 @@ class NotificationsView extends React.Component {
                         }
                         color={numOfNotSeenNotifications > 0 ? 'primary' : ''}
                     />
-                    <div
+                    <span
+                        aria-hidden="true"
                         className={classnames('notifications-count', {
                             'hidden-count': numOfNotSeenNotifications === 0
                         })}>
                         {numOfNotSeenNotifications}
-                    </div>
-                </div>
+                    </span>
+                </button>
                 {showNotificationsOverlay && (
                     <Overlay>
                         <UserNotifications
@@ -139,6 +154,15 @@ class NotificationsView extends React.Component {
         const { notifications: { showNotificationsOverlay } } = this.props;
         if (showNotificationsOverlay) {
             this.onCloseOverlay();
+        }
+    }
+
+    handleKeyDown(e) {
+        const { notifications: { showNotificationsOverlay } } = this.props;
+        if (e.key === 'Escape' && showNotificationsOverlay) {
+            e.preventDefault();
+            this.onCloseOverlay();
+            this.bellButton.focus();
         }
     }
 

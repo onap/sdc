@@ -1,5 +1,6 @@
 /*
  * Copyright © 2016-2018 European Support Limited
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +18,19 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 import { SVGIcon } from 'onap-ui-react';
+import i18n from 'nfvo-utils/i18n/i18n.js';
 import Input from 'nfvo-components/input/validation/InputWrapper.jsx';
 
-const ExpandableInputClosed = ({ iconType, onClick }) => (
-    <SVGIcon
+const ExpandableInputClosed = ({ iconType, onClick, buttonRef }) => (
+    <button
+        type="button"
         className="expandable-input-wrapper closed"
         data-test-id="expandable-input-closed"
-        name={iconType}
-        onClick={onClick}
-    />
+        aria-label={i18n('Search')}
+        ref={buttonRef}
+        onClick={onClick}>
+        <SVGIcon name={iconType} />
+    </button>
 );
 
 class ExpandableInputOpened extends React.Component {
@@ -55,7 +60,7 @@ class ExpandableInputOpened extends React.Component {
             if (this.props.value) {
                 this.handleClose();
             } else {
-                this.rawDomNode.blur();
+                this.props.onCollapse();
             }
         }
     }
@@ -67,6 +72,7 @@ class ExpandableInputOpened extends React.Component {
                 <Input
                     type="text"
                     data-test-id="expandable-input-opened"
+                    aria-label={i18n('Search')}
                     value={value}
                     ref={input => (this.searchInputNode = input)}
                     className="expandable-active"
@@ -76,13 +82,16 @@ class ExpandableInputOpened extends React.Component {
                     onBlur={handleBlur}
                 />
                 {value && (
-                    <SVGIcon
+                    <button
+                        type="button"
+                        className="expandable-input-close-btn"
                         data-test-id="expandable-input-close-btn"
-                        onClick={() => this.handleClose()}
-                        name="close"
-                    />
+                        aria-label={i18n('Clear search')}
+                        onClick={() => this.handleClose()}>
+                        <SVGIcon name="close" />
+                    </button>
                 )}
-                {!value && <SVGIcon name={iconType} onClick={handleBlur} />}
+                {!value && <SVGIcon name={iconType} aria-hidden="true" />}
             </div>
         );
     }
@@ -108,6 +117,18 @@ class ExpandableInput extends React.Component {
         }
     }
 
+    collapse() {
+        this.focusOpener = true;
+        this.setState({ showInput: false });
+    }
+
+    componentDidUpdate() {
+        if (this.focusOpener && this.openerButton) {
+            this.focusOpener = false;
+            this.openerButton.focus();
+        }
+    }
+
     getValue() {
         return this.props.value;
     }
@@ -124,12 +145,14 @@ class ExpandableInput extends React.Component {
                         value={value}
                         handleKeyDown={e => this.handleKeyDown(e)}
                         handleBlur={() => this.showInputChange()}
+                        onCollapse={() => this.collapse()}
                     />
                 )}
                 {!this.state.showInput && (
                     <ExpandableInputClosed
                         key="closed"
                         iconType={iconType}
+                        buttonRef={button => (this.openerButton = button)}
                         onClick={() => this.setState({ showInput: true })}
                     />
                 )}

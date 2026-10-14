@@ -65,7 +65,7 @@ public class VlmOverviewPage extends AbstractPageObject {
     }
 
     public void submit() {
-        findSubElement(wrappingElement, XpathSelector.BNT_SUBMIT.getXpath()).click();
+        waitToBeClickable(XpathSelector.BNT_SUBMIT.getXpath()).click();
         vlmSubmitModal.isLoaded();
         vlmSubmitModal.confirmSuccess();
     }
@@ -82,9 +82,9 @@ public class VlmOverviewPage extends AbstractPageObject {
     private enum XpathSelector {
         PAGE_MAIN_DIV("software-product-view", DIV_CLASS_XPATH_FORMAT),
         NAV_BAR_GROUP_ITEM_OVERVIEW("navbar-group-item-LICENSE_MODEL_OVERVIEW", DIV_CLASS_XPATH_FORMAT),
-        BNT_SUBMIT("vc-submit-btn", DIV_DATA_TEST_ID_XPATH_FORMAT),
+        BNT_SUBMIT("vc-submit-btn", "//button[@data-test-id='%s']"),
         NAV_BAR_GROUP_NAME_XPATH("navbar-group-name", DIV_DATA_TEST_ID_XPATH_FORMAT),
-        SELECTED_NAV_BAR_GROUP_ITEM("navigation-group-item-name selected", DIV_CLASS_XPATH_FORMAT),
+        SELECTED_NAV_BAR_GROUP_ITEM("navigation-group-item-name selected", "//button[@class='%s']"),
         OVERVIEW_PAGE("license-model-overview", DIV_CLASS_XPATH_FORMAT);
 
         @Getter

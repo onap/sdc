@@ -16,7 +16,7 @@ $message-info-icon-size: 16px;
         border: none;
         .list-editor-view-title {
             @extend .heading-1;
-            color: $blue;
+            color: $link-blue;
         }
     }
     .list-editor-view-list {
@@ -24,8 +24,12 @@ $message-info-icon-size: 16px;
         border-bottom: none;
         overflow-y: hidden;
     }
+    .activity-log-table {
+        width: 100%;
+        table-layout: fixed;
+        border-collapse: collapse;
+    }
     .activity-list-item {
-        display: flex;
         height: 36px;
         @extend .body-1;
         &.header {
@@ -59,13 +63,11 @@ $message-info-icon-size: 16px;
         &:last-child {
             border-right: none;
         }
-        flex-basis: 20%;
-        display: flex;
         padding: 0 20px;
-        justify-content: center;
-        flex-direction: column;
+        vertical-align: middle;
+        text-align: left;
+        font-weight: inherit;
         &.activity-comment {
-            min-width: 0;
             span {
                 @include ellipsis(100%);
             }
@@ -73,7 +75,8 @@ $message-info-icon-size: 16px;
     }
 
     .date-header {
-        cursor: pointer;
+        @include button-reset;
+        @include focus-ring;
         display: flex;
         align-items: center;
         .header-sort-arrow {
