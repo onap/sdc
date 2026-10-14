@@ -31,7 +31,6 @@ import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.SSLContexts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
 
 public class JettySSLUtils {
     
@@ -57,20 +56,24 @@ public class JettySSLUtils {
         KeyStore trustStore = KeyStore.getInstance(sslProperties.getTruststoreType());
         
         final SSLContextBuilder contextBuilder = SSLContexts.custom();
-        if (!StringUtils.isEmpty(sslProperties.getTruststorePath())) {
+        if (isNotEmpty(sslProperties.getTruststorePath())) {
             try (FileInputStream instream = new FileInputStream(new File(sslProperties.getTruststorePath()));) {
                 trustStore.load(instream, (sslProperties.getTruststorePass()).toCharArray());
                 contextBuilder.loadTrustMaterial(trustStore, new TrustSelfSignedStrategy());
             }
         }
         KeyStore keystore = KeyStore.getInstance(sslProperties.getKeystoreType());
-        if (!StringUtils.isEmpty(sslProperties.getKeystorePath())) {
+        if (isNotEmpty(sslProperties.getKeystorePath())) {
             try (FileInputStream instream = new FileInputStream(new File(sslProperties.getKeystorePath()));) {
                 keystore.load(instream, sslProperties.getKeystorePass().toCharArray());
                 contextBuilder.loadKeyMaterial(keystore, sslProperties.getKeystorePass().toCharArray());
             }
         }
         return contextBuilder.build();
+    }
+
+    private static boolean isNotEmpty(final String value) {
+        return value != null && !value.isEmpty();
     }
 
     public static class JettySslConfig {

@@ -6,6 +6,7 @@ ARG JETTY_FOLDER=/app/jetty
 # Create onap user/group, install dependencies, and create Jetty folder
 RUN addgroup -g 101 -S onap && \
     adduser -u 1000 -S -G onap -h /home/onap onap && \
+    apk upgrade --no-cache && \
     apk add --no-cache curl jq && \
     mkdir -p $JETTY_FOLDER && chown onap:onap $JETTY_FOLDER
 ENV HOME=/home/onap
@@ -18,7 +19,7 @@ ENV JETTY_GROUP=onap
 # Download Jetty and OpenTelemetry Java Agent
 RUN wget -q https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/${jetty-distribution.version}/jetty-distribution-${jetty-distribution.version}.tar.gz -O $JETTY_FOLDER/jetty.tar.gz && \
     tar xz -C $JETTY_FOLDER -f $JETTY_FOLDER/jetty.tar.gz --strip 1 && \
-    rm -rf $JETTY_FOLDER/jetty.tar.gz && \
+    rm -rf $JETTY_FOLDER/jetty.tar.gz $JETTY_FOLDER/demo-base $JETTY_FOLDER/lib/jetty-jaspi-*.jar && \
     sed -i 's/"jetty"/"onap"/g' $JETTY_FOLDER/etc/jetty-setuid.xml && \
     mkdir -p $JETTY_FOLDER/otel && \
     wget -q https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v${opentelemetry-javaagent.version}/opentelemetry-javaagent.jar \

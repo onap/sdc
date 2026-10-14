@@ -39,6 +39,8 @@ import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.Response;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
@@ -113,6 +115,31 @@ public class ConfigServletTest {
         Response response = configServlet.getPluginOnlineState(testPluginName, httpServletRequest);
 
         assertEquals(response.getStatus(), HttpStatus.SC_INTERNAL_SERVER_ERROR);
+    }
+
+    @Test
+    public void validateGetPluginOnlineStateLooksUpAPlainPluginIdUnchanged() {
+
+        prepareMocks();
+        when(pluginStatusBL.getPluginAvailability("DCAE-MOD_1.0")).thenReturn("true");
+
+        Response response = configServlet.getPluginOnlineState("DCAE-MOD_1.0", httpServletRequest);
+
+        assertEquals(response.getStatus(), HttpStatus.SC_OK);
+        assertEquals("true", response.getEntity().toString());
+    }
+
+    @Test
+    public void validateGetPluginOnlineStateEscapesMarkupInTheNotFoundMessage() {
+
+        prepareMocks();
+
+        Response response = configServlet.getPluginOnlineState("<script>alert(\"x\")</script>", httpServletRequest);
+
+        assertEquals(response.getStatus(), HttpStatus.SC_NOT_FOUND);
+        String entity = response.getEntity().toString();
+        assertFalse(entity, entity.contains("<script>"));
+        assertTrue(entity, entity.contains("&lt;script&gt;"));
     }
 
 
