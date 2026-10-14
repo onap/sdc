@@ -17,8 +17,19 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+import {Component, Input, NO_ERRORS_SCHEMA} from '@angular/core';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {By} from '@angular/platform-browser';
+import {CacheService} from 'app/services/cache.service';
+import {SdcConfigToken} from 'app/config/sdc-config.config';
 import {OnboardVendorPageComponent} from './onboard-vendor.component';
 import {MenuItemGroup} from 'app/utils/menu-handler';
+
+@Component({selector: 'top-nav', template: ''})
+class TopNavStubComponent {
+    @Input() topLvlSelectedIndex: number;
+    @Input() menuModel: any[];
+}
 
 function makeRegistry() {
     return {
@@ -59,6 +70,24 @@ describe('OnboardVendorPageComponent', () => {
     afterEach(() => {
         delete (window as any).PunchOutRegistry;
     });
+
+    it('keeps the primary navigation visible with Catalog selected', async(() => {
+        TestBed.configureTestingModule({
+            declarations: [OnboardVendorPageComponent, TopNavStubComponent],
+            providers: [
+                {provide: CacheService, useValue: {get: jest.fn(() => null)}},
+                {provide: SdcConfigToken, useValue: {api: {root: ''}, cookie: {}}}
+            ],
+            schemas: [NO_ERRORS_SCHEMA]
+        }).compileComponents().then(() => {
+            const fixture: ComponentFixture<OnboardVendorPageComponent> = TestBed.createComponent(OnboardVendorPageComponent);
+            fixture.detectChanges();
+
+            const topNav = fixture.debugElement.query(By.directive(TopNavStubComponent)).componentInstance;
+            expect(topNav.topLvlSelectedIndex).toBe(1);
+            expect(topNav.menuModel).toBeUndefined();
+        });
+    }));
 
     // Test 1: ngOnInit initializes state and calls loadOnBoarding
     it('ngOnInit initializes vendorData with empty selectedKeys, reads version/user from CacheService, and calls PunchOutRegistry.loadOnBoarding', () => {
