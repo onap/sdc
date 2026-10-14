@@ -28,6 +28,7 @@ export const ItemStatus = ({ data, onDataChanged, byVendorView }) => (
         type="select"
         className="catalog-filter-items-type"
         data-test-id="catalog-filter-items-type"
+        aria-label={i18n('Item status')}
         disabled={byVendorView}
         value={data.itemStatus}
         onChange={e => onDataChanged({ itemStatus: e.target.value }, data)}>

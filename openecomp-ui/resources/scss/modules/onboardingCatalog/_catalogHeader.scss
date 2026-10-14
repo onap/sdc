@@ -7,7 +7,7 @@
     }
     &.workspace-header {
         @extend .heading-1;
-        color: $blue;
+        color: $link-blue;
     }
     .catalog-header-tabs {
         display: flex;
@@ -23,7 +23,7 @@
             display: flex;
             align-items: center;
             &.active {
-                color: $blue;
+                color: $link-blue;
             }
             &:first-child {
                 padding-left: 0;
