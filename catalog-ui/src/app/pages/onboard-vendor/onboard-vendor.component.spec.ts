@@ -71,7 +71,7 @@ describe('OnboardVendorPageComponent', () => {
         delete (window as any).PunchOutRegistry;
     });
 
-    it('keeps the primary navigation visible with Catalog selected', async(() => {
+    it('keeps the primary navigation visible with Onboard selected', async(() => {
         TestBed.configureTestingModule({
             declarations: [OnboardVendorPageComponent, TopNavStubComponent],
             providers: [
@@ -84,7 +84,7 @@ describe('OnboardVendorPageComponent', () => {
             fixture.detectChanges();
 
             const topNav = fixture.debugElement.query(By.directive(TopNavStubComponent)).componentInstance;
-            expect(topNav.topLvlSelectedIndex).toBe(1);
+            expect(topNav.topLvlSelectedIndex).toBe(2);
             expect(topNav.menuModel).toBeUndefined();
         });
     }));
