@@ -43,10 +43,10 @@ Modifications copyright (c) 2018-2019 Nokia
 
     <tosca.datatype.version>${project.version}</tosca.datatype.version>
     <!-- 3rd parties versions -->
-    <lang3.version>3.12.0</lang3.version>
+    <lang3.version>3.18.0</lang3.version>
     <guava.version>32.1.1-jre</guava.version>
     <janusgraph.version>0.5.0</janusgraph.version>
-    <spring.version>5.3.27</spring.version>
+    <spring.version>5.3.39</spring.version>
     <mvn.assembly.version>3.6.0</mvn.assembly.version>
 
     <!-- update to 2.36 bring error-->
@@ -57,15 +57,15 @@ Modifications copyright (c) 2018-2019 Nokia
     <netty.version>4.1.92.Final</netty.version>
     <servlet-api.version>4.0.4</servlet-api.version>
     <wire-mock.version>2.26.3</wire-mock.version>
-    <opentelemetry-javaagent.version>2.26.1</opentelemetry-javaagent.version>
+    <opentelemetry-javaagent.version>2.28.0</opentelemetry-javaagent.version>
     <!-- kept in step with opentelemetry-javaagent.version; only the agent acts on @WithSpan, the annotation is inert -->
-    <opentelemetry-instrumentation-annotations.version>2.26.1</opentelemetry-instrumentation-annotations.version>
+    <opentelemetry-instrumentation-annotations.version>2.28.0</opentelemetry-instrumentation-annotations.version>
     <ecomp.version>3.4.0</ecomp.version>
     <cassandra.unit.version>4.3.1.0</cassandra.unit.version>
     <cadi.version>2.1.21</cadi.version>
     <lombok.version>1.18.24</lombok.version>
-    <commons-beanutils>1.9.4</commons-beanutils>
-    <commons.io.version>2.13.0</commons.io.version>
+    <commons-beanutils>1.11.0</commons-beanutils>
+    <commons.io.version>2.14.0</commons.io.version>
     <commons-configuration>2.8.0</commons-configuration>
     <onap.logging.version>1.6.1</onap.logging.version>
     <apache-commons-text.version>1.10.0</apache-commons-text.version>
@@ -91,17 +91,17 @@ Modifications copyright (c) 2018-2019 Nokia
     <nimbus-jose-jwt.version>10.9.1</nimbus-jose-jwt.version>
 
     <!-- JSON and YAML Parsing -->
-    <jackson.version>2.14.2</jackson.version>
+    <jackson.version>2.18.11</jackson.version>
     <jackson-annotations.version>${jackson.version}</jackson-annotations.version>
 
     <clearspring.version>2.1.1</clearspring.version>
     <skipYamlJsonValidator>false</skipYamlJsonValidator>
 
     <!-- Yaml for properties -->
-    <snakeyaml.version>1.33</snakeyaml.version>
+    <snakeyaml.version>2.3</snakeyaml.version>
     <functionaljava.version>4.9</functionaljava.version>
     <httpmime.version>4.5.14</httpmime.version>
-    <httpclient.version>5.2.1</httpclient.version>
+    <httpclient.version>5.6.3</httpclient.version>
     <httpcore.version>4.4.15</httpcore.version>
 
     <!-- PM Dictionary validation -->
@@ -109,7 +109,7 @@ Modifications copyright (c) 2018-2019 Nokia
 
     <!-- Logging start -->
     <!-- logback -->
-    <logback.version>1.2.12</logback.version>
+    <logback.version>1.2.13</logback.version>
     <slf4j-api.version>1.7.36</slf4j-api.version>
     <commons-codec>1.15</commons-codec>
     <janino.version>3.1.9</janino.version>
@@ -196,7 +196,7 @@ Modifications copyright (c) 2018-2019 Nokia
     <minio.version>8.5.4</minio.version>
     <okhttp.version>4.11.0</okhttp.version>
 
-    <jsoup.version>1.15.3</jsoup.version>
+    <jsoup.version>1.23.2</jsoup.version>
 
     <verbose>false</verbose>
   </properties>
@@ -308,6 +308,11 @@ Modifications copyright (c) 2018-2019 Nokia
       </dependency>
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-annotations</artifactId>
+        <version>${jackson-annotations.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-core</artifactId>
         <version>${jackson.version}</version>
       </dependency>
@@ -315,6 +320,21 @@ Modifications copyright (c) 2018-2019 Nokia
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-databind</artifactId>
         <version>${jackson.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.xml.bind</groupId>
+        <artifactId>jaxb-api</artifactId>
+        <version>2.3.1</version>
+      </dependency>
+      <dependency>
+        <groupId>jakarta.xml.bind</groupId>
+        <artifactId>jakarta.xml.bind-api</artifactId>
+        <version>2.3.3</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-beanutils</groupId>
+        <artifactId>commons-beanutils</artifactId>
+        <version>${commons-beanutils}</version>
       </dependency>
       <dependency>
         <groupId>ch.qos.logback</groupId>

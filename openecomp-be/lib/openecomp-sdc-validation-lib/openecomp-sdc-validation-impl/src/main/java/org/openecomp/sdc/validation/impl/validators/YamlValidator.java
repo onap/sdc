@@ -69,7 +69,7 @@ public class YamlValidator implements Validator {
             LoaderOptions options = new LoaderOptions();
             options.setAllowDuplicateKeys(false);
             //No Yaml Constructor takes only Constructor and LoaderOptions, that is why I had to pass anonymous Representer and DumperOptions objects
-            Object yamlObj = new Yaml(constructor, new Representer(), new DumperOptions(), options).load(yamlContent);
+            Object yamlObj = new Yaml(constructor, new Representer(new DumperOptions()), new DumperOptions(), options).load(yamlContent);
 
             if (yamlObj == null) {
                 throw new Exception();
