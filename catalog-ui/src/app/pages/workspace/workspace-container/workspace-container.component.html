@@ -19,7 +19,7 @@
                             type="button"
                             class="i-sdc-designer-sidebar-section-content-item-service-cat"
                             (click)="menuItem.callback()"
-                            [disabled]="menuItem.disabledCategory">{{menuItem.text}}</button>
+                            [disabled]="menuItem.isDisabled || menuItem.disabledCategory">{{menuItem.text}}</button>
                 </div>
             </div>
         </div>

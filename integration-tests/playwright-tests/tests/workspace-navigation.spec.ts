@@ -177,16 +177,22 @@ test.describe('Navigation and routing', () => {
         // ('workspace.deployment', …) — and disableMenuItems() compares against
         // States.WORKSPACE_GENERAL ('workspace.general'). Get the comparison wrong and tabs are
         // disabled that should not be, which is what >0 enabled items here detects.
-        //
-        // NOTE the CREATE-mode direction is NOT covered by this test and needs its own: an
-        // existing asset is opened here, so enableMenuItems() applies. Asserting on CREATE mode
-        // would additionally have to tolerate line 323, which disables the General tab on purpose
-        // during create (DE246274).
         await expect(sdcPage.locator(SEL.sideMenuItems)).not.toHaveCount(0);
         const enabled = await sdcPage.locator(
             `${SEL.sideMenuItems} .expand-collapse-menu-box-item-text:not(.disabled)`).count();
         expect(enabled, 'every sidebar tab is disabled — the bare-vs-dotted state comparison regressed')
             .toBeGreaterThan(0);
+    });
+
+    test('greyed-out sidebar tabs are disabled in CREATE mode', async ({ sdcPage }) => {
+        await gotoWorkspaceTab(sdcPage, { type: 'service', tab: 'general' });
+        await dismissTransientModal(sdcPage);
+
+        await expect(sdcPage.locator(SEL.generalSideMenu)).toBeEnabled({ timeout: 30_000 });
+        await expect(sdcPage.locator('[data-tests-id="CompositionLeftSideMenu"]')).toBeDisabled();
+        await expect(sdcPage.locator(
+            `${SEL.sideMenuItems} .expand-collapse-menu-box-item-text.disabled button:not([disabled])`),
+            'a sidebar tab is greyed out but its button still takes focus and clicks').toHaveCount(0);
     });
 
     /**
