@@ -1894,6 +1894,7 @@ public class ToscaExportHandler {
     private static class CustomRepresenter extends Representer {
 
         CustomRepresenter() {
+            super(new DumperOptions());
             this.representers.put(ToscaPropertyAssignment.class, new RepresentToscaPropertyAssignment());
             this.representers.put(ToscaAttribute.class, new RepresentToscaAttribute());
             // null representer is exceptional and it is stored as an instance
