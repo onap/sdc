@@ -205,6 +205,10 @@ public class YamlUtil {
 
     private class CustomRepresenter extends Representer {
 
+        CustomRepresenter() {
+            super(new DumperOptions());
+        }
+
         @Override
         protected MappingNode representJavaBean(Set<Property> properties, Object javaBean) {
             //remove the bean type from the output yaml (!! ...)

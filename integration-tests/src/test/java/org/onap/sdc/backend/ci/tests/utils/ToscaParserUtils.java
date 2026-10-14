@@ -50,6 +50,7 @@ import org.openecomp.sdc.common.zip.ZipUtils;
 import org.openecomp.sdc.common.zip.exception.ZipException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.introspector.PropertyUtils;
@@ -155,7 +156,7 @@ public class ToscaParserUtils {
 	
 	
 	public static Constructor initToscaDefinitionObject() {
-		Constructor toscaStructure = new Constructor(ToscaDefinition.class);
+		Constructor toscaStructure = new Constructor(ToscaDefinition.class, new LoaderOptions());
         toscaStructure.addTypeDescription(ToscaDefinition.getTypeDescription());
         toscaStructure.addTypeDescription(ToscaTopologyTemplateDefinition.getTypeDescription());
     	toscaStructure.addTypeDescription(ToscaNodeTemplatesTopologyTemplateDefinition.getTypeDescription());

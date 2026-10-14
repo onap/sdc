@@ -81,6 +81,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.YamlProcessor;
 import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.nodes.Tag;
@@ -132,7 +133,7 @@ public final class ImportUtils {
     @SuppressWarnings("unchecked")
     public static Either<List<HeatParameterDefinition>, ResultStatusEnum> getHeatParamsWithoutImplicitTypes(String heatDecodedPayload,
                                                                                                             String artifactType) {
-        Map<String, Object> heatData = (Map<String, Object>) new Yaml(new Constructor(), new Representer(), new DumperOptions(), customResolver)
+        Map<String, Object> heatData = (Map<String, Object>) new Yaml(new Constructor(new LoaderOptions()), new Representer(new DumperOptions()), new DumperOptions(), customResolver)
             .load(heatDecodedPayload);
         return getHeatParameters(heatData, artifactType);
     }

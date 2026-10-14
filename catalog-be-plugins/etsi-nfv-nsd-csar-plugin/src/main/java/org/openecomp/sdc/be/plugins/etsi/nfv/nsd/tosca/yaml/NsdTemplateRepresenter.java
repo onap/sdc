@@ -28,6 +28,7 @@ import java.util.stream.Stream;
 import org.openecomp.sdc.be.tosca.model.ToscaProperty;
 import org.openecomp.sdc.be.tosca.model.ToscaPropertyConstraintValidValues;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplate;
+import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.introspector.Property;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
@@ -44,7 +45,7 @@ public class NsdTemplateRepresenter extends Representer {
     private final Set<String> ignoredPropertySet = Stream.of("dependencies").collect(Collectors.toSet());
 
     public NsdTemplateRepresenter() {
-        super();
+        super(new DumperOptions());
         this.nullRepresenter = new RepresentNull();
     }
 

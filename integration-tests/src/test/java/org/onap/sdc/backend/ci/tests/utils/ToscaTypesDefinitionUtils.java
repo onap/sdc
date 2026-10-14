@@ -26,6 +26,7 @@ import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
@@ -66,7 +67,7 @@ public class ToscaTypesDefinitionUtils {
     }
 
     private static Constructor initToscaAnnotationDefObject() {
-        Constructor toscaStructure = new Constructor(ToscaAnnotationsTypesDefinition.class);
+        Constructor toscaStructure = new Constructor(ToscaAnnotationsTypesDefinition.class, new LoaderOptions());
         toscaStructure.addTypeDescription(ToscaAnnotationsTypesDefinition.getTypeDescription());
         return toscaStructure;
     }

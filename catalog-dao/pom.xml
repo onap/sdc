@@ -451,6 +451,13 @@ Modifications copyright (c) 2018 Nokia
         </exclusion>
       </exclusions>
     </dependency>
+    <!-- the embedded Cassandra 3.11 server used by the tests calls the snakeyaml 1.x API -->
+    <dependency>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+      <version>1.33</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.cassandraunit</groupId>
       <artifactId>cassandra-unit</artifactId>
