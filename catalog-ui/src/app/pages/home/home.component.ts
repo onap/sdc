@@ -68,6 +68,7 @@ export class HomeComponent implements OnInit {
     public homeFilter: HomeFilter;
     public vfcmtType: string;
     public displayActions: boolean;
+    public isLoading: boolean;
 
     constructor(
         @Inject(SdcConfigToken) private sdcConfig: ISdcConfig,
@@ -335,15 +336,15 @@ export class HomeComponent implements OnInit {
 
     private initEntities(reload?: boolean) {
         if (reload || this.componentShouldReload()) {
-            this.loaderService.activate();
+            this.isLoading = true;
             this.homeService.getAllComponents(true).subscribe(
                 (components: Component[]) => {
                     this.cacheService.set('breadcrumbsComponentsState', this.navigationService.getCurrentStateName());  // dashboard
                     this.cacheService.set('breadcrumbsComponents', components);
                     this.homeItems = components;
-                    this.loaderService.deactivate();
+                    this.isLoading = false;
                     this.filterHomeItems();
-                }, (error) => { this.loaderService.deactivate(); });
+                }, (error) => { this.isLoading = false; });
         } else {
             this.homeItems = this.cacheService.get('breadcrumbsComponents');
             this.filterHomeItems();
@@ -413,6 +414,7 @@ export class HomeComponent implements OnInit {
         this.version = this.cacheService.get('version');
         this.numberOfItemToDisplay = 0;
         this.displayActions = false;
+        this.isLoading = false;
         this.user = this.authService.getLoggedinUser();
         this.roles = this.sdcMenu.roles;
         this.showTutorial = false;

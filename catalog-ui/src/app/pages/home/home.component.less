@@ -9,6 +9,13 @@
   overflow-y: scroll;
 }
 
+// The relative <loader> copies this element's box, so it must span the whole scroll area even when
+// only the Add/Import cards are rendered. flex-start keeps the wrapped tile lines packed at the top.
+.w-sdc-row-flex-items {
+  min-height: 100%;
+  align-content: flex-start;
+}
+
 .w-sdc-main-right-container-element {
   float: left;
   height: 217px;

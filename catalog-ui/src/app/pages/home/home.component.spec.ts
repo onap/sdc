@@ -18,6 +18,7 @@ import {SdcUiServices} from "onap-ui-angular";
 import {ComponentType, ResourceType} from "../../utils/constants";
 import {HomeFilter} from "../../models/home-filter";
 import {NavigationService} from "../../services/navigation.service";
+import {Subject} from "rxjs/Subject";
 
 
 describe('home component', () => {
@@ -285,6 +286,45 @@ describe('home component', () => {
     //     component.componentInstance.notificationIconCallback();
     //     expect(mockStateService.go).toBeCalledWith('workspace.general', {});
     // });
+
+    describe('initEntities', () => {
+        let followed: Subject<any[]>;
+        let component;
+
+        beforeEach(() => {
+            followed = new Subject<any[]>();
+            const homeService = TestBed.get(HomeService);
+            homeService.getAllComponents = jest.fn(() => followed);
+            const cacheService = TestBed.get(CacheService);
+            cacheService.set = jest.fn();
+            component = TestBed.createComponent(HomeComponent).componentInstance;
+            component.filterHomeItems = jest.fn();
+        });
+
+        it('shows the local loader while the components are pending and hides it on success', () => {
+            component.initEntities(true);
+            expect(component.isLoading).toBe(true);
+
+            followed.next([]);
+            expect(component.isLoading).toBe(false);
+            expect(component.homeItems).toEqual([]);
+        });
+
+        it('hides the local loader when the request fails', () => {
+            component.initEntities(true);
+            expect(component.isLoading).toBe(true);
+
+            followed.error('failed');
+            expect(component.isLoading).toBe(false);
+        });
+
+        it('does not block the page with the global loader', () => {
+            component.initEntities(true);
+            followed.next([]);
+            expect(loaderServiceMock.activate).not.toHaveBeenCalled();
+            expect(loaderServiceMock.deactivate).not.toHaveBeenCalled();
+        });
+    });
 
     // isDefaultFilter() used to call angular.equals, which SKIPS function-valued keys. HomeFilter
     // carries a toUrlParam arrow field — a fresh closure per instance — so a plain _.isEqual is

@@ -72,6 +72,8 @@
                     [component]="item" (onTileClick)="goToComponent(item)"></ui-tile>
                 <!-- Tile new -->
 
+                <loader [display]="isLoading" [size]="'large'" [relative]="true" [loaderDelay]="500"></loader>
+
             </div>
 
         </div>
