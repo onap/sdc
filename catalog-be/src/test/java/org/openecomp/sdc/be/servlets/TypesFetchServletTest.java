@@ -22,7 +22,9 @@ package org.openecomp.sdc.be.servlets;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import fj.data.Either;
@@ -62,7 +64,9 @@ import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.operations.impl.DataTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 import org.openecomp.sdc.be.servlets.builder.ServletResponseBuilder;
@@ -125,6 +129,8 @@ class TypesFetchServletTest extends JerseyTest {
     private DataTypeOperation dataTypeOperation;
     @Mock
     private ToscaExportHandler toscaExportHandler;
+    @Mock
+    private ApplicationDataTypeCache applicationDataTypeCache;
 
     private final Path rootPath = Path.of("/v1/catalog");
     private final Path nodeTypesPath = rootPath.resolve("nodeTypes");
@@ -199,6 +205,33 @@ class TypesFetchServletTest extends JerseyTest {
         assertEquals(res1.getComponentType().name(), componentMetadataDefinition.get("componentType"));
         assertEquals(res1.getToscaResourceName(), componentMetadataDefinition.get("toscaResourceName"));
         assertEquals(res1.getResourceType().getValue(), componentMetadataDefinition.get("resourceType"));
+    }
+
+    @Test
+    void getAllDataTypesFromAllModels_noModelsInGraph_returnsDefaultModelDataTypes() {
+        final DataTypeDefinition dataType = new DataTypeDefinition();
+        dataType.setName("tosca.datatypes.Root");
+        when(responseFormat.getStatus()).thenReturn(HttpStatus.OK_200);
+        when(componentsUtils.getResponseFormat(ActionStatus.OK)).thenReturn(responseFormat);
+        when(servletUtils.getUserAdmin()).thenReturn(userBusinessLogic);
+        when(userBusinessLogic.getUser(anyString())).thenReturn(user);
+        when(modelOperation.findAllModels()).thenReturn(List.of());
+        when(resourceBusinessLogic.getApplicationDataTypeCache()).thenReturn(applicationDataTypeCache);
+        when(resourceBusinessLogic.getComponentsUtils()).thenReturn(componentsUtils);
+        when(componentsUtils.getAllDataTypes(any(ApplicationDataTypeCache.class), eq(null)))
+            .thenReturn(Map.of(dataType.getName(), dataType));
+
+        final var response = target()
+            .path(rootPath.resolve("allDataTypes").toString())
+            .queryParam("excludePrimitives", "true")
+            .request(MediaType.APPLICATION_JSON)
+            .header(Constants.USER_ID_HEADER, USER_ID)
+            .get();
+
+        assertEquals(HttpStatus.OK_200, response.getStatus());
+        final List<Map<String, Object>> dataTypesPerModel = response.readEntity(List.class);
+        assertEquals(1, dataTypesPerModel.size());
+        assertTrue(dataTypesPerModel.get(0).containsKey("tosca.datatypes.Root"));
     }
 
     @Override

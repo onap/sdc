@@ -195,7 +195,7 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
             log.debug("Start handle request of {} - modifier id is {}", url, userId);
             resourceBusinessLogic.getApplicationDataTypeCache().refreshDataTypesCacheIfStale();
             final List<Map<String, DataTypeDefinition>> dataTypesList = new ArrayList<>();
-            List<Model> models = modelOperation.findAllModels();
+            List<Model> models = new ArrayList<>(modelOperation.findAllModels());
             models.add(new Model(null));
             models.forEach(model -> {
                 final Map<String, DataTypeDefinition> dataTypes = resourceBusinessLogic.getComponentsUtils()
