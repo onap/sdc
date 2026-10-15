@@ -39,7 +39,6 @@ module.exports = (env, argv) => {
                 'nfvo-utils': 'src/nfvo-utils',
                 'nfvo-components': 'src/nfvo-components',
                 'sdc-app': 'src/sdc-app',
-                // TODO - this is needed for heatValidation standalone. Can be deprecated down the line
                 'react-select/dist/': 'node_modules' + '/react-select/dist/'
             }
         },
