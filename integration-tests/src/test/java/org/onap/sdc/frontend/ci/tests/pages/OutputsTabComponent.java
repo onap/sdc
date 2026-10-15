@@ -84,7 +84,7 @@ public class OutputsTabComponent extends AbstractPageObject {
      */
     @AllArgsConstructor
     private enum XpathSelector {
-        DELETE_OUTPUT_BTN("//span[@data-tests-id='delete-%s']"),
+        DELETE_OUTPUT_BTN("//button[@data-tests-id='delete-%s']"),
         OUTPUT_ATTRIBUTES_TABLE("output-attributes-table", "//div[contains(@class,'%s')]"),
         NO_DATA_MESSAGE("no-data", "//div[contains(@class,'%s') and text()='No data to display']"),
         DELETE_OUTPUT_CONFIRM_BTN("Delete", "//button[@data-tests-id='%s']"),
