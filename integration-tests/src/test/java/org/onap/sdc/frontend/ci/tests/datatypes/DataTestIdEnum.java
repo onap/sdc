@@ -818,7 +818,6 @@ public final class DataTestIdEnum {
     @Getter
     public enum VspValidationPage {
         VSP_VALIDATION_PAGE_NAVBAR("navbar-group-item-SOFTWARE_PRODUCT_VALIDATION"),
-        VSP_VALIDATION_PAGE_BREADCRUMBS("sub-menu-button-validation"),
         VSP_VALIDATION_PAGE_PROCEED_TO_INPUTS_BUTTON("go-to-vsp-validation-inputs"),
         VSP_VALIDATION_PAGE_PROCEED_TO_SETUP_BUTTON("go-to-vsp-validation-setup"),
         VSP_VALIDATION_PAGE_INPUT("%s_%s_input"),
@@ -833,8 +832,7 @@ public final class DataTestIdEnum {
     @AllArgsConstructor
     @Getter
     public enum VspValidationResultsPage {
-        VSP_VALIDATION_RESULTS_PAGE_NAVBAR("navbar-group-item-SOFTWARE_PRODUCT_VALIDATION_RESULTS"),
-        VSP_VALIDATION_RESULTS_PAGE_BREADCRUMBS("sub-menu-button-validation results");
+        VSP_VALIDATION_RESULTS_PAGE_NAVBAR("navbar-group-item-SOFTWARE_PRODUCT_VALIDATION_RESULTS");
 
         private final String value;
 

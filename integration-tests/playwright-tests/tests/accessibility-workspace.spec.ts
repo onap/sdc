@@ -54,7 +54,7 @@ const VF_TABS: TabScan[] = [
 const SERVICE_TABS: TabScan[] = [
     { tab: 'general', ready: SEL.name, known: [] },
     { tab: 'composition', ready: COMPOSITION_READY, known: [] },
-    { tab: 'properties_assignment', ready: '[data-tests-id="Inputs"]', known: ['label', 'select-name'] },
+    { tab: 'properties_assignment', ready: '[data-tests-id="Inputs"]', known: [] },
     { tab: 'activity_log', ready: 'activity-log ngx-datatable', known: [] },
     { tab: 'tosca_artifacts', ready: 'tosca-artifact-page datatable-body-row', known: [] },
     { tab: 'management_workflow', ready: '.flow-editor-punch-out-host > *', known: [] },

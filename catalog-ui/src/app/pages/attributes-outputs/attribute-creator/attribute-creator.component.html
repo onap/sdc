@@ -35,16 +35,18 @@
       </div>
       <!-- Type -->
       <div class="i-sdc-form-item">
-        <label class="i-sdc-form-label required">Type</label>
+        <label class="i-sdc-form-label required" for="ac-type">Type</label>
         <ui-element-dropdown [testId]="'property-type'"
                              class="cell link-selector"
+                             inputId="ac-type"
                              [values]="typesAttributes"
                              [(value)]="attributeModel.type"></ui-element-dropdown>
       </div>
       <div class="i-sdc-form-item attributeSchemaType" *ngIf="showSchema()">
-        <label class="i-sdc-form-label required">Schema Type</label>
+        <label class="i-sdc-form-label required" for="ac-schema-type">Schema Type</label>
         <ui-element-dropdown [testId]="'property-type'"
                              class="cell link-selector"
+                             inputId="ac-schema-type"
                              [values]="typesSchemaAttributes"
                              [(value)]="attributeModel.schema.property.type"></ui-element-dropdown>
       </div>

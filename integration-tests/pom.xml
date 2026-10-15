@@ -55,7 +55,9 @@ limitations under the License.
         <it.sdc-be.plugins>${project.build.directory}/plugins/sdc-be</it.sdc-be.plugins>
         <it.shared.volume>/tmp/sdc-integration-tests</it.shared.volume>
         <it.docker.version>latest</it.docker.version>
-        <it.ui.firefox.version>86.0</it.ui.firefox.version>
+        <!-- Newest image that still works with the selenium.version 3.141.59 client: Grid 4.12 removed
+             the /session/{id}/file endpoint that client uploads files through. -->
+        <it.ui.firefox.version>116.0-geckodriver-0.33-grid-4.11.0-20230801</it.ui.firefox.version>
         <it.helm-validator.disabled>true</it.helm-validator.disabled>
         <!-- The Selenium grid is only needed by the TestNG UI suite; the Playwright suite drives
              its own bundled browser. Defaults to enabled so the Jenkins CSIT jobs are unaffected. -->
@@ -1230,8 +1232,12 @@ limitations under the License.
                                 <env>
                                     <JAVA_OPTS>-Xmx512m</JAVA_OPTS>
                                     <!--<START_XVFB>false</START_XVFB>-->
-                                    <SCREEN_WIDTH>1920</SCREEN_WIDTH>
-                                    <SCREEN_HEIGHT>1440</SCREEN_HEIGHT>
+                                    <SE_SCREEN_WIDTH>1920</SE_SCREEN_WIDTH>
+                                    <SE_SCREEN_HEIGHT>1440</SE_SCREEN_HEIGHT>
+                                    <!-- The suite opens a second browser before it quits the first, so a
+                                         single slot leaves the new-session request queued until it times out. -->
+                                    <SE_NODE_MAX_SESSIONS>8</SE_NODE_MAX_SESSIONS>
+                                    <SE_NODE_OVERRIDE_MAX_SESSIONS>true</SE_NODE_OVERRIDE_MAX_SESSIONS>
                                 </env>
                                 <ports>
                                     <port>4444:4444</port>

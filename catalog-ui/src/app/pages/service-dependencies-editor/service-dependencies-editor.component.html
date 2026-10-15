@@ -28,29 +28,32 @@
         <div class="i-sdc-form-content">
             <div class="rule-builder-content">
                 <div class="i-sdc-form-item rule-input-field property" *ngIf="filterType == FILTER_TYPE_CAPABILITY">
-                    <label class="i-sdc-form-label required">{{"CAPABILITY_LABEL" | translate}}</label>
+                    <label class="i-sdc-form-label required" for="sde-capability">{{"CAPABILITY_LABEL" | translate}}</label>
                     <ui-element-dropdown
                         class="i-sdc-form-select"
                         data-tests-id="servicePropertyName"
+                        inputId="sde-capability"
                         [values]="capabilityDropdownList"
                         [(value)]="currentRule.capabilityName"
                         (change)="onCapabilityChange()">
                     </ui-element-dropdown>
                 </div>
                 <div class="i-sdc-form-item rule-input-field property">
-                    <label class="i-sdc-form-label required">{{"PROPERTY_LABEL" | translate}}</label>
+                    <label class="i-sdc-form-label required" for="sde-property">{{"PROPERTY_LABEL" | translate}}</label>
                     <ui-element-dropdown
                             class="i-sdc-form-select"
                             data-tests-id="servicePropertyName"
+                            inputId="sde-property"
                             [values]="servicePropertyDropdownList"
                             [(value)]="currentRule.servicePropertyName"
                             (change)="onPropertyChange()">
                     </ui-element-dropdown>
                 </div>
                 <div class="i-sdc-form-item rule-input-field operator">
-                    <label class="i-sdc-form-label required">{{"OPERATOR_LABEL" | translate}}</label>
+                    <label class="i-sdc-form-label required" for="sde-operator">{{"OPERATOR_LABEL" | translate}}</label>
                     <ui-element-dropdown class="i-sdc-form-select" data-tests-id="constraintOperator"
                                          [testId]="'constraintOperator'"
+                                         inputId="sde-operator"
                                          (change)="onSourceTypeChange()"
                                          [values]="operatorTypes" [(value)]="currentRule.constraintOperator"
                                          >

@@ -91,7 +91,7 @@ const VLM_SCREENS: ScreenScan[] = [
 
 const VSP_SCREENS: ScreenScan[] = [
     { screen: VSP_LANDING, ready: '.software-product-landing-wrapper', known: [] },
-    { screen: 'SOFTWARE_PRODUCT_DETAILS', ready: '[data-test-id="vsp-name"]', known: ['color-contrast'] },
+    { screen: 'SOFTWARE_PRODUCT_DETAILS', ready: '[data-test-id="vsp-name"]', known: [] },
     { screen: 'SOFTWARE_PRODUCT_ACTIVITY_LOG', ready: ACTIVITY_READY, known: [] },
 ];
 

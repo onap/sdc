@@ -15,17 +15,19 @@
             </div>
             <!-- Type -->
             <div class="i-sdc-form-item">
-                <label class="i-sdc-form-label required">Type</label>
+                <label class="i-sdc-form-label required" for="pc-type">Type</label>
                 <ui-element-dropdown [testId]="'property-type'"
+                                     inputId="pc-type"
                                      class="cell link-selector"
                                      [values]="typesProperties"
                                      (change)="onTypeChange()"
                                      [(value)]="propertyModel.type"></ui-element-dropdown>
             </div>
             <div class="i-sdc-form-item propertySchemaType" *ngIf="showSchema()">
-                <label class="i-sdc-form-label required">Schema Type</label>
+                <label class="i-sdc-form-label required" for="pc-schema-type">Schema Type</label>
                 <ui-element-dropdown [testId]="'property-schema-type'"
                                      data-tests-id="property-schema-type"
+                                     inputId="pc-schema-type"
                                      class="cell link-selector"
                                      [values]="typesSchemaProperties"
                                      [(value)]="propertyModel.schema.property.type"></ui-element-dropdown>

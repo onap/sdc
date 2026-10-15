@@ -16,6 +16,7 @@ import { WorkspaceService } from "app/pages/workspace/workspace.service";
 
 const REQUIREMENT = 'Requirement';
 const CAPABILITY = 'Capability';
+let nextTypeSelectId = 0;
 
 @Component({
     selector: 'select-requirement-or-capability',
@@ -33,6 +34,7 @@ export class SelectRequirementOrCapabilityComponent implements OnInit {
     @Input() selectedReqOrCapModel:RequirementCapabilityModel;
     @Output() updateSelectedReqOrCap:EventEmitter<RequirementCapabilityModel> = new EventEmitter<RequirementCapabilityModel>();
 
+    readonly typeSelectId = `req-cap-type-${nextTypeSelectId++}`;
     types:Array<string> = [];
     selectedType:string;
 

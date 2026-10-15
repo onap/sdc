@@ -68,6 +68,7 @@ export class DynamicElementComponent {
     @Input() childType: any;
     @Input() name: string;
     @Input() testId: string;
+    @Input() ariaLabel: string;
     @Input() readonly:boolean;
     @Input() constraints: Array<any>;
     @Input() path:string;//optional param. used only for for subnetpoolid type
@@ -150,6 +151,7 @@ export class DynamicElementComponent {
             this.cmpRef.instance.name = this.name;
             this.cmpRef.instance.type = this.type;
             this.cmpRef.instance.testId = this.testId;
+            this.cmpRef.instance.ariaLabel = this.ariaLabel;
             this.cmpRef.instance.value = this.value;
             this.cmpRef.instance.readonly = this.readonly;
         }

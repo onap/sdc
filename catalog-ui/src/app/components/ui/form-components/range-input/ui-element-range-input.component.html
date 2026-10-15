@@ -33,6 +33,7 @@
                 [attr.minlength]="validation.propertyValue.min"
                 [formControl]="control"
                 [attr.data-tests-id]="'valueMin-' + testId"
+                [attr.aria-label]="ariaLabel ? ariaLabel + ' minimum' : null"
                 />
         <input *ngIf="isIntegerType()"
                class="value-input"
@@ -46,6 +47,7 @@
                [attr.minlength]="validation.propertyValue.min"
                [formControl]="control"
                [attr.data-tests-id]="'valueMin-' + testId"
+               [attr.aria-label]="ariaLabel ? ariaLabel + ' minimum' : null"
         />
         <input *ngIf="isStringType()"
                class="value-input"
@@ -59,6 +61,7 @@
                [attr.minlength]="validation.propertyValue.min"
                [formControl]="control"
                [attr.data-tests-id]="'valueMin-' + testId"
+               [attr.aria-label]="ariaLabel ? ariaLabel + ' minimum' : null"
         />
     </div>
     <div class="w-sdc-form-column">
@@ -75,6 +78,7 @@
 
                     [formControl]="control"
                     [attr.data-tests-id]="'valueMax-' + testId"
+                    [attr.aria-label]="ariaLabel ? ariaLabel + ' maximum' : null"
             />
 
     </div>

@@ -16,6 +16,7 @@
  
 <ui-element-dropdown
 	data-tests-id="linkSrc"
+	ariaLabel="Source"
 	[readonly]="!link.isFirst || (link.isFirst && !link.canEdit)"
 	class="cell link-selector"
 	[values]="source"
@@ -25,6 +26,7 @@
 
 <ui-element-dropdown
 	data-tests-id="linkSrcCP"
+	ariaLabel="Source Connection Point"
 	[readonly]="!link.isFirst || (link.isFirst && !link.canEdit)"
 	class="cell link-selector"
 	[values]="srcCP"
@@ -34,6 +36,7 @@
 
 <ui-element-dropdown
 	data-tests-id="linkTarget"
+	ariaLabel="Target"
 	[readonly]="!link.canEdit"
 	class="cell link-selector"
 	[values]="target"
@@ -43,6 +46,7 @@
 
 <ui-element-dropdown
 	data-tests-id="linkTargetCP"
+	ariaLabel="Target Connection Point"
 	[readonly]="!link.canEdit"
 	class="cell link-selector"
 	[values]="targetCP"

@@ -53,8 +53,7 @@ public class CompositionElementsComponent extends AbstractPageObject {
         new Actions(webDriver).pause(Duration.ofSeconds(1)).perform();
         try {
             final WebElement accordionElement = waitForElementVisibility("//button[@class='sdc-accordion-header']");
-            final String aClass = accordionElement.getAttribute("class");
-            if (!aClass.contains("open")) {
+            if (!"true".equals(accordionElement.getAttribute("aria-expanded"))) {
                 accordionElement.click();
             }
             return Optional.ofNullable(waitToBeClickable(XpathSelector.ELEMENT_DIV.getXpath(elementName)));

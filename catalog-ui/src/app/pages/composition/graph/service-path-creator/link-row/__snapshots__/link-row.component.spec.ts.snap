@@ -8,15 +8,19 @@ exports[`artifact form component should match current snapshot of artifact form 
   targetCP={[Function Array]}
 >
   <ui-element-dropdown
+    arialabel="Source"
     class="cell link-selector"
     data-tests-id="linkSrc"
   /><ui-element-dropdown
+    arialabel="Source Connection Point"
     class="cell link-selector"
     data-tests-id="linkSrcCP"
   /><ui-element-dropdown
+    arialabel="Target"
     class="cell link-selector"
     data-tests-id="linkTarget"
   /><ui-element-dropdown
+    arialabel="Target Connection Point"
     class="cell link-selector"
     data-tests-id="linkTargetCP"
   /><div

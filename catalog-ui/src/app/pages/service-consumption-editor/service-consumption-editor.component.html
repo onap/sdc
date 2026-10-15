@@ -21,7 +21,7 @@
 
         <div class="i-sdc-form-content-operation-inputs-content" [ngClass]="{'no-inputs': !serviceOperation.consumptionInputs.length}">
             <div class="no-inputs-text" *ngIf="!serviceOperation.consumptionInputs.length">{{'CONSUMPTION_NO_INPUTS_TO_SHOW' | translate}}</div>
-            <div class="i-sdc-form-content-operation-input-box" *ngFor="let consumptionInput of serviceOperation.consumptionInputs">
+            <div class="i-sdc-form-content-operation-input-box" *ngFor="let consumptionInput of serviceOperation.consumptionInputs; let ci = index">
                 <div class="i-sdc-form-content-operation-input-box-title" (click)="onExpandCollapse(consumptionInput)">
                     <div class="expand-collapse-icon" [ngClass]="{'expanded': consumptionInput.expanded}"></div>
                     <div class="operation-input-name">{{consumptionInput.name}}</div>
@@ -33,10 +33,11 @@
 
                 <div class="operation-input-section-row with-top-border" *ngIf="consumptionInput.expanded">
                     <div class="i-sdc-form-item operation-input-section-col">
-                        <label class="i-sdc-form-label" [ngClass]="{'required': consumptionInput.required}" >{{ 'CONSUMPTION_SOURCE' | translate}}</label>
+                        <label class="i-sdc-form-label" [ngClass]="{'required': consumptionInput.required}" [attr.for]="'sce-source-' + ci">{{ 'CONSUMPTION_SOURCE' | translate}}</label>
                         <ui-element-dropdown
                                 class="i-sdc-form-select"
                                 data-tests-id="sourceType"
+                                [inputId]="'sce-source-' + ci"
                                 [values]="sourceTypes"
                                 [(value)]="consumptionInput.source"
                                 (change)="onSourceChanged(consumptionInput)">

@@ -22,6 +22,7 @@
     <ui-element-input
         *ngIf="!isAssociateWorkflow"
         [testId]="'param-name-' + (param.name || 'unnamed')"
+        [ariaLabel]="'OPERATION_PARAM_NAME' | translate"
         [(value)]="param.name"
         (valueChange)="onChangeName()"
         [readonly]="readonly">
@@ -33,6 +34,7 @@
     <ui-element-dropdown
         *ngIf="!isAssociateWorkflow"
         [testId]="'param-type-' + (param.name || 'unnamed')"
+        [ariaLabel]="'OPERATION_PARAM_TYPE' | translate"
         [values]="propTypeEnum"
         [(value)]="param.type"
         (valueChange)="onChangeType()"
@@ -47,6 +49,7 @@
         [(ngModel)]="param.inputId"
         (change)="onChangeProperty($event)"
         [ngClass]="{'disabled': readonly}"
+        [attr.aria-label]="'OPERATION_PARAM_PROPERTY' | translate"
         [attr.data-tests-id]="'value-param-property-' + (param.name || 'unnamed')">
         <option
             *ngFor="let prop of filteredInputProps"

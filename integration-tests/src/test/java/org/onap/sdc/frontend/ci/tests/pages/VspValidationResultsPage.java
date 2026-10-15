@@ -34,10 +34,6 @@ public class VspValidationResultsPage extends GeneralPageElements {
         clickOnElementUsingTestId(DataTestIdEnum.VspValidationResultsPage.VSP_VALIDATION_RESULTS_PAGE_NAVBAR);
     }
 
-    public static void navigateToVspValidationResultsPageUsingBreadcrumbs() throws Exception {
-        clickOnElementUsingTestId(DataTestIdEnum.VspValidationResultsPage.VSP_VALIDATION_RESULTS_PAGE_BREADCRUMBS);
-    }
-
     public static boolean checkResultsExist() throws Exception {
         List<WebElement> results = GeneralUIUtils.findElementsByXpath("//h4[contains(text(),'No Validation Checks Performed')]");
         return results.size() == 0;

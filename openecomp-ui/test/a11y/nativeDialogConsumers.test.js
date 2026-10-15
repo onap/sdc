@@ -16,7 +16,7 @@
 
 import React from 'react';
 import { render, fireEvent, act } from '@testing-library/react';
-import { installDialogShim } from 'nfvo-utils/dialogShim.js';
+import { installDialogPolyfill } from 'test-utils/dialogPolyfill.js';
 import { GlobalModalView } from 'nfvo-components/modal/GlobalModal.js';
 import { Notifications } from 'nfvo-components/notification/Notifications.js';
 import VendorItem from 'sdc-app/onboarding/onboard/onboardingCatalog/VendorItem.jsx';
@@ -27,7 +27,7 @@ import { catalogItemTypes } from 'sdc-app/onboarding/onboard/onboardingCatalog/O
 const noop = () => {};
 const flushObservers = () => act(() => Promise.resolve());
 
-describe('dialog shim', () => {
+describe('jsdom dialog polyfill', () => {
     it('gives dialogs open, show, showModal and close where the API is missing', () => {
         const doc = document.implementation.createHTMLDocument('');
         const nativeCreate = doc.createElement;
@@ -36,9 +36,8 @@ describe('dialog shim', () => {
             delete el.showModal;
             return el;
         };
-        // jsdom implements no showModal, like Firefox before 98.
         expect(typeof doc.createElement('dialog').showModal).toBe('undefined');
-        expect(installDialogShim(doc)).toBe(true);
+        expect(installDialogPolyfill(doc)).toBe(true);
         const dialog = doc.createElement('dialog');
         const onClose = jest.fn();
         dialog.addEventListener('close', onClose);
@@ -60,7 +59,7 @@ describe('dialog shim', () => {
             }
             return el;
         };
-        expect(installDialogShim(doc)).toBe(false);
+        expect(installDialogPolyfill(doc)).toBe(false);
     });
 });
 

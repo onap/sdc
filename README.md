@@ -148,7 +148,7 @@ It's therefore possible to connect your IDE to those debug ports remotely to wal
 
 The integration are composed of 2 parts, one to test the BE Apis and another one to test the FE with selenium.
 
-The selenium tests make use of the selenium/standalone-firefox:2.53.1 container.
+The selenium tests make use of the selenium/standalone-firefox container; its tag is `it.ui.firefox.version` in `integration-tests/pom.xml`.
 
 About BE APIs tests, onboarding E2E flow :
 Onboarding E2E flow cover following SDC functionality:

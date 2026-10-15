@@ -51,6 +51,8 @@ export class UiElementBase {
     @Input() readonly:boolean;
 
     @Input() testId:string;
+    @Input() ariaLabel: string;
+    @Input() inputId: string;
 
     constructor() {
         //this.control = new FormControl('', [Validators.required]);

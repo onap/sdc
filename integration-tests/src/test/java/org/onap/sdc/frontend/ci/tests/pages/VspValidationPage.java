@@ -55,10 +55,6 @@ public class VspValidationPage extends GeneralPageElements {
         clickOnElementUsingTestId(DataTestIdEnum.VspValidationPage.VSP_VALIDATION_PAGE_NAVBAR);
     }
 
-    public static void navigateToVspValidationPageUsingBreadcrumbs() throws Exception {
-        clickOnElementUsingTestId(DataTestIdEnum.VspValidationPage.VSP_VALIDATION_PAGE_BREADCRUMBS);
-    }
-
     public static void clickOnNextButton() throws Exception {
         clickOnElementUsingTestId(DataTestIdEnum.VspValidationPage.VSP_VALIDATION_PAGE_PROCEED_TO_INPUTS_BUTTON);
     }
