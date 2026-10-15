@@ -119,6 +119,7 @@ public class Configuration extends BasicConfiguration {
     private CassandrConfig cassandraConfig;
     private SwitchoverDetectorConfig switchoverDetector;
     private ApplicationL1CacheConfig applicationL1Cache;
+    private Integer categoriesCacheTtlInSeconds;
     private ApplicationL2CacheConfig applicationL2Cache;
     private ToscaValidatorsConfig toscaValidators;
     private boolean disableAudit;
