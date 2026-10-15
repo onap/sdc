@@ -27,6 +27,8 @@ import lombok.Getter;
 import org.onap.sdc.frontend.ci.tests.pages.AbstractPageObject;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -48,6 +50,12 @@ public class CompositionDetailSideBarComponent extends AbstractPageObject {
     }
 
     public void checkComponentIsSelected(final String componentName) {
+        try {
+            getWait().ignoring(StaleElementReferenceException.class)
+                .until(driver -> getSelectedComponentName().startsWith(componentName));
+        } catch (final TimeoutException ignored) {
+            // the assertion below reports the name that is shown instead
+        }
         assertThat("The selected component should be as expected", getSelectedComponentName(), startsWith(componentName));
     }
 

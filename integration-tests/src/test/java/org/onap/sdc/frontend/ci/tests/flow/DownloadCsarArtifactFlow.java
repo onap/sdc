@@ -27,6 +27,7 @@ import com.aventstack.extentreports.Status;
 import java.io.File;
 import java.time.Duration;
 import java.util.Optional;
+import java.util.Set;
 import lombok.Setter;
 import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
 import org.onap.sdc.frontend.ci.tests.pages.ComponentPage;
@@ -35,7 +36,6 @@ import org.onap.sdc.frontend.ci.tests.pages.component.workspace.ToscaArtifactsPa
 import org.onap.sdc.frontend.ci.tests.utilities.FileHandling;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.FluentWait;
 
 /**
  * UI Flow for downloading Tosca CSAR from a component
@@ -57,9 +57,9 @@ public class DownloadCsarArtifactFlow extends AbstractUiTestFlow {
         componentPage.isLoaded();
         toscaArtifactsPage = componentPage.goToToscaArtifacts();
         toscaArtifactsPage.isLoaded();
+        final Set<String> fileNamesBefore = FileHandling.getDownloadedFileNames();
         toscaArtifactsPage.clickOnDownload("Tosca Model");
-
-        final File downloadedCsar = waitAndGetDownloadedCsar();
+        final File downloadedCsar = waitAndGetDownloadedCsar(fileNamesBefore);
         assertThat("The downloaded CSAR should exist", downloadedCsar, is(notNullValue()));
         assertThat("The downloaded CSAR should exist", downloadedCsar.exists(), is(true));
         toscaArtifactsPage.addToDownloadedArtifactList(downloadedCsar.getName());
@@ -73,10 +73,8 @@ public class DownloadCsarArtifactFlow extends AbstractUiTestFlow {
         return Optional.ofNullable(toscaArtifactsPage);
     }
 
-    private File waitAndGetDownloadedCsar() {
+    private File waitAndGetDownloadedCsar(final Set<String> fileNamesBefore) {
         new Actions(webDriver).pause(Duration.ofSeconds(waitBeforeGetTheFile)).perform();
-        final FluentWait<String> fluentWait = new FluentWait<>("").withTimeout(Duration.ofSeconds(5)).pollingEvery(Duration.ofSeconds(1));
-        fluentWait.until(s -> FileHandling.getLastModifiedFileNameFromDir() != null);
-        return FileHandling.getLastModifiedFileNameFromDir();
+        return FileHandling.waitForNewDownloadedFile(fileNamesBefore, Duration.ofSeconds(60));
     }
 }
