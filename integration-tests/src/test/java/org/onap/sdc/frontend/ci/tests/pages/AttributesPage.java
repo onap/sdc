@@ -97,7 +97,7 @@ public class AttributesPage extends ComponentPage {
     @AllArgsConstructor
     private enum XpathSelector {
         MAIN_DIV("w-sdc-main-right-container", "//div[@class='%s']"),
-        TITLE_DIV("workspace-tab-title", "//div[contains(@class,'%s') and contains(text(), 'Attributes')]"),
+        TITLE_DIV("workspace-tab-title", "//h2[contains(@class,'%s') and contains(text(), 'Attributes')]"),
         ATTRIBUTES_DIV("workspace-attributes", "//div[@class='%s']"),
         ADD_BTN("svg-icon-label", "//span[contains(@class,'%s') and contains(text(), 'Add')]"),
         ATTRIBUTES_NAME_SPAN("//div[@data-tests-id='attrib-name_%s']"),

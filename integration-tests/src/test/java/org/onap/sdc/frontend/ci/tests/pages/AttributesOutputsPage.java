@@ -116,7 +116,7 @@ public class AttributesOutputsPage extends ComponentPage {
     @AllArgsConstructor
     private enum XpathSelector {
         MAIN_DIV("w-sdc-main-right-container", "//div[@class='%s']"),
-        TITLE_DIV("tab-title", "//div[contains(@class,'%s') and contains(text(), 'Attributes & Outputs')]"),
+        TITLE_DIV("tab-title", "//h2[contains(@class,'%s') and contains(text(), 'Attributes & Outputs')]"),
         ATTRIBUTES_TAB("Attributes", "//*[@data-tests-id='%s']"),
         OUTPUTS_TAB("Outputs", "//*[@data-tests-id='%s']");
 

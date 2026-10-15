@@ -33,7 +33,7 @@ public class VlmOverviewPage extends AbstractPageObject {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VlmOverviewPage.class);
     private static final String DIV_CLASS_XPATH_FORMAT = "//div[@class='%s']";
-    private static final String DIV_DATA_TEST_ID_XPATH_FORMAT = "//div[@data-test-id='%s']";
+    private static final String H1_DATA_TEST_ID_XPATH_FORMAT = "//h1[@data-test-id='%s']";
     private final VlmSubmitModal vlmSubmitModal;
     private WebElement wrappingElement;
 
@@ -83,7 +83,7 @@ public class VlmOverviewPage extends AbstractPageObject {
         PAGE_MAIN_DIV("software-product-view", DIV_CLASS_XPATH_FORMAT),
         NAV_BAR_GROUP_ITEM_OVERVIEW("navbar-group-item-LICENSE_MODEL_OVERVIEW", DIV_CLASS_XPATH_FORMAT),
         BNT_SUBMIT("vc-submit-btn", "//button[@data-test-id='%s']"),
-        NAV_BAR_GROUP_NAME_XPATH("navbar-group-name", DIV_DATA_TEST_ID_XPATH_FORMAT),
+        NAV_BAR_GROUP_NAME_XPATH("navbar-group-name", H1_DATA_TEST_ID_XPATH_FORMAT),
         SELECTED_NAV_BAR_GROUP_ITEM("navigation-group-item-name selected", "//button[@class='%s']"),
         OVERVIEW_PAGE("license-model-overview", DIV_CLASS_XPATH_FORMAT);
 

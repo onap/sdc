@@ -31,10 +31,10 @@ const GridSection = ({
                 'has-last-col-set': hasLastColSet
             })}>
             {title && (
-                <div className={`section-title ${titleClassName || ''}`}>
+                <h2 className={`section-title ${titleClassName || ''}`}>
                     {title}
                     {required && <span className={'required'}>*</span>}
-                </div>
+                </h2>
             )}
             <div className="grid-items">{children}</div>
         </div>

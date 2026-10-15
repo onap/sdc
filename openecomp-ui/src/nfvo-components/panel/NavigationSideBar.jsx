@@ -81,8 +81,9 @@ class NavigationMenu extends React.Component {
         const { menu, activeItemId, onNavigationItemClick } = this.props;
         return (
             <div className="navigation-group" key={menu.id}>
-                <NavigationMenuHeader title={menu.name} />
+                <NavigationMenuHeader id={menu.id} title={menu.name} />
                 <NavigationMenuItems
+                    labelledBy={`navbar-group-name-${menu.id}`}
                     items={menu.items}
                     activeItemId={activeItemId}
                     onNavigationItemClick={onNavigationItemClick}
@@ -94,9 +95,12 @@ class NavigationMenu extends React.Component {
 
 function NavigationMenuHeader(props) {
     return (
-        <div className="group-name" data-test-id="navbar-group-name">
+        <h1
+            className="group-name"
+            id={`navbar-group-name-${props.id}`}
+            data-test-id="navbar-group-name">
             {props.title}
-        </div>
+        </h1>
     );
 }
 
@@ -104,9 +108,9 @@ function getItemDataTestId(itemId) {
     return itemId.split('|')[0];
 }
 function NavigationMenuItems(props) {
-    const { items, activeItemId, onNavigationItemClick } = props;
+    const { items, activeItemId, onNavigationItemClick, labelledBy } = props;
     return (
-        <div className="navigation-group-items">
+        <nav className="navigation-group-items" aria-labelledby={labelledBy}>
             {items &&
                 items.map(item => (
                     <NavigationMenuItem
@@ -116,7 +120,7 @@ function NavigationMenuItems(props) {
                         onNavigationItemClick={onNavigationItemClick}
                     />
                 ))}
-        </div>
+        </nav>
     );
 }
 

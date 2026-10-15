@@ -313,6 +313,20 @@ $browserPrefixes: webkit moz o ms;
 
 // Pass $font: false when the same rule @extends a typography class: the
 // extended selector is emitted earlier, so font: inherit here would win.
+// Strips a heading down to the look of the div it replaces; include it before the element's own
+// rules. Pass $font: false when the rule takes its font from an @extend.
+@mixin heading-reset($font: true) {
+    margin: 0;
+    padding: 0;
+    @if $font {
+        font: inherit;
+    } @else {
+        font-weight: inherit;
+        line-height: inherit;
+    }
+    color: inherit;
+}
+
 @mixin button-reset($font: true) {
     appearance: none;
     background: none;

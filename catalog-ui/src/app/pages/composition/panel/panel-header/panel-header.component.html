@@ -9,9 +9,9 @@
         </ng-template>
     </div>
 
-    <div class="title" data-tests-id="selectedCompTitle" tooltip="&#8203;{{selectedComponent.name}}">
+    <h2 class="title" data-tests-id="selectedCompTitle" tooltip="&#8203;{{selectedComponent.name}}">
         {{selectedComponent.name}}
-    </div>
+    </h2>
 
     <svg-icon-label *ngIf="!isViewOnly && !isTopologyTemplateSelected && !selectedComponent.archived" name="edit-file-o"
                     clickable="true" ariaLabel="Rename instance" size="small" class="rename-instance" data-tests-id="renameInstance"

@@ -23,7 +23,7 @@ class SummaryView extends Component {
         const { isReadOnlyMode } = this.props;
         return (
             <div className="overview-top-section">
-                <div className="page-title">{i18n('overview')}</div>
+                <h2 className="page-title">{i18n('overview')}</h2>
                 <div className="license-model-overview-top">
                     <VendorDataView isReadOnlyMode={isReadOnlyMode} />
                     <SummaryCountList isReadOnlyMode={isReadOnlyMode} />

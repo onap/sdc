@@ -211,9 +211,9 @@ class SoftwareProductLandingPageView extends React.Component {
         if (this.isUploadInProgress()) {
             return (
                 <div>
-                    <div className="software-product-landing-view-heading-title">
+                    <h2 className="software-product-landing-view-heading-title">
                         {i18n('Software Product Attachments')}
-                    </div>
+                    </h2>
                     <div className="software-product-landing-view-top-block-col-upl ">
                         <div className="upload-status-text">
                             {this.state.uploadStatus.statusToString()}
@@ -227,9 +227,9 @@ class SoftwareProductLandingPageView extends React.Component {
         }
         return (
             <div>
-                <div className="software-product-landing-view-heading-title">
+                <h2 className="software-product-landing-view-heading-title">
                     {i18n('Software Product Attachments')}
-                </div>
+                </h2>
                 <VnfRepositorySearchBox
                     dataTestId="upload-btn"
                     isReadOnlyMode={isReadOnlyMode}
@@ -360,9 +360,9 @@ const ProductSummary = ({
     } = currentSoftwareProduct;
     return (
         <div className="details-panel">
-            <div className="software-product-landing-view-heading-title">
+            <h2 className="software-product-landing-view-heading-title">
                 {i18n('Software Product Details')}
-            </div>
+            </h2>
             <div className="software-product-landing-view-top-block">
                 <div className="details-container">
                     <div className="single-detail-section title-section">

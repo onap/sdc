@@ -23,7 +23,7 @@ const SoftwareProductListHeader = ({ selectedVendor, onBack }) => (
     <div className="vendor-page-header">
         <SVGIcon name="back" ariaLabel={i18n('Back')} onClick={onBack} />
         <div className="tab-separator" />
-        <div className="vendor-name">{selectedVendor.name}</div>
+        <h2 className="vendor-name">{selectedVendor.name}</h2>
     </div>
 );
 

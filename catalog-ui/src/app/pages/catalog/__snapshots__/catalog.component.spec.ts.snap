@@ -26,6 +26,11 @@ exports[`catalog component should match current snapshot of catalog component 1`
       class="w-sdc-main-container"
       id="main-content"
     >
+      <h1
+        class="sr-only"
+      >
+        Catalog
+      </h1>
       <div
         class="i-sdc-designer-leftbar-section-left-switch-header"
       >

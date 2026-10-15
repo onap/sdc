@@ -428,7 +428,8 @@ export async function axeRuleIds(page: Page): Promise<{ ids: string[]; detail: s
 
 /**
  * Fails on any violation not in `known` AND on any `known` rule that no longer fires, so a fix must
- * shorten the list and a regression in one rule cannot hide behind another rule's entry.
+ * shorten the list and a regression in one rule cannot hide behind another rule's entry. Also
+ * requires exactly one rendered <h1>: axe 4.12's page-has-heading-one passes on a page with none.
  */
 export async function expectAxeRatchet(page: Page, known: string[]): Promise<void> {
     await dismissTransientModal(page);
@@ -437,6 +438,10 @@ export async function expectAxeRatchet(page: Page, known: string[]): Promise<voi
         .toEqual([]);
     expect(known.filter(id => ids.indexOf(id) === -1),
         'these rules pass now: remove them from KNOWN').toEqual([]);
+    const h1s = await page.locator('h1').evaluateAll(els => els
+        .filter(el => el.getClientRects().length > 0 && !el.closest('[aria-hidden="true"]'))
+        .map(el => (el.textContent || '').trim()));
+    expect(h1s, 'the page needs exactly one <h1>').toHaveLength(1);
 }
 
 /**

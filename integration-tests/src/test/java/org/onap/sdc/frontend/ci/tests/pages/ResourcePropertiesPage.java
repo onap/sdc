@@ -72,7 +72,7 @@ public class ResourcePropertiesPage extends AbstractPageObject {
     @AllArgsConstructor
     @Getter
     private enum XpathSelector {
-        TITLE_DIV("//div[contains(@class,'tab-title') and contains(text(), 'Properties')]"),
+        TITLE_DIV("//h2[contains(@class,'tab-title') and contains(text(), 'Properties')]"),
         PROPERTIES_TABLE("//div[contains(@class,'table')]"),
         NO_DATA_MESSAGE("//div[contains(@class,'no-data') and text()='No data to display']"),
         PROPERTY_TYPES("//*[contains(@data-tests-id, 'propertyType')]"),

@@ -155,7 +155,7 @@ export default class SoftwareProductDependenciesView extends React.Component {
         );
         return (
             <div className="software-product-dependencies">
-                <div className="page-title">{i18n('Dependencies')}</div>
+                <h2 className="page-title">{i18n('Dependencies')}</h2>
                 <SelectActionTable
                     columns={[
                         i18n('Source'),

@@ -21,6 +21,7 @@
 
 @import '../../../../assets/styles/variables.less';
 @import '../../../../assets/styles/mixins.less';
+@import '../../../../assets/styles/heading-reset.less';
 
 .w-sdc-left-sidebar {
     padding: 0;
@@ -30,6 +31,7 @@
     border-right: 1px solid @main_color_o;
 
     .menu-header {
+        .sdc-heading-reset();
         border-bottom: 1px solid @main_color_o;
         height: 53px;
         .f-type._16_m;

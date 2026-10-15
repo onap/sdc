@@ -36,6 +36,7 @@
     </nav>
 
     <main id="main-content" class="sdc-admin-body">
+        <h1 class="sr-only">{{(isSelected('USER_MANAGEMENT') ? 'USER_MANAGEMENT' : 'CATEGORY_MANAGEMENT') | translate}}</h1>
         <user-management *ngIf="isSelected('USER_MANAGEMENT')"></user-management>
         <category-management *ngIf="isSelected('CATEGORY_MANAGEMENT')"></category-management>
     </main>

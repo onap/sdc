@@ -95,7 +95,7 @@ public class CompositionDetailSideBarComponent extends AbstractPageObject {
         MAIN_ELEMENT_DIV("w-sdc-designer-sidebar", "//div[@class='%s']"),
         DETAIL_SIDE_BAR_TOGGLE_DIV("w-sdc-designer-sidebar-toggle", "//button[contains(concat(' ',normalize-space(@class),' '),' %s ')]"),
         DETAIL_HEADER("w-sdc-designer-sidebar-head", "//div[@data-tests-id='%s']"),
-        DETAIL_COMPONENT_NAME_DIV("selectedCompTitle", "//div[@data-tests-id='%s']"),
+        DETAIL_COMPONENT_NAME_DIV("selectedCompTitle", "//h2[@data-tests-id='%s']"),
         TAB_LIST("sdc-tabs-list", "//ul[@class='%s']/li"),
         INFORMATION_TAB("detail-tab-information", "//li[@data-tests-id='%s']/button[@role='tab']"),
         INPUTS_TAB("detail-tab-inputs", "//li[@data-tests-id='%s']/button[@role='tab']"),

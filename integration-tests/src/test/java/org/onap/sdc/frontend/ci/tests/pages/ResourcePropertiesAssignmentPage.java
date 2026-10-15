@@ -158,7 +158,7 @@ public class ResourcePropertiesAssignmentPage extends ComponentPage {
     @AllArgsConstructor
     private enum XpathSelector {
         MAIN_DIV("w-sdc-main-right-container", "//div[@class='%s']"),
-        TITLE_DIV("tab-title", "//div[contains(@class,'%s') and contains(text(), 'Properties Assignment')]"),
+        TITLE_DIV("tab-title", "//h2[contains(@class,'%s') and contains(text(), 'Properties Assignment')]"),
         PROPERTIES_TAB("//*[contains(@data-tests-id, 'Properties') and contains(@class, 'tab')]"),
         INPUT_TAB("//*[contains(@data-tests-id, 'Inputs') and contains(@class, 'tab')]"),
         DECLARE_NOTIFIFICATION("//button[@data-tests-id='Inputs']/span[contains(@class, 'tab-indication')]");

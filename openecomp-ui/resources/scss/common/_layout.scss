@@ -22,6 +22,7 @@
 }
 
 .page-title {
+    @include heading-reset($font: false);
     @extend .heading-1;
     @extend .text-uppercase !optional;
     margin-bottom: 20px;

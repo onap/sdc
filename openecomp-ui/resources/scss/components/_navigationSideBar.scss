@@ -16,6 +16,7 @@
             flex-direction: column;
             background-color: $tlv-gray;
             .group-name {
+                @include heading-reset($font: false);
                 @extend .heading-4-semibold;
                 @include ellipsis;
                 min-height: 70px;

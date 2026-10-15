@@ -78,7 +78,7 @@ public class CompositionInterfaceOperationsTab extends AbstractPageObject {
         INTERFACE_ACCORDION("//div[@class='interface-accordion']"),
         INTERFACE_ROW("//div[contains(@class,'interface-row')]"),
         INTERFACE_NAME_SPAN("//button[@class='interface-name']"),
-        FIELD_NAME_SPAN("//span[contains(@class,'field-name') and contains(text(), '%s')]"),
+        FIELD_NAME_SPAN("//span[contains(@class,'field-name') and contains(., '%s')]"),
         FIELD_DESCRIPTION_SPAN("//span[contains(@class,'field-description')]");
 
         @Getter

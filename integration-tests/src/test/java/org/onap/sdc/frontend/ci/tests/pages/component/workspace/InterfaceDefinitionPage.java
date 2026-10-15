@@ -65,7 +65,7 @@ public class InterfaceDefinitionPage extends ComponentPage {
     @AllArgsConstructor
     private enum XpathSelector {
         MAIN_DIV("w-sdc-main-right-container", "//div[@class='%s']"),
-        TITLE_DIV("tab-title", "//div[contains(@class,'%s') and contains(text(), 'Interfaces')]"),
+        TITLE_DIV("tab-title", "//h2[contains(@class,'%s') and contains(text(), 'Interfaces')]"),
         INTERFACE_NAME_SPAN("//span[@class='interface-name']"),
 
         INTERFACE_OPERATIONS("//div[@class='interface-operations']"),

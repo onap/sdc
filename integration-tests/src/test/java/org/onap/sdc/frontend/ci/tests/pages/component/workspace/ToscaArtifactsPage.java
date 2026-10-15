@@ -67,7 +67,7 @@ public class ToscaArtifactsPage extends ComponentPage {
     @AllArgsConstructor
     private enum XpathSelector {
         MAIN_DIV("w-sdc-main-right-container", "//div[@class='%s']"),
-        TITLE_DIV("tab-title", "//div[contains(@class,'%s') and contains(text(), 'TOSCA Artifacts')]"),
+        TITLE_DIV("tab-title", "//h2[contains(@class,'%s') and contains(text(), 'TOSCA Artifacts')]"),
         DATA_TABLE_BODY("//datatable-body"),
         DOWNLOAD_LINK("//button[contains(@data-tests-id,'download_%s')]");
 

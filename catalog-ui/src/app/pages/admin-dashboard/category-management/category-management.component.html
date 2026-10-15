@@ -23,7 +23,7 @@
     <div class="row">
 
         <div class="col-sm-6">
-            <h4>
+            <h2>
                 <button type="button" class="hand"
                       (click)="selectType(SERVICE)"
                       [ngClass]="{'selected': type === SERVICE}"
@@ -34,7 +34,7 @@
                       [ngClass]="{'selected': type === RESOURCE}"
                       [attr.aria-pressed]="type === RESOURCE"
                       data-tests-id="resourcecategoryheader">{{'RESOURCE_CATEGORY_HEADER' | translate}}</button>
-            </h4>
+            </h2>
             <button type="button" (click)="createCategoryModal(null)"
                   data-tests-id="newcategory">{{'ADD_CATEGORY' | translate}}</button>
 
@@ -53,9 +53,9 @@
         </div>
 
         <div class="col-sm-6">
-            <h4>
+            <h2>
                 <span data-tests-id="subcategoryheader">{{'SUBCATEGORY_HEADER' | translate}}</span>
-            </h4>
+            </h2>
             <button type="button" *ngIf="type === RESOURCE && selectedCategory"
                   (click)="createCategoryModal(selectedCategory)"
                   data-tests-id="newsubcategory">{{'ADD_SUBCATEGORY' | translate}}</button>

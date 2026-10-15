@@ -76,10 +76,10 @@ const VersionPageTitle = ({
 }) => {
     return (
         <div className="version-page-header">
-            <div className="versions-page-title">
+            <h1 className="versions-page-title">
                 {`${i18n('Available Versions')} - ${itemName}`}
                 {isArchived ? <ArchivedTitle /> : null}
-            </div>
+            </h1>
             {isCollaborator && (
                 <ArchiveRestoreButton
                     isArchived={isArchived}

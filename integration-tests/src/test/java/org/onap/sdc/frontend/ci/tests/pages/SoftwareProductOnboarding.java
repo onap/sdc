@@ -34,7 +34,7 @@ public class SoftwareProductOnboarding extends AbstractPageObject {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SoftwareProductOnboarding.class);
     private static final String DIV_CLASS_XPATH_FORMAT = "//div[@class='%s']";
-    private static final String DIV_DATA_TEST_ID_XPATH_FORMAT = "//div[@data-test-id='%s']";
+    private static final String H1_DATA_TEST_ID_XPATH_FORMAT = "//h1[@data-test-id='%s']";
     private final VspCommitModal vspCommitModal;
     private WebElement wrappingElement;
 
@@ -97,7 +97,7 @@ public class SoftwareProductOnboarding extends AbstractPageObject {
         FILE_INPUT("fileInput", "//input[@name='%s']"),
         NAV_BAR_GROUP_ITEM_ATTACHMENT("navbar-group-item-SOFTWARE_PRODUCT_ATTACHMENTS", "//button[@data-test-id='%s']"),
         BNT_SUBMIT("vc-submit-btn", "//button[@data-test-id='%s']"),
-        NAV_BAR_GROUP_NAME_XPATH("navbar-group-name", DIV_DATA_TEST_ID_XPATH_FORMAT),
+        NAV_BAR_GROUP_NAME_XPATH("navbar-group-name", H1_DATA_TEST_ID_XPATH_FORMAT),
         SELECTED_NAV_BAR_GROUP_ITEM("navigation-group-item-name selected", "//button[@class='%s']"),
         ONBOARDING_LOADER_DIV("onboarding-loader-backdrop", DIV_CLASS_XPATH_FORMAT),
         ATTACHMENT_VIEW("vsp-attachments-view", DIV_CLASS_XPATH_FORMAT);

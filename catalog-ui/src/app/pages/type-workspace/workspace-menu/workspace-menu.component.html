@@ -21,15 +21,17 @@
   -->
 
 <div class="w-sdc-left-sidebar">
-  <div class="menu-header" [title]="menuHeader">
+  <h1 class="menu-header" [title]="menuHeader">
     {{menuHeader}}
-  </div>
-  <div class="i-sdc-designer-sidebar-section-content-item"
-       [ngClass]="{'selected': isSelected(menuItem)}"
-       *ngFor="let menuItem of leftBarTabs.menuItems">
-    <div class="expand-collapse-menu-box-item-text" [ngClass]="{ 'disabled': menuItem.isDisabled }">
-      <button [attr.data-tests-id]="menuItem.text + 'LeftSideMenu'" type="button" class="i-sdc-designer-sidebar-section-content-item-service-cat"
-              (click)="menuItem.callback()" [disabled]="menuItem.disabledCategory">{{menuItem.text}}</button>
+  </h1>
+  <nav aria-label="Workspace">
+    <div class="i-sdc-designer-sidebar-section-content-item"
+         [ngClass]="{'selected': isSelected(menuItem)}"
+         *ngFor="let menuItem of leftBarTabs.menuItems">
+      <div class="expand-collapse-menu-box-item-text" [ngClass]="{ 'disabled': menuItem.isDisabled }">
+        <button [attr.data-tests-id]="menuItem.text + 'LeftSideMenu'" type="button" class="i-sdc-designer-sidebar-section-content-item-service-cat"
+                (click)="menuItem.callback()" [disabled]="menuItem.disabledCategory">{{menuItem.text}}</button>
+      </div>
     </div>
-  </div>
+  </nav>
 </div>

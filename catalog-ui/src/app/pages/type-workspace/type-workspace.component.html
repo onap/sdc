@@ -51,9 +51,9 @@
 
       <div class="w-sdc-main-container-body-content-wrapper">
         <div class="w-sdc-main-container-body-content-header">
-          <div class="workspace-tab-title">
+          <h2 class="workspace-tab-title">
             {{currentMenu.text}}
-          </div>
+          </h2>
         </div>
         <div class="w-sdc-main-container-body-content" *ngIf="dataType">
           <app-type-workspace-general *ngIf="currentMenu.state === 'general'" [dataType]="dataType" (onImportedType)="onImportedType($event)"></app-type-workspace-general>

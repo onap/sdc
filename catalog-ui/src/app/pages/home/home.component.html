@@ -1,5 +1,6 @@
 <div class="sdc-catalog-container">
     <main id="main-content" class="w-sdc-main-container" *ngIf="user">
+        <h1 class="sr-only">Dashboard</h1>
 
         <div id="dashboard-main-scroll" tabindex="0" role="region" aria-label="Dashboard items" infiniteScroll class="w-sdc-main-right-container" (infiniteScroll)="raiseNumberOfElementToDisplay()" [infiniteScrollDistance]="100">
 

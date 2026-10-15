@@ -5,6 +5,7 @@
     margin-left: 9px;
     margin-bottom: 29px;
     .vendor-name {
+        @include heading-reset($font: false);
         @extend .heading-1;
         color: $link-blue;
         margin-left: 20px;
