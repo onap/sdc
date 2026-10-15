@@ -340,7 +340,7 @@ public class ImportVfcUiTest extends SetupCDTest {
 
         assertThat("No artifact download was found", toscaArtifactsPage.getDownloadedArtifactList(), not(empty()));
         final String downloadedCsarName = toscaArtifactsPage.getDownloadedArtifactList().get(0);
-        final String downloadFolderPath = getConfig().getDownloadAutomationFolder();
+        final String downloadFolderPath = getWindowTest().getDownloadDirectory();
         final Map<String, byte[]> filesFromZip = FileHandling.getFilesFromZip(downloadFolderPath, downloadedCsarName);
         final Optional<String> resourceEntryOpt = filesFromZip.keySet().stream()
             .filter(s -> s.equals("Definitions/" + downloadedCsarName.replace("-csar.csar", "-template.yml")))
