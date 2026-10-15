@@ -863,6 +863,11 @@ BE-configuration.yaml
             firstRunDelay: 10
             pollIntervalInSec: 60
 
+    # Expiry of the in-memory category hierarchy cache (categories, sub-categories, groupings).
+    # Writes through this sdc-be invalidate it immediately; the expiry bounds how long a write handled
+    # by another sdc-be replica stays invisible here. 0 disables the cache. Defaults to 3600 when absent.
+    categoriesCacheTtlInSeconds: 3600
+
     # Deprecated. Will be removed in future releases
     applicationL2Cache:
         enabled: false

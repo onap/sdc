@@ -686,6 +686,9 @@ applicationL1Cache:
         firstRunDelay: 10
         pollIntervalInSec: 60
 
+# Category hierarchy cache expiry; bounds staleness after a category write on another sdc-be replica. 0 disables the cache.
+categoriesCacheTtlInSeconds: 3600
+
 applicationL2Cache:
     enabled: true
     catalogL1Cache:

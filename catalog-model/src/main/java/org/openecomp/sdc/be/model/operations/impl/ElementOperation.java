@@ -65,6 +65,7 @@ import org.openecomp.sdc.be.model.BaseType;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.PropertyScope;
 import org.openecomp.sdc.be.model.Tag;
+import org.openecomp.sdc.be.model.cache.CategoryHierarchyCache;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.GroupingDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
@@ -88,6 +89,9 @@ public class ElementOperation implements IElementOperation {
     private static final String PROBLEM_WHILE_CREATING_CATEGORY_REASON = "Problem while creating category, reason {}";
     private JanusGraphGenericDao janusGraphGenericDao;
     private HealingJanusGraphDao janusGraphDao;
+    // Writes invalidate after their own commit/rollback. With inTransaction=true the caller commits later, so a concurrent read in between
+    // can re-cache the old hierarchy until the TTL expires.
+    private final CategoryHierarchyCache categoryHierarchyCache = new CategoryHierarchyCache();
 
     public ElementOperation(@Qualifier("janusgraph-generic-dao") JanusGraphGenericDao janusGraphGenericDao,
                             @Qualifier("janusgraph-dao") HealingJanusGraphDao janusGraphDao) {
@@ -168,6 +172,7 @@ public class ElementOperation implements IElementOperation {
                     janusGraphGenericDao.rollback();
                 }
             }
+            categoryHierarchyCache.invalidate();
         }
     }
 
@@ -201,6 +206,7 @@ public class ElementOperation implements IElementOperation {
                     janusGraphGenericDao.rollback();
                 }
             }
+            categoryHierarchyCache.invalidate();
         }
     }
 
@@ -260,6 +266,7 @@ public class ElementOperation implements IElementOperation {
                     janusGraphGenericDao.rollback();
                 }
             }
+            categoryHierarchyCache.invalidate();
         }
     }
 
@@ -295,6 +302,7 @@ public class ElementOperation implements IElementOperation {
                     janusGraphGenericDao.rollback();
                 }
             }
+            categoryHierarchyCache.invalidate();
         }
     }
 
@@ -344,46 +352,52 @@ public class ElementOperation implements IElementOperation {
             } else {
                 janusGraphGenericDao.rollback();
             }
+            categoryHierarchyCache.invalidate();
         }
     }
 
     @Override
     public Either<List<CategoryDefinition>, ActionStatus> getAllCategories(NodeTypeEnum nodeType, boolean inTransaction) {
         try {
-            if (nodeType != NodeTypeEnum.ResourceNewCategory && nodeType != NodeTypeEnum.ServiceNewCategory
-                && nodeType != NodeTypeEnum.ProductCategory) {
-                log.debug(UNKNOWN_CATEGORY_TYPE, nodeType.name());
-                return Either.right(ActionStatus.GENERAL_ERROR);
-            }
-            Either<List<org.openecomp.sdc.be.resources.data.category.CategoryData>, JanusGraphOperationStatus> either = janusGraphGenericDao
-                .getAll(nodeType, org.openecomp.sdc.be.resources.data.category.CategoryData.class);
-            if (either.isRight() && (either.right().value() != JanusGraphOperationStatus.NOT_FOUND)) {
-                log.debug("Problem while get all categories. reason - {}", either.right().value());
-                return Either.right(ActionStatus.GENERAL_ERROR);
-            }
-            List<CategoryData> categoryDataList = either.isLeft() ? either.left().value() : null;
-            List<CategoryDefinition> categoryList = new ArrayList<>();
-            if (categoryDataList != null) {
-                for (CategoryData elem : categoryDataList) {
-                    CategoryDataDefinition categoryDataDefinition = elem.getCategoryDataDefinition();
-                    CategoryDefinition categoryDefinition = new CategoryDefinition(categoryDataDefinition);
-                    String categoryName = categoryDataDefinition.getName();
-                    log.trace("Found category {}, category type {}", categoryName, nodeType);
-                    JanusGraphOperationStatus setSubCategories = setSubCategories(nodeType, categoryDefinition);
-                    if (setSubCategories != JanusGraphOperationStatus.OK) {
-                        log.debug("Failed to set sub-categories for category {}, category type {}, error {}", categoryName, nodeType,
-                            setSubCategories);
-                        return Either.right(ActionStatus.GENERAL_ERROR);
-                    }
-                    categoryList.add(categoryDefinition);
-                }
-            }
-            return Either.left(categoryList);
+            // A load inside the caller's transaction can see that transaction's uncommitted writes, so it is served but never stored.
+            return categoryHierarchyCache.get(nodeType, !inTransaction, () -> loadAllCategories(nodeType));
         } finally {
             if (!inTransaction) {
                 janusGraphGenericDao.commit();
             }
         }
+    }
+
+    private Either<List<CategoryDefinition>, ActionStatus> loadAllCategories(NodeTypeEnum nodeType) {
+        if (nodeType != NodeTypeEnum.ResourceNewCategory && nodeType != NodeTypeEnum.ServiceNewCategory
+            && nodeType != NodeTypeEnum.ProductCategory) {
+            log.debug(UNKNOWN_CATEGORY_TYPE, nodeType.name());
+            return Either.right(ActionStatus.GENERAL_ERROR);
+        }
+        Either<List<org.openecomp.sdc.be.resources.data.category.CategoryData>, JanusGraphOperationStatus> either = janusGraphGenericDao
+            .getAll(nodeType, org.openecomp.sdc.be.resources.data.category.CategoryData.class);
+        if (either.isRight() && (either.right().value() != JanusGraphOperationStatus.NOT_FOUND)) {
+            log.debug("Problem while get all categories. reason - {}", either.right().value());
+            return Either.right(ActionStatus.GENERAL_ERROR);
+        }
+        List<CategoryData> categoryDataList = either.isLeft() ? either.left().value() : null;
+        List<CategoryDefinition> categoryList = new ArrayList<>();
+        if (categoryDataList != null) {
+            for (CategoryData elem : categoryDataList) {
+                CategoryDataDefinition categoryDataDefinition = elem.getCategoryDataDefinition();
+                CategoryDefinition categoryDefinition = new CategoryDefinition(categoryDataDefinition);
+                String categoryName = categoryDataDefinition.getName();
+                log.trace("Found category {}, category type {}", categoryName, nodeType);
+                JanusGraphOperationStatus setSubCategories = setSubCategories(nodeType, categoryDefinition);
+                if (setSubCategories != JanusGraphOperationStatus.OK) {
+                    log.debug("Failed to set sub-categories for category {}, category type {}, error {}", categoryName, nodeType,
+                        setSubCategories);
+                    return Either.right(ActionStatus.GENERAL_ERROR);
+                }
+                categoryList.add(categoryDefinition);
+            }
+        }
+        return Either.left(categoryList);
     }
 
     @Override
@@ -666,6 +680,7 @@ public class ElementOperation implements IElementOperation {
             } else {
                 janusGraphGenericDao.rollback();
             }
+            categoryHierarchyCache.invalidate();
         }
     }
 
@@ -711,6 +726,7 @@ public class ElementOperation implements IElementOperation {
             } else {
                 janusGraphGenericDao.rollback();
             }
+            categoryHierarchyCache.invalidate();
         }
     }
 
@@ -756,6 +772,7 @@ public class ElementOperation implements IElementOperation {
             } else {
                 janusGraphGenericDao.rollback();
             }
+            categoryHierarchyCache.invalidate();
         }
     }
 
