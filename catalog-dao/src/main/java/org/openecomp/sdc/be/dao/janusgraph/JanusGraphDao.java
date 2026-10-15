@@ -24,14 +24,18 @@ import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import fj.data.Either;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -48,6 +52,7 @@ import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.structure.util.ElementHelper;
 import org.janusgraph.core.JanusGraph;
 import org.janusgraph.core.JanusGraphEdge;
+import org.janusgraph.core.JanusGraphMultiVertexQuery;
 import org.janusgraph.core.JanusGraphQuery;
 import org.janusgraph.core.JanusGraphVertex;
 import org.janusgraph.core.JanusGraphVertexQuery;
@@ -774,6 +779,75 @@ public class JanusGraphDao {
         }
         adjacentVertices.left().value().stream().forEach(vertex -> list.add(createAndFill((JanusGraphVertex) vertex, parseFlag)));
         return Either.left(list);
+    }
+
+    /**
+     * Same as {@link #getChildrenVertices(GraphVertex, EdgeLabelEnum, JsonParseFlagEnum)}, but loads the properties of all children with
+     * {@link #prefetchProperties(Collection)} instead of one backend read per child.
+     */
+    public Either<List<GraphVertex>, JanusGraphOperationStatus> getChildrenVerticesWithPrefetchedProperties(GraphVertex parentVertex,
+                                                                                                          EdgeLabelEnum edgeLabel,
+                                                                                                          JsonParseFlagEnum parseFlag) {
+        Either<List<Vertex>, JanusGraphOperationStatus> children = getAdjacentVertices(parentVertex.getVertex(), edgeLabel, Direction.OUT);
+        if (children.isRight()) {
+            return Either.right(children.right().value());
+        }
+        prefetchProperties(children.left().value());
+        List<GraphVertex> list = new ArrayList<>();
+        children.left().value().forEach(vertex -> list.add(createAndFill((JanusGraphVertex) vertex, parseFlag)));
+        return Either.left(list);
+    }
+
+    /**
+     * Loads the properties of all given vertices into the cache of the current transaction with one multi-vertex query, so that
+     * reading them afterwards does not go to the backend vertex by vertex. Without a backend multi-key read (CQL has none), JanusGraph
+     * runs the per-vertex reads of a multi-vertex query in parallel on its backend thread pool.
+     * <p>
+     * A failure is only logged: the regular reads that follow fetch whatever is missing and report errors as before.
+     */
+    public void prefetchProperties(Collection<? extends Vertex> vertices) {
+        multiQuery(vertices).ifPresent(query -> {
+            try {
+                query.properties();
+            } catch (Exception e) {
+                logger.debug("Failed to prefetch properties of {} vertices", vertices.size(), e);
+            }
+        });
+    }
+
+    /**
+     * Loads the edges with the given labels and direction of all given vertices, and the properties of the vertices at their other end,
+     * into the cache of the current transaction (see {@link #prefetchProperties(Collection)}).
+     *
+     * @return the distinct vertices at the other end of the loaded edges
+     */
+    @SuppressWarnings("unchecked")
+    public List<Vertex> prefetchAdjacentVertices(Collection<? extends Vertex> vertices, Direction direction, EdgeLabelEnum... edgeLabels) {
+        String[] labels = Arrays.stream(edgeLabels).map(EdgeLabelEnum::name).toArray(String[]::new);
+        Set<Vertex> adjacentVertices = new LinkedHashSet<>();
+        multiQuery(vertices).ifPresent(query -> {
+            try {
+                Map<JanusGraphVertex, Iterable<JanusGraphEdge>> edges = query.direction(direction).labels(labels).edges();
+                edges.values().forEach(vertexEdges -> vertexEdges.forEach(
+                    edge -> adjacentVertices.add(direction == Direction.IN ? edge.outVertex() : edge.inVertex())));
+            } catch (Exception e) {
+                logger.debug("Failed to prefetch {} {} edges of {} vertices", direction, labels, vertices.size(), e);
+            }
+        });
+        prefetchProperties(adjacentVertices);
+        return new ArrayList<>(adjacentVertices);
+    }
+
+    private Optional<JanusGraphMultiVertexQuery<?>> multiQuery(Collection<? extends Vertex> vertices) {
+        if (CollectionUtils.isEmpty(vertices)) {
+            return Optional.empty();
+        }
+        Either<JanusGraph, JanusGraphOperationStatus> graph = janusGraphClient.getGraph();
+        if (graph.isRight()) {
+            return Optional.empty();
+        }
+        List<JanusGraphVertex> janusGraphVertices = vertices.stream().map(JanusGraphVertex.class::cast).collect(Collectors.toList());
+        return Optional.of(graph.left().value().multiQuery(janusGraphVertices));
     }
 
     /**

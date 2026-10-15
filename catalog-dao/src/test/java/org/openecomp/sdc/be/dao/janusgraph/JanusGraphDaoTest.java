@@ -20,10 +20,18 @@
 
 package org.openecomp.sdc.be.dao.janusgraph;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import fj.data.Either;
+import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Element;
 import org.apache.tinkerpop.gremlin.structure.Property;
@@ -322,5 +330,70 @@ class JanusGraphDaoTest extends DAOConfDependentTest {
         // default test
 
         result = dao.getBelongingEdgeByCriteria(parentId, label, properties);
+    }
+
+    @Test
+    void getChildrenVerticesWithPrefetchedPropertiesMatchesGetChildrenVertices() {
+        GraphVertex parent = createVertex(VertexTypeEnum.USER, "parent");
+        GraphVertex first = createVertex(VertexTypeEnum.NODE_TYPE, "first");
+        GraphVertex second = createVertex(VertexTypeEnum.TOPOLOGY_TEMPLATE, "second");
+        dao.createEdge(parent, first, EdgeLabelEnum.STATE, new HashMap<>());
+        dao.createEdge(parent, second, EdgeLabelEnum.STATE, new HashMap<>());
+        dao.commit();
+
+        List<GraphVertex> expected = dao.getChildrenVertices(parent, EdgeLabelEnum.STATE, JsonParseFlagEnum.ParseMetadata).left().value();
+        dao.rollback();
+        List<GraphVertex> actual = dao.getChildrenVerticesWithPrefetchedProperties(parent, EdgeLabelEnum.STATE, JsonParseFlagEnum.ParseMetadata)
+            .left().value();
+
+        assertEquals(expected.stream().map(GraphVertex::getUniqueId).collect(Collectors.toList()),
+            actual.stream().map(GraphVertex::getUniqueId).collect(Collectors.toList()));
+        for (int i = 0; i < expected.size(); i++) {
+            assertEquals(expected.get(i).getLabel(), actual.get(i).getLabel());
+            assertEquals(expected.get(i).getMetadataProperties(), actual.get(i).getMetadataProperties());
+            assertEquals(expected.get(i).getMetadataJson(), actual.get(i).getMetadataJson());
+        }
+        assertEquals(JanusGraphOperationStatus.NOT_FOUND,
+            dao.getChildrenVerticesWithPrefetchedProperties(parent, EdgeLabelEnum.LAST_STATE, JsonParseFlagEnum.NoParse).right().value());
+    }
+
+    @Test
+    void prefetchAdjacentVerticesReturnsDistinctVerticesAtTheOtherEnd() {
+        GraphVertex creator = createVertex(VertexTypeEnum.USER, "creator");
+        GraphVertex modifier = createVertex(VertexTypeEnum.USER, "modifier");
+        GraphVertex category = createVertex(VertexTypeEnum.RESOURCE_SUBCATEGORY, "category");
+        GraphVertex first = createVertex(VertexTypeEnum.NODE_TYPE, "first");
+        GraphVertex second = createVertex(VertexTypeEnum.NODE_TYPE, "second");
+        for (GraphVertex component : List.of(first, second)) {
+            dao.createEdge(creator, component, EdgeLabelEnum.CREATOR, new HashMap<>());
+            dao.createEdge(modifier, component, EdgeLabelEnum.LAST_MODIFIER, new HashMap<>());
+            dao.createEdge(component, category, EdgeLabelEnum.CATEGORY, new HashMap<>());
+        }
+        dao.commit();
+        List<Vertex> components = List.of(first.getVertex(), second.getVertex());
+
+        assertEquals(Set.of("creator", "modifier"), uniqueIds(
+            dao.prefetchAdjacentVertices(components, Direction.IN, EdgeLabelEnum.CREATOR, EdgeLabelEnum.LAST_MODIFIER)));
+        assertEquals(List.of("category"), dao.prefetchAdjacentVertices(components, Direction.OUT, EdgeLabelEnum.CATEGORY).stream()
+            .map(vertex -> vertex.value(GraphPropertyEnum.UNIQUE_ID.getProperty())).collect(Collectors.toList()));
+        assertTrue(dao.prefetchAdjacentVertices(components, Direction.IN, EdgeLabelEnum.SUB_CATEGORY).isEmpty());
+        assertTrue(dao.prefetchAdjacentVertices(List.of(), Direction.IN, EdgeLabelEnum.CREATOR).isEmpty());
+        dao.rollback();
+    }
+
+    private Set<Object> uniqueIds(List<Vertex> vertices) {
+        return vertices.stream().map(vertex -> vertex.value(GraphPropertyEnum.UNIQUE_ID.getProperty())).collect(Collectors.toSet());
+    }
+
+    private GraphVertex createVertex(VertexTypeEnum label, String uniqueId) {
+        GraphVertex vertex = new GraphVertex(label);
+        vertex.setUniqueId(uniqueId);
+        Map<GraphPropertyEnum, Object> metadata = new EnumMap<>(GraphPropertyEnum.class);
+        metadata.put(GraphPropertyEnum.UNIQUE_ID, uniqueId);
+        metadata.put(GraphPropertyEnum.LABEL, label.getName());
+        metadata.put(GraphPropertyEnum.NAME, uniqueId + "-name");
+        vertex.setMetadataProperties(metadata);
+        vertex.updateMetadataJsonWithCurrentMetadataProperties();
+        return dao.createVertex(vertex).left().value();
     }
 }

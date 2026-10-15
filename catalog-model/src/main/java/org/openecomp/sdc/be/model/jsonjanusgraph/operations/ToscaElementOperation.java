@@ -44,7 +44,6 @@ import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.structure.VertexProperty;
 import org.apache.tinkerpop.gremlin.structure.util.empty.EmptyVertexProperty;
-import org.janusgraph.core.JanusGraphVertex;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
@@ -819,7 +818,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
         List<T> componentsPerUser;
         final Set<String> ids = new HashSet<>();
         Either<List<GraphVertex>, JanusGraphOperationStatus> childrenVertecies = janusGraphDao
-            .getChildrenVertices(userV, EdgeLabelEnum.STATE, JsonParseFlagEnum.NoParse);
+            .getChildrenVerticesWithPrefetchedProperties(userV, EdgeLabelEnum.STATE, JsonParseFlagEnum.NoParse);
         if (childrenVertecies.isRight() && childrenVertecies.right().value() != JanusGraphOperationStatus.NOT_FOUND) {
             log.debug("Failed to fetch children vertices for user {} by edge {} error {}", userV.getMetadataProperty(GraphPropertyEnum.USERID),
                 EdgeLabelEnum.STATE, childrenVertecies.right().value());
@@ -827,7 +826,8 @@ public abstract class ToscaElementOperation extends BaseOperation {
         }
         // get all resource with current state
         if (childrenVertecies.isLeft()) {
-            componentsPerUser = fetchComponents(userId, lifecycleStates, childrenVertecies.left().value(), neededType, EdgeLabelEnum.STATE);
+            componentsPerUser = fetchComponents(userV, userId, lifecycleStates, childrenVertecies.left().value(), neededType,
+                EdgeLabelEnum.STATE);
             if (componentsPerUser != null) {
                 for (T comp : componentsPerUser) {
                     ids.add(comp.getUniqueId());
@@ -836,7 +836,8 @@ public abstract class ToscaElementOperation extends BaseOperation {
             }
             if (lastStateStates != null && !lastStateStates.isEmpty()) {
                 // get all resource with last state
-                childrenVertecies = janusGraphDao.getChildrenVertices(userV, EdgeLabelEnum.LAST_STATE, JsonParseFlagEnum.NoParse);
+                childrenVertecies = janusGraphDao
+                    .getChildrenVerticesWithPrefetchedProperties(userV, EdgeLabelEnum.LAST_STATE, JsonParseFlagEnum.NoParse);
                 if (childrenVertecies.isRight() && childrenVertecies.right().value() != JanusGraphOperationStatus.NOT_FOUND) {
                     log.debug("Failed to fetch children vertices for user {} by edge {} error {}",
                         userV.getMetadataProperty(GraphPropertyEnum.USERID), EdgeLabelEnum.LAST_STATE, childrenVertecies.right().value());
@@ -844,7 +845,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
                 }
                 if (childrenVertecies.isLeft()) {
                     boolean isFirst;
-                    componentsPerUser = fetchComponents(userId, lastStateStates, childrenVertecies.left().value(), neededType,
+                    componentsPerUser = fetchComponents(userV, userId, lastStateStates, childrenVertecies.left().value(), neededType,
                         EdgeLabelEnum.LAST_STATE);
                     if (componentsPerUser != null) {
                         for (T comp : componentsPerUser) {
@@ -863,23 +864,25 @@ public abstract class ToscaElementOperation extends BaseOperation {
         return Either.left(components);
     }
 
-    private <T extends ToscaElement> List<T> fetchComponents(String userId, Set<LifecycleStateEnum> lifecycleStates, List<GraphVertex> vertices,
-                                                             ComponentTypeEnum neededType, EdgeLabelEnum edgelabel) {
-        List<T> components = new ArrayList<>();
+    private <T extends ToscaElement> List<T> fetchComponents(GraphVertex userV, String userId, Set<LifecycleStateEnum> lifecycleStates,
+                                                             List<GraphVertex> vertices, ComponentTypeEnum neededType,
+                                                             EdgeLabelEnum edgelabel) {
+        // USERID is unique, so of a component's incoming edges only those from userV can pass the userId check below. Reading userV's
+        // own (already loaded) edges instead of each component's incoming edges saves one backend read per component.
+        Map<Object, List<Edge>> userEdgesByComponent = new HashMap<>();
+        userV.getVertex().edges(Direction.OUT, edgelabel.name())
+            .forEachRemaining(edge -> userEdgesByComponent.computeIfAbsent(edge.inVertex().id(), id -> new ArrayList<>()).add(edge));
+        String userIdOfUserV = (String) janusGraphDao.getProperty(userV.getVertex(), GraphPropertyEnum.USERID.getProperty());
+        List<GraphVertex> nodesToHandle = new ArrayList<>();
         for (GraphVertex node : vertices) {
-            Iterator<Edge> edges = node.getVertex().edges(Direction.IN, edgelabel.name());
-            while (edges.hasNext()) {
-                Edge edge = edges.next();
+            for (Edge edge : userEdgesByComponent.getOrDefault(node.getVertex().id(), Collections.emptyList())) {
                 String stateStr = (String) janusGraphDao.getProperty(edge, EdgePropertyEnum.STATE);
                 LifecycleStateEnum nodeState = LifecycleStateEnum.findState(stateStr);
                 if (nodeState == null) {
                     log.debug("no supported STATE {} for element  {}", stateStr, node.getUniqueId());
                     continue;
                 }
-                //get user from edge and compare to user from followed request
-                JanusGraphVertex userVertex = (JanusGraphVertex) edge.outVertex();
-                String userIdFromEdge = (String) janusGraphDao.getProperty(userVertex, GraphPropertyEnum.USERID.getProperty());
-                if (lifecycleStates != null && lifecycleStates.contains(nodeState) && (userIdFromEdge.equals(userId))) {
+                if (lifecycleStates != null && lifecycleStates.contains(nodeState) && (userIdOfUserV.equals(userId))) {
                     Boolean isDeleted = (Boolean) node.getMetadataProperty(GraphPropertyEnum.IS_DELETED);
                     Boolean isArchived = (Boolean) node.getMetadataProperty(GraphPropertyEnum.IS_ARCHIVED);
                     if (isDeleted != null && isDeleted || isArchived != null && isArchived) {
@@ -898,12 +901,12 @@ public abstract class ToscaElementOperation extends BaseOperation {
                             switch (componentType) {
                                 case SERVICE:
                                 case PRODUCT:
-                                    handleNode(components, node, componentType);
+                                    nodesToHandle.add(node);
                                     break;
                                 case RESOURCE:
                                     Boolean isAbtract = (Boolean) node.getMetadataProperty(GraphPropertyEnum.IS_ABSTRACT);
                                     if (isAbtract == null || !isAbtract) {
-                                        handleNode(components, node, componentType);
+                                        nodesToHandle.add(node);
                                     } // if not abstract
                                     break;
                                 default:
@@ -918,7 +921,21 @@ public abstract class ToscaElementOperation extends BaseOperation {
             } // while edges
 
         } // while resources
+        prefetchLightComponents(nodesToHandle);
+        List<T> components = new ArrayList<>();
+        nodesToHandle.forEach(node -> handleNode(components, node, neededType));
         return components;
+    }
+
+    /**
+     * Batches the reads {@link #getLightComponent(GraphVertex, ComponentTypeEnum, ComponentParametersView)} makes for the creator, the
+     * last modifier and the (sub)category, which it then serves from the transaction cache.
+     */
+    private void prefetchLightComponents(List<GraphVertex> components) {
+        List<Vertex> vertices = components.stream().map(GraphVertex::getVertex).distinct().collect(Collectors.toList());
+        janusGraphDao.prefetchAdjacentVertices(vertices, Direction.IN, EdgeLabelEnum.CREATOR, EdgeLabelEnum.LAST_MODIFIER);
+        List<Vertex> categories = janusGraphDao.prefetchAdjacentVertices(vertices, Direction.OUT, EdgeLabelEnum.CATEGORY);
+        janusGraphDao.prefetchAdjacentVertices(categories, Direction.IN, EdgeLabelEnum.SUB_CATEGORY);
     }
 
     protected <T extends ToscaElement> void handleNode(List<T> components, GraphVertex vertexComponent, ComponentTypeEnum nodeType) {
