@@ -18,10 +18,14 @@
      [class.hiding]="hidden"
      (mouseenter)="setMode(MODE.HOVER)" (mouseleave)="setMode(MODE.NONE)" (click)="setMode(MODE.SELECTED, $event)">
     <div class="zone-instance__body" sdc-tooltip tooltip-text="{{zoneInstance.instanceData.name}}" [attr.data-tests-id]="zoneInstance.instanceData.name">
-        <div *ngIf="zoneInstance.handle" class="target-handle {{zoneInstance.handle}}"
-             (click)="tagHandleClicked($event)"></div>
-        <div *ngIf="!isViewOnly" class="zone-instance__handle" (click)="setMode(MODE.TAG, $event)">+</div>
+        <button type="button" *ngIf="zoneInstance.handle" class="target-handle {{zoneInstance.handle}}"
+                [attr.aria-label]="'Tag ' + zoneInstance.instanceData.name"
+                [attr.aria-pressed]="zoneInstance.handle === 'tagged-policy'"
+                (click)="tagHandleClicked($event)"></button>
+        <button type="button" *ngIf="!isViewOnly" class="zone-instance__handle"
+                [attr.aria-label]="'Assign members to ' + zoneInstance.instanceData.name"
+                (click)="setMode(MODE.TAG, $event)">+</button>
         <div class="zone-instance__body-content">{{zoneInstance.assignments.length || defaultIconText}}</div>
     </div>
-    <div class="zone-instance__name">{{zoneInstance.instanceData.name}}</div>
+    <button type="button" class="zone-instance__name" (click)="setMode(MODE.SELECTED, $event)">{{zoneInstance.instanceData.name}}</button>
 </div>

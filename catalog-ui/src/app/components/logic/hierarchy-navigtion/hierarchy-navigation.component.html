@@ -16,14 +16,14 @@
  
 <div class="navigation-wrapper">
     <div class="node-item" *ngFor="let item of displayData" (click)="onClick($event, item)">
-        <div class="node-data-wrapper" [ngClass]="{'selected': selectedItem && selectedItem === item[displayOptions.idProperty]}">
+        <button type="button" class="node-data-wrapper" [ngClass]="{'selected': selectedItem && selectedItem === item[displayOptions.idProperty]}" (click)="onClick($event, item)">
             <span class="node-data" [ngClass]="{'mark':item[displayOptions.valueProperty] === displayOptions.searchText}" [attr.data-tests-id]="item[displayOptions.valueProperty]">
 
                 <span *ngIf="displayOptions.iconProperty" [ngClass]="['node-data-icon', item[displayOptions.iconProperty], 'small']"></span>
                 {{item[displayOptions.valueProperty]}}
                 <span class="sprite-new archive-label" *ngIf="item.originArchived"></span>
             </span>
-        </div>
+        </button>
         <div class="children-node" *ngIf="item[displayOptions.childrenProperty]">
             <hierarchy-navigation class="children-hierarchy" [displayData]="item[displayOptions.childrenProperty]"
                                   [selectedItem]="selectedItem"

@@ -30,9 +30,9 @@
         <div>{{ 'INTERFACE_DATA_EMPTY' | translate }}</div>
       </div>
     </div>
-    <div class="top-add-btn add-btn" [ngClass]="{'disabled': readonly}" *ngIf="!component.isService()" data-tests-id="add-operation" (click)="onSelectInterfaceOperation(undefined, undefined)">
+    <button type="button" class="top-add-btn add-btn" [ngClass]="{'disabled': readonly}" [disabled]="readonly" *ngIf="!component.isService()" data-tests-id="add-operation" (click)="onSelectInterfaceOperation(undefined, undefined)">
     {{ 'INTERFACE_ADD_OPERATION' | translate }}
-    </div>
+    </button>
     <!-- Was `!this.selectedInstanceData.name === 'SELF'`, which parses as
          `(!name) === 'SELF'` and is therefore always false, so this third condition never
          contributed. Restoring the intent means the list now also appears for a selected
@@ -41,18 +41,22 @@
     <div class="operation-list" *ngIf="!this.component.isService() || this.enableFlag || this.selectedInstanceData && this.selectedInstanceData.name !== 'SELF'">
       <div *ngIf="!isInterfaceListEmpty()">
         <div class="expand-collapse" *ngIf="isOperationListEmpty()">
-          <a class="link"
+          <button type="button" class="link"
             [ngClass]="{'disabled': isAllExpanded()}"
+            [disabled]="isAllExpanded()"
             (click)="collapseAll(false)">{{ 'INTERFACE_EXPAND_ALL' | translate }}
-          </a> |
-          <a class="link"
+          </button> |
+          <button type="button" class="link"
             [ngClass]="{'disabled': isAllCollapsed()}"
+            [disabled]="isAllCollapsed()"
             (click)="collapseAll()">
             {{ 'INTERFACE_COLLAPSE_ALL' | translate }}
-          </a>
+          </button>
         </div>
 
         <div class="interface-row" *ngFor="let interface1 of interfaces">
+          <!-- Selenium matches @class='interface-accordion' exactly, so the row stays a div that toggles
+               for the mouse; the button around the name is the keyboard and AT control. -->
           <div class="interface-accordion" (click)="interface1.toggleCollapse()">
             <span
                 class="chevron-container"
@@ -64,7 +68,8 @@
                     size="small">
                 </svg-icon>
             </span>
-            <span class="interface-name">{{interface1.type}}</span>
+            <button type="button" [attr.aria-expanded]="!interface1.isCollapsed"
+                    (click)="$event.stopPropagation(); interface1.toggleCollapse()"><span class="interface-name">{{interface1.type}}</span></button>
           </div>
 
           <div class="generic-table" *ngIf="!interface1.isCollapsed && isOperationListEmpty()">
@@ -79,13 +84,15 @@
               <span class="cell field-delete" *ngIf="!readonly"><span class="delete-col-header"></span></span>
             </div>
             <div class="data-row" *ngFor="let operation of interface1.operations">
-              <span class="cell field-name"
-                    (click)="onSelectInterfaceOperation(interface1, operation)">{{operation.name}}</span>
+              <span class="cell field-name"><button type="button" class="field-name-button"
+                    (click)="onSelectInterfaceOperation(interface1, operation)">{{operation.name}}</button></span>
+              <!-- Opens the operation for the mouse, like the name button in the same row. -->
               <span class="cell field-description" (click)="onSelectInterfaceOperation(interface1, operation)"
                     [ngClass]="{'collapsed': operation.isCollapsed}">{{operation.getDescriptionEllipsis()}}
-                <span class="more-or-less link" (click)="operation.toggleCollapsed($event)">
-                    {{!operation.isEllipsis ? '' : operation.isCollapsed ? 'More' : 'Less'}}
-                </span>
+                <button type="button" class="more-or-less link" *ngIf="operation.isEllipsis"
+                        [attr.aria-expanded]="!operation.isCollapsed" (click)="operation.toggleCollapsed($event)">
+                    {{operation.isCollapsed ? 'More' : 'Less'}}
+                </button>
               </span>
               <span class="cell field-delete" *ngIf="!readonly">
                 <button class="table-delete-btn" (click)="onRemoveOperation(operation)"></button>
@@ -97,9 +104,9 @@
     </div>
   </div>
   <div class="right-column" *ngIf="component.isService()">
-    <div class="add-btn" [ngClass]="{'disabled': !enableFlag}" data-tests-id="add-operation" (click)="onSelectInterfaceOperation(undefined, undefined)">
+    <button type="button" class="add-btn" [ngClass]="{'disabled': !enableFlag}" [disabled]="!enableFlag" data-tests-id="add-operation" (click)="onSelectInterfaceOperation(undefined, undefined)">
       {{ 'INTERFACE_ADD_OPERATION' | translate }}
-    </div>
+    </button>
     <tabs #hierarchyNavTabs tabStyle="simple-tabs" class="gray-border">
         <tab tabTitle="Composition">
             <div class="hierarchy-nav-container">

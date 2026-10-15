@@ -24,12 +24,12 @@
      (click)="onClickPropertyRow(attribute, $event)">
     <!-- LEFT CELL -->
     <ng-container *ngIf="!isAttributeFEModel">
-        <div class="table-cell" *ngIf="canBeDeclared" [ngClass]="{'filtered':attribute.name === attributeNameSearchText}" [class.round-checkbox]="attribute.isDeclared"> <!-- simple children of complex type [@checkEffect]="property.isDeclared"-->
+        <div class="table-cell property-name-cell" *ngIf="canBeDeclared" [ngClass]="{'filtered':attribute.name === attributeNameSearchText}" [class.round-checkbox]="attribute.isDeclared"> <!-- simple children of complex type [@checkEffect]="property.isDeclared"-->
             <checkbox *ngIf="hasDeclareOption" [(checked)]="attribute.isSelected" [disabled]="attribute.isDisabled ||attribute.isDeclared || readonly" (checkedChange)="checkAttribute.emit(attribute.propertiesName)" ></checkbox>
-            <div class="inner-cell-div" tooltip="{{attribute.name}}"><span>{{attribute.name}}</span></div>
+            <button type="button" class="inner-cell-div" tooltip="{{attribute.name}}" (click)="onClickPropertyRow(attribute, $event)"><span>{{attribute.name}}</span></button>
         </div>
-        <div class="table-cell" *ngIf="!canBeDeclared && !attribute.isChildOfListOrMap">
-            <div class="inner-cell-div" tooltip="{{attribute.name}}"><span>{{attribute.name}}</span></div>
+        <div class="table-cell property-name-cell" *ngIf="!canBeDeclared && !attribute.isChildOfListOrMap">
+            <button type="button" class="inner-cell-div" tooltip="{{attribute.name}}" (click)="onClickPropertyRow(attribute, $event)"><span>{{attribute.name}}</span></button>
         </div> <!-- simple children of complex type within map or list -->
         <div class="table-cell map-entry" *ngIf="attribute.isChildOfListOrMap && attribType == derivedAttributeType.MAP"><!-- map left cell -->
             <dynamic-element #mapKeyInput
@@ -70,9 +70,9 @@
     </ng-container>
     <!-- ICONS: add, delete, and expand -->
     <ng-container *ngIf="!attribute.isDeclared">
-            <a *ngIf="(attribType == derivedAttributeType.LIST || attribType == derivedAttributeType.MAP) && !attribute.isChildOfListOrMap" class="property-icon add-item" (click)="createNewChildProperty();" [ngClass]="{'disabled':readonly || preventInsertItem(attribute)}" [attr.data-tests-id]="'add-to-list-' + attributeTestsId">Add value to list</a>
-            <span *ngIf="attribute.isChildOfListOrMap" (click)="deleteItem.emit(attribute);" class="property-icon sprite-new delete-item-icon" [ngClass]="{'disabled':readonly}" [attr.data-tests-id]="'delete-from-list-' + attributeTestsId"></span>
-            <span *ngIf="!isAttributeFEModel && (attribType == derivedAttributeType.COMPLEX || ((attribType == derivedAttributeType.LIST || attribType == derivedAttributeType.MAP) && hasChildren))" (click)="expandChildById(attribPath)" class="property-icon sprite-new round-expand-icon" [class.open]="expandedChildId.indexOf(attribPath) == 0" [attr.data-tests-id]="'expand-' + attributeTestsId" ></span>
+            <button type="button" *ngIf="(attribType == derivedAttributeType.LIST || attribType == derivedAttributeType.MAP) && !attribute.isChildOfListOrMap" class="property-icon add-item" (click)="createNewChildProperty();" [ngClass]="{'disabled':readonly || preventInsertItem(attribute)}" [disabled]="readonly || preventInsertItem(attribute)" [attr.data-tests-id]="'add-to-list-' + attributeTestsId">Add value to list</button>
+            <button type="button" *ngIf="attribute.isChildOfListOrMap" (click)="deleteItem.emit(attribute);" class="property-icon sprite-new delete-item-icon" [ngClass]="{'disabled':readonly}" [disabled]="readonly" [attr.data-tests-id]="'delete-from-list-' + attributeTestsId" aria-label="Delete value"></button>
+            <button type="button" *ngIf="!isAttributeFEModel && (attribType == derivedAttributeType.COMPLEX || ((attribType == derivedAttributeType.LIST || attribType == derivedAttributeType.MAP) && hasChildren))" (click)="expandChildById(attribPath)" class="property-icon sprite-new round-expand-icon" [class.open]="expandedChildId.indexOf(attribPath) == 0" [attr.data-tests-id]="'expand-' + attributeTestsId" [attr.aria-label]="'Expand ' + attribute.name" [attr.aria-expanded]="expandedChildId.indexOf(attribPath) == 0"></button>
     </ng-container>
 
 </div>

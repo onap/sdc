@@ -1,4 +1,5 @@
 @import '../../../../../assets/styles/variables.less';
+@import '../../../../../assets/styles/button-reset';
 .flat-children-container {
     .dynamic-property-row {
         /*create nested left border classes for up to 10 levels of nesting*/
@@ -53,12 +54,29 @@
         &.empty {
             height:40px;
         }
+        // The name button is atomic, so the cell's own ellipsis would hide all of it once the
+        // checkbox pushes it past the edge; as a shrinking flex item it ellipsizes itself.
+        &.property-name-cell {
+            display: flex;
+            align-items: baseline;
+            justify-content: flex-start;
+
+            .inner-cell-div {
+                min-width: 0;
+            }
+        }
     }
     .property-icon {
+        .sdc-sprite-button-reset();
         flex: 0 0 auto;
         margin-right:10px;
         align-self:center;
         cursor:pointer;
+
+        &.add-item {
+            .sdc-link-button();
+            margin-right: 10px;
+        }
     }
 }
 
@@ -68,10 +86,12 @@
     }
 }
 .inner-cell-div{
+    .sdc-button-reset();
     max-width: 100%;
     text-overflow: ellipsis;
     overflow: hidden;
-    display: inline;
+    display: inline-block;
+    vertical-align: top;
     padding-left: 8px;
 }
 .error {

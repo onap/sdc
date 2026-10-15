@@ -1,4 +1,5 @@
 @import '../../../../assets/styles/mixins.less';
+@import '../../../../assets/styles/button-reset';
 
 .navigation-wrapper {
     text-align: left;
@@ -16,6 +17,9 @@
 }
 
 .node-data-wrapper {
+    .sdc-button-reset();
+    display: block;
+    width: ~"calc(100% - 0.7em)";
     cursor: default;
     height: 39px;
     line-height: 39px;

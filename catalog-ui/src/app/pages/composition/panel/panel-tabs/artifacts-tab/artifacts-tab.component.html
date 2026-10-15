@@ -79,11 +79,17 @@
                                             attr.data-tests-id="add_Artifact"></button>
                                 </div>
                                 <div>
+                                <button *ngIf="artifact.allowDeleteAndUpdate; else readOnlyArtifactName" type="button"
+                                        class="i-sdc-designer-sidebar-section-content-item-artifact-details-name"
+                                        attr.data-tests-id="artifact_Display_Name-{{artifact.artifactDisplayName}}"
+                                        [ngClass]="{'hand enabled': artifact.allowDeleteAndUpdate}"
+                                        (click)="addOrUpdate(artifact)"
+                                        sdc-tooltip tooltip-text="{{artifact.artifactDisplayName}}">{{artifact.artifactDisplayName}}</button>
+                                <ng-template #readOnlyArtifactName>
                                 <span class="i-sdc-designer-sidebar-section-content-item-artifact-details-name"
                                       attr.data-tests-id="artifact_Display_Name-{{artifact.artifactDisplayName}}"
-                                      [ngClass]="{'hand enabled': artifact.allowDeleteAndUpdate}"
-                                      (click)="artifact.allowDeleteAndUpdate && addOrUpdate(artifact)"
                                       sdc-tooltip tooltip-text="{{artifact.artifactDisplayName}}">{{artifact.artifactDisplayName}}</span>
+                                </ng-template>
                                     <div class="i-sdc-designer-sidebar-section-content-item-artifact-heat-env"
                                          *ngIf="artifact.heatParameters?.length">
                                         <span attr.data-tests-id="heat_env_{{artifact.artifactDisplayName}}">{{artifact.artifactDisplayName}} (ENV)</span>

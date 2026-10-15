@@ -99,6 +99,8 @@
                 margin-left: 20px;
             }
             .tree-header-title-text {
+                @include button-reset($font: false);
+                @include focus-ring;
                 @extend .heading-4-semibold;
                 padding-left: 32px;
                 cursor: pointer;
@@ -207,14 +209,26 @@
                         }
                     }
                     .tree-node-name {
+                        @include button-reset;
+                        @include focus-ring;
+                        min-width: 0;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
                         cursor: pointer;
                     }
                     .name-section {
                         z-index: 1;
                         flex: 1;
                         @include ellipsis(auto);
+                        // A button is an atomic inline box, which the ellipsis would hide
+                        // whole; as flex items the name button ellipsises itself instead.
+                        display: flex;
+                        align-items: baseline;
                     }
                     .tree-node-expander {
+                        @include button-reset;
+                        @include focus-ring;
                         position: relative;
                         display: inline-block;
                         cursor: pointer;

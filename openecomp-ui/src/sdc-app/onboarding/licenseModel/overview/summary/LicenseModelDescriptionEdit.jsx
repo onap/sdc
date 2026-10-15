@@ -1,5 +1,6 @@
 /*!
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +20,6 @@ import Input from 'nfvo-components/input/validation/Input.jsx';
 
 class LicenseModelDescriptionEdit extends React.Component {
     render() {
-        //TODO check if buttons
         let { onDataChanged, description, genericFieldInfo } = this.props;
         let { isValid, errorText } = genericFieldInfo.description;
         let saveButtonClassName = isValid
@@ -37,18 +37,21 @@ class LicenseModelDescriptionEdit extends React.Component {
                 />
                 <div className="buttons-row">
                     <div className="buttons-wrapper">
-                        <div
+                        <button
+                            type="button"
                             onClick={() => this.submit()}
                             className={saveButtonClassName}
+                            disabled={!isValid}
                             data-test-id="vlm-summary-vendor-desc-save-btn">
                             {i18n('Save')}
-                        </div>
-                        <div
+                        </button>
+                        <button
+                            type="button"
                             onClick={() => this.onClose()}
                             className="description-button"
                             data-test-id="vlm-summary-vendor-desc-cancel-btn">
                             {i18n('Cancel')}
-                        </div>
+                        </button>
                     </div>
                 </div>
             </div>

@@ -38,9 +38,23 @@ export const TooltipWrapper = ({
         placement={placement}
         overlay={tooltip(children, tooltipClassName)}
         delayShow={delayShow}>
-        <div className={className} data-test-id={dataTestId} onClick={onClick}>
-            {children}
-        </div>
+        {onClick ? (
+            // A mouse-only twin of the tile's header button, which already
+            // carries this action for keyboard and screen reader users.
+            <button
+                type="button"
+                className={className}
+                data-test-id={dataTestId}
+                tabIndex={-1}
+                aria-hidden="true"
+                onClick={onClick}>
+                {children}
+            </button>
+        ) : (
+            <div className={className} data-test-id={dataTestId}>
+                {children}
+            </div>
+        )}
     </OverlayTrigger>
 );
 

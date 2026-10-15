@@ -17,21 +17,21 @@
 <div class="properties-table">
     <loader [display]="isLoading" [size]="'large'" [relative]="true"></loader>
     <div class="table-header">
-        <div class="table-cell col1" (click)="sort('name')">Property Name
+        <button type="button" class="table-cell col1" (click)="sort('name')">Property Name
             <span *ngIf="sortBy === 'name'" class="table-header-sort-arrow" [ngClass]="{'down': reverse, 'up':!reverse}">
             </span>
-        </div>
-        <div class="table-cell col3" (click)="sort('instanceUniqueId')">From Instance
+        </button>
+        <button type="button" class="table-cell col3" (click)="sort('instanceUniqueId')">From Instance
             <span *ngIf="sortBy === 'instanceUniqueId'" class="table-header-sort-arrow" [ngClass]="{'down': reverse, 'up':!reverse}">
             </span>
-        </div>
-        <div class="table-cell col2" (click)="sort('type')">Type
+        </button>
+        <button type="button" class="table-cell col2" (click)="sort('type')">Type
             <span *ngIf="sortBy === 'type'" class="table-header-sort-arrow" [ngClass]="{'down': reverse, 'up':!reverse}">
             </span>
-        </div>
-        <div class="table-cell col4" (click)="sort('required')" *ngIf="componentType == 'SERVICE'">
+        </button>
+        <button type="button" class="table-cell col4" (click)="sort('required')" *ngIf="componentType == 'SERVICE'">
             <span tooltip="Required in Runtime" tooltipDelay="400">Req. in RT</span>
-        </div>
+        </button>
         <div class="table-cell" [class.metadata-col-small]="!hasInputMetadata()" [class.metadata-col-wide]="hasInputMetadata()">
             <div [class.metadata-col-wide-text]="hasInputMetadata()">Metadata</div>
         </div>
@@ -44,13 +44,13 @@
                 <!-- Property Name -->
                 <div class="table-cell col1">
                     <div class="inner-cell-div">
-                        <a class="property-name" (click)="updateProperty(input)" tooltip="{{input.name}}">{{input.name}}</a>
+                        <button type="button" class="property-name" (click)="updateProperty(input)" tooltip="{{input.name}}">{{input.name}}</button>
                     </div>
                     <span *ngIf="input.description"
                           class="property-description-icon sprite-new show-desc"
                           tooltip="{{input.description}}" tooltipDelay="0"></span>
                     <div class="delete-button-container">
-                        <span *ngIf="showDelete" class="sprite-new delete-btn" (click)="openDeleteModal(input)" data-tests-id="delete-input-button"></span>
+                        <button type="button" *ngIf="showDelete" class="sprite-new delete-btn" (click)="openDeleteModal(input)" data-tests-id="delete-input-button" [attr.aria-label]="'Delete ' + input.name"></button>
                     </div>
                 </div>
                 <!-- From Instance -->
@@ -74,7 +74,7 @@
                 <!-- Metadata -->
                 <div class="table-cell" [class.metadata-col-small]="!hasInputMetadata()" [class.metadataCol]="hasInputMetadata()">
                     <div class="inner-cell-div metadata-add" tooltip="Add key value pair">
-                        <a class="property-icon add-item" (click)="createNewMetadataEntry(input);" [ngClass]="{'disabled':readonly}">Add metadata</a>
+                        <button type="button" class="property-icon add-item" (click)="createNewMetadataEntry(input);" [ngClass]="{'disabled':readonly}" [disabled]="readonly">Add metadata</button>
                     </div>
                     <ng-container >
                         <div class="metadata-container">
@@ -109,7 +109,7 @@
                                                 [testId]="'prop-key-' + propertyTestsId"
                                         ></dynamic-element>
                                         </div>
-                                        <span (click)="deleteMetadataEntry(input, metadataEntry);" class="delete-icon sprite-new delete-item-icon" [ngClass]="{'disabled':readonly}"></span>
+                                        <button type="button" (click)="deleteMetadataEntry(input, metadataEntry);" class="delete-icon sprite-new delete-item-icon" [ngClass]="{'disabled':readonly}" [disabled]="readonly" [attr.aria-label]="'Delete metadata ' + metadataEntry.key"></button>
                                     </ng-container>
                             </div>
                         </ng-container>

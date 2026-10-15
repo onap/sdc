@@ -1,5 +1,5 @@
 <div class="sdc-search-bar-container {{class}}">
     <input class="sdc-search-bar-input" type="text" [placeholder]="placeholder" [(ngModel)]="searchQuery" (ngModelChange)="searchQueryChange($event)"/>
-    <span class="sdc-clear-search-x" *ngIf="searchQuery" (click)="clearSearchQuery()">x</span>
+    <button type="button" class="sdc-clear-search-x" *ngIf="searchQuery" (click)="clearSearchQuery()" aria-label="Clear search">x</button>
     <button class="sdc-search-bar-button" (click)="searchButtonClick()"></button>
 </div>

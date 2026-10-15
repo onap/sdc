@@ -9,10 +9,12 @@
             [disabled]="!form.valid || isViewMode() || isCreateMode()"
             (click)="save()"
             data-tests-id="create/save">Save</button>
-    <span *ngIf="isEditMode()"
-          (click)="revert()"
-          class="sprite-new revert-btn"
-          data-tests-id="revert"></span>
+    <button type="button"
+            *ngIf="isEditMode()"
+            (click)="revert()"
+            class="sprite-new revert-btn"
+            aria-label="Revert"
+            data-tests-id="revert"></button>
   </div>
 
   <form [formGroup]="form" novalidate class="w-sdc-form">
@@ -26,10 +28,12 @@
             <div class="selected-icon-container"
                  [class.show-only-on-over]="component?.icon !== 'defaulticon' && !isViewMode()">
               <div class="selected-icon-inner-container">
-                <div class="sprite-new update-component-icon"
-                     *ngIf="!isViewMode() && possibleToUpdateIcon()"
-                     (click)="updateIcon()"
-                     data-tests-id="update-component-icon"></div>
+                <button type="button"
+                        class="sprite-new update-component-icon"
+                        *ngIf="!isViewMode() && possibleToUpdateIcon()"
+                        (click)="updateIcon()"
+                        aria-label="Update icon"
+                        data-tests-id="update-component-icon"></button>
                 <div class="i-sdc-form-item-suggested-icon large selected-icon {{component?.iconSprite}} {{component?.icon}}"
                      [class.disable]="isViewMode() || !possibleToUpdateIcon()">
                 </div>
@@ -170,9 +174,10 @@
                 <div class="group-tag" *ngFor="let tag of displayedTags">
                   <div class="sdc-tag">
                     <div class="tag" data-tests-id="i-sdc-tag-text">{{tag}}</div>
-                    <div class="delete" *ngIf="!isViewMode()" (click)="deleteTag(tag)" data-tests-id="i-sdc-tag-delete">
+                    <button type="button" class="delete" *ngIf="!isViewMode()" (click)="deleteTag(tag)" data-tests-id="i-sdc-tag-delete"
+                            [attr.aria-label]="'Delete tag ' + tag">
                       <span class="delete-icon"></span>
-                    </div>
+                    </button>
                   </div>
                 </div>
               </div>

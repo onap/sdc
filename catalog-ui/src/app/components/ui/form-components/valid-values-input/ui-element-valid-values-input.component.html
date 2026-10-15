@@ -18,9 +18,9 @@
 *  ============LICENSE_END=========================================================
  -->
 
-    <div class="add-btn"
+    <button type="button" class="add-btn"
              (click)="addToList()">Add to List
-    </div>
+    </button>
     <div class="w-sdc-form-columns-wrapper" *ngFor="let val of value; let valueIndex = index; trackBy:trackByFn">
         <div class="w-sdc-form-column">
             <input type="text" class="i-sdc-form-input" *ngIf="showStringField()"
@@ -34,6 +34,6 @@
                    (input)="onChangeConstrainValueIndex($event.target.value, valueIndex)"/>
         </div>
         <div class="w-sdc-form-column">
-            <span class="sprite-new delete-btn" (click)="removeFromList(valueIndex)"></span>
+            <button type="button" class="sprite-new delete-btn" aria-label="Delete" (click)="removeFromList(valueIndex)"></button>
         </div>
     </div>

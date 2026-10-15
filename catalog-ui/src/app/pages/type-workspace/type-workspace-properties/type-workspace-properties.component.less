@@ -21,6 +21,7 @@
 
 @import "../../../../assets/styles/sprite-old";
 @import "../../../../assets/styles/mixins_old";
+@import "../../../../assets/styles/button-reset";
 
 .workspace-properties {
 
@@ -73,6 +74,10 @@
         }
     }
 
+    .add-btn {
+        .sdc-button-chrome-reset();
+    }
+
     .delete-col-header {
         .sprite();
         .sprite.e-sdc-small-icon-delete();
@@ -110,11 +115,26 @@
             white-space: nowrap;
         }
 
+        .head .table-header {
+            padding: 0;
+
+            .table-header-button {
+                .sdc-button-reset();
+                width: 100%;
+                padding: 8px 15px;
+            }
+        }
+
         .flex-item:nth-child(1) {
             flex-grow: 15;
 
-            a {
-                .hand
+            .property-name-button {
+                .sdc-link-button();
+                max-width: 100%;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                vertical-align: top;
             }
         }
 

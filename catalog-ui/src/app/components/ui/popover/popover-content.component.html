@@ -26,7 +26,7 @@
     <div class="arrow" *ngIf="!hideArrow"></div>
     <div class="popover-header">
         <span class="title">{{ title }}</span>
-        <span class="close-button" (click)="popover.hide()"></span>
+        <button type="button" class="close-button" (click)="popover.hide()" aria-label="Close"></button>
     </div>
     <ng-content></ng-content>
     <div class="popover-footer" *ngIf="buttons">

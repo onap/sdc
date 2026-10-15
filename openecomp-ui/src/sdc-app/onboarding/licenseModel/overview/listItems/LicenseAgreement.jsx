@@ -1,5 +1,6 @@
 /*!
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,12 +36,13 @@ class LicenseAgreement extends Component {
             onClick,
             isOrphan
         } = this.props;
+        const expandable = children.length > 0 && !isOrphan;
         return (
             <div
                 onClick={e => onClick(e)}
                 className={`vlm-list-item vlm-list-item-la ${
                     isOrphan ? 'orphan-list-item' : ''
-                } ${children.length && !isOrphan ? 'clickable' : ''} `}
+                } ${expandable ? 'clickable' : ''} `}
                 data-test-id="vlm-list-la-item">
                 {!isOrphan && (
                     <ArrowCol
@@ -65,6 +67,15 @@ class LicenseAgreement extends Component {
                         value={this.extractValue(licenseTerm)}
                     />
                 </AdditionalDataCol>
+                {expandable && (
+                    <button
+                        type="button"
+                        className="vlm-list-item-toggle sr-only"
+                        aria-label={name}
+                        aria-expanded={!!isCollapsed}
+                        onClick={e => onClick(e)}
+                    />
+                )}
             </div>
         );
     }

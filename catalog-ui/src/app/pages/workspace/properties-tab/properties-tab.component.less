@@ -24,6 +24,7 @@
 // The old properties.less was a global stylesheet (imported by app.less) and relied on these being
 // in the global scope; a component-scoped .less must import them explicitly.
 @import '../../../../assets/styles/sprite-old.less';
+@import '../../../../assets/styles/button-reset.less';
 
 .workspace-properties {
 
@@ -73,7 +74,12 @@
     }
 
     .add-btn {
+        .sdc-button-chrome-reset();
         margin: 36px 0 0 0;
+    }
+
+    .add-property-link {
+        .sdc-link-button();
     }
 
     .delete-col-header{
@@ -120,10 +126,26 @@
             white-space: nowrap;
         }
 
+        .head .table-header {
+            padding: 0;
+
+            .table-header-button {
+                .sdc-button-reset();
+                width: 100%;
+                padding: 8px 15px;
+            }
+        }
+
         .flex-item:nth-child(1) {
             flex-grow: 15;
-            a{
-                .hand
+
+            .property-name-button {
+                .sdc-link-button();
+                max-width: 100%;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                vertical-align: top;
             }
         }
 

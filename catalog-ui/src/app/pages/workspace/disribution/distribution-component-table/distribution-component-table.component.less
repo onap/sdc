@@ -1,3 +1,10 @@
+@import '../../../../../assets/styles/button-reset.less';
+
+// Ahead of .blue and .rightVerticalSeperator, which must win over the reset's colour, font and padding.
+.rightVerticalSeperator {
+    .sdc-button-reset();
+}
+
 .red {
     color: red;
 }

@@ -117,7 +117,7 @@ public class InterfaceOperationAddInputComponent extends AbstractPageObject {
 
     @AllArgsConstructor
     private enum XpathSelector {
-        ADD_INPUT_LINK("//a[@data-tests-id='add-input.add-input-link']"),
+        ADD_INPUT_LINK("//button[@data-tests-id='add-input.add-input-link']"),
         NAME_INPUT("//input[@data-tests-id='add-input.input-name']"),
         TYPE_INPUT("//input[starts-with(@data-tests-id, 'add-input.input-type')]"),
         ADD_BTN("//button[@data-tests-id='add-input.add-input-btn']"),

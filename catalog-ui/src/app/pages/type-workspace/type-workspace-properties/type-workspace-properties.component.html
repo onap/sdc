@@ -25,12 +25,14 @@
     <input id="search-by-name" type="search" [placeholder]="'SEARCH_LABEL' | translate" [ngModel]="tableFilterTerm" (ngModelChange)="this.tableSearchTermUpdate.next($event)"/>
     <span class="sprite magnification-glass search-button"></span>
   </div>
-  <div class="add-btn" data-tests-id="add-link" *ngIf="!isViewOnly" (click)="onClickAddProperty()">Add Property</div>
+  <button type="button" class="add-btn" data-tests-id="add-link" *ngIf="!isViewOnly" (click)="onClickAddProperty()">Add Property</button>
   <div class="table-container-flex">
     <div class="table" [ngClass]="{'view-mode': isViewOnly}">
       <div class="head flex-container">
-        <div class="table-header head-row hand flex-item" *ngFor="let header of tableHeadersList" (click)="onUpdateSort(header.property)">{{header.title}}
-          <span *ngIf="tableSortBy === header.property" class="table-header-sort-arrow" [ngClass]="{'down': tableColumnReverse, 'up': !tableColumnReverse}"></span>
+        <div class="table-header head-row hand flex-item" *ngFor="let header of tableHeadersList">
+          <button type="button" class="table-header-button" (click)="onUpdateSort(header.property)">{{header.title}}
+            <span *ngIf="tableSortBy === header.property" class="table-header-sort-arrow" aria-hidden="true" [ngClass]="{'down': tableColumnReverse, 'up': !tableColumnReverse}"></span><span *ngIf="tableSortBy === header.property" class="sr-only">{{tableColumnReverse ? ', sorted descending' : ', sorted ascending'}}</span>
+          </button>
         </div>
         <div class="table-no-text-header head-row flex-item" *ngIf="!isViewOnly"><span class="delete-col-header"></span></div>
       </div>
@@ -41,7 +43,7 @@
         </div>
         <div *ngFor="let property of filteredProperties" [attr.data-tests-id]="'property-row-' + property.name" class="flex-container data-row">
           <div class="table-col-general flex-item text" [title]="property.name" (click)="onNameClick(property)">
-            <a [attr.data-tests-id]="'property-name-' + property.name" [ngClass]="{'disabled': false}">{{property.name}}</a>
+            <button type="button" class="property-name-button" [attr.data-tests-id]="'property-name-' + property.name" (click)="onNameClick(property); $event.stopPropagation();">{{property.name}}</button>
           </div>
           <div class="table-col-general flex-item text" [title]="property.type">
             <span [attr.data-tests-id]="'property-type-' + property.name">{{property.type}}</span>

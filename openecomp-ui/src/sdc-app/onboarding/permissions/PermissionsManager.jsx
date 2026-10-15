@@ -1,5 +1,6 @@
 /*
  * Copyright © 2016-2018 European Support Limited
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,15 +65,17 @@ class Permissions extends React.Component {
                     </div>
                     <div className="owner-details">
                         <span>{owner.fullName}</span>
-                        <span
+                        <button
+                            type="button"
                             className="change-owner"
+                            aria-expanded={this.state.showChangeOwner}
                             onClick={() =>
                                 this.setState({
                                     showChangeOwner: !this.state.showChangeOwner
                                 })
                             }>
                             {i18n('Change Owner')}
-                        </span>
+                        </button>
                     </div>
                     {this.state.showChangeOwner && (
                         <div className="change-owner-wrapper">

@@ -20,11 +20,18 @@
         <ul>
             <li *ngFor="let property of component.properties; let i = index"
                 class="i-sdc-designer-sidebar-section-content-item-property-and-attribute group-policy-properties" data-tests-id="propertyRow">
-                <div class="i-sdc-designer-sidebar-section-content-item-property-and-attribute-label hand group-policy-properties"
+                <button *ngIf="!isViewOnly; else readOnlyPropertyName" type="button"
+                     class="i-sdc-designer-sidebar-section-content-item-property-and-attribute-label hand group-policy-properties"
                      [attr.data-tests-id]="'propertyName_'+property.name"
                      tooltip="{{property.name}}"
-                     (click)="!isViewOnly && editProperty(property)">{{property.name}}
+                     (click)="editProperty(property)">{{property.name}}
+                </button>
+                <ng-template #readOnlyPropertyName>
+                <div class="i-sdc-designer-sidebar-section-content-item-property-and-attribute-label hand group-policy-properties"
+                     [attr.data-tests-id]="'propertyName_'+property.name"
+                     tooltip="{{property.name}}">{{property.name}}
                 </div>
+                </ng-template>
                 <div class="i-sdc-designer-sidebar-section-content-item-property-value group-policy-properties"
                      [attr.data-tests-id]="'value_'+property.name"
                      tooltip="{{property.value || property.defaultValue}}">{{property.value || property.defaultValue}}

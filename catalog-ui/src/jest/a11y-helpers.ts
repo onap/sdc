@@ -67,3 +67,24 @@ export function unnamedClickableIcons(html: string): string[] {
         })
         .filter((problem) => !!problem);
 }
+
+const CLICK_ONLY_TAGS = ['div', 'span', 'li', 'ul', 'em', 'i', 'b', 'strong', 'small', 'p', 'td', 'th', 'tr', 'img', 'section', 'label', 'a'];
+
+const isLink = (el: Element) => ['href', '[href]', 'routerlink', '[routerlink]'].some((name) => el.hasAttribute(name));
+
+/**
+ * Elements of a plain HTML tag whose (click) is their only way to be activated, i.e. not a native
+ * <button>, a link with an href or routerLink, or a label bound to its control. Component hosts
+ * (tags with a dash) are left to the component's own template.
+ */
+export function clickOnlyElements(html: string): Element[] {
+    const doc = new DOMParser().parseFromString(`<body>${html}</body>`, 'text/html');
+    return Array.from(doc.querySelectorAll('[\\(click\\)]'))
+        .filter((el) => CLICK_ONLY_TAGS.indexOf(el.tagName.toLowerCase()) !== -1)
+        .filter((el) => !(el.tagName.toLowerCase() === 'a' && isLink(el)))
+        .filter((el) => !(el.tagName.toLowerCase() === 'label' && (el.hasAttribute('for') || el.hasAttribute('[attr.for]'))));
+}
+
+export const describeElement = (el: Element) =>
+    `<${el.tagName.toLowerCase()}${attr(el, 'data-tests-id') ? ' data-tests-id="' + attr(el, 'data-tests-id') + '"' : ''}` +
+    `${el.getAttribute('class') ? ' class="' + el.getAttribute('class') + '"' : ''}>`;

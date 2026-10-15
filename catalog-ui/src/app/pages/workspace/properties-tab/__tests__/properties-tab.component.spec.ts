@@ -225,3 +225,35 @@ describe('WorkspacePropertiesTabComponent', () => {
         expect(comp.stripHeatPrefix(undefined)).toBe('');
     });
 });
+
+describe('WorkspacePropertiesTabComponent template', () => {
+    // tslint:disable-next-line:no-var-requires
+    const template: string = require('../properties-tab.component.html');
+    const doc = new DOMParser().parseFromString(`<body>${template}</body>`, 'text/html');
+
+    it('makes Add Property, the empty-list link and each property name native buttons', () => {
+        const add = doc.querySelector('[data-tests-id="addGrey"]');
+        expect(add.tagName).toBe('BUTTON');
+        expect(add.getAttribute('type')).toBe('button');
+        expect(add.getAttribute('class')).toBe('add-btn');
+        expect(add.getAttribute('[disabled]')).toBe('isDisableMode()');
+
+        const here = doc.querySelector('.no-row-text button');
+        expect(here.getAttribute('type')).toBe('button');
+        expect(here.getAttribute('(click)')).toBe('addOrUpdateProperty()');
+
+        const name = doc.querySelector('.property-name-button');
+        expect(name.tagName).toBe('BUTTON');
+        expect(name.getAttribute('[attr.data-tests-id]')).toBe(`'propertyName_' + property.name`);
+        expect(name.getAttribute('type')).toBe('button');
+    });
+
+    it('sorts from a button inside each header cell', () => {
+        const header = doc.querySelector('.table-header');
+        expect(header.hasAttribute('(click)')).toBe(false);
+        const button = header.querySelector('button');
+        expect(button.getAttribute('type')).toBe('button');
+        expect(button.getAttribute('(click)')).toBe('sort(header.property)');
+        expect(button.querySelector('.table-header-sort-arrow').getAttribute('aria-hidden')).toBe('true');
+    });
+});

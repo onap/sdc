@@ -35,7 +35,7 @@
               </tosca-function>
             </ng-container>
             <div class="buttons-container">
-              <span class="delete-icon" (click)="removeParameter(idx)"></span>
+              <button type="button" class="delete-icon" aria-label="Delete parameter" (click)="removeParameter(idx)"></button>
             </div>
           </div>
         </div>
@@ -43,6 +43,6 @@
     </div>
   </ng-container>
   <div class="buttons-container">
-    <a class="add-link" (click)="addStringParameter()">String Value</a> <a class="add-link" (click)="addFunction()">String Value Expression</a>
+    <button type="button" class="add-link" (click)="addStringParameter()">String Value</button> <button type="button" class="add-link" (click)="addFunction()">String Value Expression</button>
   </div>
 </div>

@@ -18,9 +18,10 @@
 <div class="sdc-canvas-zone {{class}}-zone" [class.minimized]="minimized" [class.hidden]="!visible"
      (click)="backgroundClicked()">
     <div class="sdc-canvas-zone__header" (click)="unminifyZone(); $event.stopPropagation();">
-        <div class="sdc-canvas-zone__title">{{title}}
+        <button type="button" class="sdc-canvas-zone__title" [attr.aria-expanded]="!minimized"
+                (click)="unminifyZone(); $event.stopPropagation();">{{title}}
             <span class="sdc-canvas-zone__counter">{{count}}</span>
-        </div>
+        </button>
         <span class="sdc-canvas-zone__state-button">&ndash;</span>
     </div>
     <div class="sdc-canvas-zone__container" #scrollDiv>

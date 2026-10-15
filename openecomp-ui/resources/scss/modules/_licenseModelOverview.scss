@@ -55,6 +55,11 @@ $lkg-ep-color: $light-blue;
                     flex: initial;
                 }
 
+                .vendor-description {
+                    @include button-reset($font: false);
+                    @include focus-ring;
+                }
+
                 &:not(.read-only) .vendor-description {
                     border: 1px solid transparent;
                     width: 100%;
@@ -126,6 +131,8 @@ $lkg-ep-color: $light-blue;
                             flex: 0 1 auto;
                             text-align: center;
                             .description-button {
+                                @include button-reset;
+                                @include focus-ring;
                                 cursor: pointer;
                                 flex: 1;
                                 &:hover {
@@ -133,6 +140,8 @@ $lkg-ep-color: $light-blue;
                                 }
                             }
                             .description-save {
+                                @include button-reset;
+                                @include focus-ring;
                                 cursor: pointer;
                                 flex: 1;
                                 color: $link-blue;
@@ -180,6 +189,9 @@ $lkg-ep-color: $light-blue;
                         margin-left: 5px;
                     }
                     .summary-name-and-count {
+                        @include button-reset;
+                        @include focus-ring;
+                        display: block;
                         width: 100%;
                     }
                     .svg-icon-wrapper {
@@ -309,6 +321,11 @@ $lkg-ep-color: $light-blue;
                     @extend .flex;
                     border: 1px solid $tlv-light-gray;
                     margin-bottom: 0px;
+                    // The expand toggle is screen-reader-only, so the row shows its focus.
+                    &:focus-within {
+                        outline: 2px solid $link-blue;
+                        outline-offset: -2px;
+                    }
                     .clickable {
                         cursor: pointer;
                     }

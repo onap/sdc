@@ -12,11 +12,17 @@
                             *ngFor="let property of properties[key]">
 
                         <div class="property-details">
-                            <span class="i-sdc-designer-sidebar-section-content-item-property-and-attribute-label"
+                            <button *ngIf="!isViewOnly; else readOnlyPropertyName" type="button"
+                                    class="i-sdc-designer-sidebar-section-content-item-property-and-attribute-label"
                                     [ngClass]="{'hand enabled': !isViewOnly}"
                                     sdc-tooltip tooltip-text="{{property.name}}"
-                                    (click)="!isViewOnly && updateProperty(property)"
+                                    (click)="updateProperty(property)"
+                                    attr.data-tests-id="{{property.name}}">{{property.name}}</button>
+                            <ng-template #readOnlyPropertyName>
+                            <span class="i-sdc-designer-sidebar-section-content-item-property-and-attribute-label"
+                                    sdc-tooltip tooltip-text="{{property.name}}"
                                     attr.data-tests-id="{{property.name}}">{{property.name}}</span>
+                            </ng-template>
                             <span class="i-sdc-designer-sidebar-section-content-item-property-value" *ngIf="isPropertyOwner()"
                                     sdc-tooltip tooltip-text="{{property.defaultValue}}">{{property.defaultValue}}</span>
                             <span class="i-sdc-designer-sidebar-section-content-item-property-value" *ngIf="!isPropertyOwner()"
@@ -75,11 +81,17 @@
                         <div class="i-sdc-designer-sidebar-section-content-item-property-and-attribute"
                                 *ngFor="let attribute of attributes[key]">
                             <div>
-                                <span class="i-sdc-designer-sidebar-section-content-item-property-and-attribute-label"
+                                <button *ngIf="!isViewOnly; else readOnlyAttributeName" type="button"
+                                        class="i-sdc-designer-sidebar-section-content-item-property-and-attribute-label"
                                         [ngClass]="{'hand enabled': !isViewOnly}"
                                         sdc-tooltip tooltip-text="{{attribute.name}}"
-                                        (click)="!isViewOnly && viewAttribute(attribute)"
+                                        (click)="viewAttribute(attribute)"
+                                        attr.data-tests-id="{{attribute.name}}-attr">{{attribute.name}}</button>
+                                <ng-template #readOnlyAttributeName>
+                                <span class="i-sdc-designer-sidebar-section-content-item-property-and-attribute-label"
+                                        sdc-tooltip tooltip-text="{{attribute.name}}"
                                         attr.data-tests-id="{{attribute.name}}-attr">{{attribute.name}}</span>
+                                </ng-template>
                             </div>
                             <div>
                                 <span class="i-sdc-designer-sidebar-section-content-item-property-value" *ngIf="isPropertyOwner()"

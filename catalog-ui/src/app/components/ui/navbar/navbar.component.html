@@ -28,11 +28,11 @@
   </div>
   <div class="navbar-toggleable-xs navbar-collapse" id="bd-main-nav" [attr.aria-expanded]="!isCollapsed" [ngClass]="{collapse: isCollapsed}">
     <ul class="nav navbar-nav">
-      <li (click)="isCollapsed = true" class="nav-item" routerLinkActive="active">
-        <a class="navbar-brand hidden-xs-down" [routerLink]="[brandMenu.path]">{{brandMenu.title}}</a>
+      <li class="nav-item" routerLinkActive="active">
+        <a (click)="isCollapsed = true" class="navbar-brand hidden-xs-down" [routerLink]="[brandMenu.path]">{{brandMenu.title}}</a>
       </li>
-      <li (click)="isCollapsed = true" *ngFor="let menuItem of menuItems" class="nav-item" routerLinkActive="active" [ngClass]="getMenuItemClasses(menuItem)">
-        <a class="nav-item nav-link" [routerLink]="[menuItem.path]" routerLinkActive="active">{{menuItem.title}}</a>
+      <li *ngFor="let menuItem of menuItems" class="nav-item" routerLinkActive="active" [ngClass]="getMenuItemClasses(menuItem)">
+        <a (click)="isCollapsed = true" class="nav-item nav-link" [routerLink]="[menuItem.path]" routerLinkActive="active">{{menuItem.title}}</a>
       </li>
     </ul>
   </div>

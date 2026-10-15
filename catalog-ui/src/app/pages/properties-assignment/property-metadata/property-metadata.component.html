@@ -42,7 +42,8 @@
                      required/>
             </div>
             <div class="w-sdc-form-column">
-              <span class="sprite-new delete-btn" [ngClass]="{'disabled': isViewOnly}" (click)="removeFromList(idx)"></span>
+              <button type="button" class="sprite-new delete-btn" [ngClass]="{'disabled': isViewOnly}" [disabled]="isViewOnly"
+                      aria-label="Delete metadata entry" (click)="removeFromList(idx)"></button>
             </div>
         </div>
         <div class="w-sdc-form-columns-wrapper">
@@ -56,8 +57,8 @@
         </div>
       </div>
       <div class="w-sdc-form-columns-wrapper" *ngIf="!isViewOnly">
-          <div class="add-btn add-list-item w-sdc-form-column" *ngIf="!isViewOnly" [ngClass]="{'disabled': isViewOnly}"
-          (click)="addMetadataField()"> Add Metadata Entry </div>
+          <button type="button" class="add-btn add-list-item w-sdc-form-column" *ngIf="!isViewOnly" [ngClass]="{'disabled': isViewOnly}"
+          [disabled]="isViewOnly" (click)="addMetadataField()"> Add Metadata Entry </button>
       </div>
     </div>
   </form>

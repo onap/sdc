@@ -57,9 +57,11 @@
 <div
 	class="cell remove"
 	data-tests-id="removeLnk">
-	<span
+	<button
+		type="button"
 		*ngIf="link.canRemove"
 		class="sprite-new delete-item-icon"
+		aria-label="Delete link"
 		(click)="removeRow()">
-	</span>
+	</button>
 </div>

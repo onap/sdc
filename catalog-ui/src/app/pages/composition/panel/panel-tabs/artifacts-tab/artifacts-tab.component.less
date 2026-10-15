@@ -1,4 +1,5 @@
 @import '../../../../../../assets/styles/override';
+@import '../../../../../../assets/styles/button-reset';
 
 
 .artifacts /deep/ .expand-collapse-content {
@@ -69,8 +70,11 @@
         }
     }
 
-    .i-sdc-designer-sidebar-section-content-item-artifact-details-name {
+    button.i-sdc-designer-sidebar-section-content-item-artifact-details-name {
+        .sdc-button-reset();
+    }
 
+    .i-sdc-designer-sidebar-section-content-item-artifact-details-name {
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;

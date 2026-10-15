@@ -1,8 +1,14 @@
 @import '../../../../../../assets/styles/variables.less';
+@import '../../../../../../assets/styles/button-reset.less';
 .remove {
     display: flex;
     align-items: center;
     justify-content: center;
+
+    .delete-item-icon {
+        .sdc-sprite-button-reset();
+        cursor: inherit;
+    }
 }
 
 .cell {

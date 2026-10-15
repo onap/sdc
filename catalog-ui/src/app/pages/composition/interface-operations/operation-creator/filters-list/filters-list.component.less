@@ -19,6 +19,7 @@
 
 @import '../../../../../../assets/styles/variables.less';
 @import '../../../../../../assets/styles/override.less';
+@import '../../../../../../assets/styles/button-reset.less';
 
 .group-with-border {
     margin: 10px 0;
@@ -50,6 +51,25 @@
     height: 30px;
     width: 100%;
     display: block;
+}
+
+.add-btn {
+    .sdc-button-reset();
+    cursor: inherit;
+
+    &.padding-bottom {
+        display: block;
+        width: 100%;
+    }
+}
+
+.add-button-container .add-btn {
+    .sdc-link-button();
+}
+
+.w-sdc-form-column .delete-btn {
+    .sdc-sprite-button-reset();
+    cursor: inherit;
 }
 
 .padding-bottom {
@@ -104,6 +124,8 @@
         margin-right: 14px;
 
         .sprite-new {
+            .sdc-sprite-button-reset();
+            cursor: inherit;
             margin-top: 110%;
         }
     }

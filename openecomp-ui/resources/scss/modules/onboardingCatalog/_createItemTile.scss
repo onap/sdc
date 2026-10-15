@@ -6,6 +6,8 @@
     margin: 9px;
 
     .tile.create-catalog-item {
+        @include button-reset;
+        border: 1px solid $tlv-light-gray;
         margin: 9px 0 9px 0;
         display: flex;
         background-color: $white;
@@ -25,6 +27,9 @@
         &:focus:not(:focus-visible) {
             outline: none;
         }
+        &:active {
+            border: 1px solid $light-blue;
+        }
         &:hover {
             box-shadow: 0.3px 5px 12.8px 1.3px rgba(24, 24, 25, 0.15);
 
@@ -42,6 +47,7 @@
             }
         }
         .create-item-plus-icon {
+            display: block;
             margin: -5px 12px 0 0;
             height: 19px;
             width: 19px;
@@ -71,6 +77,7 @@
             }
         }
         .create-item-text {
+            display: block;
             width: 140px;
             @extend .heading-5-semibold;
         }

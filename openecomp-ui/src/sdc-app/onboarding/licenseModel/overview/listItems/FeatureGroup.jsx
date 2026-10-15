@@ -1,5 +1,6 @@
 /*!
  * Copyright © 2016-2018 European Support Limited
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,12 +28,13 @@ class FeatureGroup extends Component {
             onClick,
             isOrphan
         } = this.props;
+        const expandable = children.length > 0 && !isOrphan;
         return (
             <div
                 onClick={e => onClick(e)}
                 className={`vlm-list-item vlm-list-item-fg ${
                     isOrphan ? 'orphan-list-item' : ''
-                } ${children.length && !isOrphan ? 'clickable' : ''}`}
+                } ${expandable ? 'clickable' : ''}`}
                 data-test-id="vlm-list-item-fg">
                 {!isOrphan && (
                     <ArrowCol
@@ -70,6 +72,15 @@ class FeatureGroup extends Component {
                         </span>
                     </div>
                 </ItemInfo>
+                {expandable && (
+                    <button
+                        type="button"
+                        className="vlm-list-item-toggle sr-only"
+                        aria-label={name}
+                        aria-expanded={!!isCollapsed}
+                        onClick={e => onClick(e)}
+                    />
+                )}
             </div>
         );
     }

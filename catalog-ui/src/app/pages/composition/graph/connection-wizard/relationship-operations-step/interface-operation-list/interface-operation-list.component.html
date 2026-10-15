@@ -28,20 +28,24 @@
   <div *ngIf="(interfaceOperationList$ | async)?.length">
 
     <div class="expand-collapse">
-      <a
+      <button
+          type="button"
           class="link"
           data-tests-id="expand-all"
           [ngClass]="{'disabled': isAllExpanded()}"
+          [disabled]="isAllExpanded()"
           (click)="toggleAllExpand()">
         {{ 'INTERFACE_EXPAND_ALL' | translate }}
-      </a> |
-      <a
+      </button> |
+      <button
+          type="button"
           class="link"
           data-tests-id="collapse-all"
           [ngClass]="{'disabled': isAllCollapsed()}"
+          [disabled]="isAllCollapsed()"
           (click)="toggleAllCollapse()">
         {{ 'INTERFACE_COLLAPSE_ALL' | translate }}
-      </a>
+      </button>
     </div>
 
     <div
@@ -60,7 +64,9 @@
                 size="small">
             </svg-icon>
         </span>
-        <span class="interface-name">{{interfaceType}}</span>
+        <button type="button" class="interface-name"
+                [attr.aria-expanded]="!!isInterfaceCollapsed(interfaceType)"
+                (click)="toggleCollapse(interfaceType); $event.stopPropagation()">{{interfaceType}}</button>
       </div>
 
       <div class="generic-table" *ngIf="isInterfaceCollapsed(interfaceType)">
@@ -81,8 +87,7 @@
         <div
             class="data-row"
             *ngFor="let operation of interfaceTypeMap.get(interfaceType)"
-            [attr.data-tests-id]="'operation-' + operation.operationType"
-            (click)="onEditOperation(operation)">
+            [attr.data-tests-id]="'operation-' + operation.operationType">
           <span
               class="cell field-name"
               [attr.data-tests-id]="'operation-' + operation.operationType + '-name'">
@@ -96,10 +101,10 @@
           <span class="cell field-actions">
             <span
                 class="delete-action"
-                [attr.data-tests-id]="'remove-operation-' + operation.operationType"
-                (click)="onRemoveOperation($event, operation)">
+                [attr.data-tests-id]="'remove-operation-' + operation.operationType">
               <svg-icon
                   *ngIf="!isReadOnly"
+                  (click)="onRemoveOperation($event, operation)"
                   name="trash-o"
                   mode="info"
                   size="small"

@@ -99,6 +99,12 @@
                     }
 
                     .notification-action .action-button {
+                        @include button-reset;
+                        @include focus-ring;
+                        // Text sits at the top as in the div it was; a button centres it.
+                        display: flex;
+                        align-items: flex-start;
+                        justify-content: center;
                         @extend .clickable;
                         width: 74px;
                         height: 28px;

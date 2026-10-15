@@ -1,4 +1,5 @@
 @import '../../../../assets/styles/variables';
+@import '../../../../assets/styles/button-reset';
 
 .w-sdc-designer-sidebar {
   background-color:@main_color_p ;
@@ -22,6 +23,10 @@
 }
 
 .w-sdc-designer-sidebar-toggle {
+  .sdc-button-reset();
+  // A button centres its content; this keeps the icon at its top-left margins.
+  display: flex;
+  align-items: flex-start;
   background-color: @main_color_p;
   border-left: 1px solid @main_color_o;
   border-bottom: 1px solid @main_color_o;

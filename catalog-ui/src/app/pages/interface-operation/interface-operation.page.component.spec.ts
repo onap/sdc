@@ -109,4 +109,22 @@ describe('InterfaceOperationComponent template', () => {
         expect(icon.querySelector('svg path')).not.toBeNull();
         expect(add.querySelector('.button-text').tagName).toBe('SPAN');
     });
+
+    it('keeps the accordion row an exact-class div whose name sits in a toggle button', () => {
+        const accordion = doc.querySelector('.interface-accordion');
+        expect(accordion.tagName).toBe('DIV');
+        expect(accordion.getAttribute('class')).toBe('interface-accordion');
+        const toggle = accordion.querySelector('button');
+        expect(toggle.getAttribute('[attr.aria-expanded]')).toBe('!interface.isCollapsed');
+        expect(toggle.querySelector('span.interface-name')).not.toBeNull();
+    });
+
+    it('gives each operation row a name button and native expand, collapse and More/Less buttons', () => {
+        expect(doc.querySelector('.data-row .field-name > button').getAttribute('type')).toBe('button');
+        expect(doc.querySelector('[data-tests-id="expand-all"]').tagName).toBe('BUTTON');
+        expect(doc.querySelector('[data-tests-id="collapse-all"]').tagName).toBe('BUTTON');
+        expect(doc.querySelector('.more-or-less').tagName).toBe('BUTTON');
+        expect(doc.querySelector('.delete-action').hasAttribute('(click)')).toBe(false);
+        expect(doc.querySelector('.delete-action svg-icon').getAttribute('(click)')).toBe('onRemoveOperation($event, operation)');
+    });
 });

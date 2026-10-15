@@ -31,12 +31,12 @@
 
     <div class="table-and-list-container">
         <div class="inner-container requirements-or-capabilities-container" [ngClass]="{'empty-list':!selectedType}">
-            <div *ngFor="let item of displayCapReqListFilterByType"
+            <button type="button" *ngFor="let item of displayCapReqListFilterByType"
                  class="req-or-cap-item"
                  (click)="selectReqOrCapFromList(item)"
                  [ngClass]="{'selected':selectedReqOrCapModel && (item.uniqueId + item.ownerId + item.name) == (selectedReqOrCapModel.uniqueId + selectedReqOrCapModel.ownerId + selectedReqOrCapModel.name)}">
                 {{item.getFullTitle()}}
-            </div>
+            </button>
         </div>
         <div class="inner-container properties-table-container" *ngIf="selectedReqOrCapOption == 'Capability'" [ngClass]="{'cap-selected':selectedReqOrCapModel}">
             <loader [display]="loadingCapabilityProperties" size="medium" [relative]="true"></loader>

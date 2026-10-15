@@ -20,6 +20,10 @@
     .error-block {
         margin: 10px 0;
         .error-block-header {
+            @include button-reset;
+            @include focus-ring;
+            display: block;
+            width: 100%;
             background-color: $tlv-gray;
             padding: 5px;
             cursor: pointer;

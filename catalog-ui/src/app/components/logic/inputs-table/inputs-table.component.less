@@ -1,7 +1,13 @@
 
 @import '../../../../assets/styles/variables.less';
+@import '../../../../assets/styles/button-reset';
 
 :host /deep/ input { width:100%;}
+
+// Below the .table-cell rules' specificity, so they keep the header cells' box.
+button.table-cell {
+    .sdc-button-reset();
+}
 
 .metadata-container {
     .metadata-entry {
@@ -26,6 +32,7 @@
         }
 
         .delete-icon {
+            .sdc-sprite-button-reset();
             flex: 0 0 auto;
             margin-right:10px;
             align-self:center;
@@ -188,7 +195,12 @@
             justify-content: space-between;
 
             .property-name {
+                .sdc-link-button();
                 flex: 1;
+                display: block;
+                max-width: 100%;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
 
             .property-description-icon {
@@ -247,6 +259,14 @@
                 }
             }
         }
+    }
+
+    .delete-button-container .delete-btn {
+        .sdc-sprite-button-reset();
+    }
+
+    .add-item {
+        .sdc-link-button();
     }
 
     .filtered {

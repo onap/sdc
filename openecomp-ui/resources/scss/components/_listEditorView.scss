@@ -158,3 +158,9 @@
         }
     }
 }
+
+// The open button is screen-reader-only, so its focus ring is drawn on the row content.
+.list-editor-item-view-content:focus-within {
+    outline: 2px solid $link-blue;
+    outline-offset: -2px;
+}

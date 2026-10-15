@@ -18,7 +18,7 @@
     <div class="ng2-modal-content w-sdc-classic-top-line-modal">
         <div class="ng2-modal-header modal-type-{{input.type}}">
             <span class="title">{{ input.title }}</span>
-            <span class="close-button" (click)="close()"></span>
+            <button type="button" class="close-button" (click)="close()" aria-label="Close dialog"></button>
         </div>
         <div class="ng2-modal-body" >
             <div class="multi-steps-wizard-component">

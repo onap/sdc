@@ -59,7 +59,8 @@ function VNFSortableCellHeader({
     if (isHeader) {
         if (activeSortColumn === data) {
             return (
-                <span
+                <button
+                    type="button"
                     className="vnf-table-header"
                     onClick={() => {
                         onSort(activeSortColumn);
@@ -68,18 +69,19 @@ function VNFSortableCellHeader({
                     <span
                         className={`header-sort-arrow ${isDes ? 'up' : 'down'}`}
                     />
-                </span>
+                </button>
             );
         } else {
             return (
-                <span
+                <button
+                    type="button"
                     className="vnf-table-header"
                     onClick={() => {
                         activeSortColumn = data;
                         onSort(activeSortColumn);
                     }}>
                     <span>{data}</span>
-                </span>
+                </button>
             );
         }
     }
@@ -114,15 +116,29 @@ export function VNFItemList({
             <div
                 className="table-cell vnftable-name"
                 data-test-id="vnftable-name">
-                <VNFSortableCellHeader
-                    isHeader={isHeader}
-                    data={name}
-                    isDes={isDes}
-                    onSort={activeSort => {
-                        onSort('name', activeSort);
-                    }}
-                    activeSortColumn={activeSortColumn}
-                />
+                {isHeader ? (
+                    <VNFSortableCellHeader
+                        isHeader={isHeader}
+                        data={name}
+                        isDes={isDes}
+                        onSort={activeSort => {
+                            onSort('name', activeSort);
+                        }}
+                        activeSortColumn={activeSortColumn}
+                    />
+                ) : (
+                    <span className="vnf-table-cell">
+                        <button
+                            type="button"
+                            className="vnf-table-cell-select"
+                            onClick={e => {
+                                e.stopPropagation();
+                                selectTableRow(csarId);
+                            }}>
+                            {name}
+                        </button>
+                    </span>
+                )}
             </div>
             <div
                 className="table-cell vnftable-version"

@@ -49,4 +49,13 @@ describe('hierarchyNavigationComponent', () => {
             expect(fixture.componentInstance.onClick).toHaveBeenCalled();
         });
 
+    it('selects a tree node once from its native button', () => {
+        const selected = [];
+        fixture.componentInstance.updateSelected.subscribe((item) => selected.push(item.id));
+        const nodeButton: HTMLButtonElement = fixture.debugElement.query(By.css('.node-item > button.node-data-wrapper')).nativeElement;
+        expect(nodeButton.getAttribute('type')).toBe('button');
+        nodeButton.click();
+        expect(selected).toEqual(['1']);
+    });
+
 });

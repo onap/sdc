@@ -1,6 +1,7 @@
 @import '../../../../assets/styles/variables';
 @import '../../../../assets/styles/mixins';
 @import '../../../../assets/styles/sprite-old';
+@import '../../../../assets/styles/button-reset';
 .popover .virtual-area {
     height: 11px;
     width: 100%;
@@ -49,6 +50,7 @@
         white-space: nowrap;
     }
     .close-button{
+        .sdc-sprite-button-reset();
         .sprite;
         .sprite.x-btn-black;
         cursor: pointer;

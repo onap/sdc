@@ -1,7 +1,13 @@
 
 @import '../../../../assets/styles/variables.less';
+@import '../../../../assets/styles/button-reset';
 
 :host /deep/ input { width:100%;}
+
+// Below the .table-cell rules' specificity, so they keep the header cells' box.
+button.table-cell {
+    .sdc-button-reset();
+}
 
 .properties-table {
     display:flex;
@@ -137,6 +143,7 @@
             }
 
             .delete-btn {
+                .sdc-sprite-button-reset();
                 flex: 0 0 auto;
             }
 

@@ -20,13 +20,13 @@
     (click)="onClickPropertyRow(property, $event)">
     <!-- LEFT CELL -->
     <ng-container *ngIf="!isPropertyFEModel">
-        <div class="table-cell" *ngIf="canBeDeclared" [ngClass]="{'filtered':property.name === propertyNameSearchText}" [class.round-checkbox]="property.isDeclared"> <!-- simple children of complex type [@checkEffect]="property.isDeclared"-->
+        <div class="table-cell property-name-cell" *ngIf="canBeDeclared" [ngClass]="{'filtered':property.name === propertyNameSearchText}" [class.round-checkbox]="property.isDeclared"> <!-- simple children of complex type [@checkEffect]="property.isDeclared"-->
             <checkbox *ngIf="hasDeclareOption" [(checked)]="property.isSelected" [disabled]="property.isDisabled || property.isDeclared || readonly || checkboxDisabled" (checkedChange)="checkProperty.emit(property.propertiesName)" ></checkbox>
-            <div class="inner-cell-div" tooltip="{{property.name}}"><span>{{property.name}}</span></div>
+            <button type="button" class="inner-cell-div" tooltip="{{property.name}}" (click)="onClickPropertyRow(property, $event)"><span>{{property.name}}</span></button>
         </div>
-        <div class="table-cell" *ngIf="!canBeDeclared && !property.isChildOfListOrMap">
+        <div class="table-cell property-name-cell" *ngIf="!canBeDeclared && !property.isChildOfListOrMap">
             <checkbox *ngIf="nestedLevel >= 2" [(checked)]="property.isSelected" [disabled]="property.isDisabled || readonly || checkboxDisabled" (checkedChange)="toggleTosca.emit(property)" ></checkbox>
-            <div class="inner-cell-div" tooltip="{{property.name}}"><span>{{property.name}}</span></div>
+            <button type="button" class="inner-cell-div" tooltip="{{property.name}}" (click)="onClickPropertyRow(property, $event)"><span>{{property.name}}</span></button>
         </div> <!-- simple children of complex type within map or list -->
         <div class="table-cell map-entry" *ngIf="property.isChildOfListOrMap && propType == derivedPropertyTypes.MAP && !property.mapInlist"><!-- map left cell -->
             <dynamic-element #mapKeyInput
@@ -71,10 +71,10 @@
     </ng-container>
     <!-- ICONS: add, delete, and expand -->
     <ng-container *ngIf="(!property.isDeclared && !property.isToscaFunction()) || (property.isToscaFunction() && property.isChildOfListOrMap)">
-            <a *ngIf="(propType == derivedPropertyTypes.LIST) && (!property.isChildOfListOrMap || property.mapInlist)" class="property-icon add-item" (click)="createNewChildProperty();" [class.disabled]="property.isSelected" [ngClass]="{'disabled':readonly || preventInsertItem(property)}" [attr.data-tests-id]="'add-to-list-' + propertyTestsId">Add value to list</a>
-            <a *ngIf="(propType == derivedPropertyTypes.MAP) && (!property.isChildOfListOrMap || property.mapInlist)" class="property-icon add-item" (click)="createNewChildProperty();" [class.disabled]="property.isSelected" [ngClass]="{'disabled':readonly || preventInsertItem(property)}" [attr.data-tests-id]="'add-to-list-' + propertyTestsId">Add value to map</a>
-            <span *ngIf="property.isChildOfListOrMap" (click)="deleteItem.emit(property);" class="property-icon sprite-new delete-item-icon" [ngClass]="{'disabled':readonly}" [attr.data-tests-id]="'delete-from-list-' + propertyTestsId"></span>
-            <span *ngIf="!isPropertyFEModel && (propType == derivedPropertyTypes.COMPLEX || ((propType == derivedPropertyTypes.LIST || propType == derivedPropertyTypes.MAP) && hasChildren))" (click)="expandChildById(propPath)" class="property-icon sprite-new round-expand-icon" [class.open]="expandedChildId.indexOf(propPath) == 0" [attr.data-tests-id]="'expand-' + propertyTestsId" ></span>
+            <button type="button" *ngIf="(propType == derivedPropertyTypes.LIST) && (!property.isChildOfListOrMap || property.mapInlist)" class="property-icon add-item" (click)="createNewChildProperty();" [class.disabled]="property.isSelected" [ngClass]="{'disabled':readonly || preventInsertItem(property)}" [disabled]="property.isSelected || readonly || preventInsertItem(property)" [attr.data-tests-id]="'add-to-list-' + propertyTestsId">Add value to list</button>
+            <button type="button" *ngIf="(propType == derivedPropertyTypes.MAP) && (!property.isChildOfListOrMap || property.mapInlist)" class="property-icon add-item" (click)="createNewChildProperty();" [class.disabled]="property.isSelected" [ngClass]="{'disabled':readonly || preventInsertItem(property)}" [disabled]="property.isSelected || readonly || preventInsertItem(property)" [attr.data-tests-id]="'add-to-list-' + propertyTestsId">Add value to map</button>
+            <button type="button" *ngIf="property.isChildOfListOrMap" (click)="deleteItem.emit(property);" class="property-icon sprite-new delete-item-icon" [ngClass]="{'disabled':readonly}" [disabled]="readonly" [attr.data-tests-id]="'delete-from-list-' + propertyTestsId" aria-label="Delete value"></button>
+            <button type="button" *ngIf="!isPropertyFEModel && (propType == derivedPropertyTypes.COMPLEX || ((propType == derivedPropertyTypes.LIST || propType == derivedPropertyTypes.MAP) && hasChildren))" (click)="expandChildById(propPath)" class="property-icon sprite-new round-expand-icon" [class.open]="expandedChildId.indexOf(propPath) == 0" [attr.data-tests-id]="'expand-' + propertyTestsId" [attr.aria-label]="'Expand ' + property.name" [attr.aria-expanded]="expandedChildId.indexOf(propPath) == 0"></button>
     </ng-container>
 
 </div>

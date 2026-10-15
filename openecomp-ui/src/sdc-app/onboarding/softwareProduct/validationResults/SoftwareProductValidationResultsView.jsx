@@ -329,7 +329,8 @@ class SoftwareProductValidationResultsView extends React.Component {
         } else if (results.length > 0) {
             return (
                 <div>
-                    <div
+                    <button
+                        type="button"
                         onClick={() => this.refreshValidationResult(this)}
                         data-test-id="vsp-validation-refresh-btn"
                         className={'vcp-validation-refresh-btn'}>
@@ -340,7 +341,7 @@ class SoftwareProductValidationResultsView extends React.Component {
                             iconClassName="vcp-validation-refresh-icon"
                             name="versionControllerSync"
                         />
-                    </div>
+                    </button>
                     <GridSection title={i18n('Test Results')}>
                         <GridItem colSpan={10}>
                             <Accordion
@@ -358,7 +359,8 @@ class SoftwareProductValidationResultsView extends React.Component {
         } else {
             return (
                 <div>
-                    <div
+                    <button
+                        type="button"
                         onClick={() => this.refreshValidationResult(this)}
                         data-test-id="vsp-validation-refresh-btn"
                         className={'vcp-validation-refresh-btn'}>
@@ -369,7 +371,7 @@ class SoftwareProductValidationResultsView extends React.Component {
                             iconClassName="vcp-validation-refresh-icon"
                             name="versionControllerSync"
                         />
-                    </div>
+                    </button>
                     <GridSection title={i18n('Test Results')}>
                         <h4>{i18n('No Test Result Available')}</h4>
                     </GridSection>

@@ -1,10 +1,15 @@
 @import '../../../../../assets/styles/variables.less';
+@import '../../../../../assets/styles/button-reset.less';
 
 .add-path-link {
   display: flex;
   align-items: flex-end;
   flex-direction: column;
   padding-bottom: 10px;
+
+  button {
+    .sdc-link-button();
+  }
 }
 
 .generic-table {
@@ -16,9 +21,10 @@
   align-items: center;
   justify-content: space-between;
   .sprite-new {
+    .sdc-sprite-button-reset();
     cursor: pointer;
   }
-  & > span:only-child {
+  & > button:only-child {
     margin: auto;
 }
 }

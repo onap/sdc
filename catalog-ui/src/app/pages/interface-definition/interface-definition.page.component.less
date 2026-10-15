@@ -21,6 +21,7 @@
 @import '../../../assets/styles/variables.less';
 @import '../../../assets/styles/override.less';
 @import '../../../assets/styles/sprite-old.less';
+@import '../../../assets/styles/button-reset.less';
 .interface-definition {
     font-size: 14px;
     display:flex;
@@ -55,7 +56,12 @@
         padding: 14px;
     }
 
+    .top-add-btn {
+        .sdc-button-chrome-reset();
+    }
+
     .link {
+        .sdc-button-reset();
         color: @sdcui_color_blue;
         text-decoration: underline;
         font-family: @font-opensans-regular;
@@ -128,6 +134,10 @@
 
             .interface-accordion {
                 cursor: pointer;
+
+                > button {
+                    .sdc-button-reset();
+                }
 
                 .chevron-container {
                     position: relative;
@@ -219,6 +229,20 @@
                         text-overflow: ellipsis;
                         overflow: hidden;
 
+                        &.field-name {
+                            padding: 0;
+                        }
+
+                        .field-name-button {
+                            .sdc-button-reset();
+                            display: block;
+                            width: 100%;
+                            padding: 10px;
+                            white-space: nowrap;
+                            text-overflow: ellipsis;
+                            overflow: hidden;
+                        }
+
                         &.field-description {
                             &:not(.collapsed) {
                                 white-space: normal;
@@ -256,6 +280,7 @@
         margin: 0px 0 0 1em;
         overflow-x:auto;
         .add-btn{
+            .sdc-button-chrome-reset();
             align-self: flex-end;
             margin-top: 10px;
             margin-bottom: 19px;

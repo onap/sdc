@@ -21,6 +21,7 @@
 
 @import "../../../../../assets/styles/mixins.less";
 @import "../../../../../assets/styles/sprite.less";
+@import "../../../../../assets/styles/button-reset.less";
 
 .component-container {
     overflow: scroll;
@@ -38,6 +39,7 @@
     margin-bottom: 10px;
 
     .add-link {
+        .sdc-button-reset();
         .f-color.a();
         .f-type._14_m();
         cursor: pointer;
@@ -51,6 +53,7 @@
 
         &:hover {
             .f-color.b();
+            text-decoration: underline;
             &:before {
                 .sprite-new();
                 .plus-icon-hover();
@@ -59,6 +62,7 @@
     }
 
     .delete-icon {
+        .sdc-sprite-button-reset();
         .sprite-new();
         .delete-btn();
         cursor: pointer;

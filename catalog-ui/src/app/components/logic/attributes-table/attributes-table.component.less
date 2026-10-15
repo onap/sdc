@@ -1,8 +1,14 @@
 @import '../../../../assets/styles/mixins.less';
 @import '../../../../assets/styles/sprite';
+@import '../../../../assets/styles/button-reset';
 @smaller-screen: ~"only screen and (max-width: 1580px)";
 
 :host /deep/ input { width:100%;}
+
+// Below the .table-cell rules' specificity, so they keep the header cells' box.
+button.table-cell {
+    .sdc-button-reset();
+}
 
 .attributes-table {
     display: flex;
@@ -19,6 +25,10 @@
     }
 
     .inner-cell-div-multiline {
+        .sdc-button-reset();
+        // A button centres its content vertically; a flex column keeps the name at the top of the row.
+        display: flex;
+        flex-direction: column;
         max-width: 100%;
     }
 

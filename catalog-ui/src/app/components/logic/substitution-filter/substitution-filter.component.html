@@ -28,13 +28,14 @@
              [ngClass]="{'hand': !readonly}"
              *ngFor="let property of constraintProperties; let i = index">
           <div class="rule-details" [ngClass]="{'readonly': readonly}">
-            <div class="rule-desc" (click)="!readonly && onSelectSubstitutionFilter(PROPERTIES, i)"
+            <button type="button" class="rule-desc" (click)="!readonly && onSelectSubstitutionFilter(PROPERTIES, i)" [disabled]="readonly"
                  tooltip="{{constraintPropertyLabels[i]}}">
               {{constraintPropertyLabels[i]}}
-            </div>
-            <span *ngIf="!readonly" class="sprite-new delete-btn delete-icon"
+            </button>
+            <button type="button" *ngIf="!readonly" class="sprite-new delete-btn delete-icon"
                   (click)="openDeleteModal(PROPERTIES, i)"
-                  data-tests-id="delete-input-button"></span>
+                  data-tests-id="delete-input-button"
+                  [attr.aria-label]="('DELETE_LABEL' | translate) + ' ' + constraintPropertyLabels[i]"></button>
           </div>
         </div>
 

@@ -20,6 +20,7 @@
 
 @import '../../../../assets/styles/override.less';
 @import '../../../../assets/styles/variables.less';
+@import '../../../../assets/styles/button-reset.less';
 
 .interface-operations {
   font-size: 14px;
@@ -33,6 +34,7 @@
   }
 
   .link {
+    .sdc-button-reset();
     color: @sdcui_color_blue;
     text-decoration: underline;
     font-family: @font-opensans-regular;
@@ -127,9 +129,9 @@
           }
         }
         .interface-name {
+          .sdc-button-reset();
           font-size: 18px;
           font-family: @font-opensans-bold;
-          margin-bottom: 15px;
         }
       }
 
@@ -187,6 +189,15 @@
             white-space: nowrap;
             text-overflow: ellipsis;
             overflow: hidden;
+
+            .operation-name {
+              .sdc-button-reset();
+              display: block;
+              width: 100%;
+              white-space: inherit;
+              text-overflow: inherit;
+              overflow: hidden;
+            }
 
             &.field-description {
               &:not(.collapsed) {

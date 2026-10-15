@@ -19,6 +19,7 @@
 
 @import '../../../../../../assets/styles/variables.less';
 @import '../../../../../../assets/styles/override.less';
+@import '../../../../../../assets/styles/button-reset.less';
 
 .operation-creator-interface-definition {
   font-family: @font-opensans-regular;
@@ -120,6 +121,7 @@
     margin-top: 10px;
 
     .add-param-link {
+      .sdc-link-button();
       &:not(.disabled):hover {
         cursor: pointer;
       }

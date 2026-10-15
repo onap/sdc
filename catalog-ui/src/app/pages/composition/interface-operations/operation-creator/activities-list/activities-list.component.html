@@ -57,7 +57,7 @@
                      required/>
                 </div>
                 <div class="form-item-icon">
-                  <span class="sprite-new delete-btn" [ngClass]="{'disabled': isViewOnly}" (click)="removeFromActivities(idx)"></span>
+                  <button type="button" class="sprite-new delete-btn" [ngClass]="{'disabled': isViewOnly}" [disabled]="isViewOnly" aria-label="Delete activity" (click)="removeFromActivities(idx)"></button>
                 </div>
               </div>
             </div>
@@ -97,8 +97,8 @@
           </div>
         </div>
         <div class="add-button-container group-with-border" *ngIf="!isViewOnly">
-          <a class="add-btn" data-tests-id="add-input.add-input-link"
-             (click)="addActivity()">Add Activity</a>
+          <button type="button" class="add-btn" data-tests-id="add-input.add-input-link"
+             (click)="addActivity()">Add Activity</button>
         </div>
       </div>
     </form>

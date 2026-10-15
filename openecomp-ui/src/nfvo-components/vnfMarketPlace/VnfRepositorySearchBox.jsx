@@ -1,5 +1,6 @@
 /*!
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,18 +26,20 @@ function VNFBrowse({ onBrowseVNF, isReadOnlyMode }) {
         return <div />;
     } else {
         return (
-            <div
+            <button
+                type="button"
                 className={`${'vnfRepo'}${isReadOnlyMode ? ' disabled' : ''}`}
+                disabled={isReadOnlyMode}
                 onClick={onBrowseVNF}>
-                <div className={`${'searchRepo-text'}`}>
+                <span className={`${'searchRepo-text'}`}>
                     {i18n('Search in Repository')}
-                </div>
+                </span>
                 <SVGIcon
                     name="search"
                     color="positive"
                     iconClassName="searchIcon"
                 />
-            </div>
+            </button>
         );
     }
 }

@@ -73,7 +73,7 @@ public class InterfaceDefinitionPage extends ComponentPage {
         EXPAND_COLLAPSE("//div[@class='expand-collapse']"),
         INTERFACE_ACCORDION("//div[@class='interface-accordion']"),
         INTERFACE_ROW("//div[contains(@class,'interface-row')]"),
-        FIELD_NAME_SPAN("//span[contains(@class,'field-name') and contains(text(), '%s')]"),
+        FIELD_NAME_SPAN("//span[contains(@class,'field-name') and contains(., '%s')]"),
         FIELD_DESCRIPTION_SPAN("//span[contains(@class,'field-description')]");
 
         @Getter

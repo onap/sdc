@@ -85,8 +85,8 @@
                     <div class="module-data-list-item">
                         <div class="module-data-list-item-value property-name"
                              [attr.data-tests-id]="'selected-module-property-name'">
-                            <span tooltip="{{property.name}}" [ngClass]="{'hand-pointer': !isViewOnly}"
-                                  (click)="!isViewOnly && openEditPropertyModal(property)">{{property.name}}</span>
+                            <span tooltip="{{property.name}}"><button type="button" class="property-name-button" *ngIf="!isViewOnly"
+                                  (click)="openEditPropertyModal(property)">{{property.name}}</button><ng-container *ngIf="isViewOnly">{{property.name}}</ng-container></span>
                         </div>
                         <div class="module-data-list-item-value property-info"
                              [attr.data-tests-id]="'selected-module-property-type'"> Type: {{property.type}}</div>

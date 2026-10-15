@@ -54,3 +54,28 @@ describe('general-tab file controls', () => {
         expect(clear.getAttribute('aria-label')).toBe('Clear file');
     });
 });
+
+describe('general-tab icon controls', () => {
+    const html = fs.readFileSync(path.join(__dirname, '..', 'general-tab.component.html'), 'utf8');
+    const doc = new DOMParser().parseFromString(`<body>${html}</body>`, 'text/html');
+
+    [
+        ['revert', 'sprite-new revert-btn', 'Revert'],
+        ['update-component-icon', 'sprite-new update-component-icon', 'Update icon'],
+    ].forEach(([testId, className, name]) => {
+        it(`renders ${testId} as a named native sprite button`, () => {
+            const el = doc.querySelector(`[data-tests-id="${testId}"]`);
+            expect(el.tagName).toBe('BUTTON');
+            expect(el.getAttribute('type')).toBe('button');
+            expect(el.className).toBe(className);
+            expect(el.getAttribute('aria-label')).toBe(name);
+        });
+    });
+
+    it('deletes a tag through a button named after the tag', () => {
+        const del = doc.querySelector('[data-tests-id="i-sdc-tag-delete"]');
+        expect(del.tagName).toBe('BUTTON');
+        expect(del.getAttribute('type')).toBe('button');
+        expect(del.getAttribute('[attr.aria-label]')).toBe(`'Delete tag ' + tag`);
+    });
+});

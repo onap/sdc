@@ -19,18 +19,18 @@
 <div class="properties-table">
     <loader [display]="isLoading" [size]="'large'" [relative]="true" [loaderDelay]="500"></loader>
     <div class="table-header">
-        <div class="table-cell col1" (click)="sort('name')">Property Name
+        <button type="button" class="table-cell col1" (click)="sort('name')">Property Name
             <span *ngIf="sortBy === 'name'" class="table-header-sort-arrow" [ngClass]="{'down': reverse, 'up':!reverse}">
             </span>
-        </div>
-        <div class="table-cell col2" (click)="sort('type')" *ngIf="!hidePropertyType">Type
+        </button>
+        <button type="button" class="table-cell col2" (click)="sort('type')" *ngIf="!hidePropertyType">Type
             <span *ngIf="sortBy === 'type'" class="table-header-sort-arrow" [ngClass]="{'down': reverse, 'up':!reverse}">
             </span>
-        </div>
-        <div class="table-cell col3" (click)="sort('schema.property.type')" *ngIf="!hidePropertyType">EntrySchema
+        </button>
+        <button type="button" class="table-cell col3" (click)="sort('schema.property.type')" *ngIf="!hidePropertyType">EntrySchema
             <span *ngIf="sortBy === 'schema.property.type'" class="table-header-sort-arrow" [ngClass]="{'down': reverse, 'up':!reverse}">
             </span>
-        </div>
+        </button>
         <div class="table-cell valueCol">Value</div>
     </div>
     <div class="table-body" [ngClass]="{'view-mode': readonly}">
@@ -51,14 +51,15 @@
                     <div class="property-name">
                         <checkbox *ngIf="hasDeclareOption" [(checked)]="property.isSelected" [disabled]="property.isDisabled || property.isDeclared || readonly"
                             (checkedChange)="propertyChecked(property)" [attr.data-tests-id]="property.name"></checkbox>
-                        <div class="inner-cell-div-multiline" tooltip="{{property.name}}">
+                        <button type="button" class="inner-cell-div-multiline" tooltip="{{property.name}}"
+                                (click)="onClickPropertyRow(property, instanceId); $event.stopPropagation()">
                             <multiline-ellipsis data-tests-id="propertyName" className="table-cell-multiline-ellipsis" [lines]="2">{{property.name}}</multiline-ellipsis>
-                        </div>
+                        </button>
                     </div>
                     <span *ngIf="property.description" class="property-description-icon sprite-new show-desc" tooltip="{{property.description}}"
                         tooltipDelay="0"></span>
                     <div class="delete-button-container">
-                        <span *ngIf="showDelete" class="sprite-new delete-btn" [ngClass]="{'disabled' : property.isDisabled || property.isDeclared}" (click)="openDeleteModal(property)" data-tests-id="delete-input-button"></span>
+                        <button type="button" *ngIf="showDelete" class="sprite-new delete-btn" [ngClass]="{'disabled' : property.isDisabled || property.isDeclared}" [disabled]="property.isDisabled || property.isDeclared" (click)="openDeleteModal(property)" data-tests-id="delete-input-button" [attr.aria-label]="'Delete ' + property.name"></button>
                     </div>
                 </div>
                 <!-- Property Type -->

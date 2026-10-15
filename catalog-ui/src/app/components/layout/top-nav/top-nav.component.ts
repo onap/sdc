@@ -30,6 +30,9 @@ import {NavigationService} from "../../../services/navigation.service";
 import {Subscription} from "rxjs";
 
 declare const window:any;
+
+const TOP_LEVEL_STATES = ['dashboard', 'catalog', 'onboardVendor', 'plugins'];
+
 @Component({
     selector: 'top-nav',
     templateUrl: './top-nav.component.html',
@@ -158,6 +161,25 @@ export class TopNavComponent implements OnInit, OnChanges {
         });
     }
 
+
+    menuItemHref(item:MenuItem):string {
+        if (!item || item.callback || item.action !== 'goToState' || TOP_LEVEL_STATES.indexOf(item.state) === -1) {
+            return null;
+        }
+        const path = item.state === 'plugins' ? '/plugins/' + item.params.path : '/' + item.state;
+        // The URL SdcHashLocationStrategy writes for this route.
+        return '#!' + path;
+    }
+
+    // The href serves "open in new tab"; a plain click still goes through menuItemClick, so the
+    // unsaved-changes callback runs before the route changes.
+    onMenuLinkClick(event:MouseEvent, itemGroup:MenuItemGroup, item:MenuItem) {
+        if (event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) {
+            return;
+        }
+        event.preventDefault();
+        this.menuItemClick(itemGroup, item);
+    }
 
     menuItemClick(itemGroup:MenuItemGroup, item:MenuItem) {
 

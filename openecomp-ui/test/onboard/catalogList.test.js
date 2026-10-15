@@ -54,28 +54,24 @@ describe('CatalogList - CREATE NEW VSP tile', () => {
         ).toBe(true);
     });
 
-    it('opens the dialog on click, Enter and Space when a vendor exists', () => {
+    it('is a native button that opens the dialog when a vendor exists', () => {
         const { vspTile, onAddVSP } = renderTiles(true);
-        expect(vspTile.getAttribute('role')).toBe('button');
-        expect(vspTile.getAttribute('tabindex')).toBe('0');
+        expect(vspTile.tagName).toBe('BUTTON');
+        expect(vspTile.getAttribute('type')).toBe('button');
         expect(vspTile.hasAttribute('aria-disabled')).toBe(false);
         expect(vspTile.hasAttribute('aria-describedby')).toBe(false);
 
         fireEvent.click(vspTile);
-        fireEvent.keyDown(vspTile, { key: 'Enter' });
-        fireEvent.keyDown(vspTile, { key: ' ' });
-        expect(onAddVSP).toHaveBeenCalledTimes(3);
+        expect(onAddVSP).toHaveBeenCalledTimes(1);
     });
 
     it('stays focusable but does not open the dialog without a vendor', () => {
         const { vspTile, onAddVSP } = renderTiles(false);
         expect(vspTile.getAttribute('aria-disabled')).toBe('true');
-        expect(vspTile.getAttribute('tabindex')).toBe('0');
+        expect(vspTile.disabled).toBe(false);
         expect(vspTile.classList.contains('disabled')).toBe(true);
 
         fireEvent.click(vspTile);
-        fireEvent.keyDown(vspTile, { key: 'Enter' });
-        fireEvent.keyDown(vspTile, { key: ' ' });
         expect(onAddVSP).not.toHaveBeenCalled();
     });
 

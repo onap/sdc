@@ -17,6 +17,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
+import uniqueId from 'lodash/uniqueId.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import SVGIcon from 'onap-ui-react/lib/components/SVGIcon.js';
 import store from 'sdc-app/AppStore.js';
@@ -30,6 +31,9 @@ class ListEditorItem extends React.Component {
         children: PropTypes.node,
         isReadOnlyMode: PropTypes.bool
     };
+
+    contentId = uniqueId('list-editor-item-content-');
+    openId = uniqueId('list-editor-item-open-');
 
     render() {
         let {
@@ -48,8 +52,22 @@ class ListEditorItem extends React.Component {
                 })}
                 data-test-id="list-editor-item">
                 <div
+                    id={this.contentId}
                     className="list-editor-item-view-content"
                     onClick={onSelect}>
+                    {typeof onSelect === 'function' && (
+                        <button
+                            type="button"
+                            id={this.openId}
+                            className="list-editor-item-view-open sr-only"
+                            aria-label={i18n('Open')}
+                            aria-labelledby={`${this.openId} ${this.contentId}`}
+                            onClick={e => {
+                                e.stopPropagation();
+                                onSelect();
+                            }}
+                        />
+                    )}
                     {children}
                 </div>
                 {(onEdit || onDelete) && (

@@ -1,5 +1,6 @@
 /*!
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,22 +41,20 @@ export default class ToggleInput extends React.Component {
     render() {
         let { label, disabled } = this.props;
         let checked = this.status() === 'on';
-        //TODO check onclick
         return (
-            <div
-                className="toggle-input-wrapper form-group"
-                onClick={!disabled && this.click}>
-                <div className="toggle-input-label">{label}</div>
-                <div className="toggle-switch">
+            <label className="toggle-input-wrapper form-group">
+                <span className="toggle-input-label">{label}</span>
+                <span className="toggle-switch">
                     <input
                         className="toggle toggle-round-flat"
                         type="checkbox"
                         checked={checked}
-                        readOnly
+                        disabled={disabled}
+                        onChange={this.click}
                     />
-                    <label />
-                </div>
-            </div>
+                    <span className="toggle-track" />
+                </span>
+            </label>
         );
     }
 

@@ -19,6 +19,7 @@
  * ============LICENSE_END=========================================================
  */
 @import '../../../assets/styles/variables.less';
+@import '../../../assets/styles/button-reset.less';
 
 // Restored from the deleted view-models/forms/property-forms/base-property-form/property-form-base.less.
 // That file was a GLOBAL stylesheet (imported by app.less) styling the AngularJS property-form modal;
@@ -33,7 +34,8 @@
         .sdc-modal-top-bar-buttons {
             float: right;
 
-            > span:not(.delimiter) {
+            > button {
+                .sdc-sprite-button-reset();
                 vertical-align: middle;
                 // was the .hand mixin from mixins_old.less; inlined so this component-scoped sheet
                 // does not have to pull in that file's ~1000 lines of global utility classes.

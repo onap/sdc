@@ -26,6 +26,7 @@ class CustomInput extends React.Component {
         placeHolderText: PropTypes.string,
         onChange: PropTypes.func,
         onClick: PropTypes.func,
+        disabled: PropTypes.bool,
         value: PropTypes.string
     };
 
@@ -35,6 +36,7 @@ class CustomInput extends React.Component {
             onClick,
             onClear,
             inputRef,
+            disabled,
             value: date
         } = this.props;
         const text = date ? date : placeholderText;
@@ -44,7 +46,16 @@ class CustomInput extends React.Component {
                 onClick={onClick}
                 ref={inputRef}
                 className="datepicker-custom-input">
-                <div className={`datepicker-text ${textStyle}`}>{text}</div>
+                <button
+                    type="button"
+                    className={`datepicker-text ${textStyle}`}
+                    disabled={disabled}
+                    onClick={e => {
+                        e.stopPropagation();
+                        onClick(e);
+                    }}>
+                    {text}
+                </button>
                 {date && (
                     <SVGIcon
                         onClick={e => {

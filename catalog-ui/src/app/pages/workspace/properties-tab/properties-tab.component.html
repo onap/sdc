@@ -27,13 +27,15 @@
         <input id="search-by-name" type="search" placeholder="Search" [(ngModel)]="filterTerms" (ngModelChange)="onFilterChange()"/>
         <span class="sprite magnification-glass search-button"></span>
     </div>
-    <div class="add-btn" data-tests-id="addGrey" *ngIf="!isViewMode()"
-         [ngClass]="{'disabled': isDisableMode()}" (click)="addOrUpdateProperty()">Add Property</div>
+    <button type="button" class="add-btn" data-tests-id="addGrey" *ngIf="!isViewMode()"
+            [ngClass]="{'disabled': isDisableMode()}" [disabled]="isDisableMode()" (click)="addOrUpdateProperty()">Add Property</button>
     <div class="table-container-flex">
         <div class="table" [ngClass]="{'view-mode': isViewMode()}">
             <div class="head flex-container">
-                <div class="table-header head-row hand flex-item" *ngFor="let header of tableHeadersList" (click)="sort(header.property)">{{header.title}}
-                    <span *ngIf="sortBy === header.property" class="table-header-sort-arrow" [ngClass]="{'down': reverse, 'up':!reverse}"> </span>
+                <div class="table-header head-row hand flex-item" *ngFor="let header of tableHeadersList">
+                    <button type="button" class="table-header-button" (click)="sort(header.property)">{{header.title}}
+                        <span *ngIf="sortBy === header.property" class="table-header-sort-arrow" aria-hidden="true" [ngClass]="{'down': reverse, 'up':!reverse}"> </span><span *ngIf="sortBy === header.property" class="sr-only">{{reverse ? ', sorted descending' : ', sorted ascending'}}</span>
+                    </button>
                 </div>
                 <div class="table-no-text-header head-row flex-item" *ngIf="!isViewMode()"><span class="delete-col-header"></span></div>
             </div>
@@ -42,7 +44,7 @@
                 <div class="scrollbar-container">
                     <div *ngIf="propertiesCount === 0" class="no-row-text" [ngClass]="{'disabled': isDisableMode()}">
                         There are no properties to display <br>
-                        <span *ngIf="!isViewMode()"> click <a (click)="addOrUpdateProperty()">here</a> to add one </span>
+                        <span *ngIf="!isViewMode()"> click <button type="button" class="add-property-link" (click)="addOrUpdateProperty()">here</button> to add one </span>
                     </div>
                     <div *ngFor="let property of filteredProperties; trackBy: trackByUniqueId"
                          data-tests-id="propertyRow" [ngClass]="{'selected': property.selected}"
@@ -53,8 +55,8 @@
                              AngularJS and a no-op in an Angular template, so the native `title` attribute
                              preserves the same hover-text behavior. -->
                         <div class="table-col-general flex-item text" [attr.title]="property.name">
-                            <a [attr.data-tests-id]="'propertyName_' + property.name"
-                               (click)="addOrUpdateProperty(property); $event.stopPropagation();">{{property.name}}</a>
+                            <button type="button" class="property-name-button" [attr.data-tests-id]="'propertyName_' + property.name"
+                                    (click)="addOrUpdateProperty(property); $event.stopPropagation();">{{property.name}}</button>
                         </div>
 
                         <div class="table-col-general flex-item text" [attr.title]="property.type">

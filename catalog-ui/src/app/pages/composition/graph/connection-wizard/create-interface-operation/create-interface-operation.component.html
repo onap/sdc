@@ -83,12 +83,14 @@
       <tabs tabStyle="round-tabs" [hideIndicationOnTabChange]="true">
         <tab tabTitle="Inputs"></tab>
       </tabs>
-      <a
+      <button
+          type="button"
           class="add-param-link add-btn"
           *ngIf="!isReadOnly"
           data-tests-id="addInputParameter"
           [ngClass]="{'disabled':isReadOnly}"
-          (click)="addInput()">{{ 'OPERATION_ADD_INPUT' | translate }}</a>
+          [disabled]="isReadOnly"
+          (click)="addInput()">{{ 'OPERATION_ADD_INPUT' | translate }}</button>
     </div>
 
     <div class="generic-table">

@@ -121,9 +121,9 @@
             <div class="rule-builder-content" *ngIf="isToscaFunctionListSource() && selectedProperty && isValidValuesOperator()">
 
                 <div class="i-sdc-form-item rule-input-field">
-                    <div class="add-btn"
+                    <button type="button" class="add-btn"
                          (click)="addToList()">Add to List
-                    </div>
+                    </button>
                     <div class="w-sdc-form-columns-wrapper" *ngFor="let val of this.validValuesToscaFunctionList; let valueIndex = index; trackBy:trackByFn">
                         <div class="w-sdc-form-column" style="border-width:3px; border-style:solid; border-color:#009fdb; padding: 1em;">
                             <tosca-function [property]="selectedProperty"
@@ -136,7 +136,7 @@
                             </tosca-function>
                         </div>
                         <div class="w-sdc-form-column">
-                            <span class="sprite-new delete-btn" (click)="removeFromList(valueIndex)"></span>
+                            <button type="button" class="sprite-new delete-btn" aria-label="Delete value" (click)="removeFromList(valueIndex)"></button>
                         </div>
                     </div>
                 </div>

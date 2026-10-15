@@ -4,9 +4,10 @@
   </select-directives>
   <div *ngIf="isDependent && !isEditable" class="checkbox-label-mark-as-dependent">
     <label class="i-sdc-form-label">Directive: {{getActualDirectiveValue()}}</label>
-    <span class="sprite-new delete-btn delete-icon"
-          (click)="onRemoveDirective()" data-tests-id="delete-input-button" *ngIf="!readonly">
-    </span>
+    <button type="button" class="sprite-new delete-btn delete-icon"
+          (click)="onRemoveDirective()" data-tests-id="delete-input-button" *ngIf="!readonly"
+          [attr.aria-label]="('DELETE_LABEL' | translate) + ' ' + getActualDirectiveValue()">
+    </button>
     <svg-icon-label name="edit-file-o" size="small" class="directive-edit-icon" data-tests-id="directive-edit-icon" 
           clickable="true" ariaLabel="Edit directive"
           (click)="onEditDirectives()" *ngIf="!readonly">
@@ -22,13 +23,14 @@
                [ngClass]="{'hand': !readonly}"
                *ngFor="let capability of constraintCapabilities; let i = index">
             <div class="filter-details" [ngClass]="{'readonly': readonly}">
-              <div class="filter-desc" (click)="!readonly && onSelectNodeFilterCapability(capabilities, i)"
+              <button type="button" class="filter-desc" (click)="!readonly && onSelectNodeFilterCapability(capabilities, i)" [disabled]="readonly"
                    tooltip="{{constraintCapabilityLabels[i]}}">
                    {{constraintCapabilityLabels[i]}}
-              </div>
-              <span *ngIf="!readonly" class="sprite-new delete-btn delete-icon"
+              </button>
+              <button type="button" *ngIf="!readonly" class="sprite-new delete-btn delete-icon"
                     (click)="openDeleteModal(capabilities, i)"
-                    data-tests-id="delete-input-button"></span>
+                    data-tests-id="delete-input-button"
+                    [attr.aria-label]="('DELETE_LABEL' | translate) + ' ' + constraintCapabilityLabels[i]"></button>
             </div>
           </div>
 
@@ -51,13 +53,14 @@
                [ngClass]="{'hand': !readonly}"
                *ngFor="let property of constraintProperties; let i = index">
             <div class="filter-details" [ngClass]="{'readonly': readonly}">
-              <div class="filter-desc" (click)="!readonly && onSelectNodeFilter(properties, i)"
+              <button type="button" class="filter-desc" (click)="!readonly && onSelectNodeFilter(properties, i)" [disabled]="readonly"
                    tooltip="{{constraintPropertyLabels[i]}}">
                    {{constraintPropertyLabels[i]}}
-              </div>
-              <span *ngIf="!readonly" class="sprite-new delete-btn delete-icon"
+              </button>
+              <button type="button" *ngIf="!readonly" class="sprite-new delete-btn delete-icon"
                     (click)="openDeleteModal(properties, i)"
-                    data-tests-id="delete-input-button"></span>
+                    data-tests-id="delete-input-button"
+                    [attr.aria-label]="('DELETE_LABEL' | translate) + ' ' + constraintPropertyLabels[i]"></button>
             </div>
           </div>
 

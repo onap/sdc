@@ -21,9 +21,9 @@
 
 <div>
   <div *ngIf="!isView && showAddLink" class="add-button-container">
-    <a class="add-btn" data-tests-id="add-input.add-input-link"
+    <button type="button" class="add-btn" data-tests-id="add-input.add-input-link"
        (click)="showAddInput()">{{'OPERATION_ADD_INPUT' | translate}}
-    </a>
+    </button>
   </div>
   <form *ngIf="showForm" [formGroup]="inputForm" (ngSubmit)="onSubmit()">
     <label class="occurrences-label">{{'ADD_INPUT_TITLE' | translate}}</label>

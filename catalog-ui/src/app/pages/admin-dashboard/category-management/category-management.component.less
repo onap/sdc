@@ -1,6 +1,7 @@
 @import '../../../../assets/styles/variables';
 @import '../../../../assets/styles/variables-old';
 @import '../../../../assets/styles/mixins_old';
+@import '../../../../assets/styles/button-reset';
 
 .category-management {
 
@@ -32,7 +33,11 @@
                 height: 31px;
                 font-size: 15px;
 
-                span {
+                > button {
+                    .sdc-button-reset();
+                }
+
+                span, > button {
                     display: inline-block;
                     line-height: 30px;
                     margin-right: 5px;
@@ -44,7 +49,8 @@
                 }
             }
 
-            h4+span {
+            h4+button {
+                .sdc-button-reset();
                 .hand;
                 float: right;
                 display: inline-block;
@@ -75,7 +81,7 @@
 
                 li {
                     .hand;
-                    padding: 0 8px;
+                    padding: 0;
                     text-indent: 9px;
                     font-size: 13px;
                     line-height: 25px;
@@ -84,22 +90,17 @@
                     border-left: none;
                     margin-right: 5px;
 
-                    button {
-                        background-color: transparent;
-                        border: none;
-                        float: right;
-                        margin: 5px 3px;
-                        display: none;
+                    > button {
+                        .sdc-button-reset();
+                        display: block;
+                        width: 100%;
+                        padding: 0 8px;
                     }
 
                     &:hover {
                         background-color: #d9e6ec;
                         color: #3b7b9b;
                         border-color: #d9e6ec;
-
-                        button {
-                            display: inline-block;
-                        }
                     }
 
                     &.selected {

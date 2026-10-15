@@ -1,3 +1,5 @@
+@import '../../../../../assets/styles/button-reset';
+
 .sdc-canvas-zone {
     width: 285px;
     max-height:186px;
@@ -18,6 +20,10 @@
         justify-content: space-between;
         font-size: 14px;
         text-transform:uppercase;
+        .sdc-canvas-zone__title {
+            .sdc-button-reset();
+            cursor: inherit;
+        }
         .sdc-canvas-zone__state-button {
             font-weight:bold;
             cursor:pointer;

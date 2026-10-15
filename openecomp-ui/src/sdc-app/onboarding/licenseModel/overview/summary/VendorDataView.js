@@ -1,5 +1,6 @@
 /*!
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +20,7 @@ import { connect } from 'react-redux';
 import Tooltip from 'react-bootstrap/lib/Tooltip.js';
 import OverlayTrigger from 'react-bootstrap/lib/OverlayTrigger.js';
 import { SVGIcon } from 'onap-ui-react';
+import i18n from 'nfvo-utils/i18n/i18n.js';
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
 import licenseModelOverviewActionHelper from '../licenseModelOverviewActionHelper.js';
 import LicenseModelActionHelper from '../../LicenseModelActionHelper.js';
@@ -91,27 +93,32 @@ export class VendorDataView extends Component {
             onVendorDescriptionEdit,
             isReadOnlyMode
         } = this.props;
+        if (isReadOnlyMode) {
+            return (
+                <div className="vendor-description-readonly">
+                    {this.renderOverlay(
+                        <div
+                            className="description-data"
+                            data-test-id="vlm-summary-vendor-description">
+                            {description}
+                        </div>
+                    )}
+                </div>
+            );
+        }
         return (
-            <div
-                onClick={() => {
-                    if (!isReadOnlyMode) {
-                        onVendorDescriptionEdit(description);
-                    }
-                }}
-                className={
-                    !isReadOnlyMode
-                        ? 'vendor-description'
-                        : 'vendor-description-readonly'
-                }>
-                {this.renderOverlay(
-                    <div
-                        className="description-data"
-                        data-test-id="vlm-summary-vendor-description">
-                        {description}
-                        {!isReadOnlyMode && <SVGIcon name="pencil" />}
-                    </div>
-                )}
-            </div>
+            <button
+                type="button"
+                onClick={() => onVendorDescriptionEdit(description)}
+                className="vendor-description">
+                <span className="sr-only">{i18n('Edit description')}</span>
+                <span
+                    className="description-data"
+                    data-test-id="vlm-summary-vendor-description">
+                    {description}
+                    <SVGIcon name="pencil" />
+                </span>
+            </button>
         );
     }
 

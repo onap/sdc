@@ -47,6 +47,12 @@ $transitionLength: 0.6s;
                         // swallow the hover that shows the full, ellipsised name. The
                         // consumer forwards its mouse click to the tile's action.
                         .with-overlay {
+                            @include button-reset;
+                            height: auto;
+                            // An overflow: hidden inline-block div sits on the line by its bottom
+                            // edge, a button by its text baseline; this lifts the button back by
+                            // the text's descent.
+                            vertical-align: 0.27em;
                             position: relative;
                             z-index: 1;
                             cursor: pointer;

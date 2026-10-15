@@ -163,8 +163,8 @@ public class InterfaceOperationInputListComponent extends AbstractPageObject {
         INPUT_TYPE("em[@data-tests-id='input-type']"),
         SIMPLE_VALUE_INPUT_RELATIVE_FROM_INPUT_INFO("..//li[@class='input-value']/input"),
         BOOLEAN_VALUE_INPUT_RELATIVE_FROM_INPUT_INFO("..//li[@class='input-value']/select"),
-        EXPAND_ICON("em[contains(concat(' ',normalize-space(@class),' '),' round-expand-icon ')]"),
-        DELETE_ICON("span[contains(concat(' ',normalize-space(@class),' '),' delete-btn ')]");
+        EXPAND_ICON("button[contains(concat(' ',normalize-space(@class),' '),' round-expand-icon ')]"),
+        DELETE_ICON("button[contains(concat(' ',normalize-space(@class),' '),' delete-btn ')]");
 
         private final String xPath;
 

@@ -82,9 +82,10 @@
 
               <div *ngIf="constraint.value.type == 'validValues'">
                 <div class="w-sdc-form-columns-wrapper-block">
-                  <div class="add-btn add-list-item w-sdc-form-column-block"
+                  <button type="button" class="add-btn add-list-item w-sdc-form-column-block"
                       [ngClass]="{'disabled': isViewOnly}"
-                      (click)="addToList(constraintIndex)">Add to List</div>
+                      [disabled]="isViewOnly"
+                      (click)="addToList(constraintIndex)">Add to List</button>
                 </div>
                 <div class="w-sdc-form-columns-wrapper" *ngFor="let value of constraintValuesArray(constraintIndex).controls; let valueIndex = index; trackBy:trackByFn">
                   <div class="w-sdc-form-column">
@@ -101,7 +102,8 @@
                   </ng-container>
 
                   <div class="w-sdc-form-column">
-                    <span class="sprite-new delete-btn" [ngClass]="{'disabled': isViewOnly}" (click)="removeFromList(constraintIndex, valueIndex)"></span>
+                    <button type="button" class="sprite-new delete-btn" [ngClass]="{'disabled': isViewOnly}" [disabled]="isViewOnly"
+                            aria-label="Delete value" (click)="removeFromList(constraintIndex, valueIndex)"></button>
                   </div>
                 </div>
               </div>
@@ -123,7 +125,8 @@
             </div>
 
             <div class="w-sdc-form-column-vsmall" *ngIf="!isViewOnly">
-                <span class="sprite-new delete-btn" [ngClass]="{'disabled': isViewOnly}" (click)="removeConstraint(constraintIndex)"></span>
+                <button type="button" class="sprite-new delete-btn" [ngClass]="{'disabled': isViewOnly}" [disabled]="isViewOnly"
+                        aria-label="Delete constraint" (click)="removeConstraint(constraintIndex)"></button>
             </div>
           </div>
         </div>
@@ -131,8 +134,8 @@
 
     </div>
     <div class="w-sdc-form-columns-wrapper-small" *ngIf="!isViewOnly">
-        <div class="add-btn add-list-item w-sdc-form-column-small" *ngIf="!isViewOnly" [ngClass]="{'disabled': isViewOnly}"
-        (click)="addConstraint()"> Add Constraint </div>
+        <button type="button" class="add-btn add-list-item w-sdc-form-column-small" *ngIf="!isViewOnly" [ngClass]="{'disabled': isViewOnly}"
+        [disabled]="isViewOnly" (click)="addConstraint()"> Add Constraint </button>
     </div>
   </form>
 </div>

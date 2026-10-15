@@ -91,9 +91,6 @@ class CreateItemTile extends React.Component {
     onKeyDown = e => {
         if (e.key === 'Escape') {
             this.hideHint();
-        } else if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            this.activate();
         }
     };
 
@@ -107,12 +104,11 @@ class CreateItemTile extends React.Component {
         const disabled = !!disabledReason;
         const hintId = `${dataTestId}-hint`;
         return (
-            <div
+            <button
+                type="button"
                 className={classnames('create-catalog-item tile', className, {
                     disabled
                 })}
-                role="button"
-                tabIndex={0}
                 aria-disabled={disabled || undefined}
                 aria-describedby={disabled ? hintId : undefined}
                 onClick={this.activate}
@@ -122,23 +118,23 @@ class CreateItemTile extends React.Component {
                 onFocus={disabled ? this.showHint : undefined}
                 onBlur={disabled ? this.hideHint : undefined}
                 data-test-id={dataTestId}>
-                <div className="create-item-plus-icon">
+                <span className="create-item-plus-icon">
                     <SVGIcon name="plus" />
-                </div>
-                <div className="create-item-text">{title}</div>
+                </span>
+                <span className="create-item-text">{title}</span>
                 {disabled && (
                     // aria-hidden keeps the hint out of the button's name;
                     // aria-describedby still reads it as the description.
-                    <div
+                    <span
                         id={hintId}
                         aria-hidden="true"
                         className={classnames('create-item-hint', {
                             visible: this.state.showHint
                         })}>
                         {disabledReason}
-                    </div>
+                    </span>
                 )}
-            </div>
+            </button>
         );
     }
 }

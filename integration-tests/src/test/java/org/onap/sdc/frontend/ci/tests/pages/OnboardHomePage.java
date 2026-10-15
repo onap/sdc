@@ -80,8 +80,8 @@ public class OnboardHomePage extends AbstractPageObject {
      */
     @AllArgsConstructor
     private enum XpathSelector {
-        ADD_NEW_VSP_BTN("catalog-add-new-vsp", "//div[@data-test-id='%s']"),
-        ADD_NEW_VLM_BTN("catalog-add-new-vlm", "//div[@data-test-id='%s']"),
+        ADD_NEW_VSP_BTN("catalog-add-new-vsp", "//button[@data-test-id='%s']"),
+        ADD_NEW_VLM_BTN("catalog-add-new-vlm", "//button[@data-test-id='%s']"),
         ONBOARDING_LOADER_DIV("onboarding-loader-backdrop","//div[@class='%s']");
 
         @Getter

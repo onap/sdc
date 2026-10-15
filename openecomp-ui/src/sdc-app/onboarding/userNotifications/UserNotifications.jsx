@@ -1,5 +1,6 @@
 /*!
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -87,7 +88,8 @@ const Notification = ({
                 <div className="date">{dateTime}</div>
             </div>
             <div className="notification-action">
-                <div
+                <button
+                    type="button"
                     className={classnames('action-button', { hidden: read })}
                     onClick={() => onActionClicked(notification)}>
                     {eventType === notificationType.PERMISSION_CHANGED ||
@@ -96,7 +98,7 @@ const Notification = ({
                     eventType === notificationType.ITEM_RESTORED
                         ? i18n('OK')
                         : i18n('Sync')}
-                </div>
+                </button>
             </div>
         </div>
     );

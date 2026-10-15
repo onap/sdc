@@ -5,21 +5,24 @@
     <div class="interface-operations-group"
          *ngFor="let interface of interfacesList; let interfaceIndex = index"
          (click)="expandCollapseInterfaceGroup(interface)">
-        <div class="interface-title first-level hand" [attr.data-tests-id]="interface.displayName" [ngClass]="{'expanded': interface.isExpanded}">
+        <button type="button" class="interface-title first-level hand" [attr.data-tests-id]="interface.displayName" [ngClass]="{'expanded': interface.isExpanded}"
+                [attr.aria-expanded]="!!interface.isExpanded" (click)="expandCollapseInterfaceGroup(interface); $event.stopPropagation()">
             <span class="sprite-new expand-collapse-plus-icon expand-collapse-icon"></span>
-            <div class="title-text" tooltip="{{interface.displayName}}">{{interface.displayName}}</div>
-        </div>
+            <span class="title-text" tooltip="{{interface.displayName}}">{{interface.displayName}}</span>
+        </button>
         <div class="i-sdc-designer-sidebar-section-content-item operations-group" *ngIf="interface.isExpanded">
             <div class="operation-data"
              [ngClass]="{'hand': !readonly}"
              *ngFor="let serviceOperation of interface.operationsList; let opIndex = index"
              (click)="onSelectOperation($event, interface, opIndex)">
-                <div class="operation-name"
+                <button type="button" class="operation-name"
                      [attr.data-tests-id]="interface.displayName + '.' + serviceOperation.operation.name"
                      [ngClass]="{'readonly': readonly}"
-                     tooltip="{{serviceOperation.operation.name}}">
+                     [attr.aria-disabled]="readonly ? true : null"
+                     tooltip="{{serviceOperation.operation.name}}"
+                     (click)="onSelectOperation($event, interface, opIndex)">
                     {{serviceOperation.operation.name}}
-                </div>
+                </button>
             </div>
         </div>
     </div>

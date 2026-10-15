@@ -26,7 +26,7 @@
         <!-- no hierarchy & dropdowns mode -->
         <li *ngFor="let item of topLvlMenu.menuItems; let i = index"
             [ngClass]="{'selected': i == topLvlMenu.selectedIndex}">
-            <a sdcKeyboardClick="link" (click)="menuItemClick(topLvlMenu, item)"
+            <a [href]="menuItemHref(item)" (click)="onMenuLinkClick($event, topLvlMenu, item)"
                [attr.aria-current]="i == topLvlMenu.selectedIndex ? 'page' : null"
                [attr.data-tests-id]="'main-menu-button-' + item.text.toLowerCase()">{{item.text}}</a>
         </li>
@@ -36,21 +36,28 @@
         <!-- with hierarchy & dropdowns mode -->
         <ng-container *ngFor="let groupItem of menuModel; let $index = index; let $last = last">
             <li [ngClass]="{'selected': $last }">
-                <a sdcKeyboardClick="link" (click)="menuItemClick(groupItem, groupItem.menuItems[groupItem.selectedIndex])"
+                <a *ngIf="menuItemHref(groupItem.menuItems[groupItem.selectedIndex]) as href; else breadcrumbButton"
+                   [href]="href" (click)="onMenuLinkClick($event, groupItem, groupItem.menuItems[groupItem.selectedIndex])"
                    [attr.data-tests-id]="'breadcrumbs-button-' + $index">
                     {{groupItem.menuItems[groupItem.selectedIndex]?.text}}
                 </a>
+                <ng-template #breadcrumbButton>
+                    <button type="button" (click)="menuItemClick(groupItem, groupItem.menuItems[groupItem.selectedIndex])"
+                            [attr.data-tests-id]="'breadcrumbs-button-' + $index">
+                        {{groupItem.menuItems[groupItem.selectedIndex]?.text}}
+                    </button>
+                </ng-template>
             </li>
             <li class="triangle-dropdown"
                 [ngClass]="{'item-click': groupItem.itemClick}" (mouseover)="groupItem.itemClick = true" (focusin)="groupItem.itemClick = true">
                 <div class="triangle"><span class="sprite-new arrow-right"></span></div>
                 <ul class="sub-menu">
                     <li *ngFor="let ddItem of groupItem.menuItems; let $index2 = index"
-                        sdcKeyboardClick="link" [sdcKeyboardClickDisabled]="ddItem.isDisabled"
-                        (click)="menuItemClick(groupItem, ddItem)"
-                        [ngClass]="{'selected': $index2 == groupItem.selectedIndex, 'disabled': ddItem.isDisabled}"
-                        [attr.data-tests-id]="'sub-menu-button-' + ddItem.text.toLowerCase()">
-                        <span sdc-smart-tooltip="">{{ddItem.text}}</span>
+                        [ngClass]="{'selected': $index2 == groupItem.selectedIndex, 'disabled': ddItem.isDisabled}">
+                        <button type="button" (click)="menuItemClick(groupItem, ddItem)" [disabled]="ddItem.isDisabled"
+                                [attr.data-tests-id]="'sub-menu-button-' + ddItem.text.toLowerCase()">
+                            <span sdc-smart-tooltip="">{{ddItem.text}}</span>
+                        </button>
                     </li>
                 </ul>
             </li>
@@ -68,6 +75,6 @@
         <span class="w-sdc-search-icon magnification" aria-hidden="true"></span>
     </div>
 
-    <div class="notification-icon" sdcKeyboardClick [sdcKeyboardClickDisabled]="progress > 0" aria-label="Vendor Software Product Repository" [ngClass]="{'disabled' : progress > 0}" *ngIf="user && user.role === 'DESIGNER' && notificationIconCallback" (click)="notificationIconCallback()" tooltip="Vendor Software Product Repository" tooltipPlacement="left" data-tests-id="repository-icon"></div>
+    <button type="button" class="notification-icon" aria-label="Vendor Software Product Repository" [ngClass]="{'disabled' : progress > 0}" [disabled]="progress > 0" *ngIf="user && user.role === 'DESIGNER' && notificationIconCallback" (click)="notificationIconCallback()" tooltip="Vendor Software Product Repository" tooltipPlacement="left" data-tests-id="repository-icon"></button>
 
 </nav>

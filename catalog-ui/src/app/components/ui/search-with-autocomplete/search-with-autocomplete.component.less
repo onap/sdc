@@ -1,3 +1,5 @@
+@import '../../../../assets/styles/button-reset';
+
 .sdc-search-with-autocomplete-container{
     &.sdc-autocomplete-visible {
 
@@ -21,6 +23,10 @@
         }
 
         .sdc-autocomplete-result-item {
+            .sdc-button-reset();
+            display: block;
+            width: 100%;
+            text-align: left;
             color:#5a5a5a;
             padding: 5px 0;
             cursor:pointer;

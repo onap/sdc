@@ -40,8 +40,8 @@
       <ng-template let-column="column" height="100" ngx-datatable-header-template>
             <span class="datatable-column-span">
               <b>{{col.name}}</b>
-              <div *ngIf="canBeDeleted(col.name)" style="width: 45px !important; color: red; "
-                   class="delete-icon" (click)="deleteColumn(col)">⛌</div>
+              <button type="button" *ngIf="canBeDeleted(col.name)" style="width: 45px !important; color: red; "
+                   class="delete-icon" (click)="deleteColumn(col)" [attr.aria-label]="'Delete column ' + col.name">⛌</button>
             </span>
         <br/>
         <input
@@ -64,7 +64,7 @@
 
     <ngx-datatable-column class="datatable-white-body-cell" [minWidth]="50" [maxWidth]="100"  >
       <ng-template ngx-datatable-header-template>
-        <div data-tests-id="gab-add-btn" class="add-btn add-btn-div" (click)="showAddNewColumn()">Add</div>
+        <button type="button" data-tests-id="gab-add-btn" class="add-btn add-btn-div" (click)="showAddNewColumn()">Add</button>
       </ng-template>
       <ng-template class="datatable-white-body-cell" ngx-datatable-cell-template>
       </ng-template>

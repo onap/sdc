@@ -15,6 +15,7 @@
     }
 
     .link {
+        .sdc-button-reset();
         color: @sdcui_color_blue;
         text-decoration: underline;
         font-family: @font-opensans-regular;
@@ -106,6 +107,10 @@
             .interface-accordion {
                 cursor: pointer;
 
+                > button {
+                    .sdc-button-reset();
+                }
+
                 .chevron-container {
                     position: relative;
                     margin-right: 5px;
@@ -187,6 +192,20 @@
                         white-space: nowrap;
                         text-overflow: ellipsis;
                         overflow: hidden;
+
+                        &.field-name {
+                            padding: 0;
+                        }
+
+                        .field-name-button {
+                            .sdc-button-reset();
+                            display: block;
+                            width: 100%;
+                            padding: 10px;
+                            white-space: nowrap;
+                            text-overflow: ellipsis;
+                            overflow: hidden;
+                        }
 
                         &.field-description {
                             &:not(.collapsed) {

@@ -150,3 +150,18 @@ describe('HierarchyTabComponent', () => {
             property, topologyTemplate, selectedModule, selectedModule.properties);
     });
 });
+describe('HierarchyTabComponent template', () => {
+    // tslint:disable-next-line:no-var-requires
+    const template: string = require('./hierarchy-tab.component.html');
+    const doc = new DOMParser().parseFromString(`<body>${template}</body>`, 'text/html');
+
+    // DeploymentPage reads the names through "div[data-tests-id='selected-module-property-name'] span".
+    it('keeps the name span and edits through a native button only outside view mode', () => {
+        const span = doc.querySelector(`[\\[attr\\.data-tests-id\\]="'selected-module-property-name'"] > span`);
+        expect(span.hasAttribute('(click)')).toBe(false);
+        const button = span.querySelector('button');
+        expect(button.getAttribute('type')).toBe('button');
+        expect(button.getAttribute('*ngif')).toBe('!isViewOnly');
+        expect(button.getAttribute('(click)')).toBe('openEditPropertyModal(property)');
+    });
+});

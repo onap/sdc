@@ -19,6 +19,11 @@
   max-width: 900px;
 }
 .vcp-validation-refresh-btn {
+  @include button-reset;
+  @include focus-ring;
+  // Top-aligned like the div it was; a button centres its content vertically.
+  display: flex;
+  align-items: flex-start;
   float: right;
   border: 1px solid $dark-gray;
   width: 98px;

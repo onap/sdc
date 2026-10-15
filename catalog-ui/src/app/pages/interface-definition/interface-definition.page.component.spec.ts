@@ -92,3 +92,29 @@ describe('InterfaceDefinitionComponent', () => {
         expect(comp.component.uniqueId).toBe('abc');
     });
 });
+
+describe('InterfaceDefinitionComponent template', () => {
+    // tslint:disable-next-line:no-var-requires
+    const template: string = require('./interface-definition.page.component.html');
+    const doc = new DOMParser().parseFromString(`<body>${template}</body>`, 'text/html');
+
+    it('keeps the accordion row an exact-class div whose name sits in a toggle button', () => {
+        const accordion = doc.querySelector('.interface-accordion');
+        expect(accordion.tagName).toBe('DIV');
+        expect(accordion.getAttribute('class')).toBe('interface-accordion');
+        const toggle = accordion.querySelector('button');
+        expect(toggle.getAttribute('[attr.aria-expanded]')).toBe('!interface1.isCollapsed');
+        expect(toggle.querySelector('span.interface-name')).not.toBeNull();
+    });
+
+    it('renders both Add Operation controls as buttons disabled like their look', () => {
+        const adds = Array.from(doc.querySelectorAll('[data-tests-id="add-operation"]'));
+        expect(adds.map((el) => el.tagName + ' ' + el.getAttribute('[disabled]'))).toEqual(['BUTTON readonly', 'BUTTON !enableFlag']);
+    });
+
+    it('puts the operation name in a button inside its cell', () => {
+        const name = doc.querySelector('.data-row .field-name');
+        expect(name.tagName).toBe('SPAN');
+        expect(name.querySelector('button').getAttribute('(click)')).toBe('onSelectInterfaceOperation(interface1, operation)');
+    });
+});

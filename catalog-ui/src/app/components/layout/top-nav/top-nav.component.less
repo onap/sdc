@@ -2,6 +2,7 @@
 @import "../../../../assets/styles/variables-old";
 @import "../../../../assets/styles/mixins_old";
 @import "../../../../assets/styles/sprite";
+@import "../../../../assets/styles/button-reset";
 
 .top-nav {
   position: fixed;
@@ -47,10 +48,15 @@
       height: 50px;
       padding: 0 20px;
 
+      > button {
+        .sdc-button-reset();
+        width: 100%;
+      }
+
       &.selected {
         border-bottom: solid 4px @main_color_a;
 
-        a {
+        a, > button {
           color: @func_color_s;
         }
       }
@@ -59,7 +65,7 @@
           border-bottom: solid 4px @main_color_a;
       }*/
 
-      a {
+      a, > button {
         font-family: @font-opensans-medium;
         color: @main_color_m;
         font-size: 16px;
@@ -121,7 +127,16 @@
             font-size: 13px;
             width: auto;
             line-height: 35px;
-            padding: 0 10px;
+            padding: 0;
+
+            > button {
+              .sdc-button-reset();
+              display: block;
+              width: 100%;
+              height: 35px;
+              padding: 0 10px;
+              white-space: nowrap;
+            }
 
             &.disabled {
               opacity: 1;
@@ -207,6 +222,7 @@
   }
 
   .notification-icon {
+    .sdc-sprite-button-reset();
     cursor: pointer;
     flex-grow: 1;
     margin: 0 10px 6px 0;

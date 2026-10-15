@@ -24,19 +24,22 @@
          (old data-ng-if="!isNew && !editPropertyModel.property.propertyView", property-form-view.html:18-25). -->
     <div class="sdc-modal-top-bar" *ngIf="showTopBar">
         <div class="sdc-modal-top-bar-buttons">
-            <span (click)="isDeleteDisabled ? null : deleteCurrent()"
+            <button type="button" (click)="isDeleteDisabled ? null : deleteCurrent()"
                   [class.disabled]="isDeleteDisabled"
+                  [disabled]="isDeleteDisabled"
                   class="sprite-new delete-btn"
-                  data-tests-id="delete_property">Delete</span>
+                  data-tests-id="delete_property">Delete</button>
             <span class="delimiter"></span>
-            <span (click)="isFirstProperty() ? null : getPrev()"
+            <button type="button" (click)="isFirstProperty() ? null : getPrev()"
                   [class.disabled]="isFirstProperty()"
+                  [disabled]="isFirstProperty()"
                   class="sprite-new left-arrow"
-                  data-tests-id="get-prev">Previous</span>
-            <span (click)="isLastProperty() ? null : getNext()"
+                  data-tests-id="get-prev">Previous</button>
+            <button type="button" (click)="isLastProperty() ? null : getNext()"
                   [class.disabled]="isLastProperty()"
+                  [disabled]="isLastProperty()"
                   class="sprite-new right-arrow"
-                  data-tests-id="get-next">Next</span>
+                  data-tests-id="get-next">Next</button>
         </div>
     </div>
 

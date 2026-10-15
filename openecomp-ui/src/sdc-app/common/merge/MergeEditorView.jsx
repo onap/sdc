@@ -1,5 +1,6 @@
 /*!
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,17 +56,19 @@ class ConflictCategory extends React.Component {
             <div key={'conflictCategory_' + conflictId}>
                 <GridSection className="conflict-section">
                     <GridItem>
-                        <div
+                        <button
+                            type="button"
                             className="collapsible-section"
+                            aria-expanded={!!isCollapsed}
                             onClick={collapseExpand}>
                             <SVGIcon
                                 name={isCollapsed ? 'chevronDown' : 'chevronUp'}
                                 iconClassName={iconClass}
                             />
-                            <div className="conflict-title">
+                            <span className="conflict-title">
                                 {this.getTitle(type, name)}
-                            </div>
-                        </div>
+                            </span>
+                        </button>
                     </GridItem>
                     <GridItem className="yours">
                         <Radio

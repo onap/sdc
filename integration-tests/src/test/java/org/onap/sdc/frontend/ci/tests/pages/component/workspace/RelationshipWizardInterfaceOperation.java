@@ -109,7 +109,7 @@ public class RelationshipWizardInterfaceOperation extends AbstractPageObject {
         INTERFACE_AND_OPERATION_DROPDOWN("//li[@class='sdc-dropdown__option ng-star-inserted' and contains(text(), '%s')]"),
         INTERFACE_OPERATION_DESCRIPTION_INPUT("//input[@data-tests-id='interface-operation-description']"),
         INTERFACE_OPERATION_IMPLEMENTATION_NAME_INPUT("//input[@id='implementationInput']"),
-        ADD_INPUT_BTN("//a[contains(@class,'add-param-link add-btn') and contains(text(), 'Add Input')]"),
+        ADD_INPUT_BTN("//button[contains(@class,'add-param-link add-btn') and contains(text(), 'Add Input')]"),
         FIELD_INPUT_NAME("//input[@id='propertyAssignmentNameInput']"),
         FIELD_INPUT_VALUE("//input[@id='propertyAssignmentValueInput']"),
         ADD_BTN("//button[@data-tests-id='addBtn']");

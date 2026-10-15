@@ -40,6 +40,9 @@
             height: 14px;
         }
         .dual-list-option {
+            @include button-reset;
+            @include focus-ring;
+            display: block;
             text-align: center;
             line-height: 10px;
             font-size: 25px;

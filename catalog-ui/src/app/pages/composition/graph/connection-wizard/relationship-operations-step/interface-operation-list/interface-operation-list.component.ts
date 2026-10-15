@@ -24,7 +24,7 @@ import {Operation} from "../../create-interface-operation/model/operation";
 @Component({
   selector: 'app-interface-operation-list',
   templateUrl: './interface-operation-list.component.html',
-  styleUrls: ['./interface-operation-list.component.css']
+  styleUrls: ['./interface-operation-list.component.less']
 })
 export class InterfaceOperationListComponent implements OnInit {
 

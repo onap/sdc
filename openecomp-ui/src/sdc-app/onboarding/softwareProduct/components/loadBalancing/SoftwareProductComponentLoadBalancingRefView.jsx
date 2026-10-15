@@ -1,5 +1,6 @@
 /*!
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,7 +60,6 @@ const pointers = [
         added: 'Please describe.'
     }
 ];
-//TODO check for buttons
 
 const TextAreaItem = ({
     item,
@@ -70,14 +70,16 @@ const TextAreaItem = ({
     onQDataChanged
 }) => (
     <GridItem colSpan={3} key={item.key}>
-        <div
+        <button
+            type="button"
             className={expanded ? 'title' : 'title add-padding'}
             data-test-id={`btn-${item.key}`}
+            aria-expanded={!!expanded}
             onClick={() => toggle(item.key)}>
             <SVGIcon name={expanded ? 'chevronUp' : 'chevronDown'} />
             <span className="title-text">{i18n(item.description)}</span>
-            {item.added && <div className="new-line">{i18n(item.added)}</div>}
-        </div>
+            {item.added && <span className="new-line">{i18n(item.added)}</span>}
+        </button>
         <div className={expanded ? 'collapse in' : 'collapse'}>
             <div>
                 <div>

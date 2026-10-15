@@ -108,6 +108,8 @@ describe('DistributionComponent template', () => {
     const icon = doc.querySelector('.btnMarkAsDistributed svg-icon');
     expect(icon.getAttribute('arialabel')).toBe('Mark {{row.distributionID}} as deployed');
     expect(icon.getAttribute('[disabled]')).toBe(`row.deployementStatus !== 'Distributed'`);
+    expect(icon.getAttribute('(click)')).toBe('markDeploy(row.distributionID, row.deployementStatus)');
+    expect(doc.querySelector('.btnMarkAsDistributed').hasAttribute('(click)')).toBe(false);
   });
 
   it('keeps the clipboard buffer out of the tab order and the accessibility tree', () => {

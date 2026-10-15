@@ -1,3 +1,5 @@
+@import '../../../../../../assets/styles/button-reset';
+
 .scroll-container {
     display: flex;
     overflow-y: auto;
@@ -33,6 +35,12 @@
     &:hover {
         color: #3b7b9b;
     }
+}
+
+button.i-sdc-designer-sidebar-section-content-item-property-and-attribute-label {
+    .sdc-button-reset();
+    width: 100%;
+    font-weight: bold;
 }
 
 .i-sdc-designer-sidebar-section-content-item-property-and-attribute-label, .i-sdc-designer-sidebar-section-content-item-property-value {

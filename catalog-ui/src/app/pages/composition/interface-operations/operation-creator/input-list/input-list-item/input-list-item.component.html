@@ -21,10 +21,11 @@
 
 <li [class.root]="isRoot()">
   <span class="input-info">
-    <em class="sprite-new round-expand-icon" [class.open]="isExpanded" (click)="expandAndCollapse()"></em>
+    <button type="button" class="sprite-new round-expand-icon" [class.open]="isExpanded"
+            [attr.aria-label]="name" [attr.aria-expanded]="isExpanded" (click)="expandAndCollapse()"></button>
     <label class="input-label">{{name}}:</label> <em data-tests-id="input-type">{{resolveType()}}</em>
-    <span class="sprite-new delete-btn" *ngIf="showInputDelete()" (click)="onInputDelete()"></span>
-    <span class="sprite-new delete-btn" *ngIf="showListItemDelete()" (click)="onChildListItemDelete()"></span>
+    <button type="button" class="sprite-new delete-btn" *ngIf="showInputDelete()" [attr.aria-label]="'Delete ' + name" (click)="onInputDelete()"></button>
+    <button type="button" class="sprite-new delete-btn" *ngIf="showListItemDelete()" [attr.aria-label]="'Delete ' + name" (click)="onChildListItemDelete()"></button>
   </span>
 
   <ng-container *ngIf="isExpanded && showToscaFunctionOption">
@@ -124,7 +125,7 @@
             </ng-container>
             <input type="text" *ngIf="!isViewOnly"
                   [(ngModel)]="valueObjRef[i]" (ngModelChange)="onListValueChange()" />
-            <span class="sprite-new delete-btn" *ngIf="!isViewOnly" (click)="onListItemDelete(i)"></span>
+            <button type="button" class="sprite-new delete-btn" *ngIf="!isViewOnly" [attr.aria-label]="'Delete ' + i" (click)="onListItemDelete(i)"></button>
           </li>
           <app-input-list-item *ngIf="!isTypeSimple(schema.property.type)"
               [name]="i+''"
@@ -144,7 +145,7 @@
           </app-input-list-item>
         </ng-container>
         <li class="input-value" *ngIf="!isViewOnly">
-          <a class="add-btn" (click)="addListElement()">{{'INPUT_LIST_ADD_LIST_ENTRY' | translate}}</a>
+          <button type="button" class="add-btn" (click)="addListElement()">{{'INPUT_LIST_ADD_LIST_ENTRY' | translate}}</button>
         </li>
       </ul>
     </ng-container>
@@ -157,7 +158,7 @@
               {{valueObjRef[key]}}
             </ng-container>
             <input type="text" *ngIf="!isViewOnly" [(ngModel)]="valueObjRef[key]" (ngModelChange)="onMapValueChange()"/>
-            <span class="sprite-new delete-btn" *ngIf="!isViewOnly" (click)="onMapKeyDelete(key)"></span>
+            <button type="button" class="sprite-new delete-btn" *ngIf="!isViewOnly" [attr.aria-label]="'Delete ' + key" (click)="onMapKeyDelete(key)"></button>
           </li>
           <app-input-list-item
               *ngIf="!isTypeSimple(schema.property.type)"
@@ -178,7 +179,7 @@
         </ng-container>
         <li class="input-value" *ngIf="!isViewOnly">
           <input type="text" [(ngModel)]="mapEntryName" placeholder="{{ 'INPUT_LIST_MAP_KEY_PLACEHOLDER' | translate }}"/>
-          <a class="add-btn" (click)="addMapEntry()">{{ 'INPUT_LIST_ADD_MAP_ENTRY' | translate }}</a>
+          <button type="button" class="add-btn" (click)="addMapEntry()">{{ 'INPUT_LIST_ADD_MAP_ENTRY' | translate }}</button>
         </li>
       </ul>
     </ng-container>

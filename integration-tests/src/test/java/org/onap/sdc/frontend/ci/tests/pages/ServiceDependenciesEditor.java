@@ -129,7 +129,7 @@ public class ServiceDependenciesEditor extends AbstractPageObject {
         VALUE_TYPE_STATIC("//*[@data-tests-id='value-type-static']"),
         VALUE_TYPE_TOSCA_FUNCTION("//*[@data-tests-id='value-type-tosca-function']"),
         RULE_ASSIGNED_VALUE("//*[@data-tests-id='ruleAssignedValue']//*[self::input or self::select]"),
-        RULE_ASSIGNED_VALUE_ADD_TO_LIST("//a[@data-tests-id = 'add-to-list-%s']"),
+        RULE_ASSIGNED_VALUE_ADD_TO_LIST("//button[@data-tests-id = 'add-to-list-%s']"),
         RULE_ASSIGNED_LIST_VALUE("//*[@data-tests-id='value-prop-%s.%d']"),
         RULE_ASSIGNED_MAP_KEY_VALUE("//*[contains(@data-tests-id, 'value-prop') and contains(@data-tests-id, '%s.%d')]"),
         CREATE_BUTTON("//button[text()='Create']");

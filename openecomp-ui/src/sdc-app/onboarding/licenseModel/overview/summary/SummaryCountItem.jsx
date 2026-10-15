@@ -25,23 +25,22 @@ function SummaryCountItem({
     onNavigate,
     isReadOnlyMode
 }) {
-    //TODO check for buttons
     return (
         <div className="summary-count-item">
-            <div className="summary-name-and-count" onClick={onNavigate}>
-                <span className="item-name" onClick={onNavigate}>
-                    {name}
-                </span>
+            <button
+                type="button"
+                className="summary-name-and-count"
+                onClick={onNavigate}>
+                <span className="item-name">{name}</span>
                 <span
                     className="item-count"
-                    onClick={onNavigate}
                     data-test-id={
                         'vlm-summary-vendor-counter-' +
                         name.toLowerCase().replace(/\s/g, '-')
                     }>
                     ({counter})
                 </span>
-            </div>
+            </button>
             <SVGIcon
                 name="plusCircle"
                 disabled={isReadOnlyMode}

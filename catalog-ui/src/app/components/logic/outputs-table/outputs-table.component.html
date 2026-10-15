@@ -20,24 +20,24 @@
 <div class="output-attributes-table">
   <loader [display]="isLoading" [size]="'large'" [relative]="true"></loader>
   <div class="table-header">
-    <div class="table-cell col-output-attribute-name" (click)="sort('name')">Output Name
+    <button type="button" class="table-cell col-output-attribute-name" (click)="sort('name')">Output Name
       <span *ngIf="sortBy === 'name'" class="table-header-sort-arrow"
             [ngClass]="{'down': reverse, 'up':!reverse}"></span>
-    </div>
-    <div class="table-cell col-output-attribute-instance" (click)="sort('instanceUniqueId')">From
+    </button>
+    <button type="button" class="table-cell col-output-attribute-instance" (click)="sort('instanceUniqueId')">From
       Instance
       <span *ngIf="sortBy === 'instanceUniqueId'" class="table-header-sort-arrow"
             [ngClass]="{'down': reverse, 'up':!reverse}"></span>
-    </div>
-    <div class="table-cell col-output-attribute-type" (click)="sort('type')">Type
+    </button>
+    <button type="button" class="table-cell col-output-attribute-type" (click)="sort('type')">Type
       <span *ngIf="sortBy === 'type'" class="table-header-sort-arrow"
             [ngClass]="{'down': reverse, 'up':!reverse}">
             </span>
-    </div>
-    <div class="table-cell col-output-attribute-required" (click)="sort('required')"
+    </button>
+    <button type="button" class="table-cell col-output-attribute-required" (click)="sort('required')"
          *ngIf="componentType == 'SERVICE'">
       <span tooltip="Required in Runtime" tooltipDelay="400">Req. in RT</span>
-    </div>
+    </button>
     <div class="table-cell col-output-attribute-value">Value</div>
   </div>
   <div class="table-body">
@@ -87,7 +87,7 @@
                            [constraints]="getConstraints(output)">
           </dynamic-element>
           <div class="delete-button-container">
-            <span [attr.data-tests-id]="'delete-'+output.name" *ngIf="output.instanceUniqueId && !readonly" class="sprite-new delete-btn" (click)="openDeleteModal(output)"></span>
+            <button type="button" [attr.data-tests-id]="'delete-'+output.name" *ngIf="output.instanceUniqueId && !readonly" class="sprite-new delete-btn" (click)="openDeleteModal(output)" [attr.aria-label]="'Delete ' + output.name"></button>
           </div>
         </div>
       </div>

@@ -45,3 +45,21 @@ describe('DistributionComponentTableComponent', () => {
     expect(fixture.componentInstance.components[1]).toBe('Consumer2');
   });
 });
+
+describe('DistributionComponentTableComponent template', () => {
+  // tslint:disable-next-line:no-var-requires
+  const template: string = require('./distribution-component-table.component.html');
+  const doc = new DOMParser().parseFromString(`<body>${template}</body>`, 'text/html');
+
+  it('opens each status count from a native button', () => {
+    const counts = Array.from(doc.querySelectorAll('.distributionSummary [\\(click\\)]'));
+    expect(counts.map((el) => el.getAttribute('data-tests-id'))).toEqual([
+      'totalDistributionNotifiedArtifactsLabel', 'totalDistributionDownloadedArtifactsLabel',
+      'totalDistributionDeployedArtifactsLabel', 'totalDistributionNotNotifiedArtifactsLabel',
+      'totalDistributionDeployErrorArtifactsLabel', 'totalDistributionDownloadErrorArtifactsLabel']);
+    counts.forEach((el) => {
+      expect(el.tagName).toBe('BUTTON');
+      expect(el.getAttribute('type')).toBe('button');
+    });
+  });
+});

@@ -104,8 +104,31 @@ describe('TypeWorkspacePropertiesComponent', () => {
         const element = testHostFixture.nativeElement;
         expect(element.querySelector('.no-row-text')).toBeFalsy();
         const expectedPropertyName = 'property1';
-        const propertyNameLink: HTMLAnchorElement = element.querySelector(`a[data-tests-id^="property-name-${expectedPropertyName}"]`);
+        const propertyNameLink: HTMLButtonElement = element.querySelector(`button[data-tests-id^="property-name-${expectedPropertyName}"]`);
         expect(propertyNameLink.textContent).toContain(expectedPropertyName);
+    });
+
+    it('opens a property once from its name button and sorts from a header button', () => {
+        testHostFixture = TestBed.createComponent(TestHostComponent);
+        testHostComponent = testHostFixture.componentInstance;
+        const component = testHostComponent.typeWorkspacePropertiesComponent;
+        const dataType = new DataTypeModel();
+        dataType.uniqueId = 'dataTypeId';
+        component.dataType = dataType;
+        testHostFixture.detectChanges();
+        const element: HTMLElement = testHostFixture.nativeElement;
+
+        const onNameClick = jest.spyOn(component, 'onNameClick').mockImplementation(() => undefined);
+        const nameButton: HTMLButtonElement = element.querySelector('button[data-tests-id="property-name-property1"]');
+        expect(nameButton.getAttribute('type')).toBe('button');
+        nameButton.click();
+        expect(onNameClick).toHaveBeenCalledTimes(1);
+
+        const onUpdateSort = jest.spyOn(component, 'onUpdateSort');
+        const headerButton: HTMLButtonElement = element.querySelector('.table-header .table-header-button');
+        expect(headerButton.getAttribute('type')).toBe('button');
+        headerButton.click();
+        expect(onUpdateSort).toHaveBeenCalledWith('name');
     });
 
     @Component({

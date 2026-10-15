@@ -2,6 +2,8 @@
 @import '../../../../assets/styles/variables-old.less';
 @import '../../../../assets/styles/mixins_old.less';
 @import '../../../../assets/styles/sprite.less';
+@import '../../../../assets/styles/button-reset';
+@import (reference) '../../../../assets/styles/multi-level-expand-collapse.less';
 
 .service-consumption {
   min-height: 100px;
@@ -16,7 +18,11 @@
       margin-top: 1px;
     }
     .interface-title {
+      .sdc-button-reset();
+      // The reset outranks the global .first-level rule, so its look is restated here.
+      .first-level();
       display: flex;
+      width: 100%;
       .title-text {
         font-size: 14px;
         overflow: hidden;
@@ -50,6 +56,7 @@
     }
 
     .operation-name {
+      .sdc-button-reset();
       // .s_1;
       overflow: hidden;
       text-overflow: ellipsis;

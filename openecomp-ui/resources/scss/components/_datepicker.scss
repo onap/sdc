@@ -53,6 +53,8 @@
             }
         }
         .datepicker-text {
+            @include button-reset($font: false);
+            @include focus-ring;
             cursor: pointer;
             @extend .body-1;
             &.placeholder {

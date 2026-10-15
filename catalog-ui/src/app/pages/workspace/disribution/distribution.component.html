@@ -69,10 +69,11 @@
                     <span class = "distributionRowValue" [attr.data-tests-id]="generateDataTestID('status_', row.distributionID)">
                         {{ row.deployementStatus }}
                     </span>
-                    <span class="btnMarkAsDistributed" (click)="markDeploy(row.distributionID, row.deployementStatus)">
+                    <span class="btnMarkAsDistributed">
                             <svg-icon [clickable]="true" [name]= "'success'" [mode]="getIconMode(row.deployementStatus)"
                                       [size]="'medium'" ariaLabel="Mark {{row.distributionID}} as deployed"
-                                      [disabled]="row.deployementStatus !== 'Distributed'"></svg-icon>
+                                      [disabled]="row.deployementStatus !== 'Distributed'"
+                                      (click)="markDeploy(row.distributionID, row.deployementStatus)"></svg-icon>
                     </span>
                 </div>
             </ng-template>

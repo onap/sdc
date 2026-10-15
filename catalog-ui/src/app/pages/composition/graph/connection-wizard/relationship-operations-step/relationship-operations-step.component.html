@@ -18,11 +18,12 @@
   -->
 <div class="relationship-operations-container">
   <div id="relationship-operation-actions" class="actions">
-    <a
+    <button
+        type="button"
         class="add-param-link add-btn"
         *ngIf="!enableAddOperation"
         data-tests-id="addInterfaceOperation"
-        (click)="addOperation()">{{ 'OPERATION_ADD1' | translate }}</a>
+        (click)="addOperation()">{{ 'OPERATION_ADD1' | translate }}</button>
   </div>
   <div id="operation-list-container" class="operation-list-container">
     <app-interface-operation-list [interfaceOperationList]="operationList" [readonly]="false" (onRemoveOperation)="onRemoveOperation($event)"></app-interface-operation-list>

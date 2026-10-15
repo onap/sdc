@@ -62,6 +62,9 @@ $message-info-icon-size: 16px;
     }
 
     .vnf-table-header {
+        @include button-reset;
+        @include focus-ring;
+        width: 100%;
         cursor: pointer;
         display: flex;
         align-items: center;
@@ -83,9 +86,15 @@ $message-info-icon-size: 16px;
     .vnf-table-cell {
         display: flex;
         justify-content: space-between;
-        span {
+        span,
+        .vnf-table-cell-select {
             overflow: hidden;
             text-overflow: ellipsis;
+        }
+        .vnf-table-cell-select {
+            @include button-reset;
+            @include focus-ring;
+            min-width: 0;
         }
     }
     .vnftable-name {

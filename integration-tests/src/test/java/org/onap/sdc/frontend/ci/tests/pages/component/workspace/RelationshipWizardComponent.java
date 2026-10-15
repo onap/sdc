@@ -71,7 +71,7 @@ public class RelationshipWizardComponent extends AbstractPageObject {
         NEXT_BUTTON(WIZARD_FOOTER.getXpath() + "//div[contains(@class, 'white-arrow-next')]/.."),
         BACK_BUTTON(WIZARD_FOOTER.getXpath() + "//div[contains(@class, 'blue-arrow-back')]/.."),
         FINISH_BUTTON(WIZARD_FOOTER.getXpath() + "//button[contains(text(), 'Finish')]"),
-        ADD_OPERATION_BUTTON("//a[contains(@class,'add-param-link add-btn') and contains(text(), 'Add Operation')]");
+        ADD_OPERATION_BUTTON("//button[contains(@class,'add-param-link add-btn') and contains(text(), 'Add Operation')]");
 
         @Getter
         private final String xpath;

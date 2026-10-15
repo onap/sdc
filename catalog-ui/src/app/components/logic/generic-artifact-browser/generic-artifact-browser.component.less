@@ -1,4 +1,5 @@
 @import '../../../../assets/styles/mixins';
+@import '../../../../assets/styles/button-reset';
 
 .ngx-datatable.scroll-vertical {
   height: 80vh;
@@ -39,7 +40,12 @@
   height: 10px;
 }
 
+.datatable-column-span .delete-icon {
+  .sdc-button-reset();
+}
+
 .add-btn-div {
+  .sdc-button-chrome-reset();
   width: 45px;
 }
 

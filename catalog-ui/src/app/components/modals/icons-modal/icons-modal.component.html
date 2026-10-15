@@ -18,11 +18,12 @@
     <div class="suggested-icons-container">
         <div class="suggested-icon-wrapper" [ngClass]="{'selected': selectedIcon === iconSrc}"
              *ngFor="let iconSrc of icons">
-            <div class="i-sdc-form-item-suggested-icon large hand {{iconSprite}} {{iconSrc}}"
+            <button type="button" class="i-sdc-form-item-suggested-icon large hand {{iconSprite}} {{iconSrc}}"
                  [attr.data-tests-id]="iconSrc + ' iconBox'"
                  (click)="changeIcon(iconSrc)"
+                 [attr.aria-pressed]="selectedIcon === iconSrc"
                  [title]="iconSrc | translate">
-            </div>
+            </button>
         </div>
     </div>
 </div>

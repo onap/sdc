@@ -55,20 +55,24 @@
         <div *ngIf="!isListEmpty()">
 
             <div class="expand-collapse">
-                <a
+                <button
+                    type="button"
                     class="link"
                     data-tests-id="expand-all"
                     [ngClass]="{'disabled': isAllExpanded()}"
+                    [disabled]="isAllExpanded()"
                     (click)="collapseAll(false)">
                     {{ 'INTERFACE_EXPAND_ALL' | translate }}
-                </a> |
-                <a
+                </button> |
+                <button
+                    type="button"
                     class="link"
                     data-tests-id="collapse-all"
                     [ngClass]="{'disabled': isAllCollapsed()}"
+                    [disabled]="isAllCollapsed()"
                     (click)="collapseAll()">
                     {{ 'INTERFACE_COLLAPSE_ALL' | translate }}
-                </a>
+                </button>
             </div>
 
             <div
@@ -76,6 +80,8 @@
                 *ngFor="let interface of interfaces"
                 [attr.data-tests-id]="'interface-' + interface.displayType()">
 
+                <!-- Selenium matches @class='interface-accordion' exactly, so the row stays a div that toggles
+                     for the mouse; the button around the name is the keyboard and AT control. -->
                 <div
                     class="interface-accordion"
                     [attr.data-tests-id]="'interface-' + interface.displayType() + '-toggle'"
@@ -89,7 +95,8 @@
                             size="small">
                         </svg-icon>
                     </span>
-                    <span class="interface-name">{{interface.displayType()}}</span>
+                    <button type="button" [attr.aria-expanded]="!interface.isCollapsed"
+                            (click)="$event.stopPropagation(); interface.toggleCollapse()"><span class="interface-name">{{interface.displayType()}}</span></button>
                 </div>
 
                 <div
@@ -110,6 +117,7 @@
                         </span>
                     </div>
 
+                    <!-- The row opens the operation for the mouse; the name button is the keyboard and AT control. -->
                     <div
                         class="data-row"
                         *ngFor="let operation of interface.operations"
@@ -117,28 +125,34 @@
                         (click)="onEditOperation(operation)">
                         <span
                             class="cell field-name"
-                            [attr.data-tests-id]="'operation-' + operation.name + '-name'">
+                            [attr.data-tests-id]="'operation-' + operation.name + '-name'"><button
+                                type="button"
+                                class="field-name-button"
+                                (click)="$event.stopPropagation(); onEditOperation(operation)">
                             {{operation.name}}
-                        </span>
+                        </button></span>
                         <span
                             class="cell field-description"
                             [ngClass]="{'collapsed': operation.isCollapsed}"
                             [attr.data-tests-id]="'operation-' + operation.name + '-description'">
                             {{operation.getDescriptionEllipsis()}}
-                            <span
+                            <button
+                                type="button"
                                 class="more-or-less link"
+                                *ngIf="operation.isEllipsis"
+                                [attr.aria-expanded]="!operation.isCollapsed"
                                 (click)="operation.toggleCollapsed($event)"
                                 [attr.data-tests-id]="'operation-' + operation.name + '-ellipsis'">
-                                {{!operation.isEllipsis ? '' : operation.isCollapsed ? 'More' : 'Less'}}
-                            </span>
+                                {{operation.isCollapsed ? 'More' : 'Less'}}
+                            </button>
                         </span>
                         <span class="cell field-actions">
                             <span
                                 class="delete-action"
-                                [attr.data-tests-id]="'remove-operation-' + operation.name"
-                                (click)="onRemoveOperation($event, operation)">
+                                [attr.data-tests-id]="'remove-operation-' + operation.name">
                                 <svg-icon
                                     *ngIf="!readonly"
+                                    (click)="onRemoveOperation($event, operation)"
                                     name="trash-o"
                                     mode="info"
                                     size="small"

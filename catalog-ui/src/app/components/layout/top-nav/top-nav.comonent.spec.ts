@@ -159,4 +159,50 @@ describe('artifact form component', () => {
         expect(fixture.componentInstance.topLvlMenu.selectedIndex).toBe(0);
     });
 
+    it('renders the top-level items as links to their route', () => {
+        fixture.componentInstance.topLvlSelectedIndex = 0;
+        fixture.detectChanges();
+        const links = Array.from(fixture.nativeElement.querySelectorAll('ul.top-menu > li > a'));
+        expect(links.map((a: HTMLAnchorElement) => a.getAttribute('href')))
+            .toEqual(['#!/dashboard', '#!/catalog', '#!/onboardVendor', '#!/plugins/DCAE-DS_stateURL']);
+        expect(links.map((a: HTMLAnchorElement) => a.getAttribute('data-tests-id')))
+            .toEqual(['main-menu-button-home', 'main-menu-button-catalog', 'main-menu-button-onboard', 'main-menu-button-dcae-ds']);
+    });
+
+    it('has no href for items that run a callback', () => {
+        const item = new MenuItem('VF: x', () => Promise.resolve(true), null, null, []);
+        expect(fixture.componentInstance.menuItemHref(item)).toBeNull();
+        expect(fixture.componentInstance.menuItemHref(undefined)).toBeNull();
+    });
+
+    it('routes a plain link click through menuItemClick and leaves modified clicks to the browser', () => {
+        const comp = fixture.componentInstance;
+        const group = new MenuItemGroup(0, [new MenuItem('HOME', null, 'dashboard', 'goToState')]);
+        comp.menuItemClick = jest.fn();
+        const plain = {button: 0, preventDefault: jest.fn()} as any;
+        comp.onMenuLinkClick(plain, group, group.menuItems[0]);
+        expect(plain.preventDefault).toHaveBeenCalled();
+        expect(comp.menuItemClick).toHaveBeenCalledWith(group, group.menuItems[0]);
+
+        const withCtrl = {button: 0, ctrlKey: true, preventDefault: jest.fn()} as any;
+        comp.onMenuLinkClick(withCtrl, group, group.menuItems[0]);
+        expect(withCtrl.preventDefault).not.toHaveBeenCalled();
+        expect(comp.menuItemClick).toHaveBeenCalledTimes(1);
+    });
+
+    it('renders breadcrumbs without a route and the sub-menu items as buttons', () => {
+        const comp = fixture.componentInstance;
+        const crumbs = new MenuItemGroup(0, [new MenuItem('VF: x', () => Promise.resolve(true), null, null, []),
+            new MenuItem('VF: y', () => Promise.resolve(true), null, null, [])]);
+        crumbs.menuItems[1].isDisabled = true;
+        comp.menuModel = [crumbs];
+        comp.ngOnChanges({menuModel: {}});
+        fixture.detectChanges();
+        const el: HTMLElement = fixture.nativeElement;
+        expect(el.querySelector('[data-tests-id="breadcrumbs-button-0"]').tagName).toBe('A');
+        expect(el.querySelector('[data-tests-id="breadcrumbs-button-1"]').tagName).toBe('BUTTON');
+        const subItems = Array.from(el.querySelectorAll('ul.sub-menu [data-tests-id^="sub-menu-button-vf"]'));
+        expect(subItems.map((b: HTMLButtonElement) => b.tagName + ':' + b.disabled)).toEqual(['BUTTON:false', 'BUTTON:true']);
+    });
+
 });

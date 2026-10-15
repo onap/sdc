@@ -19,6 +19,7 @@
 
 @import '../../../../../../assets/styles/variables.less';
 @import '../../../../../../assets/styles/override.less';
+@import '../../../../../../assets/styles/button-reset.less';
 
 .group-with-border {
     margin: 10px 0;
@@ -82,7 +83,13 @@
         margin-right: 14px;
 
         .sprite-new {
+            .sdc-sprite-button-reset();
+            cursor: inherit;
             margin-top: 110%;
         }
     }
+}
+
+.add-button-container .add-btn {
+    .sdc-link-button();
 }

@@ -1,5 +1,6 @@
 /*!
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -83,14 +84,19 @@ function HeatFileTreeRow(props) {
             data-test-id="validation-tree-node">
             <div className="name-section">
                 {isFolder && (
-                    <div
+                    <button
+                        type="button"
                         onClick={() => toggleExpanded(path)}
-                        className="tree-node-expander">
+                        className="tree-node-expander"
+                        aria-label={i18n('Contents of {name}', {
+                            name: node.name
+                        })}
+                        aria-expanded={!!node.expanded}>
                         <SVGIcon
                             name={!node.expanded ? 'chevronUp' : 'chevronDown'}
                             data-test-id="validation-tree-block-toggle"
                         />
-                    </div>
+                    </button>
                 )}
                 {
                     <span className="tree-node-icon">
@@ -105,12 +111,13 @@ function HeatFileTreeRow(props) {
                     </span>
                 }
                 {
-                    <span
+                    <button
+                        type="button"
                         className="tree-node-name"
                         onClick={() => selectNode(node.name)}
                         data-test-id="validation-tree-node-name">
                         {node.name ? node.name : 'UNKNOWN'}
-                    </span>
+                    </button>
                 }
             </div>
             <ErrorsAndWarningsCount
@@ -135,17 +142,22 @@ function HeatFileTreeHeader(props) {
             data-test-id="validation-tree-header">
             <div className="tree-header-title">
                 {/*<SVGIcon name='zip' color={props.selectedNode === nodeFilters.ALL ? 'primary' : ''}  iconClassName='header-icon' />*/}
-                <span
+                <button
+                    type="button"
                     className={classNames({
                         'tree-header-title-text': true,
                         'tree-header-title-selected':
                             props.selectedNode === nodeFilters.ALL
-                    })}>
+                    })}
+                    onClick={e => {
+                        e.stopPropagation();
+                        props.selectNode(nodeFilters.ALL);
+                    }}>
                     {i18n('{title} {hasErrors}', {
                         title: props.headerTitle,
                         hasErrors: hasErrors ? '(Draft)' : ''
                     })}
-                </span>
+                </button>
             </div>
             <ErrorsAndWarningsCount errorList={props.errorList} size="large" />
         </div>

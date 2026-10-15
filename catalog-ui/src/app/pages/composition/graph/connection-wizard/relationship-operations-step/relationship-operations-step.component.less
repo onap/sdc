@@ -17,11 +17,17 @@
  *  ============LICENSE_END=========================================================
  */
 
+@import '../../../../../../assets/styles/button-reset.less';
+
 .relationship-operations-container {
   .actions {
     display: flex;
     justify-content: flex-end;
     margin-bottom: 10px;
+
+    .add-param-link {
+      .sdc-link-button();
+    }
   }
   .operation-list-container {
     margin: 10px 0 10px 0;

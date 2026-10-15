@@ -12,6 +12,8 @@
         display: flex;
         margin-bottom: 30px;
         .change-owner {
+            @include button-reset;
+            @include focus-ring;
             margin-left: auto;
             color: $link-blue;
             cursor: pointer;

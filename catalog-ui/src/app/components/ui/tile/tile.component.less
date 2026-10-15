@@ -3,6 +3,15 @@
 //This was done as a fix for the wrong dispaly that was in every ui-tile.
 //All other styles located in mail.less
 
+@import '../../../../assets/styles/button-reset';
+
+// Below the global `.sdc-tile .sdc-tile-content .sdc-tile-content-icon` rule (main.less, onap-ui-common),
+// which keeps giving the icon row its width, negative top margin and right alignment.
+.sdc-tile-content-icon {
+  .sdc-button-reset();
+  display: block;
+}
+
 .sdc-tile {
   display: block;
 

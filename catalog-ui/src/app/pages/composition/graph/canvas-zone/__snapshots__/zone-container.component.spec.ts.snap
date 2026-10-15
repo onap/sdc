@@ -11,8 +11,9 @@ exports[`ZoneContainerComponent should match current snapshot of palette element
     <div
       class="sdc-canvas-zone__header"
     >
-      <div
+      <button
         class="sdc-canvas-zone__title"
+        type="button"
       >
         
         <span
@@ -20,7 +21,7 @@ exports[`ZoneContainerComponent should match current snapshot of palette element
         >
           
         </span>
-      </div>
+      </button>
       <span
         class="sdc-canvas-zone__state-button"
       >

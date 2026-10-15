@@ -491,7 +491,8 @@ const LicenseAgreementWithoutExternal = ({
 }) => {
     if (!currentSoftwareProduct.licenseAgreementName) {
         return (
-            <div
+            <button
+                type="button"
                 className="missing-license clickable"
                 onClick={event =>
                     licenceChange(
@@ -501,8 +502,8 @@ const LicenseAgreementWithoutExternal = ({
                     )
                 }>
                 <SVGIcon color="warning" name="exclamationTriangleFull" />
-                <div className="warning-text">{i18n('Missing')}</div>
-            </div>
+                <span className="warning-text">{i18n('Missing')}</span>
+            </button>
         );
     }
     return <div>{currentSoftwareProduct.licenseAgreementName}</div>;

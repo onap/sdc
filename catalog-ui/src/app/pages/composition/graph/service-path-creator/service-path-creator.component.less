@@ -1,10 +1,15 @@
 @import '../../../../../assets/styles/variables.less';
+@import '../../../../../assets/styles/button-reset.less';
 .service-path-creator {
     font-family: @font-opensans-regular;
     .separator-buttons {
         margin: 10px 0;
         display: flex;
         justify-content: space-between;
+
+        button {
+            .sdc-link-button();
+        }
     }
     .i-sdc-form-label {
     	font-size: 12px;

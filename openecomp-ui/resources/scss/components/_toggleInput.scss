@@ -2,6 +2,7 @@
     $toggle-width: 40px;
     $toggle-height: 20px;
     display: table;
+    font-weight: inherit;
     .toggle-switch,
     .toggle-input-label {
         display: table-cell;
@@ -11,9 +12,18 @@
     .toggle {
         position: absolute;
         margin-left: -9999px;
-        visibility: hidden;
     }
-    .toggle + label {
+    .toggle:focus + .toggle-track {
+        outline: 2px solid $link-blue;
+        outline-offset: 2px;
+    }
+    .toggle:focus:not(:focus-visible) + .toggle-track {
+        outline: none;
+    }
+    .toggle:disabled + .toggle-track {
+        cursor: default;
+    }
+    .toggle + .toggle-track {
         @extend %noselect;
         display: block;
         position: relative;
@@ -21,7 +31,7 @@
         outline: none;
     }
 
-    input.toggle-round-flat + label {
+    input.toggle-round-flat + .toggle-track {
         padding: 1px;
         width: $toggle-width;
         height: $toggle-height;
@@ -29,13 +39,13 @@
         border-radius: $toggle-height;
         transition: background 0.4s;
     }
-    input.toggle-round-flat + label:before,
-    input.toggle-round-flat + label:after {
+    input.toggle-round-flat + .toggle-track:before,
+    input.toggle-round-flat + .toggle-track:after {
         display: block;
         position: absolute;
         content: '';
     }
-    input.toggle-round-flat + label:before {
+    input.toggle-round-flat + .toggle-track:before {
         top: 1px;
         left: 1px;
         bottom: 1px;
@@ -44,7 +54,7 @@
         border-radius: $toggle-height;
         transition: background 0.4s;
     }
-    input.toggle-round-flat + label:after {
+    input.toggle-round-flat + .toggle-track:after {
         top: 4px;
         left: 4px;
         bottom: 4px;
@@ -53,10 +63,10 @@
         border-radius: $toggle-height - 8;
         transition: margin 0.4s, background 0.4s;
     }
-    input.toggle-round-flat:checked + label {
+    input.toggle-round-flat:checked + .toggle-track {
         background-color: $link-blue;
     }
-    input.toggle-round-flat:checked + label:after {
+    input.toggle-round-flat:checked + .toggle-track:after {
         margin-left: $toggle-height;
         background-color: $link-blue;
     }

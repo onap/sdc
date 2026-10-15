@@ -1,5 +1,6 @@
 /*!
  * Copyright © 2016-2018 European Support Limited
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,16 +39,14 @@ import LicenseKeyGroupFormContent from './components/FormContent.jsx';
 import ModalButtons from 'sdc-app/onboarding/licenseModel/components/ModalButtons.jsx';
 
 const TabButton = props => {
-    const { onClick, disabled, className } = props;
+    const { onClick, disabled, className, children } = props;
     const dataTestId = props['data-test-id'];
     return (
-        <div
-            className={className}
-            onClick={disabled ? undefined : onClick}
-            data-test-id={dataTestId}
-            role="tab"
-            disabled={disabled}>
-            {props.children}
+        <div className={className} data-test-id={dataTestId}>
+            {children &&
+                React.cloneElement(children, {
+                    onClick: disabled ? undefined : onClick
+                })}
         </div>
     );
 };

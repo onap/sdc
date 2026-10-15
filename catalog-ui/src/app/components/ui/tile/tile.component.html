@@ -22,12 +22,14 @@
         <div *ngIf="!component.isResource() && !component.isService()">{{component.getComponentSubType()}}</div>
     </div>
 
-    <div class='sdc-tile-content' sdcKeyboardClick data-tests-id="dashboard-Elements" (click)="tileClicked()">
-        <div class='sdc-tile-content-icon'>
-            <div [ngClass]="[component.iconSprite, component.icon]"
+    <!-- The whole content area stays clickable for the mouse; the icon button is the keyboard and AT control. -->
+    <div class='sdc-tile-content' data-tests-id="dashboard-Elements" (click)="tileClicked()">
+        <button type="button" class='sdc-tile-content-icon' [attr.aria-label]="component.name | resourceName"
+                (click)="$event.stopPropagation(); tileClicked()">
+            <span [ngClass]="[component.iconSprite, component.icon]"
                  [ngClass]="{'sprite-resource-icons': component.isResource(), 'sprite-services-icons': component.isService()}"
-                 [attr.data-tests-id]="component.name"></div>
-        </div>
+                 [attr.data-tests-id]="component.name"></span>
+        </button>
 
         <div class='sdc-tile-content-info'>
             <div class="sdc-tile-info-line title" [attr.data-tests-id]="component.name | resourceName"

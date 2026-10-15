@@ -2,11 +2,15 @@
 @import '../../../assets/styles/variables-old.less';
 @import '../../../assets/styles/sprite.less';
 @import '../../../assets/styles/mixins_old.less';
+@import '../../../assets/styles/button-reset.less';
 
 .service-consumption-editor {
   .sdc-modal-top-bar {
     display: flex;
     justify-content: space-between;
+    .sdc-modal-top-bar-buttons > button {
+      .sdc-sprite-button-reset();
+    }
     .operation-name {
       text-transform: capitalize;
       font-family: @font-opensans-bold;
@@ -16,6 +20,7 @@
   .expand-collapse-all {
     display: flex;
     .expand-all, .collapse-all {
+      .sdc-button-reset();
       color: @main_color_b; // Changed from @main_color_a (#009fdb) to meet WCAG AA 4.5:1 contrast
       border-bottom: solid 1px @main_color_b;
       font-size: 12px;
@@ -50,7 +55,10 @@
       }
 
       .i-sdc-form-content-operation-input-box-title {
+        .sdc-button-reset();
         .hand;
+        width: 100%;
+        text-align: left;
         display: flex;
         align-items: center;
         padding-left: 10px;

@@ -28,13 +28,13 @@ exports[`catalog component should match current snapshot of catalog component 1`
     >
       <div
         class="i-sdc-designer-leftbar-section-left-switch-header"
-        sdckeyboardclick=""
       >
-        <div
+        <button
           class="i-sdc-designer-leftbar-section-left-switch-header-text"
+          type="button"
         >
            
-        </div>
+        </button>
         <div
           class="i-sdc-designer-leftbar-section-left-switch-header-icon sprite-new arrow-up-small"
         >
@@ -52,9 +52,9 @@ exports[`catalog component should match current snapshot of catalog component 1`
           <div
             class="sdc-catalog-model-filter-container"
           >
-            <div
+            <button
               class="i-sdc-designer-leftbar-section-title pointer"
-              sdckeyboardclick=""
+              type="button"
             >
               <span
                 class="i-sdc-designer-leftbar-section-title-icon"
@@ -65,7 +65,7 @@ exports[`catalog component should match current snapshot of catalog component 1`
               >
                 Model
               </span>
-            </div>
+            </button>
             <div
               class="i-sdc-designer-leftbar-section-content"
             >
@@ -75,9 +75,9 @@ exports[`catalog component should match current snapshot of catalog component 1`
           <div
             class="sdc-catalog-type-filter-container"
           >
-            <div
+            <button
               class="i-sdc-designer-leftbar-section-title pointer"
-              sdckeyboardclick=""
+              type="button"
             >
               <span
                 class="i-sdc-designer-leftbar-section-title-icon"
@@ -88,7 +88,7 @@ exports[`catalog component should match current snapshot of catalog component 1`
               >
                 Type
               </span>
-            </div>
+            </button>
             <div
               class="i-sdc-designer-leftbar-section-content"
             >
@@ -98,9 +98,9 @@ exports[`catalog component should match current snapshot of catalog component 1`
           <div
             class="sdc-catalog-categories-filter-container"
           >
-            <div
+            <button
               class="i-sdc-designer-leftbar-section-title pointer"
-              sdckeyboardclick=""
+              type="button"
             >
               <span
                 class="i-sdc-designer-leftbar-section-title-icon"
@@ -111,7 +111,7 @@ exports[`catalog component should match current snapshot of catalog component 1`
               >
                 Categories
               </span>
-            </div>
+            </button>
             <div
               class="i-sdc-designer-leftbar-section-content"
             >
@@ -121,9 +121,9 @@ exports[`catalog component should match current snapshot of catalog component 1`
           <div
             class="sdc-catalog-status-filter-container"
           >
-            <div
+            <button
               class="i-sdc-designer-leftbar-section-title pointer"
-              sdckeyboardclick=""
+              type="button"
             >
               <span
                 class="i-sdc-designer-leftbar-section-title-icon"
@@ -134,7 +134,7 @@ exports[`catalog component should match current snapshot of catalog component 1`
               >
                 Status
               </span>
-            </div>
+            </button>
             <div
               class="i-sdc-designer-leftbar-section-content"
             >
@@ -165,22 +165,22 @@ exports[`catalog component should match current snapshot of catalog component 1`
               
             </span>
                
-            <a
+            <button
               class="w-sdc-dashboard-catalog-sort"
               data-tests-id="sort-by-last-update"
-              sdckeyboardclick="link"
+              type="button"
             >
               
-            </a>
+            </button>
               
             
-            <a
+            <button
               class="w-sdc-dashboard-catalog-sort"
               data-tests-id="sort-by-alphabetical"
-              sdckeyboardclick="link"
+              type="button"
             >
               
-            </a>
+            </button>
               
             
           </div>

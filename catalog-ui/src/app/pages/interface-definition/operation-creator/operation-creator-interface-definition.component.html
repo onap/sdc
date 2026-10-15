@@ -99,11 +99,13 @@
                         data-tests-id="artifactFilename">
                         {{ operation.artifactFileName }}
                     </span>
-                    <div
+                    <button
+                        type="button"
                         *ngIf="operation.artifactFileName"
                         class="i-sdc-form-file-upload-x-btn"
                         data-tests-id="clearArtifact"
-                        (click)="onChangeArtifactFile({ target: {} })"></div>
+                        aria-label="Clear file"
+                        (click)="onChangeArtifactFile({ target: {} })"></button>
                     <label
                         class="i-sdc-form-file-upload-label"
                         [ngClass]="{'disabled': readonly}">
@@ -152,12 +154,14 @@
                 <tab tabTitle="Inputs"></tab>
                 <tab tabTitle="Outputs"></tab>
             </tabs>
-            <a
+            <button
+                type="button"
                 class="add-param-link add-btn"
                 *ngIf="!isUsingExistingWF() && !readonly"
                 data-tests-id="addInputParameter"
                 [ngClass]="{'disabled':!canAdd()}"
-                (click)="addParam()">{{ currentTab === TYPE_INPUT ? 'Add Input' : 'Add Output' }}</a>
+                [disabled]="!canAdd()"
+                (click)="addParam()">{{ currentTab === TYPE_INPUT ? 'Add Input' : 'Add Output' }}</button>
         </div>
 
         <div class="generic-table">

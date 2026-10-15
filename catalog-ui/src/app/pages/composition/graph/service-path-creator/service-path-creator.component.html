@@ -33,7 +33,7 @@
 
 		<div class="separator-buttons">
 			<span class="based-on-title">Based On</span>
-			<a (click)="addRow()" [ngClass]="{'disabled':!isExtendAllowed()}" data-tests-id="extendPathlnk">Extend Flow</a>
+			<button type="button" (click)="addRow()" [ngClass]="{'disabled':!isExtendAllowed()}" [disabled]="!isExtendAllowed()" data-tests-id="extendPathlnk">Extend Flow</button>
 		</div>
 
 		<div class="generic-table">

@@ -22,6 +22,7 @@
 @import '../../../../assets/styles/variables-old.less';
 @import '../../../../assets/styles/mixins_old.less';
 @import '../../../../assets/styles/mixins.less';
+@import '../../../../assets/styles/button-reset';
 
 .substitution-filter {
 
@@ -44,6 +45,7 @@
         margin-left: 5px;
         width: 180px;
         .delete-icon {
+          .sdc-sprite-button-reset();
           visibility: hidden;
         }
         &:not(.readonly):hover {
@@ -52,11 +54,16 @@
         &:hover .delete-icon{
           visibility: visible;
         }
+        // A hidden button cannot take focus; focusing the description reveals it for the keyboard.
+        &:focus-within .delete-icon {
+          visibility: visible;
+        }
         &.readonly {
           opacity: 0.5;
         }
       }
       .rule-desc {
+        .sdc-button-reset();
         .sdc-ellipsis;
         width: 220px;
         position: relative;

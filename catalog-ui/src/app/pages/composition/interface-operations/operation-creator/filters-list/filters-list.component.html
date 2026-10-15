@@ -93,11 +93,12 @@
                   </div>
                   <div *ngIf="!isToscaFunction(idx)">
                     <div *ngIf="filter.constraint == 'validValues'">
-                      <div class="add-btn padding-bottom"
+                      <button type="button" class="add-btn padding-bottom"
                           [ngClass]="{'disabled': isViewOnly}"
+                          [disabled]="isViewOnly"
                           (click)="addToList(idx)">
                           Add to List
-                      </div>
+                      </button>
                       <div class="w-sdc-form-columns-wrapper padding-bottom" *ngFor="let value of constraintValuesArray(idx); let valueIndex = index; trackBy:trackByFn">
                         <div class="w-sdc-form-column">
                           <input type="text" required
@@ -106,7 +107,7 @@
                             [value]="getInRangeValue(idx, valueIndex)"/>
                         </div>
                         <div class="w-sdc-form-column">
-                          <span class="sprite-new delete-btn" [ngClass]="{'disabled': isViewOnly}" (click)="removeFromList(idx, valueIndex)"></span>
+                          <button type="button" class="sprite-new delete-btn" [ngClass]="{'disabled': isViewOnly}" [disabled]="isViewOnly" aria-label="Delete value" (click)="removeFromList(idx, valueIndex)"></button>
                         </div>
                       </div>
                     </div>
@@ -138,7 +139,7 @@
                   </div>
                 </div>
                 <div class="form-item-icon">
-                  <span class="sprite-new delete-btn" [ngClass]="{'disabled': isViewOnly}" (click)="removeFromFilters(idx)"></span>
+                  <button type="button" class="sprite-new delete-btn" [ngClass]="{'disabled': isViewOnly}" [disabled]="isViewOnly" aria-label="Delete filter" (click)="removeFromFilters(idx)"></button>
                 </div>
               </div>
             </div>
@@ -155,8 +156,8 @@
         </div>
 
         <div class="add-button-container group-with-border" *ngIf="!isViewOnly && activitiesExist">
-          <a class="add-btn" data-tests-id="add-input.add-input-link"
-             (click)="addFilter()">Add Filter</a>
+          <button type="button" class="add-btn" data-tests-id="add-input.add-input-link"
+             (click)="addFilter()">Add Filter</button>
         </div>
         <div *ngIf="!activitiesExist">
           Must have at leat one actifity before adding filters

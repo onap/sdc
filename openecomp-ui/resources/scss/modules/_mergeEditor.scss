@@ -78,10 +78,14 @@ $selected-color: $blue;
         }
 
         .collapsible-section {
+            @include button-reset;
+            @include focus-ring;
             display: flex;
+            width: 100%;
             cursor: pointer;
 
             .conflict-title {
+                display: block;
                 @extend .heading-5-semibold;
                 text-transform: uppercase;
             }

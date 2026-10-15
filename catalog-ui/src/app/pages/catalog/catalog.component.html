@@ -1,19 +1,21 @@
 <div class="sdc-catalog-container">
     <main id="main-content" class="w-sdc-main-container">
-        <div class="i-sdc-designer-leftbar-section-left-switch-header" sdcKeyboardClick
-             [attr.aria-expanded]="showCatalogSelector"
+        <!-- The whole bar toggles for the mouse; the title button is the keyboard and AT control. -->
+        <div class="i-sdc-designer-leftbar-section-left-switch-header"
              (click)="showCatalogSelector=!showCatalogSelector">
-            <div class="i-sdc-designer-leftbar-section-left-switch-header-text">
+            <button type="button" class="i-sdc-designer-leftbar-section-left-switch-header-text"
+                    [attr.aria-expanded]="showCatalogSelector"
+                    (click)="$event.stopPropagation(); showCatalogSelector=!showCatalogSelector">
                 {{selectedCatalogItem.title}}
-            </div>
+            </button>
             <div class="i-sdc-designer-leftbar-section-left-switch-header-icon sprite-new arrow-up-small">&nbsp;</div>
 
             <div class="sdc-catalog-selector-wrapper" *ngIf="showCatalogSelector">
-                <div class="sdc-catalog-selector-item" sdcKeyboardClick
+                <button type="button" class="sdc-catalog-selector-item"
                      *ngFor="let leftSwitchItem of catalogSelectorItems"
                      (click)="selectLeftSwitchItem(leftSwitchItem)">
                     <span>{{leftSwitchItem.title}}</span>
-                </div>
+                </button>
             </div>
         </div>
 
@@ -22,14 +24,14 @@
             <div class="sdc-catalog-leftbar-container">
                 <!-- Model -->
                 <div class="sdc-catalog-model-filter-container">
-                    <div class="i-sdc-designer-leftbar-section-title pointer" sdcKeyboardClick
+                    <button type="button" class="i-sdc-designer-leftbar-section-title pointer"
                          [attr.aria-expanded]="expandedSection.indexOf('model') !== -1"
                          (click)="sectionClick('model')"
                          [ngClass]="{'expanded': expandedSection.indexOf('model') !== -1}">
                         <span class="i-sdc-designer-leftbar-section-title-icon"></span>
                         <span class="i-sdc-designer-leftbar-section-title-text"
                               data-tests-id="statusFilterTitle">Model</span>
-                    </div>
+                    </button>
                     <div class="i-sdc-designer-leftbar-section-content">
                         <sdc-checklist [checklistModel]="modelsChecklistModel" [testId]="'checklist-model'"
                                        (checkedChange)="gui.onModelClick()"></sdc-checklist>
@@ -37,14 +39,14 @@
                 </div>
                 <!-- Type -->
                 <div class="sdc-catalog-type-filter-container">
-                    <div class="i-sdc-designer-leftbar-section-title pointer" sdcKeyboardClick
+                    <button type="button" class="i-sdc-designer-leftbar-section-title pointer"
                          [attr.aria-expanded]="expandedSection.indexOf('type') !== -1"
                          (click)="sectionClick('type')"
                          [ngClass]="{'expanded': expandedSection.indexOf('type') !== -1}">
                         <span class="i-sdc-designer-leftbar-section-title-icon"></span>
                         <span class="i-sdc-designer-leftbar-section-title-text"
                               data-tests-id="typeFilterTitle">Type</span>
-                    </div>
+                    </button>
                     <div class="i-sdc-designer-leftbar-section-content">
                         <sdc-checklist [checklistModel]="typesChecklistModel" [testId]="'checklist-type'"
                                        (checkedChange)="gui.onComponentTypeClick()"></sdc-checklist>
@@ -52,13 +54,13 @@
                 </div>
 
                 <div class="sdc-catalog-categories-filter-container">
-                    <div class="i-sdc-designer-leftbar-section-title pointer" sdcKeyboardClick
+                    <button type="button" class="i-sdc-designer-leftbar-section-title pointer"
                          [attr.aria-expanded]="expandedSection.indexOf('category') !== -1"
                          (click)="sectionClick('category')"
                          [ngClass]="{'expanded': expandedSection.indexOf('category') !== -1}">
                         <span class="i-sdc-designer-leftbar-section-title-icon"></span>
                         <span class="i-sdc-designer-leftbar-section-title-text" data-tests-id="categoriesFilterTitle">Categories</span>
-                    </div>
+                    </button>
                     <div class="i-sdc-designer-leftbar-section-content">
                         <sdc-checklist [checklistModel]="categoriesChecklistModel" [testId]="'checklist-category'"
                                        (checkedChange)="gui.onCategoryClick()"></sdc-checklist>
@@ -67,14 +69,14 @@
 
                 <!-- STATUS -->
                 <div class="sdc-catalog-status-filter-container">
-                    <div class="i-sdc-designer-leftbar-section-title pointer" sdcKeyboardClick
+                    <button type="button" class="i-sdc-designer-leftbar-section-title pointer"
                          [attr.aria-expanded]="expandedSection.indexOf('status') !== -1"
                          (click)="sectionClick('status')"
                          [ngClass]="{'expanded': expandedSection.indexOf('status') !== -1}">
                         <span class="i-sdc-designer-leftbar-section-title-icon"></span>
                         <span class="i-sdc-designer-leftbar-section-title-text"
                               data-tests-id="statusFilterTitle">Status</span>
-                    </div>
+                    </button>
 
                     <div class="i-sdc-designer-leftbar-section-content">
                         <sdc-checklist [checklistModel]="statusChecklistModel" [testId]="'checklist-status'"
@@ -97,14 +99,16 @@
                     </div>
                     <div class="catalog-top-right-bar">
                         <span class="w-sdc-dashboard-catalog-header-order1">{{'SORT_CAPTION'|translate}}</span>&nbsp;&nbsp;
-                        <a class="w-sdc-dashboard-catalog-sort" data-tests-id="sort-by-last-update"
+                        <button type="button" class="w-sdc-dashboard-catalog-sort" data-tests-id="sort-by-last-update"
                            [ngClass]="{'blue' : sortBy==='lastUpdateDate'}"
-                           sdcKeyboardClick="link" (click)="order('lastUpdateDate')">{{'SORT_BY_UPDATE_DATE'|translate}}</a>&nbsp;
+                           [attr.aria-pressed]="sortBy==='lastUpdateDate'"
+                           (click)="order('lastUpdateDate')">{{'SORT_BY_UPDATE_DATE'|translate}}</button>&nbsp;
                         <span *ngIf="sortBy === 'lastUpdateDate'" class="w-sdc-catalog-sort-arrow"
                               [ngClass]="{'down': reverse, 'up':!reverse}"></span>
-                        <a class="w-sdc-dashboard-catalog-sort" data-tests-id="sort-by-alphabetical"
+                        <button type="button" class="w-sdc-dashboard-catalog-sort" data-tests-id="sort-by-alphabetical"
                            [ngClass]="{'blue' : sortBy!=='lastUpdateDate'}"
-                           sdcKeyboardClick="link" (click)="order('resourceName')">{{'SORT_ALPHABETICAL'|translate}}</a>&nbsp;
+                           [attr.aria-pressed]="sortBy!=='lastUpdateDate'"
+                           (click)="order('resourceName')">{{'SORT_ALPHABETICAL'|translate}}</button>&nbsp;
                         <span *ngIf="sortBy !== 'lastUpdateDate'" class="w-sdc-catalog-sort-arrow"
                               [ngClass]="{'down': reverse, 'up':!reverse}"></span>
                     </div>

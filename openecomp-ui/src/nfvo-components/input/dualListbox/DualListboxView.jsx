@@ -1,5 +1,6 @@
 /*
  * Copyright © 2016-2018 European Support Limited
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +18,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import SVGIcon from 'onap-ui-react/lib/components/SVGIcon.js';
 import Input from 'nfvo-components/input/validation/Input.jsx';
+import i18n from 'nfvo-utils/i18n/i18n.js';
 
 class DualListboxView extends React.Component {
     constructor(props) {
@@ -187,32 +189,43 @@ class DualListboxView extends React.Component {
                 }`}>
                 {this.renderOperationBarButton(
                     () => this.addToSelectedList(),
-                    'angleRight'
+                    'angleRight',
+                    i18n('Add selected'),
+                    isReadOnlyMode
                 )}
                 {this.renderOperationBarButton(
                     () => this.removeFromSelectedList(),
-                    'angleLeft'
+                    'angleLeft',
+                    i18n('Remove selected'),
+                    isReadOnlyMode
                 )}
                 {this.renderOperationBarButton(
                     () => this.addAllToSelectedList(),
-                    'angleDoubleRight'
+                    'angleDoubleRight',
+                    i18n('Add all'),
+                    isReadOnlyMode
                 )}
                 {this.renderOperationBarButton(
                     () => this.removeAllFromSelectedList(),
-                    'angleDoubleLeft'
+                    'angleDoubleLeft',
+                    i18n('Remove all'),
+                    isReadOnlyMode
                 )}
             </div>
         );
     }
 
-    renderOperationBarButton(onClick, iconName) {
+    renderOperationBarButton(onClick, iconName, label, disabled) {
         return (
-            <div
+            <button
+                type="button"
                 className="dual-list-option"
                 data-test-id={`operation-icon-${iconName}`}
+                aria-label={label}
+                disabled={disabled}
                 onClick={onClick}>
                 <SVGIcon name={iconName} />
-            </div>
+            </button>
         );
     }
 

@@ -1,5 +1,6 @@
 @import '../../../../assets/styles/variables.less';
 @import '../../../../assets/styles/mixins.less';
+@import '../../../../assets/styles/button-reset';
 .main-container{
   color: @main_color_m;
 }
@@ -68,6 +69,13 @@
       width: 100%;
     }
   }
+}
+
+// At .selected's specificity and ahead of it, so the selected colour and border still apply.
+.req-or-cap-item {
+  .sdc-button-reset();
+  display: block;
+  width: 100%;
 }
 
 .selected{

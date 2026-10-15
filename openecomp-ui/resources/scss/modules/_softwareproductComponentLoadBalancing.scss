@@ -12,6 +12,10 @@
             }
         }
         .title {
+            @include button-reset($font: false);
+            @include focus-ring;
+            display: block;
+            width: 100%;
             @extend .body-1-semibold;
             margin-bottom: 8px;
             cursor: pointer;
@@ -26,6 +30,7 @@
             padding-bottom: 20px;
         }
         .new-line {
+            display: block;
             margin-left: 16px;
         }
         textarea.form-control {
