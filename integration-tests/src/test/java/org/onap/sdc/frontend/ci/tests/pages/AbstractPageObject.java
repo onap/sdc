@@ -20,9 +20,11 @@ package org.onap.sdc.frontend.ci.tests.pages;
 
 import java.util.List;
 import org.openqa.selenium.By;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
@@ -223,6 +225,20 @@ public abstract class AbstractPageObject implements PageObject {
      */
     protected WebElement waitToBeClickable(final By locator) {
         return getWait().until(ExpectedConditions.elementToBeClickable(locator));
+    }
+
+    /**
+     * Selects the option with the given text, waiting for it to be loaded into the select.
+     *
+     * @param selectLocator the By locator of the select element
+     * @param optionText the visible text of the option to select
+     */
+    protected void selectByVisibleTextWhenPresent(final By selectLocator, final String optionText) {
+        getWait().ignoring(StaleElementReferenceException.class)
+            .withMessage(String.format("waiting for option '%s' in %s", optionText, selectLocator))
+            .until(driver -> new Select(driver.findElement(selectLocator)).getOptions().stream()
+                .anyMatch(option -> optionText.equals(option.getText().trim())));
+        new Select(findElement(selectLocator)).selectByVisibleText(optionText);
     }
 
 }

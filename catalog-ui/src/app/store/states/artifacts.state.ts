@@ -74,6 +74,22 @@ export class ArtifactsState {
     @Action(GetArtifactsByTypeAction)
     getArtifactsByType({getState, patchState}: StateContext<ArtifactsStateModel>, action: GetArtifactsByTypeAction) {
         const state = getState();
+        // Until the response arrives the list would still hold another component's artifacts, and
+        // downloading one of those for action.payload.componentId fails with "doesn't belong to".
+        switch (action.payload.artifactType) {
+            case ArtifactGroupType.INFORMATION:
+                patchState({artifacts: []});
+                break;
+            case ArtifactGroupType.DEPLOYMENT:
+                patchState({deploymentArtifacts: []});
+                break;
+            case ArtifactGroupType.TOSCA:
+                patchState({toscaArtifacts: []});
+                break;
+            case ArtifactGroupType.SERVICE_API:
+                patchState({serviceApiArtifacts: []});
+                break;
+        }
         return this.topologyTemplateService.getArtifactsByType(action.payload.componentType, action.payload.componentId, action.payload.artifactType)
             .pipe(tap((resp: ComponentGenericResponse) => {
                 switch (action.payload.artifactType) {

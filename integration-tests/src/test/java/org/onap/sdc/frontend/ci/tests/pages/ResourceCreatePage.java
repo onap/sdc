@@ -29,7 +29,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.Select;
 
 /**
  * Handles the Resource Create Page UI actions
@@ -128,7 +127,7 @@ public class ResourceCreatePage extends ComponentPage {
         if (value == null) {
             return;
         }
-        new Select(findElement(locator)).selectByVisibleText(value);
+        selectByVisibleTextWhenPresent(locator, value);
     }
 
     private void setInputField(final By locator, final String value) {

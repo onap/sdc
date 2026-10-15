@@ -47,6 +47,10 @@ public class AttributesPage extends ComponentPage {
         wrappingElement = findElement(By.xpath(XpathSelector.ATTRIBUTES_DIV.getXpath()));
     }
 
+    public void waitForAttribute(final String attributeName) {
+        waitForElementVisibility(By.xpath(XpathSelector.ATTRIBUTES_NAME_SPAN.getXpath(attributeName)));
+    }
+
     public boolean isAttributePresent(final String attributeName) {
         try {
             final WebElement element = wrappingElement.findElement(By.xpath(XpathSelector.ATTRIBUTES_NAME_SPAN.getXpath(attributeName)));

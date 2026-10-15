@@ -32,7 +32,6 @@ import org.onap.sdc.frontend.ci.tests.utilities.NotificationComponent;
 import org.onap.sdc.frontend.ci.tests.utilities.NotificationComponent.NotificationType;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.Select;
 
 /**
  * Represents the Service Create Page
@@ -75,24 +74,22 @@ public class ServiceCreatePage extends ComponentPage {
         if (etsiVersion == null) {
             return;
         }
-        final Select categorySelect = new Select(waitForElementVisibility(By.xpath(XpathSelector.ETSI_VERSION_SELECT.getXpath())));
-        categorySelect.selectByVisibleText(etsiVersion);
+        waitForElementVisibility(By.xpath(XpathSelector.ETSI_VERSION_SELECT.getXpath()));
+        selectByVisibleTextWhenPresent(By.xpath(XpathSelector.ETSI_VERSION_SELECT.getXpath()), etsiVersion);
     }
 
     private void setModel(final String model) {
         if (model == null) {
             return;
         }
-        final Select modelSelect = new Select(findElement(By.xpath(XpathSelector.MODEL_SELECT.getXpath())));
-        modelSelect.selectByVisibleText(model);
+        selectByVisibleTextWhenPresent(By.xpath(XpathSelector.MODEL_SELECT.getXpath()), model);
     }
 
     private void setCategory(final String category) {
         if (category == null) {
             return;
         }
-        final Select categorySelect = new Select(findElement(By.xpath(XpathSelector.CATEGORY_SELECT.getXpath())));
-        categorySelect.selectByVisibleText(category);
+        selectByVisibleTextWhenPresent(By.xpath(XpathSelector.CATEGORY_SELECT.getXpath()), category);
     }
 
     public void fillDescription(final String description) {

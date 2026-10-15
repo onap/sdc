@@ -185,7 +185,7 @@ public class EtsiModelUiTests extends SetupCDTest {
     }
 
     private void checkCsarPackage(final String serviceName, final String downloadedCsarName) throws UnzipException {
-        final String downloadFolderPath = getConfig().getDownloadAutomationFolder();
+        final String downloadFolderPath = getWindowTest().getDownloadDirectory();
         final Map<String, byte[]> filesFromZip = FileHandling.getFilesFromZip(downloadFolderPath, downloadedCsarName);
         final String mainDefinitionFileName = String.format("resource-%s-template.yml", serviceName.substring(0, 1).toUpperCase() + serviceName.substring(1).toLowerCase());
         final Path mainDefinitionFilePath = Path.of("Definitions", mainDefinitionFileName);

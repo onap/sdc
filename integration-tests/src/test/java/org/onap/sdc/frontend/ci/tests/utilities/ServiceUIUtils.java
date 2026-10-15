@@ -29,6 +29,7 @@ import org.onap.sdc.frontend.ci.tests.datatypes.DataTestIdEnum;
 import org.onap.sdc.frontend.ci.tests.execute.setup.SetupCDTest;
 import org.onap.sdc.frontend.ci.tests.pages.GeneralPageElements;
 import org.onap.sdc.frontend.ci.tests.pages.ServiceGeneralPage;
+import org.onap.sdc.frontend.ci.tests.pages.home.HomePage;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openqa.selenium.By;
@@ -95,6 +96,8 @@ public class ServiceUIUtils {
 
     public static void clickAddService() {
         SetupCDTest.getExtendTest().log(Status.INFO, String.format("Clicking the Add Service button"));
+        // HOME shows its tiles loader only after a delay; if it appears after the hover it cancels the Add menu.
+        new HomePage(GeneralUIUtils.getDriver()).isLoaded();
         try {
             GeneralUIUtils.hoverOnAreaByTestId(DataTestIdEnum.Dashboard.ADD_AREA.getValue());
             GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.Dashboard.BUTTON_ADD_SERVICE.getValue()).click();

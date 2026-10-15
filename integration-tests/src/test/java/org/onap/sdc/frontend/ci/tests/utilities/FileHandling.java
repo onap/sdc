@@ -35,6 +35,7 @@ import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
 import org.onap.sdc.frontend.ci.tests.execute.setup.SetupCDTest;
 import org.openecomp.sdc.common.util.GeneralUtility;
+import org.openqa.selenium.support.ui.FluentWait;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.BufferedOutputStream;
@@ -47,8 +48,12 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -334,6 +339,35 @@ public class FileHandling {
      */
     public static synchronized File getLastModifiedFileNameFromDir() {
         return getLastModifiedFileNameFromDir(SetupCDTest.getWindowTest().getDownloadDirectory());
+    }
+
+    public static Set<String> getDownloadedFileNames() {
+        final File[] files = new File(SetupCDTest.getWindowTest().getDownloadDirectory()).listFiles();
+        return files == null ? Set.of() : Arrays.stream(files).map(File::getName).collect(Collectors.toSet());
+    }
+
+    /**
+     * Waits for a completed download that was not in the download directory before.
+     *
+     * @param fileNamesBefore the {@link #getDownloadedFileNames()} taken before the download was triggered
+     * @param timeout how long to wait for the download to complete
+     * @return the downloaded file
+     */
+    public static File waitForNewDownloadedFile(final Set<String> fileNamesBefore, final Duration timeout) {
+        final File downloadDirectory = new File(SetupCDTest.getWindowTest().getDownloadDirectory());
+        return new FluentWait<>(downloadDirectory).withTimeout(timeout).pollingEvery(Duration.ofMillis(500))
+            .withMessage("waiting for a new file in " + downloadDirectory)
+            .until(directory -> {
+                final File[] files = directory.listFiles();
+                // Firefox creates the final file name up front and fills it in through a .part file.
+                if (files == null || Arrays.stream(files).anyMatch(file -> file.getName().endsWith(".part"))) {
+                    return null;
+                }
+                return Arrays.stream(files)
+                    .filter(file -> file.isFile() && file.length() > 0 && !fileNamesBefore.contains(file.getName()))
+                    .max(Comparator.comparingLong(File::lastModified))
+                    .orElse(null);
+            });
     }
 
     /**

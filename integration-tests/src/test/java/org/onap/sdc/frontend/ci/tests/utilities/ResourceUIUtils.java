@@ -35,6 +35,7 @@ import org.onap.sdc.frontend.ci.tests.datatypes.DataTestIdEnum.StepsEnum;
 import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
 import org.onap.sdc.frontend.ci.tests.execute.setup.SetupCDTest;
 import org.onap.sdc.frontend.ci.tests.pages.ResourceGeneralPage;
+import org.onap.sdc.frontend.ci.tests.pages.home.HomePage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.WebDriver;
@@ -160,6 +161,8 @@ public final class ResourceUIUtils {
 
     private static void createResource(ResourceReqDetails resource, User user, DataTestIdEnum.Dashboard button) {
         WebElement addVFButton;
+        // HOME shows its tiles loader only after a delay; if it appears after the hover it cancels the Add menu.
+        new HomePage(GeneralUIUtils.getDriver()).isLoaded();
         try {
             GeneralUIUtils.ultimateWait();
             try {

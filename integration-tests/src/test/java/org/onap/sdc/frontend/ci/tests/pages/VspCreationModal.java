@@ -26,6 +26,7 @@ import org.onap.sdc.frontend.ci.tests.datatypes.VspCreateData;
 import org.onap.sdc.frontend.ci.tests.datatypes.VspOnboardingProcedure;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
@@ -163,7 +164,10 @@ public class VspCreationModal extends AbstractPageObject {
     }
 
     private void setSelectIndex(final XpathSelector inputTestId, final int index) {
-        new Select(findSubElement(wrappingElement, By.xpath(inputTestId.getXpath()))).selectByIndex(index);
+        final By selectLocator = By.xpath(inputTestId.getXpath());
+        getWait().ignoring(StaleElementReferenceException.class)
+            .until(driver -> new Select(findSubElement(wrappingElement, selectLocator)).getOptions().size() > index);
+        new Select(findSubElement(wrappingElement, selectLocator)).selectByIndex(index);
     }
 
     private void setSelectValue(final XpathSelector inputTestId, final String value) {

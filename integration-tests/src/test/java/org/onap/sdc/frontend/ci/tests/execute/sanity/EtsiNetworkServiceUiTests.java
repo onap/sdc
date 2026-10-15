@@ -306,7 +306,7 @@ public class EtsiNetworkServiceUiTests extends SetupCDTest {
 
     private void checkEtsiNsPackage(final String serviceName, final String downloadedCsarName,
                                     final Map<String, Object> expectedPropertyMap) throws UnzipException {
-        final String downloadFolderPath = getConfig().getDownloadAutomationFolder();
+        final String downloadFolderPath = getWindowTest().getDownloadDirectory();
         final Map<String, byte[]> filesFromZip = FileHandling.getFilesFromZip(downloadFolderPath, downloadedCsarName);
         final Optional<String> etsiPackageEntryOpt =
             filesFromZip.keySet().stream().filter(s -> s.startsWith("Artifacts/ETSI_PACKAGE")).findFirst();

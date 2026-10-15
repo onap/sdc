@@ -71,7 +71,11 @@ public class WebDriverThread {
             final String remoteEnvIP = config.getRemoteTestingMachineIP();
             final String remoteEnvPort = config.getRemoteTestingMachinePort();
             FirefoxOptions firefoxOptions = new FirefoxOptions();
-            firefoxOptions.setProfile(initFirefoxProfile(config));
+            final FirefoxProfile firefoxProfile = initFirefoxProfile(config);
+            ThreadDownloadDirectory.hostPath(config);
+            firefoxProfile.setPreference("browser.download.dir", ThreadDownloadDirectory.remoteBrowserPath());
+            firefoxProfile.setPreference("browser.download.folderList", 2);
+            firefoxOptions.setProfile(firefoxProfile);
             firefoxOptions.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
             final String remoteUrlString = String.format(SELENIUM_NODE_URL, remoteEnvIP, remoteEnvPort);
             final URL remoteUrl;

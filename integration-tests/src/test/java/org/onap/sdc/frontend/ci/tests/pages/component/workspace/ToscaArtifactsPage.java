@@ -33,7 +33,6 @@ public class ToscaArtifactsPage extends ComponentPage {
 
     private final List<String> downloadedArtifactList = new ArrayList<>();
     private WebElement wrappingElement;
-    private WebElement artifactsTableBody;
 
     public ToscaArtifactsPage(final WebDriver webDriver) {
         super(webDriver);
@@ -43,11 +42,11 @@ public class ToscaArtifactsPage extends ComponentPage {
     public void isLoaded() {
         wrappingElement = waitForElementVisibility(By.xpath(XpathSelector.MAIN_DIV.getXpath()), 5);
         waitForElementVisibility(By.xpath(XpathSelector.TITLE_DIV.getXpath()), 5);
-        artifactsTableBody = waitForElementVisibility(By.xpath(XpathSelector.DATA_TABLE_BODY.getXpath()), 5);
+        waitForElementVisibility(By.xpath(XpathSelector.DATA_TABLE_BODY.getXpath()), 5);
     }
 
     public void clickOnDownload(final String artifactName) {
-        artifactsTableBody.findElement(By.xpath(XpathSelector.DOWNLOAD_LINK.getXpath(artifactName))).click();
+        waitToBeClickable(By.xpath(XpathSelector.DOWNLOAD_LINK.getXpath(artifactName))).click();
     }
 
     public void addToDownloadedArtifactList(final String downloadedArtifactName) {

@@ -31,7 +31,7 @@ public class WindowTest {
         refreshAttempts = 0;
         previousRole = "";
         addedValueFromDataProvider = null;
-        downloadDirectory = Config.instance().getDownloadAutomationFolder();
+        downloadDirectory = ThreadDownloadDirectory.hostPath(Config.instance());
     }
 
     private int refreshAttempts;

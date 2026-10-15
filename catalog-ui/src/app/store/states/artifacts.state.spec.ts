@@ -1,9 +1,12 @@
 import { Store } from '@ngxs/store';
-import { Observable } from 'rxjs/Rx';
+import { Observable, Subject } from 'rxjs/Rx';
 import { Mock } from 'ts-mockery';
 import { ArtifactModel } from '../../models/artifacts';
 import { ArtifactGroupType } from '../../utils/constants';
 import { ComponentInstanceService } from '../../services/component-instance-services/component-instance.service';
+import { TopologyTemplateService } from '../../services/component-services/topology-template.service';
+import { GetArtifactsByTypeAction } from '../actions/artifacts.action';
+import { ArtifactsState } from './artifacts.state';
 import { GetInstanceArtifactsByTypeAction, UpdateInstanceArtifactAction } from '../actions/instance-artifacts.actions';
 import { InstanceArtifactsState } from './instance-artifacts.state';
 
@@ -59,4 +62,28 @@ describe('Test Artifact State', () => {
         expect(storeMock.dispatch).toBeCalled();
     });
 
+});
+
+describe('ArtifactsState getArtifactsByType', () => {
+
+    it('clears the previous component\'s TOSCA artifacts before the new ones are loaded', () => {
+        const pendingResponse = new Subject<any>();
+        const topologyTemplateServiceMock = Mock.of<TopologyTemplateService>({
+            getArtifactsByType: jest.fn().mockImplementation(() => pendingResponse)
+        });
+        const state = new ArtifactsState(topologyTemplateServiceMock);
+        const patchState = jest.fn();
+        const context: any = {getState: jest.fn().mockReturnValue({toscaArtifacts: [Mock.of<ArtifactModel>({uniqueId: 'other-component.assettoscacsar'})]}), patchState};
+
+        state.getArtifactsByType(context, new GetArtifactsByTypeAction({
+            componentType: 'resources', componentId: 'new-component', artifactType: ArtifactGroupType.TOSCA
+        })).subscribe();
+
+        expect(patchState).toHaveBeenCalledTimes(1);
+        expect(patchState).toHaveBeenCalledWith({toscaArtifacts: []});
+
+        const csar = Mock.of<ArtifactModel>({uniqueId: 'new-component.assettoscacsar'});
+        pendingResponse.next({toscaArtifacts: {assettoscacsar: csar}});
+        expect(patchState).toHaveBeenCalledWith({toscaArtifacts: [csar]});
+    });
 });
