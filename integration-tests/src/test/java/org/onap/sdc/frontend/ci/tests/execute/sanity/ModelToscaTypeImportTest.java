@@ -141,7 +141,7 @@ public class ModelToscaTypeImportTest extends SetupCDTest {
         assertTrue(toscaArtifactsPage.getDownloadedArtifactList().size() > 0, "No artifact download was found");
         toscaArtifactsPage.getDownloadedArtifactList().get(0);
 
-        final String downloadFolderPath = getConfig().getDownloadAutomationFolder();
+        final String downloadFolderPath = getWindowTest().getDownloadDirectory();
         final Map<String, byte[]> csarFiles = FileHandling.getFilesFromZip(downloadFolderPath, toscaArtifactsPage.getDownloadedArtifactList().get(0));
 
         assertEquals(8, csarFiles.size());

@@ -27,6 +27,7 @@ import com.aventstack.extentreports.Status;
 import java.io.File;
 import java.time.Duration;
 import java.util.Optional;
+import java.util.Set;
 import lombok.Setter;
 import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
 import org.onap.sdc.frontend.ci.tests.pages.ComponentPage;
@@ -35,7 +36,6 @@ import org.onap.sdc.frontend.ci.tests.pages.component.workspace.ToscaArtifactsPa
 import org.onap.sdc.frontend.ci.tests.utilities.FileHandling;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.FluentWait;
 
 public class DownloadToscaTemplateFlow extends AbstractUiTestFlow {
 
@@ -53,8 +53,9 @@ public class DownloadToscaTemplateFlow extends AbstractUiTestFlow {
         toscaArtifactsPage = componentPage.goToToscaArtifacts();
         toscaArtifactsPage.isLoaded();
 
+        final Set<String> fileNamesBefore = FileHandling.getDownloadedFileNames();
         toscaArtifactsPage.clickOnDownload("Tosca Template");
-        final File downloadedTemplate = waitAndGetDowloadedTemplate();
+        final File downloadedTemplate = waitAndGetDowloadedTemplate(fileNamesBefore);
         assertThat("The downloaded Template exists", downloadedTemplate, is(notNullValue()));
         assertThat("The downloaded Template exists", downloadedTemplate.exists(), is(true));
         toscaArtifactsPage.addToDownloadedArtifactList(downloadedTemplate.getName());
@@ -68,10 +69,8 @@ public class DownloadToscaTemplateFlow extends AbstractUiTestFlow {
         return Optional.ofNullable(toscaArtifactsPage);
     }
 
-    private File waitAndGetDowloadedTemplate() {
+    private File waitAndGetDowloadedTemplate(final Set<String> fileNamesBefore) {
         new Actions(webDriver).pause(Duration.ofSeconds(waitBeforeGetTheFile)).perform();
-        final FluentWait<String> fluentWait = new FluentWait<>("").withTimeout(Duration.ofSeconds(5)).pollingEvery(Duration.ofSeconds(1));
-        fluentWait.until(s -> FileHandling.getLastModifiedFileNameFromDir() != null);
-        return FileHandling.getLastModifiedFileNameFromDir();
+        return FileHandling.waitForNewDownloadedFile(fileNamesBefore, Duration.ofSeconds(60));
     }
 }

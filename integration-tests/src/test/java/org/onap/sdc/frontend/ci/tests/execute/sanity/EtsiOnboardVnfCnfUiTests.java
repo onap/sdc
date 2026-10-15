@@ -117,7 +117,7 @@ public class EtsiOnboardVnfCnfUiTests extends SetupCDTest {
         resourceCreatePage.certifyComponent();
         ExtentTestActions.takeScreenshot(Status.INFO, "resource-certified",
             String.format("Resource '%s' was certified", resourceName));
-        downloadAndVerifyOnboardedPackage(loadComponentPage());
+        downloadAndVerifyOnboardedPackage(loadComponentPage(), "Artifacts/Deployment/ETSI_PACKAGE/");
     }
 
     private void runDistribution(final String resourceName) {
@@ -145,16 +145,18 @@ public class EtsiOnboardVnfCnfUiTests extends SetupCDTest {
         ExtentTestActions.takeScreenshot(Status.INFO, "service-certified",
             String.format("Service '%s' was certified", serviceCreateData.getName()));
 
-        downloadAndVerifyOnboardedPackage(componentPage);
+        final String resourceNodeType = String.format("org.openecomp.resource.vf.%s",
+            resourceName.substring(0, 1).toUpperCase() + resourceName.substring(1).toLowerCase());
+        downloadAndVerifyOnboardedPackage(componentPage, String.format("Artifacts/%s_v1.0/Deployment/ETSI_PACKAGE/", resourceNodeType));
     }
 
-    private void downloadAndVerifyOnboardedPackage(final ComponentPage componentPage) {
+    private void downloadAndVerifyOnboardedPackage(final ComponentPage componentPage, final String packageFolder) {
         final DownloadCsarArtifactFlow downloadCsarArtifactFlow = downloadToscaCsar(componentPage);
         final ToscaArtifactsPage toscaArtifactsPage = downloadCsarArtifactFlow.getLandedPage()
             .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected ToscaArtifactsPage"));
         assertThat("No artifact download was found", toscaArtifactsPage.getDownloadedArtifactList(), not(empty()));
         final String downloadedCsarName = toscaArtifactsPage.getDownloadedArtifactList().get(0);
-        verifyOnboardedPackage(downloadedCsarName);
+        verifyOnboardedPackage(downloadedCsarName, packageFolder);
     }
 
     private ServiceCreatePage createService(final HomePage homePage, final ServiceCreateData serviceCreateData) {
@@ -212,17 +214,18 @@ public class EtsiOnboardVnfCnfUiTests extends SetupCDTest {
      * Verifies if the onboarded package is included in the downloaded csar
      *
      * @param downloadedCsarName downloaded csar package name
+     * @param packageFolder the folder in the csar that should hold the onboarded package
      */
-    private void verifyOnboardedPackage(final String downloadedCsarName) {
-        final String downloadFolderPath = getConfig().getDownloadAutomationFolder();
+    private void verifyOnboardedPackage(final String downloadedCsarName, final String packageFolder) {
+        final String downloadFolderPath = getWindowTest().getDownloadDirectory();
         final Map<String, byte[]> filesFromZip;
         try {
             filesFromZip = FileHandling.getFilesFromZip(downloadFolderPath, downloadedCsarName);
             final java.util.Optional<String> etsiPackageEntryOpt =
-                filesFromZip.keySet().stream().filter(s -> s.startsWith("Artifacts/Deployment/ETSI_PACKAGE"))
+                filesFromZip.keySet().stream().filter(s -> s.startsWith(packageFolder))
                     .findFirst();
             if (etsiPackageEntryOpt.isEmpty()) {
-                Assertions.fail("Could not find the  Onboarded Package in Artifacts/Deployment/ETSI_PACKAGE");
+                Assertions.fail(String.format("Could not find the Onboarded Package in %s, the csar contains %s", packageFolder, filesFromZip.keySet()));
             }
         } catch (final UnzipException e) {
             final String errorMsg = "Could not unzip the downloaded csar package";
