@@ -9,7 +9,7 @@
     <main id="main-content" class="w-sdc-main-container">
         <div class="w-sdc-left-sidebar" *ngIf="component && !isComposition">
             <h1 class="menu-header" [title]="menuComponentTitle">
-                {{menuComponentTitle}}
+                {{menuComponentTitle}}<span class="sr-only" *ngIf="!menuComponentTitle">{{newComponentTitle}}</span>
             </h1>
             <nav aria-label="Workspace">
                 <div class="i-sdc-designer-sidebar-section-content-item"

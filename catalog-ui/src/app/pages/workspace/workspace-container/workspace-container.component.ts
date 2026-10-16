@@ -863,12 +863,16 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
         this.breadcrumbsModel = [breadcrumbsComponentsLvl, this.leftBarTabs];
     }
 
+    get newComponentTitle(): string {
+        return 'Create new ' + this.navigationService.getParam('type');
+    }
+
     private getNewComponentBreadcrumbItem(): MenuItem {
         let text = '';
         if (this.component.isResource() && (this.component as Resource).isCsarComponent()) {
             text = this.component.getComponentSubType() + ': ' + this.component.name;
         } else {
-            text = 'Create new ' + this.navigationService.getParam('type');
+            text = this.newComponentTitle;
         }
         return new MenuItem(text, null, States.WORKSPACE_GENERAL, 'goToState', [this.navigationService.getParams()]);
     }

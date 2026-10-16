@@ -43,6 +43,16 @@
             border: none;
             position: relative;
             padding: 11px 24px;
+
+            &:hover, &:focus {
+                color: @main_color_p;
+                text-decoration: none;
+            }
+
+            &:focus {
+                outline: 2px solid @main_color_p;
+                outline-offset: -4px;
+            }
         }
     }
 

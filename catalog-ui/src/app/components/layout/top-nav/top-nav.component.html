@@ -50,8 +50,12 @@
                     </ng-template>
                 </li>
                 <li class="triangle-dropdown"
-                    [ngClass]="{'item-click': groupItem.itemClick}" (mouseover)="groupItem.itemClick = true" (focusin)="groupItem.itemClick = true">
-                    <div class="triangle"><span class="sprite-new arrow-right"></span></div>
+                    [ngClass]="{'item-click': groupItem.itemClick, 'open': openDropdown === groupItem}"
+                    (mouseover)="groupItem.itemClick = true" (focusin)="groupItem.itemClick = true"
+                    (focusout)="onDropdownFocusOut($event, groupItem)" (keydown)="onDropdownKeydown($event, groupItem)">
+                    <button type="button" class="triangle" [attr.aria-expanded]="openDropdown === groupItem"
+                            [attr.aria-label]="(groupItem.menuItems[groupItem.selectedIndex]?.text) + ' menu'"
+                            (click)="toggleDropdown(groupItem)"><span class="sprite-new arrow-right"></span></button>
                     <ul class="sub-menu">
                         <li *ngFor="let ddItem of groupItem.menuItems; let $index2 = index"
                             [ngClass]="{'selected': $index2 == groupItem.selectedIndex, 'disabled': ddItem.isDisabled}">

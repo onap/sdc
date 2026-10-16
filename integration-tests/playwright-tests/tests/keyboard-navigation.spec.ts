@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-import { test, expect, SEL, gotoCold, currentRoute } from './fixtures/sdc';
+import { test, expect, SEL, ADMIN_USER, gotoCold, gotoWorkspaceTab, currentRoute } from './fixtures/sdc';
 
 test.describe('keyboard navigation', () => {
     for (const route of ['/catalog', '/dashboard', '/onboardVendor']) {
@@ -63,5 +63,59 @@ test.describe('keyboard navigation', () => {
         await title.focus();
         await sdcPage.keyboard.press('Enter');
         await expect(title).not.toHaveAttribute('aria-expanded', before as string);
+    });
+
+    test('dashboard filters come before the cards in the tab order', async ({ sdcPage }) => {
+        await gotoCold(sdcPage, '/dashboard');
+        const filter = sdcPage.locator('.w-sdc-left-sidebar input.sdc-checkbox__input').first();
+        await filter.waitFor({ state: 'attached', timeout: 60_000 });
+        await filter.focus();
+        await sdcPage.keyboard.press('Tab');
+        await sdcPage.keyboard.press('Tab');
+        await sdcPage.keyboard.press('Tab');
+        await sdcPage.keyboard.press('Tab');
+        await expect(sdcPage.locator('#dashboard-main-scroll')).toBeFocused();
+    });
+
+    test('closing Import Type puts focus back on the Import card', async ({ sdcPage }) => {
+        await gotoCold(sdcPage, '/dashboard');
+        await sdcPage.locator('.w-sdc-dashboard-card-new[aria-label="Import"]').focus();
+        const importType = sdcPage.locator('[data-tests-id="importTypebutton"]');
+        await importType.focus();
+        await sdcPage.keyboard.press('Enter');
+        const dialog = sdcPage.getByRole('dialog', { name: 'Import Type' });
+        await expect(dialog).toBeVisible();
+        await sdcPage.keyboard.press('Escape');
+        await expect(dialog).toBeHidden();
+        await expect(sdcPage.locator('.w-sdc-dashboard-card-new[aria-label="Import"]')).toBeFocused();
+    });
+
+    test('catalog scrollbar thumbs are not tab stops', async ({ sdcPage }) => {
+        await gotoCold(sdcPage, '/catalog');
+        const thumbs = sdcPage.locator('.sdc-catalog-body-container .ps-scrollbar-x, .sdc-catalog-body-container .ps-scrollbar-y');
+        await expect(thumbs).toHaveCount(2, { timeout: 60_000 });
+        for (const thumb of await thumbs.all()) {
+            await expect(thumb).toHaveAttribute('tabindex', '-1');
+        }
+    });
+
+    test('a new service is announced by its heading before it has a name', async ({ sdcPage }) => {
+        await gotoCold(sdcPage, '/dashboard');
+        await gotoWorkspaceTab(sdcPage, { type: 'service' });
+        await expect(sdcPage.getByRole('heading', { level: 1 })).toHaveText('Create new service');
+    });
+
+    test.describe('as admin', () => {
+        test.use({ sdcUser: ADMIN_USER });
+
+        test('Monitor is a single link', async ({ sdcPage }) => {
+            await gotoCold(sdcPage, '/adminDashboard');
+            const monitor = sdcPage.locator('[data-tests-id="monitor"]');
+            await expect(monitor).toHaveJSProperty('tagName', 'A', { timeout: 60_000 });
+            await expect(monitor.locator('a, button')).toHaveCount(0);
+            await sdcPage.locator('[data-tests-id="categorymanagmenttab"]').focus();
+            await sdcPage.keyboard.press('Tab');
+            await expect(monitor).toBeFocused();
+        });
     });
 });

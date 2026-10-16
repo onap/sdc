@@ -5,6 +5,7 @@ exports[`artifact form component should match current snapshot of top-nav compon
   _getTopLvlSelectedIndexByState={[Function Function]}
   authService={[Function Object]}
   navigationService={[Function Object]}
+  openDropdown="null"
   sdcConfig={[Function Object]}
   searchTermChange={[Function EventEmitter]}
   translateService={[Function Object]}

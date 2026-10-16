@@ -19,7 +19,7 @@
  */
 import * as fs from 'fs';
 import * as path from 'path';
-import { clickOnlyElements, describeElement } from '../../jest/a11y-helpers';
+import { clickOnlyElements, describeElement, nestedInteractiveElements } from '../../jest/a11y-helpers';
 
 const sources = (dir: string): string[] =>
     fs.readdirSync(dir).reduce((found: string[], entry: string) => {
@@ -111,10 +111,27 @@ describe('click-only elements', () => {
         expect(problems).toEqual([]);
     });
 
+    it('nests no control inside a link or button', () => {
+        const problems = sources(appDir).reduce((found: string[], file: string) =>
+            found.concat(nestedInteractiveElements(templateHtml(file))
+                .map((el) => `${path.relative(appDir, file)}: ${describeElement(el)}`)), []);
+        expect(problems).toEqual([]);
+    });
+
     it('lists only containers that still exist', () => {
         const live = sources(appDir).reduce((found: string[], file: string) =>
             found.concat(clickOnlyElements(templateHtml(file)).map((el) => containerKey(path.relative(appDir, file), el))), []);
         expect(Object.keys(CONTAINERS).filter((key) => live.indexOf(key) === -1)).toEqual([]);
+    });
+});
+
+describe('nestedInteractiveElements', () => {
+    it('flags a button inside a link and a link inside a button', () => {
+        expect(nestedInteractiveElements('<a [href]="u"><button>x</button></a><button><a href="#x">x</a></button>').length).toBe(2);
+    });
+
+    it('accepts a link or button holding only content', () => {
+        expect(nestedInteractiveElements('<a href="#x"><span>x</span></a><button><svg-icon></svg-icon></button>')).toEqual([]);
     });
 });
 

@@ -28,11 +28,8 @@
                 [attr.aria-current]="isSelected('CATEGORY_MANAGEMENT') ? 'page' : null"
                 (click)="moveToTab('CATEGORY_MANAGEMENT')">{{'CATEGORY_MANAGEMENT' | translate}}
         </button>
-        <a [href]="monitorUrl" target="_blank" *ngIf="monitorUrl">
-            <button class="sdc-admin-top-bar-menu-monitor-btn"
-                    data-tests-id="monitor">{{'MONITOR' | translate}}
-            </button>
-        </a>
+        <a class="sdc-admin-top-bar-menu-monitor-btn" data-tests-id="monitor"
+           [href]="monitorUrl" target="_blank" rel="noopener noreferrer" *ngIf="monitorUrl">{{'MONITOR' | translate}}</a>
     </nav>
 
     <main id="main-content" class="sdc-admin-body">

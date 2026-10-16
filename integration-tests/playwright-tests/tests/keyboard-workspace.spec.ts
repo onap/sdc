@@ -90,4 +90,28 @@ test.describe('Workspace keyboard operation', () => {
         await sdcPage.keyboard.press(' ');
         await expect(time).toHaveAccessibleName('Time, sorted descending');
     });
+
+    test('breadcrumb menus open, walk and close from the keyboard', async ({ sdcPage, api }) => {
+        const vf = await api.createVf('PwKbdCrumbs');
+        await gotoWorkspaceTab(sdcPage, { id: vf.id, type: 'resource', tab: 'general' });
+        expect(await settles(sdcPage), 'page did not settle').toBe(true);
+
+        const dropdown = sdcPage.locator('li.triangle-dropdown').first();
+        const toggle = dropdown.locator('button.triangle');
+        await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+        await toggle.focus();
+        await sdcPage.keyboard.press('ArrowDown');
+        await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+        await expect(dropdown.locator('[data-tests-id="sub-menu-button-home"]')).toBeFocused();
+        await sdcPage.keyboard.press('Escape');
+        await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+        await expect(toggle).toBeFocused();
+
+        await sdcPage.keyboard.press('Enter');
+        await sdcPage.keyboard.press('Tab');
+        const home = dropdown.locator('[data-tests-id="sub-menu-button-home"]');
+        await expect(home).toBeFocused();
+        await sdcPage.keyboard.press('Enter');
+        await expect.poll(() => currentRoute(sdcPage), { timeout: 15_000 }).toBe('/dashboard');
+    });
 });

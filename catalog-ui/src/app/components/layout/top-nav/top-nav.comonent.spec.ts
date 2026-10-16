@@ -205,4 +205,89 @@ describe('artifact form component', () => {
         expect(subItems.map((b: HTMLButtonElement) => b.tagName + ':' + b.disabled)).toEqual(['BUTTON:false', 'BUTTON:true']);
     });
 
+    describe('breadcrumb dropdown keyboard', () => {
+        let el: HTMLElement;
+        // ngOnChanges puts the top-level menu group in front of the given one.
+        const dropdown = () => {
+            const all = el.querySelectorAll('li.triangle-dropdown');
+            return all[all.length - 1] as HTMLElement;
+        };
+        const toggle = () => dropdown().querySelector('button.triangle') as HTMLButtonElement;
+        const items = () => Array.from(dropdown().querySelectorAll('ul.sub-menu button')) as HTMLButtonElement[];
+        const key = (target: HTMLElement, k: string) => {
+            const event = new KeyboardEvent('keydown', {key: k, bubbles: true, cancelable: true});
+            target.dispatchEvent(event);
+            fixture.detectChanges();
+            return event;
+        };
+
+        beforeEach(() => {
+            jest.useFakeTimers();
+            const comp = fixture.componentInstance;
+            comp.menuModel = [new MenuItemGroup(0, [new MenuItem('VF: x', () => Promise.resolve(true), null, null, []),
+                new MenuItem('VF: y', () => Promise.resolve(true), null, null, []),
+                new MenuItem('VF: z', () => Promise.resolve(true), null, null, [])])];
+            comp.menuModel[0].menuItems[2].isDisabled = true;
+            comp.ngOnChanges({menuModel: {}});
+            fixture.detectChanges();
+            el = fixture.nativeElement;
+        });
+
+        afterEach(() => jest.useRealTimers());
+
+        it('has a named toggle button that reports and flips the open state', () => {
+            expect(toggle().getAttribute('aria-label')).toBe('VF: x menu');
+            expect(toggle().getAttribute('aria-expanded')).toBe('false');
+            toggle().click();
+            fixture.detectChanges();
+            expect(toggle().getAttribute('aria-expanded')).toBe('true');
+            expect(dropdown().classList).toContain('open');
+            toggle().click();
+            fixture.detectChanges();
+            expect(dropdown().classList).not.toContain('open');
+        });
+
+        it('opens on ArrowDown and walks the enabled items with the arrow keys', () => {
+            toggle().focus();
+            expect(key(toggle(), 'ArrowDown').defaultPrevented).toBe(true);
+            jest.runAllTimers();
+            expect(dropdown().classList).toContain('open');
+            expect(document.activeElement).toBe(items()[0]);
+            key(items()[0], 'ArrowDown');
+            jest.runAllTimers();
+            expect(document.activeElement).toBe(items()[1]);
+            key(items()[1], 'ArrowDown');
+            jest.runAllTimers();
+            expect(document.activeElement).toBe(items()[0]);
+            key(items()[0], 'ArrowUp');
+            jest.runAllTimers();
+            expect(document.activeElement).toBe(items()[1]);
+        });
+
+        it('closes on Escape and returns focus to the toggle', () => {
+            toggle().click();
+            fixture.detectChanges();
+            items()[0].focus();
+            expect(key(items()[0], 'Escape').defaultPrevented).toBe(true);
+            expect(dropdown().classList).not.toContain('open');
+            expect(document.activeElement).toBe(toggle());
+        });
+
+        it('leaves Escape alone while closed', () => {
+            toggle().focus();
+            expect(key(toggle(), 'Escape').defaultPrevented).toBe(false);
+        });
+
+        it('closes when focus leaves the dropdown, not when it moves inside', () => {
+            toggle().click();
+            fixture.detectChanges();
+            dropdown().dispatchEvent(new FocusEvent('focusout', {relatedTarget: items()[0]}));
+            fixture.detectChanges();
+            expect(dropdown().classList).toContain('open');
+            dropdown().dispatchEvent(new FocusEvent('focusout', {relatedTarget: document.body}));
+            fixture.detectChanges();
+            expect(dropdown().classList).not.toContain('open');
+        });
+    });
+
 });

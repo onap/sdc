@@ -85,6 +85,15 @@ export function clickOnlyElements(html: string): Element[] {
         .filter((el) => !(el.tagName.toLowerCase() === 'label' && (el.hasAttribute('for') || el.hasAttribute('[attr.for]'))));
 }
 
+const INTERACTIVE = 'a[href], a[\\[href\\]], a[routerLink], a[\\[routerLink\\]], button, input, select, textarea';
+
+/** Links and buttons that contain another control: two tab stops, and the inner one is invalid HTML. */
+export function nestedInteractiveElements(html: string): Element[] {
+    const doc = new DOMParser().parseFromString(`<body>${html}</body>`, 'text/html');
+    return Array.from(doc.querySelectorAll('a, button'))
+        .filter((el) => (el.tagName.toLowerCase() === 'button' || el.matches(INTERACTIVE)) && !!el.querySelector(INTERACTIVE));
+}
+
 export const describeElement = (el: Element) =>
     `<${el.tagName.toLowerCase()}${attr(el, 'data-tests-id') ? ' data-tests-id="' + attr(el, 'data-tests-id') + '"' : ''}` +
     `${el.getAttribute('class') ? ' class="' + el.getAttribute('class') + '"' : ''}>`;

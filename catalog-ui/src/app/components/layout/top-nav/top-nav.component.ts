@@ -55,6 +55,7 @@ export class TopNavComponent implements OnInit, OnChanges {
     private subscription: Subscription;
     private hasUnsavedChanges: boolean;
     public topLvlMenu:MenuItemGroup;
+    public openDropdown:MenuItemGroup = null;
     public user:IUserProperties;
     private topNavPlugins: Array<Plugin>;
 
@@ -195,8 +196,47 @@ export class TopNavComponent implements OnInit, OnChanges {
         }
     }
 
+    toggleDropdown(itemGroup:MenuItemGroup) {
+        this.openDropdown = this.openDropdown === itemGroup ? null : itemGroup;
+    }
+
+    onDropdownFocusOut(event:FocusEvent, itemGroup:MenuItemGroup) {
+        const dropdown = event.currentTarget as HTMLElement;
+        if (this.openDropdown === itemGroup && !dropdown.contains(event.relatedTarget as Node)) {
+            this.openDropdown = null;
+        }
+    }
+
+    onDropdownKeydown(event:KeyboardEvent, itemGroup:MenuItemGroup) {
+        const dropdown = event.currentTarget as HTMLElement;
+        const toggle = dropdown.querySelector('button.triangle') as HTMLElement;
+        if (event.key === 'Escape' || event.key === 'Esc') {
+            if (this.openDropdown === itemGroup) {
+                event.preventDefault();
+                this.openDropdown = null;
+                toggle.focus();
+            }
+            return;
+        }
+        if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') {
+            return;
+        }
+        event.preventDefault();
+        this.openDropdown = itemGroup;
+        const items: HTMLElement[] = Array.prototype.slice.call(dropdown.querySelectorAll('ul.sub-menu button:not([disabled])'));
+        if (!items.length) {
+            return;
+        }
+        const step = event.key === 'ArrowDown' ? 1 : -1;
+        const current = items.indexOf(document.activeElement as HTMLElement);
+        const next = current === -1 ? (step === 1 ? 0 : items.length - 1) : (current + step + items.length) % items.length;
+        // The list only becomes visible on the next change detection, and a hidden button cannot take focus.
+        setTimeout(() => items[next].focus());
+    }
+
     navigate(itemGroup:MenuItemGroup, item:MenuItem) {
         itemGroup.itemClick = false;
+        this.openDropdown = null;
         let onSuccess = ():void => {
             itemGroup.selectedIndex = itemGroup.menuItems.indexOf(item);
         };

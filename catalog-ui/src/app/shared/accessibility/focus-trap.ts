@@ -1,5 +1,18 @@
 const FOCUSABLE_SELECTOR = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
+// An opener that was hidden meanwhile (e.g. a dashboard card's buttons, shown only while the card
+// has focus) cannot take focus back; the nearest focusable ancestor keeps the user in place.
+function restoreFocus(element: HTMLElement): void {
+  let target: HTMLElement | null = element;
+  while (target) {
+    target.focus();
+    if (document.activeElement === target) {
+      return;
+    }
+    target = target.parentElement && target.parentElement.closest(FOCUSABLE_SELECTOR) as HTMLElement;
+  }
+}
+
 export class FocusTrap {
   private previousFocus: HTMLElement | null = null;
   private container: HTMLElement | null = null;
@@ -23,7 +36,7 @@ export class FocusTrap {
   deactivate(): void {
     document.removeEventListener('keydown', this.boundKeydown);
     if (this.previousFocus && this.previousFocus.focus) {
-      this.previousFocus.focus();
+      restoreFocus(this.previousFocus);
     }
     this.container = null;
     this.previousFocus = null;

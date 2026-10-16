@@ -2,6 +2,26 @@
     <main id="main-content" class="w-sdc-main-container" *ngIf="user">
         <h1 class="sr-only">Dashboard</h1>
 
+        <div class="w-sdc-left-sidebar">
+            <div class="i-sdc-left-sidebar-item "
+                 *ngFor="let folder of folders.getFolders()"
+                 [ngClass]="{'category-title': folder.isGroup(), 'selectedLink': folder.isSelected()}">
+
+                <span *ngIf="folder.isGroup()" class="title-text">{{folder.text}}</span>
+                <sdc-checkbox *ngIf="!folder.isGroup() && !folder.dist"
+                    [label]="folder.text"
+                    [attr.data-tests-id]="'filter-' + folder.state"
+                    [checked]="homeFilter.selectedStatuses.indexOf(folder.state) !== -1"
+                    (checkedChange)="changeCheckboxesFilter(homeFilter.selectedStatuses, folder.state, $event)"></sdc-checkbox>
+
+                <sdc-checkbox *ngIf="!folder.isGroup() && folder.dist"
+                    [label]="folder.text"
+                    [checked]="homeFilter.distributed.indexOf(folder.dist) !== -1"
+                    (checkedChange)="changeCheckboxesFilter(homeFilter.distributed, folder.dist, $event)"></sdc-checkbox>
+                <span class="i-sdc-left-sidebar-item-state-count" [attr.data-tests-id]="'count-' + folder.state">{{entitiesCount(folder)}}</span>
+            </div>
+        </div>
+
         <div id="dashboard-main-scroll" tabindex="0" role="region" aria-label="Dashboard items" infiniteScroll class="w-sdc-main-right-container" (infiniteScroll)="raiseNumberOfElementToDisplay()" [infiniteScrollDistance]="100">
 
             <div class='w-sdc-row-flex-items'>
@@ -77,26 +97,6 @@
 
             </div>
 
-        </div>
-
-        <div class="w-sdc-left-sidebar">
-            <div class="i-sdc-left-sidebar-item "
-                 *ngFor="let folder of folders.getFolders()"
-                 [ngClass]="{'category-title': folder.isGroup(), 'selectedLink': folder.isSelected()}">
-
-                <span *ngIf="folder.isGroup()" class="title-text">{{folder.text}}</span>
-                <sdc-checkbox *ngIf="!folder.isGroup() && !folder.dist"
-                    [label]="folder.text"
-                    [attr.data-tests-id]="'filter-' + folder.state"
-                    [checked]="homeFilter.selectedStatuses.indexOf(folder.state) !== -1"
-                    (checkedChange)="changeCheckboxesFilter(homeFilter.selectedStatuses, folder.state, $event)"></sdc-checkbox>
-
-                <sdc-checkbox *ngIf="!folder.isGroup() && folder.dist"
-                    [label]="folder.text"
-                    [checked]="homeFilter.distributed.indexOf(folder.dist) !== -1"
-                    (checkedChange)="changeCheckboxesFilter(homeFilter.distributed, folder.dist, $event)"></sdc-checkbox>
-                <span class="i-sdc-left-sidebar-item-state-count" [attr.data-tests-id]="'count-' + folder.state">{{entitiesCount(folder)}}</span>
-            </div>
         </div>
 
     </main>

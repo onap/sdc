@@ -32,6 +32,10 @@ export class PerfectScrollbarDirective {
     public ngOnInit() {
         console.log('PSbar: Initializing');
         PerfectScrollbar.initialize(this.elemRef.nativeElement, this.psOptions);
+        // perfect-scrollbar 0.6 makes each thumb a tab stop, unnamed and present even when nothing
+        // scrolls. Tabbing through the content already scrolls it.
+        const thumbs = this.elemRef.nativeElement.querySelectorAll('.ps-scrollbar-x, .ps-scrollbar-y');
+        Array.prototype.forEach.call(thumbs, (thumb: HTMLElement) => thumb.setAttribute('tabindex', '-1'));
     }
 
     public ngAfterContentChecked() {
