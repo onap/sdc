@@ -14,7 +14,7 @@
 .validation-form-content {
     fieldset[disabled] {
         .form-group {
-            opacity: 0.7;
+            opacity: 1;
             cursor: auto;
             pointer-events: none;
             .dropdown-multi-select {
@@ -31,6 +31,17 @@
 
 .Select-placeholder {
     color: $dark-gray;
+}
+
+// react-select 1.x draws its edge in #ccc and the clear/arrow glyphs in #999
+.Select-control {
+    border-color: $control-border;
+}
+.Select-clear-zone {
+    color: $dark-gray;
+}
+.Select-arrow {
+    border-top-color: $dark-gray;
 }
 
 .dropdown-multi-select {

@@ -40,12 +40,12 @@
             select,
             textarea {
                 .h_1;
-                border-color: @main_color_g;
+                border-color: @func_color_q;
                 box-sizing: border-box;
 
                 &:hover {
                     .h_1;
-                    border-color: @main_color_g;
+                    border-color: @func_color_q;
                 }
             }
             label {
@@ -60,7 +60,7 @@
             display: block;
 
             &.required::before {
-                color: #f33;
+                color: @func_color_q;
                 content: '*';
                 margin: 0 4px 0 0;
             }
@@ -77,7 +77,7 @@
             .border-radius(2px);
             margin: 0;
             padding: 0;
-            border: solid 1px @main_color_o;
+            border: solid 1px @control_border;
             height: 30px;
             width: 100%;
             display: block;
@@ -93,7 +93,7 @@
             }
             &.view-mode {
                 opacity: 1;
-                border: solid 1px @main_color_o;
+                border: solid 1px @control_border;
                 background-color: #f8f8f8 !important;
                 pointer-events: none;
                 cursor: auto;
@@ -194,5 +194,15 @@
         .input-error;
         margin-top: -10px;
         margin-bottom: 10px;
+    }
+}
+
+// The property editors show their value while disabled (view mode), so grey the field, not the text.
+ui-element-input, ui-element-integer-input, ui-element-dropdown, ui-element-popover-input,
+ui-element-range-input, ui-element-valid-values-input {
+    input.disabled, select.disabled, textarea.disabled {
+        opacity: 1 !important;
+        background-color: @func_color_r;
+        color: @main_color_m;
     }
 }

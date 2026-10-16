@@ -3,7 +3,7 @@
         .list-editor-item-view-field {
             .operational-scope,
             .type {
-                color: $orange;
+                color: $orange-text;
             }
             .operational-scope {
                 @include ellipsis;

@@ -42,7 +42,7 @@
 
             <div class="body">
                 <div class="scrollbar-container">
-                    <div *ngIf="propertiesCount === 0" class="no-row-text" [ngClass]="{'disabled': isDisableMode()}">
+                    <div *ngIf="propertiesCount === 0" class="no-row-text">
                         There are no properties to display <br>
                         <span *ngIf="!isViewMode()"> click <button type="button" class="add-property-link" (click)="addOrUpdateProperty()">here</button> to add one </span>
                     </div>

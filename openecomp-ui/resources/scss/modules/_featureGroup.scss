@@ -18,15 +18,15 @@
                     }
                     .feature-groups-count-ep {
                         @extend .heading-1;
-                        color: $light-blue;
+                        color: $link-blue;
                     }
                     .feature-groups-mrn-ep {
                         @extend .body-1;
-                        color: $light-blue;
+                        color: $link-blue;
                     }
                     .feature-groups-count-lk {
                         @extend .heading-1;
-                        color: $light-green;
+                        color: $light-green-text;
                     }
                     .title-no-wrap {
                         white-space: nowrap;

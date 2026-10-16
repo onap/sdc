@@ -1,6 +1,12 @@
 @import "~@ng-select/ng-select/themes/default.theme.css";
 @import '../../../../assets/styles/variables.less';
 
+// The ng-select default theme draws its edge, placeholder and arrow in #aaa-#ccc.
+.ng-select .ng-select-container { border-color: @control_border; }
+.ng-select .ng-select-container .ng-value-container .ng-placeholder { color: @main_color_n; }
+.ng-select .ng-arrow-wrapper .ng-arrow { border-top-color: @main_color_n; }
+.ng-select .ng-clear-wrapper { color: @main_color_n; }
+
 .select-directives {
   height: 350px;
   .multi-select-dropdown-box {
