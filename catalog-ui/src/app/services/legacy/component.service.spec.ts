@@ -67,6 +67,12 @@ describe('LegacyComponentService', () => {
         req.flush({isValid: true});
     });
 
+    it('validateName encodes the name, so %, # and ? stay part of it', () => {
+        service.validateName('bad name %%#1?');
+        const req = httpMock.expectOne(r => r.url === 'http://localhost/v1/catalog/validate-name/bad%20name%20%25%25%231%3F');
+        req.flush({isValid: true});
+    });
+
     it('deleteArtifact issues DELETE with operation param', () => {
         service.deleteArtifact('c1', 'a1', 'label1');
         const req = httpMock.expectOne(r => r.url === 'http://localhost/v1/catalog/c1/artifacts/a1');
