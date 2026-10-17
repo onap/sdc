@@ -7,12 +7,14 @@ const SelectActionTableCell = ({
     disabled,
     onChange,
     clearable = true,
-    placeholder
+    placeholder,
+    ariaLabel
 }) => {
     return (
         <div className="select-action-table-cell">
             <SelectInput
                 placeholder={placeholder}
+                aria-label={ariaLabel}
                 type="select"
                 value={selected}
                 data-test-id="select-action-table-dropdown"

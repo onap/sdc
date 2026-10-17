@@ -4,6 +4,7 @@ import {SdcMenuToken, IAppMenu} from "../../../config/sdc-menu.config";
 import {ElementIcon} from "../sdc-element-icon/sdc-element-icon.component";
 import {ComponentType, DEFAULT_MODEL_NAME, Icon, ResourceType} from "../../../utils/constants";
 import {DataTypeCatalogComponent} from "../../../models/data-type-catalog-component";
+import {ResourceNamePipe} from "../../../pipes/resource-name.pipe";
 
 @Component({
     selector: 'ui-tile',
@@ -55,6 +56,23 @@ export class TileComponent {
         } else {
             return this.component.model;
         }
+    }
+
+    /** e.g. "Basic_cnf_macro_gnb, VF, version 0.1, In Design": two assets of one name stay distinguishable. */
+    public get accessibleName(): string {
+        const component: any = this.component;
+        const parts: string[] = [ResourceNamePipe.getDisplayName(component.name)];
+        parts.push(component.isService() ? 'Service' : component.getComponentSubType());
+        if (component.isResource() || component.isService()) {
+            parts.push('version ' + component.version);
+        }
+        if (component.model) {
+            parts.push('model ' + component.model);
+        }
+        if (component.isResource() || component.isService()) {
+            parts.push(component.getStatus(this.sdcMenu));
+        }
+        return parts.filter((part) => !!part).join(', ');
     }
 
     public tileClicked() {

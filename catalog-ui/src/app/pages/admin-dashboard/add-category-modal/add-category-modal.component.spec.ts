@@ -1,5 +1,6 @@
 import 'rxjs/add/operator/map';
 import {of} from 'rxjs/observable/of';
+import {ChangeDetectorRef} from '@angular/core';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {ReactiveFormsModule} from '@angular/forms';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
@@ -100,6 +101,37 @@ describe('AddCategoryModalComponent', () => {
             fixture.componentInstance.save().subscribe();
             expect(mockCategoryService.createSubCategory).toHaveBeenCalledWith('service', 'PARENT_ID', {name: 'SubName'});
             expect(mockCategoryService.createCategory).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('accessibility', () => {
+        const input = (fixture: ComponentFixture<AddCategoryModalComponent>): HTMLInputElement =>
+            fixture.nativeElement.querySelector('input[formControlName="name"]');
+        const refresh = (fixture: ComponentFixture<AddCategoryModalComponent>): void =>
+            fixture.debugElement.injector.get(ChangeDetectorRef).detectChanges();
+
+        it('labels the name field and marks it required', () => {
+            const fixture = createComponent();
+            const label: HTMLLabelElement = fixture.nativeElement.querySelector('label.required');
+            expect(label.htmlFor).toBe(input(fixture).id);
+            expect(input(fixture).getAttribute('aria-required')).toBe('true');
+        });
+
+        it('flags an invalid name and points it at the shown error only', () => {
+            const fixture = createComponent();
+            expect(input(fixture).hasAttribute('aria-invalid')).toBe(false);
+            const name = fixture.componentInstance.form.get('name');
+            name.setValue('ab');
+            name.markAsDirty();
+            refresh(fixture);
+            expect(input(fixture).getAttribute('aria-invalid')).toBe('true');
+            const error = fixture.nativeElement.querySelector('#' + input(fixture).getAttribute('aria-describedby'));
+            expect(error.classList.contains('input-error')).toBe(true);
+
+            name.setValue('abc');
+            refresh(fixture);
+            expect(input(fixture).hasAttribute('aria-invalid')).toBe(false);
+            expect(input(fixture).hasAttribute('aria-describedby')).toBe(false);
         });
     });
 });

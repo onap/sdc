@@ -415,6 +415,7 @@ const ModelSelection = ({
                         clearable={true}
                         data-test-id="model-option-select"
                         placeholder={i18n('vsp.model.select.label')}
+                        aria-label={i18n('vsp.model.select.label')}
                         multi
                     />
                 )}

@@ -47,6 +47,7 @@ const TableActionRow = ({
             actionIcon={actionIcon}
             actionAriaLabel={actionAriaLabel}>
             <SelectActionTableCell
+                ariaLabel={i18n('Source')}
                 options={sourceOptions}
                 selected={dependency.sourceId}
                 placeholder={i18n('Select VFC...')}
@@ -57,11 +58,13 @@ const TableActionRow = ({
                 }}
             />
             <SelectActionTableCell
+                ariaLabel={i18n('Relation Type')}
                 options={relationTypesOptions}
                 selected={dependency.relationType}
                 clearable={false}
             />
             <SelectActionTableCell
+                ariaLabel={i18n('Target')}
                 placeholder={i18n('Select VFC...')}
                 options={targetOptions}
                 selected={dependency.targetId}

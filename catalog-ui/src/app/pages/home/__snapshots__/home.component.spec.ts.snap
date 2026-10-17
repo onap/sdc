@@ -24,8 +24,8 @@ exports[`home component should match current snapshot 1`] = `
   <div
     class="sdc-catalog-container"
   >
-    
     <top-nav />
+    
   </div>
 </home-page>
 `;

@@ -71,6 +71,7 @@ class Input extends React.Component {
         if (disabled) {
             wrapperClassName += ' disabled';
         }
+        const ariaProps = this.getAriaProps();
         return (
             <div className={wrapperClassName}>
                 <FormGroup
@@ -98,6 +99,7 @@ class Input extends React.Component {
                             inputRef={input => (this.input = input)}
                             type={type}
                             data-test-id={this.props['data-test-id']}
+                            {...ariaProps}
                             placeholder={this.props.placeholder || ''}
                         />
                     )}
@@ -112,6 +114,7 @@ class Input extends React.Component {
                             inputRef={input => (this.input = input)}
                             type={type}
                             data-test-id={this.props['data-test-id']}
+                            {...ariaProps}
                         />
                     )}
                     {type === 'file' && (
@@ -121,6 +124,7 @@ class Input extends React.Component {
                             disabled={isReadOnlyMode || Boolean(disabled)}
                             type={type}
                             data-test-id={this.props['data-test-id']}
+                            {...ariaProps}
                             inputRef={input => (this.input = input)}
                         />
                     )}
@@ -135,6 +139,7 @@ class Input extends React.Component {
                             onChange={e => this.onChange(e)}
                             inputRef={input => (this.input = input)}
                             data-test-id={this.props['data-test-id']}
+                            {...ariaProps}
                         />
                     )}
 
@@ -175,6 +180,7 @@ class Input extends React.Component {
                             name={name}
                             {...inputProps}
                             data-test-id={this.props['data-test-id']}
+                            {...ariaProps}
                         />
                     )}
                     {type === 'date' && (
@@ -264,6 +270,20 @@ class Input extends React.Component {
         ReactDOM.findDOMNode(this.input).focus();
     }
 
+    getErrorId() {
+        return `${this.inputId}-error`;
+    }
+
+    getAriaProps() {
+        const { isRequired, isValid = true, errorText } = this.props;
+        return {
+            'aria-required': isRequired ? true : undefined,
+            'aria-invalid': isValid ? undefined : true,
+            'aria-describedby':
+                !isValid && errorText ? this.getErrorId() : undefined
+        };
+    }
+
     renderErrorOverlay() {
         let position = 'right';
         const { errorText = '', isValid = true, type, overlayPos } = this.props;
@@ -291,7 +311,7 @@ class Input extends React.Component {
                 }}
                 container={this}>
                 <Tooltip
-                    id={`error-${errorText.replace(' ', '-')}`}
+                    id={this.getErrorId()}
                     className="validation-error-message">
                     {errorText}
                 </Tooltip>

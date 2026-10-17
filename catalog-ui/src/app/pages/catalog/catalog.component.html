@@ -1,6 +1,9 @@
 <div class="sdc-catalog-container">
+    <top-nav [topLvlSelectedIndex]="1" [searchTerm]="search.filterTerm"
+             (searchTermChange)="gui.changeFilterTerm($event)" [version]="version"></top-nav>
     <main id="main-content" class="w-sdc-main-container">
         <h1 class="sr-only">Catalog</h1>
+        <sdc-live-status [message]="resultCountMessage" [delay]="1000" [announceInitial]="false"></sdc-live-status>
         <!-- The whole bar toggles for the mouse; the title button is the keyboard and AT control. -->
         <div class="i-sdc-designer-leftbar-section-left-switch-header"
              (click)="showCatalogSelector=!showCatalogSelector">
@@ -115,15 +118,13 @@
                     </div>
                 </div>
 
-                <div class='catalog-elements-list'>
+                <div class='catalog-elements-list' role="list">
                     <!-- Tile new -->
-                    <ui-tile *ngFor="let component of catalogFilteredSlicedItems"
+                    <ui-tile role="listitem" *ngFor="let component of catalogFilteredSlicedItems"
                              [component]="component" (onTileClick)="goToComponent(component)"></ui-tile>
                     <!-- Tile new -->
                 </div>
         </div>
     </main>
 
-    <top-nav [topLvlSelectedIndex]="1" [searchTerm]="search.filterTerm"
-             (searchTermChange)="gui.changeFilterTerm($event)" [version]="version"></top-nav>
 </div>

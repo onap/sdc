@@ -128,6 +128,7 @@ import {UnsavedChangesFlagGuard} from './guards/unsaved-changes-flag.guard';
 import {UnsavedChangesGuard} from './guards/unsaved-changes.guard';
 import {WorkspaceComponentResolver} from './pages/workspace/workspace-component.resolver';
 import {WorkspaceService} from './pages/workspace/workspace.service';
+import {RouteFocusService} from './services/route-focus.service';
 import {RouteMetadataService} from './services/route-metadata.service';
 import {environment} from '../environments/environment';
 
@@ -269,6 +270,7 @@ export function configServiceFactory(config: ConfigService, authService: Authent
     FileUtilsService,
     NavigationService,
     RouteMetadataService,
+    RouteFocusService,
     AuthGuard,
     UnsavedChangesGuard,
     UnsavedChangesFlagGuard,

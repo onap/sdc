@@ -101,6 +101,7 @@ class LicenseKeyGroupsListEditorView extends React.Component {
         } = this.props;
         return (
             <ListEditorItemView
+                itemName={name}
                 key={id}
                 onSelect={() =>
                     onEditLicenseKeyGroupClick(licenseKeyGroup, isReadOnlyMode)

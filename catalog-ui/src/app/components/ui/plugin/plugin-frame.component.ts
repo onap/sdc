@@ -5,6 +5,15 @@ import {EventBusService} from "../../../services/event-bus.service";
 import {NavigationService} from "../../../services/navigation.service";
 import {PluginsService} from "../../../services/plugins.service";
 
+/** The name the plugin is shown under for `displayType` ('tab' or 'context'), else any it has, else its id. */
+export function pluginDisplayName(plugin: Plugin, displayType?: string): string {
+    if (!plugin) { return ''; }
+    const options: any = plugin.pluginDisplayOptions || {};
+    const preferred = displayType && options[displayType];
+    const any = Object.keys(options).map((key) => options[key]).find((option: any) => option && option.displayName);
+    return (preferred && preferred.displayName) || (any && any.displayName) || plugin.pluginId;
+}
+
 @Component({
     selector: 'plugin-frame',
     templateUrl: './plugin-frame.component.html',
@@ -28,6 +37,10 @@ export class PluginFrameComponent implements OnInit, OnDestroy {
                 private navigationService: NavigationService) {
         this.urlSearchParams = new URLSearchParams();
         this.isPluginCheckDone = false;
+    }
+
+    get frameTitle(): string {
+        return pluginDisplayName(this.plugin, this.queryParams && this.queryParams['displayType']);
     }
 
     ngOnDestroy(): void {

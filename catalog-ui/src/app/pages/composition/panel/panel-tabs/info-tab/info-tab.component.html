@@ -16,21 +16,22 @@
  
 <ng2-expand-collapse state="0">
     <span expandCollapseHeader tooltip="General Information">General Info</span>
-    <content class="general-info-container">
+    <!-- One listitem per "Name: value" pair, so a screen reader can step through them instead of reading one run of text. -->
+    <content class="general-info-container" role="list">
         <!-- TYPE -->
-        <div class="component-details-panel-item" *ngIf="details.componentType">
+        <div class="component-details-panel-item" role="listitem" *ngIf="details.componentType">
             <span class="name" [innerHTML]="'Type:'"></span>
             <span class="value" data-tests-id="rightTab_componentType" tooltip="{{details.componentType}}">{{details.componentType}}</span>
         </div>
 
         <!-- RESOURCE TYPE-->
-        <div class="component-details-panel-item" *ngIf="details.resourceType">
+        <div class="component-details-panel-item" role="listitem" *ngIf="details.resourceType">
             <span class="name" [innerHTML]="'Resource Type:'"></span>
             <span class="value" data-tests-id="rightTab_resourceType" tooltip="{{details.resourceType}}">{{details.resourceType}}</span>
         </div>
 
         <!-- VERSION -->
-        <div class="component-details-panel-item" >
+        <div class="component-details-panel-item" role="listitem" >
             <span class="name" [innerHTML]="'GENERAL_LABEL_VERSION' | translate"></span>
             <span class="value" *ngIf="!isComponentSelectedFlag" data-tests-id="rightTab_version" tooltip="{{component.version}}">{{component.version}}</span>
             <ng-container *ngIf="isComponentSelectedFlag">
@@ -44,88 +45,88 @@
 
         <!-- CATEGORY -->
         <ng-container *ngIf="details.categories && details.categories[0]">
-            <div class="component-details-panel-item">
+            <div class="component-details-panel-item" role="listitem">
                 <span class="name" [innerHTML]="'GENERAL_LABEL_CATEGORY' | translate"></span>
                 <span class="value" data-tests-id="rightTab_category" tooltip="{{getCategoryDisplayNameOrName(details.categories[0])}}">{{getCategoryDisplayNameOrName(details.categories[0])}}</span>
             </div>
 
             <!-- SUB CATEGORY -->
-            <div class="component-details-panel-item" *ngIf="details.categories[0].subcategories && details.categories[0].subcategories[0]">
+            <div class="component-details-panel-item" role="listitem" *ngIf="details.categories[0].subcategories && details.categories[0].subcategories[0]">
                 <span class="name" [innerHTML]="'GENERAL_LABEL_SUB_CATEGORY' | translate"></span>
                 <span class="value" data-tests-id="rightTab_subCategory" tooltip="{{details.categories[0].subcategories[0].name}}">{{details.categories[0].subcategories[0].name}}</span>
             </div>
         </ng-container>
 
         <!-- CREATION DATE -->
-        <div class="component-details-panel-item" *ngIf="details.creationDate">
+        <div class="component-details-panel-item" role="listitem" *ngIf="details.creationDate">
             <span class="name" [innerHTML]="'Creation Date:'"></span>
             <span class="value" data-tests-id="rightTab_version" tooltip="{{details.creationDate | date: 'MM/dd/yyyy'}}">{{details.creationDate | date: 'MM/dd/yyyy'}}</span>
         </div>
 
         <!-- AUTHOR -->
-        <div class="component-details-panel-item" *ngIf="details.creatorFullName">
+        <div class="component-details-panel-item" role="listitem" *ngIf="details.creatorFullName">
             <span class="name" [innerHTML]="'Author:'"></span>
             <span class="value" data-tests-id="rightTab_author" tooltip="{{details.creatorFullName}}">{{details.creatorFullName}}</span>
         </div>
 
         <!-- Vendor Name data-ng-if="selectedComponent.isResource()"-->
-        <div class="component-details-panel-item" *ngIf="details.vendorName">
+        <div class="component-details-panel-item" role="listitem" *ngIf="details.vendorName">
             <span class="name" [innerHTML]="'Vendor Name:'"></span>
             <span class="value" data-tests-id="rightTab_vendorName" tooltip="{{details.vendorName}}">{{details.vendorName}}</span>
         </div>
 
         <!-- Vendor Release data-ng-if="selectedComponent.isResource()"-->
-        <div class="component-details-panel-item" *ngIf="details.vendorRelease">
+        <div class="component-details-panel-item" role="listitem" *ngIf="details.vendorRelease">
             <span class="name" [innerHTML]="'Vendor Release:'"></span>
             <span class="value" data-tests-id="rightTab_vendorRelease" tooltip="{{details.vendorRelease}}">{{details.vendorRelease}}</span>
         </div>
 
         <!-- Vendor Release data-ng-if="selectedComponent.isResource()"-->
-        <div class="component-details-panel-item" *ngIf="details.resourceVendorModelNumber">
+        <div class="component-details-panel-item" role="listitem" *ngIf="details.resourceVendorModelNumber">
             <span class="name" [innerHTML]="'GENERAL_LABEL_RESOURCE_MODEL_NUMBER' | translate"></span>
             <span class="value" data-tests-id="rightTab_resourceVendorModelNumber" tooltip="{{details.resourceVendorModelNumber}}">{{details.resourceVendorModelNumber}}</span>
         </div>
 
         <!-- Service Type data-ng-if="selectedComponent.isService()"-->
-        <div class="component-details-panel-item" *ngIf="details.serviceType">
+        <div class="component-details-panel-item" role="listitem" *ngIf="details.serviceType">
             <span class="name" [innerHTML]="'GENERAL_LABEL_SERVICE_TYPE' | translate"></span>
             <span class="value" data-tests-id="rightTab_serviceType" tooltip="{{details.serviceType}}">{{details.serviceType}}</span>
         </div>
 
         <!-- Service Role data-ng-if="selectedComponent.isService()"-->
-        <div class="component-details-panel-item" *ngIf="details.serviceRole">
+        <div class="component-details-panel-item" role="listitem" *ngIf="details.serviceRole">
             <span class="name" [innerHTML]="'GENERAL_LABEL_SERVICE_ROLE' | translate"></span>
             <span class="value" data-tests-id="rightTab_serviceRole" tooltip="{{details.serviceRole}}">{{details.serviceRole}}</span>
         </div>
 
         <!-- Contact ID -->
-        <div class="component-details-panel-item" *ngIf="details.contactId">
+        <div class="component-details-panel-item" role="listitem" *ngIf="details.contactId">
             <span class="name" [innerHTML]="'GENERAL_LABEL_CONTACT_ID' | translate"></span>
             <span class="value" data-tests-id="rightTab_contactId" tooltip="{{details.contactId}}">{{details.contactId}}</span>
         </div>
 
         <!-- Service Name data-ng-if="isComponentInstanceSelected() && currentComponent.selectedInstance.isServiceProxy()"-->
-        <div class="component-details-panel-item" *ngIf="details.sourceModelName">
+        <div class="component-details-panel-item" role="listitem" *ngIf="details.sourceModelName">
             <span class="name" [innerHTML]="'GENERAL_LABEL_SOURCE_SERVICE_NAME' | translate"></span>
             <span class="value" data-tests-id="rightTab_sourceModelName" tooltip="{{details.sourceModelName}}">{{details.sourceModelName}}</span>
         </div>
 
         <!-- Customization UUID data-ng-if="isViewMode() && currentComponent.isService() && selectedComponent.isResource()"-->
-        <div class="component-details-panel-item" *ngIf="details.customizationUUID">
+        <div class="component-details-panel-item" role="listitem" *ngIf="details.customizationUUID">
             <span class="name" [innerHTML]="'GENERAL_LABEL_RESOURCE_CUSTOMIZATION_UUID' | translate"></span>
             <span class="value" data-tests-id="rightTab_customizationModuleUUID" tooltip="{{details.customizationUUID}}">{{details.customizationUUID}}</span>
         </div>
 
         <!-- Category specific metadata -->
         <ng-container *ngFor="let metadata of details.categorySpecificMetadata | keyValue">
-            <div class="component-details-panel-item">
+            <div class="component-details-panel-item" role="listitem">
                 <span class="name" innerHTML="{{metadata.key}}"></span>
                 <span class="value" tooltip="{{metadata.value}}">{{metadata.value}}</span>
             </div>
         </ng-container>
 
         <!-- DESCRIPTION -->
-        <div class="component-details-panel-item description">
+        <div class="component-details-panel-item description" role="listitem">
             <span class="name" [innerHTML]="'GENERAL_LABEL_DESCRIPTION' | translate"></span>
             <chars-ellipsis [text]="component.description" [maxChars]="55" [testId]="'rightTab_description'"></chars-ellipsis>
         </div>
@@ -134,19 +135,19 @@
         <!--TODO: move to separate component!-->
         <ng-container *ngIf="componentType == 'POLICY'">
             <!-- TYPE -->
-            <div class="component-details-panel-item policy-item">
+            <div class="component-details-panel-item policy-item" role="listitem">
                 <span class="name" [innerHTML]="'GENERAL_LABEL_TYPE' | translate"></span>
                 <span class="value" data-tests-id="rightTab_componentType" tooltip="{{details.policyTypeUid}}">{{details.policyTypeUid}}</span>
             </div>
 
             <!-- CATEGORY -->
-            <div class="component-details-panel-item policy-item">
+            <div class="component-details-panel-item policy-item" role="listitem">
                 <span class="name" [innerHTML]="'GENERAL_LABEL_CATEGORY' | translate"></span>
                 <span class="value" data-tests-id="rightTab_category" tooltip="Policy">Policy</span>
             </div>
 
             <!-- SUB CATEGORY -->
-            <div class="component-details-panel-item policy-item">
+            <div class="component-details-panel-item policy-item" role="listitem">
                 <span class="name" [innerHTML]="'GENERAL_LABEL_SUB_CATEGORY' | translate"></span>
                 <span class="value" data-tests-id="rightTab_subCategory" tooltip="Policy">Policy</span>
             </div>
@@ -155,13 +156,13 @@
         <!--TODO: move to separate component!-->
         <ng-container *ngIf="componentType == 'GROUP'">
             <!-- CATEGORY -->
-            <div class="component-details-panel-item group-item">
+            <div class="component-details-panel-item group-item" role="listitem">
                 <span class="name" [innerHTML]="'GENERAL_LABEL_CATEGORY' | translate"></span>
                 <span class="value" data-tests-id="rightTab_category" tooltip="Group">Group</span>
             </div>
 
             <!-- SUB CATEGORY -->
-            <div class="component-details-panel-item group-item">
+            <div class="component-details-panel-item group-item" role="listitem">
                 <span class="name" [innerHTML]="'GENERAL_LABEL_SUB_CATEGORY' | translate"></span>
                 <span class="value" data-tests-id="rightTab_subCategory" tooltip="Group">Group</span>
             </div>

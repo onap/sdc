@@ -44,7 +44,7 @@ const ArtifactOrNestedFileList = ({
             type === 'nested' ? 'nested' : ''
         } ${headerClassName} `}>
         <div className="artifact-files-header">
-            <span>
+            <h2 className="artifact-files-title">
                 {type === 'artifact' && (
                     <SVGIcon
                         color="primary"
@@ -53,7 +53,7 @@ const ArtifactOrNestedFileList = ({
                     />
                 )}
                 {`${title}`}
-            </span>
+            </h2>
             {type === 'artifact' && (
                 <Button
                     disabled={isReadOnlyMode}
@@ -73,6 +73,7 @@ const ArtifactOrNestedFileList = ({
                 value={selected}
                 clearable={false}
                 placeholder={i18n('Add Artifact')}
+                aria-label={title}
                 multi
             />
         )}

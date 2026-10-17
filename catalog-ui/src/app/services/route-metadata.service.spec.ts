@@ -62,8 +62,22 @@ describe('RouteMetadataService', () => {
     });
 
     it('applies a top-level route title', () => {
-        navigateTo({title: 'SDC - Dashboard'});
-        expect(document.title).toBe('SDC - Dashboard');
+        navigateTo({title: 'Dashboard'});
+        expect(document.title).toBe('Dashboard - SDC');
+    });
+
+    it('puts the most specific part first and skips empty parts', () => {
+        service.setPageTitle('Composition', '', 'vFW');
+        expect(document.title).toBe('Composition - vFW - SDC');
+        service.setPageTitle();
+        expect(document.title).toBe('SDC');
+    });
+
+    it('resets a refined title to the route title on the next navigation', () => {
+        navigateTo({}, {title: 'Workspace'}, {});
+        service.setPageTitle('General', 'vFW');
+        navigateTo({title: 'Catalog'});
+        expect(document.title).toBe('Catalog - SDC');
     });
 
     /**
@@ -71,19 +85,19 @@ describe('RouteMetadataService', () => {
      * the workspace SHELL, so a single navigation has to read the two from different depths.
      */
     it('takes bodyClass from the deepest route and title from the shell', () => {
-        navigateTo({}, {title: 'SDC - Workspace'}, {bodyClass: 'composition'});
+        navigateTo({}, {title: 'Workspace'}, {bodyClass: 'composition'});
         expect(document.body.className).toBe('composition');
-        expect(document.title).toBe('SDC - Workspace');
+        expect(document.title).toBe('Workspace - SDC');
     });
 
     it('falls back to the default class when only a parent declares a title', () => {
-        navigateTo({}, {title: 'SDC - Workspace'}, {});
+        navigateTo({}, {title: 'Workspace'}, {});
         expect(document.body.className).toBe('default-class');
     });
 
     it('swaps the class on a tab switch instead of accumulating', () => {
-        navigateTo({}, {title: 'SDC - Workspace'}, {bodyClass: 'general'});
-        navigateTo({}, {title: 'SDC - Workspace'}, {bodyClass: 'composition'});
+        navigateTo({}, {title: 'Workspace'}, {bodyClass: 'general'});
+        navigateTo({}, {title: 'Workspace'}, {bodyClass: 'composition'});
         expect(document.body.className).toBe('composition');
     });
 

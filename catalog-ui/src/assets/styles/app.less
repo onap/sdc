@@ -17,6 +17,13 @@
   }
 }
 
+// RouteFocusService focuses these after a navigation; they are not controls, and after a
+// keyboard-triggered navigation the UA ring would box the whole full-width tab header.
+#main-content h1:focus,
+[data-tab-heading]:focus {
+  outline: none;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;

@@ -108,6 +108,17 @@ describe('home component', () => {
         expect(fixture).toMatchSnapshot();
     });
 
+    it('reports the filtered count only once the items have loaded', () => {
+        const component = TestBed.createComponent(HomeComponent).componentInstance;
+        component.homeFilteredItems = undefined;
+        expect(component.resultCountMessage).toBeNull();
+        component.homeFilteredItems = [{}, {}] as any;
+        component.isLoading = true;
+        expect(component.resultCountMessage).toBeNull();
+        component.isLoading = false;
+        expect(component.resultCountMessage).toBe('2 results');
+    });
+
     it('keeps actions shown while focus moves inside a card and hides them when it leaves', () => {
         const component = TestBed.createComponent(HomeComponent).componentInstance;
         const card = document.createElement('div');

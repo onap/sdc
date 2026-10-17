@@ -19,6 +19,7 @@
  */
 import { Component, OnInit, ViewContainerRef} from '@angular/core';
 import { AuthenticationService } from './services/authentication.service';
+import { RouteFocusService } from './services/route-focus.service';
 import { RouteMetadataService } from './services/route-metadata.service';
 
 @Component({
@@ -28,7 +29,8 @@ import { RouteMetadataService } from './services/route-metadata.service';
 export class AppComponent implements OnInit {
 
   constructor(auth: AuthenticationService, public viewContainerRef: ViewContainerRef,
-              private routeMetadataService: RouteMetadataService){
+              private routeMetadataService: RouteMetadataService,
+              private routeFocusService: RouteFocusService){
 
   }
 
@@ -37,6 +39,7 @@ export class AppComponent implements OnInit {
   // upgrade.bootstrap() — well after this component's ngOnInit, which runs inside bootstrapModule().
   ngOnInit(): void {
     this.routeMetadataService.start();
+    this.routeFocusService.start();
   }
 
   // The href is kept for axe's skip-link rule, but following it would set location.hash, which

@@ -397,6 +397,32 @@ describe('PropertyFormModalComponent', () => {
                 expect(fixture.debugElement.query(By.css('[data-tests-id=booleantype]'))).toBeTruthy();
                 expect(fixture.debugElement.query(By.css('[data-tests-id=defaultvalue]'))).toBeNull();
             });
+
+            it('labels the name, type and description fields and marks the required ones', () => {
+                render(makeProperty({type: 'string', value: 'hello'}));
+                const field = (testId: string): HTMLElement =>
+                    fixture.nativeElement.querySelector(`[data-tests-id="${testId}"]`);
+                const labelFor = (el: HTMLElement): HTMLLabelElement =>
+                    fixture.nativeElement.querySelector(`label[for="${el.id}"]`);
+                expect(labelFor(field('propertyName')).textContent.trim()).toBe('Name');
+                expect(labelFor(field('propertyType')).textContent.trim()).toBe('Type');
+                expect(labelFor(field('description')).textContent.trim()).toBe('Description');
+                expect(field('propertyName').getAttribute('aria-required')).toBe('true');
+                expect(field('propertyType').getAttribute('aria-required')).toBe('true');
+                expect(field('description').hasAttribute('aria-required')).toBe(false);
+            });
+
+            it('points an invalid default value at its error message', () => {
+                const comp = render(makeProperty({type: 'string', value: 'hello'}));
+                const value = (): HTMLElement => fixture.nativeElement.querySelector('[data-tests-id="defaultvalue"]');
+                expect(value().hasAttribute('aria-invalid')).toBe(false);
+                comp.form.get('value').setErrors({pattern: true});
+                comp.form.get('value').markAsDirty();
+                fixture.debugElement.injector.get(ChangeDetectorRef).detectChanges();
+                expect(value().getAttribute('aria-invalid')).toBe('true');
+                const error = fixture.nativeElement.querySelector('#' + value().getAttribute('aria-describedby'));
+                expect(error.classList.contains('input-error')).toBe(true);
+            });
         });
     });
 

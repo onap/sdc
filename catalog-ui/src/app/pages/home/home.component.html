@@ -1,6 +1,8 @@
 <div class="sdc-catalog-container">
+    <top-nav [topLvlSelectedIndex]="0" [version]="version" [searchTerm]="homeFilter.search.filterTerm" (searchTermChange)="changeFilterTerm($event)" [notificationIconCallback]="notificationIconCallback"></top-nav>
     <main id="main-content" class="w-sdc-main-container" *ngIf="user">
         <h1 class="sr-only">Dashboard</h1>
+        <sdc-live-status [message]="resultCountMessage" [delay]="1000" [announceInitial]="false"></sdc-live-status>
 
         <div class="w-sdc-left-sidebar">
             <div class="i-sdc-left-sidebar-item "
@@ -100,7 +102,5 @@
         </div>
 
     </main>
-
-    <top-nav [topLvlSelectedIndex]="0" [version]="version" [searchTerm]="homeFilter.search.filterTerm" (searchTermChange)="changeFilterTerm($event)" [notificationIconCallback]="notificationIconCallback"></top-nav>
 
 </div>

@@ -33,41 +33,45 @@
             </li>
         </ul>
 
-        <ul class="top-menu" *ngIf="menuModel">
-            <!-- with hierarchy & dropdowns mode -->
-            <ng-container *ngFor="let groupItem of menuModel; let $index = index; let $last = last">
-                <li [ngClass]="{'selected': $last }">
-                    <a *ngIf="menuItemHref(groupItem.menuItems[groupItem.selectedIndex]) as href; else breadcrumbButton"
-                       [href]="href" (click)="onMenuLinkClick($event, groupItem, groupItem.menuItems[groupItem.selectedIndex])"
-                       [attr.data-tests-id]="'breadcrumbs-button-' + $index">
-                        {{groupItem.menuItems[groupItem.selectedIndex]?.text}}
-                    </a>
-                    <ng-template #breadcrumbButton>
-                        <button type="button" (click)="menuItemClick(groupItem, groupItem.menuItems[groupItem.selectedIndex])"
-                                [attr.data-tests-id]="'breadcrumbs-button-' + $index">
+        <nav class="top-nav-breadcrumb" aria-label="Breadcrumb" *ngIf="menuModel">
+            <ul class="top-menu">
+                <!-- with hierarchy & dropdowns mode -->
+                <ng-container *ngFor="let groupItem of menuModel; let $index = index; let $last = last">
+                    <li [ngClass]="{'selected': $last }">
+                        <a *ngIf="menuItemHref(groupItem.menuItems[groupItem.selectedIndex]) as href; else breadcrumbButton"
+                           [href]="href" (click)="onMenuLinkClick($event, groupItem, groupItem.menuItems[groupItem.selectedIndex])"
+                           [attr.aria-current]="$last ? 'page' : null"
+                           [attr.data-tests-id]="'breadcrumbs-button-' + $index">
                             {{groupItem.menuItems[groupItem.selectedIndex]?.text}}
-                        </button>
-                    </ng-template>
-                </li>
-                <li class="triangle-dropdown"
-                    [ngClass]="{'item-click': groupItem.itemClick, 'open': openDropdown === groupItem}"
-                    (mouseover)="groupItem.itemClick = true" (focusin)="groupItem.itemClick = true"
-                    (focusout)="onDropdownFocusOut($event, groupItem)" (keydown)="onDropdownKeydown($event, groupItem)">
-                    <button type="button" class="triangle" [attr.aria-expanded]="openDropdown === groupItem"
-                            [attr.aria-label]="(groupItem.menuItems[groupItem.selectedIndex]?.text) + ' menu'"
-                            (click)="toggleDropdown(groupItem)"><span class="sprite-new arrow-right"></span></button>
-                    <ul class="sub-menu">
-                        <li *ngFor="let ddItem of groupItem.menuItems; let $index2 = index"
-                            [ngClass]="{'selected': $index2 == groupItem.selectedIndex, 'disabled': ddItem.isDisabled}">
-                            <button type="button" (click)="menuItemClick(groupItem, ddItem)" [disabled]="ddItem.isDisabled"
-                                    [attr.data-tests-id]="'sub-menu-button-' + ddItem.text.toLowerCase()">
-                                <span sdc-smart-tooltip="">{{ddItem.text}}</span>
+                        </a>
+                        <ng-template #breadcrumbButton>
+                            <button type="button" (click)="menuItemClick(groupItem, groupItem.menuItems[groupItem.selectedIndex])"
+                                    [attr.aria-current]="$last ? 'page' : null"
+                                    [attr.data-tests-id]="'breadcrumbs-button-' + $index">
+                                {{groupItem.menuItems[groupItem.selectedIndex]?.text}}
                             </button>
-                        </li>
-                    </ul>
-                </li>
-            </ng-container>
-        </ul>
+                        </ng-template>
+                    </li>
+                    <li class="triangle-dropdown"
+                        [ngClass]="{'item-click': groupItem.itemClick, 'open': openDropdown === groupItem}"
+                        (mouseover)="groupItem.itemClick = true" (focusin)="groupItem.itemClick = true"
+                        (focusout)="onDropdownFocusOut($event, groupItem)" (keydown)="onDropdownKeydown($event, groupItem)">
+                        <button type="button" class="triangle" [attr.aria-expanded]="openDropdown === groupItem"
+                                [attr.aria-label]="(groupItem.menuItems[groupItem.selectedIndex]?.text) + ' menu'"
+                                (click)="toggleDropdown(groupItem)"><span class="sprite-new arrow-right" aria-hidden="true"></span></button>
+                        <ul class="sub-menu">
+                            <li *ngFor="let ddItem of groupItem.menuItems; let $index2 = index"
+                                [ngClass]="{'selected': $index2 == groupItem.selectedIndex, 'disabled': ddItem.isDisabled}">
+                                <button type="button" (click)="menuItemClick(groupItem, ddItem)" [disabled]="ddItem.isDisabled"
+                                        [attr.data-tests-id]="'sub-menu-button-' + ddItem.text.toLowerCase()">
+                                    <span sdc-smart-tooltip="">{{ddItem.text}}</span>
+                                </button>
+                            </li>
+                        </ul>
+                    </li>
+                </ng-container>
+            </ul>
+        </nav>
 
         <div class="top-search" role="search" [hidden]="hideSearch === true">
             <input type="text"

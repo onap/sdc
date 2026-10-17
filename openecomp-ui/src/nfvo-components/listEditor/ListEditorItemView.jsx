@@ -29,6 +29,7 @@ class ListEditorItem extends React.Component {
         onDelete: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
         onEdit: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
         children: PropTypes.node,
+        itemName: PropTypes.string,
         isReadOnlyMode: PropTypes.bool
     };
 
@@ -41,6 +42,7 @@ class ListEditorItem extends React.Component {
             onSelect,
             onEdit,
             children,
+            itemName,
             isReadOnlyMode
         } = this.props;
         let isAbilityToDelete =
@@ -60,8 +62,7 @@ class ListEditorItem extends React.Component {
                             type="button"
                             id={this.openId}
                             className="list-editor-item-view-open sr-only"
-                            aria-label={i18n('Open')}
-                            aria-labelledby={`${this.openId} ${this.contentId}`}
+                            {...this.getOpenButtonName(itemName)}
                             onClick={e => {
                                 e.stopPropagation();
                                 onSelect();
@@ -92,6 +93,16 @@ class ListEditorItem extends React.Component {
                 )}
             </div>
         );
+    }
+
+    getOpenButtonName(itemName) {
+        if (itemName) {
+            return { 'aria-label': i18n('Open {name}', { name: itemName }) };
+        }
+        return {
+            'aria-label': i18n('Open'),
+            'aria-labelledby': `${this.openId} ${this.contentId}`
+        };
     }
 
     onClickedItem(callBackFunc) {

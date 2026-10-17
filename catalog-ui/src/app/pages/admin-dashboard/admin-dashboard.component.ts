@@ -23,6 +23,7 @@ import {Subscription} from 'rxjs/Subscription';
 import {CacheService} from 'app/services/cache.service';
 import {SdcConfigToken, ISdcConfig} from 'app/config/sdc-config.config';
 import {TranslateService} from 'app/shared/translator/translate.service';
+import {RouteMetadataService} from 'app/services/route-metadata.service';
 
 /**
  * Admin Dashboard container component. Replaces the AngularJS AdminDashboardViewModel.
@@ -48,7 +49,8 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     constructor(private cacheService: CacheService,
                 @Inject(SdcConfigToken) private sdcConfig: ISdcConfig,
                 private translateService: TranslateService,
-                private cdr: ChangeDetectorRef) {}
+                private cdr: ChangeDetectorRef,
+                private routeMetadataService: RouteMetadataService) {}
 
     ngOnInit(): void {
         this.version = this.cacheService.get('version');
@@ -61,8 +63,10 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
         // the pipe re-evaluates. languageChangedObservable is publishReplay(1) — it fires
         // immediately if already loaded, or on load otherwise.
         this.languageChangedSubscription = this.translateService.languageChangedObservable.subscribe(() => {
+            this.updatePageTitle();
             this.detectChangesSafe();
         });
+        this.updatePageTitle();
         this.detectChangesSafe();
     }
 
@@ -81,7 +85,12 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
             return;
         }
         this.currentTab = tab;
+        this.updatePageTitle();
         this.detectChangesSafe();
+    }
+
+    private updatePageTitle(): void {
+        this.routeMetadataService.setPageTitle(this.translateService.translate(this.currentTab), 'Administration');
     }
 
     private detectChangesSafe(): void {

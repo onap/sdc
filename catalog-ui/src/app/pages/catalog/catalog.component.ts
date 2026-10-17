@@ -34,6 +34,7 @@ import { ResourceNamePipe } from "../../pipes/resource-name.pipe";
 import { EntityFilterPipe, IEntityFilterObject, ISearchFilter} from "../../pipes/entity-filter.pipe";
 import {DEFAULT_MODEL_NAME, States} from "app/utils/constants";
 import {DataTypeCatalogComponent} from "../../models/data-type-catalog-component";
+import {resultCount} from "../../components/ui/live-status/live-status.component";
 
 interface Gui {
     onComponentSubTypesClick:Function;
@@ -368,6 +369,10 @@ export class CatalogComponent {
 
 
     // Will print the number of elements found in catalog
+    public get resultCountMessage(): string {
+        return this.catalogFilteredItems ? resultCount(this.catalogFilteredItems.length) : null;
+    }
+
     public getNumOfElements(num:number):string {
         if (!num || num === 0) {
             return `No <b>${this.selectedCatalogItem.header}</b> Elements found`;

@@ -114,4 +114,15 @@ describe('info-tab template', () => {
     it('names the instance version select', () => {
         expect(doc.querySelector('select[data-tests-id="changeVersion"]').getAttribute('aria-label')).toBe('Instance version');
     });
+
+    // DOMParser keeps <ng-container> as an element, so walk through it to the rendered children.
+    it('exposes General Info as a list of name/value items', () => {
+        const list = doc.querySelector('content.general-info-container');
+        expect(list.getAttribute('role')).toBe('list');
+        const rendered = (el: Element): Element[] => el.tagName.toLowerCase() === 'ng-container'
+            ? Array.from(el.children).reduce((all, child) => all.concat(rendered(child)), [] as Element[]) : [el];
+        const items = Array.from(list.children).reduce((all, child) => all.concat(rendered(child)), [] as Element[]);
+        expect(items.length).toBe(22);
+        expect(items.filter((item) => item.getAttribute('role') !== 'listitem')).toEqual([]);
+    });
 });

@@ -140,6 +140,14 @@ describe('catalog component', () => {
         expect(fixture).toMatchSnapshot();
     });
 
+    it('reports the filtered count only once the catalog has loaded', () => {
+        const component = TestBed.createComponent(CatalogComponent).componentInstance;
+        component.catalogFilteredItems = undefined;
+        expect(component.resultCountMessage).toBeNull();
+        component.catalogFilteredItems = [{}] as any;
+        expect(component.resultCountMessage).toBe('1 result');
+    });
+
     it ('should call on catalog component onInit' , () => {
         const component = TestBed.createComponent(CatalogComponent);
         component.componentInstance.initGui = jest.fn();

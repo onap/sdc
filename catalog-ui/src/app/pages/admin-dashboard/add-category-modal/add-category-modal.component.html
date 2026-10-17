@@ -2,16 +2,19 @@
     <div class="w-sdc-form-column">
         <div class="i-sdc-form-item"
              [ngClass]="{'error': form.get('name').dirty && form.get('name').invalid}">
-            <label class="i-sdc-form-label required">
+            <label class="i-sdc-form-label required" for="add-category-name">
                 {{'CREATE_CATEGORY_MODAL_CATEGORY_NAME' | translate:{'modelType': input.modelType} }}
             </label>
-            <input class="i-sdc-form-input"
+            <input class="i-sdc-form-input" id="add-category-name"
                    formControlName="name"
+                   aria-required="true"
+                   [attr.aria-invalid]="form.get('name').dirty && form.get('name').invalid ? 'true' : null"
+                   [attr.aria-describedby]="form.get('name').dirty && form.get('name').invalid ? 'add-category-name-error' : null"
                    type="text"
                    maxlength="25"
                    data-tests-id="i-sdc-form-input"
                    autofocus />
-            <div class="input-error"
+            <div class="input-error" id="add-category-name-error"
                  *ngIf="form.get('name').dirty && form.get('name').invalid">
                 <span *ngIf="form.get('name').errors?.required">
                     {{'CREATE_CATEGORY_MODAL_REQUIRED' | translate:{'modelType': input.modelType} }}

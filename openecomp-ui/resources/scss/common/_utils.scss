@@ -116,7 +116,10 @@ $browserPrefixes: webkit moz o ms;
     // margin-right: -1em;
     padding-right: 1em;
     &:before {
+        // The glyph is decorative: screen readers get the full text anyway.
+        // The first declaration is the fallback for browsers without CSS alt text.
         content: '...';
+        content: '...' / '';
         position: absolute;
         right: 3px;
         bottom: 0;

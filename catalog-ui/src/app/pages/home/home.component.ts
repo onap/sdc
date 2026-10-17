@@ -46,6 +46,7 @@ import {TranslateService} from '../../shared/translator/translate.service';
 import {FoldersItemsMenu, FoldersItemsMenuGroup, FoldersMenu} from './folders';
 import {ImportVSPdata} from "../../components/modals/onboarding-modal/onboarding-modal.component";
 import {DataTypeCatalogComponent} from "../../models/data-type-catalog-component";
+import {resultCount} from "../../components/ui/live-status/live-status.component";
 import {ModalImportTypeComponent} from "../../components/ui/modal-import-type/modal-import-type.component";
 import * as _ from 'lodash';
 
@@ -386,6 +387,10 @@ export class HomeComponent implements OnInit {
         this.homeFilteredItems = this.makeFilteredItems(this.homeItems, this.homeFilter);
         this.raiseNumberOfElementToDisplay(true);
         this.homeFilteredSlicedItems = this.homeFilteredItems.slice(0, this.numberOfItemToDisplay);
+    }
+
+    public get resultCountMessage(): string {
+        return this.homeFilteredItems && !this.isLoading ? resultCount(this.homeFilteredItems.length) : null;
     }
 
     private makeFilteredItems(homeItems: Array<Component>, filter: HomeFilter) {

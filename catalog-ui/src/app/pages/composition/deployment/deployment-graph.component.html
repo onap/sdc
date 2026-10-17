@@ -1,1 +1,9 @@
-<div class="sdc-deployment-graph-wrapper"></div>
+<!-- role="img" keeps cytoscape's canvases out of the accessibility tree; the list below is their text alternative. -->
+<div class="sdc-deployment-graph-wrapper" role="img" aria-label="Deployment canvas, its modules are listed after it"></div>
+<section class="sr-only" aria-labelledby="deployment-alternative-title">
+    <h3 id="deployment-alternative-title">Modules on the canvas</h3>
+    <p *ngIf="!deploymentModules.length">No modules</p>
+    <ul *ngIf="deploymentModules.length">
+        <li *ngFor="let module of deploymentModules">{{module.name}}<span *ngIf="module.members.length">: {{module.members.join(', ')}}</span></li>
+    </ul>
+</section>

@@ -35,6 +35,7 @@ const LimitItem = ({ isReadOnlyMode, limit, onDelete, onSelect }) => {
 
     return (
         <ListEditorItemView
+            itemName={name}
             onDelete={onDelete}
             onSelect={onSelect}
             isReadOnlyMode={isReadOnlyMode}>

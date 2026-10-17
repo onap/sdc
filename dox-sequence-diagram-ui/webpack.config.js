@@ -26,7 +26,10 @@ module.exports = (env, argv) => {
             libraryTarget: 'umd'
         },
         resolve: {
-            extensions: ['.js', '.jsx']
+            extensions: ['.js', '.jsx'],
+            alias: {
+                'dox-svg-sprite$': path.resolve(PATHS.SRC, 'lib/svgSprite.js')
+            }
         },
         devtool: 'eval-source-map',
         module: {
@@ -65,7 +68,11 @@ module.exports = (env, argv) => {
                     loader: 'svg-sprite-loader',
                     options: {
                         symbolId: '[name]_[hash]',
-                        extract: false
+                        extract: false,
+                        // A bare request: the loader rewrites an absolute path
+                        // relative to the root, which then fails to resolve
+                        // from the icon's own directory.
+                        spriteModule: 'dox-svg-sprite'
                     }
                 }
             ]

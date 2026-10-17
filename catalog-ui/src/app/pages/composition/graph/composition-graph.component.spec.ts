@@ -354,4 +354,63 @@ describe('composition graph component', () => {
         expect(instance._cy.off).toHaveBeenCalledWith('handletagclick');
 
     })
+
+    describe('canvas text alternative', () => {
+        const addInstances = () => {
+            instance._cy.add([
+                {group: 'nodes', data: {id: 'n1', name: 'vfw_1', componentInstance: {name: 'vfw_1', originType: 'VF'}}},
+                {group: 'nodes', data: {id: 'n2', name: 'net_1', componentInstance: {name: 'net_1', originType: 'VL'}}},
+                {group: 'nodes', data: {id: 'module', name: 'not an instance'}},
+                {group: 'edges', data: {id: 'e1', source: 'n1', target: 'n2', relation: {relationships: [
+                    {relation: {requirement: 'virtualLink', capability: 'virtual_linkable'}}]}}},
+                {group: 'edges', data: {id: 'e2', source: 'n1', target: 'n2', type: 'service-path-link'}}
+            ] as any);
+        };
+
+        it('lists every instance node with its type, and the relations between them', () => {
+            addInstances();
+            instance.refreshCanvasAlternative();
+            expect(instance.canvasInstances).toEqual([{id: 'n1', label: 'vfw_1, VF'}, {id: 'n2', label: 'net_1, VL'}]);
+            expect(instance.canvasRelations).toEqual(['vfw_1 connects to net_1: virtualLink to virtual_linkable']);
+        });
+
+        it('selects an instance from the list the way a node click does', () => {
+            addInstances();
+            instance.activeZoneInstance = createPolicyInstance();
+            jest.spyOn(instance, 'unsetActiveZoneInstance');
+            jest.spyOn(instance, 'selectComponentInstance');
+            instance.selectInstanceFromList('n2');
+            expect(instance._cy.getElementById('n2').selected()).toBe(true);
+            expect(instance.unsetActiveZoneInstance).toHaveBeenCalled();
+            expect(instance.selectComponentInstance).toHaveBeenCalledWith({name: 'net_1', originType: 'VL'});
+        });
+
+        it('ignores an id that is no longer on the canvas', () => {
+            jest.spyOn(instance, 'selectComponentInstance');
+            instance.selectInstanceFromList('gone');
+            expect(instance.selectComponentInstance).not.toHaveBeenCalled();
+        });
+
+        it('rebuilds once per burst of graph changes', () => {
+            jest.useFakeTimers();
+            jest.spyOn(instance, 'refreshCanvasAlternative');
+            instance.scheduleCanvasAlternativeRefresh();
+            instance.scheduleCanvasAlternativeRefresh();
+            jest.runAllTimers();
+            expect(instance.refreshCanvasAlternative).toHaveBeenCalledTimes(1);
+            jest.useRealTimers();
+        });
+
+        it('hides the canvas behind a named image and keeps the list out of it', () => {
+            // tslint:disable-next-line:no-var-requires
+            const template: string = require('./composition-graph.component.html');
+            const doc = new DOMParser().parseFromString(`<body>${template}</body>`, 'text/html');
+            const canvas = doc.querySelector('.sdc-composition-graph-wrapper');
+            expect(canvas.getAttribute('role')).toBe('img');
+            expect(canvas.hasAttribute('[attr.aria-label]')).toBe(true);
+            expect(canvas.querySelector('section')).toBeNull();
+            expect(doc.querySelector('section.sdc-canvas-alternative button').getAttribute('(click)'))
+                .toBe('selectInstanceFromList(instance.id)');
+        });
+    });
 });

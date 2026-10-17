@@ -33,7 +33,11 @@ const GridSection = ({
             {title && (
                 <h2 className={`section-title ${titleClassName || ''}`}>
                     {title}
-                    {required && <span className={'required'}>*</span>}
+                    {required && (
+                        <span className={'required'} aria-hidden="true">
+                            *
+                        </span>
+                    )}
                 </h2>
             )}
             <div className="grid-items">{children}</div>

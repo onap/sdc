@@ -3,8 +3,9 @@
    width: 100%;
 
   ::ng-deep canvas {
-    /*canvas z-index is initialized to 999 while top-nav z-Index is 10, which makes top-nav disappear, so z-Index must be overwritten here*/
-    z-index: 10 !important;
+    /*canvas z-index is initialized to 999 while top-nav z-Index is 10, which makes top-nav disappear, so z-Index must be overwritten here.
+      Kept below 10: top-nav now precedes main in the DOM, so an equal z-index would paint the canvas over the breadcrumb menus.*/
+    z-index: 9 !important;
   }
  }
 

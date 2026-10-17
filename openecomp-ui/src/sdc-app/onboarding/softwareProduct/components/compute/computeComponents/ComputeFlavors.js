@@ -153,6 +153,7 @@ const ComputeItem = ({
     const { id, name, description } = computeItem;
     return (
         <ListEditorItemView
+            itemName={name}
             key={'item_' + id}
             className="list-editor-item-view"
             isReadOnlyMode={isReadOnlyMode}

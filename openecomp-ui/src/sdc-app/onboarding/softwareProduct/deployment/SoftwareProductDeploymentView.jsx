@@ -65,6 +65,7 @@ export default class SoftwareProductDeployment extends React.Component {
         } = this.props;
         return (
             <ListEditorItemView
+                itemName={model}
                 key={id}
                 className="list-editor-item-view"
                 isReadOnlyMode={isReadOnlyMode}

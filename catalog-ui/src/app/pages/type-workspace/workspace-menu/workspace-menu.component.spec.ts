@@ -86,4 +86,12 @@ describe('WorkspaceMenuComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+  it('marks only the selected menu button as the current page', () => {
+    const buttons = fixture.nativeElement.querySelectorAll('nav button');
+    expect(buttons.length).toBe(1);
+    expect(buttons[0].getAttribute('aria-current')).toBe('page');
+    component.leftBarTabs.selectedIndex = -1;
+    fixture.detectChanges();
+    expect(buttons[0].hasAttribute('aria-current')).toBe(false);
+  });
 });

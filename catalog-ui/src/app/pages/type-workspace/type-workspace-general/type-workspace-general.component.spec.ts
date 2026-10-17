@@ -78,4 +78,20 @@ describe('TypeWorkspaceGeneralComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('names the description field by its visible label', () => {
+    const label: HTMLLabelElement = fixture.nativeElement.querySelectorAll('label')[3];
+    const textarea: HTMLTextAreaElement = fixture.nativeElement.querySelector('textarea');
+    expect(label.htmlFor).toBe(textarea.id);
+  });
+
+  it('labels the model select and marks it required only while it is editable', () => {
+    const modelLabel = (): HTMLLabelElement => fixture.nativeElement.querySelectorAll('label')[1];
+    expect(modelLabel().hasAttribute('for')).toBe(false);
+    component.isViewOnly = false;
+    fixture.detectChanges();
+    const select: HTMLSelectElement = fixture.nativeElement.querySelector('select');
+    expect(modelLabel().htmlFor).toBe(select.id);
+    expect(select.getAttribute('aria-required')).toBe('true');
+  });
 });

@@ -73,6 +73,7 @@ class FeatureGroupListEditorView extends React.Component {
         } = listItem;
         return (
             <ListEditorItemView
+                itemName={name}
                 key={listItem.id}
                 onDelete={() => this.deleteFeatureGroupItem(listItem, version)}
                 onSelect={() =>

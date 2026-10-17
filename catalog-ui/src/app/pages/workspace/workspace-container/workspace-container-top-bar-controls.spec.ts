@@ -93,13 +93,14 @@ function createComponent(overrides: any = {}) {
     };
     const notificationsService: any = {push: jest.fn()};
     const cdr: any = {detectChanges: jest.fn()};
+    const routeMetadataService: any = overrides.routeMetadataService || {setPageTitle: jest.fn()};
 
     const comp = new WorkspaceContainerComponent(
         cacheService, eventListenerService, homeService, catalogService, componentService,
         automatedUpgradeService, eventBusService, modalServiceSdcUI, pluginsService,
         workspaceNg1BridgeService, workspaceService, translateService, navigationService,
         notificationsService, cdr, sdcMenu, componentFactory, menuHandler,
-        changeLifecycleStateHandler, progressService
+        changeLifecycleStateHandler, progressService, routeMetadataService
     );
     comp.component = overrides.component || makeComponent();
     comp.role = overrides.role !== undefined ? overrides.role : Role.DESIGNER;

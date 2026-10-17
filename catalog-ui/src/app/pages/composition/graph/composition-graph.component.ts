@@ -1,7 +1,7 @@
 /**
  * Created by ob0695 on 4/24/2018.
  */
-import { AfterViewInit, Component, ElementRef, HostBinding, Input } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostBinding, Input, NgZone } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import {ButtonModel} from 'app/models/button';
 import {Capability} from 'app/models/capability';
@@ -70,6 +70,12 @@ import { RelationshipOperationsStepComponent } from "app/pages/composition/graph
 
 declare const window: any;
 
+/** One instance on the canvas, as the text alternative lists it. */
+export interface CanvasInstanceItem {
+    id: string;
+    label: string;
+}
+
 @Component({
     selector: 'composition-graph',
     templateUrl: './composition-graph.component.html',
@@ -93,6 +99,9 @@ export class CompositionGraphComponent implements AfterViewInit {
     private dragElement: JQuery;
     private dragComponent: ComponentInstance;
     public componentInstanceNames: string[];
+    public canvasInstances: CanvasInstanceItem[] = [];
+    public canvasRelations: string[] = [];
+    private canvasAlternativeTimer: any = null;
     private topologyTemplateId: string;
     private topologyTemplateType: string;
 
@@ -116,7 +125,8 @@ export class CompositionGraphComponent implements AfterViewInit {
                 private workspaceService: WorkspaceService,
                 private notificationService: SdcUiServices.NotificationsService,
                 private simplePopupMenuService: SdcUiServices.simplePopupMenuService,
-                private servicePathGraphUtils: ServicePathGraphUtils) {
+                private servicePathGraphUtils: ServicePathGraphUtils,
+                private zone: NgZone) {
     }
 
     ngOnInit() {
@@ -139,6 +149,9 @@ export class CompositionGraphComponent implements AfterViewInit {
     }
 
     ngOnDestroy() {
+        if (this.canvasAlternativeTimer) {
+            clearTimeout(this.canvasAlternativeTimer);
+        }
         this._cy.destroy();
         _.forEach(GRAPH_EVENTS, (event) => {
             this.eventListenerService.unRegisterObserver(event);
@@ -335,6 +348,8 @@ export class CompositionGraphComponent implements AfterViewInit {
             this.unsetActiveZoneInstance();
             this.selectComponentInstance(event.cyTarget.data().componentInstance);
         });
+
+        this._cy.on('add remove data', () => this.scheduleCanvasAlternativeRefresh());
 
         this._cy.on('canvasredraw', (event: Cy.EventObject) => {
             if (this.zoneTagMode) {
@@ -541,6 +556,53 @@ export class CompositionGraphComponent implements AfterViewInit {
             this.activeZoneInstance = null;
             this.zoneTagMode = null;
         }
+    }
+
+    /**
+     * WCAG 1.1.1 / 2.1.1 text alternative for the canvas: the instances (each a button doing what a
+     * click on its node does) and the relations between them, rebuilt from the graph itself so that
+     * adds, deletes, renames and new links all show up. Coalesced, because loading a topology fires
+     * one `add` per node and link.
+     */
+    private scheduleCanvasAlternativeRefresh(): void {
+        if (this.canvasAlternativeTimer) { return; }
+        this.zone.runOutsideAngular(() => {
+            this.canvasAlternativeTimer = setTimeout(() => {
+                this.canvasAlternativeTimer = null;
+                this.zone.run(() => this.refreshCanvasAlternative());
+            }, 100);
+        });
+    }
+
+    public refreshCanvasAlternative(): void {
+        const instanceNodes = _.filter(this._cy.nodes(), (node: Cy.CollectionFirstNode) => !!node.data('componentInstance'));
+        this.canvasInstances = _.map(instanceNodes, (node: Cy.CollectionFirstNode) => {
+            const instance: ComponentInstance = node.data('componentInstance');
+            const type = instance.originType || instance.componentName;
+            return {id: node.id(), label: [node.data('name') || instance.name, type].filter((part) => !!part).join(', ')};
+        });
+        const links = _.filter(this._cy.edges(), (edge: Cy.CollectionFirstEdge) =>
+            edge.data('type') !== CompositionCiServicePathLink.LINK_TYPE);
+        this.canvasRelations = _.map(links, (edge: Cy.CollectionFirstEdge) => {
+            const relationship = edge.data('relation') && edge.data('relation').relationships && edge.data('relation').relationships[0];
+            const relation = relationship && relationship.relation;
+            const text = edge.source().data('name') + ' connects to ' + edge.target().data('name');
+            return relation && (relation.requirement || relation.capability)
+                ? text + ': ' + relation.requirement + ' to ' + relation.capability
+                : text;
+        });
+    }
+
+    /** The node-click path of onTapEnd, minus the drag check: highlight the node and select its instance. */
+    public selectInstanceFromList(nodeId: string): void {
+        const node = this._cy.getElementById(nodeId);
+        if (!node || !node.length) { return; }
+        this._cy.$(':selected').unselect();
+        node.select();
+        if (this.activeZoneInstance) {
+            this.unsetActiveZoneInstance();
+        }
+        this.selectComponentInstance(node.data('componentInstance'));
     }
 
     private selectComponentInstance = (componentInstance: ComponentInstance) => {

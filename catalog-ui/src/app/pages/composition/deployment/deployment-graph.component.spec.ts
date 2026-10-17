@@ -86,4 +86,20 @@ describe('DeploymentGraphComponent', () => {
         expect(commonGraphUtilsServiceMock.addComponentInstanceNodeToGraph).toHaveBeenCalledTimes(6);
     });
 
+    it('describes each module with the names of its member instances', () => {
+        const modules: any = [{name: 'vf..base..module-0', members: {a: 'id-a', b: 'id-gone'}}, {name: 'empty'}];
+        const instances: any = [{uniqueId: 'id-a', name: 'vfc_a'}];
+        expect(fixture.componentInstance.describeModules(modules, instances)).toEqual([
+            {name: 'vf..base..module-0', members: ['vfc_a', 'id-gone']},
+            {name: 'empty', members: []}
+        ]);
+    });
+
+    it('hides the canvas behind a named image and lists the modules for screen readers', () => {
+        // tslint:disable-next-line:no-var-requires
+        const template: string = require('./deployment-graph.component.html');
+        const doc = new DOMParser().parseFromString(`<body>${template}</body>`, 'text/html');
+        expect(doc.querySelector('.sdc-deployment-graph-wrapper').getAttribute('role')).toBe('img');
+        expect(doc.querySelector('section.sr-only li').getAttribute('*ngFor')).toBe('let module of deploymentModules');
+    });
 });

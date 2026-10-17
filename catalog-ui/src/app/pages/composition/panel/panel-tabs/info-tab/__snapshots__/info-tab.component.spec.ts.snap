@@ -30,11 +30,13 @@ exports[`InfoTabComponent can load instance 1`] = `
     </span>
     <content
       class="general-info-container"
+      role="list"
     >
       
       
       <div
         class="component-details-panel-item"
+        role="listitem"
       >
         <span
           class="name"
@@ -56,6 +58,7 @@ exports[`InfoTabComponent can load instance 1`] = `
       
       <div
         class="component-details-panel-item description"
+        role="listitem"
       >
         <span
           class="name"

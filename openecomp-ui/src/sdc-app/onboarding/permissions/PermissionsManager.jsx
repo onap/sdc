@@ -100,6 +100,7 @@ class Permissions extends React.Component {
                             </div>
                             <Select
                                 data-test-id="selected-owner"
+                                aria-label={i18n('Change Owner')}
                                 value={newOwnerId}
                                 onChange={item =>
                                     this.setState({
@@ -115,6 +116,7 @@ class Permissions extends React.Component {
                     </div>
                     <Select
                         data-test-id="selected-contributors"
+                        aria-label={i18n('Contributors')}
                         value={this.state.itemUsers.map(item => item.userId)}
                         className="options-input contributors-select"
                         clearable={false}

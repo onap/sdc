@@ -29,6 +29,7 @@ import {DataTypeService} from "../../services/data-type.service";
 import {TypeWorkspaceService} from "./type-workspace.service";
 import {TranslateService} from "../../shared/translator/translate.service";
 import {NavigationService} from "../../services/navigation.service";
+import {RouteMetadataService} from "../../services/route-metadata.service";
 import {HttpErrorResponse} from "@angular/common/http";
 import {ServerErrorResponse} from "../../models/server-error-response";
 import {Observable} from "rxjs/Observable";
@@ -59,7 +60,8 @@ export class TypeWorkspaceComponent implements OnInit {
               private navigationService: NavigationService,
               private injector: Injector,
               private modalServiceSdcUI: SdcUiServices.ModalService,
-              @Inject(SdcMenuToken) public sdcMenu: IAppMenu) { }
+              @Inject(SdcMenuToken) public sdcMenu: IAppMenu,
+              private routeMetadataService: RouteMetadataService) { }
 
   ngOnInit(): void {
     this.sdcVersion = this.cacheService.get('version');
@@ -73,6 +75,7 @@ export class TypeWorkspaceComponent implements OnInit {
       this.dataTypeService.findById(this.navigationService.getParams().id).subscribe(dataType => {
         this.dataType = dataType;
         this.updateTypeBreadcrumb();
+        this.updatePageTitle();
       }, error => {
         console.debug('Could not find data type %s', this.navigationService.getParams().id, error);
         this.goToBreadcrumbHome();
@@ -203,5 +206,10 @@ export class TypeWorkspaceComponent implements OnInit {
 
   onMenuClick(menuItem: MenuItem): void {
     this.currentMenu = menuItem;
+    this.updatePageTitle();
+  }
+
+  private updatePageTitle(): void {
+    this.routeMetadataService.setPageTitle(this.currentMenu && this.currentMenu.text, this.dataType && this.dataType.name, 'Data Type');
   }
 }

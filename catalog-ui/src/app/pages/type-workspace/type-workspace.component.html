@@ -23,6 +23,7 @@
 <div class="sdc-workspace-container">
 
   <loader class="loader" [display]="isLoading"></loader>
+  <top-nav [hideSearch]="true" [menuModel]="breadcrumbsModel" [version]="sdcVersion" [unsavedChanges]="false"></top-nav>
   <main id="main-content" class="w-sdc-main-container">
     <app-workspace-menu [menuHeader]="dataType.name"
                         (onMenuUpdate)="onMenuUpdate($event)"
@@ -65,5 +66,4 @@
 
     </div>
   </main>
-  <top-nav [hideSearch]="true" [menuModel]="breadcrumbsModel" [version]="sdcVersion" [unsavedChanges]="false"></top-nav>
 </div>

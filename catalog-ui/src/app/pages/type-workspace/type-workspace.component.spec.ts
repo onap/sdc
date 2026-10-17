@@ -47,6 +47,7 @@ import {NO_ERRORS_SCHEMA} from "@angular/core";
 import {TypeWorkspaceService} from "./type-workspace.service";
 import {ModelService} from "../../services/model.service";
 import {NavigationService} from "../../services/navigation.service";
+import {RouteMetadataService} from "../../services/route-metadata.service";
 
 describe('TypeWorkspaceComponent', () => {
   let component: TypeWorkspaceComponent;
@@ -87,8 +88,10 @@ describe('TypeWorkspaceComponent', () => {
       'importedFile': importedFileMock
   };
   let modelServiceMock: Partial<ModelService>;
+  let routeMetadataService: any;
 
   beforeEach(async(() => {
+    routeMetadataService = {setPageTitle: jest.fn()};
     TestBed.configureTestingModule({
       declarations: [ TypeWorkspaceComponent, WorkspaceMenuComponent, TypeWorkspaceGeneralComponent, TypeWorkspacePropertiesComponent, TypeWorkspaceToscaArtifactPageComponent ],
       imports: [
@@ -112,6 +115,7 @@ describe('TypeWorkspaceComponent', () => {
         {provide: SdcMenuToken, useValue: sdcMenuMock},
         {provide: SdcConfigToken, useValue: sdcConfigMock},
         {provide: AuthenticationService, useValue: authenticationService},
+        {provide: RouteMetadataService, useValue: routeMetadataService},
       ]
     })
     .compileComponents();
@@ -126,12 +130,24 @@ describe('TypeWorkspaceComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('titles the page with the selected menu item and the data type', () => {
+    component.dataType = {name: 'tosca.datatypes.Root'} as any;
+    component.onMenuClick({text: 'Properties'} as any);
+    expect(routeMetadataService.setPageTitle).toHaveBeenLastCalledWith('Properties', 'tosca.datatypes.Root', 'Data Type');
+  });
 });
 
 describe('TypeWorkspaceComponent template', () => {
   // tslint:disable-next-line:no-var-requires
   const template: string = require('./type-workspace.component.html');
   const doc = new DOMParser().parseFromString(`<body>${template}</body>`, 'text/html');
+
+  it('renders the top navigation before main', () => {
+    const main = doc.querySelector('main');
+    // tslint:disable-next-line:no-bitwise
+    expect(doc.querySelector('top-nav').compareDocumentPosition(main) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
 
   it('wraps the page in the skip-link target', () => {
     const main = doc.getElementById('main-content');

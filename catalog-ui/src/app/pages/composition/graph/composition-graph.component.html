@@ -1,6 +1,23 @@
-<div class="sdc-composition-graph-wrapper {{zoneTagMode}}"
+<!-- role="img" keeps cytoscape's canvases out of the accessibility tree; the section below is their text alternative. -->
+<div class="sdc-composition-graph-wrapper {{zoneTagMode}}" role="img"
+     [attr.aria-label]="'Composition canvas, ' + canvasInstances.length + (canvasInstances.length === 1 ? ' instance' : ' instances') + ', listed under Instances on the canvas'"
      [ngClass]="{'with-sidebar': withSidebar$ | async, 'view-only':isViewOnly$ | async}">
 </div>
+
+<section class="sdc-canvas-alternative" aria-labelledby="canvas-alternative-title">
+    <h2 id="canvas-alternative-title">Instances on the canvas</h2>
+    <p *ngIf="!canvasInstances.length">No instances</p>
+    <ul *ngIf="canvasInstances.length">
+        <li *ngFor="let instance of canvasInstances">
+            <button type="button" (click)="selectInstanceFromList(instance.id)">{{instance.label}}</button>
+        </li>
+    </ul>
+    <h3>Relations</h3>
+    <p *ngIf="!canvasRelations.length">No relations</p>
+    <ul *ngIf="canvasRelations.length">
+        <li *ngFor="let relation of canvasRelations">{{relation}}</li>
+    </ul>
+</section>
 
 <div class="sdc-composition-menu" [ngClass]="{'with-sidebar': withSidebar$ | async}">
 

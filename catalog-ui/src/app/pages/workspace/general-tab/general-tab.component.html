@@ -47,13 +47,16 @@
                 <input id="gt-name" class="i-sdc-form-input"
                        [class.view-mode]="isViewMode()"
                        formControlName="name"
+                       aria-required="true"
+                       [attr.aria-invalid]="form.get('name').invalid && form.get('name').touched ? 'true' : null"
+                       [attr.aria-describedby]="form.get('name').invalid && form.get('name').touched ? 'gt-name-error' : null"
                        type="text"
                        maxlength="50"
                        [attr.disabled]="isViewMode() || component?.isAlreadyCertified() ? '' : null"
                        (blur)="validateName()"
                        data-tests-id="name"
                        autofocus/>
-                <div class="input-error" *ngIf="form.get('name').invalid && form.get('name').touched">
+                <div class="input-error" id="gt-name-error" *ngIf="form.get('name').invalid && form.get('name').touched">
                   <span *ngIf="form.get('name').errors?.required">Name is required.</span>
                   <span *ngIf="form.get('name').errors?.pattern">Name contains invalid characters.</span>
                   <span *ngIf="form.get('name').errors?.nameExist">Name already exists.</span>
@@ -66,6 +69,7 @@
                 <select id="gt-model" class="i-sdc-form-select"
                         [class.view-mode]="isViewMode()"
                         formControlName="model"
+                        aria-required="true"
                         (change)="onModelChange()"
                         [attr.disabled]="isModelDisabled() ? '' : null"
                         data-tests-id="selectModelName">
@@ -80,6 +84,9 @@
                 <select id="gt-category" class="i-sdc-form-select"
                         [class.view-mode]="isViewMode()"
                         formControlName="category"
+                        aria-required="true"
+                        [attr.aria-invalid]="form.get('category').invalid && form.get('category').touched ? 'true' : null"
+                        [attr.aria-describedby]="form.get('category').invalid && form.get('category').touched ? 'gt-category-error' : null"
                         (change)="onCategoryChange()"
                         [attr.disabled]="isCategoryDisabled() ? '' : null"
                         data-tests-id="selectGeneralCategory">
@@ -99,7 +106,7 @@
                             [attr.data-tests-id]="mainCategory.name">{{mainCategory.name}}</option>
                   </ng-container>
                 </select>
-                <div class="input-error" *ngIf="form.get('category').invalid && form.get('category').touched">
+                <div class="input-error" id="gt-category-error" *ngIf="form.get('category').invalid && form.get('category').touched">
                   <span *ngIf="form.get('category').errors?.required">Category is required.</span>
                 </div>
               </div>
@@ -126,6 +133,7 @@
                         [class.view-mode]="isViewMode()"
                         [attr.name]="entry.key"
                         [attr.data-tests-id]="entry.key"
+                        [attr.aria-required]="isMetadataKeyMandatory(entry.key) ? 'true' : null"
                         [value]="entry.value"
                         (change)="onCategoryMetadataChange(entry.key, $event.target.value)"
                         [attr.disabled]="isViewMode() ? '' : null">
@@ -141,6 +149,7 @@
                        (input)="onCategoryMetadataChange(entry.key, $event.target.value)"
                        [attr.name]="entry.key"
                        [attr.data-tests-id]="entry.key"
+                       [attr.aria-required]="isMetadataKeyMandatory(entry.key) ? 'true' : null"
                        [attr.disabled]="isViewMode() ? '' : null"/>
               </ng-container>
             </div>
@@ -191,9 +200,12 @@
             <textarea id="gt-description" class="description"
                       [class.view-mode]="isViewMode()"
                       formControlName="description"
+                      aria-required="true"
+                      [attr.aria-invalid]="form.get('description').invalid && form.get('description').touched ? 'true' : null"
+                      [attr.aria-describedby]="form.get('description').invalid && form.get('description').touched ? 'gt-description-error' : null"
                       maxlength="1024"
                       data-tests-id="description"></textarea>
-            <div class="input-error" *ngIf="form.get('description').invalid && form.get('description').touched">
+            <div class="input-error" id="gt-description-error" *ngIf="form.get('description').invalid && form.get('description').touched">
               <span *ngIf="form.get('description').errors?.required">Description is required.</span>
               <span *ngIf="form.get('description').errors?.maxlength">Description is too long (max 1024).</span>
             </div>
@@ -254,9 +266,12 @@
             <input id="gt-contact-id" class="i-sdc-form-input" type="text"
                    [class.view-mode]="isViewMode()"
                    formControlName="contactId"
+                   aria-required="true"
+                   [attr.aria-invalid]="form.get('contactId').invalid && form.get('contactId').touched ? 'true' : null"
+                   [attr.aria-describedby]="form.get('contactId').invalid && form.get('contactId').touched ? 'gt-contact-id-error' : null"
                    maxlength="50"
                    data-tests-id="contactId"/>
-            <div class="input-error" *ngIf="form.get('contactId').invalid && form.get('contactId').touched">
+            <div class="input-error" id="gt-contact-id-error" *ngIf="form.get('contactId').invalid && form.get('contactId').touched">
               <span *ngIf="form.get('contactId').errors?.required">Contact ID is required.</span>
               <span *ngIf="form.get('contactId').errors?.maxlength">Contact ID exceeds maximum length (50).</span>
               <span *ngIf="form.get('contactId').errors?.pattern">Contact ID is not valid.</span>
@@ -270,10 +285,13 @@
             <input id="gt-vendor-name" class="i-sdc-form-input" type="text"
                    [class.view-mode]="isViewMode()"
                    formControlName="vendorName"
+                   aria-required="true"
+                   [attr.aria-invalid]="form.get('vendorName').invalid && form.get('vendorName').touched ? 'true' : null"
+                   [attr.aria-describedby]="form.get('vendorName').invalid && form.get('vendorName').touched ? 'gt-vendor-name-error' : null"
                    maxlength="60"
                    [attr.disabled]="isVendorNameDisabled() ? '' : null"
                    data-tests-id="vendorName"/>
-            <div class="input-error" *ngIf="form.get('vendorName').invalid && form.get('vendorName').touched">
+            <div class="input-error" id="gt-vendor-name-error" *ngIf="form.get('vendorName').invalid && form.get('vendorName').touched">
               <span *ngIf="form.get('vendorName').errors?.required">Vendor Name is required.</span>
               <span *ngIf="form.get('vendorName').errors?.maxlength">Vendor Name exceeds maximum length (60).</span>
             </div>
@@ -286,10 +304,13 @@
             <input id="gt-vendor-release" class="i-sdc-form-input" type="text"
                    [class.view-mode]="isViewMode()"
                    formControlName="vendorRelease"
+                   aria-required="true"
+                   [attr.aria-invalid]="form.get('vendorRelease').invalid && form.get('vendorRelease').touched ? 'true' : null"
+                   [attr.aria-describedby]="form.get('vendorRelease').invalid && form.get('vendorRelease').touched ? 'gt-vendor-release-error' : null"
                    maxlength="25"
                    [attr.disabled]="isVendorReleaseDisabled() ? '' : null"
                    data-tests-id="vendorRelease"/>
-            <div class="input-error" *ngIf="form.get('vendorRelease').invalid && form.get('vendorRelease').touched">
+            <div class="input-error" id="gt-vendor-release-error" *ngIf="form.get('vendorRelease').invalid && form.get('vendorRelease').touched">
               <span *ngIf="form.get('vendorRelease').errors?.required">Vendor Release is required.</span>
               <span *ngIf="form.get('vendorRelease').errors?.maxlength">Vendor Release exceeds maximum length (25).</span>
             </div>
@@ -302,9 +323,11 @@
             <input id="gt-vendor-model-number" class="i-sdc-form-input" type="text"
                    [class.view-mode]="isViewMode()"
                    formControlName="resourceVendorModelNumber"
+                   [attr.aria-invalid]="form.get('resourceVendorModelNumber').invalid && form.get('resourceVendorModelNumber').touched ? 'true' : null"
+                   [attr.aria-describedby]="form.get('resourceVendorModelNumber').invalid && form.get('resourceVendorModelNumber').touched ? 'gt-vendor-model-number-error' : null"
                    maxlength="65"
                    data-tests-id="resourceVendorModelNumber"/>
-            <div class="input-error" *ngIf="form.get('resourceVendorModelNumber').invalid && form.get('resourceVendorModelNumber').touched">
+            <div class="input-error" id="gt-vendor-model-number-error" *ngIf="form.get('resourceVendorModelNumber').invalid && form.get('resourceVendorModelNumber').touched">
               <span *ngIf="form.get('resourceVendorModelNumber').errors?.maxlength">Vendor Model Number exceeds maximum length (65).</span>
             </div>
           </div>
@@ -328,10 +351,12 @@
             <input id="gt-naming-policy" class="i-sdc-form-input" type="text"
                    [class.view-mode]="isViewMode() || !form.get('ecompGeneratedNaming').value"
                    formControlName="namingPolicy"
+                   [attr.aria-invalid]="form.get('namingPolicy').invalid && form.get('namingPolicy').touched ? 'true' : null"
+                   [attr.aria-describedby]="form.get('namingPolicy').invalid && form.get('namingPolicy').touched ? 'gt-naming-policy-error' : null"
                    maxlength="100"
                    [attr.readonly]="isViewMode() || !form.get('ecompGeneratedNaming').value ? '' : null"
                    data-tests-id="namingPolicy"/>
-            <div class="input-error" *ngIf="form.get('namingPolicy').invalid && form.get('namingPolicy').touched">
+            <div class="input-error" id="gt-naming-policy-error" *ngIf="form.get('namingPolicy').invalid && form.get('namingPolicy').touched">
               <span *ngIf="form.get('namingPolicy').errors?.maxlength">Naming Policy exceeds maximum length (100).</span>
             </div>
           </div>
@@ -342,9 +367,11 @@
             <input id="gt-service-type" class="i-sdc-form-input" type="text"
                    [class.view-mode]="isViewMode()"
                    formControlName="serviceType"
+                   [attr.aria-invalid]="form.get('serviceType').invalid && form.get('serviceType').touched ? 'true' : null"
+                   [attr.aria-describedby]="form.get('serviceType').invalid && form.get('serviceType').touched ? 'gt-service-type-error' : null"
                    maxlength="256"
                    data-tests-id="serviceType"/>
-            <div class="input-error" *ngIf="form.get('serviceType').invalid && form.get('serviceType').touched">
+            <div class="input-error" id="gt-service-type-error" *ngIf="form.get('serviceType').invalid && form.get('serviceType').touched">
               <span *ngIf="form.get('serviceType').errors?.maxlength">Service Type exceeds maximum length (256).</span>
             </div>
           </div>

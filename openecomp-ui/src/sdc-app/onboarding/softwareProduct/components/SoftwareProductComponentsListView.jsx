@@ -94,6 +94,7 @@ class SoftwareProductComponentsListView extends React.Component {
         } = this.props;
         return (
             <ListEditorItemView
+                itemName={displayName}
                 key={
                     name + Math.floor(Math.random() * (100 - 1) + 1).toString()
                 }

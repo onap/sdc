@@ -205,6 +205,21 @@ describe('artifact form component', () => {
         expect(subItems.map((b: HTMLButtonElement) => b.tagName + ':' + b.disabled)).toEqual(['BUTTON:false', 'BUTTON:true']);
     });
 
+    it('exposes the breadcrumb trail as a labelled navigation with the last crumb current', () => {
+        const comp = fixture.componentInstance;
+        const crumbs = new MenuItemGroup(0, [new MenuItem('VF: x', () => Promise.resolve(true), null, null, [])]);
+        const tabs = new MenuItemGroup(0, [new MenuItem('General', () => Promise.resolve(true), null, null, [])]);
+        comp.menuModel = [crumbs, tabs];
+        comp.ngOnChanges({menuModel: {}});
+        fixture.detectChanges();
+        const el: HTMLElement = fixture.nativeElement;
+        const trail = el.querySelector('nav[aria-label="Breadcrumb"]');
+        expect(trail.querySelector('ul.top-menu')).not.toBeNull();
+        const crumbButtons = Array.from(trail.querySelectorAll('[data-tests-id^="breadcrumbs-button-"]'));
+        expect(crumbButtons.map((b) => b.getAttribute('aria-current'))).toEqual([null, null, 'page']);
+        expect(trail.querySelector('button.triangle > span').getAttribute('aria-hidden')).toBe('true');
+    });
+
     describe('breadcrumb dropdown keyboard', () => {
         let el: HTMLElement;
         // ngOnChanges puts the top-level menu group in front of the given one.

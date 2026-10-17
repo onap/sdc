@@ -102,6 +102,7 @@ class EntitlementPoolsListEditorView extends React.Component {
         } = this.props;
         return (
             <ListEditorItemView
+                itemName={name}
                 key={id}
                 onSelect={() => onEditEntitlementPoolClick(entitlementPool)}
                 onDelete={() => onDeleteEntitlementPool(entitlementPool)}

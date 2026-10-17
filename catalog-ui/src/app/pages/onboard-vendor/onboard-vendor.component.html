@@ -24,15 +24,16 @@
         <div class="tlv-loader-back"></div>
         <div class="tlv-loader large"></div>
     </div>
+    <div class="sr-only" role="status">{{isLoading ? 'Loading' : ''}}</div>
+    <top-nav
+        [topLvlSelectedIndex]="2"
+        [version]="version"
+        [hideSearch]="true">
+    </top-nav>
     <main id="main-content" class="w-sdc-main-container">
         <!-- React "onboarding/vendor" punch-out (onboarding wizard) is mounted into this host
              imperatively via PunchOutRegistry.render. The host must NOT be behind *ngIf so it
              exists when ngAfterViewInit fires. -->
         <div class="onboard-vendor-punch-out-host"></div>
     </main>
-    <top-nav
-        [topLvlSelectedIndex]="2"
-        [version]="version"
-        [hideSearch]="true">
-    </top-nav>
 </div>

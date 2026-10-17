@@ -50,6 +50,7 @@ import {WorkspaceNg1BridgeService} from '../workspace-ng1-bridge-service';
 import {WorkspaceService} from '../workspace.service';
 import {TranslateService} from '../../../shared/translator/translate.service';
 import {NavigationService} from '../../../services/navigation.service';
+import {RouteMetadataService} from '../../../services/route-metadata.service';
 import {SdcMenuToken} from '../../../config/sdc-menu.config';
 
 /**
@@ -126,7 +127,8 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
         private componentFactory: ComponentFactory,
         private menuHandler: MenuHandler,
         private changeLifecycleStateHandler: ChangeLifecycleStateHandler,
-        private progressService: ProgressService
+        private progressService: ProgressService,
+        private routeMetadataService: RouteMetadataService
     ) {
     }
 
@@ -159,6 +161,7 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
         this.initMenuItems();
         this.verifyIfDependenciesExist();
         this.updateSelectedMenuItem(this.navigationService.getCurrentStateName());
+        this.updatePageTitle();
         this.eventListenerService.registerObserverCallback(EVENTS.ON_WORKSPACE_UNSAVED_CHANGES, this.setWorkspaceButtonState);
         // Keep the highlighted sidebar item + tab title in sync as the user moves between child
         // tab states (General, TOSCA Artifacts, ...). The old WorkspaceViewModel did this via
@@ -168,6 +171,7 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
         this.deregisterStateChange = this.navigationService.onNavigationSuccess(() => {
             this.updateFullBleedFlags();
             this.updateSelectedMenuItem(this.navigationService.getCurrentStateName());
+            this.updatePageTitle();
             this.cdr.detectChanges();
         });
     }
@@ -737,6 +741,10 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
     getTabTitle(): string {
         return this.leftBarTabs && this.leftBarTabs.menuItems && this.leftBarTabs.selectedIndex >= 0 ?
             this.leftBarTabs.menuItems[this.leftBarTabs.selectedIndex].text : '';
+    }
+
+    private updatePageTitle(): void {
+        this.routeMetadataService.setPageTitle(this.getTabTitle(), this.menuComponentTitle || this.newComponentTitle);
     }
 
     // --- Navigation ---

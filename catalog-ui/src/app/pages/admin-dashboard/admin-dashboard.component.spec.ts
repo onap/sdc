@@ -29,9 +29,10 @@ function createComp() {
 
     const cdr: any = {detectChanges: jest.fn(), destroyed: false};
 
-    const comp = new AdminDashboardComponent(cacheService, sdcConfig, translateService, cdr);
+    const routeMetadataService: any = {setPageTitle: jest.fn()};
+    const comp = new AdminDashboardComponent(cacheService, sdcConfig, translateService, cdr, routeMetadataService);
 
-    return {comp, cacheService, sdcConfig, translateService, languageChanged, cdr};
+    return {comp, cacheService, sdcConfig, translateService, languageChanged, cdr, routeMetadataService};
 }
 
 // ---------------------------------------------------------------------------
@@ -139,6 +140,25 @@ describe('AdminDashboardComponent', () => {
     });
 });
 
+describe('AdminDashboardComponent page title', () => {
+    it('names the selected tab before the section', () => {
+        const {comp, routeMetadataService} = createComp();
+        comp.ngOnInit();
+        expect(routeMetadataService.setPageTitle).toHaveBeenLastCalledWith('USER_MANAGEMENT', 'Administration');
+        comp.moveToTab('CATEGORY_MANAGEMENT');
+        expect(routeMetadataService.setPageTitle).toHaveBeenLastCalledWith('CATEGORY_MANAGEMENT', 'Administration');
+    });
+
+    it('re-titles once the language file has loaded', () => {
+        const {comp, routeMetadataService, languageChanged} = createComp();
+        comp.ngOnInit();
+        routeMetadataService.setPageTitle.mockClear();
+        languageChanged.next('en_US');
+        expect(routeMetadataService.setPageTitle).toHaveBeenCalledWith('USER_MANAGEMENT', 'Administration');
+        comp.ngOnDestroy();
+    });
+});
+
 describe('AdminDashboardComponent template', () => {
     // tslint:disable-next-line:no-var-requires
     const template: string = require('./admin-dashboard.component.html');
@@ -158,5 +178,9 @@ describe('AdminDashboardComponent template', () => {
             `isSelected('CATEGORY_MANAGEMENT') ? 'page' : null`
         ]);
         tabs.forEach((el) => expect(el.getAttribute('type')).toBe('button'));
+    });
+
+    it('names the admin navigation', () => {
+        expect(doc.querySelector('nav.sdc-admin-top-bar-menu').getAttribute('aria-label')).toBe('Administration');
     });
 });

@@ -206,6 +206,10 @@
                 span {
                     display: flex;
                 }
+                .artifact-files-title {
+                    @include heading-reset;
+                    display: flex;
+                }
             }
         }
     }
@@ -230,6 +234,7 @@
         top: 10px;
 
         .unassigned-files-title {
+            @include heading-reset($font: false);
             @extend .heading-5-semibold;
             background-color: $tlv-gray;
             padding: 11px 0 9px 15px;

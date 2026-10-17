@@ -101,6 +101,7 @@ class LicenseAgreementListEditorView extends React.Component {
         } = this.props;
         return (
             <ListEditorItemView
+                itemName={name}
                 key={id}
                 onSelect={() =>
                     onEditLicenseAgreementClick(

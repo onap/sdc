@@ -34,14 +34,27 @@ export class DeploymentGraphComponent implements OnInit {
     }
 
     public _cy: Cy.Instance;
+    public deploymentModules: Array<{name: string, members: string[]}> = [];
 
     ngOnInit(): void {
         this.topologyTemplateService.getDeploymentGraphData(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId).subscribe((response: ComponentGenericResponse) => {
             this.deploymentService.componentInstances = response.componentInstances;
             this.deploymentService.componentInstancesRelations = response.componentInstancesRelations;
             this.deploymentService.modules = response.modules;
+            this.deploymentModules = this.describeModules(response.modules, response.componentInstances);
             this.loadGraph();
         });
+    }
+
+    /** The canvas's text alternative: each module with the names of the instances it groups. */
+    public describeModules(modules: Array<Module>, instances: Array<ComponentInstance>): Array<{name: string, members: string[]}> {
+        return _.map(modules || [], (groupModule: Module) => ({
+            name: groupModule.name,
+            members: _.values(groupModule.members).map((memberId: string) => {
+                const member = _.find(instances || [], (instance: ComponentInstance) => instance.uniqueId === memberId);
+                return member ? member.name : memberId;
+            })
+        }));
     }
 
     public findInstanceModule = (groupsArray: Array<Module>, componentInstanceId: string): string => {

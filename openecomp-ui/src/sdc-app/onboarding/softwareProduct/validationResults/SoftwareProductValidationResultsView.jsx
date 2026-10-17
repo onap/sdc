@@ -323,7 +323,9 @@ class SoftwareProductValidationResultsView extends React.Component {
         if (!results) {
             return (
                 <GridSection title={i18n('Test Results')}>
-                    <h4>{i18n('No Test Performed')}</h4>
+                    <h3 className="validation-results-empty">
+                        {i18n('No Test Performed')}
+                    </h3>
                 </GridSection>
             );
         } else if (results.length > 0) {
@@ -373,7 +375,9 @@ class SoftwareProductValidationResultsView extends React.Component {
                         />
                     </button>
                     <GridSection title={i18n('Test Results')}>
-                        <h4>{i18n('No Test Result Available')}</h4>
+                        <h3 className="validation-results-empty">
+                            {i18n('No Test Result Available')}
+                        </h3>
                     </GridSection>
                 </div>
             );

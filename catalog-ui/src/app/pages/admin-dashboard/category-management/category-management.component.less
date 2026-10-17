@@ -23,7 +23,7 @@
                 border-right: none;
             }
 
-            h2 {
+            h2:not(.sr-only), .category-type-toggles {
                 float: left;
                 color: white;
                 background-color: #5f7584;
@@ -49,7 +49,7 @@
                 }
             }
 
-            h2+button {
+            h2+button, .category-type-toggles+button {
                 .sdc-button-reset();
                 .hand;
                 float: right;

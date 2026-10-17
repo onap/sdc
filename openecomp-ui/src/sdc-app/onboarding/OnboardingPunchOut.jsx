@@ -41,6 +41,7 @@ import { actionTypes, enums, screenTypes } from './OnboardingConstants.js';
 import { actionTypes as modalActionTypes } from 'nfvo-components/modal/GlobalModalConstants.js';
 import OnboardingActionHelper from './OnboardingActionHelper.js';
 import Onboarding from './Onboarding.js';
+import { DocumentTitleKeeper } from './onboardingDocumentTitle.js';
 
 ConfigHelper.fetchVspConfig()
     .then(response => {
@@ -65,6 +66,8 @@ ConfigHelper.fetchVspConfig()
     });
 
 export default class OnboardingPunchOut {
+    documentTitle = new DocumentTitleKeeper();
+
     render({ options: { data, apiRoot, apiHeaders }, onEvent }, element) {
         if (!this.unsubscribeFromStore) {
             this.unsubscribeFromStore = store.subscribe(() =>
@@ -111,6 +114,7 @@ export default class OnboardingPunchOut {
     unmount(element) {
         ReactDOM.unmountComponentAtNode(element);
         this.rendered = false;
+        this.documentTitle.restore();
         this.unsubscribeFromStore();
         this.unsubscribeFromStore = null;
     }
@@ -411,6 +415,7 @@ export default class OnboardingPunchOut {
             this.programmaticBreadcrumbsUpdate = true;
             let breadcrumbs = this.buildBreadcrumbs(breadcrumbsData);
             this.onEvent('breadcrumbsupdated', breadcrumbs);
+            this.documentTitle.update(breadcrumbs);
             store.dispatch({
                 type: actionTypes.SET_CURRENT_SCREEN,
                 currentScreen: {

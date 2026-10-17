@@ -21,9 +21,9 @@ const UnassignedFileList = props => {
         <div>
             <div className="modules-list-header" />
             <div className="unassigned-files">
-                <div className="unassigned-files-title">
+                <h2 className="unassigned-files-title">
                     {i18n('UNASSIGNED FILES')}
-                </div>
+                </h2>
                 <div className="unassigned-files-list">{props.children}</div>
             </div>
         </div>

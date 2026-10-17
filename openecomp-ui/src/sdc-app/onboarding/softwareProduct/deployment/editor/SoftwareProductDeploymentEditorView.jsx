@@ -157,6 +157,9 @@ export default class SoftwareProductDeploymentEditorView extends React.Component
                                             <SelectActionTableRow
                                                 key={association.componentId}>
                                                 <SelectActionTableCell
+                                                    ariaLabel={i18n(
+                                                        'Virtual Function Components'
+                                                    )}
                                                     options={componentsList.map(
                                                         component => ({
                                                             value: component.id,
@@ -186,6 +189,9 @@ export default class SoftwareProductDeploymentEditorView extends React.Component
                                                     disabled={true}
                                                 />
                                                 <SelectActionTableCell
+                                                    ariaLabel={i18n(
+                                                        'Compute Flavors'
+                                                    )}
                                                     options={computesList
                                                         .filter(
                                                             compute =>

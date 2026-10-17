@@ -6,6 +6,7 @@
         <div class="tlv-loader-back"></div>
         <div class="tlv-loader large"></div>
     </div>
+    <top-nav *ngIf="component" [hideSearch]="true" [menuModel]="breadcrumbsModel" [version]="version" [unsavedChanges]="unsavedChanges" [unsavedChangesCallback]="unsavedChangesCallback"></top-nav>
     <main id="main-content" class="w-sdc-main-container">
         <div class="w-sdc-left-sidebar" *ngIf="component && !isComposition">
             <h1 class="menu-header" [title]="menuComponentTitle">
@@ -17,6 +18,7 @@
                      *ngFor="let menuItem of leftBarTabs?.menuItems; let i = index">
                     <div class="expand-collapse-menu-box-item-text" [class.disabled]="menuItem.isDisabled">
                         <button [attr.data-tests-id]="menuItem.text + 'LeftSideMenu'"
+                                [attr.aria-current]="isSelected(menuItem) ? 'page' : null"
                                 type="button"
                                 class="i-sdc-designer-sidebar-section-content-item-service-cat"
                                 (click)="menuItem.callback()"
@@ -138,13 +140,13 @@
                 </div>
             </div>
             <div class="w-sdc-main-container-body-content-header" *ngIf="!isComposition && !isDeployment && !isPlugins">
-                <h2 class="workspace-tab-title">
+                <h2 class="workspace-tab-title" data-tab-heading>
                     {{getTabTitle()}}
                 </h2>
             </div>
+            <h2 class="sr-only" *ngIf="isDeployment" data-tab-heading>{{getTabTitle()}}</h2>
             <router-outlet></router-outlet>
           </div>
         </div>
     </main>
-    <top-nav *ngIf="component" [hideSearch]="true" [menuModel]="breadcrumbsModel" [version]="version" [unsavedChanges]="unsavedChanges" [unsavedChangesCallback]="unsavedChangesCallback"></top-nav>
 </div>

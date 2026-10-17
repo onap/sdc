@@ -115,23 +115,28 @@ const workspaceChildren: Routes = [
 ];
 
 /**
- * `data.title` reproduces app.ts:731-738's WCAG 2.4.2 page-title map, which keyed off the state's
- * BASE name — so every workspace tab shared one title and everything outside the three entries
- * fell back to 'SDC'. Only these three carry a title for that reason; RouteMetadataService applies
- * the fallback.
+ * `data.title` is the WCAG 2.4.2 page title, without the application suffix that
+ * RouteMetadataService.setPageTitle() appends. Pages whose title depends on loaded data (the
+ * workspace shell, type-workspace, plugins, the admin tabs) refine it once they know it.
  */
 export const routes: Routes = [
     {
         path: 'dashboard', component: HomeComponent, canActivate: [AuthGuard],
-        data: {permissions: ['DESIGNER'], title: 'SDC - Dashboard'}
+        data: {permissions: ['DESIGNER'], title: 'Dashboard'}
     },
-    {path: 'catalog', component: CatalogComponent, canActivate: [AuthGuard], data: {title: 'SDC - Catalog'}},
-    {path: 'adminDashboard', component: AdminDashboardComponent, canActivate: [AuthGuard], data: {permissions: ['ADMIN']}},
-    {path: 'onboardVendor', component: OnboardVendorPageComponent, canActivate: [AuthGuard]},
-    {path: 'plugins/:path', component: PluginTabViewPageComponent, canActivate: [AuthGuard]},
-    {path: 'error-403', component: Error403PageComponent},
+    {path: 'catalog', component: CatalogComponent, canActivate: [AuthGuard], data: {title: 'Catalog'}},
+    {
+        path: 'adminDashboard', component: AdminDashboardComponent, canActivate: [AuthGuard],
+        data: {permissions: ['ADMIN'], title: 'Administration'}
+    },
+    {path: 'onboardVendor', component: OnboardVendorPageComponent, canActivate: [AuthGuard], data: {title: 'Onboard'}},
+    {path: 'plugins/:path', component: PluginTabViewPageComponent, canActivate: [AuthGuard], data: {title: 'Plugin'}},
+    {path: 'error-403', component: Error403PageComponent, data: {title: 'Access Denied'}},
 
-    {path: ':previousState/type-workspace/:type/:id/:subPage', component: TypeWorkspaceComponent, canActivate: [AuthGuard]},
+    {
+        path: ':previousState/type-workspace/:type/:id/:subPage', component: TypeWorkspaceComponent, canActivate: [AuthGuard],
+        data: {title: 'Data Type'}
+    },
 
     // CREATE mode. ui-router matched the id-less form as '/dashboard/workspace//service/general' —
     // a DOUBLE slash. DefaultUrlSerializer.parse() drops an empty segment AND everything after it,
@@ -157,7 +162,7 @@ export const routes: Routes = [
         component: WorkspaceContainerComponent,
         resolve: {component: WorkspaceComponentResolver},
         runGuardsAndResolvers: 'paramsChange' as 'paramsChange',
-        data: {bodyClass: 'workspace', title: 'SDC - Workspace'},
+        data: {bodyClass: 'workspace', title: 'Workspace'},
         children: workspaceChildren
     },
     {
@@ -165,7 +170,7 @@ export const routes: Routes = [
         component: WorkspaceContainerComponent,
         resolve: {component: WorkspaceComponentResolver},
         runGuardsAndResolvers: 'paramsChange' as 'paramsChange',
-        data: {bodyClass: 'workspace', title: 'SDC - Workspace'},
+        data: {bodyClass: 'workspace', title: 'Workspace'},
         children: workspaceChildren
     },
 

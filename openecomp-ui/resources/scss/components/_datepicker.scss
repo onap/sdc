@@ -12,7 +12,9 @@
     .date-picker-label {
         &.required {
             &:before {
+                // The first declaration is the fallback for browsers without CSS alt text.
                 content: '*';
+                content: '*' / '';
                 color: $red;
                 margin: 0 4px 0 0;
             }

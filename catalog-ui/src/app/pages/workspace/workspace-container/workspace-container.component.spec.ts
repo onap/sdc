@@ -60,13 +60,14 @@ function createComponent(overrides: any = {}) {
     };
     const notificationsService: any = {push: jest.fn()};
     const cdr: any = {detectChanges: jest.fn()};
+    const routeMetadataService: any = overrides.routeMetadataService || {setPageTitle: jest.fn()};
 
     const comp = new WorkspaceContainerComponent(
         cacheService, eventListenerService, homeService, catalogService, componentService,
         automatedUpgradeService, eventBusService, modalServiceSdcUI, pluginsService,
         workspaceNg1BridgeService, workspaceService, translateService, navigationService,
         notificationsService, cdr, sdcMenu, componentFactory, menuHandler,
-        changeLifecycleStateHandler, progressService
+        changeLifecycleStateHandler, progressService, routeMetadataService
     );
     return {comp, workspaceService, navigationService, cdr, eventListenerService};
 }
@@ -283,5 +284,56 @@ describe('main landmark', () => {
         expect(main.className).toBe('w-sdc-main-container');
         expect(main.hasAttribute('role')).toBe(false);
         expect(doc.querySelectorAll('[role="main"], main').length).toBe(1);
+    });
+});
+
+describe('page title', () => {
+    it('names the tab first, then the asset', () => {
+        const {comp} = createComponent();
+        const routeMetadataService = (comp as any).routeMetadataService;
+        (comp as any).leftBarTabs = {menuItems: [{text: 'General'}, {text: 'Composition'}], selectedIndex: 1};
+        (comp as any).menuComponentTitle = 'vFW';
+        (comp as any).updatePageTitle();
+        expect(routeMetadataService.setPageTitle).toHaveBeenCalledWith('Composition', 'vFW');
+    });
+
+    it('uses the create heading while the new asset has no name', () => {
+        const navigationService: any = {
+            getParam: jest.fn((key: string) => key === 'type' ? 'service' : undefined),
+            getParams: jest.fn(() => ({})),
+            getCurrentStateName: jest.fn(() => 'workspace.general'),
+            onNavigationSuccess: jest.fn(() => jest.fn()),
+            navigate: jest.fn()
+        };
+        const {comp} = createComponent({navigationService});
+        (comp as any).leftBarTabs = {menuItems: [{text: 'General'}], selectedIndex: 0};
+        (comp as any).menuComponentTitle = '';
+        (comp as any).updatePageTitle();
+        expect((comp as any).routeMetadataService.setPageTitle).toHaveBeenCalledWith('General', 'Create new service');
+    });
+});
+
+describe('reading order and current location', () => {
+    // tslint:disable-next-line:no-var-requires
+    const template: string = require('./workspace-container.component.html');
+    const doc = new DOMParser().parseFromString(`<body>${template}</body>`, 'text/html');
+
+    it('renders the top navigation before main', () => {
+        const topNav = doc.querySelector('top-nav');
+        const main = doc.querySelector('main');
+        // tslint:disable-next-line:no-bitwise
+        expect(topNav.compareDocumentPosition(main) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    });
+
+    it('marks the selected left-menu button as the current page', () => {
+        const button = doc.querySelector('nav[aria-label="Workspace"] button');
+        expect(button.getAttribute('[attr.aria-current]')).toBe("isSelected(menuItem) ? 'page' : null");
+    });
+
+    it('gives the visible tab title and the deployment tab a focusable tab heading', () => {
+        const headings = Array.from(doc.querySelectorAll('h2[data-tab-heading]'));
+        expect(headings.length).toBe(2);
+        expect(headings[1].getAttribute('class')).toBe('sr-only');
+        expect(headings[1].getAttribute('*ngIf')).toBe('isDeployment');
     });
 });

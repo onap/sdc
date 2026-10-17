@@ -1,5 +1,6 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { LiveStatusModule } from "../../components/ui/live-status/live-status.module";
 import { CatalogComponent } from "./catalog.component";
 import { LayoutModule } from "../../components/layout/layout.module";
 import { UiElementsModule } from "../../components/ui/ui-elements.module";
@@ -14,6 +15,7 @@ import {SdcTileModule} from "../../components/ui/tile/sdc-tile.module";
     ],
     imports: [
         CommonModule,
+        LiveStatusModule,
         SdcUiComponentsModule,
         LayoutModule,
         UiElementsModule,

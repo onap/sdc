@@ -30,6 +30,7 @@
          *ngFor="let menuItem of leftBarTabs.menuItems">
       <div class="expand-collapse-menu-box-item-text" [ngClass]="{ 'disabled': menuItem.isDisabled }">
         <button [attr.data-tests-id]="menuItem.text + 'LeftSideMenu'" type="button" class="i-sdc-designer-sidebar-section-content-item-service-cat"
+                [attr.aria-current]="isSelected(menuItem) ? 'page' : null"
                 (click)="menuItem.callback()" [disabled]="menuItem.disabledCategory">{{menuItem.text}}</button>
       </div>
     </div>

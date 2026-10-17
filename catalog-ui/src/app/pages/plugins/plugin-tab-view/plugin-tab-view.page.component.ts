@@ -4,6 +4,8 @@ import {IUserProperties} from 'app/models/user';
 import {CacheService} from 'app/services/cache.service';
 import {PluginsService} from 'app/services/plugins.service';
 import {NavigationService} from "../../../services/navigation.service";
+import {RouteMetadataService} from "../../../services/route-metadata.service";
+import {pluginDisplayName} from "../../../components/ui/plugin/plugin-frame.component";
 
 @Component({
     selector: 'plugin-tab-view',
@@ -20,7 +22,8 @@ export class PluginTabViewPageComponent {
 
     constructor(private navigationService: NavigationService,
                 private cacheService: CacheService,
-                private pluginsService: PluginsService) {
+                private pluginsService: PluginsService,
+                private routeMetadataService: RouteMetadataService) {
 
         this.plugin = this.pluginsService.getPluginByStateUrl(this.navigationService.getParam('path'));
         this.version = this.cacheService.get('version');
@@ -29,6 +32,7 @@ export class PluginTabViewPageComponent {
 
     ngOnInit() {
         this.isLoading = true;
+        this.routeMetadataService.setPageTitle(pluginDisplayName(this.plugin, 'tab'));
 
         this.queryParams = {
             userId: this.user.userId,

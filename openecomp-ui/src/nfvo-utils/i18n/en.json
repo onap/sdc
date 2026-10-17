@@ -388,6 +388,7 @@
   "Add all": "Add all",
   "Remove all": "Remove all",
   "Open": "Open",
+  "Open {name}": "Open {name}",
   "Edit description": "Edit description",
   "Contents of {name}": "Contents of {name}",
   "Clear date": "Clear date",

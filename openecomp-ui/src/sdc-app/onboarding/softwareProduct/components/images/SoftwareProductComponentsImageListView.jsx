@@ -137,6 +137,7 @@ class SoftwareProductComponentsImageListView extends React.Component {
         let { onEditImageClick, isManual, onDeleteImage } = this.props;
         return (
             <ListEditorItemView
+                itemName={fileName}
                 key={id}
                 isReadOnlyMode={isReadOnlyMode}
                 onSelect={() => onEditImageClick(image, isReadOnlyMode)}

@@ -24,7 +24,7 @@ import {ActivatedRouteSnapshot, NavigationEnd, Router} from '@angular/router';
 import {Subscription} from 'rxjs/Subscription';
 
 const DEFAULT_BODY_CLASS = 'default-class';
-const DEFAULT_TITLE = 'SDC';
+const APP_TITLE = 'SDC';
 
 /**
  * Replaces ui-router's `$stateChangeSuccess` handler (`app.ts:711-739`), which owned two things:
@@ -65,7 +65,18 @@ export class RouteMetadataService {
 
     private apply(root: ActivatedRouteSnapshot): void {
         this.setBodyClass(this.deepestData(root, 'bodyClass') || DEFAULT_BODY_CLASS);
-        this.document.title = this.deepestData(root, 'title') || DEFAULT_TITLE;
+        this.setPageTitle(this.deepestData(root, 'title'));
+    }
+
+    /**
+     * Most specific part first, application name last ("Composition - vFW - SDC"), so the part
+     * that tells pages apart is what a screen reader announces first and what a narrow browser tab
+     * still shows. Pages whose title depends on loaded data (workspace tab + asset name, plugin
+     * name) call this once they know it; the next NavigationEnd resets it to the route's static
+     * `data.title`.
+     */
+    public setPageTitle(...parts: string[]): void {
+        this.document.title = parts.filter((part) => !!part).concat(APP_TITLE).join(' - ');
     }
 
     /**

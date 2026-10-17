@@ -23,7 +23,8 @@
     <div class="row">
 
         <div class="col-sm-6">
-            <h2>
+            <h2 class="sr-only">{{(type === SERVICE ? 'SERVICE_CATEGORY_HEADER' : 'RESOURCE_CATEGORY_HEADER') | translate}}</h2>
+            <div class="category-type-toggles" role="group" aria-label="Category type">
                 <button type="button" class="hand"
                       (click)="selectType(SERVICE)"
                       [ngClass]="{'selected': type === SERVICE}"
@@ -34,7 +35,7 @@
                       [ngClass]="{'selected': type === RESOURCE}"
                       [attr.aria-pressed]="type === RESOURCE"
                       data-tests-id="resourcecategoryheader">{{'RESOURCE_CATEGORY_HEADER' | translate}}</button>
-            </h2>
+            </div>
             <button type="button" (click)="createCategoryModal(null)"
                   data-tests-id="newcategory">{{'ADD_CATEGORY' | translate}}</button>
 

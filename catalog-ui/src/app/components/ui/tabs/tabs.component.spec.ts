@@ -87,6 +87,16 @@ describe('Tabs', () => {
         expect(ids.filter((id, i) => ids.indexOf(id) === i).length).toBe(3);
     });
 
+    it('points aria-controls only at the panel that is rendered', () => {
+        const controls = (): string[] => tabEls().map((el) => el.getAttribute('aria-controls'));
+        const panelId = (): string => fixture.nativeElement.querySelector('[role="tabpanel"]').id;
+        expect(controls()).toEqual([panelId(), null, null]);
+        tab('Inputs').click();
+        fixture.detectChanges();
+        expect(controls()).toEqual([null, panelId(), null]);
+        expect(fixture.nativeElement.querySelectorAll('[role="tabpanel"]').length).toBe(1);
+    });
+
     // Manual activation: PropertiesAssignmentComponent.tabChanged opens an unsaved-changes modal,
     // so an arrow press that selected would pop it on every keystroke.
     it('moves focus with ArrowRight, past the hidden tab, without selecting', () => {

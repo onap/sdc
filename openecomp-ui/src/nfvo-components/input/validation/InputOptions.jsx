@@ -105,6 +105,10 @@ class InputOptions extends React.Component {
         if (!onBlur) {
             onBlur = () => {};
         }
+        const errorId = `${this.inputId}-error`;
+        const describedBy =
+            isValid === false && this.props.errorText ? errorId : undefined;
+        const invalid = isValid === false ? true : undefined;
 
         return (
             <div className="validation-input-wrapper">
@@ -123,6 +127,7 @@ class InputOptions extends React.Component {
                             {...dataTestId}
                             id={this.inputId}
                             aria-label={this.props['aria-label']}
+                            aria-describedby={describedBy}
                             ref={input => (this.input = input)}
                             value={currentMultiSelectedEnum}
                             className="options-input"
@@ -147,6 +152,9 @@ class InputOptions extends React.Component {
                                 {...dataTestId}
                                 id={this.inputId}
                                 aria-label={this.props['aria-label']}
+                                aria-required={isRequired ? true : undefined}
+                                aria-invalid={invalid}
+                                aria-describedby={describedBy}
                                 ref={input => (this.input = input)}
                                 label={label}
                                 className="form-control input-options-select"
@@ -179,6 +187,9 @@ class InputOptions extends React.Component {
                             )}
                             <input
                                 className="form-control input-options-other"
+                                aria-required={isRequired ? true : undefined}
+                                aria-invalid={invalid}
+                                aria-describedby={describedBy}
                                 placeholder={i18n('other')}
                                 ref={otherValue =>
                                     (this.otherValue = otherValue)
@@ -271,7 +282,7 @@ class InputOptions extends React.Component {
                 }}
                 container={this}>
                 <Tooltip
-                    id={`error-${errorText.replace(' ', '-')}`}
+                    id={`${this.inputId}-error`}
                     className="validation-error-message">
                     {errorText}
                 </Tooltip>

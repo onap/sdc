@@ -1,5 +1,6 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { LiveStatusModule } from "../../components/ui/live-status/live-status.module";
 import { HomeComponent } from "./home.component";
 import { LayoutModule } from "../../components/layout/layout.module";
 import { UiElementsModule } from "../../components/ui/ui-elements.module";
@@ -15,6 +16,7 @@ import {ModalImportTypeComponent} from "../../components/ui/modal-import-type/mo
     ],
     imports: [
         CommonModule,
+        LiveStatusModule,
         SdcUiComponentsModule,
         LayoutModule,
         UiElementsModule,

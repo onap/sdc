@@ -22,15 +22,18 @@
 import { NO_ERRORS_SCHEMA, ViewContainerRef } from "@angular/core";
 import { async, TestBed } from "@angular/core/testing";
 import { AuthenticationService } from './services/authentication.service';
+import { RouteFocusService } from './services/route-focus.service';
 import { RouteMetadataService } from './services/route-metadata.service';
 import { AppComponent } from './app.component'
 
 describe('AppComponent', () => {
 
     let routeMetadataService: any;
+    let routeFocusService: any;
 
     beforeEach(async(() => {
         routeMetadataService = { start: jest.fn(), stop: jest.fn() };
+        routeFocusService = { start: jest.fn(), stop: jest.fn() };
         TestBed.configureTestingModule({
             imports: [],
             schemas: [NO_ERRORS_SCHEMA],
@@ -40,7 +43,8 @@ describe('AppComponent', () => {
             providers: [
                 { provide: AuthenticationService },
                 { provide: ViewContainerRef },
-                { provide: RouteMetadataService, useValue: routeMetadataService }
+                { provide: RouteMetadataService, useValue: routeMetadataService },
+                { provide: RouteFocusService, useValue: routeFocusService }
             ],
         }).compileComponents();
     }));
@@ -57,6 +61,12 @@ describe('AppComponent', () => {
         const fixture = TestBed.createComponent(AppComponent);
         fixture.detectChanges();
         expect(routeMetadataService.start).toHaveBeenCalled();
+    });
+
+    it('starts the route focus subscription', () => {
+        const fixture = TestBed.createComponent(AppComponent);
+        fixture.detectChanges();
+        expect(routeFocusService.start).toHaveBeenCalled();
     });
 
     it('skipToMain focuses #main-content without touching the hash', () => {

@@ -63,6 +63,7 @@ class SoftwareProductProcessesListView extends React.Component {
         } = this.props;
         return (
             <ListEditorItemView
+                itemName={name}
                 key={id}
                 className="list-editor-item-view"
                 isReadOnlyMode={isReadOnlyMode}

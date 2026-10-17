@@ -105,6 +105,51 @@ test.describe('keyboard navigation', () => {
         await expect(sdcPage.getByRole('heading', { level: 1 })).toHaveText('Create new service');
     });
 
+    test('an sdc-modal takes focus, keeps it, closes on Escape and gives it back', async ({ sdcPage }) => {
+        await gotoCold(sdcPage, '/dashboard');
+        const card = sdcPage.locator('.w-sdc-dashboard-card-new[aria-label="Import"]');
+        await card.focus();
+        await sdcPage.getByRole('button', { name: 'Import VSP' }).focus();
+        await sdcPage.keyboard.press('Enter');
+        const dialog = sdcPage.getByRole('dialog', { name: 'Import VSP' });
+        await expect(dialog).toBeVisible();
+        await expect(dialog).toHaveAttribute('aria-modal', 'true');
+        await expect.poll(() => dialog.evaluate((d) => d.contains(document.activeElement))).toBe(true);
+        for (let i = 0; i < 25; i++) {
+            await sdcPage.keyboard.press('Tab');
+            expect(await dialog.evaluate((d) => d.contains(document.activeElement)), `Tab ${i + 1} left the modal`).toBe(true);
+        }
+        await sdcPage.keyboard.press('Shift+Tab');
+        expect(await dialog.evaluate((d) => d.contains(document.activeElement))).toBe(true);
+        await sdcPage.keyboard.press('Escape');
+        await expect(dialog).toBeHidden();
+        await expect(card).toBeFocused();
+    });
+
+    test('a focused sdc-checkbox shows a focus ring on its box', async ({ sdcPage }) => {
+        await gotoCold(sdcPage, '/dashboard');
+        const box = sdcPage.locator('.w-sdc-left-sidebar input.sdc-checkbox__input').first();
+        await box.waitFor({ state: 'attached', timeout: 60_000 });
+        await box.focus();
+        await sdcPage.keyboard.press('Shift+Tab');
+        await sdcPage.keyboard.press('Tab');
+        await expect(box).toBeFocused();
+        expect(await box.evaluate((input) => getComputedStyle(input.nextElementSibling, '::before').outlineStyle)).toBe('solid');
+    });
+
+    test('a collapsed accordion takes its controls out of the tab order', async ({ sdcPage }) => {
+        await gotoCold(sdcPage, '/onboardVendor');
+        const header = sdcPage.locator('button.sdc-accordion-header', { hasText: 'ENTITY TYPE' });
+        await expect(header).toHaveAttribute('aria-expanded', 'true', { timeout: 60_000 });
+        await header.focus();
+        await sdcPage.keyboard.press('Enter');
+        await expect(header).toHaveAttribute('aria-expanded', 'false');
+        // The body only turns hidden once its fade-out has finished.
+        await expect(sdcPage.locator(`#${await header.getAttribute('aria-controls')}`)).toHaveCSS('visibility', 'hidden');
+        await sdcPage.keyboard.press('Tab');
+        await expect(sdcPage.locator('button.sdc-accordion-header', { hasText: 'PERMISSIONS' })).toBeFocused();
+    });
+
     test.describe('as admin', () => {
         test.use({ sdcUser: ADMIN_USER });
 

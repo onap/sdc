@@ -27,7 +27,7 @@ const ListEditorHeader = ({
 }) => {
     return (
         <div className="list-editor-view-header">
-            {title && <div className="list-editor-view-title">{title}</div>}
+            {title && <h2 className="list-editor-view-title">{title}</h2>}
             <div>
                 {onAdd && (
                     <Button

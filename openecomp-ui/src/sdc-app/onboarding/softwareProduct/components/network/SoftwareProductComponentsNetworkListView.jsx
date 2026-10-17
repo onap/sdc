@@ -168,6 +168,7 @@ class SoftwareProductComponentsNetworkView extends React.Component {
         let { onEditNicClick, version, isManual, onDeleteNic } = this.props;
         return (
             <ListEditorItemView
+                itemName={name}
                 key={id}
                 isReadOnlyMode={isReadOnlyMode}
                 onSelect={() => onEditNicClick(nic, version, isReadOnlyMode)}

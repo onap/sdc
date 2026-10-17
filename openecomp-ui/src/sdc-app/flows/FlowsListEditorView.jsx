@@ -117,6 +117,7 @@ class FlowsListEditorView extends Component {
         } = this.props;
         return (
             <ListEditorItemView
+                itemName={artifactName}
                 key={uniqueId}
                 onSelect={() => onEditFlowDetailsClick(flow)}
                 onDelete={() => onDeleteFlowClick(flow)}

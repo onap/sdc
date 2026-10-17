@@ -9,7 +9,9 @@
         </ng-template>
     </div>
 
-    <h2 class="title" data-tests-id="selectedCompTitle" tooltip="&#8203;{{selectedComponent.name}}">
+    <!-- The page h1 already names the asset, so its own details panel is headed "Details", not the name again. -->
+    <h2 class="title" data-tests-id="selectedCompTitle" tooltip="&#8203;{{selectedComponent.name}}"
+        [attr.aria-label]="isTopologyTemplateSelected ? 'Details' : null">
         {{selectedComponent.name}}
     </h2>
 

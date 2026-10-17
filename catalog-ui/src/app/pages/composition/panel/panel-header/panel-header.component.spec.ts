@@ -129,3 +129,14 @@ describe('CompositionPanelHeaderComponent', () => {
     });
 
 });
+
+describe('CompositionPanelHeaderComponent template', () => {
+    // tslint:disable-next-line:no-var-requires
+    const template: string = require('./panel-header.component.html');
+    const doc = new DOMParser().parseFromString(`<body>${template}</body>`, 'text/html');
+
+    it('does not repeat the page h1 when the asset itself is selected', () => {
+        expect(doc.querySelector('h2[data-tests-id="selectedCompTitle"]').getAttribute('[attr.aria-label]'))
+            .toBe("isTopologyTemplateSelected ? 'Details' : null");
+    });
+});
