@@ -52,6 +52,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -79,6 +80,8 @@ public class DistributionEngineTest {
 
     @Mock
     DistributionDeleteNotificationSender distributionDeleteNotificationSender;
+    @Mock
+    private DistributionEngineClusterHealth distributionEngineClusterHealth;
 
     private DummyDistributionConfigurationManager distributionEngineConfigurationMock;
 
@@ -133,6 +136,37 @@ public class DistributionEngineTest {
                 .thenReturn(ActionStatus.GENERAL_ERROR);
         ActionStatus actionStatus = testInstance.notifyService(DISTRIBUTION_ID, service, notificationData, ENV_ID, modifier);
         assertEquals(ActionStatus.GENERAL_ERROR, actionStatus);
+    }
+
+    @Test
+    void notifyService_kafkaPublishFailureMarksHealthDown() {
+        when(kafkaHandler.isKafkaActive()).thenReturn(true);
+        when(environmentsEngine.getEnvironmentById(ENV_ID)).thenReturn(envs.get(ENV_ID));
+        when(distributionEngineConfigurationMock.getConfigurationMock().getDistributionNotifTopicName()).thenReturn("topic");
+        when(distributionNotificationSender.sendNotification(eq("topic-ENVID"), eq(DISTRIBUTION_ID), any(EnvironmentMessageBusData.class),
+                any(NotificationDataImpl.class), any(Service.class), any(User.class)))
+                .thenReturn(ActionStatus.GENERAL_ERROR);
+
+        ActionStatus actionStatus = testInstance.notifyService(DISTRIBUTION_ID, new Service(), new NotificationDataImpl(), ENV_ID, modifier);
+
+        assertEquals(ActionStatus.GENERAL_ERROR, actionStatus);
+        verify(distributionEngineClusterHealth).setHealthCheckUnavailableAndReportInCaseLastStateIsUp();
+        verify(distributionEngineClusterHealth, never()).setHealthCheckOkAndReportInCaseLastStateIsDown();
+    }
+
+    @Test
+    void notifyService_kafkaPublishSuccessMarksHealthUp() {
+        when(kafkaHandler.isKafkaActive()).thenReturn(true);
+        when(environmentsEngine.getEnvironmentById(ENV_ID)).thenReturn(envs.get(ENV_ID));
+        when(distributionEngineConfigurationMock.getConfigurationMock().getDistributionNotifTopicName()).thenReturn("topic");
+        when(distributionNotificationSender.sendNotification(eq("topic-ENVID"), eq(DISTRIBUTION_ID), any(EnvironmentMessageBusData.class),
+                any(NotificationDataImpl.class), any(Service.class), any(User.class)))
+                .thenReturn(ActionStatus.OK);
+
+        testInstance.notifyService(DISTRIBUTION_ID, new Service(), new NotificationDataImpl(), ENV_ID, modifier);
+
+        verify(distributionEngineClusterHealth).setHealthCheckOkAndReportInCaseLastStateIsDown();
+        verify(distributionEngineClusterHealth, never()).setHealthCheckUnavailableAndReportInCaseLastStateIsUp();
     }
 
     private Map<String, OperationalEnvironmentEntry> getEnvs(String... environmentIds) {

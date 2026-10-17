@@ -55,7 +55,8 @@ public class DistributionNotificationSender {
                     deConfiguration.getDistributionNotificationTopic().getMaxWaitingAfterSendingSeconds());
         }
         else{
-            status = kafkaHandler.sendNotification(topicName, notificationData);
+            status = kafkaHandler.sendNotification(topicName, notificationData,
+                deConfiguration.getDistributionNotificationTopic().getMaxWaitingAfterSendingSeconds());
         }
         logger.info("After publishing service {} of version {}. Status is {}", service.getName(), service.getVersion(), status.getHttpCode());
         auditDistributionNotification(

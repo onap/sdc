@@ -20,13 +20,16 @@
 package org.openecomp.sdc.be.components.distribution.engine;
 
 import com.att.nsa.cambria.client.CambriaConsumer;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParseException;
 import fj.data.Either;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.openecomp.sdc.be.components.distribution.engine.report.DistributionCompleteReporter;
 import org.openecomp.sdc.be.components.kafka.KafkaHandler;
@@ -52,7 +55,7 @@ public class DistributionEnginePollingTask implements Runnable {
     private String consumerId;
     private String consumerGroup;
     private CambriaHandler cambriaHandler = new CambriaHandler();
-    private final KafkaHandler kafkaHandler = new KafkaHandler();
+    private final KafkaHandler kafkaHandler;
     private Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private DistributionCompleteReporter distributionCompleteReporter;
     private ScheduledExecutorService scheduledPollingService = Executors
@@ -65,6 +68,16 @@ public class DistributionEnginePollingTask implements Runnable {
                                          DistributionCompleteReporter distributionCompleteReporter, ComponentsUtils componentUtils,
                                          DistributionEngineClusterHealth distributionEngineClusterHealth,
                                          OperationalEnvironmentEntry environmentEntry) {
+        this(distributionEngineConfiguration, distributionCompleteReporter, componentUtils, distributionEngineClusterHealth, environmentEntry,
+            new KafkaHandler());
+    }
+
+    @VisibleForTesting
+    DistributionEnginePollingTask(DistributionEngineConfiguration distributionEngineConfiguration,
+                                  DistributionCompleteReporter distributionCompleteReporter, ComponentsUtils componentUtils,
+                                  DistributionEngineClusterHealth distributionEngineClusterHealth,
+                                  OperationalEnvironmentEntry environmentEntry, KafkaHandler kafkaHandler) {
+        this.kafkaHandler = kafkaHandler;
         this.componentUtils = componentUtils;
         DistributionStatusTopicConfig statusConfig = distributionEngineConfiguration.getDistributionStatusTopic();
         this.pollingIntervalInSec = statusConfig.getPollingIntervalSec();
@@ -96,8 +109,7 @@ public class DistributionEnginePollingTask implements Runnable {
             }
         } catch (Exception e) {
             logger.debug("unexpected error occured", e);
-            String methodName = Object.class.getEnclosingMethod().getName();
-            BeEcompErrorManager.getInstance().logBeDistributionEngineSystemError(methodName, e.getMessage());
+            BeEcompErrorManager.getInstance().logBeDistributionEngineSystemError("startTask", e.getMessage());
         }
     }
 
@@ -124,52 +136,81 @@ public class DistributionEnginePollingTask implements Runnable {
     @Override
     public void run() {
         logger.trace("run() method. polling queue {}", topicName);
-        Either<Iterable<String>, CambriaErrorResponse> fetchResult;
+        // scheduleAtFixedRate cancels every further run once one run throws, so nothing may escape this method
         try {
-            // init error
-            if (Boolean.FALSE.equals(kafkaHandler.isKafkaActive())) {
-                if (cambriaConsumer == null) {
-                    BeEcompErrorManager.getInstance()
-                        .logBeUebSystemError(DISTRIBUTION_STATUS_POLLING, "polling task was not initialized properly");
-                    stopTask();
-                    return;
-                }
-                fetchResult = cambriaHandler.fetchFromTopic(cambriaConsumer);
-            } else {
-                fetchResult = kafkaHandler.fetchFromTopic(topicName);
+            pollTopic();
+        } catch (Throwable e) {
+            logger.error("unexpected error while polling topic {}", topicName, e);
+            BeEcompErrorManager.getInstance().logBeDistributionEngineSystemError(DISTRIBUTION_STATUS_POLLING, String.valueOf(e));
+            if (Boolean.TRUE.equals(kafkaHandler.isKafkaActive())) {
+                distributionEngineClusterHealth.setHealthCheckUnavailableAndReportInCaseLastStateIsUp();
             }
-            // fetch error
-            if (fetchResult.isRight()) {
-                CambriaErrorResponse errorResponse = fetchResult.right().value();
-                BeEcompErrorManager.getInstance().logBeUebSystemError(DISTRIBUTION_STATUS_POLLING,
-                    "failed to fetch messages from topic " + topicName + " error: " + errorResponse);
-                // TODO: if status== internal error (connection problem) change
+        }
+    }
 
-                // state to inactive
-
-                // in next try, if succeed - change to active
+    private void pollTopic() {
+        Either<Iterable<String>, CambriaErrorResponse> fetchResult;
+        boolean kafkaActive = Boolean.TRUE.equals(kafkaHandler.isKafkaActive());
+        if (!kafkaActive) {
+            if (cambriaConsumer == null) {
+                BeEcompErrorManager.getInstance()
+                    .logBeUebSystemError(DISTRIBUTION_STATUS_POLLING, "polling task was not initialized properly");
+                stopTask();
                 return;
             }
-            // success
-            Iterable<String> messages = fetchResult.left().value();
-            for (String message : messages) {
-                logger.trace("received message {}", message);
-                try {
-                    DistributionStatusNotification notification = gson.fromJson(message, DistributionStatusNotification.class);
-                    audit.startAuditFetchLog(PARTNER_NAME, DistributionEnginePollingTask.class.getName());
-                    handleDistributionNotificationMsg(notification, audit);
-                    distributionEngineClusterHealth.setHealthCheckOkAndReportInCaseLastStateIsDown();
-                } catch (Exception e) {
-                    logger.debug("failed to convert message to object", e);
-                    BeEcompErrorManager.getInstance().logBeUebSystemError(DISTRIBUTION_STATUS_POLLING,
-                        "failed to parse message " + message + " from topic " + topicName + " error: " + fetchResult.right().value());
-                }
-            }
-        } catch (Exception e) {
-            logger.debug("unexpected error occurred", e);
-            String methodName = Object.class.getEnclosingMethod().getName();
-            BeEcompErrorManager.getInstance().logBeDistributionEngineSystemError(methodName, e.getMessage());
+            fetchResult = cambriaHandler.fetchFromTopic(cambriaConsumer);
+        } else {
+            fetchResult = kafkaHandler.fetchFromTopic(topicName);
         }
+        if (fetchResult.isRight()) {
+            CambriaErrorResponse errorResponse = fetchResult.right().value();
+            BeEcompErrorManager.getInstance().logBeUebSystemError(DISTRIBUTION_STATUS_POLLING,
+                "failed to fetch messages from topic " + topicName + " error: " + errorResponse);
+            if (kafkaActive) {
+                distributionEngineClusterHealth.setHealthCheckUnavailableAndReportInCaseLastStateIsUp();
+            }
+            return;
+        }
+        if (kafkaActive) {
+            distributionEngineClusterHealth.setHealthCheckOkAndReportInCaseLastStateIsDown();
+        }
+        for (String message : fetchResult.left().value()) {
+            logger.trace("received message {}", message);
+            try {
+                handleMessage(message);
+            } catch (Throwable e) {
+                logger.error("failed to handle message {} from topic {}", message, topicName, e);
+                BeEcompErrorManager.getInstance().logBeUebSystemError(DISTRIBUTION_STATUS_POLLING,
+                    "failed to handle message " + message + " from topic " + topicName + " error: " + e);
+            }
+        }
+    }
+
+    private void handleMessage(String message) {
+        DistributionStatusNotification notification;
+        try {
+            notification = gson.fromJson(message, DistributionStatusNotification.class);
+        } catch (JsonParseException e) {
+            skipInvalidMessage(message, "not a valid distribution status notification: " + e.getMessage());
+            return;
+        }
+        if (notification == null || StringUtils.isBlank(notification.getDistributionID())) {
+            skipInvalidMessage(message, "missing distributionID");
+            return;
+        }
+        if (notification.getStatus() == null) {
+            skipInvalidMessage(message, "missing or unknown status");
+            return;
+        }
+        audit.startAuditFetchLog(PARTNER_NAME, DistributionEnginePollingTask.class.getName());
+        handleDistributionNotificationMsg(notification, audit);
+        distributionEngineClusterHealth.setHealthCheckOkAndReportInCaseLastStateIsDown();
+    }
+
+    private void skipInvalidMessage(String message, String reason) {
+        logger.warn("skipping invalid message {} from topic {}: {}", message, topicName, reason);
+        BeEcompErrorManager.getInstance().logBeUebSystemError(DISTRIBUTION_STATUS_POLLING,
+            "skipping invalid message " + message + " from topic " + topicName + ": " + reason);
     }
 
     private void handleDistributionNotificationMsg(DistributionStatusNotification notification, LoggerSdcAudit audit) {

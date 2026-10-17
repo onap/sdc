@@ -78,7 +78,8 @@ public class DistributionDeleteNotificationSender {
                             deConfiguration.getDistributionDeleteTopic().getMaxWaitingAfterSendingSeconds());
         } else {
             logger.debug("Kafka is active. Using KafkaHandler to send notification for topic={}", topicName);
-            status = kafkaHandler.sendNotification(topicName, notificationData);
+            status = kafkaHandler.sendNotification(topicName, notificationData,
+                    deConfiguration.getDistributionDeleteTopic().getMaxWaitingAfterSendingSeconds());
         }
 
         logger.info("sending notification is completed for topicName={}, with status = {}",

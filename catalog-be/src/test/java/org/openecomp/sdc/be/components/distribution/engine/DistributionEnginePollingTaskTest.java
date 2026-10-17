@@ -20,20 +20,36 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import fj.data.Either;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import mockit.Deencapsulation;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.openecomp.sdc.be.components.BeConfDependentTest;
 import org.openecomp.sdc.be.components.distribution.engine.report.DistributionCompleteReporter;
+import org.openecomp.sdc.be.components.kafka.KafkaHandler;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
+import org.openecomp.sdc.be.distribution.api.client.CambriaOperationStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
+import org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.common.log.wrappers.LoggerSdcAudit;
@@ -49,6 +65,23 @@ class DistributionEnginePollingTaskTest extends BeConfDependentTest {
 
     @Mock
     private ComponentsUtils componentsUtils;
+
+    private static final String TOPIC = "StatusTopic";
+    private static final String VALID_MESSAGE =
+        "{\"distributionID\":\"dist-1\",\"consumerID\":\"consumer-1\",\"timestamp\":1,"
+            + "\"artifactURL\":\"/url\",\"status\":\"DOWNLOAD_OK\"}";
+
+    private final KafkaHandler kafkaHandler = Mockito.mock(KafkaHandler.class);
+    private final DistributionEngineClusterHealth clusterHealth = new DistributionEngineClusterHealth();
+
+    private DistributionEnginePollingTask createKafkaTestSubject() {
+        componentsUtils = Mockito.mock(ComponentsUtils.class);
+        when(kafkaHandler.isKafkaActive()).thenReturn(true);
+        DistributionEnginePollingTask task = new DistributionEnginePollingTask(configurationManager.getDistributionEngineConfiguration(),
+            new DistributionCompleteReporterMock(), componentsUtils, clusterHealth, new OperationalEnvironmentEntry(), kafkaHandler);
+        Deencapsulation.setField(task, "topicName", TOPIC);
+        return task;
+    }
 
     private DistributionEnginePollingTask createTestSubject() {
         componentsUtils = Mockito.mock(ComponentsUtils.class);
@@ -126,6 +159,62 @@ class DistributionEnginePollingTaskTest extends BeConfDependentTest {
         final Method method = DistributionEnginePollingTask.class.getDeclaredMethod("handleDistributionNotificationMsg", argClasses);
         method.setAccessible(true);
         method.invoke(testSubject, notification, new LoggerSdcAudit(DistributionEnginePollingTask.class));
+    }
+
+    @Test
+    void testRunSkipsNonJsonMessageAndHandlesTheRest() {
+        DistributionEnginePollingTask testSubject = createKafkaTestSubject();
+        when(kafkaHandler.fetchFromTopic(TOPIC)).thenReturn(Either.left(Arrays.asList("not json {", VALID_MESSAGE)));
+
+        assertDoesNotThrow(testSubject::run);
+
+        verify(componentsUtils, times(1)).auditDistributionStatusNotification(eq("dist-1"), eq("consumer-1"), eq(TOPIC), eq("/url"),
+            eq("1"), eq("DOWNLOAD_OK"), any(), any());
+    }
+
+    @Test
+    void testRunSkipsMessageWithUnknownStatus() {
+        DistributionEnginePollingTask testSubject = createKafkaTestSubject();
+        when(kafkaHandler.fetchFromTopic(TOPIC)).thenReturn(Either.left(Arrays.asList(
+            "{\"distributionID\":\"dist-1\",\"status\":\"NOT_A_STATUS\"}", "null", VALID_MESSAGE)));
+
+        assertDoesNotThrow(testSubject::run);
+
+        verify(componentsUtils, times(1)).auditDistributionStatusNotification(anyString(), any(), any(), any(), any(), anyString(), any(),
+            any());
+    }
+
+    @Test
+    void testRunSkipsMessageWithoutDistributionId() {
+        DistributionEnginePollingTask testSubject = createKafkaTestSubject();
+        when(kafkaHandler.fetchFromTopic(TOPIC)).thenReturn(Either.left(List.of("{\"status\":\"DOWNLOAD_OK\"}")));
+
+        assertDoesNotThrow(testSubject::run);
+
+        verify(componentsUtils, never()).auditDistributionStatusNotification(any(), any(), any(), any(), any(), any(), any(), any());
+    }
+
+    @Test
+    void testRunSurvivesUnexpectedFetchFailure() {
+        DistributionEnginePollingTask testSubject = createKafkaTestSubject();
+        when(kafkaHandler.fetchFromTopic(TOPIC)).thenThrow(new IllegalStateException("consumer closed"));
+
+        assertDoesNotThrow(testSubject::run);
+        assertEquals(HealthCheckStatus.DOWN, clusterHealth.getHealthCheckInfo().getHealthCheckStatus());
+    }
+
+    @Test
+    void testRunMarksHealthDownOnFetchErrorAndUpOnNextSuccess() {
+        DistributionEnginePollingTask testSubject = createKafkaTestSubject();
+        when(kafkaHandler.fetchFromTopic(TOPIC))
+            .thenReturn(Either.right(new CambriaErrorResponse(CambriaOperationStatus.INTERNAL_SERVER_ERROR, 500)))
+            .thenReturn(Either.left(List.of()));
+
+        testSubject.run();
+        assertEquals(HealthCheckStatus.DOWN, clusterHealth.getHealthCheckInfo().getHealthCheckStatus());
+
+        testSubject.run();
+        assertEquals(HealthCheckStatus.UP, clusterHealth.getHealthCheckInfo().getHealthCheckStatus());
     }
 
     private class DistributionCompleteReporterMock implements DistributionCompleteReporter {

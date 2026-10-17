@@ -33,6 +33,8 @@ import org.mockito.Mockito;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.common.KafkaException;
+import org.apache.kafka.common.errors.TimeoutException;
+import java.util.concurrent.CompletableFuture;
 
 import org.openecomp.sdc.be.catalog.api.IStatus;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
@@ -44,19 +46,30 @@ public class SdcKafkaProducerTest {
         KafkaProducer<byte[], byte[]> mockKafkaProducer = Mockito.mock(KafkaProducer.class);
         SdcKafkaProducer sdcKafkaProducer = new SdcKafkaProducer(mockKafkaProducer);
         ArgumentCaptor<ProducerRecord> captor = ArgumentCaptor.forClass(ProducerRecord.class);
-        sdcKafkaProducer.send("testMessage", "testTopic");
+        when(mockKafkaProducer.send(any())).thenReturn(CompletableFuture.completedFuture(null));
+        sdcKafkaProducer.send("testMessage", "testTopic", 5);
 
 
         verify(mockKafkaProducer).send(captor.capture());
     }
 
     @Test
-    public void testFlushSuccess(){
-        KafkaProducer<byte[], byte[]> mockKafkaProducer = Mockito.mock(KafkaProducer.class);
+    public void testSendFailsWhenDeliveryFails() {
+        KafkaProducer<String, String> mockKafkaProducer = Mockito.mock(KafkaProducer.class);
         SdcKafkaProducer sdcKafkaProducer = new SdcKafkaProducer(mockKafkaProducer);
-        sdcKafkaProducer.flush();
+        when(mockKafkaProducer.send(any())).thenReturn(CompletableFuture.failedFuture(new TimeoutException("broker unreachable")));
 
-        verify(mockKafkaProducer).flush();
+        KafkaException thrown = assertThrows(KafkaException.class, () -> sdcKafkaProducer.send("testMessage", "testTopic", 5));
+        assertEquals(TimeoutException.class, thrown.getCause().getClass());
+    }
+
+    @Test
+    public void testSendFailsWhenDeliveryIsNotAcknowledgedInTime() {
+        KafkaProducer<String, String> mockKafkaProducer = Mockito.mock(KafkaProducer.class);
+        SdcKafkaProducer sdcKafkaProducer = new SdcKafkaProducer(mockKafkaProducer);
+        when(mockKafkaProducer.send(any())).thenReturn(new CompletableFuture<>());
+
+        assertThrows(KafkaException.class, () -> sdcKafkaProducer.send("testMessage", "testTopic", 0));
     }
 
     @Test
@@ -68,7 +81,7 @@ public class SdcKafkaProducerTest {
 
         assertThrows(
             KafkaException.class,
-            () ->   sdcKafkaProducer.send("testMessage", "testTopic"),
+            () ->   sdcKafkaProducer.send("testMessage", "testTopic", 5),
             "Expected a KafkaException thrown on KafkaProducer Send");
     }
 

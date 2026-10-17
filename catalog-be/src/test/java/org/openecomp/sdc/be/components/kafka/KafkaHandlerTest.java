@@ -34,12 +34,17 @@ import org.openecomp.sdc.be.distribution.api.client.CambriaOperationStatus;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.common.errors.TimeoutException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -96,7 +101,7 @@ class KafkaHandlerTest {
     void testSendNotificationSuccess() {
         String testTopic = "testTopic";
         INotificationData testData = new NotificationDataImpl();
-        CambriaErrorResponse response = kafkaHandler.sendNotification(testTopic, testData);
+        CambriaErrorResponse response = kafkaHandler.sendNotification(testTopic, testData, 5);
         assertEquals(response.getOperationStatus(), CambriaOperationStatus.OK);
         assertEquals(response.getHttpCode(), 200);
     }
@@ -105,8 +110,8 @@ class KafkaHandlerTest {
     void testSendNotificationKafkaException() {
         String testTopic = "testTopic";
         INotificationData testData = new NotificationDataImpl();
-        doThrow(KafkaException.class).when(mockSdcKafkaProducer).send(any(), any());
-        CambriaErrorResponse response = kafkaHandler.sendNotification(testTopic, testData);
+        doThrow(KafkaException.class).when(mockSdcKafkaProducer).send(any(), any(), anyLong());
+        CambriaErrorResponse response = kafkaHandler.sendNotification(testTopic, testData, 5);
         assertEquals(response.getOperationStatus(), CambriaOperationStatus.INTERNAL_SERVER_ERROR);
         assertEquals(response.getHttpCode(), 500);
     }
@@ -115,19 +120,33 @@ class KafkaHandlerTest {
     void testSendNotificationJsonSyntaxException() {
         String testTopic = "testTopic";
         INotificationData testData = new NotificationDataImpl();
-        doThrow(JsonSyntaxException.class).when(mockSdcKafkaProducer).send(any(), any());
-        CambriaErrorResponse response = kafkaHandler.sendNotification(testTopic, testData);
+        doThrow(JsonSyntaxException.class).when(mockSdcKafkaProducer).send(any(), any(), anyLong());
+        CambriaErrorResponse response = kafkaHandler.sendNotification(testTopic, testData, 5);
         assertEquals(response.getOperationStatus(), CambriaOperationStatus.INTERNAL_SERVER_ERROR);
         assertEquals(response.getHttpCode(), 500);
     }
 
     @Test
-    void testSendNotificationFlushException() {
-        String testTopic = "testTopic";
-        INotificationData testData = new NotificationDataImpl();
-        doThrow(KafkaException.class).when(mockSdcKafkaProducer).flush();
-        CambriaErrorResponse response = kafkaHandler.sendNotification(testTopic, testData);
-        assertEquals(response.getOperationStatus(), CambriaOperationStatus.INTERNAL_SERVER_ERROR);
-        assertEquals(response.getHttpCode(), 500);
+    void testSendNotificationReportsFailedDelivery() {
+        KafkaProducer<String, String> kafkaProducer = mock(KafkaProducer.class);
+        when(kafkaProducer.send(any())).thenReturn(CompletableFuture.failedFuture(new TimeoutException("broker unreachable")));
+        KafkaHandler handler = new KafkaHandler(mockSdcKafkaConsumer, new SdcKafkaProducer(kafkaProducer), true);
+
+        CambriaErrorResponse response = handler.sendNotification("testTopic", new NotificationDataImpl(), 5);
+
+        assertEquals(CambriaOperationStatus.INTERNAL_SERVER_ERROR, response.getOperationStatus());
+        assertEquals(500, response.getHttpCode());
+    }
+
+    @Test
+    void testSendNotificationReportsUnacknowledgedDelivery() {
+        KafkaProducer<String, String> kafkaProducer = mock(KafkaProducer.class);
+        when(kafkaProducer.send(any())).thenReturn(new CompletableFuture<>());
+        KafkaHandler handler = new KafkaHandler(mockSdcKafkaConsumer, new SdcKafkaProducer(kafkaProducer), true);
+
+        CambriaErrorResponse response = handler.sendNotification("testTopic", new NotificationDataImpl(), 0);
+
+        assertEquals(CambriaOperationStatus.INTERNAL_SERVER_ERROR, response.getOperationStatus());
+        assertEquals(500, response.getHttpCode());
     }
 }

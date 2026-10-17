@@ -273,9 +273,21 @@ public class DistributionEngine implements IDistributionEngine {
         ActionStatus notifyServiceStatus = Optional.ofNullable(environmentsEngine.getEnvironmentById(envId)).map(EnvironmentMessageBusData::new).map(
                         messageBusData -> distributionNotificationSender
                                 .sendNotification(topicName, distributionId, messageBusData, notificationData, service, modifier))
+                .map(this::reportKafkaPublishHealth)
                 .orElse(ActionStatus.DISTRIBUTION_ENVIRONMENT_NOT_AVAILABLE);
         logger.debug("Finish notifyService. status is {}", notifyServiceStatus);
         return notifyServiceStatus;
+    }
+
+    private ActionStatus reportKafkaPublishHealth(ActionStatus publishStatus) {
+        if (Boolean.TRUE.equals(kafkaHandler.isKafkaActive())) {
+            if (publishStatus == ActionStatus.OK) {
+                distributionEngineClusterHealth.setHealthCheckOkAndReportInCaseLastStateIsDown();
+            } else {
+                distributionEngineClusterHealth.setHealthCheckUnavailableAndReportInCaseLastStateIsUp();
+            }
+        }
+        return publishStatus;
     }
 
     private String buildTopicName(String envName) {
@@ -354,6 +366,7 @@ public class DistributionEngine implements IDistributionEngine {
                         messageBusData -> distributionDeleteNotificationSender
                                 .sendNotificationForDeleteService(topicName, distributionId, messageBusData,
                                         notificationData))
+                .map(this::reportKafkaPublishHealth)
                 .orElse(ActionStatus.DISTRIBUTION_ENVIRONMENT_NOT_AVAILABLE);
         logger.debug("Finish delete notification service. notification status is {}", deleteServiceNotifStatus);
         return deleteServiceNotifStatus;

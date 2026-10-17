@@ -60,8 +60,15 @@ public class KafkaHandler {
     }
 
     public KafkaHandler() {
-        isKafkaActive = Boolean.parseBoolean(System.getenv().getOrDefault("USE_KAFKA", "false"));
+        isKafkaActive = isKafkaConfigured();
         deConfiguration = ConfigurationManager.getConfigurationManager().getDistributionEngineConfiguration();
+    }
+
+    /**
+     * @return whether the deployment selected Kafka instead of DMaaP via the USE_KAFKA environment variable
+     */
+    public static boolean isKafkaConfigured() {
+        return Boolean.parseBoolean(System.getenv().getOrDefault("USE_KAFKA", "false"));
     }
 
     /**
@@ -95,44 +102,30 @@ public class KafkaHandler {
     }
 
     /**
-     * Publish notification message to a given topic and flush
+     * Publish notification message to a given topic and wait for the broker to acknowledge it
      *
-     * @param topicName The topic to which the message should be published
-     * @param data      The data to publish to the topic specified
+     * @param topicName      The topic to which the message should be published
+     * @param data           The data to publish to the topic specified
+     * @param timeoutSeconds How long to wait for the acknowledgement
      * @return CambriaErrorResponse a status response on success or any errors thrown
      */
-    public CambriaErrorResponse sendNotification(String topicName, INotificationData data) {
-        CambriaErrorResponse response;
-        if(sdcKafkaProducer == null){
+    public CambriaErrorResponse sendNotification(String topicName, INotificationData data, long timeoutSeconds) {
+        if (sdcKafkaProducer == null) {
             sdcKafkaProducer = new SdcKafkaProducer(deConfiguration);
         }
-       try {
-           String json = gson.toJson(data);
-           log.info("Before sending to topic {}", topicName);
-           sdcKafkaProducer.send(json, topicName);
-       }
-       catch(KafkaException e){
-           BeEcompErrorManager.getInstance().logBeDistributionEngineSystemError("sendNotification", e.getMessage());
-           log.error("Failed to send message . Exception {}", e.getMessage());
-
-           return new CambriaErrorResponse(CambriaOperationStatus.INTERNAL_SERVER_ERROR, 500);
-       } catch (JsonSyntaxException e) {
-           BeEcompErrorManager.getInstance().logBeDistributionEngineSystemError("sendNotification", e.getMessage());
-           log.error("Failed to convert data to json: {}", data, e);
-
+        try {
+            String json = gson.toJson(data);
+            log.info("Before sending to topic {}", topicName);
+            sdcKafkaProducer.send(json, topicName, timeoutSeconds);
+            return new CambriaErrorResponse(CambriaOperationStatus.OK, 200);
+        } catch (KafkaException | IllegalStateException | IllegalArgumentException e) {
+            BeEcompErrorManager.getInstance().logBeDistributionEngineSystemError("sendNotification", e.getMessage());
+            log.error("Failed to send message to topic {}", topicName, e);
             return new CambriaErrorResponse(CambriaOperationStatus.INTERNAL_SERVER_ERROR, 500);
-        } finally {
-            try {
-                sdcKafkaProducer.flush();
-                response = new CambriaErrorResponse(CambriaOperationStatus.OK, 200);
-            } catch (KafkaException | IllegalArgumentException e) {
-                BeEcompErrorManager.getInstance().logBeDistributionEngineSystemError("sendNotification", e.getMessage());
-                log.error("Failed to flush sdcKafkaProducer", e);
-
-                response = new CambriaErrorResponse(CambriaOperationStatus.INTERNAL_SERVER_ERROR, 500);
-            }
+        } catch (JsonSyntaxException e) {
+            BeEcompErrorManager.getInstance().logBeDistributionEngineSystemError("sendNotification", e.getMessage());
+            log.error("Failed to convert data to json: {}", data, e);
+            return new CambriaErrorResponse(CambriaOperationStatus.INTERNAL_SERVER_ERROR, 500);
         }
-
-        return response;
     }
 }

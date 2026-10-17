@@ -87,27 +87,35 @@ public class DistributionDeleteNotificationSenderTest {
     public void testSendNotificationForDeleteService_WhenKafkaIsActive() {
         INotificationData notificationData = new NotificationDataImpl();
         when(kafkaHandler.isKafkaActive()).thenReturn(true);
-        when(kafkaHandler.sendNotification(TOPIC_NAME, notificationData))
+        stubDeleteTopicTimeout(10);
+        when(kafkaHandler.sendNotification(TOPIC_NAME, notificationData, 10L))
                 .thenReturn(new CambriaErrorResponse(CambriaOperationStatus.OK, 200));
 
         ActionStatus result = deleteNotificationSender.sendNotificationForDeleteService(
                 TOPIC_NAME, ThreadLocalsHolder.getUuid(), null, notificationData);
 
         assertEquals(ActionStatus.OK, result);
-        verify(kafkaHandler, times(1)).sendNotification(eq(TOPIC_NAME), eq(notificationData));
+        verify(kafkaHandler, times(1)).sendNotification(eq(TOPIC_NAME), eq(notificationData), eq(10L));
     }
 
     @Test
     public void testSendNotificationForDeleteService_WhenKafkaNotificationFails() {
         INotificationData notificationData = new NotificationDataImpl();
         when(kafkaHandler.isKafkaActive()).thenReturn(true);
-        when(kafkaHandler.sendNotification(TOPIC_NAME, notificationData))
+        stubDeleteTopicTimeout(10);
+        when(kafkaHandler.sendNotification(TOPIC_NAME, notificationData, 10L))
                 .thenReturn(new CambriaErrorResponse(CambriaOperationStatus.INTERNAL_SERVER_ERROR, 200));
 
         ActionStatus result = deleteNotificationSender.sendNotificationForDeleteService(
                 TOPIC_NAME, ThreadLocalsHolder.getUuid(), null, notificationData);
 
         assertEquals(ActionStatus.GENERAL_ERROR, result);
-        verify(kafkaHandler, times(1)).sendNotification(eq(TOPIC_NAME), eq(notificationData));
+        verify(kafkaHandler, times(1)).sendNotification(eq(TOPIC_NAME), eq(notificationData), eq(10L));
+    }
+
+    private void stubDeleteTopicTimeout(int seconds) {
+        DistributionDeleteTopicConfig deleteTopicConfig = mock(DistributionEngineConfiguration.DistributionDeleteTopicConfig.class);
+        when(distributionConfig.getDistributionDeleteTopic()).thenReturn(deleteTopicConfig);
+        when(deleteTopicConfig.getMaxWaitingAfterSendingSeconds()).thenReturn(seconds);
     }
 }

@@ -20,6 +20,8 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -29,7 +31,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.components.BeConfDependentTest;
 import org.openecomp.sdc.be.components.distribution.engine.DistributionEngineClusterHealth.HealthCheckScheduledTask;
+import org.openecomp.sdc.be.components.kafka.KafkaHandler;
 import org.openecomp.sdc.common.api.HealthCheckInfo;
+import org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus;
 
 class DistributionEngineClusterHealthTest extends BeConfDependentTest {
 
@@ -124,18 +128,23 @@ class DistributionEngineClusterHealthTest extends BeConfDependentTest {
     }
 
     @Test
-    void testHealthCheckScheduledTaskRunWithKafkaActive() throws Exception {
-        DistributionEngineClusterHealth testSubject;
+    void testHealthCheckScheduledTaskDoesNotForceUpWhenKafkaActive() {
         Map<String, AtomicBoolean> envNamePerStatus = new HashMap<>();
         envNamePerStatus.put("mock", new AtomicBoolean(true));
-        // When Kafka is active, the health check should skip UEB queries
-        // and report healthy based on the environment status alone
-        testSubject = createTestSubject();
+        DistributionEngineClusterHealth testSubject = createTestSubject();
         testSubject.setKafkaActive(true);
         testSubject.startHealthCheckTask(envNamePerStatus, false);
         HealthCheckScheduledTask healthCheckScheduledTask = testSubject.new HealthCheckScheduledTask(new LinkedList<>());
-        // No UEB health check calls configured - should still report healthy
+
         Deencapsulation.invoke(healthCheckScheduledTask, "run");
+
+        assertEquals(HealthCheckStatus.UNKNOWN, testSubject.getHealthCheckInfo().getHealthCheckStatus());
+    }
+
+    @Test
+    void testKafkaFlagMatchesKafkaHandler() {
+        boolean healthKafkaActive = Deencapsulation.getField(createTestSubject(), "isKafkaActive");
+        assertEquals(new KafkaHandler().isKafkaActive(), healthKafkaActive);
     }
 
     @Test

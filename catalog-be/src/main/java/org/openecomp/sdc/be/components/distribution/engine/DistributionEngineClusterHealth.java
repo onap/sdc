@@ -35,6 +35,7 @@ import javax.annotation.PreDestroy;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.openecomp.sdc.be.components.kafka.KafkaHandler;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
@@ -53,7 +54,7 @@ public class DistributionEngineClusterHealth {
     //TODO use LoggerMetric instead
     private static final Logger healthLogger = Logger.getLogger(UEB_HEALTH_LOG_CONTEXT);
     @Setter
-    private boolean isKafkaActive = Boolean.parseBoolean(System.getenv().getOrDefault("USE_KAFKA", "true"));
+    private boolean isKafkaActive = KafkaHandler.isKafkaConfigured();
     boolean lastHealthState = false;
     Object lockOject = new Object();
     ScheduledExecutorService healthCheckScheduler = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
@@ -158,6 +159,20 @@ public class DistributionEngineClusterHealth {
         }
     }
 
+    public void setHealthCheckUnavailableAndReportInCaseLastStateIsUp() {
+        if (healthCheckInfo == HealthCheckInfoResult.UNAVAILABLE.getHealthCheckInfo()) {
+            return;
+        }
+        synchronized (lockOject) {
+            if (healthCheckInfo != HealthCheckInfoResult.UNAVAILABLE.getHealthCheckInfo()) {
+                logger.debug("Going to update health check state to unavailable");
+                lastHealthState = false;
+                healthCheckInfo = HealthCheckInfoResult.UNAVAILABLE.getHealthCheckInfo();
+                logAlarm(lastHealthState);
+            }
+        }
+    }
+
     @AllArgsConstructor
     @Getter
     private enum HealthCheckInfoResult {
@@ -216,18 +231,13 @@ public class DistributionEngineClusterHealth {
         @Override
         public void run() {
             healthLogger.trace("Executing UEB Health Check Task - Start");
+            if (isKafkaActive) {
+                healthLogger.trace("Kafka is active, health is reported by the status polling task and the notification publisher");
+                return;
+            }
             boolean healthStatus = verifyAtLeastOneEnvIsUp();
             if (healthStatus) {
-                boolean queryStatus;
-                if (isKafkaActive) {
-                    // When MSB (Kafka) is active, we skip legacy UEB health checks.
-                    // The environment status (set by DistributionEngineInitTask and
-                    // DistributionEnginePollingTask) is sufficient to determine health.
-                    queryStatus = true;
-                    healthLogger.trace("MSB (MSB/Kafka) is active, skipping UEB health check query");
-                } else {
-                    queryStatus = queryUeb();
-                }
+                boolean queryStatus = queryUeb();
                 if (queryStatus == lastHealthState) {
                     return;
                 }

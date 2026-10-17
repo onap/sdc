@@ -21,8 +21,13 @@ package org.openecomp.sdc.be.components.kafka;
 
 import com.google.common.annotations.VisibleForTesting;
 import java.util.Properties;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.KafkaException;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
 import org.slf4j.Logger;
@@ -58,17 +63,21 @@ public class SdcKafkaProducer {
     /**
      * @param message A message to Send
      * @param topicName The name of the topic to publish to
+     * @param timeoutSeconds How long to wait for the broker to acknowledge the message
+     * @throws KafkaException if the message was not acknowledged within the timeout
      */
-    public void send(String message, String topicName) throws KafkaException {
+    public void send(String message, String topicName, long timeoutSeconds) throws KafkaException {
         ProducerRecord<String, String> kafkaMessagePayload = new ProducerRecord<>(topicName, "PartitionKey", message);
-        kafkaProducer.send(kafkaMessagePayload);
-    }
-
-    /**
-     * Kafka FLush operation
-     */
-    public void flush() throws KafkaException {
-        log.info("SdcKafkaProducer - flush");
-        kafkaProducer.flush();
+        Future<RecordMetadata> delivery = kafkaProducer.send(kafkaMessagePayload);
+        try {
+            delivery.get(timeoutSeconds, TimeUnit.SECONDS);
+        } catch (ExecutionException e) {
+            throw new KafkaException("Failed to deliver message to topic " + topicName, e.getCause());
+        } catch (TimeoutException e) {
+            throw new KafkaException("Message to topic " + topicName + " was not acknowledged within " + timeoutSeconds + " seconds", e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new KafkaException("Interrupted while waiting for delivery to topic " + topicName, e);
+        }
     }
 }
