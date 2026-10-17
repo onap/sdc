@@ -223,7 +223,7 @@ export class LegacyComponentService implements ILegacyComponentService {
     public validateName = (newName: string, subtype?: string): Promise<IValidate> => {
         let params = new HttpParams();
         if (subtype !== undefined) { params = params.set('subtype', subtype); }
-        return this.http.get(this.url('validate-name', newName), {params}).toPromise() as any;
+        return this.http.get(this.url('validate-name', encodeURIComponent(newName)), {params}).toPromise() as any;
     };
 
     public changeLifecycleState = (component: Component, state: string, commentObj: AsdcComment): Promise<ComponentMetadata> => {
