@@ -91,6 +91,7 @@ import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.IComplexDefaultValue;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.cache.DataTypeWriteTracker;
 import org.openecomp.sdc.be.model.operations.api.DerivedFromOperation;
 import org.openecomp.sdc.be.model.operations.api.IPropertyOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -137,13 +138,16 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
     private static final String UPDATE_DATA_TYPE = "UpdateDataType";
     private static final Logger log = Logger.getLogger(PropertyOperation.class.getName());
     private final DerivedFromOperation derivedFromOperation;
+    private final DataTypeWriteTracker dataTypeWriteTracker;
     private ToscaFunctionValidator toscaFunctionValidator;
     private DataTypeOperation dataTypeOperation;
 
     @Autowired
-    public PropertyOperation(final HealingJanusGraphGenericDao janusGraphGenericDao, final DerivedFromOperation derivedFromOperation) {
+    public PropertyOperation(final HealingJanusGraphGenericDao janusGraphGenericDao, final DerivedFromOperation derivedFromOperation,
+                             final DataTypeWriteTracker dataTypeWriteTracker) {
         this.janusGraphGenericDao = janusGraphGenericDao;
         this.derivedFromOperation = derivedFromOperation;
+        this.dataTypeWriteTracker = dataTypeWriteTracker;
     }
 
     @Autowired
@@ -1193,6 +1197,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
             BeEcompErrorManager.getInstance().logBeFailedAddingNodeTypeError("AddDataType", NodeTypeEnum.DataType.getName());
             return Either.right(operationStatus);
         }
+        dataTypeWriteTracker.markWritten();
         DataTypeData resultCTD = createDataTypeResult.left().value();
         List<PropertyDefinition> properties = dataTypeDefinition.getProperties();
         Either<Map<String, PropertyData>, JanusGraphOperationStatus> addPropertiesToDataType = addPropertiesToDataType(resultCTD.getUniqueId(),
@@ -1308,6 +1313,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
                     .logInternalFlowError("AddPropertyToDataType", "Failed to fetch data type. Status is " + operationStatus, ErrorSeverity.ERROR);
                 return Either.right(operationStatus);
             } else {
+                dataTypeWriteTracker.markWritten();
                 log.debug("Update data type uid {}. Set modification time to {}", uniqueId, modificationTime);
             }
         }

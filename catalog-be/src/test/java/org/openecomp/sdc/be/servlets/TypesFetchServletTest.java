@@ -25,6 +25,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import fj.data.Either;
@@ -232,6 +234,33 @@ class TypesFetchServletTest extends JerseyTest {
         final List<Map<String, Object>> dataTypesPerModel = response.readEntity(List.class);
         assertEquals(1, dataTypesPerModel.size());
         assertTrue(dataTypesPerModel.get(0).containsKey("tosca.datatypes.Root"));
+        verify(applicationDataTypeCache).refreshDataTypesCacheIfRecentlyWritten();
+        verify(applicationDataTypeCache, never()).refreshDataTypesCacheIfStale();
+    }
+
+    @Test
+    void getAllDataTypesServlet_checksStalenessOnlyAfterRecentWrite() {
+        final DataTypeDefinition dataType = new DataTypeDefinition();
+        dataType.setName("tosca.datatypes.Root");
+        when(responseFormat.getStatus()).thenReturn(HttpStatus.OK_200);
+        when(componentsUtils.getResponseFormat(ActionStatus.OK)).thenReturn(responseFormat);
+        when(servletUtils.getUserAdmin()).thenReturn(userBusinessLogic);
+        when(userBusinessLogic.getUser(anyString())).thenReturn(user);
+        when(resourceBusinessLogic.getApplicationDataTypeCache()).thenReturn(applicationDataTypeCache);
+        when(resourceBusinessLogic.getComponentsUtils()).thenReturn(componentsUtils);
+        when(componentsUtils.getAllDataTypes(any(ApplicationDataTypeCache.class), eq(null)))
+            .thenReturn(Map.of(dataType.getName(), dataType));
+
+        final var response = target()
+            .path(rootPath.resolve("dataTypes").toString())
+            .request(MediaType.APPLICATION_JSON)
+            .header(Constants.USER_ID_HEADER, USER_ID)
+            .get();
+
+        assertEquals(HttpStatus.OK_200, response.getStatus());
+        assertTrue(response.readEntity(Map.class).containsKey("tosca.datatypes.Root"));
+        verify(applicationDataTypeCache).refreshDataTypesCacheIfRecentlyWritten();
+        verify(applicationDataTypeCache, never()).refreshDataTypesCacheIfStale();
     }
 
     @Override

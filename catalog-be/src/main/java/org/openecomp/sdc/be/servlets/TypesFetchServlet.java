@@ -156,7 +156,7 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
         if (responseWrapper.isEmpty()) {
             String url = request.getMethod() + " " + request.getRequestURI();
             log.debug("Start handle request of {} - modifier id is {}", url, userId);
-            resourceBusinessLogic.getApplicationDataTypeCache().refreshDataTypesCacheIfStale();
+            resourceBusinessLogic.getApplicationDataTypeCache().refreshDataTypesCacheIfRecentlyWritten();
             final Map<String, DataTypeDefinition> dataTypes = resourceBusinessLogic.getComponentsUtils()
                 .getAllDataTypes(resourceBusinessLogic.getApplicationDataTypeCache(), modelName);
             String dataTypeJson = gson.toJson(dataTypes);
@@ -193,7 +193,7 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
             final boolean exclude = Boolean.parseBoolean(excludePrimitives);
             String url = request.getMethod() + " " + request.getRequestURI();
             log.debug("Start handle request of {} - modifier id is {}", url, userId);
-            resourceBusinessLogic.getApplicationDataTypeCache().refreshDataTypesCacheIfStale();
+            resourceBusinessLogic.getApplicationDataTypeCache().refreshDataTypesCacheIfRecentlyWritten();
             final List<Map<String, DataTypeDefinition>> dataTypesList = new ArrayList<>();
             List<Model> models = new ArrayList<>(modelOperation.findAllModels());
             models.add(new Model(null));

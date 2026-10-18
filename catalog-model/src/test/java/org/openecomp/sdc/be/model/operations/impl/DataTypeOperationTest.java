@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import fj.data.Either;
@@ -36,6 +37,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.janusgraph.core.JanusGraph;
+import org.janusgraph.core.JanusGraphFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -43,6 +47,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
+import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
+import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ModelTypeEnum;
@@ -51,6 +57,7 @@ import org.openecomp.sdc.be.exception.supplier.DataTypeOperationExceptionSupplie
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.cache.DataTypeWriteTracker;
 import org.openecomp.sdc.be.model.dto.PropertyDefinitionDto;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.OperationException;
 import org.openecomp.sdc.be.model.mapper.PropertyDefinitionDtoMapper;
@@ -69,6 +76,8 @@ class DataTypeOperationTest {
     private HealingJanusGraphGenericDao janusGraphGenericDao;
     @Mock
     private PropertyOperation propertyOperation;
+    @Mock
+    private DataTypeWriteTracker dataTypeWriteTracker;
 
     private final String modelName = "ETSI-SDC-MODEL-TEST";
     private final List<DataTypeData> dataTypesWithoutModel = new ArrayList<>();
@@ -83,6 +92,44 @@ class DataTypeOperationTest {
         dataTypeOperation.setModelOperation(modelOperation);
         dataTypeOperation.setPropertyOperation(propertyOperation);
         initTestData();
+    }
+
+    @Test
+    void deleteDataTypesByDataTypeIdRecordsWrite() {
+        final JanusGraph graph = JanusGraphFactory.build().set("storage.backend", "inmemory").open();
+        try {
+            final Vertex dataType = graph.addVertex();
+            dataType.property(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), "test.data.type001");
+            when(janusGraphGenericDao.getJanusGraph()).thenReturn(graph);
+
+            dataTypeOperation.deleteDataTypesByDataTypeId("test.data.type001");
+
+            assertTrue(graph.traversal().V().has(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), "test.data.type001").toList().isEmpty());
+            verify(dataTypeWriteTracker).markWritten();
+        } finally {
+            graph.close();
+        }
+    }
+
+    @Test
+    void deleteDataTypesByModelIdRecordsWrite() {
+        final JanusGraph graph = JanusGraphFactory.build().set("storage.backend", "inmemory").open();
+        try {
+            final Vertex modelVertex = graph.addVertex();
+            modelVertex.property(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), modelName);
+            final Vertex dataType = graph.addVertex();
+            dataType.property(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), "test.data.type003");
+            dataType.property(GraphPropertiesDictionary.LABEL.getProperty(), NodeTypeEnum.DataType.getName());
+            modelVertex.addEdge(GraphEdgeLabels.MODEL_ELEMENT.getProperty(), dataType);
+            when(janusGraphGenericDao.getJanusGraph()).thenReturn(graph);
+
+            dataTypeOperation.deleteDataTypesByModelId(modelName);
+
+            assertTrue(graph.traversal().V().has(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), "test.data.type003").toList().isEmpty());
+            verify(dataTypeWriteTracker).markWritten();
+        } finally {
+            graph.close();
+        }
     }
 
     @Test

@@ -26,6 +26,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import fj.data.Either;
@@ -64,6 +66,9 @@ class ApplicationDataTypeCacheTest {
 
     @Mock
 	private ApplicationEventPublisher applicationEventPublisher;
+
+    @Mock
+    private DataTypeWriteTracker dataTypeWriteTracker;
 
     @InjectMocks
     private ApplicationDataTypeCache applicationDataTypeCache;
@@ -197,6 +202,30 @@ class ApplicationDataTypeCacheTest {
 	}
 
 	@Test
+	void testRequestPathCheckSkippedWithoutRecentWrite() {
+		initWithIdlePolling();
+		when(dataTypeWriteTracker.wasWrittenWithin(Duration.ofSeconds(3600))).thenReturn(false);
+		applicationDataTypeCache.refreshDataTypesCacheIfRecentlyWritten();
+		verify(dataTypeOperation, never()).getAllDataTypeNodes();
+	}
+
+	@Test
+	void testRequestPathCheckRunsAfterRecentWrite() {
+		initWithIdlePolling();
+		when(dataTypeWriteTracker.wasWrittenWithin(Duration.ofSeconds(3600))).thenReturn(true);
+		applicationDataTypeCache.refreshDataTypesCacheIfRecentlyWritten();
+		verify(dataTypeOperation).getAllDataTypeNodes();
+	}
+
+	@Test
+	void testRequestPathCheckRunsWhenPollingIsOff() {
+		mockEmptyConfiguration();
+		applicationDataTypeCache.init();
+		applicationDataTypeCache.refreshDataTypesCacheIfRecentlyWritten();
+		verify(dataTypeOperation).getAllDataTypeNodes();
+	}
+
+	@Test
 	void testGetAllWithNoInitialization() {
 		final Map<String, Map<String, DataTypeDefinition>> dataTypeDefinitionMap = new HashMap<>();
 		when(propertyOperation.getAllDataTypes()).thenReturn(Either.left(dataTypeDefinitionMap));
@@ -231,6 +260,15 @@ class ApplicationDataTypeCacheTest {
 		assertEquals(expectedDataTypeDefinition.getCreationTime(), actualDataTypeDefinition.getCreationTime());
 		assertEquals(expectedDataTypeDefinition.getModificationTime(), actualDataTypeDefinition.getModificationTime());
 	}
+
+    private void initWithIdlePolling() {
+        final var applicationL1CacheInfo = new ApplicationL1CacheInfo();
+        applicationL1CacheInfo.setEnabled(true);
+        applicationL1CacheInfo.setFirstRunDelay(3600);
+        applicationL1CacheInfo.setPollIntervalInSec(3600);
+        mockConfiguration(applicationL1CacheInfo);
+        applicationDataTypeCache.init();
+    }
 
     private void defaultInit() {
         var applicationL1CacheInfo = new ApplicationL1CacheInfo();

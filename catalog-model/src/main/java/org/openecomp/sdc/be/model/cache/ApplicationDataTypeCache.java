@@ -21,6 +21,7 @@ package org.openecomp.sdc.be.model.cache;
 
 import fj.data.Either;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -69,14 +70,16 @@ public class ApplicationDataTypeCache implements ApplicationCache<DataTypeDefini
     private ScheduledFuture<?> scheduledFuture = null;
     private Map<String, Map<String, DataTypeDefinition>> dataTypesByModelCacheMap = new HashMap<>();
     private final DataTypeOperation dataTypeOperation;
+    private final DataTypeWriteTracker dataTypeWriteTracker;
     private int firstRunDelayInSec = 30;
     private int pollingIntervalInSec = 60;
 
     public ApplicationDataTypeCache(final PropertyOperation propertyOperation, final ApplicationEventPublisher applicationEventPublisher,
-                                    final DataTypeOperation dataTypeOperation) {
+                                    final DataTypeOperation dataTypeOperation, final DataTypeWriteTracker dataTypeWriteTracker) {
         this.propertyOperation = propertyOperation;
         this.applicationEventPublisher = applicationEventPublisher;
         this.dataTypeOperation = dataTypeOperation;
+        this.dataTypeWriteTracker = dataTypeWriteTracker;
         scheduledPollingService = Executors
             .newScheduledThreadPool(1, new BasicThreadFactory.Builder().namingPattern("ApplicationDataTypeCacheThread-%d").build());
     }
@@ -315,6 +318,17 @@ public class ApplicationDataTypeCache implements ApplicationCache<DataTypeDefini
             refreshDataTypesCache();
         }
         log.trace("Finished refresh data types cache. Finished in {}ms", (System.currentTimeMillis() - startTime));
+    }
+
+    /**
+     * Request-path variant of {@link #refreshDataTypesCacheIfStale()}. The staleness check reads every data type vertex, so it only runs
+     * while a write on this instance may not have reached the cache yet: within one polling interval of that write, or always when the
+     * polling task is not running. Writes on other instances are picked up by the polling task.
+     */
+    public void refreshDataTypesCacheIfRecentlyWritten() {
+        if (scheduledFuture == null || dataTypeWriteTracker.wasWrittenWithin(Duration.ofSeconds(pollingIntervalInSec))) {
+            refreshDataTypesCacheIfStale();
+        }
     }
 
     private void refreshDataTypesCache() {

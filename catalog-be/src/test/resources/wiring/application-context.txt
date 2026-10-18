@@ -127,6 +127,7 @@ dataTypeBusinessLogic : org.openecomp.sdc.be.components.impl.DataTypeBusinessLog
 dataTypeImportManager : org.openecomp.sdc.be.components.impl.DataTypeImportManager
 dataTypeServlet : org.openecomp.sdc.be.servlets.DataTypeServlet
 dataTypeValidatorConverter : org.openecomp.sdc.be.config.CatalogModelSpringConfig#0#dataTypeValidatorConverter -> org.openecomp.sdc.be.model.tosca.validators.DataTypeValidatorConverter destroy-method=(inferred)
+dataTypeWriteTracker : org.openecomp.sdc.be.model.cache.DataTypeWriteTracker
 dataTypesService : org.openecomp.sdc.be.components.impl.DataTypesService
 declaredInputsResolver : org.openecomp.sdc.be.components.merge.input.DeclaredInputsResolver
 declaredOutputsResolver : org.openecomp.sdc.be.components.merge.output.DeclaredOutputsResolver
