@@ -41,8 +41,15 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -315,6 +322,43 @@ class SecurityManagerTest {
         byte[] archive = readAllBytes("/cert/3-file-signed-package/dummyPnfv4.csar");
         byte[] cert = readAllBytes("/cert/3-file-signed-package/dummyPnfv4.cert");
         assertTrue(securityManager.verifySignedData(signature, cert, archive));
+    }
+
+    @Test
+    void verifySignedDataConcurrentlyOnFirstUse() throws Exception {
+        prepareCertFiles("/cert/rootCA.cert", cerDirPath + "root.cert");
+        final byte[] signature = readAllBytes("/cert/3-file-signed-package/dummyPnfv4.cms");
+        final byte[] archive = readAllBytes("/cert/3-file-signed-package/dummyPnfv4.csar");
+        final byte[] cert = readAllBytes("/cert/3-file-signed-package/dummyPnfv4.cert");
+        final int threads = 4;
+        final ExecutorService executor = Executors.newFixedThreadPool(threads);
+        try {
+            int failures = 0;
+            for (int round = 0; round < 50; round++) {
+                final SecurityManager freshSecurityManager = new SecurityManager(certDir.getPath());
+                final CountDownLatch start = new CountDownLatch(1);
+                final List<Future<Boolean>> results = new ArrayList<>();
+                for (int i = 0; i < threads; i++) {
+                    results.add(executor.submit(() -> {
+                        start.await();
+                        try {
+                            return freshSecurityManager.verifySignedData(signature, cert, archive);
+                        } catch (final SecurityManagerException e) {
+                            return false;
+                        }
+                    }));
+                }
+                start.countDown();
+                for (final Future<Boolean> result : results) {
+                    if (!result.get(30, TimeUnit.SECONDS)) {
+                        failures++;
+                    }
+                }
+            }
+            assertEquals(0, failures);
+        } finally {
+            executor.shutdownNow();
+        }
     }
 
     @Test
