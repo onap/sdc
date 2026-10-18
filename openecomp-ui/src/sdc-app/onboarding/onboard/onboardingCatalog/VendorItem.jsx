@@ -31,6 +31,7 @@ import {
 
 import VSPOverlay from './VSPOverlay.jsx';
 import { TooltipWrapper } from './Tooltip.jsx';
+import Term from 'nfvo-components/term/Term.jsx';
 
 class VendorItem extends React.Component {
     static propTypes = {
@@ -91,13 +92,15 @@ class VendorItem extends React.Component {
                 </TileInfo>
                 <TileFooter align="center">
                     <TileFooterCell dataTestId="catalog-create-new-vsp-from-vendor">
-                        <Button
-                            btnType="link"
-                            color="primary"
-                            iconName="plusThin"
-                            onClick={this.onCreateVspClick}>
-                            {i18n('Create new VSP')}
-                        </Button>
+                        <Term term="VSP">
+                            <Button
+                                btnType="link"
+                                color="primary"
+                                iconName="plusThin"
+                                onClick={this.onCreateVspClick}>
+                                {i18n('Create new VSP')}
+                            </Button>
+                        </Term>
                     </TileFooterCell>
                 </TileFooter>
             </Tile>

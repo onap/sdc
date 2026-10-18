@@ -49,7 +49,7 @@ const CatalogList = ({
                             onClick={onAddVLM}
                             dataTestId={'catalog-add-new-vlm'}
                             className="vlm-type"
-                            title={i18n('CREATE NEW VLM')}
+                            title={i18n('CREATE NEW VENDOR LICENSE MODEL')}
                         />
                     )}
                     {onAddVSP && (
@@ -57,7 +57,7 @@ const CatalogList = ({
                             onClick={() => onAddVSP()}
                             dataTestId={'catalog-add-new-vsp'}
                             className="vsp-type"
-                            title={i18n('CREATE NEW VSP')}
+                            title={i18n('CREATE NEW VENDOR SOFTWARE PRODUCT')}
                             disabledReason={
                                 canAddVSP
                                     ? undefined

@@ -19,6 +19,7 @@ import { Provider } from 'react-redux';
 import GlobalModal from 'nfvo-components/modal/GlobalModal.js';
 import Notifications from 'nfvo-components/notification/Notifications.js';
 import Loader from 'nfvo-components/loader/Loader.jsx';
+import { GlossaryDescriptions } from 'nfvo-components/term/Term.jsx';
 import WebSocketUtil from 'nfvo-utils/WebSocketUtil.js';
 import UserNotificationsActionHelper from 'sdc-app/onboarding/userNotifications/UserNotificationsActionHelper.js';
 import store from './AppStore.js';
@@ -46,6 +47,7 @@ class Application extends React.Component {
                 <div data-onboardingroot="">
                     <GlobalModal />
                     <Notifications />
+                    <GlossaryDescriptions />
                     {this.props.children}
                     <Loader />
                 </div>

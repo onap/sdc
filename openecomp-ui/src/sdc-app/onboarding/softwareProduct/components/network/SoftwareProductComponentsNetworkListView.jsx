@@ -1,5 +1,6 @@
 /*!
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +22,7 @@ import ListEditorView from 'nfvo-components/listEditor/ListEditorView.jsx';
 import ListEditorItemView from 'nfvo-components/listEditor/ListEditorItemView.jsx';
 import ListEditorItemViewField from 'nfvo-components/listEditor/ListEditorItemViewField.jsx';
 import Input from 'nfvo-components/input/validation/Input.jsx';
+import Term from 'nfvo-components/term/Term.jsx';
 
 class SoftwareProductComponentsNetworkView extends React.Component {
     state = {
@@ -178,9 +180,12 @@ class SoftwareProductComponentsNetworkView extends React.Component {
                 </ListEditorItemViewField>
                 <ListEditorItemViewField>
                     <div className={isManual ? 'details-col' : 'details'}>
-                        <div className={isManual ? 'manual-title' : 'title'}>
-                            {i18n('Purpose of NIC')}
-                        </div>
+                        <Term term="NIC">
+                            <div
+                                className={isManual ? 'manual-title' : 'title'}>
+                                {i18n('Purpose of NIC')}
+                            </div>
+                        </Term>
                         {description && (
                             <div className={isManual ? 'description' : ''}>
                                 {description}

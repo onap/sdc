@@ -1,5 +1,6 @@
 /*
  * Copyright © 2016-2018 European Support Limited
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,13 +77,13 @@ export const ByVendorView = ({ data, onDataChanged }) => (
 export const EntityType = ({ data, onDataChanged }) => {
     const items = [
         {
-            label: i18n('VSP'),
+            label: i18n('Vendor Software Product (VSP)'),
             dataTestId: 'catalog-filter-type-vsp',
             value: 'vsp',
             checked: data.itemType && data.itemType.vsp
         },
         {
-            label: i18n('VLM'),
+            label: i18n('Vendor License Model (VLM)'),
             dataTestId: 'catalog-filter-type-vlm',
             value: 'vlm',
             checked: data.itemType && data.itemType.vlm

@@ -32,12 +32,12 @@ import { TooltipWrapper } from './onboardingCatalog/Tooltip.jsx';
 
 const ITEM_TYPE_MAP = {
     [catalogItemTypes.LICENSE_MODEL]: {
-        headerText: i18n('VLM'),
+        headerText: i18n('Vendor License Model'),
         contentIconName: 'vlm',
         color: 'purple'
     },
     [catalogItemTypes.SOFTWARE_PRODUCT]: {
-        headerText: i18n('VSP'),
+        headerText: i18n('Vendor Software Product'),
         contentIconName: 'vsp',
         color: 'blue'
     }

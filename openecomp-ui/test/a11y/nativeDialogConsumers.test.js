@@ -155,7 +155,7 @@ describe('Onboarding catalog tiles', () => {
             />
         );
         noNestedControls(container);
-        fireEvent.click(getByRole('button', { name: 'VSP MyVsp' }));
+        fireEvent.click(getByRole('button', { name: 'Vendor Software Product MyVsp' }));
         fireEvent.click(
             container.querySelector('[data-test-id="catalog-item-name"]')
         );
