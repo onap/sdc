@@ -33,6 +33,7 @@ import org.onap.sdc.frontend.ci.tests.pages.ServiceCreatePage;
 import org.onap.sdc.frontend.ci.tests.pages.TopNavComponent;
 import org.onap.sdc.frontend.ci.tests.utilities.LoaderHelper;
 import org.openqa.selenium.By;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -137,21 +138,41 @@ public class HomePage extends AbstractPageObject {
         }
     }
 
+    /**
+     * Clicks on a button of the Add card menu, e.g. {@code createServiceButton}.
+     *
+     * @param dataTestId the data-tests-id of the button
+     */
+    public void clickOnAddMenuButton(final String dataTestId) {
+        clickOnAdd(By.xpath(String.format("//*[@data-tests-id='%s']", dataTestId)));
+    }
+
     private void clickOnAdd(final By locator) {
-        hoverToAddArea().findElement(locator).click();
+        openAddMenu(locator).click();
+    }
+
+    /**
+     * The menu opens on mouseover and closes on mouseleave, so anything that covers the card for a moment (the
+     * tiles loader) closes it for good: a pointer move to the position the pointer already has dispatches no
+     * event. Every attempt therefore leaves the card first.
+     */
+    private WebElement openAddMenu(final By buttonLocator) {
+        final By addArea = By.xpath(XpathSelector.ADD_BUTTONS_AREA.getXpath());
+        final By sideBar = By.xpath(XpathSelector.HOME_SIDE_BAR.getXpath());
+        return getWait().ignoring(StaleElementReferenceException.class)
+            .withMessage(String.format("waiting for %s to show in the Add menu", buttonLocator))
+            .until(driver -> {
+                new Actions(driver)
+                    .moveToElement(driver.findElement(sideBar))
+                    .moveToElement(driver.findElement(addArea))
+                    .perform();
+                final WebElement button = driver.findElement(buttonLocator);
+                return button.isDisplayed() ? button : null;
+            });
     }
 
     private void clickOnImport(final By locator) {
         hoverToImportArea().findElement(locator).click();
-    }
-
-    /**
-     * Hovers to the Add buttons area.
-     *
-     * @return the add buttons area element
-     */
-    private WebElement hoverToAddArea() {
-        return hoverTo(By.xpath(XpathSelector.ADD_BUTTONS_AREA.getXpath()));
     }
 
     /**

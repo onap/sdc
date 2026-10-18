@@ -96,18 +96,9 @@ public class ServiceUIUtils {
 
     public static void clickAddService() {
         SetupCDTest.getExtendTest().log(Status.INFO, String.format("Clicking the Add Service button"));
-        // HOME shows its tiles loader only after a delay; if it appears after the hover it cancels the Add menu.
-        new HomePage(GeneralUIUtils.getDriver()).isLoaded();
-        try {
-            GeneralUIUtils.hoverOnAreaByTestId(DataTestIdEnum.Dashboard.ADD_AREA.getValue());
-            GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.Dashboard.BUTTON_ADD_SERVICE.getValue()).click();
-            //GeneralUIUtils.hoverAndClickOnButtonByTestId(DataTestIdEnum.Dashboard.ADD_AREA.getValue(),DataTestIdEnum.Dashboard.BUTTON_ADD_SERVICE.getValue());
-            GeneralUIUtils.ultimateWait();
-        } catch (Exception e) {
-            SetupCDTest.getExtendTest().log(Status.WARNING, String.format("Exception on catched on Add Service button, retrying ..."));
-            GeneralUIUtils.hoverOnAreaByClassName("w-sdc-dashboard-card-new");
-            GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.Dashboard.BUTTON_ADD_SERVICE.getValue()).click();
-            GeneralUIUtils.ultimateWait();
-        }
+        final HomePage homePage = new HomePage(GeneralUIUtils.getDriver());
+        homePage.isLoaded();
+        homePage.clickOnAddMenuButton(DataTestIdEnum.Dashboard.BUTTON_ADD_SERVICE.getValue());
+        GeneralUIUtils.ultimateWait();
     }
 }
