@@ -177,12 +177,12 @@
                      rename updates the chip instead of leaving the old name behind. -->
                 <div class="group-tag" *ngIf="component?.name">
                   <div class="sdc-tag">
-                    <div class="tag" data-tests-id="i-sdc-tag-text">{{component.name}}</div>
+                    <div class="tag" data-tests-id="i-sdc-tag-text" [title]="component.name">{{component.name}}</div>
                   </div>
                 </div>
                 <div class="group-tag" *ngFor="let tag of displayedTags">
                   <div class="sdc-tag">
-                    <div class="tag" data-tests-id="i-sdc-tag-text">{{tag}}</div>
+                    <div class="tag" data-tests-id="i-sdc-tag-text" [title]="tag">{{tag}}</div>
                     <button type="button" class="delete" *ngIf="!isViewMode()" (click)="deleteTag(tag)" data-tests-id="i-sdc-tag-delete"
                             [attr.aria-label]="'Delete tag ' + tag">
                       <span class="delete-icon"></span>

@@ -51,6 +51,7 @@
             <ng-template ngx-datatable-cell-template let-row="row" let-expanded="expanded">
                 <div class="expand-collapse-cell" [attr.data-tests-id]="'attrib-name_'+row.name">
                     <svg-icon [clickable]="true" class="expand-collapse-icon"
+                              [style.visibility]="row.description ? null : 'hidden'"
                               [name]="expanded ? 'caret1-up-o': 'caret1-down-o'"
                               [mode]="'primary'"
                               [size]="'medium'" ariaLabel="Show details of {{row.name}}"

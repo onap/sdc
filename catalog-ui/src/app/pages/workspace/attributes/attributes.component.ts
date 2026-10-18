@@ -170,7 +170,7 @@ export class AttributesComponent implements OnInit {
   }
 
   onExpandRow(event) {
-    if (event.type === 'click') {
+    if (event.type === 'click' && event.row.description) {
       this.table.rowDetail.toggleExpandRow(event.row);
     }
   }
