@@ -48,6 +48,7 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.exception.supplier.DataTypeOperationExceptionSupplier;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.cache.DataTypeWriteTracker;
 import org.openecomp.sdc.be.model.dto.PropertyDefinitionDto;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.OperationException;
 import org.openecomp.sdc.be.model.mapper.PropertyDefinitionDtoMapper;
@@ -68,10 +69,12 @@ public class DataTypeOperation extends AbstractOperation {
 
     private ModelOperation modelOperation;
     private PropertyOperation propertyOperation;
+    private final DataTypeWriteTracker dataTypeWriteTracker;
 
     @Autowired
-    public DataTypeOperation(final HealingJanusGraphGenericDao janusGraphGenericDao) {
+    public DataTypeOperation(final HealingJanusGraphGenericDao janusGraphGenericDao, final DataTypeWriteTracker dataTypeWriteTracker) {
         this.janusGraphGenericDao = janusGraphGenericDao;
+        this.dataTypeWriteTracker = dataTypeWriteTracker;
     }
 
     //circular dependency ModelOperation->ModelElementOperation->DataTypeOperation
@@ -189,6 +192,7 @@ public class DataTypeOperation extends AbstractOperation {
             traversal.V(dataTypeVertex).out(GraphEdgeLabels.PROPERTY.getProperty()).drop().iterate();
             dataTypeVertex.remove();
         });
+        dataTypeWriteTracker.markWritten();
     }
 
     public void deleteDataTypesByDataTypeId(final String dataTypeId) {
@@ -201,6 +205,7 @@ public class DataTypeOperation extends AbstractOperation {
             traversal.V(dataTypeVertex).out(GraphEdgeLabels.PROPERTY.getProperty()).drop().iterate();
             dataTypeVertex.remove();
         });
+        dataTypeWriteTracker.markWritten();
     }
 
     public Optional<DataTypeDataDefinition> getDataTypeByUid(final String uniqueId) {

@@ -57,6 +57,7 @@ import org.openecomp.sdc.be.model.IComplexDefaultValue;
 import org.openecomp.sdc.be.model.ModelTestBase;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.cache.DataTypeWriteTracker;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.model.tosca.ToscaType;
@@ -80,7 +81,9 @@ public class PropertyOperationTest extends ModelTestBase {
 
     final DataTypeOperation dataTypeOperation = mock(DataTypeOperation.class);
 
-    PropertyOperation propertyOperation = new PropertyOperation(janusGraphGenericDao, null);
+    final DataTypeWriteTracker dataTypeWriteTracker = mock(DataTypeWriteTracker.class);
+
+    PropertyOperation propertyOperation = new PropertyOperation(janusGraphGenericDao, null, dataTypeWriteTracker);
 
     @Before
     public void setup() {
@@ -488,7 +491,7 @@ public class PropertyOperationTest extends ModelTestBase {
     }
 
     private PropertyOperation createTestSubject() {
-        final var propertyOperation = new PropertyOperation(new HealingJanusGraphGenericDao(new JanusGraphClient()), null);
+        final var propertyOperation = new PropertyOperation(new HealingJanusGraphGenericDao(new JanusGraphClient()), null, dataTypeWriteTracker);
         propertyOperation.setDataTypeOperation(dataTypeOperation);
         return propertyOperation;
     }
@@ -922,6 +925,7 @@ public class PropertyOperationTest extends ModelTestBase {
 
         result = propertyOperation.addDataType(dataTypeDefinition);
         assertTrue(result.isLeft());
+        Mockito.verify(dataTypeWriteTracker).markWritten();
 
         Mockito.doReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND)).when(janusGraphGenericDao)
             .getChild(Mockito.anyString(), Mockito.anyString(), Mockito.eq(GraphEdgeLabels.DERIVED_FROM), Mockito.eq(NodeTypeEnum.DataType),
@@ -941,6 +945,17 @@ public class PropertyOperationTest extends ModelTestBase {
 
         Either<Boolean, JanusGraphOperationStatus> resultIsDefinedDataType = propertyOperation.isDefinedInDataTypes(dataTypeName, null);
         assertTrue(resultIsDefinedDataType.isLeft());
+    }
+
+    @Test
+    public void testAddDataTypeFailureIsNotRecordedAsWrite() {
+        DataTypeDefinition dataTypeDefinition = new DataTypeDefinition();
+        dataTypeDefinition.setName("myDataType");
+        Mockito.doReturn(Either.right(JanusGraphOperationStatus.GENERAL_ERROR)).when(janusGraphGenericDao)
+            .createNode(Mockito.any(), Mockito.eq(DataTypeData.class));
+
+        assertTrue(propertyOperation.addDataType(dataTypeDefinition).isRight());
+        Mockito.verify(dataTypeWriteTracker, Mockito.never()).markWritten();
     }
 
     @Test
