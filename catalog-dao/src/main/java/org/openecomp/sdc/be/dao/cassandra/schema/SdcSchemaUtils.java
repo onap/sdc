@@ -29,6 +29,7 @@ import com.datastax.driver.core.policies.DCAwareRoundRobinPolicy;
 import com.datastax.driver.core.policies.LoadBalancingPolicy;
 import com.datastax.driver.core.policies.TokenAwarePolicy;
 import java.util.List;
+import java.util.concurrent.Future;
 import java.util.function.Supplier;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -82,18 +83,17 @@ public class SdcSchemaUtils {
     }
 
     /**
-     * @return
+     * @return the pending session, or null if there is no cluster
      */
-    public Session connect() {
-        Session session = null;
+    public Future<Session> connectAsync() {
         if (cluster != null) {
             try {
-                session = cluster.connect();
+                return cluster.connectAsync();
             } catch (Throwable e) {
                 log.debug("Failed to connect cluster, error :", e);
             }
         }
-        return session;
+        return null;
     }
 
     public Metadata getMetadata() {

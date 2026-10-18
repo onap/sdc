@@ -44,6 +44,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.function.LongSupplier;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -79,6 +80,11 @@ public class HealthCheckBusinessLogic {
     private static final String LOG_PARTNER_NAME = "SDC.BE";
     private static final String COMPONENT_CHANGED_MESSAGE = "BE Component %s state changed from %s to %s";
     private static final Logger log = Logger.getLogger(HealthCheckBusinessLogic.class.getName());
+    /**
+     * A cycle normally takes a few seconds; without this bound, a cycle that never returns leaves the last result served
+     * for the lifetime of the pod.
+     */
+    private static final long HEALTH_CHECK_STALE_AFTER_NANOS = TimeUnit.SECONDS.toNanos(60);
     private static final HealthCheckUtil healthCheckUtil = new HealthCheckUtil();
     private final ScheduledExecutorService healthCheckScheduler = newSingleThreadScheduledExecutor(
         (Runnable r) -> new Thread(r, "BE-Health-Check-Task"));
@@ -99,11 +105,14 @@ public class HealthCheckBusinessLogic {
     @Autowired
     private SwitchoverDetector switchoverDetector;
     private volatile List<HealthCheckInfo> prevBeHealthCheckInfos = null;
+    private volatile long lastHealthCheckNanos;
+    LongSupplier nanoClock = System::nanoTime;
     private ScheduledFuture<?> scheduledFuture = null;
 
     @PostConstruct
     public void init() {
         prevBeHealthCheckInfos = getBeHealthCheckInfos();
+        lastHealthCheckNanos = nanoClock.getAsLong();
         log.debug("After initializing prevBeHealthCheckInfos: {}", prevBeHealthCheckInfos);
         healthCheckScheduledTask = new HealthCheckScheduledTask();
         if (this.scheduledFuture == null) {
@@ -117,9 +126,20 @@ public class HealthCheckBusinessLogic {
     }
 
     public Pair<Boolean, List<HealthCheckInfo>> getBeHealthCheckInfosStatus() {
+        List<HealthCheckInfo> healthCheckInfos = prevBeHealthCheckInfos;
+        long age = nanoClock.getAsLong() - lastHealthCheckNanos;
+        if (age > HEALTH_CHECK_STALE_AFTER_NANOS) {
+            String description = "Health check has not completed for " + TimeUnit.NANOSECONDS.toSeconds(age) + " seconds";
+            log.error("BE {}, reporting BE as down", description);
+            List<HealthCheckInfo> staleInfos = healthCheckInfos.stream()
+                .filter(info -> !HC_COMPONENT_BE.equals(info.getHealthCheckComponent()))
+                .collect(Collectors.toCollection(ArrayList::new));
+            staleInfos.add(new HealthCheckInfo(HC_COMPONENT_BE, DOWN, getAppVersion(), description));
+            return new ImmutablePair<>(false, staleInfos);
+        }
         Configuration config = ConfigurationManager.getConfigurationManager().getConfiguration();
-        return new ImmutablePair<>(healthCheckUtil.getAggregateStatus(prevBeHealthCheckInfos, config.getHealthStatusExclude()),
-            prevBeHealthCheckInfos);
+        return new ImmutablePair<>(healthCheckUtil.getAggregateStatus(healthCheckInfos, config.getHealthStatusExclude()),
+            healthCheckInfos);
     }
 
     private List<HealthCheckInfo> getBeHealthCheckInfos() {
@@ -398,17 +418,23 @@ public class HealthCheckBusinessLogic {
         @Override
         @WithSpan("HealthCheckBusinessLogic.healthCheck")
         public void run() {
-            mdcFieldsHandler.addInfoForErrorAndDebugLogging(LOG_PARTNER_NAME);
-            Configuration config = ConfigurationManager.getConfigurationManager().getConfiguration();
-            log.trace("Executing BE Health Check Task");
-            List<HealthCheckInfo> currentBeHealthCheckInfos = getBeHealthCheckInfos();
-            boolean healthStatus = healthCheckUtil.getAggregateStatus(currentBeHealthCheckInfos, config.getHealthStatusExclude());
-            boolean prevHealthStatus = healthCheckUtil.getAggregateStatus(prevBeHealthCheckInfos, config.getHealthStatusExclude());
-            boolean anyStatusChanged = anyStatusChanged(currentBeHealthCheckInfos, prevBeHealthCheckInfos);
-            if (prevHealthStatus != healthStatus || anyStatusChanged) {
-                log.trace("BE Health State Changed to {}. Issuing alarm / recovery alarm...", healthStatus);
-                prevBeHealthCheckInfos = currentBeHealthCheckInfos;
-                logAlarm(healthStatus);
+            // scheduleAtFixedRate cancels the task for good if run() throws, so nothing may escape
+            try {
+                mdcFieldsHandler.addInfoForErrorAndDebugLogging(LOG_PARTNER_NAME);
+                Configuration config = ConfigurationManager.getConfigurationManager().getConfiguration();
+                log.trace("Executing BE Health Check Task");
+                List<HealthCheckInfo> currentBeHealthCheckInfos = getBeHealthCheckInfos();
+                boolean healthStatus = healthCheckUtil.getAggregateStatus(currentBeHealthCheckInfos, config.getHealthStatusExclude());
+                boolean prevHealthStatus = healthCheckUtil.getAggregateStatus(prevBeHealthCheckInfos, config.getHealthStatusExclude());
+                boolean anyStatusChanged = anyStatusChanged(currentBeHealthCheckInfos, prevBeHealthCheckInfos);
+                if (prevHealthStatus != healthStatus || anyStatusChanged) {
+                    log.trace("BE Health State Changed to {}. Issuing alarm / recovery alarm...", healthStatus);
+                    prevBeHealthCheckInfos = currentBeHealthCheckInfos;
+                    logAlarm(healthStatus);
+                }
+                lastHealthCheckNanos = nanoClock.getAsLong();
+            } catch (Throwable t) {
+                log.error("BE health check task failed", t);
             }
         }
 

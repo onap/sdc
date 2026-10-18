@@ -33,6 +33,7 @@ import com.datastax.driver.core.Metadata;
 import com.datastax.driver.core.Session;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.dao.cassandra.schema.SdcSchemaUtils;
@@ -50,7 +51,7 @@ class CassandraHealthCheckTest {
     void setUp() {
         sdcSchemaUtils = mock(SdcSchemaUtils.class);
         session = mock(Session.class);
-        when(sdcSchemaUtils.connect()).thenReturn(session);
+        when(sdcSchemaUtils.connectAsync()).thenReturn(CompletableFuture.completedFuture(session));
         final Metadata metadata = metadataWithHosts(true, true, true);
         when(sdcSchemaUtils.getMetadata()).thenReturn(metadata);
         cassandraHealthCheck = new CassandraHealthCheck();
@@ -65,7 +66,7 @@ class CassandraHealthCheckTest {
         assertTrue(cassandraHealthCheck.getCassandraStatus());
         assertTrue(cassandraHealthCheck.getCassandraStatus());
 
-        verify(sdcSchemaUtils, times(1)).connect();
+        verify(sdcSchemaUtils, times(1)).connectAsync();
         verify(session, never()).close();
     }
 
@@ -76,14 +77,47 @@ class CassandraHealthCheckTest {
 
         assertTrue(cassandraHealthCheck.getCassandraStatus());
 
-        verify(sdcSchemaUtils, times(2)).connect();
+        verify(sdcSchemaUtils, times(2)).connectAsync();
     }
 
     @Test
     void statusIsDownWhenSessionCannotBeOpened() {
-        when(sdcSchemaUtils.connect()).thenReturn(null);
+        when(sdcSchemaUtils.connectAsync()).thenReturn(null);
 
         assertFalse(cassandraHealthCheck.getCassandraStatus());
+    }
+
+    @Test
+    void aSessionThatNeverOpensTimesOutAndIsNotRequestedAgain() {
+        when(sdcSchemaUtils.connectAsync()).thenReturn(new CompletableFuture<>());
+        cassandraHealthCheck.sessionTimeoutMillis = 50;
+
+        assertFalse(cassandraHealthCheck.getCassandraStatus());
+        assertFalse(cassandraHealthCheck.getCassandraStatus());
+
+        verify(sdcSchemaUtils, times(1)).connectAsync();
+    }
+
+    @Test
+    void aSessionThatOpensLateIsPickedUpOnTheNextCheck() {
+        final CompletableFuture<Session> pending = new CompletableFuture<>();
+        when(sdcSchemaUtils.connectAsync()).thenReturn(pending);
+        cassandraHealthCheck.sessionTimeoutMillis = 50;
+        assertFalse(cassandraHealthCheck.getCassandraStatus());
+
+        pending.complete(session);
+
+        assertTrue(cassandraHealthCheck.getCassandraStatus());
+    }
+
+    @Test
+    void aFailedSessionIsRequestedAgainOnTheNextCheck() {
+        final CompletableFuture<Session> failed = new CompletableFuture<>();
+        failed.completeExceptionally(new IllegalStateException("no host available"));
+        when(sdcSchemaUtils.connectAsync()).thenReturn(failed, CompletableFuture.completedFuture(session));
+
+        assertFalse(cassandraHealthCheck.getCassandraStatus());
+        assertTrue(cassandraHealthCheck.getCassandraStatus());
     }
 
     @Test
@@ -107,7 +141,7 @@ class CassandraHealthCheckTest {
         ReflectionTestUtils.setField(cassandraHealthCheck, "localDataCenterName", "");
 
         assertFalse(cassandraHealthCheck.getCassandraStatus());
-        verify(sdcSchemaUtils, never()).connect();
+        verify(sdcSchemaUtils, never()).connectAsync();
     }
 
     @Test

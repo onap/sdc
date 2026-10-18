@@ -28,6 +28,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,12 +40,16 @@ import org.openecomp.sdc.be.catalog.impl.DmaapProducerHealth;
 import org.openecomp.sdc.be.components.BeConfDependentTest;
 import org.openecomp.sdc.be.components.distribution.engine.DistributionEngineClusterHealth;
 import org.openecomp.sdc.be.components.distribution.engine.DmaapHealth;
+import org.openecomp.sdc.be.components.impl.CassandraHealthCheck;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.switchover.detector.SwitchoverDetector;
+import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.api.HealthCheckInfo;
+import org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus;
 import org.openecomp.sdc.common.http.client.api.HttpExecuteException;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
@@ -224,4 +229,53 @@ class HealthCheckBusinessLogicHealthTest extends BeConfDependentTest {
         Assertions.assertEquals(false, result);
     }
 
+    @Test
+    void freshResultIsServedAsIs() {
+        HealthCheckBusinessLogic testSubject = createTestSubjectWithResultAgeOf(TimeUnit.SECONDS.toNanos(5));
+
+        Pair<Boolean, List<HealthCheckInfo>> status = testSubject.getBeHealthCheckInfosStatus();
+
+        Assertions.assertTrue(status.getLeft());
+        Assertions.assertEquals(HealthCheckStatus.UP, statusOf(status.getRight(), Constants.HC_COMPONENT_BE));
+    }
+
+    @Test
+    void staleResultReportsBeDown() {
+        HealthCheckBusinessLogic testSubject = createTestSubjectWithResultAgeOf(TimeUnit.SECONDS.toNanos(61));
+
+        Pair<Boolean, List<HealthCheckInfo>> status = testSubject.getBeHealthCheckInfosStatus();
+
+        Assertions.assertFalse(status.getLeft());
+        Assertions.assertEquals(HealthCheckStatus.DOWN, statusOf(status.getRight(), Constants.HC_COMPONENT_BE));
+        Assertions.assertEquals(HealthCheckStatus.UP, statusOf(status.getRight(), Constants.HC_COMPONENT_JANUSGRAPH));
+    }
+
+    @Test
+    void scheduledTaskSurvivesAThrowable() {
+        HealthCheckBusinessLogic testSubject = createTestSubject();
+        CassandraHealthCheck cassandraHealthCheck = mock(CassandraHealthCheck.class);
+        when(cassandraHealthCheck.getCassandraStatus()).thenThrow(new NoClassDefFoundError("simulated"));
+        ReflectionTestUtils.setField(testSubject, "cassandraHealthCheck", cassandraHealthCheck);
+
+        Assertions.assertDoesNotThrow(testSubject.new HealthCheckScheduledTask()::run);
+    }
+
+    private HealthCheckBusinessLogic createTestSubjectWithResultAgeOf(long ageNanos) {
+        HealthCheckBusinessLogic testSubject = createTestSubject();
+        List<HealthCheckInfo> infos = new LinkedList<>();
+        infos.add(new HealthCheckInfo(Constants.HC_COMPONENT_BE, HealthCheckStatus.UP, null, "OK"));
+        infos.add(new HealthCheckInfo(Constants.HC_COMPONENT_JANUSGRAPH, HealthCheckStatus.UP, null, "OK"));
+        ReflectionTestUtils.setField(testSubject, "prevBeHealthCheckInfos", infos);
+        ReflectionTestUtils.setField(testSubject, "lastHealthCheckNanos", 0L);
+        testSubject.nanoClock = () -> ageNanos;
+        return testSubject;
+    }
+
+    private static HealthCheckStatus statusOf(List<HealthCheckInfo> infos, String component) {
+        return infos.stream()
+            .filter(info -> component.equals(info.getHealthCheckComponent()))
+            .findFirst()
+            .orElseThrow()
+            .getHealthCheckStatus();
+    }
 }
