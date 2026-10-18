@@ -78,6 +78,7 @@ const TOP_LEVEL_PATHS: {[state: string]: string} = {
     'catalog': '/catalog',
     'adminDashboard': '/adminDashboard',
     'onboardVendor': '/onboardVendor',
+    'glossary': '/glossary',
     'error-403': '/error-403',
     'plugins': '/plugins/:path',
     'type-workspace': '/:previousState/type-workspace/:type/:id/:subPage'

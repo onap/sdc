@@ -11,6 +11,8 @@ import { ResourceNamePipe } from "../../pipes/resource-name.pipe";
 import { CatalogService } from "../../services/catalog.service";
 import {TranslatePipe} from "../../shared/translator/translate.pipe";
 import {TranslateService} from "../../shared/translator/translate.service";
+import {GlossaryService} from "../../shared/glossary/glossary.service";
+import {translateServiceStub} from "../../shared/glossary/glossary.testing";
 import {Observable} from "rxjs";
 import {LoaderService} from "onap-ui-angular/dist/loader/loader.service";
 import {categoriesElements} from "../../../jest/mocks/categories.mock";
@@ -124,7 +126,8 @@ describe('catalog component', () => {
                         {provide: CatalogService, useValue: catalogServiceMock },
                         {provide: ResourceNamePipe, useValue: {}},
                         {provide: SdcUiServices.LoaderService, useValue: loaderServiceMock },
-                        {provide: TranslateService, useValue: {}}
+                        GlossaryService,
+                        {provide: TranslateService, useValue: translateServiceStub()}
                     ],
                 });
             };
@@ -661,5 +664,33 @@ describe('catalog component', () => {
         expect(resp).toEqual(categoryUniqueMock);
     });
 
+
+    it('labels resource types with their long names but keeps codes as ids and filter keys', () => {
+        const catalog: any = fixture.componentInstance;
+        catalog.checkboxesFilterKeys = checkboxesFilterKeysMock;
+        catalog.buildChecklistModelForTypes();
+        const resource = catalog.typesChecklistModel.checkboxes[0].subLevelChecklist.checkboxes;
+        expect(resource.map((c) => c.label)).toEqual([
+            'Virtual Function (VF)', 'Virtual Function Component (VFC)', 'Complex Resource (CR)',
+            'Physical Network Function (PNF)', 'Connection Point (CP)', 'Virtual Link (VL)']);
+        expect(resource.map((c) => c.testId)).toEqual(
+            ['checkbox-vf', 'checkbox-vfc', 'checkbox-cr', 'checkbox-pnf', 'checkbox-cp', 'checkbox-vl']);
+        expect(resource.map((c) => c.value)).toEqual(
+            ['Resource.VF', 'Resource.VFC', 'Resource.CR', 'Resource.PNF', 'Resource.CP', 'Resource.VL']);
+        expect(catalog.typesChecklistModel.checkboxes[2].subLevelChecklist.checkboxes[0].label).toBe('Data Type');
+    });
+
+    it('relabels the type filter once the language file arrives', () => {
+        const catalog: any = fixture.componentInstance;
+        const glossary: GlossaryService = TestBed.get(GlossaryService);
+        const label = jest.spyOn(glossary, 'label').mockImplementation((code: string) => code);
+        catalog.checkboxesFilterKeys = checkboxesFilterKeysMock;
+        catalog.buildChecklistModelForTypes();
+        expect(catalog.typesChecklistModel.checkboxes[0].subLevelChecklist.checkboxes[0].label).toBe('VF');
+        label.mockRestore();
+        catalog.relabelTypes();
+        expect(catalog.typesChecklistModel.checkboxes[0].subLevelChecklist.checkboxes[0].label)
+            .toBe('Virtual Function (VF)');
+    });
 
 });

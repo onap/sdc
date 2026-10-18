@@ -26,12 +26,13 @@
 import { test, expect, SEL, ADMIN_USER, gotoCold, gotoWorkspaceTab, expectAxeRatchet } from './fixtures/sdc';
 import { Page } from '@playwright/test';
 
-type PageName = 'dashboard' | 'catalog' | 'onboardVendor' | 'serviceCreateGeneral' | 'vfCreateGeneral';
+type PageName = 'dashboard' | 'catalog' | 'onboardVendor' | 'glossary' | 'serviceCreateGeneral' | 'vfCreateGeneral';
 
 const KNOWN: Record<PageName, string[]> = {
     dashboard: [],
     catalog: [],
     onboardVendor: [],
+    glossary: [],
     serviceCreateGeneral: [],
     vfCreateGeneral: [],
 };
@@ -52,6 +53,10 @@ const OPEN: Record<PageName, (p: Page) => Promise<void>> = {
     onboardVendor: async p => {
         await gotoCold(p, '/onboardVendor');
         await p.locator('[data-test-id="catalog-filter-items-type"]').waitFor({ timeout: 60_000 });
+    },
+    glossary: async p => {
+        await gotoCold(p, '/glossary');
+        await p.locator('[data-tests-id="glossary-term-VF"]').waitFor({ timeout: 30_000 });
     },
     serviceCreateGeneral: p => gotoWorkspaceTab(p, { type: 'service', tab: 'general', cold: true }),
     vfCreateGeneral: p => gotoWorkspaceTab(p, { type: 'resource', tab: 'general', cold: true }),

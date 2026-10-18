@@ -21,14 +21,17 @@
 import {NgModule, CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {TranslateModule} from 'app/shared/translator/translate.module';
+import {FormsModule} from '@angular/forms';
 import {LayoutModule} from 'app/components/layout/layout.module';
+import {GlossaryModule} from 'app/shared/glossary/glossary.module';
 
 import {Error403PageComponent} from './error-403/error-403.component';
 import {OnboardVendorPageComponent} from './onboard-vendor/onboard-vendor.component';
+import {GlossaryPageComponent} from './glossary/glossary-page.component';
 
 /**
- * Declares the two page components routed to by the 'error-403' and
- * 'onboardVendor' routes in app.routes.ts.
+ * Declares the page components routed to by the 'error-403', 'onboardVendor'
+ * and 'glossary' routes in app.routes.ts.
  *
  * SdcConfigToken is NOT provided here — it is already root-provided via
  * SdcConfig in AppModule.providers, so OnboardVendorPageComponent receives
@@ -37,20 +40,25 @@ import {OnboardVendorPageComponent} from './onboard-vendor/onboard-vendor.compon
 @NgModule({
     declarations: [
         Error403PageComponent,
-        OnboardVendorPageComponent
+        OnboardVendorPageComponent,
+        GlossaryPageComponent
     ],
     imports: [
         CommonModule,
+        FormsModule,
         TranslateModule,
-        LayoutModule
+        LayoutModule,
+        GlossaryModule
     ],
     exports: [
         Error403PageComponent,
-        OnboardVendorPageComponent
+        OnboardVendorPageComponent,
+        GlossaryPageComponent
     ],
     entryComponents: [
         Error403PageComponent,
-        OnboardVendorPageComponent
+        OnboardVendorPageComponent,
+        GlossaryPageComponent
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

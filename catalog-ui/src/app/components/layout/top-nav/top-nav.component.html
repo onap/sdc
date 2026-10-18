@@ -84,6 +84,11 @@
             <span class="w-sdc-search-icon magnification" aria-hidden="true"></span>
         </div>
 
+        <a class="top-nav-glossary-link" [href]="menuItemHref(glossaryItem)"
+           (click)="onMenuLinkClick($event, glossaryGroup, glossaryItem)"
+           aria-label="Glossary" tooltip="Glossary" tooltipPlacement="left"
+           data-tests-id="main-menu-glossary-link">?</a>
+
         <button type="button" class="notification-icon" aria-label="Vendor Software Product Repository" [ngClass]="{'disabled' : progress > 0}" [disabled]="progress > 0" *ngIf="user && user.role === 'DESIGNER' && notificationIconCallback" (click)="notificationIconCallback()" tooltip="Vendor Software Product Repository" tooltipPlacement="left" data-tests-id="repository-icon"></button>
 
     </nav>

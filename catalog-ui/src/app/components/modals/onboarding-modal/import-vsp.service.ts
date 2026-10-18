@@ -17,7 +17,7 @@ export class ImportVSPService {
         var subject = new Subject<any>();
         const onboardingModalConfig = {
             size: SdcUiCommon.ModalSize.xlarge,
-            title: 'Import VSP',      
+            title: 'Import Vendor Software Product (VSP)',
             type: SdcUiCommon.ModalType.custom,
             testId: 'sampleTestIdModal1',
         } as SdcUiCommon.IModalConfig;

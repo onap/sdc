@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +32,7 @@ import {Subscription} from "rxjs";
 
 declare const window:any;
 
-const TOP_LEVEL_STATES = ['dashboard', 'catalog', 'onboardVendor', 'plugins'];
+const TOP_LEVEL_STATES = ['dashboard', 'catalog', 'onboardVendor', 'plugins', 'glossary'];
 
 @Component({
     selector: 'top-nav',
@@ -56,6 +57,8 @@ export class TopNavComponent implements OnInit, OnChanges {
     private hasUnsavedChanges: boolean;
     public topLvlMenu:MenuItemGroup;
     public openDropdown:MenuItemGroup = null;
+    public glossaryItem:MenuItem = new MenuItem('Glossary', null, 'glossary', 'goToState', null, null);
+    public glossaryGroup:MenuItemGroup = new MenuItemGroup(0, [this.glossaryItem]);
     public user:IUserProperties;
     private topNavPlugins: Array<Plugin>;
 

@@ -8,6 +8,7 @@ import { GlobalPipesModule } from "../../pipes/global-pipes.module";
 import { TranslateModule } from "../../shared/translator/translate.module";
 import { SdcUiComponentsModule } from "onap-ui-angular";
 import {SdcTileModule} from "../../components/ui/tile/sdc-tile.module";
+import {GlossaryModule} from "../../shared/glossary/glossary.module";
 
 @NgModule({
     declarations: [
@@ -21,7 +22,8 @@ import {SdcTileModule} from "../../components/ui/tile/sdc-tile.module";
         UiElementsModule,
         GlobalPipesModule,
         TranslateModule,
-        SdcTileModule
+        SdcTileModule,
+        GlossaryModule
     ],
     exports: [
         CatalogComponent

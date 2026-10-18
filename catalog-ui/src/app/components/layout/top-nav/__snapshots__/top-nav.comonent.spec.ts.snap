@@ -4,6 +4,8 @@ exports[`artifact form component should match current snapshot of top-nav compon
 <top-nav
   _getTopLvlSelectedIndexByState={[Function Function]}
   authService={[Function Object]}
+  glossaryGroup={[Function MenuItemGroup]}
+  glossaryItem={[Function MenuItem]}
   navigationService={[Function Object]}
   openDropdown="null"
   sdcConfig={[Function Object]}
@@ -47,6 +49,15 @@ exports[`artifact form component should match current snapshot of top-nav compon
           class="w-sdc-search-icon magnification"
         />
       </div>
+      <a
+        aria-label="Glossary"
+        class="top-nav-glossary-link"
+        data-tests-id="main-menu-glossary-link"
+        tooltip="Glossary"
+        tooltipplacement="left"
+      >
+        ?
+      </a>
       
     </nav>
   </header>

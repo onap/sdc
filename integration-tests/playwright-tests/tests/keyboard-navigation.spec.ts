@@ -111,7 +111,7 @@ test.describe('keyboard navigation', () => {
         await card.focus();
         await sdcPage.getByRole('button', { name: 'Import VSP' }).focus();
         await sdcPage.keyboard.press('Enter');
-        const dialog = sdcPage.getByRole('dialog', { name: 'Import VSP' });
+        const dialog = sdcPage.getByRole('dialog', { name: 'Import Vendor Software Product (VSP)' });
         await expect(dialog).toBeVisible();
         await expect(dialog).toHaveAttribute('aria-modal', 'true');
         await expect.poll(() => dialog.evaluate((d) => d.contains(document.activeElement))).toBe(true);

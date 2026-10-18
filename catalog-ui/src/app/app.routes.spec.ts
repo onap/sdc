@@ -96,6 +96,10 @@ describe('app.routes', () => {
         expect(go('/no/such/place')).toBe('/dashboard');
     }));
 
+    it('matches the glossary page', fakeAsync(() => {
+        expect(go('/glossary')).toBe('/glossary');
+    }));
+
     it('matches composition, activity_log and deployment as the browser delivers them', fakeAsync(() => {
         expect(goFromBrowser('/catalog/workspace/abc/resource/composition/'))
             .toBe('/catalog/workspace/abc/resource/composition');

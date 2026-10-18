@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +20,8 @@
  */
 
 import * as _ from "lodash";
-import { Component as NgComponent, Inject } from '@angular/core';
+import { Component as NgComponent, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { NavigationService } from "../../services/navigation.service";
 import { SdcUiCommon, SdcUiServices } from "onap-ui-angular";
 import {CacheService} from 'app/services/cache.service';
@@ -35,6 +37,7 @@ import { EntityFilterPipe, IEntityFilterObject, ISearchFilter} from "../../pipes
 import {DEFAULT_MODEL_NAME, States} from "app/utils/constants";
 import {DataTypeCatalogComponent} from "../../models/data-type-catalog-component";
 import {resultCount} from "../../components/ui/live-status/live-status.component";
+import {GlossaryService} from "../../shared/glossary/glossary.service";
 
 interface Gui {
     onComponentSubTypesClick:Function;
@@ -79,7 +82,7 @@ interface ICategoriesMap {
     templateUrl: './catalog.component.html',
     styleUrls:['./catalog.component.less']
 })
-export class CatalogComponent {
+export class CatalogComponent implements OnInit, OnDestroy {
     public checkboxesFilter:IEntityFilterObject;
     public checkboxesFilterKeys:ICheckboxesFilterKeys;
     public gui:Gui;
@@ -120,6 +123,7 @@ export class CatalogComponent {
         active: true
     };
     private categoriesMap:ICategoriesMap;
+    private glossarySubscription: Subscription;
 
     constructor(
         @Inject(SdcConfigToken) private sdcConfig:ISdcConfig,
@@ -128,7 +132,8 @@ export class CatalogComponent {
         private cacheService:CacheService,
         private catalogService:CatalogService,
         private resourceNamePipe:ResourceNamePipe,
-        private loaderService: SdcUiServices.LoaderService
+        private loaderService: SdcUiServices.LoaderService,
+        private glossary: GlossaryService
     ) {}
 
     ngOnInit(): void {
@@ -137,6 +142,14 @@ export class CatalogComponent {
         this.initScopeMembers();
         this.loadFilterParams();
         this.initCatalogData(); // Async task to get catalog from server.
+        // The type filter can be built before en_US.json has loaded, with the codes as labels.
+        this.glossarySubscription = this.glossary.changed.subscribe(() => this.relabelTypes());
+    }
+
+    ngOnDestroy(): void {
+        if (this.glossarySubscription) {
+            this.glossarySubscription.unsubscribe();
+        }
     }
 
     private initLeftSwitch = ():void => {
@@ -199,6 +212,13 @@ export class CatalogComponent {
         return 'checkbox-' + text.toLowerCase().replace(/ /g, '');
     }
 
+    // Rebuilt rather than relabelled in place: a new model reference is what re-renders the checklist.
+    private relabelTypes(): void {
+        if (this.typesChecklistModel) {
+            this.buildChecklistModelForTypes();
+        }
+    }
+
     private buildChecklistModelForTypes() {
         this.componentTypes = {
             Resource: ['VF', 'VFC', 'CR', 'PNF', 'CP', 'VL'],
@@ -214,7 +234,7 @@ export class CatalogComponent {
                         this.componentTypes[ct].map((st) => {
                             const stKey = [ct, st].join('.');
                             const testId = this.getTestIdForCheckboxByText(st);
-                            return new SdcUiCommon.ChecklistItemModel(st, false, this.checkboxesFilterKeys.componentTypes[ct].indexOf(stKey) !== -1, null, testId, stKey);
+                            return new SdcUiCommon.ChecklistItemModel(this.glossary.label(st), false, this.checkboxesFilterKeys.componentTypes[ct].indexOf(stKey) !== -1, null, testId, stKey);
                         })
                     );
                 }

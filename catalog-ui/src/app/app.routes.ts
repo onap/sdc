@@ -24,6 +24,7 @@ import {AttributesOutputsComponent} from './pages/attributes-outputs/attributes-
 import {CatalogComponent} from './pages/catalog/catalog.component';
 import {CompositionPageComponent} from './pages/composition/composition-page.component';
 import {Error403PageComponent} from './pages/error-403/error-403.component';
+import {GlossaryPageComponent} from './pages/glossary/glossary-page.component';
 import {HomeComponent} from './pages/home/home.component';
 import {InterfaceDefinitionComponent} from './pages/interface-definition/interface-definition.page.component';
 import {InterfaceOperationComponent} from './pages/interface-operation/interface-operation.page.component';
@@ -131,6 +132,7 @@ export const routes: Routes = [
     },
     {path: 'onboardVendor', component: OnboardVendorPageComponent, canActivate: [AuthGuard], data: {title: 'Onboard'}},
     {path: 'plugins/:path', component: PluginTabViewPageComponent, canActivate: [AuthGuard], data: {title: 'Plugin'}},
+    {path: 'glossary', component: GlossaryPageComponent, canActivate: [AuthGuard], data: {title: 'Glossary'}},
     {path: 'error-403', component: Error403PageComponent, data: {title: 'Access Denied'}},
 
     {

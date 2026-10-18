@@ -169,6 +169,17 @@ describe('artifact form component', () => {
             .toEqual(['main-menu-button-home', 'main-menu-button-catalog', 'main-menu-button-onboard', 'main-menu-button-dcae-ds']);
     });
 
+    it('links to the glossary through the unsaved-changes-aware menu click', () => {
+        const comp = fixture.componentInstance;
+        fixture.detectChanges();
+        const link: HTMLAnchorElement = fixture.nativeElement.querySelector('[data-tests-id="main-menu-glossary-link"]');
+        expect(link.getAttribute('href')).toBe('#!/glossary');
+        expect(link.getAttribute('aria-label')).toBe('Glossary');
+        comp.menuItemClick = jest.fn();
+        link.click();
+        expect((comp.menuItemClick as jest.Mock).mock.calls[0][1].state).toBe('glossary');
+    });
+
     it('has no href for items that run a callback', () => {
         const item = new MenuItem('VF: x', () => Promise.resolve(true), null, null, []);
         expect(fixture.componentInstance.menuItemHref(item)).toBeNull();
