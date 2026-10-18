@@ -179,6 +179,10 @@ export class ServiceDependenciesEditorComponent implements OnInit {
     private initConstraintOperatorOptions(): void {
         if (!this.selectedProperty) {
             this.operatorTypes = [this.setOperatorDropdownValue(undefined)];
+            // ngOnInit calls this before initSelectedProperty(), so an edited rule must keep its operator.
+            if (!this.currentRule.servicePropertyName) {
+                this.currentRule.constraintOperator = undefined;
+            }
             return;
         }
         const operatorList: DropdownValue[] = [];
@@ -215,6 +219,10 @@ export class ServiceDependenciesEditorComponent implements OnInit {
                 }
                 this.operatorTypes = [this.setOperatorDropdownValue(ConstraintOperatorType.EQUAL)];
                 break;
+        }
+        if (!this.currentRule.constraintOperator) {
+            this.currentRule.constraintOperator = this.operatorTypes.some(operator => operator.value === ConstraintOperatorType.EQUAL)
+                ? ConstraintOperatorType.EQUAL : this.operatorTypes[0].value;
         }
     }
 
