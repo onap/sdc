@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2019, Nordix Foundation. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +20,6 @@
  */
 package org.openecomp.sdc.vendorsoftwareproduct.security;
 
-import com.google.common.collect.ImmutableSet;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -96,8 +96,7 @@ public class SecurityManager {
         }
     }
 
-    private Set<X509Certificate> trustedCertificates = new HashSet<>();
-    private Set<X509Certificate> trustedCertificatesFromPackage = new HashSet<>();
+    private Set<X509Certificate> trustedCertificates = Set.of();
     private File certificateDirectory;
 
     private SecurityManager() {
@@ -119,28 +118,24 @@ public class SecurityManager {
      * @return set of trustedCertificates
      * @throws SecurityManagerException
      */
-    public Set<X509Certificate> getTrustedCertificates() throws SecurityManagerException {
+    public synchronized Set<X509Certificate> getTrustedCertificates() throws SecurityManagerException {
         //if file number in certificate directory changed reload certs
         String[] certFiles = certificateDirectory.list();
         if (certFiles == null) {
             LOGGER.error("Certificate directory is empty!");
-            return ImmutableSet.copyOf(new HashSet<>());
+            return Set.of();
         }
         if (trustedCertificates.size() != certFiles.length) {
-            trustedCertificates = new HashSet<>();
-            processCertificateDir();
+            trustedCertificates = processCertificateDir();
         }
-        if (!trustedCertificatesFromPackage.isEmpty()) {
-            return Stream.concat(trustedCertificatesFromPackage.stream(), trustedCertificates.stream()).collect(Collectors.toUnmodifiableSet());
-        }
-        return ImmutableSet.copyOf(trustedCertificates);
+        return trustedCertificates;
     }
 
     /**
      * Cleans certificate collection
      */
-    public void cleanTrustedCertificates() {
-        trustedCertificates.clear();
+    public synchronized void cleanTrustedCertificates() {
+        trustedCertificates = Set.of();
     }
 
     /**
@@ -260,8 +255,10 @@ public class SecurityManager {
             cert = readSignCert(certs, firstSigner)
                 .orElseThrow(() -> new SecurityManagerException("No matching certificate found in certificate file that should contain one!"));
         }
-        trustedCertificatesFromPackage = readTrustedCerts(certs, firstSigner);
-        if (verifyCertificate(cert, getTrustedCertificates()) == null) {
+        final Set<X509Certificate> trustedCertificatesFromPackage = readTrustedCerts(certs, firstSigner);
+        final Set<X509Certificate> allTrustedCertificates =
+            Stream.concat(trustedCertificatesFromPackage.stream(), getTrustedCertificates().stream()).collect(Collectors.toUnmodifiableSet());
+        if (verifyCertificate(cert, allTrustedCertificates) == null) {
             return false;
         }
         try {
@@ -318,19 +315,21 @@ public class SecurityManager {
         return allCerts;
     }
 
-    private void processCertificateDir() throws SecurityManagerException {
+    private Set<X509Certificate> processCertificateDir() throws SecurityManagerException {
         if (!certificateDirectory.exists() || !certificateDirectory.isDirectory()) {
             LOGGER.error("Issue with certificate directory, check if exists!");
-            return;
+            return Set.of();
         }
         File[] files = certificateDirectory.listFiles();
         if (files == null) {
             LOGGER.error("Certificate directory is empty!");
-            return;
+            return Set.of();
         }
+        final Set<X509Certificate> certificates = new HashSet<>();
         for (File f : files) {
-            trustedCertificates.add(loadCertificate(f));
+            certificates.add(loadCertificate(f));
         }
+        return Set.copyOf(certificates);
     }
 
     private File getcertDirectory(String sdcCertDir) {
