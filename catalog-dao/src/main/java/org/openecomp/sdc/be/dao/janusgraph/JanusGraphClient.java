@@ -29,6 +29,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.function.LongSupplier;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import org.apache.commons.configuration.BaseConfiguration;
@@ -72,7 +73,9 @@ public class JanusGraphClient {
     ExecutorService healthCheckExecutor = Executors.newSingleThreadExecutor(runnable -> new Thread(runnable, "JanusGraph-Health-Check-Thread"));
     HealthCheckTask healthCallableTask = new HealthCheckTask();
     HealthCheckScheduledTask healthCheckScheduledTask = new HealthCheckScheduledTask();
-    boolean lastHealthState = false;
+    volatile boolean lastHealthState = false;
+    private volatile long lastHealthCheckNanos;
+    LongSupplier nanoClock = System::nanoTime;
     JanusGraphClientStrategy janusGraphClientStrategy;
     // Health Check Variables
     private JanusGraph graph;
@@ -271,20 +274,41 @@ public class JanusGraphClient {
         }
     }
 
+    /**
+     * A result older than {@link #healthStaleAfterNanos()} counts as down: a health check task that stopped running would
+     * otherwise keep reporting its last result for the lifetime of the pod.
+     */
     public boolean getHealth() {
-        return this.lastHealthState;
+        if (!lastHealthState) {
+            return false;
+        }
+        long age = nanoClock.getAsLong() - lastHealthCheckNanos;
+        if (age > healthStaleAfterNanos()) {
+            logger.error("JanusGraph health check has not completed for {} seconds, reporting the graph as down",
+                TimeUnit.NANOSECONDS.toSeconds(age));
+            return false;
+        }
+        return true;
+    }
+
+    private long healthStaleAfterNanos() {
+        return TimeUnit.SECONDS.toNanos(3 * (reconnectInterval + healthCheckReadTimeout));
     }
 
     private boolean isGraphOpen() {
         healthLogger.trace("Invoking JanusGraph health check ...");
         Vertex v = null;
         if (graph != null) {
+            Future<Vertex> future = null;
             try {
-                Future<Vertex> future = healthCheckExecutor.submit(healthCallableTask);
+                future = healthCheckExecutor.submit(healthCallableTask);
                 v = future.get(this.healthCheckReadTimeout, TimeUnit.SECONDS);
                 healthLogger.trace("Health Check Node Found... {}", v.property(HEALTH_CHECK));
                 graph.tx().commit();
             } catch (Exception e) {
+                if (future != null) {
+                    future.cancel(true);
+                }
                 String message = e.getMessage();
                 if (message == null) {
                     message = e.getClass().getName();
@@ -354,13 +378,19 @@ public class JanusGraphClient {
         @Override
         @WithSpan("JanusGraphClient.healthCheck")
         public void run() {
-            healthLogger.trace("Executing janusGraph Health Check Task - Start");
-            boolean healthStatus = isGraphOpen();
-            healthLogger.trace("Executing janusGraph Health Check Task - Status = {}", healthStatus);
-            if (healthStatus != lastHealthState) {
-                logger.trace("janusGraph  Health State Changed to {}. Issuing alarm / recovery alarm...", healthStatus);
-                lastHealthState = healthStatus;
-                logAlarm();
+            // scheduleAtFixedRate cancels the task for good if run() throws, so nothing may escape
+            try {
+                healthLogger.trace("Executing janusGraph Health Check Task - Start");
+                boolean healthStatus = isGraphOpen();
+                healthLogger.trace("Executing janusGraph Health Check Task - Status = {}", healthStatus);
+                lastHealthCheckNanos = nanoClock.getAsLong();
+                if (healthStatus != lastHealthState) {
+                    logger.trace("janusGraph  Health State Changed to {}. Issuing alarm / recovery alarm...", healthStatus);
+                    lastHealthState = healthStatus;
+                    logAlarm();
+                }
+            } catch (Throwable t) {
+                logger.error("JanusGraph health check task failed", t);
             }
         }
     }

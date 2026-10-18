@@ -33,6 +33,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -51,6 +55,8 @@ public class CassandraHealthCheck {
     private int HC_FormulaNumber;
     private SdcSchemaUtils sdcSchemaUtils;
     private volatile Session session;
+    private Future<Session> pendingSession;
+    long sessionTimeoutMillis = TimeUnit.SECONDS.toMillis(10);
 
     @PostConstruct
     private void init() {
@@ -131,7 +137,7 @@ public class CassandraHealthCheck {
             // node in the data center, and closing it tears the pools down again. Doing that per check added ~175ms to
             // every cycle. The driver needs the pools to keep the host up/down state this check reads current.
             if (session == null || session.isClosed()) {
-                session = sdcSchemaUtils.connect();
+                session = awaitSession();
             }
             log.debug("The cassandra session is {}", session);
             if (session == null) {
@@ -152,10 +158,37 @@ public class CassandraHealthCheck {
                 log.debug("The cassandra down nodes number is {}", downHostsNumber);
             }
             return HC_FormulaNumber >= downHostsNumber;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return false;
         } catch (Exception e) {
             log.error("create cassandra cluster failed with exception.", e);
             return false;
         }
+    }
+
+    /**
+     * Opening a session has no time bound of its own, and a health check that blocks on it never completes again. An
+     * attempt that is still running is awaited again on the next check rather than started anew.
+     */
+    private Session awaitSession() throws InterruptedException {
+        if (pendingSession == null) {
+            pendingSession = sdcSchemaUtils.connectAsync();
+            if (pendingSession == null) {
+                return null;
+            }
+        }
+        try {
+            Session connected = pendingSession.get(sessionTimeoutMillis, TimeUnit.MILLISECONDS);
+            pendingSession = null;
+            return connected;
+        } catch (TimeoutException e) {
+            log.error("Cassandra session not established within {} ms", sessionTimeoutMillis);
+        } catch (ExecutionException e) {
+            pendingSession = null;
+            log.error("Failed to connect to cassandra", e.getCause());
+        }
+        return null;
     }
 
     @PreDestroy
