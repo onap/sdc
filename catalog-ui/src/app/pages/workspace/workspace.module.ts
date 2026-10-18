@@ -27,6 +27,7 @@ import {WorkspaceTopProgressComponent} from './workspace-container/top-progress.
 import {ManagementWorkflowTabComponent} from './flow-editor/management-workflow-tab.component';
 import {NetworkCallFlowTabComponent} from './flow-editor/network-call-flow-tab.component';
 import {WorkspacePropertiesTabComponent} from './properties-tab/properties-tab.component';
+import {GlossaryModule} from '../../shared/glossary/glossary.module';
 
 @NgModule({
     declarations: [WorkspaceContainerComponent, WorkspaceTopProgressComponent, GeneralTabComponent,
@@ -35,6 +36,7 @@ import {WorkspacePropertiesTabComponent} from './properties-tab/properties-tab.c
         CommonModule,
         FormsModule,
         ReactiveFormsModule,
+        GlossaryModule,
         // Required for the <router-outlet> that hosts the 19 workspace tabs. NOT optional and NOT
         // inherited: `schemas: [CUSTOM_ELEMENTS_SCHEMA]` below makes an unrecognised <router-outlet>
         // compile as an inert unknown element instead of erroring, so without this import the tab

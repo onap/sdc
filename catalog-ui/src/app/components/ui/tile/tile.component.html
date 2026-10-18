@@ -17,8 +17,11 @@
 <div class="sdc-tile sdc-tile-fix-width">
 
     <div class='sdc-tile-header' aria-hidden="true" [ngClass]="{'purple': component.isResource() || !component.isService(), 'blue': component.isService()}">
-        <div *ngIf="component.isResource()" data-tests-id="asset-type">{{component.getComponentSubType()}}</div>
-        <div *ngIf="component.isService()">S</div>
+        <div *ngIf="component.isResource()" data-tests-id="asset-type" class="sdc-tile-asset-type"
+             [attr.data-asset-type]="component.getComponentSubType()"
+             [sdcTerm]="component.getComponentSubType()" [sdcTermUnderline]="false">{{component.getComponentSubType() | glossaryName}}</div>
+        <div *ngIf="component.isService()" class="sdc-tile-asset-type" data-asset-type="S"
+             sdcTerm="S" [sdcTermUnderline]="false">{{'S' | glossaryName}}</div>
         <div *ngIf="!component.isResource() && !component.isService()">{{component.getComponentSubType()}}</div>
     </div>
 
@@ -43,7 +46,8 @@
                  [attr.data-tests-id]="component.name+'Version'">V
                 {{component.version}}
             </div>
-            <div class="sdc-tile-info-line subtitle" [attr.data-tests-id]="component.model">
+            <div class="sdc-tile-info-line subtitle" [attr.data-tests-id]="component.model"
+                 [sdcTerm]="getComponentModel()">
                 {{getComponentModel()}}
             </div>
         </div>

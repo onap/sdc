@@ -27,6 +27,7 @@ import { SdcUiComponentsModule } from "onap-ui-angular";
 import { UiElementsModule } from 'app/components/ui/ui-elements.module';
 import { AddElementsModule } from "../../../components/ui/modal/add-elements/add-elements.module";
 import { TranslateModule } from "app/shared/translator/translate.module";
+import { GlossaryModule } from "app/shared/glossary/glossary.module";
 import { InfoTabComponent } from './panel-tabs/info-tab/info-tab.component';
 import { PanelTabComponent } from "app/pages/composition/panel/panel-tabs/panel-tab.component";
 import { ArtifactsTabComponent } from "app/pages/composition/panel/panel-tabs/artifacts-tab/artifacts-tab.component";
@@ -77,6 +78,7 @@ import {CompositionService} from "../composition.service";
         UiElementsModule,
         AddElementsModule,
         TranslateModule,
+        GlossaryModule,
         NgxDatatableModule,
         DatatableA11yModule,
         ServiceDependenciesModule,

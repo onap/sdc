@@ -19,6 +19,8 @@ import {ComponentMetadata} from '../../../../../models/component-metadata';
 import {Component as TopologyTemplate} from '../../../../../models/components/component';
 import {ComponentInstance} from '../../../../../models/components-instances/component-instance';
 import {KeyValuePipe} from "../../../../../pipes/key-value.pipe";
+import {IsGlossaryTermPipe} from "../../../../../shared/glossary/glossary.pipes";
+import {GlossaryService} from "../../../../../shared/glossary/glossary.service";
 import {TopologyTemplateService} from "../../../../../services/component-services/topology-template.service";
 import {ComponentGenericResponse} from "../../../../../services/responses/component-generic-response";
 import {serviceMetadata} from "../../../../../../jest/mocks/service-metadata.mock";
@@ -56,7 +58,7 @@ describe('InfoTabComponent', () => {
             const configure: ConfigureFn = testBed => {
                 testBed.configureTestingModule({
                     imports: [ ],
-                    declarations: [ InfoTabComponent, TranslatePipe, KeyValuePipe ],
+                    declarations: [ InfoTabComponent, TranslatePipe, KeyValuePipe, IsGlossaryTermPipe ],
                     schemas: [ NO_ERRORS_SCHEMA ],
                     providers: [
                         { provide: Store, useValue: {} },
@@ -69,7 +71,8 @@ describe('InfoTabComponent', () => {
                         { provide: ComponentInstanceService, useValue: {} },
                         { provide: EventListenerService, useValue: eventListenerServiceStub },
                         { provide: TopologyTemplateService, useValue: topologyTemplateServiceStub},
-                        { provide: TranslateService, useValue: {}}
+                        { provide: TranslateService, useValue: {}},
+                        GlossaryService
                     ]
                 });
             };

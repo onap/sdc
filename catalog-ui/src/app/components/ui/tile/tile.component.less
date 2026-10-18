@@ -22,3 +22,19 @@
     }
   }
 }
+
+// Long type names wrap into the empty space left of the icon instead of being cut off, and the
+// badge sits above the icon button (z-index 1), which otherwise covers the header and swallows the
+// hover that shows the glossary tooltip. A click on the badge therefore does not open the asset.
+.sdc-tile .sdc-tile-header {
+  overflow: visible;
+}
+
+.sdc-tile-asset-type {
+  position: relative;
+  z-index: 2;
+  max-width: 120px;
+  white-space: normal;
+  font-size: 12px;
+  line-height: 14px;
+}

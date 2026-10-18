@@ -6,6 +6,7 @@ import { LayoutModule } from "../../components/layout/layout.module";
 import { UiElementsModule } from "../../components/ui/ui-elements.module";
 import { GlobalPipesModule } from "../../pipes/global-pipes.module";
 import { TranslateModule } from "../../shared/translator/translate.module";
+import { GlossaryModule } from "../../shared/glossary/glossary.module";
 import { SdcUiComponentsModule } from "onap-ui-angular";
 import { ResourceService } from "../../services/component-services/resource.service";
 import {ModalImportTypeComponent} from "../../components/ui/modal-import-type/modal-import-type.component";
@@ -21,7 +22,8 @@ import {ModalImportTypeComponent} from "../../components/ui/modal-import-type/mo
         LayoutModule,
         UiElementsModule,
         GlobalPipesModule,
-        TranslateModule
+        TranslateModule,
+        GlossaryModule
 
     ],
     exports: [

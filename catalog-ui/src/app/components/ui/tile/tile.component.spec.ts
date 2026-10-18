@@ -18,6 +18,14 @@
  * ============LICENSE_END=========================================================
  */
 
+import {NO_ERRORS_SCHEMA} from '@angular/core';
+import {TestBed} from '@angular/core/testing';
+import {SdcMenuToken} from '../../../config/sdc-menu.config';
+import {ResourceNamePipe} from '../../../pipes/resource-name.pipe';
+import {GlossaryModule} from '../../../shared/glossary/glossary.module';
+import {GlossaryService} from '../../../shared/glossary/glossary.service';
+import {translateServiceStub} from '../../../shared/glossary/glossary.testing';
+import {TranslateService} from '../../../shared/translator/translate.service';
 import {TileComponent} from './tile.component';
 
 describe('TileComponent accessible name', () => {
@@ -33,18 +41,18 @@ describe('TileComponent accessible name', () => {
             getComponentSubType: () => 'VF',
             getStatus: () => 'In Design'
         }, overrides);
-        const comp = new TileComponent(sdcMenu);
+        const comp = new TileComponent(sdcMenu, new GlossaryService(translateServiceStub()));
         comp.component = component;
         return comp;
     }
 
-    it('names a resource by name, type, version and status', () => {
-        expect(tile({}).accessibleName).toBe('Basic_cnf_macro_gnb, VF, version 0.1, In Design');
+    it('names a resource by name, spelled-out type, version and status', () => {
+        expect(tile({}).accessibleName).toBe('Basic_cnf_macro_gnb, Virtual Function (VF), version 0.1, In Design');
     });
 
     it('tells apart two assets that share a name', () => {
         const vfc = tile({version: '1.0', getComponentSubType: () => 'VFC', getStatus: () => 'Certified'});
-        expect(vfc.accessibleName).toBe('Basic_cnf_macro_gnb, VFC, version 1.0, Certified');
+        expect(vfc.accessibleName).toBe('Basic_cnf_macro_gnb, Virtual Function Component (VFC), version 1.0, Certified');
         expect(vfc.accessibleName).not.toBe(tile({}).accessibleName);
     });
 
@@ -55,7 +63,7 @@ describe('TileComponent accessible name', () => {
 
     it('includes a non-default model', () => {
         expect(tile({model: 'ETSI SOL001 v2.5.1'}).accessibleName)
-            .toBe('Basic_cnf_macro_gnb, VF, version 0.1, model ETSI SOL001 v2.5.1, In Design');
+            .toBe('Basic_cnf_macro_gnb, Virtual Function (VF), version 0.1, model ETSI SOL001 v2.5.1, In Design');
     });
 
     it('names a data type without version or status', () => {
@@ -77,5 +85,49 @@ describe('TileComponent template', () => {
     it('hides the text the button name already carries', () => {
         ['.sdc-tile-header', '.sdc-tile-content-info', '.sdc-tile-footer'].forEach((selector) =>
             expect(doc.querySelector(selector).getAttribute('aria-hidden')).toBe('true'));
+    });
+});
+
+describe('TileComponent badge', () => {
+    const component = (overrides: any) => Object.assign({
+        name: 'n', version: '0.1', model: undefined, icon: 'defaulticon', iconSprite: '',
+        isResource: () => true, isService: () => false,
+        getComponentSubType: () => 'VF', getStatus: () => 'In Design Check Out'
+    }, overrides);
+
+    const render = (comp: any, dict?: any): HTMLElement => {
+        TestBed.configureTestingModule({
+            imports: [GlossaryModule],
+            declarations: [TileComponent, ResourceNamePipe],
+            providers: [{provide: SdcMenuToken, useValue: {}},
+                {provide: TranslateService, useValue: translateServiceStub(dict)}],
+            schemas: [NO_ERRORS_SCHEMA]
+        });
+        const fixture = TestBed.createComponent(TileComponent);
+        fixture.componentInstance.component = comp;
+        fixture.detectChanges();
+        return fixture.nativeElement.querySelector('.sdc-tile-header > div');
+    };
+
+    it('shows the long resource type name and keeps the code for tests', () => {
+        const badge = render(component({}));
+        expect(badge.textContent.trim()).toBe('Virtual Function');
+        expect(badge.getAttribute('data-asset-type')).toBe('VF');
+        expect(badge.getAttribute('data-tests-id')).toBe('asset-type');
+        expect(badge.getAttribute('aria-describedby')).toBe('sdc-glossary-VF');
+    });
+
+    it('shows "Service" instead of S for services', () => {
+        const badge = render(component({isResource: () => false, isService: () => true}));
+        expect(badge.textContent.trim()).toBe('Service');
+        expect(badge.getAttribute('data-asset-type')).toBe('S');
+    });
+
+    it('falls back to the raw code for unknown types', () => {
+        expect(render(component({getComponentSubType: () => 'ServiceProxy'})).textContent.trim()).toBe('ServiceProxy');
+    });
+
+    it('falls back to the raw code while en_US.json is not loaded', () => {
+        expect(render(component({}), {}).textContent.trim()).toBe('VF');
     });
 });

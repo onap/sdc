@@ -37,9 +37,9 @@
                     <div class="w-sdc-dashboard-card-new-content" data-tests-id="AddButtonsArea">
                         <div class="w-sdc-dashboard-card-new-content-plus" [hidden]="displayActions"></div>
                         <div class="sdc-dashboard-create-element-container" [hidden]="!displayActions">
-                            <sdc-button *ngIf="roles[user.role].dashboard.showCreateNew" testId="createResourceButton" size="medium" type="secondary" text="Add VF" (click)="openCreateModal('RESOURCE')"></sdc-button>
-                            <sdc-button *ngIf="roles[user.role].dashboard.showCreateNew" testId="createCRButton" size="medium" type="secondary" text="Add CR" (click)="createCR()"></sdc-button>
-                            <sdc-button *ngIf="roles[user.role].dashboard.showCreateNew" testId="createPNFButton" size="medium" type="secondary" text="Add PNF" (click)="createPNF()"></sdc-button>
+                            <sdc-button *ngIf="roles[user.role].dashboard.showCreateNew" testId="createResourceButton" sdcTerm="VF" [sdcTermUnderline]="false" size="medium" type="secondary" text="Add VF" (click)="openCreateModal('RESOURCE')"></sdc-button>
+                            <sdc-button *ngIf="roles[user.role].dashboard.showCreateNew" testId="createCRButton" sdcTerm="CR" [sdcTermUnderline]="false" size="medium" type="secondary" text="Add CR" (click)="createCR()"></sdc-button>
+                            <sdc-button *ngIf="roles[user.role].dashboard.showCreateNew" testId="createPNFButton" sdcTerm="PNF" [sdcTermUnderline]="false" size="medium" type="secondary" text="Add PNF" (click)="createPNF()"></sdc-button>
                             <sdc-button *ngIf="roles[user.role].dashboard.showCreateNew" testId="createServiceButton" size="medium" type="secondary" text="Add Service" (click)="openCreateModal('SERVICE')"></sdc-button>
                         </div>
                     </div>
@@ -60,17 +60,21 @@
                                 type="secondary"
                                 text="Import VFC"
                                 testId="importVFCbutton"
+                                sdcTerm="VFC"
+                                [sdcTermUnderline]="false"
                                 [extensions]="sdcConfig.toscaFileExtension"
                                 (fileUpload)="onImportVfc($event)"
                                 [convertToBase64]="true"
                             ></sdc-button-file-opener>
-                            <sdc-button *ngIf="roles[user.role].dashboard.showCreateNew" data-tests-id="importButtonsVSP" size="medium" type="secondary" text="Import VSP" (click)="notificationIconCallback()"></sdc-button>
+                            <sdc-button *ngIf="roles[user.role].dashboard.showCreateNew" data-tests-id="importButtonsVSP" sdcTerm="VSP" [sdcTermUnderline]="false" size="medium" type="secondary" text="Import VSP" (click)="notificationIconCallback()"></sdc-button>
                             <sdc-button-file-opener
                                 *ngIf="roles[user.role].dashboard.showCreateNew"
                                 size="medium"
                                 type="secondary"
                                 text="Import DCAE"
                                 testId="importDCAE"
+                                sdcTerm="DCAE"
+                                [sdcTermUnderline]="false"
                                 [extensions]="sdcConfig.csarFileExtension"
                                 (fileUpload)="onImportVf($event)"
                                 [convertToBase64]="true"

@@ -27,7 +27,9 @@
         <!-- RESOURCE TYPE-->
         <div class="component-details-panel-item" role="listitem" *ngIf="details.resourceType">
             <span class="name" [innerHTML]="'Resource Type:'"></span>
-            <span class="value" data-tests-id="rightTab_resourceType" tooltip="{{details.resourceType}}">{{details.resourceType}}</span>
+            <span class="value" data-tests-id="rightTab_resourceType" tooltip="{{details.resourceType}}"
+                  [tooltipDisabled]="details.resourceType | isGlossaryTerm"
+                  [sdcTerm]="details.resourceType">{{details.resourceType}}</span>
         </div>
 
         <!-- VERSION -->
@@ -47,13 +49,17 @@
         <ng-container *ngIf="details.categories && details.categories[0]">
             <div class="component-details-panel-item" role="listitem">
                 <span class="name" [innerHTML]="'GENERAL_LABEL_CATEGORY' | translate"></span>
-                <span class="value" data-tests-id="rightTab_category" tooltip="{{getCategoryDisplayNameOrName(details.categories[0])}}">{{getCategoryDisplayNameOrName(details.categories[0])}}</span>
+                <span class="value" data-tests-id="rightTab_category" tooltip="{{getCategoryDisplayNameOrName(details.categories[0])}}"
+                      [tooltipDisabled]="getCategoryDisplayNameOrName(details.categories[0]) | isGlossaryTerm"
+                      [sdcTerm]="getCategoryDisplayNameOrName(details.categories[0])">{{getCategoryDisplayNameOrName(details.categories[0])}}</span>
             </div>
 
             <!-- SUB CATEGORY -->
             <div class="component-details-panel-item" role="listitem" *ngIf="details.categories[0].subcategories && details.categories[0].subcategories[0]">
                 <span class="name" [innerHTML]="'GENERAL_LABEL_SUB_CATEGORY' | translate"></span>
-                <span class="value" data-tests-id="rightTab_subCategory" tooltip="{{details.categories[0].subcategories[0].name}}">{{details.categories[0].subcategories[0].name}}</span>
+                <span class="value" data-tests-id="rightTab_subCategory" tooltip="{{details.categories[0].subcategories[0].name}}"
+                      [tooltipDisabled]="details.categories[0].subcategories[0].name | isGlossaryTerm"
+                      [sdcTerm]="details.categories[0].subcategories[0].name">{{details.categories[0].subcategories[0].name}}</span>
             </div>
         </ng-container>
 

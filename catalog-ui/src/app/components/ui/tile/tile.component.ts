@@ -5,6 +5,7 @@ import {ElementIcon} from "../sdc-element-icon/sdc-element-icon.component";
 import {ComponentType, DEFAULT_MODEL_NAME, Icon, ResourceType} from "../../../utils/constants";
 import {DataTypeCatalogComponent} from "../../../models/data-type-catalog-component";
 import {ResourceNamePipe} from "../../../pipes/resource-name.pipe";
+import {GlossaryService} from "../../../shared/glossary/glossary.service";
 
 @Component({
     selector: 'ui-tile',
@@ -17,7 +18,7 @@ export class TileComponent {
     public catalogIcon: ElementIcon;
     public hasEllipsis: boolean;
 
-    constructor(@Inject(SdcMenuToken) public sdcMenu: IAppMenu) {
+    constructor(@Inject(SdcMenuToken) public sdcMenu: IAppMenu, private glossary: GlossaryService) {
         this.onTileClick = new EventEmitter<ComponentModel | DataTypeCatalogComponent>();
         this.hasEllipsis = false;
     }
@@ -58,11 +59,11 @@ export class TileComponent {
         }
     }
 
-    /** e.g. "Basic_cnf_macro_gnb, VF, version 0.1, In Design": two assets of one name stay distinguishable. */
+    /** e.g. "Basic_cnf_macro_gnb, Virtual Function (VF), version 0.1, In Design": two assets of one name stay distinguishable. */
     public get accessibleName(): string {
         const component: any = this.component;
         const parts: string[] = [ResourceNamePipe.getDisplayName(component.name)];
-        parts.push(component.isService() ? 'Service' : component.getComponentSubType());
+        parts.push(component.isService() ? 'Service' : this.glossary.label(component.getComponentSubType()));
         if (component.isResource() || component.isService()) {
             parts.push('version ' + component.version);
         }

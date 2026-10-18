@@ -247,7 +247,7 @@
 
           <!-- IMPORT TOSCA FILE VIA ONBOARDING (VSP) -->
           <div class="i-sdc-form-item" *ngIf="isVspImport() && !isShowFileBrowse">
-            <label class="i-sdc-form-label required">VSP</label>
+            <label class="i-sdc-form-label required" sdcTerm="VSP">VSP</label>
             <div class="i-sdc-form-file-upload i-sdc-form-input">
               <span class="i-sdc-form-file-name"
                     data-tests-id="filename">{{component?.importedFile?.filename || ''}}</span>

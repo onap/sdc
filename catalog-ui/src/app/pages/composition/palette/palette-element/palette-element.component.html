@@ -6,6 +6,6 @@
                             tooltip-text='{{paletteElement.name | resourceName}}'>{{paletteElement.name | resourceName}}
         </div>
         <span> V.{{paletteElement.version}}</span>
-        <span>{{paletteElement.componentSubType}}</span>
+        <span [sdcTerm]="paletteElement.componentSubType" [sdcTermUnderline]="false">{{paletteElement.componentSubType}}</span>
     </div>
 </div>

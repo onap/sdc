@@ -49,6 +49,7 @@ import {DynamicComponentService} from './services/dynamic-component.service';
 import {SdcConfig} from './config/sdc-config.config';
 import {SdcMenu} from './config/sdc-menu.config';
 import {TranslateModule} from './shared/translator/translate.module';
+import {GlossaryModule} from './shared/glossary/glossary.module';
 import {TranslationServiceConfig} from './config/translation.service.config';
 import {MultilineEllipsisModule} from './shared/multiline-ellipsis/multiline-ellipsis.module';
 import {ServicePathCreatorModule} from './pages/composition/graph/service-path-creator/service-path-creator.module';
@@ -169,6 +170,7 @@ export function configServiceFactory(config: ConfigService, authService: Authent
     HttpClientModule,
     LayoutModule,
     TranslateModule,
+    GlossaryModule,
     MultilineEllipsisModule,
     UiElementsModule,
     CompositionPanelModule,

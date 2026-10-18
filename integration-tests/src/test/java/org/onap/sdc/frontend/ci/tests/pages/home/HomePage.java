@@ -123,7 +123,7 @@ public class HomePage extends AbstractPageObject {
     public AbstractPageObject clickOnComponent(final String componentName) {
         final WebElement element = waitForElementVisibility(By.xpath(XpathSelector.COMPONENT.getXpath(componentName)));
         final WebElement componentTypeDiv = element.findElement(By.xpath("./../../../div[contains(@class, 'sdc-tile-header')]/div"));
-        final String componentType = componentTypeDiv.getText();
+        final String componentType = componentTypeDiv.getAttribute("data-asset-type");
         assertThat("The given component type should not be null", componentType, is(notNullValue()));
         element.click();
         switch (componentType) {
