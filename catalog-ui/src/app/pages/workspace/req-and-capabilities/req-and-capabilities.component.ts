@@ -103,7 +103,7 @@ export class ReqAndCapabilitiesComponent implements OnInit {
     }
 
     selectTab($event) {
-        this.selectTabName = $event.title.contains('Requirement') ? 'REQUIREMENTS' : 'CATPABILITIES';
+        this.selectTabName = $event.title.includes('Requirement') ? 'REQUIREMENTS' : 'CATPABILITIES';
         this.loadReqOrCap();
     }
 

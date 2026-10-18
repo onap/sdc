@@ -8,6 +8,7 @@ import {SdcUiServices, SdcUiCommon} from "onap-ui-angular";
 import 'rxjs/add/observable/of';
 import {ReqAndCapabilitiesComponent} from "./req-and-capabilities.component";
 import {ReqAndCapabilitiesService} from "./req-and-capabilities.service";
+import {CapabilitiesComponent} from "./capabilities/capabilities.component";
 import {WorkspaceService} from "../workspace.service";
 import {
     capabilitiesMock,
@@ -123,6 +124,14 @@ describe('req and capabilities component', () => {
         }
         fixture.componentInstance.updateFilter(event);
         expect(fixture.componentInstance.instanceRef.instance.capabilities[0].type).toBe("tosca.capabilities.Node");
+    });
+
+    it('loads the capabilities table when the Capabilities tab is selected', () => {
+        fixture.componentInstance.instanceRef = null;
+        createDynamicComponentServiceMock.insertComponentDynamically.mockClear();
+        fixture.componentInstance.selectTab({title: 'Capabilities(2)'});
+        expect(fixture.componentInstance.selectTabName).not.toBe('REQUIREMENTS');
+        expect(createDynamicComponentServiceMock.insertComponentDynamically.mock.calls[0][0]).toBe(CapabilitiesComponent);
     });
 });
 
