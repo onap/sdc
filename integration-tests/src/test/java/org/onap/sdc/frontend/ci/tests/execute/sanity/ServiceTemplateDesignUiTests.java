@@ -274,7 +274,7 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
         verifyToscaTemplateHasSubstitutionFilter(downloadToscaTemplate());
     }
 
-    @Test(dependsOnMethods = "createBaseService")
+    @Test(dependsOnMethods = "addRelationshipTemplate")
     public void createDirectiveNodeFilterTest() throws Exception {
         final ResourceCreateData vfcResourceCreateData = vfcs.get(1);
         final String vfcNameInComposition = vfcResourceCreateData.getName().concat(" 0");
@@ -314,7 +314,7 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
         verifyToscaTemplateHasDirectiveNodeFilter(yaml, serviceDependencyProperty, vfcNameInComposition);
     }
 
-    @Test(dependsOnMethods = "addComponentProperty")
+    @Test(dependsOnMethods = {"addComponentProperty", "addRelationshipTemplate"})
     public void declareInputFromProperties() throws Exception {
         componentPage = (ComponentPage) homePage.clickOnComponent(vfResourceCreateData.getName());
         componentPage.isLoaded();

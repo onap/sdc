@@ -160,30 +160,11 @@ public final class ResourceUIUtils {
     }
 
     private static void createResource(ResourceReqDetails resource, User user, DataTestIdEnum.Dashboard button) {
-        WebElement addVFButton;
-        // HOME shows its tiles loader only after a delay; if it appears after the hover it cancels the Add menu.
-        new HomePage(GeneralUIUtils.getDriver()).isLoaded();
-        try {
-            GeneralUIUtils.ultimateWait();
-            try {
-                GeneralUIUtils.hoverOnAreaByClassName("w-sdc-dashboard-card-new");
-                addVFButton = GeneralUIUtils.getWebElementByTestID(button.getValue());
-            } catch (Exception e) {
-                File imageFilePath = GeneralUIUtils.takeScreenshot(null, SetupCDTest.getScreenshotFolder(), "Warning_" + resource.getName());
-                final String absolutePath = new File(SetupCDTest.getReportFolder()).toURI().relativize(imageFilePath.toURI()).getPath();
-                SetupCDTest.getExtendTest().log(Status.WARNING, "Add button is not visible after hover on import area of Home page, moving on ..." + SetupCDTest.getExtendTest().addScreenCaptureFromPath(absolutePath));
-                showButtonsADD();
-                addVFButton = GeneralUIUtils.getWebElementByTestID(button.getValue());
-            }
-            addVFButton.click();
-            GeneralUIUtils.ultimateWait();
-        } catch (Exception e) {
-            SetupCDTest.getExtendTest().log(Status.WARNING, String.format("Exeption catched on ADD button, retrying ... "));
-            GeneralUIUtils.hoverOnAreaByClassName("w-sdc-dashboard-card-new");
-            GeneralUIUtils.ultimateWait();
-            GeneralUIUtils.getWebElementByTestID(button.getValue()).click();
-            GeneralUIUtils.ultimateWait();
-        }
+        final HomePage homePage = new HomePage(GeneralUIUtils.getDriver());
+        homePage.isLoaded();
+        GeneralUIUtils.ultimateWait();
+        homePage.clickOnAddMenuButton(button.getValue());
+        GeneralUIUtils.ultimateWait();
         fillResourceGeneralInformationPage(resource, user, true);
         resource.setVersion("0.1");
         GeneralPageElements.clickCreateButton();
@@ -348,23 +329,6 @@ public final class ResourceUIUtils {
         WebElement fileInputElementWithVisible = GeneralUIUtils.getDriver().findElement(By.className(parentElementClassAttribute));
         GeneralUIUtils.unhideElement(fileInputElementWithVisible, parentElementClassAttribute);
         GeneralUIUtils.ultimateWait();
-        SetupCDTest.getExtendTest().log(Status.WARNING, String.format("Input buttons now visible..."));
-    }
-
-    private static void showButtonsADD() {
-        try {
-            GeneralUIUtils.ultimateWait();
-            String parentElementClassAttribute = "sdc-dashboard-create-element-container";
-            WebElement fileInputElementWithVisible = GeneralUIUtils.getDriver().findElement(By.className(parentElementClassAttribute));
-            GeneralUIUtils.unhideElement(fileInputElementWithVisible, parentElementClassAttribute);
-            GeneralUIUtils.ultimateWait();
-        } catch (Exception e) {
-            GeneralUIUtils.ultimateWait();
-            String parentElementClassAttribute = "sdc-dashboard-create-element-container";
-            WebElement fileInputElementWithVisible = GeneralUIUtils.getDriver().findElement(By.className(parentElementClassAttribute));
-            GeneralUIUtils.unhideElement(fileInputElementWithVisible, parentElementClassAttribute);
-            GeneralUIUtils.ultimateWait();
-        }
         SetupCDTest.getExtendTest().log(Status.WARNING, String.format("Input buttons now visible..."));
     }
 

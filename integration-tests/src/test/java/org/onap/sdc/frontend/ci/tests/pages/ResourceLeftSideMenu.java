@@ -25,15 +25,15 @@ import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionPage;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.InterfaceDefinitionPage;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.ToscaArtifactsPage;
 import org.openqa.selenium.By;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 /**
  * Handles the Resource Page Left Side Menu UI actions
  */
 public class ResourceLeftSideMenu extends AbstractPageObject {
-
-    private WebElement wrappingElement;
 
     public ResourceLeftSideMenu(final WebDriver webDriver) {
         super(webDriver);
@@ -42,17 +42,7 @@ public class ResourceLeftSideMenu extends AbstractPageObject {
 
     @Override
     public void isLoaded() {
-        wrappingElement = getWrappingElement();
         waitToBeClickable(By.xpath(XpathSelector.GENERAL_MENU.getXpath()));
-    }
-
-    /**
-     * Gets the enclosing element of the menu.
-     *
-     * @return the enclosing element
-     */
-    public WebElement getWrappingElement() {
-        return waitForElementVisibility(By.className(XpathSelector.MAIN_DIV.getId()));
     }
 
     /**
@@ -61,7 +51,7 @@ public class ResourceLeftSideMenu extends AbstractPageObject {
      * @return the next page object
      */
     public ResourcePropertiesAssignmentPage clickOnPropertiesAssignmentMenuItem() {
-        wrappingElement.findElement(By.xpath(XpathSelector.PROPERTIES_ASSIGNMENT_MENU.getXpath())).click();
+        clickOnMenuItem(XpathSelector.PROPERTIES_ASSIGNMENT_MENU);
         return new ResourcePropertiesAssignmentPage(webDriver);
     }
 
@@ -71,7 +61,7 @@ public class ResourceLeftSideMenu extends AbstractPageObject {
      * @return the next page object
      */
     public AttributesOutputsPage clickOnAttributesOutputsMenuItem() {
-        wrappingElement.findElement(By.xpath(XpathSelector.ATTRIBUTES_OUTPUTS_MENU.getXpath())).click();
+        clickOnMenuItem(XpathSelector.ATTRIBUTES_OUTPUTS_MENU);
         return new AttributesOutputsPage(webDriver);
     }
 
@@ -81,7 +71,7 @@ public class ResourceLeftSideMenu extends AbstractPageObject {
      * @return the next page object
      */
     public AttributesPage clickOnAttributesMenuItem() {
-        wrappingElement.findElement(By.xpath(XpathSelector.ATTRIBUTES_MENU.getXpath())).click();
+        clickOnMenuItem(XpathSelector.ATTRIBUTES_MENU);
         return new AttributesPage(webDriver);
     }
 
@@ -91,7 +81,7 @@ public class ResourceLeftSideMenu extends AbstractPageObject {
      * @return the next page object
      */
     public ToscaArtifactsPage clickOnToscaArtifactsMenuItem() {
-        wrappingElement.findElement(By.xpath(XpathSelector.TOSCA_ARTIFACTS_MENU.getXpath())).click();
+        clickOnMenuItem(XpathSelector.TOSCA_ARTIFACTS_MENU);
         return new ToscaArtifactsPage(webDriver);
     }
 
@@ -101,7 +91,7 @@ public class ResourceLeftSideMenu extends AbstractPageObject {
      * @return the next page object
      */
     public InterfaceDefinitionPage clickOnInterfaceDefinitionMenuItem() {
-        wrappingElement.findElement(By.xpath(XpathSelector.INTERFACE_DEFINITION_MENU.getXpath())).click();
+        clickOnMenuItem(XpathSelector.INTERFACE_DEFINITION_MENU);
         return new InterfaceDefinitionPage(webDriver);
     }
 
@@ -111,18 +101,35 @@ public class ResourceLeftSideMenu extends AbstractPageObject {
      * @return the next page object
      */
     public <T extends ComponentPage> T clickOnGeneralMenuItem(Class<? extends T> clazz) {
-        wrappingElement.findElement(By.xpath(XpathSelector.GENERAL_MENU.getXpath())).click();
+        clickOnMenuItem(XpathSelector.GENERAL_MENU);
         return (T) new ComponentPage(webDriver);
     }
 
     public CompositionPage clickOnCompositionMenuItem() {
-        wrappingElement.findElement(By.xpath(XpathSelector.COMPOSITION_MENU.getXpath())).click();
+        clickOnMenuItem(XpathSelector.COMPOSITION_MENU);
         return new CompositionPage(webDriver);
     }
 
     public ResourcePropertiesPage clickOnPropertiesMenuItem() {
-        wrappingElement.findElement(By.xpath(XpathSelector.PROPERTIES_MENU.getXpath())).click();
+        clickOnMenuItem(XpathSelector.PROPERTIES_MENU);
         return new ResourcePropertiesPage(webDriver);
+    }
+
+    /**
+     * Looks the item up afresh on every attempt instead of under a cached sidebar element: HOME renders a
+     * {@code div.w-sdc-left-sidebar} too, and right after a tile click that one can still be the match while
+     * the workspace is resolving, only to be detached when the workspace replaces it.
+     */
+    private void clickOnMenuItem(final XpathSelector menuItem) {
+        final By locator = By.xpath(menuItem.getXpath());
+        getWait().ignoring(StaleElementReferenceException.class).until(driver -> {
+            final WebElement item = ExpectedConditions.elementToBeClickable(locator).apply(driver);
+            if (item == null) {
+                return false;
+            }
+            item.click();
+            return true;
+        });
     }
 
     /**
@@ -130,7 +137,6 @@ public class ResourceLeftSideMenu extends AbstractPageObject {
      */
     @AllArgsConstructor
     private enum XpathSelector {
-        MAIN_DIV("w-sdc-left-sidebar", "//div[@class='%s']"),
         PROPERTIES_ASSIGNMENT_MENU("Properties AssignmentLeftSideMenu", "//*[@data-tests-id='%s']"),
         PROPERTIES_MENU("PropertiesLeftSideMenu", "//*[@data-tests-id='%s']"),
         ATTRIBUTES_OUTPUTS_MENU("Attributes & OutputsLeftSideMenu", "//*[@data-tests-id='%s']"),
