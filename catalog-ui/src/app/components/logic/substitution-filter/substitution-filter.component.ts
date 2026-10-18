@@ -33,6 +33,8 @@ import {ToscaFilterConstraintType} from "../../../models/tosca-filter-constraint
 import {FilterConstraint} from "app/models/filter-constraint";
 import {PropertyFilterConstraintUi} from "../../../models/ui-models/property-filter-constraint-ui";
 import {FilterConstraintHelper, ConstraintOperatorType} from "../../../utils/filter-constraint-helper";
+import {NavigationService} from 'app/services/navigation.service';
+import {States} from 'app/utils/constants';
 
 class I18nTexts {
   static addSubstitutionFilterTxt: string;
@@ -84,7 +86,8 @@ export class SubstitutionFilterComponent implements OnInit, OnChanges {
   @Output() loadConstraintListEvent: EventEmitter<any> = new EventEmitter();
   @Output() hasSubstitutionFilter = new EventEmitter<boolean>();
 
-  constructor(private topologyTemplateService: TopologyTemplateService, private modalService: ModalService, private translateService: TranslateService) {
+  constructor(private topologyTemplateService: TopologyTemplateService, private modalService: ModalService, private translateService: TranslateService,
+              private navigationService: NavigationService) {
   }
 
   ngOnInit(): void {
@@ -219,6 +222,14 @@ export class SubstitutionFilterComponent implements OnInit, OnChanges {
       this.isLoading = false;
     });
     this.modalService.closeCurrentModal();
+  }
+
+  hasNoProperties(): boolean {
+    return Array.isArray(this.selectedInstanceProperties) && this.selectedInstanceProperties.length === 0;
+  }
+
+  goToPropertiesAssignment(): void {
+    this.navigationService.navigate(States.WORKSPACE_PROPERTIES_ASSIGNMENT);
   }
 
   getDisabled = (): boolean => {
