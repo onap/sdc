@@ -22,8 +22,10 @@
 @import '../../../../../assets/styles/override.less';
 
 .operation-handler {
-    overflow: scroll;
+    overflow-y: auto;
     max-height: 700px;
+    // Overlay scrollbars take no layout width and would otherwise be drawn over the inputs' right edge.
+    padding-right: 12px;
     max-width: 100%;
     font-family: @font-opensans-regular;
     user-select: none;

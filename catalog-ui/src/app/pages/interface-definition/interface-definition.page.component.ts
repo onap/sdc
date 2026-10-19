@@ -354,7 +354,7 @@ export class InterfaceDefinitionComponent {
         }
         modalButtons.push(new ButtonModel(this.modalTranslation.CANCEL_BUTTON, 'outline white', this.cancelAndCloseModal));
         const interfaceDataModal: ModalModel =
-            new ModalModel('l', this.modalTranslation.EDIT_TITLE, '', modalButtons, 'custom');
+            new ModalModel('l', isEdit ? this.modalTranslation.EDIT_TITLE : this.modalTranslation.CREATE_TITLE, '', modalButtons, 'custom');
         this.modalInstance = this.modalService.createCustomModal(interfaceDataModal);
 
         this.modalService.addDynamicContentToModal(
