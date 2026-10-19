@@ -337,3 +337,30 @@ describe('reading order and current location', () => {
         expect(headings[1].getAttribute('*ngIf')).toBe('isDeployment');
     });
 });
+
+describe('getLatestVersion', () => {
+    // allVersions maps version number -> component unique id, in whatever order the BE's map
+    // serialised it, so neither the key nor key order is usable as a navigation target.
+    it('navigates to the unique id of the highest version', () => {
+        const {comp, navigationService} = createComponent();
+        (comp as any).eventBusService.notify = jest.fn(() => ({subscribe: (cb: () => void) => cb()}));
+        (comp as any).component = {
+            version: '1.0',
+            componentType: 'RESOURCE',
+            isLatestVersion: () => false,
+            allVersions: {'2.0': 'uid-2.0', '1.10': 'uid-1.10', '1.0': 'uid-1.0', '1.9': 'uid-1.9'},
+            getAllVersionsAsSortedArray: () => [
+                {versionNumber: '1.0', versionId: 'uid-1.0'},
+                {versionNumber: '1.9', versionId: 'uid-1.9'},
+                {versionNumber: '1.10', versionId: 'uid-1.10'},
+                {versionNumber: '2.0', versionId: 'uid-2.0'}
+            ]
+        };
+        (comp as any).initVersionObject();
+
+        comp.getLatestVersion();
+
+        expect(navigationService.navigate).toHaveBeenCalledWith('workspace.general',
+            expect.objectContaining({id: 'uid-2.0', type: 'resource'}));
+    });
+});
