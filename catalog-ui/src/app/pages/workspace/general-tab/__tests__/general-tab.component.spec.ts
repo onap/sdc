@@ -163,6 +163,33 @@ describe('GeneralTabComponent - save (data-loss fix)', () => {
     });
 });
 
+describe('GeneralTabComponent - certify in place', () => {
+    function certify(eventListener: any, component: any) {
+        component.lifecycleState = 'CERTIFIED';
+        const call = eventListener.registerObserverCallback.mock.calls.find((c: any[]) => c[0] === 'onCertify');
+        expect(call).toBeDefined();
+        call[1]();
+    }
+
+    it('switches to VIEW mode so Save cannot PUT a certified component', () => {
+        const {comp, eventListener, workspaceService, cdr} = createComp();
+        comp.ngOnInit();
+        expect(comp.isEditMode()).toBe(true);
+        cdr.detectChanges.mockClear();
+        certify(eventListener, workspaceService.component);
+        expect(comp.isViewMode()).toBe(true);
+        expect(comp.isEditMode()).toBe(false);
+        expect(cdr.detectChanges).toHaveBeenCalled();
+    });
+
+    it('stops listening for certify on destroy', () => {
+        const {comp, eventListener} = createComp();
+        comp.ngOnInit();
+        comp.ngOnDestroy();
+        expect(eventListener.unRegisterObserver).toHaveBeenCalledWith('onCertify');
+    });
+});
+
 describe('GeneralTabComponent - revert', () => {
     it('revert() restores the form to originComponent values and clears dirty', () => {
         const {comp, workspaceService} = createComp();

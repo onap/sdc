@@ -159,6 +159,7 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
             }
         }
         this.registerLifecycleSaveHandler();
+        this.registerCertifyHandler();
         this.wireFormToWorkspace();
         // Populate dropdown option-lists (ported from old AngularJS controller, Tasks 8b + 8c)
         // Categories must be loaded first — initBaseTypes reads component.categories
@@ -198,6 +199,7 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this.eventListenerService.unRegisterObserver(EVENTS.ON_LIFECYCLE_CHANGE_WITH_SAVE);
         this.eventListenerService.unRegisterObserver(EVENTS.ON_LIFECYCLE_CHANGE);
+        this.eventListenerService.unRegisterObserver(EVENTS.ON_CERTIFY);
         this.destroy$.next();
         this.destroy$.complete();
     }
@@ -1366,6 +1368,15 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
             } else if (actions) {
                 actions.handleChangeLifecycleState(nextState);
             }
+        });
+    }
+
+    // The shell certifies in place without re-mounting this tab, so the mode taken in ngOnInit
+    // would keep Save enabled on a component the BE now rejects updates for.
+    private registerCertifyHandler(): void {
+        this.eventListenerService.registerObserverCallback(EVENTS.ON_CERTIFY, () => {
+            this.mode = this.initMode(this.cacheService.get('user'));
+            this.detectChangesSafe();
         });
     }
 

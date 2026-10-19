@@ -69,7 +69,7 @@ function createComponent(overrides: any = {}) {
         notificationsService, cdr, sdcMenu, componentFactory, menuHandler,
         changeLifecycleStateHandler, progressService, routeMetadataService
     );
-    return {comp, workspaceService, navigationService, cdr, eventListenerService};
+    return {comp, workspaceService, navigationService, cdr, eventListenerService, changeLifecycleStateHandler, workspaceNg1BridgeService};
 }
 
 describe('menu state matching', () => {
@@ -248,6 +248,44 @@ describe('ngOnInit component feed', () => {
         comp.ngOnInit();
         expect(workspaceService.containerActions).toBe(comp);
         expect(comp.component).toBeUndefined();
+    });
+});
+
+describe('certify', () => {
+    function certifyFromEditMode() {
+        const navigationService: any = {
+            getParam: jest.fn((k: string) => k === 'id' ? 'uid-1' : undefined),
+            getCurrentStateName: jest.fn(() => 'workspace.deployment'),
+            onNavigationSuccess: jest.fn(() => jest.fn()),
+            navigate: jest.fn()
+        };
+        const ctx = createComponent({navigationService});
+        const {comp} = ctx;
+        comp.user = {userId: 'cs0008'};
+        comp.role = 'DESIGNER';
+        comp.component = {
+            lifecycleState: 'NOT_CERTIFIED_CHECKOUT', lastUpdaterUserId: 'cs0008',
+            isService: () => false, isResource: () => true
+        };
+        comp.mode = 'edit';
+        comp.changeLifecycleStateButtons = {certify: {text: 'Certify', url: 'lifecycleState/certify'}};
+        jest.spyOn(comp as any, 'handleCertification').mockImplementation(() => undefined);
+        jest.spyOn(comp as any, 'verifyIfDependenciesExist').mockImplementation(() => undefined);
+        comp.handleChangeLifecycleState('certify');
+        const onSuccess = ctx.changeLifecycleStateHandler.changeLifecycleState.mock.calls[0][3];
+        onSuccess({lifecycleState: 'CERTIFIED'}, 'lifecycleState/certify');
+        return ctx;
+    }
+
+    it('drops the workspace to VIEW mode without waiting for the dependency check', () => {
+        const {comp, workspaceNg1BridgeService} = certifyFromEditMode();
+        expect(comp.isViewMode()).toBe(true);
+        expect(workspaceNg1BridgeService.updateIsViewOnly).toHaveBeenLastCalledWith(true);
+    });
+
+    it('tells the mounted tabs the component was certified', () => {
+        const {eventListenerService} = certifyFromEditMode();
+        expect(eventListenerService.notifyObservers).toHaveBeenCalledWith('onCertify');
     });
 });
 
