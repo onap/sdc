@@ -33,6 +33,7 @@ import {Component, ViewChild} from "@angular/core";
 import {PropertyBEModel} from "../../../models/properties-inputs/property-be-model";
 import {ModalService} from "../../../services/modal.service";
 import {SdcUiServices} from "onap-ui-angular/dist";
+import {ButtonsModule} from "onap-ui-angular/dist/buttons/buttons.module";
 
 describe('TypeWorkspacePropertiesComponent', () => {
     const messages = require("../../../../assets/languages/en_US.json");
@@ -64,7 +65,8 @@ describe('TypeWorkspacePropertiesComponent', () => {
             declarations: [TypeWorkspacePropertiesComponent, TestHostComponent],
             imports: [
                 TranslateModule,
-                FormsModule
+                FormsModule,
+                ButtonsModule
             ],
             providers: [
                 {provide: DataTypeService, useValue: dataTypeServiceMock},

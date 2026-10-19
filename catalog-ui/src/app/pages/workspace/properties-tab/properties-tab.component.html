@@ -27,8 +27,8 @@
         <input id="search-by-name" type="search" placeholder="Search" [(ngModel)]="filterTerms" (ngModelChange)="onFilterChange()"/>
         <span class="sprite magnification-glass search-button"></span>
     </div>
-    <button type="button" class="add-btn" data-tests-id="addGrey" *ngIf="!isViewMode()"
-            [ngClass]="{'disabled': isDisableMode()}" [disabled]="isDisableMode()" (click)="addOrUpdateProperty()">Add Property</button>
+    <sdc-button *ngIf="!isViewMode()" class="add-property-btn" [type]="'tertiary'" [icon_name]="'plus'" [icon_position]="'left'"
+                [testId]="'addGrey'" [text]="'Add Property'" [disabled]="isDisableMode()" (click)="addOrUpdateProperty()"></sdc-button>
     <div class="table-container-flex">
         <div class="table" [ngClass]="{'view-mode': isViewMode()}">
             <div class="head flex-container">

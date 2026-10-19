@@ -183,7 +183,7 @@ test.describe('Workspace layout', () => {
 
         await gotoWorkspaceTab(sdcPage, { id: vf.id, type: 'resource', tab: 'req_and_capabilities' });
         await expect(sdcPage.locator('[data-tests-id="search-box"]')).toBeVisible({ timeout: 30_000 });
-        await expect(sdcPage.locator('.addTitle')).toBeVisible();
+        await expect(sdcPage.locator('[data-tests-id="add-requirement-button"]')).toBeVisible();
 
         const tabs = sdcPage.locator('.sdc-table-tab');
         const separator = sdcPage.locator('.line-separates');

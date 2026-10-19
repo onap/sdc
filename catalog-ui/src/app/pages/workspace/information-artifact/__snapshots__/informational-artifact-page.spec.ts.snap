@@ -12,7 +12,7 @@ exports[`informational artifacts page should match current snapshot of informati
   <div
     class="information-artifact-page"
   >
-    <svg-icon-label
+    <sdc-button
       class="add-artifact-btn"
     />
     <ngx-datatable

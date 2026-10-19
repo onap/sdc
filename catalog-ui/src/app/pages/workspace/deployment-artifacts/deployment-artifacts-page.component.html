@@ -1,7 +1,7 @@
 <div class="deployment-artifact-page" *ngIf="(workspaceState$ | async) as state">
-    <svg-icon-label *ngIf="!state.isViewOnly" class="add-artifact-btn" [clickable]="true" [mode]="'primary'" [labelPlacement]="'right'"
-                    [label]="'Add'" [name]="'plus'"
-                    (click)="addOrUpdateArtifact()"></svg-icon-label>
+    <sdc-button *ngIf="!state.isViewOnly" class="add-artifact-btn" [type]="'tertiary'" [icon_name]="'plus'" [icon_position]="'left'"
+                [testId]="'add-deployment-artifact-button'" [text]="'Add Artifact'"
+                (click)="addOrUpdateArtifact()"></sdc-button>
     <ngx-datatable sdcDatatableA11y="Deployment artifacts"
             columnMode="flex"
             [headerHeight]="40"
@@ -72,11 +72,10 @@
         <ngx-datatable-footer>
             <ng-template ngx-datatable-footer-template>
                 <div class="table-footer-container">
-                    <sdc-button *ngIf="!state.isViewOnly" [type]="'secondary'"
+                    <sdc-button *ngIf="!state.isViewOnly" [type]="'tertiary'"
                                 [testId]="'add_artifact_btn'"
                                 [text]="'DEPLOYMENT_ARTIFACT_BUTTON_ADD_OTHER' | translate"
-                                [icon_name]="'plus-circle-o'"
-                                [icon_mode] = "'secondary'"
+                                [icon_name]="'plus'"
                                 [icon_position]="'left'"
                                 (click)="addOrUpdateArtifact()">
                     </sdc-button>

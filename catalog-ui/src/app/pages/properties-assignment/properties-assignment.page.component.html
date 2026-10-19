@@ -89,11 +89,12 @@
             </div>
         </div>
         <div class="right-column">
-            <button type="button" *ngIf="!isReadonly && !isInputsTabSelected" class="add-btn"
-                    (click)="addProperty(component.model)" data-tests-id="properties-add-button"
-                    [disabled]="!showAddProperties()" [class.disabled]="!showAddProperties()">Add Property</button>
-            <button type="button" *ngIf="!isReadonly && isInputsTabSelected" class="add-btn"
-                    (click)="addInput()" [disabled]="!isSelf()" [class.disabled]="!isSelf()">Add Input</button>
+            <sdc-button *ngIf="!isReadonly && !isInputsTabSelected" class="right-column-add" [type]="'tertiary'"
+                        [icon_name]="'plus'" [icon_position]="'left'" [testId]="'properties-add-button'" [text]="'Add Property'"
+                        [disabled]="!showAddProperties()" (click)="addProperty(component.model)"></sdc-button>
+            <sdc-button *ngIf="!isReadonly && isInputsTabSelected" class="right-column-add" [type]="'tertiary'"
+                        [icon_name]="'plus'" [icon_position]="'left'" [testId]="'inputs-add-button'" [text]="'Add Input'"
+                        [disabled]="!isSelf()" (click)="addInput()"></sdc-button>
             <tabs #hierarchyNavTabs tabStyle="simple-tabs" class="gray-border">
                 <tab tabTitle="Composition">
                     <div class="hierarchy-nav-container">

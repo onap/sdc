@@ -6,12 +6,9 @@
     font-size: 14px;
 
     .top-add-btn {
-        .sdc-button-chrome-reset();
-        position: relative;
-        top: -31px;
-        text-transform: uppercase;
-        font-size: 14px;
-        font-family: @font-opensans-medium;
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 10px;
     }
 
     .link {
@@ -20,13 +17,9 @@
         text-decoration: underline;
         font-family: @font-opensans-regular;
 
-        &:not(.disabled) {
-            &:not(.empty-list-add-btn) {
-                &:hover {
-                    color: @sdcui_color_dark-blue;
-                    cursor: pointer;
-                }
-            }
+        &:not(.disabled):hover {
+            color: @sdcui_color_dark-blue;
+            cursor: pointer;
         }
     }
 
@@ -39,54 +32,9 @@
             display: flex;
             justify-content: center;
 
-            .empty-list-add-btn {
-                .sdc-button-reset();
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-
-                border: 1px solid @main_color_o;
-                margin-top: 50px;
-
-                height: 229px;
-                width: 480px;
-
-                &.disabled {
-                    pointer-events: none;
-                }
-
-                &:hover {
-                    &:not(.disabled) {
-                        border: 1px solid @sdcui_color_blue;
-                        cursor: pointer;
-                    }
-                }
-
-                // Mirrors svg-icon mode="primary" size="x_large", dimmed like svg-icon[disabled].
-                .empty-list-add-icon {
-                    display: inline-flex;
-                    width: 36px;
-                    height: 36px;
-                    fill: @sdcui_color_blue;
-
-                    > svg {
-                        width: 100%;
-                        height: 100%;
-                    }
-                }
-
-                &.disabled .empty-list-add-icon {
-                    opacity: .7;
-                }
-
-                .button-text {
-                    margin-top: 9px;
-                    font-family: @font-opensans-medium;
-                    font-size: 16px;
-                    text-transform: uppercase;
-                    color: @sdcui_color_blue;
-                }
+            .empty-list-message {
+                padding: 14px;
+                font-family: @font-opensans-medium;
             }
         }
 

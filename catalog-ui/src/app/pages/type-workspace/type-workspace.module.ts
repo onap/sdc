@@ -36,6 +36,7 @@ import {DataTypeService} from "../../services/data-type.service";
 import { TypeWorkspacePropertiesComponent } from './type-workspace-properties/type-workspace-properties.component';
 import {NgxDatatableModule} from "@swimlane/ngx-datatable";
 import {SvgIconModule} from "onap-ui-angular/dist/svg-icon/svg-icon.module";
+import {ButtonsModule} from "onap-ui-angular/dist/buttons/buttons.module";
 import {TypeWorkspaceToscaArtifactPageComponent} from "./type-workspace-tosca-artifacts/type-workspace-tosca-artifact-page.component";
 import {ModalService} from "../../services/modal.service";
 import {AddPropertyComponent} from './type-workspace-properties/add-property/add-property.component';
@@ -55,6 +56,7 @@ import {ConstraintsModule} from "../properties-assignment/constraints/constraint
         NgxDatatableModule,
         DatatableA11yModule,
         SvgIconModule,
+        ButtonsModule,
         AutoCompleteModule,
         ConstraintsModule
     ],

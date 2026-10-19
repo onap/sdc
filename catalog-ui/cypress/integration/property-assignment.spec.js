@@ -38,7 +38,7 @@ describe('Test add property to self in service at property assignment page', () 
         cy.visit(compositionPageUrl);
         // Add property to service
         cy.get('.table-row').should('have.length', 2);
-        cy.get('.add-btn').click();
+        cy.get('[data-tests-id="properties-add-button"]').click();
         cy.get('[data-tests-id="property-name"]').type('new_property');
         cy.get('[data-tests-id="value-property-type"]').select('string');
         cy.get('[data-tests-id="property-description"]').type('new service property');

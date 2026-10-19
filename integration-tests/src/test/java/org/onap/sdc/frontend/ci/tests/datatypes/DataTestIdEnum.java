@@ -225,8 +225,8 @@ public final class DataTestIdEnum {
         UPLOAD_HEAT_ENV_PARAMETERS("uplaodEnv_"),
         VERSION_ENV("artifactEnvVersion_"),
         // Matches every "add an artifact" control on the Informational Artifacts screen: the always-present
-        // svg-icon-label (information-artifact-page.component.html:3, testId add-information-artifact-button)
-        // plus one sdc-button per artifact placeholder (same file, line 74, testId add_artifact_<displayName>).
+        // Add Artifact button (testId add-information-artifact-button) plus one button per artifact
+        // placeholder (testId add_artifact_<displayName>), all in information-artifact-page.component.html.
         ADD_OTHER_ARTIFACT_BUTTON(
             "//button[@data-tests-id='add-information-artifact-button' or starts-with(@data-tests-id, 'add_artifact_')]");
 

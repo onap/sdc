@@ -119,9 +119,10 @@ describe('InterfaceDefinitionComponent template', () => {
         expect(toggle.querySelector('span.interface-name')).not.toBeNull();
     });
 
-    it('renders both Add Operation controls as buttons disabled like their look', () => {
-        const adds = Array.from(doc.querySelectorAll('[data-tests-id="add-operation"]'));
-        expect(adds.map((el) => el.tagName + ' ' + el.getAttribute('[disabled]'))).toEqual(['BUTTON readonly', 'BUTTON !enableFlag']);
+    it('renders both Add Operation controls as tertiary buttons', () => {
+        const adds = Array.from(doc.querySelectorAll('sdc-button')).filter((el) => el.getAttribute('[testId]') === `'add-operation'`);
+        expect(adds.map((el) => el.getAttribute('[disabled]'))).toEqual(['readonly', '!enableFlag']);
+        adds.forEach((el) => expect(el.getAttribute('[type]')).toBe(`'tertiary'`));
     });
 
     it('puts the operation name in a button inside its cell', () => {

@@ -231,11 +231,11 @@ describe('WorkspacePropertiesTabComponent template', () => {
     const template: string = require('../properties-tab.component.html');
     const doc = new DOMParser().parseFromString(`<body>${template}</body>`, 'text/html');
 
-    it('makes Add Property, the empty-list link and each property name native buttons', () => {
-        const add = doc.querySelector('[data-tests-id="addGrey"]');
-        expect(add.tagName).toBe('BUTTON');
-        expect(add.getAttribute('type')).toBe('button');
-        expect(add.getAttribute('class')).toBe('add-btn');
+    it('makes Add Property a tertiary button, and the empty-list link and each property name native buttons', () => {
+        const add = doc.querySelector('sdc-button.add-property-btn');
+        expect(add.getAttribute('[type]')).toBe(`'tertiary'`);
+        expect(add.getAttribute('[icon_name]')).toBe(`'plus'`);
+        expect(add.getAttribute('[testId]')).toBe(`'addGrey'`);
         expect(add.getAttribute('[disabled]')).toBe('isDisableMode()');
 
         const here = doc.querySelector('.no-row-text button');

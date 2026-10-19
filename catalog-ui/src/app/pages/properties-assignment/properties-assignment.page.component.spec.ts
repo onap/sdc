@@ -135,14 +135,11 @@ describe('PropertiesAssignmentComponent template', () => {
     });
 
     // The global `.disabled` class only stops the mouse; `disabled` also stops the keyboard.
-    it('renders Add Property and Add Input as native buttons disabled exactly when they look disabled', () => {
-        const adds = Array.from(doc.querySelectorAll('.right-column > .add-btn'));
-        expect(adds.map((el) => el.textContent.trim())).toEqual(['Add Property', 'Add Input']);
-        adds.forEach((el) => {
-            expect(el.tagName).toBe('BUTTON');
-            expect(el.getAttribute('type')).toBe('button');
-            expect(el.getAttribute('[disabled]')).toBe(el.getAttribute('[class.disabled]'));
-        });
+    it('renders Add Property and Add Input as tertiary buttons with their own test ids', () => {
+        const adds = Array.from(doc.querySelectorAll('.right-column > sdc-button.right-column-add'));
+        expect(adds.map((el) => el.getAttribute('[text]'))).toEqual([`'Add Property'`, `'Add Input'`]);
+        expect(adds.map((el) => el.getAttribute('[testId]'))).toEqual([`'properties-add-button'`, `'inputs-add-button'`]);
         expect(adds.map((el) => el.getAttribute('[disabled]'))).toEqual(['!showAddProperties()', '!isSelf()']);
+        adds.forEach((el) => expect(el.getAttribute('[type]')).toBe(`'tertiary'`));
     });
 });

@@ -7,8 +7,10 @@
                 [testId]="'search-box'">
             </sdc-filter-bar>
         </span>
-        <button type="button" class="addTitle" *ngIf="selectTabName === 'REQUIREMENTS' && showAdd()" (click)="addRequirement()">Add Requirement</button>
-        <button type="button" class="addTitle" *ngIf="selectTabName !== 'REQUIREMENTS' && showAdd()" (click)="addCapability()">Add Capability</button>
+        <sdc-button *ngIf="selectTabName === 'REQUIREMENTS' && showAdd()" class="req-and-cap-add" [type]="'tertiary'" [icon_name]="'plus'"
+                    [icon_position]="'left'" [testId]="'add-requirement-button'" [text]="'Add Requirement'" (click)="addRequirement()"></sdc-button>
+        <sdc-button *ngIf="selectTabName !== 'REQUIREMENTS' && showAdd()" class="req-and-cap-add" [type]="'tertiary'" [icon_name]="'plus'"
+                    [icon_position]="'left'" [testId]="'add-capability-button'" [text]="'Add Capability'" (click)="addCapability()"></sdc-button>
     </div>
     <sdc-tabs (selectedTab)="selectTab($event)" [tabStyle]="'sdc-table-tab'">
         <sdc-tab [title]="'Requirements('+(requirements.length||'0')+')'" [active]="true" [testId]="'req-tab'">

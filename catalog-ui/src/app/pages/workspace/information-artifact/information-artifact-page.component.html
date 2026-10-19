@@ -1,7 +1,7 @@
 <div class="information-artifact-page">
-    <svg-icon-label class="add-artifact-btn" [clickable]="true" [mode]="'primary'" [labelPlacement]="'right'"
-                    [label]="'Add'" [name]="'plus'" [testId]="'add-information-artifact-button'"
-                    (click)="addOrUpdateArtifact()"></svg-icon-label>
+    <sdc-button class="add-artifact-btn" [type]="'tertiary'" [icon_name]="'plus'" [icon_position]="'left'"
+                [testId]="'add-information-artifact-button'" [text]="'Add Artifact'"
+                (click)="addOrUpdateArtifact()"></sdc-button>
     <ngx-datatable sdcDatatableA11y="Informational artifacts"
             columnMode="flex"
             [headerHeight]="40"
@@ -75,11 +75,9 @@
                     <sdc-button *ngFor="let artifact of informationArtifactsAsButtons$ | async"
                                 class="add-artifacts-dynamic-btn"
                                 testId="add_artifact_{{artifact.artifactDisplayName}}"
-                                [type]="'secondary'"
-                                [size]="'xx-large'"
-                                [text]="'ADD ' + artifact.artifactDisplayName"
-                                [icon_name]="'plus-circle-o'"
-                                [icon_mode] = "'secondary'"
+                                [type]="'tertiary'"
+                                [text]="'Add ' + artifact.artifactDisplayName"
+                                [icon_name]="'plus'"
                                 [icon_position]="'left'"
                                 (click)="addOrUpdateArtifact(artifact)">
                     </sdc-button>

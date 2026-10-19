@@ -25,7 +25,8 @@
     <input id="search-by-name" type="search" [placeholder]="'SEARCH_LABEL' | translate" [ngModel]="tableFilterTerm" (ngModelChange)="this.tableSearchTermUpdate.next($event)"/>
     <span class="sprite magnification-glass search-button"></span>
   </div>
-  <button type="button" class="add-btn" data-tests-id="add-link" *ngIf="!isViewOnly" (click)="onClickAddProperty()">Add Property</button>
+  <sdc-button *ngIf="!isViewOnly" class="add-property-btn" [type]="'tertiary'" [icon_name]="'plus'" [icon_position]="'left'"
+              [testId]="'add-link'" [text]="'Add Property'" (click)="onClickAddProperty()"></sdc-button>
   <div class="table-container-flex">
     <div class="table" [ngClass]="{'view-mode': isViewOnly}">
       <div class="head flex-container">

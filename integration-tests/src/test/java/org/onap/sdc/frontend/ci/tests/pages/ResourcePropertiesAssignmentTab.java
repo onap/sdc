@@ -375,7 +375,7 @@ public class ResourcePropertiesAssignmentTab extends AbstractPageObject {
         SET_INPUT_NAME_FIELD("//*[@id=\"myText\"]"),
         PROPERTY_SAVE_BTN("properties-save-button", "//button[@data-tests-id='%s']"),
         PROPERTY_ADD_RIGHT_COLUMN_DIV("right-column", "//div[@class='%s']"),
-        PROPERTY_ADD_BTN("add-btn", "//button[contains(concat(' ',normalize-space(@class),' '),' %s ')]"),
+        PROPERTY_ADD_BTN("properties-add-button", "//button[@data-tests-id='%s']"),
         PROPERTY_ADD_VALUE_COMPLEX_TYPE("//button[contains(@data-tests-id, 'add-to-list-%s')]"),
         INPUT_PROPERTY_COMPLEX_TYPE_KEY("//input[contains(@data-tests-id, 'value-prop-key-%s')]"),
         INPUT_PROPERTY_COMPLEX_TYPE_VALUE("//input[contains(@data-tests-id, 'value-prop-%s')]"),

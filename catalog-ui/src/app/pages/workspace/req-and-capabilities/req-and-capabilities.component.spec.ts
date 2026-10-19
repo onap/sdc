@@ -139,12 +139,13 @@ describe('req and capabilities template', () => {
     const template: string = require('./req-and-capabilities.component.html');
     const doc = new DOMParser().parseFromString(`<body>${template}</body>`, 'text/html');
 
-    it('renders Add Requirement and Add Capability as native buttons', () => {
-        const adds = Array.from(doc.querySelectorAll('.addTitle'));
-        expect(adds.map((el) => el.textContent.trim())).toEqual(['Add Requirement', 'Add Capability']);
+    it('renders Add Requirement and Add Capability as tertiary buttons', () => {
+        const adds = Array.from(doc.querySelectorAll('sdc-button.req-and-cap-add'));
+        expect(adds.map((el) => el.getAttribute('[text]'))).toEqual([`'Add Requirement'`, `'Add Capability'`]);
+        expect(adds.map((el) => el.getAttribute('[testId]'))).toEqual([`'add-requirement-button'`, `'add-capability-button'`]);
         adds.forEach((el) => {
-            expect(el.tagName).toBe('BUTTON');
-            expect(el.getAttribute('type')).toBe('button');
+            expect(el.getAttribute('[type]')).toBe(`'tertiary'`);
+            expect(el.getAttribute('[icon_name]')).toBe(`'plus'`);
         });
     });
 });

@@ -16,18 +16,16 @@
 <div class="workspace-attributes">
 
     <div class="action-bar-wrapper">
-        <svg-icon-label
+        <sdc-button
             *ngIf="!(this.isViewOnly$ | async)"
             class="add-attr-icon"
-            [name]="'plus'"
-            [mode]="'primary'"
-            [size]="'medium'"
-            [label]="'Add'"
-            [labelPlacement]="'right'"
-            [labelClassName]="'externalActionLabel'"
-            [clickable]="true"
+            [type]="'tertiary'"
+            [icon_name]="'plus'"
+            [icon_position]="'left'"
+            [testId]="'add-attribute-button'"
+            [text]="'Add Attribute'"
             (click)="onAddAttribute()">
-        </svg-icon-label>
+        </sdc-button>
     </div>
 
     <ngx-datatable sdcDatatableA11y="Attributes"
