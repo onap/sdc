@@ -24,13 +24,13 @@
     <loader [display]="isLoading" [size]="'large'" [relative]="true"></loader>
 
     <sdc-button
+        *ngIf="!readonly"
         class="top-add-btn"
         [type]="'tertiary'"
         [icon_name]="'plus'"
         [icon_position]="'left'"
         [testId]="'add-operation'"
         [text]="'INTERFACE_ADD_OPERATION' | translate"
-        [disabled]="readonly"
         (click)="onEditOperation()">
     </sdc-button>
 

@@ -34,9 +34,9 @@
             </div>
           </div>
 
-          <div class="w-sdc-designer-sidebar-section-node-filter-footer">
+          <div class="w-sdc-designer-sidebar-section-node-filter-footer" *ngIf="!readonly">
             <sdc-button [type]="'tertiary'" [icon_name]="'plus'" [icon_position]="'left'" [testId]="'add-rule-button'"
-                        [text]="'DIRECTIVES_AND_NODE_FILTER_ADD_NODE_FILTER' | translate" [disabled]="readonly"
+                        [text]="'DIRECTIVES_AND_NODE_FILTER_ADD_NODE_FILTER' | translate"
                         (click)="onAddNodeFilterCapabilities()"></sdc-button>
           </div>
         </div>
@@ -60,9 +60,9 @@
             </div>
           </div>
 
-          <div class="w-sdc-designer-sidebar-section-node-filter-footer">
+          <div class="w-sdc-designer-sidebar-section-node-filter-footer" *ngIf="!readonly">
             <sdc-button [type]="'tertiary'" [icon_name]="'plus'" [icon_position]="'left'" [testId]="'add-rule-button'"
-                        [text]="'DIRECTIVES_AND_NODE_FILTER_ADD_NODE_FILTER' | translate" [disabled]="readonly"
+                        [text]="'DIRECTIVES_AND_NODE_FILTER_ADD_NODE_FILTER' | translate"
                         (click)="onAddNodeFilter()"></sdc-button>
           </div>
         </div>

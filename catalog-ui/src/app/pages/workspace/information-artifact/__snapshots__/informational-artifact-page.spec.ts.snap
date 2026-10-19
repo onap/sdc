@@ -12,9 +12,7 @@ exports[`informational artifacts page should match current snapshot of informati
   <div
     class="information-artifact-page"
   >
-    <sdc-button
-      class="add-artifact-btn"
-    />
+    
     <ngx-datatable
       class="ngx-datatable"
       columnmode="flex"
