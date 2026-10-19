@@ -103,7 +103,7 @@ public class AttributesPage extends ComponentPage {
         MAIN_DIV("w-sdc-main-right-container", "//div[@class='%s']"),
         TITLE_DIV("workspace-tab-title", "//h2[contains(@class,'%s') and contains(text(), 'Attributes')]"),
         ATTRIBUTES_DIV("workspace-attributes", "//div[@class='%s']"),
-        ADD_BTN("svg-icon-label", "//span[contains(@class,'%s') and contains(text(), 'Add')]"),
+        ADD_BTN("add-attribute-button", "//button[@data-tests-id='%s']"),
         ATTRIBUTES_NAME_SPAN("//div[@data-tests-id='attrib-name_%s']"),
         EDIT_BTN("//button[contains(@class,'svg-icon-wrapper') and @data-tests-id='edit_%s']"),
         DELETE_BTN("//button[contains(@class,'svg-icon-wrapper') and @data-tests-id='delete_%s']"),
