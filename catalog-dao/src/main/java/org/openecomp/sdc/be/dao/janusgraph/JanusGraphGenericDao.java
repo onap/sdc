@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -126,19 +127,25 @@ public class JanusGraphGenericDao {
                         }
                     }
                     final JanusGraphTransaction tGraph = graph.left().value().tx().createThreadedTx();
-                    final Vertex vertex = tGraph.addVertex();
-                    vertex.property(GraphPropertiesDictionary.LABEL.getProperty(), node.getLabel());
-                    final Map<String, Object> properties = node.toGraphMap();
-                    if (properties != null) {
-                        setProperties(vertex, properties);
-                    }
-                    final Map<String, Object> newProps = getProperties(vertex);
-                    newNode = GraphElementFactory.createElement(node.getLabel(), GraphElementTypeEnum.Node, newProps, clazz);
-                    log.debug("created node for props : {}", newProps);
-                    log.debug("Node was created for ID [{}]", node.getKeyValueIdForLog());
+                    try {
+                        final Vertex vertex = tGraph.addVertex();
+                        vertex.property(GraphPropertiesDictionary.LABEL.getProperty(), node.getLabel());
+                        final Map<String, Object> properties = node.toGraphMap();
+                        if (properties != null) {
+                            setProperties(vertex, properties);
+                        }
+                        final Map<String, Object> newProps = getProperties(vertex);
+                        newNode = GraphElementFactory.createElement(node.getLabel(), GraphElementTypeEnum.Node, newProps, clazz);
+                        log.debug("created node for props : {}", newProps);
+                        log.debug("Node was created for ID [{}]", node.getKeyValueIdForLog());
 
-                    tGraph.commit();
-                    return Either.left(newNode);
+                        tGraph.commit();
+                        return Either.left(newNode);
+                    } finally {
+                        if (tGraph.isOpen()) {
+                            tGraph.rollback();
+                        }
+                    }
                 } else {
                     final JanusGraph tGraph = graph.left().value();
                     final Vertex vertex = tGraph.addVertex();
@@ -347,16 +354,25 @@ public class JanusGraphGenericDao {
      */
     public <T extends GraphNode> Either<T, JanusGraphOperationStatus> getNode(String keyName, Object keyValue, Class<T> clazz) {
         log.debug("Try to get node for key [{}] with value [{}] ", keyName, keyValue);
-        Either<JanusGraphVertex, JanusGraphOperationStatus> vertexByProperty;
         if (clazz != null && clazz.isAssignableFrom(GraphNodeLock.class)) {
             final Either<JanusGraph, JanusGraphOperationStatus> graph = janusGraphClient.getGraph();
             if (graph.isRight()) {
                 return Either.right(graph.right().value());
             }
-            vertexByProperty = getVertexByPropertyFromGraph(graph.left().value().tx().createThreadedTx(), keyName, keyValue);
-        } else {
-            vertexByProperty = getVertexByProperty(keyName, keyValue);
+            final JanusGraphTransaction tGraph = graph.left().value().tx().createThreadedTx();
+            try {
+                return toNode(getVertexByPropertyFromGraph(tGraph, keyName, keyValue), keyName, keyValue, clazz);
+            } finally {
+                if (tGraph.isOpen()) {
+                    tGraph.rollback();
+                }
+            }
         }
+        return toNode(getVertexByProperty(keyName, keyValue), keyName, keyValue, clazz);
+    }
+
+    private <T extends GraphNode> Either<T, JanusGraphOperationStatus> toNode(Either<JanusGraphVertex, JanusGraphOperationStatus> vertexByProperty,
+                                                                             String keyName, Object keyValue, Class<T> clazz) {
         if (vertexByProperty.isLeft()) {
             try {
                 Vertex vertex = vertexByProperty.left().value();
@@ -1097,13 +1113,11 @@ public class JanusGraphGenericDao {
             return Either.right(graph.right().value());
         }
         final JanusGraphTransaction tGraph = graph.left().value().tx().createThreadedTx();
-        final Either<JanusGraphVertex, JanusGraphOperationStatus> vertexByProperty = getVertexByPropertyFromGraph(tGraph, keyName, keyValue);
-        if (vertexByProperty.isRight()) {
-            tGraph.rollback();
-            return Either.right(vertexByProperty.right().value());
-        }
-
         try {
+            final Either<JanusGraphVertex, JanusGraphOperationStatus> vertexByProperty = getVertexByPropertyFromGraph(tGraph, keyName, keyValue);
+            if (vertexByProperty.isRight()) {
+                return Either.right(vertexByProperty.right().value());
+            }
             final Vertex vertex = vertexByProperty.left().value();
             final Map<String, Object> properties = getProperties(vertex);
             if (properties != null) {
@@ -1124,6 +1138,10 @@ public class JanusGraphGenericDao {
         } catch (Exception e) {
             log.debug("Failed to delete node for {} = {}", keyName, keyValue, e);
             return Either.right(JanusGraphClient.handleJanusGraphException(e));
+        } finally {
+            if (tGraph.isOpen()) {
+                tGraph.rollback();
+            }
         }
     }
 

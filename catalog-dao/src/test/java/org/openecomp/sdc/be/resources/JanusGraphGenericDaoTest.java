@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,6 +43,7 @@ import org.janusgraph.core.JanusGraphVertex;
 import org.janusgraph.core.PropertyKey;
 import org.janusgraph.core.attribute.Text;
 import org.janusgraph.core.schema.JanusGraphManagement;
+import org.janusgraph.graphdb.database.StandardJanusGraph;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -357,6 +359,45 @@ public class JanusGraphGenericDaoTest {
         janusGraphDao.deleteNode(resourceData, ResourceMetadataData.class);
         janusGraphDao.commit();
 
+    }
+
+    @Test
+    void testLockAndReleaseCloseTheirTransactions() {
+        JanusGraph graph = janusGraphDao.getGraph().left().value();
+        janusGraphDao.commit();
+        int openBefore = openTransactions(graph);
+
+        for (int i = 0; i < 3; i++) {
+            assertEquals(JanusGraphOperationStatus.OK, janusGraphDao.lockElement("txLeak", NodeTypeEnum.Resource));
+            assertEquals(JanusGraphOperationStatus.ALREADY_LOCKED, janusGraphDao.lockElement("txLeak", NodeTypeEnum.Resource));
+            assertTrue(janusGraphDao.getNode(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), "lock_resource_txLeak", GraphNodeLock.class)
+                .isLeft());
+            assertEquals(JanusGraphOperationStatus.OK, janusGraphDao.releaseElement("txLeak", NodeTypeEnum.Resource));
+            assertEquals(JanusGraphOperationStatus.NOT_FOUND, janusGraphDao.releaseElement("txLeak", NodeTypeEnum.Resource));
+        }
+        janusGraphDao.commit();
+
+        assertEquals(openBefore, openTransactions(graph));
+    }
+
+    @Test
+    void testReleaseOfLockWithoutLabelClosesItsTransaction() {
+        JanusGraph graph = janusGraphDao.getGraph().left().value();
+        graph.addVertex().property(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), "lock_resource_txLeakNoLabel");
+        janusGraphDao.commit();
+        int openBefore = openTransactions(graph);
+
+        assertEquals(JanusGraphOperationStatus.MISSING_NODE_LABEL, janusGraphDao.releaseElement("txLeakNoLabel", NodeTypeEnum.Resource));
+        janusGraphDao.commit();
+
+        assertEquals(openBefore, openTransactions(graph));
+        janusGraphDao.getVertexByProperty(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), "lock_resource_txLeakNoLabel").left().value()
+            .remove();
+        janusGraphDao.commit();
+    }
+
+    private static int openTransactions(JanusGraph graph) {
+        return ((StandardJanusGraph) graph).getOpenTransactions().size();
     }
 
     @Test
