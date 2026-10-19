@@ -60,4 +60,16 @@ describe('ActivitiesListComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('renders Add Activity as a tertiary button that does not submit the form', () => {
+    const button: HTMLButtonElement = fixture.nativeElement.querySelector('[data-tests-id="add-activity-button"]');
+    expect(button.tagName).toBe('BUTTON');
+    expect(button.type).toBe('button');
+    expect(button.classList).toContain('sdc-button__tertiary');
+    expect(button.textContent.trim()).toBe('Add Activity');
+
+    const before = component.activities.length;
+    button.click();
+    expect(component.activities.length).toBe(before + 1);
+  });
 });

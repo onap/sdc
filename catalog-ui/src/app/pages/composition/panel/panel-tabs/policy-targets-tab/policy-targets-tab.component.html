@@ -15,16 +15,8 @@
   -->
  
 <h2 class="w-sdc-designer-sidebar-section-title" titleTooltip="Targets">Targets
-    <svg-icon-label *ngIf="!isViewOnly"
-                    class="add-policy-button"
-                    name="plus-circle-o"
-                    mode="primary"
-                    size="medium"
-                    label="ADD"
-                    labelPlacement="right"
-                    clickable="true"
-                    (click)="openAddTargetModal()">
-    </svg-icon-label>
+    <sdc-button *ngIf="!isViewOnly" [type]="'tertiary'" [icon_name]="'plus'" [icon_position]="'left'" [testId]="'add-targets-button'"
+                [text]="'Add Targets'" (click)="openAddTargetModal()"></sdc-button>
 </h2>
 <div class="expand-collapse-content">
     <ul>

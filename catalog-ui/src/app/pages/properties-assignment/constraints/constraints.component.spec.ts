@@ -20,6 +20,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {SvgIconModule} from "onap-ui-angular/dist/svg-icon/svg-icon.module";
 import { ConstraintsComponent } from './constraints.component';
 
 describe('ConstraintsComponent', () => {
@@ -29,7 +30,7 @@ describe('ConstraintsComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ ConstraintsComponent ],
-      imports: [FormsModule, ReactiveFormsModule]
+      imports: [FormsModule, ReactiveFormsModule, SvgIconModule]
     })
     .compileComponents();
   }));
@@ -42,5 +43,17 @@ describe('ConstraintsComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('renders Add Constraint as a tertiary button that does not submit the form', () => {
+    const button: HTMLButtonElement = fixture.nativeElement.querySelector('[data-tests-id="add-constraint-button"]');
+    expect(button.tagName).toBe('BUTTON');
+    expect(button.type).toBe('button');
+    expect(button.classList).toContain('sdc-button__tertiary');
+    expect(button.textContent.trim()).toBe('Add Constraint');
+
+    const before = component.constraintsArray.length;
+    button.click();
+    expect(component.constraintsArray.length).toBe(before + 1);
   });
 });

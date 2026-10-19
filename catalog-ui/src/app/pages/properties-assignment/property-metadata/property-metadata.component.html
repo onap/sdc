@@ -57,8 +57,9 @@
         </div>
       </div>
       <div class="w-sdc-form-columns-wrapper" *ngIf="!isViewOnly">
-          <button type="button" class="add-btn add-list-item w-sdc-form-column" *ngIf="!isViewOnly" [ngClass]="{'disabled': isViewOnly}"
-          [disabled]="isViewOnly" (click)="addMetadataField()"> Add Metadata Entry </button>
+          <!-- Native button, not sdc-button: sdc-button's inner button has no type, so inside a form it is a submit button that Enter in any field clicks. -->
+          <button type="button" class="sdc-button sdc-button__tertiary sdc-icon-left" data-tests-id="add-metadata-entry-button"
+                  (click)="addMetadataField()"><svg-icon [name]="'plus'" [size]="'medium'"></svg-icon>Add Metadata Entry</button>
       </div>
     </div>
   </form>

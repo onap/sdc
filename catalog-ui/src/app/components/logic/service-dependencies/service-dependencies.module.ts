@@ -6,6 +6,7 @@ import { ServiceDependenciesComponent } from './service-dependencies.component';
 import {AccordionModule} from "onap-ui-angular/dist/accordion/accordion.module";
 import {SelectDirectivesModule} from "../select-directives/select-directives.module";
 import {SvgIconModule} from "onap-ui-angular/dist/svg-icon/svg-icon.module";
+import {ButtonsModule} from "onap-ui-angular/dist/buttons/buttons.module";
 import {FormsModule} from "@angular/forms";
 
 @NgModule({
@@ -19,6 +20,7 @@ import {FormsModule} from "@angular/forms";
     AccordionModule,
     SelectDirectivesModule,
     SvgIconModule,
+    ButtonsModule,
     FormsModule
   ],
     exports: [

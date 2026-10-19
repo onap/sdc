@@ -7,6 +7,7 @@ import { ServiceDependenciesEditorComponent } from './service-dependencies-edito
 import { PropertyTableModule } from 'app/components/logic/properties-table/property-table.module';
 import {TranslateModule} from "../../shared/translator/translate.module";
 import {ToscaFunctionModule} from "../properties-assignment/tosca-function/tosca-function.module";
+import {SvgIconModule} from "onap-ui-angular/dist/svg-icon/svg-icon.module";
 
 @NgModule({
     declarations: [
@@ -19,7 +20,8 @@ import {ToscaFunctionModule} from "../properties-assignment/tosca-function/tosca
         UiElementsModule,
         PropertyTableModule,
         TranslateModule,
-        ToscaFunctionModule
+        ToscaFunctionModule,
+        SvgIconModule
     ],
     exports: [],
     entryComponents: [

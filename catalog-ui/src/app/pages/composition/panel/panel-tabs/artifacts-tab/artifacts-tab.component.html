@@ -121,8 +121,8 @@
                 </div>
                 <div class="w-sdc-designer-sidebar-section-footer"
                      *ngIf="!isViewOnly && type!=='api' && (!isComponentInstanceSelected || isVfOrPnf() && (type !== 'deployment') || isComplex)">
-                    <sdc-button testId="add_Artifact_Button" size="large" type="primary" text="Add Artifact"
-                                (click)="addOrUpdate({})"></sdc-button>
+                    <sdc-button [type]="'tertiary'" [icon_name]="'plus'" [icon_position]="'left'" [testId]="'add_Artifact_Button'"
+                                [text]="'Add Artifact'" (click)="addOrUpdate({})"></sdc-button>
                 </div>
             </content>
         </ng2-expand-collapse>

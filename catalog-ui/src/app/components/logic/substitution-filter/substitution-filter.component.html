@@ -40,13 +40,9 @@
         </div>
 
         <div class="w-sdc-designer-sidebar-section-substitution-filter-footer" *ngIf="selectedInstanceProperties?.length">
-          <button
-                  class="w-sdc-designer-sidebar-section-substitution-filter-footer-action add-rule-btn tlv-btn blue"
-                  data-tests-id="add-substitution-filter-button"
-                  (click)="onAddSubstitutionFilter(PROPERTIES)"
-                  [disabled]="readonly">
-            {{'ADD_SUBSTITUTION_FILTER' | translate}}
-          </button>
+          <sdc-button [type]="'tertiary'" [icon_name]="'plus'" [icon_position]="'left'" [testId]="'add-substitution-filter-button'"
+                      [text]="'ADD_SUBSTITUTION_FILTER' | translate" [disabled]="readonly"
+                      (click)="onAddSubstitutionFilter(PROPERTIES)"></sdc-button>
         </div>
         <div class="substitution-filter-no-properties" *ngIf="hasNoProperties()" data-tests-id="substitution-filter-no-properties">
           <p class="substitution-filter-no-properties-title">{{'SUBSTITUTION_FILTER_NO_PROPERTIES' | translate}}</p>

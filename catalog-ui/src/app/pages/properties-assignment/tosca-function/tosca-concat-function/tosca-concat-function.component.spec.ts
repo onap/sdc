@@ -29,6 +29,7 @@ import {TranslateModule} from "../../../../shared/translator/translate.module";
 import {ToscaGetFunctionComponent} from "../tosca-get-function/tosca-get-function.component";
 import {UiElementsModule} from "../../../../components/ui/ui-elements.module";
 import {YamlFunctionComponent} from "../yaml-function/yaml-function.component";
+import {SvgIconModule} from "onap-ui-angular/dist/svg-icon/svg-icon.module";
 
 describe('ToscaConcatFunctionComponent', () => {
     let component: ToscaConcatFunctionComponent;
@@ -41,7 +42,8 @@ describe('ToscaConcatFunctionComponent', () => {
                 FormsModule,
                 ReactiveFormsModule,
                 TranslateModule,
-                UiElementsModule
+                UiElementsModule,
+                SvgIconModule
             ]
         })
         .compileComponents();
