@@ -57,7 +57,8 @@ const ArtifactOrNestedFileList = ({
             {type === 'artifact' && (
                 <Button
                     disabled={isReadOnlyMode}
-                    btnType="link"
+                    btnType="tertiary"
+                    iconName="plus"
                     className="add-all-unassigned"
                     onClick={onAddAllUnassigned}>
                     {i18n('Add All Unassigned Files')}

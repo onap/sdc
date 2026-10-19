@@ -207,7 +207,7 @@ class LicenseKeyGroupsEditorView extends React.Component {
                             data-test-id="add-limits-tab"
                             className="add-limit-button">
                             <Button
-                                btnType="link"
+                                btnType="tertiary"
                                 iconName="plus"
                                 disabled={
                                     !!this.state.selectedLimit || isReadOnlyMode

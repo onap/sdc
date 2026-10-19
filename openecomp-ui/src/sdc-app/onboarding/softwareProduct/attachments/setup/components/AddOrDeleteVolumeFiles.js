@@ -29,9 +29,9 @@ const AddOrDeleteVolumeFiles = ({
         <Button
             disabled={isReadOnlyMode}
             onClick={action}
-            btnType="link"
+            btnType="tertiary"
             className="add-or-delete-volumes"
-            iconName={add ? 'plus' : 'close'}>
+            iconName={add ? 'plus' : 'trashO'}>
             {i18n(displayText)}
         </Button>
     );

@@ -32,8 +32,8 @@ const ListEditorHeader = ({
                 {onAdd && (
                     <Button
                         data-test-id="add-button"
-                        iconName="plusThin"
-                        btnType="link"
+                        iconName="plus"
+                        btnType="tertiary"
                         onClick={onAdd}
                         disabled={isReadOnlyMode === true}>
                         {plusButtonTitle}
