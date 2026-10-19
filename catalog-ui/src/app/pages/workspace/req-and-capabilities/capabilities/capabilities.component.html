@@ -1,14 +1,4 @@
 <div class="capabilities-table">
-    <div class="expand-collapse-all-rows">
-        <svg-icon class="selected-all-capabilities" 
-            [mode]="'primary'"  [clickable]="true" [name]="'expand-o'" ariaLabel="Expand all"
-                [size]="'medium'" (click)="capabilitiesTable.rowDetail.expandAllRows()">
-        </svg-icon>
-         <svg-icon class="unselected-all-capabilities"
-            [mode]="'primary'"  [clickable]="true" [name]="'minimize-o'" ariaLabel="Collapse all"
-                [size]="'medium'" (click)="capabilitiesTable.rowDetail.collapseAllRows()">
-        </svg-icon>
-    </div>
     <ngx-datatable sdcDatatableA11y="Capabilities" #capabilitiesTable 
         columnMode="flex" 
         [headerHeight]="40"  
@@ -23,6 +13,19 @@
             </ng-template>
         </ngx-datatable-row-detail>
         <ngx-datatable-column  name="Name" [flexGrow]="1" [resizeable]="false">
+            <ng-template ngx-datatable-header-template let-column="column" let-sort="sortFn">
+                <div class="expand-collapse-all-rows">
+                    <svg-icon class="selected-all-capabilities"
+                        [mode]="'primary'"  [clickable]="true" [name]="'expand-o'" ariaLabel="Expand all"
+                            [size]="'medium'" (click)="capabilitiesTable.rowDetail.expandAllRows()">
+                    </svg-icon>
+                    <svg-icon class="unselected-all-capabilities"
+                        [mode]="'primary'"  [clickable]="true" [name]="'minimize-o'" ariaLabel="Collapse all"
+                            [size]="'medium'" (click)="capabilitiesTable.rowDetail.collapseAllRows()">
+                    </svg-icon>
+                </div>
+                <button type="button" class="datatable-header-cell-label sort-by-name" (click)="sort()">{{column.name}}</button>
+            </ng-template>
             <ng-template ngx-datatable-cell-template let-row="row" let-expanded="expanded">
                 <div class="expand-collapse-cell">
                     <svg-icon [clickable]="true" class="expand-collapse-icon"
