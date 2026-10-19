@@ -718,12 +718,7 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
 
     getLatestVersion(): void {
         if (this.component.isLatestVersion()) { return; }
-        const latestVersionId = _.last(_.keys(this.component.allVersions));
-        // NOTE: navigate(), not reload() — the original transition passed no {reload: true}.
-        this.navigationService.navigate(this.navigationService.getCurrentStateName(), {
-            id: latestVersionId,
-            type: this.component.componentType.toLowerCase()
-        });
+        this.onVersionChanged(_.first(this.versionsList).versionId);
     }
 
     // --- Status display ---
