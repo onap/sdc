@@ -119,14 +119,20 @@ jobs:
         with:
           egress-policy: audit
 
-      # A GitHub-hosted runner ships ~14 GB free on /, while the SDC stack needs ~6 GB of
-      # images plus the Maven build tree. Reclaiming the preinstalled toolchains we do not
-      # use buys ~30 GB and is the difference between this job running and dying mid-build
-      # with a confusing ENOSPC. Jenkins runs this on an 8c-8g node that needs no such help.
+      # The SDC stack needs ~6 GB of images plus the Maven build tree (~11 GB in all). Older
+      # GitHub-hosted runners shipped only ~14 GB free on /, and running out shows up as a
+      # confusing ENOSPC mid-build. Current ubuntu-24.04 runners have ~86 GB free, and the
+      # rm -rf below costs ~4.5 minutes, so it only runs when the runner is short of space.
+      # Jenkins runs this on an 8c-8g node that needs no such help.
       - name: Free up disk space
         run: |
           echo "Available before cleanup:"
           df -h /
+          available_gb=$(df --output=avail -BG / | tail -1 | tr -dc '0-9')
+          if [ "$available_gb" -ge 40 ]; then
+            echo "${available_gb} GB free, skipping cleanup"
+            exit 0
+          fi
           sudo rm -rf /usr/local/lib/android \
                       /usr/share/dotnet \
                       /opt/ghc \
