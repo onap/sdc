@@ -872,6 +872,11 @@ limitations under the License.
                                 </ulimits>
                                 <wait>
                                     <time>120000</time>
+                                    <!-- PID 1 in these images is a shell that ignores SIGTERM, so docker's
+                                         default 10 s stop timeout always expires. Not stopMode=kill: docker
+                                         answers 409 to a kill of a container that has already exited, which
+                                         fails docker:stop for a crashed container. -->
+                                    <kill>1000</kill>
                                     <tcp>
                                         <host>sdc-cs</host>
                                         <mode>direct</mode>
@@ -990,6 +995,7 @@ limitations under the License.
                                 </volumes>
                                 <wait>
                                     <time>300000</time>
+                                    <kill>1000</kill>
                                     <tcp>
                                         <host>sdc-onboard-BE</host>
                                         <mode>direct</mode>
@@ -1056,6 +1062,7 @@ limitations under the License.
                                 </volumes>
                                 <wait>
                                     <time>60000</time>
+                                    <kill>1000</kill>
                                     <tcp>
                                         <host>sdc-BE</host>
                                         <mode>direct</mode>
@@ -1148,6 +1155,7 @@ limitations under the License.
                                 </volumes>
                                 <wait>
                                     <time>180000</time>
+                                    <kill>1000</kill>
                                     <tcp>
                                         <host>sdc-FE</host>
                                         <mode>direct</mode>
@@ -1186,6 +1194,7 @@ limitations under the License.
                                 </volumes>
                                 <wait>
                                     <time>60000</time>
+                                    <kill>1000</kill>
                                     <tcp>
                                         <host>sdc-sim</host>
                                         <mode>direct</mode>
