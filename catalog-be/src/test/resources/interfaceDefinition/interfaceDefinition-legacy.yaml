@@ -37,6 +37,13 @@ start:
       type: float
       required: false
       default: 11.1
+    listInput:
+      type: list
+      entry_schema:
+        type: string
+    mapInput:
+      type: map
+      entry_schema: integer
     complexInput:
       type: onap.datatypes.partner.access_details
       status: experimental

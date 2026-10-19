@@ -32,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.lenient;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.DEFAULT;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.DESCRIPTION;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.ENTRY_SCHEMA;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.REQUIRED;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.STATUS;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.TYPE;
@@ -199,6 +200,8 @@ class InterfaceDefinitionHandlerTest {
             "default", 11.1
         );
         startOperationExpectedInputMap.put("floatInput", floatInput);
+        startOperationExpectedInputMap.put("listInput", Map.of("type", "list", "entry_schema", "string"));
+        startOperationExpectedInputMap.put("mapInput", Map.of("type", "map", "entry_schema", "integer"));
 
         final LinkedHashMap<String, Object> complexInputDefault = new LinkedHashMap<>();
         complexInputDefault.put("dsl_stability_profile", "dsl_stability_profile_value");
@@ -258,6 +261,11 @@ class InterfaceDefinitionHandlerTest {
             );
             assertEquals(expectedInput.get(DESCRIPTION.getElementName()), actualInputDefinition.getDescription(),
                 String.format("%s attribute of input %s should be as expected", DESCRIPTION.getElementName(), expectedInputName)
+            );
+            final String actualEntrySchemaType = actualInputDefinition.getSchema() == null ? null
+                : actualInputDefinition.getSchema().getProperty().getType();
+            assertEquals(expectedInput.get(ENTRY_SCHEMA.getElementName()), actualEntrySchemaType,
+                String.format("%s type of input %s should be as expected", ENTRY_SCHEMA.getElementName(), expectedInputName)
             );
             final Object expectedRequired =
                 expectedInput.get(REQUIRED.getElementName()) == null ? false : expectedInput.get(REQUIRED.getElementName());

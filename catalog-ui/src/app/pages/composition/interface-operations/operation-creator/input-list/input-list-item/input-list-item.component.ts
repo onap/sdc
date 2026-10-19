@@ -79,6 +79,10 @@ export class InputListItemComponent implements OnInit {
     if (this.schema) {
       this.property.schema = this.schema;
       this.property.schemaType = this.schema.property.type;
+    } else if (this.isTypeList(this.type.name) || this.isTypeMap(this.type.name)) {
+      // Operation inputs imported before the BE kept entry_schema have none. Edit their entries as
+      // strings, without writing that guess into property.schema.
+      this.schema = new SchemaPropertyGroupModel(new SchemaProperty({type: PROPERTY_TYPES.STRING} as SchemaProperty));
     }
     if (this.toscaFunction) {
       this.property.toscaFunction = this.toscaFunction;
