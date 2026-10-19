@@ -54,4 +54,30 @@ describe('InputListItemComponent', () => {
   it('should create', () => {
     expect(component).toBeDefined();
   });
+
+  ['list', 'map'].forEach((typeName) => {
+    it(`renders a ${typeName} input that has no entry schema, editing its entries as strings`, () => {
+      const noSchemaFixture = TestBed.createComponent(InputListItemComponent);
+      const item = noSchemaFixture.componentInstance;
+      item.name = 'aCollection';
+      item.valueObjRef = typeName === 'list' ? [] : {};
+      item.type = new DataTypeModel(undefined);
+      item.type.name = typeName;
+      item.dataTypeMap = new Map();
+
+      expect(() => noSchemaFixture.detectChanges()).not.toThrow();
+
+      expect(item.resolveType()).toContain('string');
+      expect(item.property.schemaType).toBeUndefined();
+      expect(item.property.schema.property.type).toBeUndefined();
+      if (typeName === 'list') {
+        item.addListElement();
+        expect(item.valueObjRef).toEqual(['']);
+      } else {
+        item.mapEntryName = 'k1';
+        item.addMapEntry();
+        expect(item.valueObjRef).toEqual({k1: ''});
+      }
+    });
+  });
 });
