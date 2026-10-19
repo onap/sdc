@@ -17,6 +17,22 @@
 <div class="properties-assignment-page">
     <div class="main-content">
         <div class="left-column">
+            <div class="header">
+                <div class="search-filter-container" [class.without-filter]="isInputsTabSelected || isPoliciesTabSelected">
+                    <button type="button" *ngIf="displayClearSearch && isPropertiesTabSelected" (click)="clickOnClearSearch()" class="clear-filter" data-tests-id="clear-filter-button">Clear All</button>
+                    <input type="text" class="search-box" placeholder="Search" aria-label="Search properties" [(ngModel)]="searchQuery" data-tests-id="search-box"/>
+                    <span class="sprite search-icon" data-tests-id="search-button"></span>
+                    <filter-properties-assignment *ngIf="isPropertiesTabSelected" #advanceSearch class="advance-search" [componentType]="component.componentType" (searchProperties)="searchPropertiesInstances($event)"></filter-properties-assignment>
+                </div>
+                <button (click)="openToscaGetFunctionModal()"
+                        *ngIf="isPropertiesTabSelected && !isSelf()"
+                        [disabled]="(checkedPropertiesCount != 1 || isReadonly || hasChangedData) && !enableToscaFunction"
+                        class="tlv-btn blue declare-button"
+                        data-tests-id="declare-button select-tosca-function">{{'TOSCA_FUNCTION_LABEL' | translate}}</button>
+                <button class="tlv-btn blue declare-button" [disabled]="!checkedPropertiesCount || isReadonly || hasChangedData" (click)="declareInput()" data-tests-id="declare-button declare-input">Declare Input</button>
+                <button class="tlv-btn blue declare-button" [disabled]="!checkedPropertiesCount || isReadonly || hasChangedData || isSelf()" (click)="declarePropertiesToPolicies()" data-tests-id="declare-button declare-policy">Declare Policy</button>
+                <button class="tlv-btn blue declare-button" [disabled]="!checkedPropertiesCount || checkedChildPropertiesCount || isReadonly || hasChangedData" (click)="declareListProperties()" data-tests-id="declare-button declare-list-input">Create List Input</button>
+            </div>
             <div class="main-tabs-section">
                 <tabs #propertyInputTabs tabStyle="round-tabs" (tabChanged)="tabChanged($event)" [hideIndicationOnTabChange]="true" >
                     <tab tabTitle="Properties">
@@ -70,22 +86,6 @@
                     <button class="tlv-btn outline blue" [disabled]="!hasChangedData || savingChangedData" (click)="reverseChangedData()" data-tests-id="properties-reverse-button">Discard</button>
                     <button class="tlv-btn blue" [disabled]="!hasChangedData || !isValidChangedData || savingChangedData" (click)="doSaveChangedData()" data-tests-id="properties-save-button">{{savingChangedData ? 'Saving' : 'Save'}}</button>
                 </div>
-            </div>
-            <div class="header">
-                <div class="search-filter-container" [class.without-filter]="isInputsTabSelected || isPoliciesTabSelected">
-                    <button type="button" *ngIf="displayClearSearch && isPropertiesTabSelected" (click)="clickOnClearSearch()" class="clear-filter" data-tests-id="clear-filter-button">Clear All</button>
-                    <input type="text" class="search-box" placeholder="Search" aria-label="Search properties" [(ngModel)]="searchQuery" data-tests-id="search-box"/>
-                    <span class="sprite search-icon" data-tests-id="search-button"></span>
-                    <filter-properties-assignment *ngIf="isPropertiesTabSelected" #advanceSearch class="advance-search" [componentType]="component.componentType" (searchProperties)="searchPropertiesInstances($event)"></filter-properties-assignment>
-                </div>
-                <button (click)="openToscaGetFunctionModal()"
-                        *ngIf="isPropertiesTabSelected && !isSelf()"
-                        [disabled]="(checkedPropertiesCount != 1 || isReadonly || hasChangedData) && !enableToscaFunction"
-                        class="tlv-btn blue declare-button"
-                        data-tests-id="declare-button select-tosca-function">{{'TOSCA_FUNCTION_LABEL' | translate}}</button>
-                <button class="tlv-btn blue declare-button" [disabled]="!checkedPropertiesCount || isReadonly || hasChangedData" (click)="declareInput()" data-tests-id="declare-button declare-input">Declare Input</button>
-                <button class="tlv-btn blue declare-button" [disabled]="!checkedPropertiesCount || isReadonly || hasChangedData || isSelf()" (click)="declarePropertiesToPolicies()" data-tests-id="declare-button declare-policy">Declare Policy</button>
-                <button class="tlv-btn blue declare-button" [disabled]="!checkedPropertiesCount || checkedChildPropertiesCount || isReadonly || hasChangedData" (click)="declareListProperties()" data-tests-id="declare-but($event)ton declare-list-input">Create List Input</button>
             </div>
         </div>
         <div class="right-column">
