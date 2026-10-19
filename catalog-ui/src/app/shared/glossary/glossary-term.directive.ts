@@ -18,6 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 import {AfterViewInit, Directive, ElementRef, HostListener, Input, OnChanges, OnDestroy, Renderer2} from '@angular/core';
+import {Subscription} from 'rxjs/Subscription';
 import {GlossaryService} from './glossary.service';
 
 const SHOW_DELAY_MS = 300;
@@ -42,6 +43,7 @@ export class GlossaryTermDirective implements OnChanges, AfterViewInit, OnDestro
     private tooltipElement: HTMLElement = null;
     private showTimer: any = null;
     private removeListeners: Array<() => void> = [];
+    private languageSubscription: Subscription = null;
 
     constructor(private host: ElementRef, private renderer: Renderer2, private glossary: GlossaryService) {
     }
@@ -58,9 +60,18 @@ export class GlossaryTermDirective implements OnChanges, AfterViewInit, OnDestro
     ngAfterViewInit(): void {
         this.viewReady = true;
         this.applyAttributes();
+        // Focus that lands before en_US.json has loaded finds no text to show.
+        this.languageSubscription = this.glossary.changed.subscribe(() => {
+            if (this.host.nativeElement.contains(document.activeElement)) {
+                this.show();
+            }
+        });
     }
 
     ngOnDestroy(): void {
+        if (this.languageSubscription) {
+            this.languageSubscription.unsubscribe();
+        }
         this.hide();
         this.removeAttributes();
     }

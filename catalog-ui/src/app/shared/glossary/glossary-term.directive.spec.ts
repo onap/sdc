@@ -18,11 +18,15 @@
  * ============LICENSE_END=========================================================
  */
 import {Component} from '@angular/core';
+import {Subject} from 'rxjs/Subject';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {TranslateService} from '../translator/translate.service';
 import {GlossaryTermDirective} from './glossary-term.directive';
 import {GlossaryService} from './glossary.service';
 import {translateServiceStub} from './glossary.testing';
+
+declare const require: any;
+const EN_US: {[k: string]: string} = require('../../../assets/languages/en_US.json');
 
 @Component({
     template: `
@@ -169,6 +173,50 @@ describe('GlossaryTermDirective', () => {
 
         it('opens above the host when there is no room below it', () => {
             expect(placeAt(700).style.top).toBe((700 - 60 - 4) + 'px');
+        });
+    });
+
+    describe('before en_US.json has loaded', () => {
+        let dict: {[k: string]: string};
+        let languageChanged: Subject<string>;
+
+        beforeEach(() => {
+            fixture.destroy();
+            TestBed.resetTestingModule();
+            dict = {};
+            languageChanged = new Subject<string>();
+            const stub = Object.assign(translateServiceStub(dict), {languageChangedObservable: languageChanged});
+            TestBed.configureTestingModule({
+                declarations: [HostComponent, GlossaryTermDirective],
+                providers: [GlossaryService, {provide: TranslateService, useValue: stub}]
+            });
+            fixture = TestBed.createComponent(HostComponent);
+            document.body.appendChild(fixture.nativeElement);
+            fixture.detectChanges();
+        });
+
+        afterEach(() => fixture.nativeElement.remove());
+
+        const load = () => {
+            Object.assign(dict, EN_US);
+            languageChanged.next('en_US');
+        };
+
+        it('shows the tooltip once the text arrives if the host still has focus', () => {
+            el('btn').focus();
+            fire(el('btn'), 'focusin');
+            expect(tooltip()).toBeNull();
+            load();
+            expect(tooltip().textContent).toContain('Virtual Function Component (VFC)');
+        });
+
+        it('stays closed if focus moved away before the text arrived', () => {
+            el('btn').focus();
+            fire(el('btn'), 'focusin');
+            el('btn').blur();
+            fire(el('btn'), 'focusout');
+            load();
+            expect(tooltip()).toBeNull();
         });
     });
 });
