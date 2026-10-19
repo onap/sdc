@@ -23,6 +23,7 @@ import * as _ from 'lodash';
 (window as any)._ = _;
 
 import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ComponentFixture } from '@angular/core/testing';
 import { ConfigureFn, configureTests } from '../../../../../jest/test-config.helper';
 import { DynamicPropertyComponent } from './dynamic-property.component';
@@ -30,6 +31,7 @@ import { PropertiesUtils } from '../../../../pages/properties-assignment/service
 import { DataTypeService } from '../../../../services/data-type.service';
 import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
 import {PropertyFEModel} from 'app/models/properties-inputs/property-fe-model';
+import {DerivedFEProperty} from 'app/models/properties-inputs/derived-fe-property';
 import {PROPERTY_TYPES} from 'app/utils/constants';
 import { ContentAfterLastDotPipe } from '../../../../pipes/content-after-last-dot.pipe';
 import { FilterChildPropertiesPipe } from '../pipes/filter-child-properties.pipe';
@@ -44,6 +46,7 @@ describe('dynamic-property component', () => {
         dataTypeServiceMock = { getConstraintsByParentTypeAndUniqueID: jest.fn().mockReturnValue(null) };
         const configure: ConfigureFn = (testBed) => {
             testBed.configureTestingModule({
+                imports: [NoopAnimationsModule],
                 declarations: [DynamicPropertyComponent, ContentAfterLastDotPipe, FilterChildPropertiesPipe],
                 schemas: [NO_ERRORS_SCHEMA],
                 providers: [
@@ -88,5 +91,30 @@ describe('dynamic-property component', () => {
         cmp.onElementChanged({ value: '', isValid: true } as any);
         expect(cmp.checkboxDisabled).toBe(false);
         expect(cmp.emitter.emit).toHaveBeenCalled();
+    });
+
+    describe('map entry checkbox', () => {
+        const renderMapWithOneEntry = (hideCheckBox: boolean): HTMLElement => {
+            const mapProp = new PropertyFEModel({
+                name: 'headers', type: PROPERTY_TYPES.MAP, schema: { property: { type: PROPERTY_TYPES.STRING } }
+            } as any);
+            const entry = new DerivedFEProperty(mapProp, mapProp.name, true, 'key', 'value');
+            mapProp.flattenedChildren = [entry];
+            const cmp = fixture.componentInstance;
+            cmp.property = mapProp;
+            cmp.rootProperty = mapProp;
+            cmp.expandedChildId = mapProp.name;
+            cmp.hideCheckBox = hideCheckBox;
+            fixture.detectChanges();
+            return fixture.nativeElement.querySelector('.flat-children-container');
+        };
+
+        it('is rendered on a map entry by default', () => {
+            expect(renderMapWithOneEntry(false).querySelector('checkbox')).not.toBeNull();
+        });
+
+        it('is not rendered on a map entry when the root hides it', () => {
+            expect(renderMapWithOneEntry(true).querySelector('checkbox')).toBeNull();
+        });
     });
 });

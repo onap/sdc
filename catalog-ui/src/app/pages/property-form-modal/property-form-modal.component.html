@@ -197,6 +197,7 @@
                                 [property]="propertyFEModel"
                                 [rootProperty]="propertyFEModel"
                                 [readonly]="isValueReadonly"
+                                [hideCheckBox]="true"
                                 [expandedChildId]="propertyFEModel.expandedChildPropertyId"
                                 (propertyChanged)="onValueChanged()"
                                 (expandChild)="propertyFEModel.updateExpandedChildPropertyId($event)">
