@@ -20,7 +20,7 @@
 *  Modifications Copyright (C) 2026 Deutsche Telekom AG.
 */
 import * as _ from "lodash";
-import {Component, Inject} from '@angular/core';
+import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {Component as IComponent} from 'app/models/components/component';
 
 import {ISdcConfig, SdcConfigToken} from "app/config/sdc-config.config";
@@ -39,7 +39,8 @@ import {PluginsService} from 'app/services/plugins.service';
 import {WorkflowService} from 'app/services/workflow.service';
 import {NavigationService} from 'app/services/navigation.service';
 import {WorkspaceService} from 'app/pages/workspace/workspace.service';
-import {WorkspaceMode} from 'app/utils/constants';
+import {EVENTS, WorkspaceMode} from 'app/utils/constants';
+import {EventListenerService} from 'app/services/event-listener.service';
 
 import {
     OperationCreatorComponent,
@@ -131,7 +132,7 @@ export class UIInterfaceModel extends InterfaceModel {
     providers: [ModalService, TranslateService]
 })
 
-export class InterfaceOperationComponent {
+export class InterfaceOperationComponent implements OnInit, OnDestroy {
 
     interfaces: UIInterfaceModel[];
     modalInstance: ModalComponent;
@@ -157,18 +158,28 @@ export class InterfaceOperationComponent {
         private WorkflowService: WorkflowService,
         private modalService: ModalService,
         private ModalServiceSdcUI: SdcUiServices.ModalService,
-        private workspaceService: WorkspaceService
+        private workspaceService: WorkspaceService,
+        private eventListenerService: EventListenerService
     ) {
         this.enableWorkflowAssociation = sdcConfig.enableWorkflowAssociation;
         this.modalTranslation = new ModalTranslation(TranslateService);
     }
 
-    ngOnInit(): void {
-        this.component = this.workspaceService.component as any;
-        // Replaces the deleted workspace shim controller's [readonly]="isViewMode() || !isDesigner()"
-        // route-template binding; getComponentMode() already folds the designer-role check in.
+    ngOnDestroy(): void {
+        this.eventListenerService.unRegisterObserver(EVENTS.ON_CERTIFY, this.updateReadonly);
+    }
+
+    // Replaces the deleted workspace shim controller's [readonly]="isViewMode() || !isDesigner()"
+    // route-template binding; getComponentMode() already folds the designer-role check in.
+    private updateReadonly = (): void => {
         this.readonly = !this.component ||
             this.workspaceService.getComponentMode(this.workspaceService.component) === WorkspaceMode.VIEW;
+    }
+
+    ngOnInit(): void {
+        this.component = this.workspaceService.component as any;
+        this.updateReadonly();
+        this.eventListenerService.registerObserverCallback(EVENTS.ON_CERTIFY, this.updateReadonly);
         this.isLoading = true;
         this.workflowIsOnline = !_.isUndefined(this.PluginsService.getPluginByStateUrl('workflowDesigner'));
         Observable.forkJoin(

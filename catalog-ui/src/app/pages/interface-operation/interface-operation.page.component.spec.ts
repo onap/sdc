@@ -20,7 +20,8 @@
 import 'rxjs/add/observable/forkJoin';
 import 'rxjs/add/observable/of';
 import {Observable} from 'rxjs/Observable';
-import {WorkspaceMode} from 'app/utils/constants';
+import {EVENTS, WorkspaceMode} from 'app/utils/constants';
+import {EventListenerService} from 'app/services/event-listener.service';
 import {InterfaceOperationComponent} from './interface-operation.page.component';
 
 function makeComponent(overrides: any = {}) {
@@ -52,11 +53,12 @@ function createComp(opts: any = {}) {
     const workflowService: any = {getWorkflows: jest.fn(() => Observable.of([]))};
     const modalService: any = {};
     const modalServiceSdcUI: any = {};
+    const eventListenerService = new EventListenerService();
 
     const comp = new InterfaceOperationComponent(
         sdcConfig, navigationService, translateService, pluginsService, componentService,
-        workflowService, modalService, modalServiceSdcUI, workspaceService);
-    return {comp, component, workspaceService, componentService};
+        workflowService, modalService, modalServiceSdcUI, workspaceService, eventListenerService);
+    return {comp, component, workspaceService, componentService, eventListenerService};
 }
 
 describe('InterfaceOperationComponent', () => {
@@ -71,6 +73,22 @@ describe('InterfaceOperationComponent', () => {
         const {comp} = createComp({mode: WorkspaceMode.EDIT});
         comp.ngOnInit();
         expect(comp.readonly).toBe(false);
+    });
+
+    it('turns read-only when the component is certified while the tab is open', () => {
+        const {comp, workspaceService, eventListenerService} = createComp({mode: WorkspaceMode.EDIT});
+        comp.ngOnInit();
+        expect(comp.readonly).toBe(false);
+        workspaceService.getComponentMode.mockReturnValue(WorkspaceMode.VIEW);
+        eventListenerService.notifyObservers(EVENTS.ON_CERTIFY);
+        expect(comp.readonly).toBe(true);
+    });
+
+    it('stops listening for certify on destroy', () => {
+        const {comp, eventListenerService} = createComp();
+        comp.ngOnInit();
+        comp.ngOnDestroy();
+        expect(eventListenerService.observerCallbacks.containsKey(EVENTS.ON_CERTIFY)).toBe(false);
     });
 
     it('reads the component from WorkspaceService, not an @Input', () => {

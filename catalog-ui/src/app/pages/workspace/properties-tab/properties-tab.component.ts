@@ -17,11 +17,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {PropertyModel} from 'app/models/properties';
 import {ModalsHandler} from 'app/utils/modals-handler';
 import {SdcUiCommon, SdcUiServices} from 'onap-ui-angular';
-import {WorkspaceMode} from 'app/utils/constants';
+import {EVENTS, WorkspaceMode} from 'app/utils/constants';
+import {EventListenerService} from 'app/services/event-listener.service';
 import {TranslateService} from 'app/shared/translator/translate.service';
 import {ComponentService} from 'app/services/component-services/component.service';
 import {ComponentGenericResponse} from 'app/services/responses/component-generic-response';
@@ -59,7 +60,7 @@ interface ITableHeader {
     styleUrls: ['./properties-tab.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class WorkspacePropertiesTabComponent implements OnInit {
+export class WorkspacePropertiesTabComponent implements OnInit, OnDestroy {
 
     component: any;
     isLoading: boolean = false;
@@ -86,7 +87,17 @@ export class WorkspacePropertiesTabComponent implements OnInit {
                 private modalsHandler: ModalsHandler,
                 private modalService: SdcUiServices.ModalService,
                 private translateService: TranslateService,
-                private cdr: ChangeDetectorRef) {
+                private cdr: ChangeDetectorRef,
+                private eventListenerService: EventListenerService) {
+    }
+
+    ngOnDestroy(): void {
+        this.eventListenerService.unRegisterObserver(EVENTS.ON_CERTIFY, this.onCertify);
+    }
+
+    private onCertify = (): void => {
+        this.mode = this.workspaceService.getComponentMode(this.component);
+        this.detectChangesSafe();
     }
 
     ngOnInit(): void {
@@ -95,6 +106,7 @@ export class WorkspacePropertiesTabComponent implements OnInit {
             return;
         }
         this.mode = this.workspaceService.getComponentMode(this.component);
+        this.eventListenerService.registerObserverCallback(EVENTS.ON_CERTIFY, this.onCertify);
         if (!this.component.properties) {
             this.isLoading = true;
             this.componentService.getComponentProperties(this.component).subscribe(

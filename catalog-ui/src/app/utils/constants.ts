@@ -342,6 +342,7 @@ export class EVENTS {
     static ON_WORKSPACE_SAVE_BUTTON_ERROR = "onWorkspaceSaveButtonError";
     static ON_WORKSPACE_UNSAVED_CHANGES = "onWorkspaceUnsavedChanges";
     static ON_CHECKOUT = "onCheckout";
+    static ON_CERTIFY = "onCertify";
     static ON_LIFECYCLE_CHANGE_WITH_SAVE = "onLifecycleChangeWithSave";
     static ON_LIFECYCLE_CHANGE = "onCheckout";
 

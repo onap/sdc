@@ -18,7 +18,8 @@
  * ============LICENSE_END=========================================================
  */
 import {of, throwError} from 'rxjs';
-import {WorkspaceMode} from 'app/utils/constants';
+import {EVENTS, WorkspaceMode} from 'app/utils/constants';
+import {EventListenerService} from 'app/services/event-listener.service';
 import {PropertyModel} from 'app/models/properties';
 import {WorkspacePropertiesTabComponent} from '../properties-tab.component';
 
@@ -60,13 +61,33 @@ function createComp(opts: any = {}) {
     const modalService: any = {openInfoModal: jest.fn()};
     const translateService: any = {translate: jest.fn((k: string) => k)};
     const cdr: any = {detectChanges: jest.fn()};
+    const eventListenerService = new EventListenerService();
 
     const comp = new WorkspacePropertiesTabComponent(
-        workspaceService, componentService, modalsHandler, modalService, translateService, cdr);
-    return {comp, component, workspaceService, componentService, modalsHandler, modalService, translateService, cdr};
+        workspaceService, componentService, modalsHandler, modalService, translateService, cdr, eventListenerService);
+    return {comp, component, workspaceService, componentService, modalsHandler, modalService, translateService, cdr,
+        eventListenerService};
 }
 
 describe('WorkspacePropertiesTabComponent', () => {
+
+    it('switches to VIEW mode when the component is certified while the tab is open', () => {
+        const {comp, workspaceService, eventListenerService, cdr} = createComp({properties: []});
+        comp.ngOnInit();
+        expect(comp.isViewMode()).toBe(false);
+        cdr.detectChanges.mockClear();
+        workspaceService.getComponentMode.mockReturnValue(WorkspaceMode.VIEW);
+        eventListenerService.notifyObservers(EVENTS.ON_CERTIFY);
+        expect(comp.isViewMode()).toBe(true);
+        expect(cdr.detectChanges).toHaveBeenCalled();
+    });
+
+    it('stops listening for certify on destroy', () => {
+        const {comp, eventListenerService} = createComp({properties: []});
+        comp.ngOnInit();
+        comp.ngOnDestroy();
+        expect(eventListenerService.observerCallbacks.containsKey(EVENTS.ON_CERTIFY)).toBe(false);
+    });
 
     it('fetches properties when the component has none cached, then populates the list', () => {
         const fetched = [makeProperty('a'), makeProperty('b')];

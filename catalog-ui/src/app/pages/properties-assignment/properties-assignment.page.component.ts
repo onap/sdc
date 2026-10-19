@@ -157,6 +157,7 @@ export class PropertiesAssignmentComponent implements UnsavedChangesAware {
         than if the data is already exist, no need to call the api again - Ask orit if you have any questions*/
         this.component = this.workspaceService.component;
         this.eventListenerService.registerObserverCallback(EVENTS.ON_LIFECYCLE_CHANGE, this.onCheckout);
+        this.eventListenerService.registerObserverCallback(EVENTS.ON_CERTIFY, this.updateViewMode);
         this.updateViewMode();
         this.changedData = [];
         this.updateHasChangedData();
@@ -254,6 +255,7 @@ export class PropertiesAssignmentComponent implements UnsavedChangesAware {
 
     ngOnDestroy(){
         this.eventListenerService.unRegisterObserver(EVENTS.ON_LIFECYCLE_CHANGE);
+        this.eventListenerService.unRegisterObserver(EVENTS.ON_CERTIFY, this.updateViewMode);
     }
 
     selectFirstInstanceByDefault = () => {

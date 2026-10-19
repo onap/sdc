@@ -136,6 +136,7 @@ export class AttributesOutputsComponent implements UnsavedChangesAware {
     than if the data is already exist, no need to call the api again - Ask orit if you have any questions*/
     this.component = this.workspaceService.component;
     this.EventListenerService.registerObserverCallback(EVENTS.ON_LIFECYCLE_CHANGE, this.onCheckout);
+    this.EventListenerService.registerObserverCallback(EVENTS.ON_CERTIFY, this.updateViewMode);
     this.updateViewMode();
 
     this.changedData = [];
@@ -202,6 +203,7 @@ export class AttributesOutputsComponent implements UnsavedChangesAware {
 
   ngOnDestroy() {
     this.EventListenerService.unRegisterObserver(EVENTS.ON_LIFECYCLE_CHANGE);
+    this.EventListenerService.unRegisterObserver(EVENTS.ON_CERTIFY, this.updateViewMode);
   }
 
   selectFirstInstanceByDefault = () => {
