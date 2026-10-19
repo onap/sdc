@@ -30,7 +30,6 @@
     .left-column {
         flex: 1 0 500px;
         position: relative;
-	min-width:930px;
 
         /deep/ .tabs {
             width:18%;
@@ -72,6 +71,7 @@
         .search-filter-container{
             display:flex;
             flex-direction:row;
+            position: relative;
 
             .search-box {
                 border: 1px solid @control_border;
@@ -134,6 +134,28 @@
                 top: 45px;
                 right: 0;
                 padding: 4px;
+            }
+        }
+
+        // The toolbar only fits beside the tabs when the column is about 975px wide (201px of tabs
+        // + 764px of toolbar with TOSCA function shown), which this column reaches at a 1800px
+        // viewport. Narrower, it would overlap the tabs, so it moves above them and Discard/Save
+        // take the space it leaves next to the tabs.
+        @media (max-width: 1799px) {
+            .header {
+                position: static;
+                flex-wrap: wrap;
+                justify-content: flex-end;
+                row-gap: 8px;
+                margin-bottom: 8px;
+            }
+
+            /deep/ .tabs {
+                width: max-content;
+            }
+
+            .main-tabs-section .main-tabs-section-buttons {
+                top: 0;
             }
         }
     }

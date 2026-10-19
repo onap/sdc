@@ -229,4 +229,42 @@ test.describe('Workspace layout', () => {
                 .toBe(0);
         }
     });
+
+    test('Properties Assignment keeps its toolbar off the tabs and its side panel on screen', async ({ sdcPage, api }) => {
+        const vf = await api.createVf('PwPropsLayout');
+
+        await gotoWorkspaceTab(sdcPage, { id: vf.id, type: 'resource', tab: 'properties_assignment' });
+        await settles(sdcPage);
+        const addProperty = sdcPage.locator('[data-tests-id="properties-add-button"]');
+        await expect(addProperty).toBeVisible({ timeout: 30_000 });
+
+        for (const width of [1600, 1920]) {
+            await sdcPage.setViewportSize({ width, height: 1000 });
+            const g = await sdcPage.evaluate(() => {
+                const box = (el: Element | null) => {
+                    const r = el && el.getBoundingClientRect();
+                    return r && r.width && r.height ? { left: r.left, right: r.right, top: r.top, bottom: r.bottom } : null;
+                };
+                const tabs = Array.from(document.querySelectorAll('.main-tabs-section .tabs .tab')).map(box).filter(Boolean);
+                return {
+                    viewportWidth: window.innerWidth,
+                    toolbar: box(document.querySelector('.left-column .header')),
+                    tabStrip: tabs.length ? {
+                        left: tabs[0]!.left, right: tabs[tabs.length - 1]!.right,
+                        top: tabs[0]!.top, bottom: tabs[0]!.bottom,
+                    } : null,
+                    rightColumn: box(document.querySelector('.properties-assignment-page .right-column')),
+                };
+            });
+
+            expect(g.toolbar, `no toolbar laid out at ${width}px`).not.toBeNull();
+            expect(g.tabStrip, `no tabs laid out at ${width}px`).not.toBeNull();
+            const overlaps = g.toolbar!.left < g.tabStrip!.right && g.toolbar!.right > g.tabStrip!.left
+                && g.toolbar!.top < g.tabStrip!.bottom && g.toolbar!.bottom > g.tabStrip!.top;
+            expect(overlaps, `the search/declare toolbar covers the tabs at ${width}px`).toBe(false);
+            expect(g.rightColumn!.right,
+                `the Composition panel and Add Property run past the viewport at ${width}px`)
+                .toBeLessThanOrEqual(g.viewportWidth);
+        }
+    });
 });
