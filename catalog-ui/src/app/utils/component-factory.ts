@@ -191,7 +191,7 @@ export class ComponentFactory {
     };
 
     public getComponentWithMetadataFromServer = (componentType:string, componentId:string):Promise<Component> => {
-        return new Promise<Component>((resolve) => {
+        return new Promise<Component>((resolve, reject) => {
             let component = this.createEmptyComponent(componentType);
             component.setUniqueId(componentId);
             this.ComponentService.getComponentMetadata(component.uniqueId, component.componentType).subscribe((response:ComponentGenericResponse) => {
@@ -200,7 +200,7 @@ export class ComponentFactory {
                 component.derivedFromGenericVersion = response.derivedFromGenericVersion;
                 component.model = response.model;
                 resolve(component);
-            });
+            }, reject);
         });
     }
 }
