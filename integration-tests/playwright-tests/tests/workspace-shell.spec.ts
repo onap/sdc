@@ -32,7 +32,7 @@
  * HOW TO RUN: see README.md — `npx playwright test workspace-shell`.
  */
 
-import { test, expect, SEL, settles, dismissTransientModal, gotoWorkspaceTab } from './fixtures/sdc';
+import { test, expect, SEL, settles, dismissTransientModal, gotoWorkspaceTab, currentRoute } from './fixtures/sdc';
 
 test.describe('Workspace shell', () => {
 
@@ -142,5 +142,33 @@ test.describe('Workspace shell', () => {
 
         await expect(sdcPage.locator(SEL.generalSideMenu)).toBeVisible({ timeout: 10_000 });
         await expect(sdcPage.locator(SEL.sideMenuItems)).not.toHaveCount(0);
+    });
+
+    // A version switch changes only :id, so the router reuses the shell and the tab. Both used to
+    // keep the version they were opened on: V0.1 showed V0.2's Check in and Delete version.
+    test('version switch: the shell offers the actions of the version picked', async ({ sdcPage, api }) => {
+        const v1 = await api.createVf('PwShellVersions');
+        const v2 = await api.newVersion(v1);
+        await gotoWorkspaceTab(sdcPage, { id: v2.id, type: 'resource', tab: 'general' });
+        await expect(sdcPage.locator('[data-tests-id="check_in"]')).toBeVisible({ timeout: 30_000 });
+
+        await sdcPage.locator(SEL.versionHeader).selectOption({ label: 'V0.1' });
+        await expect.poll(() => currentRoute(sdcPage), { timeout: 30_000 }).toContain(v1.id);
+
+        await expect(sdcPage.locator('[data-tests-id="check_out"]')).toBeVisible({ timeout: 30_000 });
+        await expect(sdcPage.locator('[data-tests-id="check_in"]')).toHaveCount(0);
+        await expect(sdcPage.locator('[data-tests-id="formlifecyclestate"]')).toHaveText(/check in/i);
+    });
+
+    test('asset switch: opening another asset from a workspace shows it in the shell and the tab', async ({ sdcPage, api }) => {
+        const first = await api.createVf('PwShellSwitchA');
+        const second = await api.createVf('PwShellSwitchB');
+        await gotoWorkspaceTab(sdcPage, { id: first.id, type: 'resource', tab: 'general' });
+        await expect(sdcPage.locator(SEL.name)).toHaveValue(first.name, { timeout: 30_000 });
+
+        await gotoWorkspaceTab(sdcPage, { id: second.id, type: 'resource', tab: 'general' });
+
+        await expect(sdcPage.locator(SEL.name)).toHaveValue(second.name, { timeout: 30_000 });
+        await expect(sdcPage.locator('.w-sdc-left-sidebar')).toContainText(second.name.slice(0, 20));
     });
 });

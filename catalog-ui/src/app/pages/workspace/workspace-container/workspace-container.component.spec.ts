@@ -251,6 +251,31 @@ describe('ngOnInit component feed', () => {
     });
 });
 
+describe('onNavigationSuccess', () => {
+    function shellShowing(uniqueId: string, resolvedId: string) {
+        const workspaceService: any = {component: {uniqueId: resolvedId}};
+        const {comp, cdr} = createComponent({workspaceService});
+        comp.component = {uniqueId};
+        const initWorkspace = jest.spyOn(comp as any, 'initWorkspace').mockImplementation(() => undefined);
+        const updateSelectedMenuItem = jest.spyOn(comp as any, 'updateSelectedMenuItem').mockImplementation(() => undefined);
+        jest.spyOn(comp as any, 'updatePageTitle').mockImplementation(() => undefined);
+        (comp as any).onNavigationSuccess();
+        return {initWorkspace, updateSelectedMenuItem, cdr};
+    }
+
+    it('re-initialises the reused shell when the navigation resolved another component', () => {
+        const {initWorkspace, cdr} = shellShowing('uid-0.2', 'uid-0.1');
+        expect(initWorkspace).toHaveBeenCalledTimes(1);
+        expect(cdr.detectChanges).toHaveBeenCalled();
+    });
+
+    it('only follows the tab when the component is unchanged', () => {
+        const {initWorkspace, updateSelectedMenuItem} = shellShowing('uid-0.2', 'uid-0.2');
+        expect(initWorkspace).not.toHaveBeenCalled();
+        expect(updateSelectedMenuItem).toHaveBeenCalledWith('workspace.general');
+    });
+});
+
 // Since the router swap this shell is a <router-outlet> CHILD view rather than a downgradeComponent
 // whose host view was attached to ApplicationRef. tick() detectChanges()es each ROOT directly and so
 // bypasses the OnPush ChecksEnabled gate, but a child is reached via callViewAction, which enforces
