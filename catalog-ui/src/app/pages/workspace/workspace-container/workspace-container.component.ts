@@ -168,12 +168,23 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
         // $scope.$on('$stateChangeSuccess'); the shell re-mounts only on full reloads, so without
         // this the title/selection stay stuck on the initial tab (e.g. Selenium waiting for the
         // 'TOSCA Artifacts' tab-title after navigating there would time out).
-        this.deregisterStateChange = this.navigationService.onNavigationSuccess(() => {
+        if (!this.deregisterStateChange) {
+            this.deregisterStateChange = this.navigationService.onNavigationSuccess(() => this.onNavigationSuccess());
+        }
+    }
+
+    private onNavigationSuccess(): void {
+        // The router reuses this shell when only :id changes (version switch, checkout), so the
+        // resolver's new component has to be picked up here rather than in ngOnInit.
+        const resolved = this.workspaceService.component;
+        if (resolved && resolved.uniqueId !== this.component.uniqueId) {
+            this.initWorkspace();
+        } else {
             this.updateFullBleedFlags();
             this.updateSelectedMenuItem(this.navigationService.getCurrentStateName());
             this.updatePageTitle();
-            this.cdr.detectChanges();
-        });
+        }
+        this.cdr.detectChanges();
     }
 
     ngOnDestroy(): void {
