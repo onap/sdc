@@ -132,7 +132,7 @@
                         <phase>test</phase>
                         <configuration>
                             <arguments>test</arguments>
-                            <skip>${maven.test.skip}</skip>
+                            <skip>${npm.test.skip}</skip>
                         </configuration>
                     </execution>
                 </executions>

@@ -197,6 +197,9 @@
               <goal>integration-test</goal>
               <goal>verify</goal>
             </goals>
+            <configuration>
+              <skipITs>${module.its.skip}</skipITs>
+            </configuration>
           </execution>
         </executions>
       </plugin>

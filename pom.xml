@@ -183,6 +183,9 @@ Modifications copyright (c) 2018-2019 Nokia
     <surefire.forkCount>1C</surefire.forkCount>
     <surefire.reuseForks>true</surefire.reuseForks>
     <surefire.skip.tests>false</surefire.skip.tests>
+    <!-- Unset by default, so -Dmaven.test.skip and -DskipITs keep skipping these. -->
+    <npm.test.skip>${maven.test.skip}</npm.test.skip>
+    <module.its.skip>${skipITs}</module.its.skip>
 
     <bouncycastle.version>2.73.2</bouncycastle.version>
 
@@ -963,6 +966,8 @@ Modifications copyright (c) 2018-2019 Nokia
         <skipYamlJsonValidator>true</skipYamlJsonValidator>
         <checkstyle.skip>true</checkstyle.skip>
         <surefire.skip.tests>true</surefire.skip.tests>
+        <npm.test.skip>true</npm.test.skip>
+        <module.its.skip>true</module.its.skip>
       </properties>
       <modules>
         <module>onboarding</module>
@@ -988,6 +993,8 @@ Modifications copyright (c) 2018-2019 Nokia
         <skipYamlJsonValidator>true</skipYamlJsonValidator>
         <checkstyle.skip>true</checkstyle.skip>
         <surefire.skip.tests>true</surefire.skip.tests>
+        <npm.test.skip>true</npm.test.skip>
+        <module.its.skip>true</module.its.skip>
       </properties>
       <modules>
         <module>onboarding</module>
@@ -1013,6 +1020,8 @@ Modifications copyright (c) 2018-2019 Nokia
         <skipYamlJsonValidator>true</skipYamlJsonValidator>
         <checkstyle.skip>true</checkstyle.skip>
         <surefire.skip.tests>true</surefire.skip.tests>
+        <npm.test.skip>true</npm.test.skip>
+        <module.its.skip>true</module.its.skip>
       </properties>
       <modules>
         <module>onboarding</module>
