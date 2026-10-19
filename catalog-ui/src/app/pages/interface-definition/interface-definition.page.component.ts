@@ -19,7 +19,7 @@
 *  ============LICENSE_END=========================================================
 *  Modifications Copyright (C) 2026 Deutsche Telekom AG.
 */
-import {Component, ComponentRef, Inject} from '@angular/core';
+import {Component, ComponentRef, Inject, OnDestroy, OnInit} from '@angular/core';
 import {Component as IComponent} from 'app/models/components/component';
 import {WorkflowService} from 'app/services/workflow.service';
 import {HierarchyDisplayOptions} from "../../components/logic/hierarchy-navigtion/hierarchy-display-options";
@@ -52,7 +52,8 @@ import {PluginsService} from 'app/services/plugins.service';
 import {NavigationService} from 'app/services/navigation.service';
 import { InstanceFeDetails } from 'app/models/instance-fe-details';
 import {WorkspaceService} from 'app/pages/workspace/workspace.service';
-import {WorkspaceMode} from 'app/utils/constants';
+import {EVENTS, WorkspaceMode} from 'app/utils/constants';
+import {EventListenerService} from 'app/services/event-listener.service';
 
 export class UIOperationModel extends OperationModel {
     isCollapsed: boolean = true;
@@ -130,7 +131,7 @@ export class UIInterfaceModel extends InterfaceModel {
     styleUrls: ['interface-definition.page.component.less'],
     providers: [ModalService, TranslateService, InterfaceOperationComponent]
 })
-export class InterfaceDefinitionComponent {
+export class InterfaceDefinitionComponent implements OnInit, OnDestroy {
 
     modalInstance: ComponentRef<ModalComponent>;
     interfaces: UIInterfaceModel[];
@@ -180,18 +181,28 @@ export class InterfaceDefinitionComponent {
         private WorkflowService: WorkflowService,
         private ModalServiceSdcUI: SdcUiServices.ModalService,
         private PluginsService: PluginsService,
-        private workspaceService: WorkspaceService
+        private workspaceService: WorkspaceService,
+        private eventListenerService: EventListenerService
     ) {
         this.modalTranslation = new ModalTranslation(translateService);
         this.interfaceTypesMap = new Map<string, string[]>();
     }
 
-    ngOnInit(): void {
-        this.component = this.workspaceService.component as any;
-        // Replaces the deleted workspace shim controller's [readonly]="isViewMode() || !isDesigner()"
-        // route-template binding; getComponentMode() already folds the designer-role check in.
+    ngOnDestroy(): void {
+        this.eventListenerService.unRegisterObserver(EVENTS.ON_CERTIFY, this.updateReadonly);
+    }
+
+    // Replaces the deleted workspace shim controller's [readonly]="isViewMode() || !isDesigner()"
+    // route-template binding; getComponentMode() already folds the designer-role check in.
+    private updateReadonly = (): void => {
         this.readonly = !this.component ||
             this.workspaceService.getComponentMode(this.workspaceService.component) === WorkspaceMode.VIEW;
+    }
+
+    ngOnInit(): void {
+        this.component = this.workspaceService.component as any;
+        this.updateReadonly();
+        this.eventListenerService.registerObserverCallback(EVENTS.ON_CERTIFY, this.updateReadonly);
         this.isLoading = true;
         this.interfaces = [];
         this.workflowIsOnline = !_.isUndefined(this.PluginsService.getPluginByStateUrl('workflowDesigner'));

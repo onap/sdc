@@ -519,6 +519,8 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
                     // place, and the next tab navigation (e.g. goToToscaArtifacts) loads fresh data,
                     // so the parent reload is unnecessary here and only introduced the race.
                     this.component.lifecycleState = component.lifecycleState;
+                    this.mode = this.initViewMode();
+                    this.eventListenerService.notifyObservers(EVENTS.ON_CERTIFY);
                     this.handleCertification(component);
                     this.verifyIfDependenciesExist();
                     this.cdr.detectChanges();

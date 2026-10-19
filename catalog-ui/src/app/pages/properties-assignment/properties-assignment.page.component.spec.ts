@@ -23,6 +23,8 @@ import {ButtonModel} from 'app/models/button';
 import {ModalModel} from 'app/models/modal';
 import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
 import {PropertiesAssignmentComponent} from './properties-assignment.page.component';
+import {EventListenerService} from 'app/services/event-listener.service';
+import {EVENTS, WorkspaceMode} from 'app/utils/constants';
 
 describe('PropertiesAssignmentComponent', () => {
 
@@ -114,6 +116,33 @@ describe('PropertiesAssignmentComponent', () => {
         saveButton().callback();
 
         expect(component.instanceFePropertiesMap[componentUniqueId].map((p) => p.name)).toEqual(['existing', 'my_prop']);
+    });
+});
+
+describe('PropertiesAssignmentComponent certify', () => {
+    const build = () => {
+        const componentModeService = {getComponentMode: jest.fn(() => WorkspaceMode.EDIT)};
+        const eventListenerService = new EventListenerService();
+        const deps: any[] = new Array(17).fill({});
+        deps[7] = {component: {uniqueId: 'vf-1', model: null}};
+        deps[9] = componentModeService;
+        deps[10] = eventListenerService;
+        const comp = new (PropertiesAssignmentComponent as any)(...deps) as PropertiesAssignmentComponent;
+        return {comp, componentModeService, eventListenerService};
+    };
+
+    it('turns read-only when the component is certified while the tab is open', () => {
+        const {comp, componentModeService, eventListenerService} = build();
+        expect(comp.isReadonly).toBe(false);
+        componentModeService.getComponentMode.mockReturnValue(WorkspaceMode.VIEW);
+        eventListenerService.notifyObservers(EVENTS.ON_CERTIFY);
+        expect(comp.isReadonly).toBe(true);
+    });
+
+    it('stops listening for certify on destroy', () => {
+        const {comp, eventListenerService} = build();
+        comp.ngOnDestroy();
+        expect(eventListenerService.observerCallbacks.containsKey(EVENTS.ON_CERTIFY)).toBe(false);
     });
 });
 

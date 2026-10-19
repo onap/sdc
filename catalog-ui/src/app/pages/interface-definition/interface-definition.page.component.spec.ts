@@ -25,7 +25,8 @@ import * as _ from 'lodash';
 import 'rxjs/add/observable/forkJoin';
 import 'rxjs/add/observable/of';
 import {Observable} from 'rxjs/Observable';
-import {WorkspaceMode} from 'app/utils/constants';
+import {EVENTS, WorkspaceMode} from 'app/utils/constants';
+import {EventListenerService} from 'app/services/event-listener.service';
 import {InterfaceDefinitionComponent} from './interface-definition.page.component';
 
 function makeComponent(overrides: any = {}) {
@@ -66,12 +67,13 @@ function createComp(opts: any = {}) {
     const toscaArtifactService: any = {getToscaArtifacts: jest.fn(() => Observable.of(null))};
     const workflowService: any = {getWorkflows: jest.fn(() => Observable.of([]))};
     const pluginsService: any = {getPluginByStateUrl: jest.fn(() => undefined)};
+    const eventListenerService = new EventListenerService();
 
     const comp = new InterfaceDefinitionComponent(
         sdcConfig, navigationService, notificationsService, translateService, componentService,
         modalService, modalServiceSdcUI, topologyTemplateService, toscaArtifactService,
-        componentService, workflowService, modalServiceSdcUI, pluginsService, workspaceService);
-    return {comp, component, workspaceService, componentService, modalService};
+        componentService, workflowService, modalServiceSdcUI, pluginsService, workspaceService, eventListenerService);
+    return {comp, component, workspaceService, componentService, modalService, eventListenerService};
 }
 
 describe('InterfaceDefinitionComponent', () => {
@@ -86,6 +88,22 @@ describe('InterfaceDefinitionComponent', () => {
         const {comp} = createComp({mode: WorkspaceMode.EDIT});
         comp.ngOnInit();
         expect(comp.readonly).toBe(false);
+    });
+
+    it('turns read-only when the component is certified while the tab is open', () => {
+        const {comp, workspaceService, eventListenerService} = createComp({mode: WorkspaceMode.EDIT});
+        comp.ngOnInit();
+        expect(comp.readonly).toBe(false);
+        workspaceService.getComponentMode.mockReturnValue(WorkspaceMode.VIEW);
+        eventListenerService.notifyObservers(EVENTS.ON_CERTIFY);
+        expect(comp.readonly).toBe(true);
+    });
+
+    it('stops listening for certify on destroy', () => {
+        const {comp, eventListenerService} = createComp();
+        comp.ngOnInit();
+        comp.ngOnDestroy();
+        expect(eventListenerService.observerCallbacks.containsKey(EVENTS.ON_CERTIFY)).toBe(false);
     });
 
     it('reads the component from WorkspaceService, not an @Input', () => {
