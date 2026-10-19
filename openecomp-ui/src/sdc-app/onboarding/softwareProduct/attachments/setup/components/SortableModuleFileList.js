@@ -97,7 +97,8 @@ class SortableModuleFileList extends React.Component {
                     {!isBaseExist && (
                         <div>
                             <Button
-                                btnType="link"
+                                btnType="tertiary"
+                                iconName="plus"
                                 onClick={onBaseAdd}
                                 disabled={
                                     isReadOnlyMode || unassigned.length === 0
@@ -108,7 +109,8 @@ class SortableModuleFileList extends React.Component {
                     )}
                     <div>
                         <Button
-                            btnType="link"
+                            btnType="tertiary"
+                            iconName="plus"
                             onClick={onModuleAdd}
                             disabled={
                                 isReadOnlyMode || unassigned.length === 0
