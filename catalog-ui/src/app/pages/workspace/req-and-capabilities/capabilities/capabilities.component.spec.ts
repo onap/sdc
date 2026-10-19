@@ -77,6 +77,13 @@ describe('CapabilitiesComponent', () => {
         imported.click();
         expect(fixture.componentInstance.editCapability).not.toHaveBeenCalled();
     });
+
+    it('renders the expand/collapse-all controls inside the Name column header', () => {
+        const nameHeader = fixture.nativeElement.querySelector('datatable-header-cell');
+        expect(nameHeader.querySelector('.selected-all-capabilities')).not.toBeNull();
+        expect(nameHeader.querySelector('.unselected-all-capabilities')).not.toBeNull();
+        expect(nameHeader.textContent).toContain('Name');
+    });
 });
 
 describe('capability properties template', () => {
