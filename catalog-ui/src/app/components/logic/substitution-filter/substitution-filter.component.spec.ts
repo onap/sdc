@@ -50,3 +50,16 @@ describe('SubstitutionFilterComponent without properties', () => {
         expect(navigationService.navigate).toHaveBeenCalledWith(States.WORKSPACE_PROPERTIES_ASSIGNMENT);
     });
 });
+
+describe('SubstitutionFilterComponent template', () => {
+    // tslint:disable-next-line:no-var-requires
+    const template: string = require('./substitution-filter.component.html');
+    const doc = new DOMParser().parseFromString(`<body>${template}</body>`, 'text/html');
+
+    it('hides Add Substitution Filter while read-only instead of disabling it', () => {
+        const add = doc.querySelector('sdc-button');
+        expect(add.getAttribute('[testId]')).toBe(`'add-substitution-filter-button'`);
+        expect(add.hasAttribute('[disabled]')).toBe(false);
+        expect(add.parentElement.getAttribute('*ngIf')).toBe('!readonly && selectedInstanceProperties?.length');
+    });
+});

@@ -104,14 +104,12 @@ describe('InterfaceOperationComponent template', () => {
     const template: string = require('./interface-operation.page.component.html');
     const doc = new DOMParser().parseFromString(`<body>${template}</body>`, 'text/html');
 
-    // The global `.disabled` class only stops the mouse; a native disabled button also stops the
-    // keyboard, and axe exempts it from color-contrast as an inactive control.
-    it('renders one tertiary Add Operation, disabled when read-only, whether or not the list is empty', () => {
+    it('renders one tertiary Add Operation, hidden when read-only, whether or not the list is empty', () => {
         const adds = Array.from(doc.querySelectorAll('sdc-button')).filter((el) => el.getAttribute('[testId]') === `'add-operation'`);
         expect(adds.length).toBe(1);
-        expect(adds[0].hasAttribute('*ngIf')).toBe(false);
+        expect(adds[0].getAttribute('*ngIf')).toBe('!readonly');
         expect(adds[0].getAttribute('[type]')).toBe(`'tertiary'`);
-        expect(adds[0].getAttribute('[disabled]')).toBe('readonly');
+        expect(adds[0].hasAttribute('[disabled]')).toBe(false);
     });
 
     it('shows only a message in the empty list', () => {

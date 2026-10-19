@@ -137,9 +137,10 @@ describe('InterfaceDefinitionComponent template', () => {
         expect(toggle.querySelector('span.interface-name')).not.toBeNull();
     });
 
-    it('renders both Add Operation controls as tertiary buttons', () => {
+    it('renders both Add Operation controls as tertiary buttons, neither while read-only', () => {
         const adds = Array.from(doc.querySelectorAll('sdc-button')).filter((el) => el.getAttribute('[testId]') === `'add-operation'`);
-        expect(adds.map((el) => el.getAttribute('[disabled]'))).toEqual(['readonly', '!enableFlag']);
+        expect(adds.map((el) => el.getAttribute('*ngIf'))).toEqual(['!component.isService() && !readonly', '!readonly']);
+        expect(adds.map((el) => el.getAttribute('[disabled]'))).toEqual([null, '!enableFlag']);
         adds.forEach((el) => expect(el.getAttribute('[type]')).toBe(`'tertiary'`));
     });
 

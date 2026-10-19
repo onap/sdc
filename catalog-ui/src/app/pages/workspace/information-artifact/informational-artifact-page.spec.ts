@@ -13,6 +13,8 @@ import {ArtifactsState} from "../../../store/states/artifacts.state";
 import {InformationArtifactPageComponent} from "./information-artifact-page.component";
 import { informationalArtifactsMock} from "../../../../jest/mocks/artifacts-mock";
 import {ArtifactsService} from "../../../components/forms/artifacts-form/artifacts.service";
+import {WorkspaceState} from "../../../store/states/workspace.state";
+import {UpdateIsViewOnly} from "../../../store/actions/workspace.action";
 
 describe('informational artifacts page', () => {
 
@@ -37,7 +39,7 @@ describe('informational artifacts page', () => {
             const configure: ConfigureFn = testBed => {
                 testBed.configureTestingModule({
                     declarations: [InformationArtifactPageComponent],
-                    imports: [NgxDatatableModule, NgxsModule.forRoot([ArtifactsState])],
+                    imports: [NgxDatatableModule, NgxsModule.forRoot([ArtifactsState, WorkspaceState])],
                     schemas: [NO_ERRORS_SCHEMA],
                     providers: [
                         {provide: WorkspaceService, useValue: workspaceServiceMock},
@@ -72,6 +74,27 @@ describe('informational artifacts page', () => {
             expect(artifacts.length).toEqual(9);
         });
     })
+
+    const addButtons = () => fixture.nativeElement.querySelectorAll(
+        'sdc-button.add-artifact-btn, .add-artifacts-dynamic-btn-list');
+
+    // No artifact rows: the mock rows are plain objects without ArtifactModel's methods.
+    const renderWithoutRows = (isViewOnly: boolean) => {
+        (topologyTemplateServiceMock.getArtifactsByType as jest.Mock).mockImplementation(() => Observable.of([]));
+        store.dispatch(new UpdateIsViewOnly(isViewOnly));
+        fixture.detectChanges();
+    };
+
+    it('shows the add actions on an editable asset', () => {
+        renderWithoutRows(false);
+        fixture.detectChanges();
+        expect(addButtons().length).toBe(2);
+    });
+
+    it('hides the add actions on a read-only asset', () => {
+        renderWithoutRows(true);
+        expect(addButtons().length).toBe(0);
+    });
 
 
 });

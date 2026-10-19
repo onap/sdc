@@ -39,9 +39,9 @@
           </div>
         </div>
 
-        <div class="w-sdc-designer-sidebar-section-substitution-filter-footer" *ngIf="selectedInstanceProperties?.length">
+        <div class="w-sdc-designer-sidebar-section-substitution-filter-footer" *ngIf="!readonly && selectedInstanceProperties?.length">
           <sdc-button [type]="'tertiary'" [icon_name]="'plus'" [icon_position]="'left'" [testId]="'add-substitution-filter-button'"
-                      [text]="'ADD_SUBSTITUTION_FILTER' | translate" [disabled]="readonly"
+                      [text]="'ADD_SUBSTITUTION_FILTER' | translate"
                       (click)="onAddSubstitutionFilter(PROPERTIES)"></sdc-button>
         </div>
         <div class="substitution-filter-no-properties" *ngIf="hasNoProperties()" data-tests-id="substitution-filter-no-properties">

@@ -1,5 +1,5 @@
 <div class="information-artifact-page">
-    <sdc-button class="add-artifact-btn" [type]="'tertiary'" [icon_name]="'plus'" [icon_position]="'left'"
+    <sdc-button *ngIf="!(isViewOnly$ | async)" class="add-artifact-btn" [type]="'tertiary'" [icon_name]="'plus'" [icon_position]="'left'"
                 [testId]="'add-information-artifact-button'" [text]="'Add Artifact'"
                 (click)="addOrUpdateArtifact()"></sdc-button>
     <ngx-datatable sdcDatatableA11y="Informational artifacts"
@@ -71,7 +71,7 @@
 
         <ngx-datatable-footer>
             <ng-template ngx-datatable-footer-template>
-                <div class="add-artifacts-dynamic-btn-list">
+                <div class="add-artifacts-dynamic-btn-list" *ngIf="!(isViewOnly$ | async)">
                     <sdc-button *ngFor="let artifact of informationArtifactsAsButtons$ | async"
                                 class="add-artifacts-dynamic-btn"
                                 testId="add_artifact_{{artifact.artifactDisplayName}}"
