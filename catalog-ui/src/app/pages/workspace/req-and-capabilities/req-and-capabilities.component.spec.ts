@@ -133,6 +133,27 @@ describe('req and capabilities component', () => {
         expect(fixture.componentInstance.selectTabName).not.toBe('REQUIREMENTS');
         expect(createDynamicComponentServiceMock.insertComponentDynamically.mock.calls[0][0]).toBe(CapabilitiesComponent);
     });
+
+    it('opens the add dialogs with Create as the primary button and Cancel as the secondary one', () => {
+        const component = fixture.componentInstance as any;
+        const openCustomModal = jest.fn().mockReturnValue(
+            {innerModalContent: {instance: {onValidationChange: {subscribe: jest.fn()}}}});
+        component.modalService = {openCustomModal};
+        component.reqAndCapabilitiesService = {
+            getCapabilityTypesList: jest.fn(), getRelationsShipeTypeList: jest.fn(), getNodeTypesList: jest.fn()
+        };
+
+        component.addRequirement();
+        component.addCapability();
+
+        openCustomModal.mock.calls.forEach(([config]) => {
+            expect(config.buttons.map((b) => [b.text, b.type || SdcUiCommon.ButtonType.primary, b.size])).toEqual([
+                ['Create', SdcUiCommon.ButtonType.primary, 'x-small'],
+                ['Cancel', SdcUiCommon.ButtonType.secondary, 'x-small'],
+            ]);
+        });
+        expect(openCustomModal).toHaveBeenCalledTimes(2);
+    });
 });
 
 describe('req and capabilities template', () => {

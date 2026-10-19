@@ -154,11 +154,11 @@ export class ReqAndCapabilitiesComponent implements OnInit {
                 {
                     id: 'saveButton',
                     text: ('Create'),
-                    size: "'x-small'",
+                    size: 'x-small',
                     callback: () => this.createCapability(),
                     closeModal: true
                 },
-                {text: "Cancel", size: "'x-small'", closeModal: true}]
+                {text: 'Cancel', type: SdcUiCommon.ButtonType.secondary, size: 'x-small', closeModal: true}]
         };
         let modalInputs = {
             capabilityTypesList: this.reqAndCapabilitiesService.getCapabilityTypesList(),
@@ -192,11 +192,11 @@ export class ReqAndCapabilitiesComponent implements OnInit {
                 {
                     id: 'saveButton',
                     text: ('Create'),
-                    size: "'x-small'",
+                    size: 'x-small',
                     callback: () => this.createRequirement(),
                     closeModal: true
                 },
-                {text: "Cancel", size: "'x-small'", closeModal: true}]
+                {text: 'Cancel', type: SdcUiCommon.ButtonType.secondary, size: 'x-small', closeModal: true}]
         };
         let modalInputs = {
             // requirement: req,
