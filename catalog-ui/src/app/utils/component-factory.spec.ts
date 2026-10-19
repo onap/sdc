@@ -20,6 +20,7 @@
 
 import {ComponentFactory} from './component-factory';
 import {ComponentType} from './constants';
+import {Subject} from 'rxjs/Subject';
 
 describe('ComponentFactory', () => {
     let factory: ComponentFactory;
@@ -77,5 +78,17 @@ describe('ComponentFactory', () => {
         for (const m of methods) {
             expect(typeof (factory as any)[m]).toBe('function');
         }
+    });
+
+    // The workspace resolver awaits this promise, and the Angular router runs navigations one at a
+    // time: a promise that never settles stalls every later navigation in the app.
+    it('getComponentWithMetadataFromServer rejects when the metadata request fails', async () => {
+        const response = new Subject<any>();
+        const f = new ComponentFactory({} as any, {} as any, {get: () => []} as any,
+            {getComponentMetadata: () => response} as any);
+        const result = f.getComponentWithMetadataFromServer(ComponentType.RESOURCE, '1.1');
+        const error = {status: 404};
+        response.error(error);
+        await expect(result).rejects.toBe(error);
     });
 });
