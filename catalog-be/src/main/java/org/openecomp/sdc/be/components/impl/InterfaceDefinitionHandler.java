@@ -24,6 +24,7 @@ import static org.openecomp.sdc.be.utils.PropertyFilterConstraintDataDefinitionH
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.ACTIVITIES;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.DEFAULT;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.DESCRIPTION;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.ENTRY_SCHEMA;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.FILTERS;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.IMPLEMENTATION;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.INPUTS;
@@ -369,6 +370,9 @@ public class InterfaceDefinitionHandler {
                 final String type = inputPropertyValue.get(TYPE.getElementName()).toString();
                 LOGGER.debug(WITH_ATTRIBUTE, TYPE.getElementName(), type);
                 operationInput.setType(type);
+            }
+            if (inputPropertyValue.get(ENTRY_SCHEMA.getElementName()) != null) {
+                operationInput.setSchema(ImportUtils.getSchema(inputPropertyValue.get(ENTRY_SCHEMA.getElementName())));
             }
             if (inputPropertyValue.get(DESCRIPTION.getElementName()) != null) {
                 final String description = inputPropertyValue.get(DESCRIPTION.getElementName()).toString();

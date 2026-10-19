@@ -497,7 +497,7 @@ public final class ImportUtils {
         return findToscaElement(propertyValue, TypeUtils.ToscaTagNamesEnum.ENTRY_SCHEMA, ToscaElementTypeEnum.ALL);
     }
 
-    private static SchemaDefinition getSchema(Object propertyFieldEntryScheme) {
+    static SchemaDefinition getSchema(Object propertyFieldEntryScheme) {
         SchemaDefinition schema = new SchemaDefinition();
         if (propertyFieldEntryScheme instanceof String) {
             String schemaType = (String) propertyFieldEntryScheme;
