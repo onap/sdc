@@ -100,7 +100,7 @@ export class CompositionPanelHeaderComponent implements OnInit {
             testId: "renameInstanceModal",
             buttons: [
                 {id: 'saveButton', text: 'OK', size: 'xsm', callback: this.saveInstanceName, closeModal: false},
-                {id: 'cancelButton', text: 'Cancel', size: 'sm', closeModal: true}
+                {id: 'cancelButton', text: 'Cancel', type: SdcUiCommon.ButtonType.secondary, size: 'sm', closeModal: true}
             ] as SdcUiCommon.IModalButtonComponent[]
         } as SdcUiCommon.IModalConfig;
         this.valueEditModalInstance = this.modalService.openCustomModal(modalConfig, EditNameModalComponent, {name: this.selectedComponent.name, validityChangedCallback: this.enableOrDisableSaveButton});

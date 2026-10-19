@@ -40,11 +40,11 @@ export class CapabilitiesComponent {
                 {
                     id: 'saveButton',
                     text: ('Update'),
-                    size: "'x-small'",
+                    size: 'x-small',
                     callback: () => this.updateCapability(),
                     closeModal: true
                 },
-                {text: "Cancel", size: "'x-small'", closeModal: true}]
+                {text: 'Cancel', type: SdcUiCommon.ButtonType.secondary, size: 'x-small', closeModal: true}]
         };
         let modalInputs = {
             capability: cap,
