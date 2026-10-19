@@ -2,17 +2,21 @@
 @import '../../../../../assets/styles/button-reset';
 
 :host ::ng-deep {
-    .datatable-row-detail {
-       width: 1260px;
-      }
-      .datatable-body-row {
+    // ngx-datatable sizes the scroller from its column-width total, which stays 0 for this table,
+    // so the expanded row detail had no width to fill
+    .datatable-scroll {
+        min-width: 100%;
+    }
+    .datatable-body-row {
         cursor: pointer;
     }
 }
 .expand-collapse-all-rows {
     position: absolute;
-    top: 172px;
-    left: 890px;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
 }
 .properties-title {
     padding-bottom: 10px;
