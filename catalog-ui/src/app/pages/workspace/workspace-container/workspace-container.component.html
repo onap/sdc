@@ -143,6 +143,10 @@
                 <h2 class="workspace-tab-title" data-tab-heading>
                     {{getTabTitle()}}
                 </h2>
+                <p *ngIf="readOnlyNotice()" class="workspace-read-only-notice" data-tests-id="read-only-notice">
+                    <svg-icon [name]="'info-circle'" [size]="'medium'" [mode]="'info'"></svg-icon>
+                    <span>{{readOnlyNotice()}}</span>
+                </p>
             </div>
             <h2 class="sr-only" *ngIf="isDeployment" data-tab-heading>{{getTabTitle()}}</h2>
             <router-outlet></router-outlet>

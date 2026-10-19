@@ -427,3 +427,41 @@ describe('getLatestVersion', () => {
             expect.objectContaining({id: 'uid-2.0', type: 'resource'}));
     });
 });
+
+describe('readOnlyNotice', () => {
+    const notice = (mode: string, role: string, component: any) => {
+        const {comp} = createComponent();
+        comp.translateService = {translate: (key: string, args: any) => `${key}|${args.name}`};
+        comp.mode = mode;
+        comp.role = role;
+        comp.component = {isArchived: false, isLatestVersion: () => true, lastUpdaterFullName: 'Jane Doe', ...component};
+        return comp.readOnlyNotice();
+    };
+
+    it('is empty while the workspace is editable or being created', () => {
+        expect(notice('edit', 'DESIGNER', {lifecycleState: 'NOT_CERTIFIED_CHECKOUT'})).toBe('');
+        expect(notice('create', 'DESIGNER', {})).toBe('');
+    });
+
+    it('says why a view-mode workspace is read-only, the first matching reason winning', () => {
+        expect(notice('view', 'DESIGNER', {lifecycleState: 'CERTIFIED'})).toBe('WORKSPACE_READ_ONLY_CERTIFIED|Jane Doe');
+        expect(notice('view', 'DESIGNER', {lifecycleState: 'NOT_CERTIFIED_CHECKIN'})).toBe('WORKSPACE_READ_ONLY_CHECKED_IN|Jane Doe');
+        expect(notice('view', 'DESIGNER', {lifecycleState: 'NOT_CERTIFIED_CHECKOUT'})).toBe('WORKSPACE_READ_ONLY_CHECKED_OUT_BY_OTHER|Jane Doe');
+        expect(notice('view', 'DESIGNER', {lifecycleState: 'CERTIFIED', isLatestVersion: () => false})).toBe('WORKSPACE_READ_ONLY_NOT_LATEST|Jane Doe');
+        expect(notice('view', 'TESTER', {lifecycleState: 'CERTIFIED', isLatestVersion: () => false})).toBe('WORKSPACE_READ_ONLY_ROLE|Jane Doe');
+        expect(notice('view', 'TESTER', {lifecycleState: 'CERTIFIED', isArchived: true})).toBe('WORKSPACE_READ_ONLY_ARCHIVED|Jane Doe');
+    });
+});
+
+describe('workspace-container template', () => {
+    // tslint:disable-next-line:no-var-requires
+    const template: string = require('./workspace-container.component.html');
+    const doc = new DOMParser().parseFromString(`<body>${template}</body>`, 'text/html');
+
+    it('puts the read-only notice in the tab-title strip, after the heading', () => {
+        const notice = doc.querySelector('[data-tests-id="read-only-notice"]');
+        expect(notice.parentElement.classList.contains('w-sdc-main-container-body-content-header')).toBe(true);
+        expect(notice.previousElementSibling.tagName).toBe('H2');
+        expect(notice.getAttribute('*ngIf')).toBe('readOnlyNotice()');
+    });
+});
