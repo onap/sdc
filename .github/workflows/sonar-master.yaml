@@ -81,7 +81,14 @@ jobs:
       # project's own analysis, so it cannot.
       build_type: 'maven'
       mvn_phases: 'clean install'
-      mvn_params: '-Djib.skip=true --fail-at-end'
+      #
+      # skip-integration-tests matches the Jenkins job's module list. The
+      # integration-tests module builds onap/sdc-backend-init on every
+      # build, and that image's Dockerfile copies scripts/ that only
+      # catalog-be's docker profile stages, so a plain build fails there
+      # before the scan starts. The npm registry is the one Jenkins uses.
+      # yamllint disable-line rule:line-length
+      mvn_params: '-P skip-integration-tests -Dnpm.registry=https://nexus3.onap.org/repository/npm.public/npm/-/ -Djib.skip=true --fail-at-end'
       #
       # The Jenkins job leaves sonarcloud-qualitygate-wait false, so the
       # gate has never been awaited or enforced for this project. Neither
