@@ -124,7 +124,9 @@ import {NavigationService} from "./services/navigation.service";
 import {AppRoutingModule} from "./app-routing.module";
 import {AuthGuard} from "./guards/auth.guard";
 import {LocationStrategy} from '@angular/common';
+import {RouteReuseStrategy} from '@angular/router';
 import {SdcHashLocationStrategy} from './utils/sdc-hash-location-strategy';
+import {SdcRouteReuseStrategy} from './utils/sdc-route-reuse-strategy';
 import {UnsavedChangesFlagGuard} from './guards/unsaved-changes-flag.guard';
 import {UnsavedChangesGuard} from './guards/unsaved-changes.guard';
 import {WorkspaceComponentResolver} from './pages/workspace/workspace-component.resolver';
@@ -283,9 +285,10 @@ export function configServiceFactory(config: ConfigService, authService: Authent
     // injector is also what keeps the flag shared across a tab switch.
     WorkspaceService,
     // Must be provided HERE and not in AppRoutingModule: RouterModule.forRoot() registers its own
-    // `provideLocationStrategy` in the module it is imported into, so a competing provider in that
-    // same module is ambiguous — the root module's wins.
+    // `provideLocationStrategy` and RouteReuseStrategy in the module it is imported into, so a
+    // competing provider in that same module is ambiguous — the root module's wins.
     {provide: LocationStrategy, useClass: SdcHashLocationStrategy},
+    {provide: RouteReuseStrategy, useClass: SdcRouteReuseStrategy},
     {
       provide: APP_INITIALIZER,
       useFactory: configServiceFactory,

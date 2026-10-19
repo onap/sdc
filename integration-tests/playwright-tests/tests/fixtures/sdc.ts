@@ -626,6 +626,24 @@ export class SdcApi {
         return this.readable(resp, name, 'service');
     }
 
+    /** Checks the asset in and out again: the BE answers with version 0.2 under a NEW unique id. */
+    async newVersion(asset: CreatedAsset): Promise<CreatedAsset> {
+        const collection = SdcApi.collectionOf(asset.type);
+        let resp: APIResponse;
+        for (const action of ['checkin', 'checkout']) {
+            resp = await this.request.post(this.url(`/catalog/${collection}/${asset.id}/lifecycleState/${action}`), {
+                headers: this.headers, data: { userRemarks: 'created by the Playwright suite' },
+            });
+            if (resp.status() !== 200) {
+                expect(resp.status(), `${action} of ${asset.name} failed: ${await resp.text()}`).toBe(200);
+            }
+        }
+        const id: string = (await resp!.json()).uniqueId;
+        expect(id, `checkout of ${asset.name} returned no uniqueId`).toBeTruthy();
+        expect(id, 'checkout kept the unique id, so it created no new version').not.toBe(asset.id);
+        return { id, name: asset.name, type: asset.type };
+    }
+
     /**
      * Deletes an asset. Note the trap recorded in the regression-test skill: the wrong id ALSO
      * returns 204, so a 204 is not evidence the intended asset is gone.
