@@ -197,6 +197,11 @@ export class InterfaceOperationHandlerComponent {
                 this.interfaceOperationMap = new Map<string, Array<string>>();
                 for (const interfaceType of Object.keys(response).sort()) {
                     const operationList = response[interfaceType];
+                    // A type with no operations (tosca.interfaces.Root) leaves nothing to pick. The current
+                    // type is kept regardless, so an existing operation still shows its interface.
+                    if (operationList.length === 0 && interfaceType !== this.interfaceType) {
+                        continue;
+                    }
                     operationList.sort();
                     this.interfaceOperationMap.set(interfaceType, operationList);
                     const operationDropDownOption: DropDownOption = new DropDownOption(interfaceType);

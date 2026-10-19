@@ -57,7 +57,10 @@ function createComp(opts: any = {}) {
         getCapabilitiesAndRequirements: jest.fn(() => Observable.of({capabilities: {}})),
         getComponentResourcePropertiesData: jest.fn(() => Observable.of({componentInstances: []}))
     };
-    const modalService: any = {};
+    const modalService: any = {
+        createCustomModal: jest.fn(() => ({instance: {open: jest.fn()}})),
+        addDynamicContentToModal: jest.fn()
+    };
     const modalServiceSdcUI: any = {};
     const topologyTemplateService: any = {};
     const toscaArtifactService: any = {getToscaArtifacts: jest.fn(() => Observable.of(null))};
@@ -68,7 +71,7 @@ function createComp(opts: any = {}) {
         sdcConfig, navigationService, notificationsService, translateService, componentService,
         modalService, modalServiceSdcUI, topologyTemplateService, toscaArtifactService,
         componentService, workflowService, modalServiceSdcUI, pluginsService, workspaceService);
-    return {comp, component, workspaceService, componentService};
+    return {comp, component, workspaceService, componentService, modalService};
 }
 
 describe('InterfaceDefinitionComponent', () => {
@@ -90,6 +93,15 @@ describe('InterfaceDefinitionComponent', () => {
         comp.ngOnInit();
         expect(comp.component).toBe(component);
         expect(comp.component.uniqueId).toBe('abc');
+    });
+
+    it('titles the operation modal Create when adding and Edit when an operation is opened', () => {
+        const {comp, modalService} = createComp();
+        comp.ngOnInit();
+        comp.onSelectInterfaceOperation(undefined, undefined);
+        comp.onSelectInterfaceOperation(undefined, {} as any);
+        const titles = modalService.createCustomModal.mock.calls.map(call => call[0].title);
+        expect(titles).toEqual(['INTERFACE_CREATE_TITLE', 'INTERFACE_EDIT_TITLE']);
     });
 });
 
