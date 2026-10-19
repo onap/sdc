@@ -1,14 +1,30 @@
 @import '../../../../assets/styles/button-reset';
 
+.workspace-req-and-cap {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+}
+
+.req-and-cap-controls {
+    grid-row: 1;
+    grid-column: 2;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    min-width: 0;
+}
+
 .req-and-cap-filter {
-    width: 336px;
-    float: right;
-    margin-right: 10px;
+    flex: 1 1 240px;
+    max-width: 336px;
+    min-width: 0;
+    margin: 0 10px;
 }
 
 .addTitle {
     .sdc-button-reset();
-    float: right;
+    flex: none;
     text-transform: uppercase;
     font-family: OpenSans-Semibold, sans-serif;
     color: #056bae; // Darkened from #009fdb to meet WCAG AA 4.5:1 contrast
@@ -21,6 +37,20 @@
 }
 
 :host ::ng-deep .sdc-tabs {
+    // lets the tablist share the first grid row with the controls
+    display: contents;
+
+    > * {
+        grid-column-start: 1;
+        grid-column-end: -1;
+    }
+
+    > .sdc-tabs-list {
+        grid-row: 1;
+        grid-column: 1;
+        align-self: end;
+    }
+
     .sdc-tab-content {
         margin-top: 0;
     }

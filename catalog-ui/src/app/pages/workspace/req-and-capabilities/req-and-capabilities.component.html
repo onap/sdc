@@ -1,7 +1,5 @@
 <div class="workspace-req-and-cap">
-    <div>
-        <button type="button" class="addTitle" *ngIf="selectTabName === 'REQUIREMENTS' && showAdd()" (click)="addRequirement()">Add Requirement</button>
-        <button type="button" class="addTitle" *ngIf="selectTabName !== 'REQUIREMENTS' && showAdd()" (click)="addCapability()">Add Capability</button>
+    <div class="req-and-cap-controls">
         <span class="req-and-cap-filter" *ngIf="notEmptyTable">
             <sdc-filter-bar
                 [placeHolder]="'Search'"
@@ -9,6 +7,8 @@
                 [testId]="'search-box'">
             </sdc-filter-bar>
         </span>
+        <button type="button" class="addTitle" *ngIf="selectTabName === 'REQUIREMENTS' && showAdd()" (click)="addRequirement()">Add Requirement</button>
+        <button type="button" class="addTitle" *ngIf="selectTabName !== 'REQUIREMENTS' && showAdd()" (click)="addCapability()">Add Capability</button>
     </div>
     <sdc-tabs (selectedTab)="selectTab($event)" [tabStyle]="'sdc-table-tab'">
         <sdc-tab [title]="'Requirements('+(requirements.length||'0')+')'" [active]="true" [testId]="'req-tab'">

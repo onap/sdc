@@ -173,6 +173,33 @@ test.describe('Workspace layout', () => {
     });
 
     /**
+     * Req. & Capabilities: the search box and Add Requirement used to float right over the tab row,
+     * so on an editable asset the Capabilities tab wrapped under Requirements. Measured below the
+     * suite's 1920px viewport because at that width the floats left room for both tabs.
+     */
+    test('the Req. & Capabilities tabs stay in one row beside the controls', async ({ sdcPage, api }) => {
+        const vf = await api.createVf('PwReqCapRow');
+        await api.addComputeInstance(vf);
+
+        await gotoWorkspaceTab(sdcPage, { id: vf.id, type: 'resource', tab: 'req_and_capabilities' });
+        await expect(sdcPage.locator('[data-tests-id="search-box"]')).toBeVisible({ timeout: 30_000 });
+        await expect(sdcPage.locator('.addTitle')).toBeVisible();
+
+        const tabs = sdcPage.locator('.sdc-table-tab');
+        const separator = sdcPage.locator('.line-separates');
+        for (const width of [1395, 1100]) {
+            await sdcPage.setViewportSize({ width, height: 900 });
+            const [req, cap, line] = await Promise.all(
+                [tabs.nth(0), tabs.nth(1), separator].map((l) => l.boundingBox()));
+            expect(cap!.y, `the Capabilities tab wrapped under Requirements at ${width}px`).toBe(req!.y);
+            expect(cap!.x, `the Capabilities tab is not right of Requirements at ${width}px`)
+                .toBeGreaterThanOrEqual(req!.x + req!.width);
+            expect(Math.round(req!.y + req!.height), `the tabs do not sit on the blue bar at ${width}px`)
+                .toBe(Math.round(line!.y));
+        }
+    });
+
+    /**
      * The counterweight to the gutter test: padding every routed element would satisfy that test and
      * break both canvas tabs. Composition is matched by body class (its component is selectorless)
      * and Deployment by tag (its route declares no bodyClass) — two different hooks, so both are
