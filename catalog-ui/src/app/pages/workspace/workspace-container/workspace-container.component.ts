@@ -262,6 +262,29 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
         return this.role === Role.DESIGNER;
     }
 
+    readOnlyNotice(): string {
+        if (!this.component || !this.isViewMode()) {
+            return '';
+        }
+        let key: string;
+        if (this.component.isArchived) {
+            key = 'WORKSPACE_READ_ONLY_ARCHIVED';
+        } else if (!this.isDesigner()) {
+            key = 'WORKSPACE_READ_ONLY_ROLE';
+        } else if (!this.component.isLatestVersion()) {
+            key = 'WORKSPACE_READ_ONLY_NOT_LATEST';
+        } else if (this.component.lifecycleState === ComponentState.NOT_CERTIFIED_CHECKOUT) {
+            key = 'WORKSPACE_READ_ONLY_CHECKED_OUT_BY_OTHER';
+        } else if (this.component.lifecycleState === ComponentState.CERTIFIED) {
+            key = 'WORKSPACE_READ_ONLY_CERTIFIED';
+        } else if (this.component.lifecycleState === ComponentState.NOT_CERTIFIED_CHECKIN) {
+            key = 'WORKSPACE_READ_ONLY_CHECKED_IN';
+        } else {
+            key = 'WORKSPACE_READ_ONLY';
+        }
+        return this.translateService.translate(key, {name: this.component.lastUpdaterFullName});
+    }
+
     isCreateMode(): boolean {
         return this.mode === WorkspaceMode.CREATE;
     }

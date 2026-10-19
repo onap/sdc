@@ -1,3 +1,5 @@
+@import '../../../../assets/styles/variables.less';
+
 // Styles are inherited from the existing workspace layout CSS.
 // This file exists for component encapsulation — most styling comes from
 // the global workspace LESS already loaded via webpack.
@@ -17,4 +19,37 @@
 // the absolute layout still apply to the real children (loader/top-bar/...).
 :host ::ng-deep .w-sdc-main-right-container > .w-sdc-main-right-container-content {
     display: contents;
+}
+
+// The read-only notice sits in the tab-title strip beside the heading: the routed tab is absolutely
+// positioned below that strip, so a notice wrapping underneath the heading would be painted over.
+// workspace.less's own `display: flex` for this strip is nested under ancestors this shell does not
+// render, so it never applies.
+.w-sdc-main-container-body-content-header {
+    display: flex;
+    align-items: center;
+
+    .workspace-tab-title {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+}
+
+.workspace-read-only-notice {
+    flex: 0 1 auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 50%;
+    margin: 0 100px 0 24px;
+    padding: 8px 12px;
+    border-left: 4px solid @main_color_b;
+    background-color: @func_color_r;
+    color: @func_color_s;
+    font-size: 14px;
+    line-height: 20px;
+
+    svg-icon {
+        flex: none;
+    }
 }
