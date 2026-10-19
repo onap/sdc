@@ -18,12 +18,8 @@
   -->
 <div class="relationship-operations-container">
   <div id="relationship-operation-actions" class="actions">
-    <button
-        type="button"
-        class="add-param-link add-btn"
-        *ngIf="!enableAddOperation"
-        data-tests-id="addInterfaceOperation"
-        (click)="addOperation()">{{ 'OPERATION_ADD1' | translate }}</button>
+    <sdc-button *ngIf="!enableAddOperation" [type]="'tertiary'" [icon_name]="'plus'" [icon_position]="'left'"
+                [testId]="'addInterfaceOperation'" [text]="'OPERATION_ADD1' | translate" (click)="addOperation()"></sdc-button>
   </div>
   <div id="operation-list-container" class="operation-list-container">
     <app-interface-operation-list [interfaceOperationList]="operationList" [readonly]="false" (onRemoveOperation)="onRemoveOperation($event)"></app-interface-operation-list>

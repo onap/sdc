@@ -20,12 +20,14 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ConstraintsComponent } from './constraints.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {SvgIconModule} from "onap-ui-angular/dist/svg-icon/svg-icon.module";
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    SvgIconModule
   ],
     declarations: [ConstraintsComponent],
     exports: [ConstraintsComponent],

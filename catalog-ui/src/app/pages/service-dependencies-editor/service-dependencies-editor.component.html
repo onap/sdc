@@ -121,9 +121,9 @@
             <div class="rule-builder-content" *ngIf="isToscaFunctionListSource() && selectedProperty && isValidValuesOperator()">
 
                 <div class="i-sdc-form-item rule-input-field">
-                    <button type="button" class="add-btn"
-                         (click)="addToList()">Add to List
-                    </button>
+                    <!-- Native button, not sdc-button: sdc-button's inner button has no type, so inside a form it is a submit button that Enter in any field clicks. -->
+                    <button type="button" class="sdc-button sdc-button__tertiary sdc-icon-left" data-tests-id="add-rule-valid-value-button"
+                            (click)="addToList()"><svg-icon [name]="'plus'" [size]="'medium'"></svg-icon>Add Valid Value</button>
                     <div class="w-sdc-form-columns-wrapper" *ngFor="let val of this.validValuesToscaFunctionList; let valueIndex = index; trackBy:trackByFn">
                         <div class="w-sdc-form-column" style="border-width:3px; border-style:solid; border-color:#009fdb; padding: 1em;">
                             <tosca-function [property]="selectedProperty"

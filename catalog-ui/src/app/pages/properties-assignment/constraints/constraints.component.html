@@ -82,10 +82,9 @@
 
               <div *ngIf="constraint.value.type == 'validValues'">
                 <div class="w-sdc-form-columns-wrapper-block">
-                  <button type="button" class="add-btn add-list-item w-sdc-form-column-block"
-                      [ngClass]="{'disabled': isViewOnly}"
-                      [disabled]="isViewOnly"
-                      (click)="addToList(constraintIndex)">Add to List</button>
+                  <!-- Native button, not sdc-button: sdc-button's inner button has no type, so inside a form it is a submit button that Enter in any field clicks. -->
+                  <button type="button" class="sdc-button sdc-button__tertiary sdc-icon-left" [disabled]="isViewOnly"
+                          (click)="addToList(constraintIndex)"><svg-icon [name]="'plus'" [size]="'medium'"></svg-icon>Add Valid Value</button>
                 </div>
                 <div class="w-sdc-form-columns-wrapper" *ngFor="let value of constraintValuesArray(constraintIndex).controls; let valueIndex = index; trackBy:trackByFn">
                   <div class="w-sdc-form-column">
@@ -134,8 +133,8 @@
 
     </div>
     <div class="w-sdc-form-columns-wrapper-small" *ngIf="!isViewOnly">
-        <button type="button" class="add-btn add-list-item w-sdc-form-column-small" *ngIf="!isViewOnly" [ngClass]="{'disabled': isViewOnly}"
-        [disabled]="isViewOnly" (click)="addConstraint()"> Add Constraint </button>
+        <button type="button" class="sdc-button sdc-button__tertiary sdc-icon-left" data-tests-id="add-constraint-button"
+                (click)="addConstraint()"><svg-icon [name]="'plus'" [size]="'medium'"></svg-icon>Add Constraint</button>
     </div>
   </form>
 </div>

@@ -29,6 +29,7 @@ import {TranslateModule} from "../../../../shared/translator/translate.module";
 import {ToscaGetFunctionComponent} from "../tosca-get-function/tosca-get-function.component";
 import {UiElementsModule} from "../../../../components/ui/ui-elements.module";
 import {YamlFunctionComponent} from "../yaml-function/yaml-function.component";
+import {SvgIconModule} from "onap-ui-angular/dist/svg-icon/svg-icon.module";
 import {TopologyTemplateService} from "../../../../services/component-services/topology-template.service";
 import {Observable} from "rxjs/Observable";
 import {defaultCustomFunctionsMock} from "../../../../../jest/mocks/default-custom-tosca-function.mock";
@@ -53,7 +54,8 @@ describe('ToscaCustomFunctionComponent', () => {
                 FormsModule,
                 ReactiveFormsModule,
                 TranslateModule,
-                UiElementsModule
+                UiElementsModule,
+                SvgIconModule
             ],
             providers: [
                 {provide: TopologyTemplateService, useValue: topologyTemplateServiceMock}

@@ -26,6 +26,7 @@ import {BrowserModule} from "@angular/platform-browser";
 import {GenericArtifactBrowserColumnProviderComponent} from "./generic-artifact-browser-column-provider.component";
 import {FormsModule} from "@angular/forms";
 import {UiElementsModule} from "../../ui/ui-elements.module";
+import {ButtonsModule} from "onap-ui-angular/dist/buttons/buttons.module";
 
 @NgModule({
     declarations: [
@@ -37,7 +38,8 @@ import {UiElementsModule} from "../../ui/ui-elements.module";
         FormsModule,
         NgxDatatableModule,
         DatatableA11yModule,
-        UiElementsModule
+        UiElementsModule,
+        ButtonsModule
     ],
     entryComponents: [ //need to add anything that will be dynamically created
         GenericArtifactBrowserComponent,

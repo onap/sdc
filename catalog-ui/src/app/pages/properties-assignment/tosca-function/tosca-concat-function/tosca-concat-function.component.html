@@ -43,6 +43,10 @@
     </div>
   </ng-container>
   <div class="buttons-container">
-    <button type="button" class="add-link" (click)="addStringParameter()">String Value</button> <button type="button" class="add-link" (click)="addFunction()">String Value Expression</button>
+    <!-- Native buttons, not sdc-button: sdc-button's inner button has no type, so inside a form it is a submit button that Enter in any field clicks. -->
+    <button type="button" class="sdc-button sdc-button__tertiary sdc-icon-left"
+            (click)="addStringParameter()"><svg-icon [name]="'plus'" [size]="'medium'"></svg-icon>Add String Value</button>
+    <button type="button" class="sdc-button sdc-button__tertiary sdc-icon-left"
+            (click)="addFunction()"><svg-icon [name]="'plus'" [size]="'medium'"></svg-icon>Add String Value Expression</button>
   </div>
 </div>

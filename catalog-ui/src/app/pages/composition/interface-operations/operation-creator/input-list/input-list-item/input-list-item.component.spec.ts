@@ -26,6 +26,7 @@ import {TranslateModule} from '../../../../../../shared/translator/translate.mod
 import {FormsModule} from '@angular/forms';
 import {DataTypeModel} from '../../../../../../models/data-types';
 import {ToscaFunctionModule} from '../../../../../properties-assignment/tosca-function/tosca-function.module';
+import {SvgIconModule} from "onap-ui-angular/dist/svg-icon/svg-icon.module";
 
 describe('InputListItemComponent', () => {
   let component: InputListItemComponent;
@@ -37,7 +38,8 @@ describe('InputListItemComponent', () => {
       imports: [
         TranslateModule,
         FormsModule,
-        ToscaFunctionModule
+        ToscaFunctionModule,
+        SvgIconModule
       ]
     })
     .compileComponents();
