@@ -30,27 +30,27 @@
             #activityLogTable
             [rows]="activities">
 
-        <ngx-datatable-column name="Time" [flexGrow]="2" [prop]="'TIMESTAMP'">
+        <ngx-datatable-column [resizeable]="false" name="Time" [width]="210" [canAutoResize]="false" [prop]="'TIMESTAMP'">
             <ng-template ngx-datatable-cell-template let-row="row">
                 {{row.TIMESTAMP | date }} | {{row.TIMESTAMP | date:"HH:mm O"}}
             </ng-template>
         </ngx-datatable-column>
-        <ngx-datatable-column name="Action" [flexGrow]="3" [prop]="'ACTION'">
+        <ngx-datatable-column [resizeable]="false" name="Action" [flexGrow]="3" [prop]="'ACTION'">
             <ng-template ngx-datatable-cell-template let-row="row">
                 {{row.ACTION}}
             </ng-template>
         </ngx-datatable-column>
-        <ngx-datatable-column name="Comment" [flexGrow]="5" [prop]="'COMMENT'">
+        <ngx-datatable-column [resizeable]="false" name="Comment" [flexGrow]="5" [prop]="'COMMENT'">
             <ng-template ngx-datatable-cell-template let-row="row">
                 <span sdc-tooltip [tooltip-text]="row.COMMENT">{{ row.COMMENT }}</span>
             </ng-template>
         </ngx-datatable-column>
-        <ngx-datatable-column name="Modifier" [flexGrow]="3" [prop]="'MODIFIER'">
+        <ngx-datatable-column [resizeable]="false" name="Modifier" [flexGrow]="3" [prop]="'MODIFIER'">
             <ng-template ngx-datatable-cell-template let-row="row">
                 {{ row.MODIFIER }}
             </ng-template>
         </ngx-datatable-column>
-        <ngx-datatable-column name="Status" [flexGrow]="1" [prop]="'STATUS'">
+        <ngx-datatable-column [resizeable]="false" name="Status" [width]="100" [canAutoResize]="false" [prop]="'STATUS'">
             <ng-template ngx-datatable-cell-template let-row="row">
                 <svg-icon-label
                         [name]="row.STATUS <= 399 ? 'success' : 'icons_close'"
