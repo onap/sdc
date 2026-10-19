@@ -47,6 +47,14 @@ describe('listEditor Module Tests', function () {
 		TestUtils.Simulate.click(sliderIcon);
 	});
 
+	it('should render the add action as a tertiary button with a plus icon', () => {
+		let view = mount(<ListEditorView onAdd={()=>{}} plusButtonTitle='Add Item' />);
+		let button = view.find('button[data-test-id="add-button"]');
+		expect(button.hasClass('sdc-button__tertiary')).toBe(true);
+		expect(button.find('.__plus').length).toBeGreaterThan(0);
+		expect(button.text()).toBe('Add Item');
+	});
+
 	it('should render list and list item and call onFilter', () => {
 		let itemView = mount(
 			<ListEditorView onFilter={()=>{}} children={[(<ListEditorItemView key='id'/>)]} />

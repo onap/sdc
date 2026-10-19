@@ -22,7 +22,7 @@ export default class SelectActionTable extends React.Component {
                     {onAdd &&
                         onAddItem && (
                             <Button
-                                btnType="link"
+                                btnType="tertiary"
                                 disabled={isReadOnlyMode === true}
                                 color="primary"
                                 iconName="plus"

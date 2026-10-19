@@ -214,7 +214,7 @@ class EntitlementPoolsEditorView extends React.Component {
                                 disabled={
                                     !!this.state.selectedLimit || isReadOnlyMode
                                 }
-                                btnType="link"
+                                btnType="tertiary"
                                 iconName="plus">
                                 {i18n('Add Limit')}
                             </Button>
