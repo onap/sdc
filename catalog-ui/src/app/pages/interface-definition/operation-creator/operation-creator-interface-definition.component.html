@@ -154,14 +154,10 @@
                 <tab tabTitle="Inputs"></tab>
                 <tab tabTitle="Outputs"></tab>
             </tabs>
-            <button
-                type="button"
-                class="add-param-link add-btn"
-                *ngIf="!isUsingExistingWF() && !readonly"
-                data-tests-id="addInputParameter"
-                [ngClass]="{'disabled':!canAdd()}"
-                [disabled]="!canAdd()"
-                (click)="addParam()">{{ currentTab === TYPE_INPUT ? 'Add Input' : 'Add Output' }}</button>
+            <!-- Native button, not sdc-button: sdc-button's inner button has no type, so inside a form it is a submit button that Enter in any field clicks. -->
+            <button type="button" class="sdc-button sdc-button__tertiary sdc-icon-left" data-tests-id="addInputParameter" *ngIf="!isUsingExistingWF() && !readonly"
+                    [disabled]="!canAdd()"
+                    (click)="addParam()"><svg-icon [name]="'plus'" [size]="'medium'"></svg-icon>{{ currentTab === TYPE_INPUT ? 'Add Input' : 'Add Output' }}</button>
         </div>
 
         <div class="generic-table">

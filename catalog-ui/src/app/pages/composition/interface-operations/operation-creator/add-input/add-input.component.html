@@ -21,9 +21,9 @@
 
 <div>
   <div *ngIf="!isView && showAddLink" class="add-button-container">
-    <button type="button" class="add-btn" data-tests-id="add-input.add-input-link"
-       (click)="showAddInput()">{{'OPERATION_ADD_INPUT' | translate}}
-    </button>
+    <!-- Native button, not sdc-button: sdc-button's inner button has no type, so inside a form it is a submit button that Enter in any field clicks. -->
+    <button type="button" class="sdc-button sdc-button__tertiary sdc-icon-left" data-tests-id="add-input.add-input-link"
+            (click)="showAddInput()"><svg-icon [name]="'plus'" [size]="'medium'"></svg-icon>{{'OPERATION_ADD_INPUT' | translate}}</button>
   </div>
   <form *ngIf="showForm" [formGroup]="inputForm" (ngSubmit)="onSubmit()">
     <label class="occurrences-label">{{'ADD_INPUT_TITLE' | translate}}</label>

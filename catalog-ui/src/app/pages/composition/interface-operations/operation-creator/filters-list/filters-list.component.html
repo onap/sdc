@@ -93,12 +93,9 @@
                   </div>
                   <div *ngIf="!isToscaFunction(idx)">
                     <div *ngIf="filter.constraint == 'validValues'">
-                      <button type="button" class="add-btn padding-bottom"
-                          [ngClass]="{'disabled': isViewOnly}"
-                          [disabled]="isViewOnly"
-                          (click)="addToList(idx)">
-                          Add to List
-                      </button>
+                      <!-- Native button, not sdc-button: sdc-button's inner button has no type, so inside a form it is a submit button that Enter in any field clicks. -->
+                      <button type="button" class="sdc-button sdc-button__tertiary sdc-icon-left" [disabled]="isViewOnly"
+                              (click)="addToList(idx)"><svg-icon [name]="'plus'" [size]="'medium'"></svg-icon>Add Valid Value</button>
                       <div class="w-sdc-form-columns-wrapper padding-bottom" *ngFor="let value of constraintValuesArray(idx); let valueIndex = index; trackBy:trackByFn">
                         <div class="w-sdc-form-column">
                           <input type="text" required
@@ -156,8 +153,8 @@
         </div>
 
         <div class="add-button-container group-with-border" *ngIf="!isViewOnly && activitiesExist">
-          <button type="button" class="add-btn" data-tests-id="add-input.add-input-link"
-             (click)="addFilter()">Add Filter</button>
+          <button type="button" class="sdc-button sdc-button__tertiary sdc-icon-left" data-tests-id="add-filter-button"
+                  (click)="addFilter()"><svg-icon [name]="'plus'" [size]="'medium'"></svg-icon>Add Filter</button>
         </div>
         <div *ngIf="!activitiesExist">
           Must have at leat one actifity before adding filters

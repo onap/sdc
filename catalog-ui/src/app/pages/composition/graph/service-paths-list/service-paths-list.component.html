@@ -1,5 +1,8 @@
 <div class="service-path-list">
-    <div class="add-path-link" *ngIf="!isViewOnly"><button type="button" (click)="onAddServicePath()" data-tests-id="add-service-path-lnk" >+ Add Flow</button></div>
+    <div class="add-path-link" *ngIf="!isViewOnly">
+        <sdc-button [type]="'tertiary'" [icon_name]="'plus'" [icon_position]="'left'" [testId]="'add-service-path-lnk'"
+                    [text]="'Add Flow'" (click)="onAddServicePath()"></sdc-button>
+    </div>
     <div class="generic-table table-container" >
         <div class="header-row">
             <div class="cell header-cell" *ngFor="let header of headers">

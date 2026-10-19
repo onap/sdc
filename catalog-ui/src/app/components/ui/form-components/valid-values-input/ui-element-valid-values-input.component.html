@@ -18,9 +18,9 @@
 *  ============LICENSE_END=========================================================
  -->
 
-    <button type="button" class="add-btn"
-             (click)="addToList()">Add to List
-    </button>
+    <!-- Native button, not sdc-button: sdc-button's inner button has no type, so inside a form it is a submit button that Enter in any field clicks. -->
+    <button type="button" class="sdc-button sdc-button__tertiary sdc-icon-left"
+            (click)="addToList()"><svg-icon [name]="'plus'" [size]="'medium'"></svg-icon>Add Valid Value</button>
     <div class="w-sdc-form-columns-wrapper" *ngFor="let val of value; let valueIndex = index; trackBy:trackByFn">
         <div class="w-sdc-form-column">
             <input type="text" class="i-sdc-form-input" *ngIf="showStringField()"

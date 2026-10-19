@@ -62,9 +62,10 @@
       </ng-template>
     </ngx-datatable-column>
 
-    <ngx-datatable-column class="datatable-white-body-cell" [minWidth]="50" [maxWidth]="100"  >
+    <ngx-datatable-column class="datatable-white-body-cell" [minWidth]="130" [maxWidth]="130">
       <ng-template ngx-datatable-header-template>
-        <button type="button" data-tests-id="gab-add-btn" class="add-btn add-btn-div" (click)="showAddNewColumn()">Add</button>
+        <sdc-button [type]="'tertiary'" [icon_name]="'plus'" [icon_position]="'left'" [testId]="'gab-add-btn'"
+                    [text]="'Add Column'" (click)="showAddNewColumn()"></sdc-button>
       </ng-template>
       <ng-template class="datatable-white-body-cell" ngx-datatable-cell-template>
       </ng-template>

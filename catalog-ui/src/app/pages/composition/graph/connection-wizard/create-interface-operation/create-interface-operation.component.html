@@ -83,14 +83,9 @@
       <tabs tabStyle="round-tabs" [hideIndicationOnTabChange]="true">
         <tab tabTitle="Inputs"></tab>
       </tabs>
-      <button
-          type="button"
-          class="add-param-link add-btn"
-          *ngIf="!isReadOnly"
-          data-tests-id="addInputParameter"
-          [ngClass]="{'disabled':isReadOnly}"
-          [disabled]="isReadOnly"
-          (click)="addInput()">{{ 'OPERATION_ADD_INPUT' | translate }}</button>
+      <!-- Native button, not sdc-button: sdc-button's inner button has no type, so inside a form it is a submit button that Enter in any field clicks. -->
+      <button type="button" class="sdc-button sdc-button__tertiary sdc-icon-left" data-tests-id="addInputParameter" *ngIf="!isReadOnly"
+              (click)="addInput()"><svg-icon [name]="'plus'" [size]="'medium'"></svg-icon>{{ 'OPERATION_ADD_INPUT' | translate }}</button>
     </div>
 
     <div class="generic-table">
