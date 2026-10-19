@@ -18,6 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 import {AfterViewInit, Directive, ElementRef, HostListener, Input, OnChanges, OnDestroy, Renderer2} from '@angular/core';
+import {Subscription} from 'rxjs';
 import {GlossaryService} from './glossary.service';
 
 const SHOW_DELAY_MS = 300;
@@ -41,6 +42,8 @@ export class GlossaryTermDirective implements OnChanges, AfterViewInit, OnDestro
     private appliedId: string = null;
     private tooltipElement: HTMLElement = null;
     private showTimer: any = null;
+    private wanted: boolean = false;
+    private languageSubscription: Subscription = null;
     private removeListeners: Array<() => void> = [];
 
     constructor(private host: ElementRef, private renderer: Renderer2, private glossary: GlossaryService) {
@@ -58,11 +61,20 @@ export class GlossaryTermDirective implements OnChanges, AfterViewInit, OnDestro
     ngAfterViewInit(): void {
         this.viewReady = true;
         this.applyAttributes();
+        // A host focused on a cold load can get focusin before en_US.json has arrived.
+        this.languageSubscription = this.glossary.changed.subscribe(() => {
+            if (this.wanted) {
+                this.show();
+            }
+        });
     }
 
     ngOnDestroy(): void {
         this.hide();
         this.removeAttributes();
+        if (this.languageSubscription) {
+            this.languageSubscription.unsubscribe();
+        }
     }
 
     @HostListener('mouseenter')
@@ -93,6 +105,7 @@ export class GlossaryTermDirective implements OnChanges, AfterViewInit, OnDestro
 
     private show(): void {
         this.clearTimer();
+        this.wanted = true;
         if (this.tooltipElement) {
             return;
         }
@@ -121,6 +134,7 @@ export class GlossaryTermDirective implements OnChanges, AfterViewInit, OnDestro
 
     private hide(): void {
         this.clearTimer();
+        this.wanted = false;
         this.removeListeners.forEach((remove) => remove());
         this.removeListeners = [];
         if (this.tooltipElement) {

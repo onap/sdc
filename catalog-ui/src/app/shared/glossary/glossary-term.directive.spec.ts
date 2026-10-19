@@ -18,6 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 import {Component} from '@angular/core';
+import {Subject} from 'rxjs';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {TranslateService} from '../translator/translate.service';
 import {GlossaryTermDirective} from './glossary-term.directive';
@@ -41,6 +42,7 @@ class HostComponent {
 
 describe('GlossaryTermDirective', () => {
     let fixture: ComponentFixture<HostComponent>;
+    let languageChanged: Subject<string>;
     const el = (id: string): HTMLElement => fixture.nativeElement.querySelector('#' + id);
     const tooltip = (): HTMLElement => document.body.querySelector('.sdc-glossary-tooltip') as HTMLElement;
     const fire = (target: EventTarget, type: string) => target.dispatchEvent(new Event(type, {bubbles: true}));
@@ -49,7 +51,10 @@ describe('GlossaryTermDirective', () => {
         jest.useFakeTimers();
         TestBed.configureTestingModule({
             declarations: [HostComponent, GlossaryTermDirective],
-            providers: [GlossaryService, {provide: TranslateService, useValue: translateServiceStub()}]
+            providers: [GlossaryService, {provide: TranslateService, useFactory: () => {
+                languageChanged = new Subject<string>();
+                return {...translateServiceStub(), languageChangedObservable: languageChanged};
+            }}]
         });
         fixture = TestBed.createComponent(HostComponent);
         fixture.detectChanges();
@@ -118,6 +123,28 @@ describe('GlossaryTermDirective', () => {
         fire(el('inner'), 'focusin');
         expect(tooltip().textContent).toContain('Complex Resource (CR)');
         fire(el('inner'), 'focusout');
+        expect(tooltip()).toBeNull();
+    });
+
+    it('shows a tooltip focused before the language file arrived once it does', () => {
+        const stub = TestBed.get(TranslateService);
+        const translate = stub.translate;
+        stub.translate = () => '';
+        fire(el('btn'), 'focusin');
+        expect(tooltip()).toBeNull();
+        stub.translate = translate;
+        languageChanged.next('en_US');
+        expect(tooltip().textContent).toContain('Virtual Function Component (VFC)');
+    });
+
+    it('stays hidden when the language arrives after focus has moved on', () => {
+        const stub = TestBed.get(TranslateService);
+        const translate = stub.translate;
+        stub.translate = () => '';
+        fire(el('btn'), 'focusin');
+        fire(el('btn'), 'focusout');
+        stub.translate = translate;
+        languageChanged.next('en_US');
         expect(tooltip()).toBeNull();
     });
 
