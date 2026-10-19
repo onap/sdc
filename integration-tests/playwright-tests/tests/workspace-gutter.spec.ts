@@ -281,4 +281,32 @@ test.describe('Workspace layout', () => {
                 .toBeLessThanOrEqual(g.viewportWidth);
         }
     });
+
+    test('Interfaces Assignment keeps Add Operation and its side panel on screen', async ({ sdcPage, api }) => {
+        const service = await api.createService('PwIfaceLayout');
+
+        await gotoWorkspaceTab(sdcPage, { id: service.id, type: 'service', tab: 'interfaceDefinition' });
+        await settles(sdcPage);
+        await expect(sdcPage.locator('.interface-definition .right-column-add button')).toBeVisible({ timeout: 30_000 });
+        // The button is already visible under the page's loader overlay; SELF only appears once loading is done.
+        await expect(sdcPage.locator('.interface-definition .right-column').getByText('SELF', { exact: true }))
+            .toBeVisible({ timeout: 30_000 });
+
+        for (const width of [1366, 1600, 1920]) {
+            await sdcPage.setViewportSize({ width, height: 1000 });
+            const g = await sdcPage.evaluate(() => {
+                const add = document.querySelector('.interface-definition .right-column-add button')!;
+                const r = add.getBoundingClientRect();
+                const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+                return {
+                    viewportWidth: window.innerWidth,
+                    addReachable: !!hit && add.contains(hit),
+                    rightColumn: document.querySelector('.interface-definition .right-column')!.getBoundingClientRect().right,
+                };
+            });
+            expect(g.rightColumn, `the Composition panel and Add Operation run past the viewport at ${width}px`)
+                .toBeLessThanOrEqual(g.viewportWidth);
+            expect(g.addReachable, `Add Operation does not take a click at ${width}px`).toBe(true);
+        }
+    });
 });
