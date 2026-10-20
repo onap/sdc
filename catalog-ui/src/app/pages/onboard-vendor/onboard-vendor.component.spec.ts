@@ -22,6 +22,7 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {CacheService} from 'app/services/cache.service';
 import {SdcConfigToken} from 'app/config/sdc-config.config';
+import {NavigationService} from 'app/services/navigation.service';
 import {OnboardVendorPageComponent} from './onboard-vendor.component';
 import {MenuItemGroup} from 'app/utils/menu-handler';
 
@@ -36,6 +37,18 @@ function makeRegistry() {
         loadOnBoarding: jest.fn((cb: () => void) => cb()),   // synchronous (cached-bundle path)
         render: jest.fn(),
         unmount: jest.fn()
+    };
+}
+
+function makeNavigationService() {
+    const listeners: Array<() => void> = [];
+    return {
+        deregister: jest.fn(),
+        onNavigationSuccess: jest.fn(function(cb: () => void) {
+            listeners.push(cb);
+            return this.deregister;
+        }),
+        emitNavigationSuccess: () => listeners.forEach((cb) => cb())
     };
 }
 
@@ -55,8 +68,10 @@ function createComp() {
         cookie: {userIdSuffix: 'USER_ID', userFirstName: 'FN', userLastName: 'LN', userEmail: 'EM'}
     };
 
-    const comp = new OnboardVendorPageComponent(cacheService, cdr, el, sdcConfig);
-    return {comp, cacheService, cdr, el, hostEl};
+    const navigationService: any = makeNavigationService();
+
+    const comp = new OnboardVendorPageComponent(cacheService, cdr, el, sdcConfig, navigationService);
+    return {comp, cacheService, cdr, el, hostEl, navigationService};
 }
 
 describe('OnboardVendorPageComponent', () => {
@@ -76,7 +91,8 @@ describe('OnboardVendorPageComponent', () => {
             declarations: [OnboardVendorPageComponent, TopNavStubComponent],
             providers: [
                 {provide: CacheService, useValue: {get: jest.fn(() => null)}},
-                {provide: SdcConfigToken, useValue: {api: {root: ''}, cookie: {}}}
+                {provide: SdcConfigToken, useValue: {api: {root: ''}, cookie: {}}},
+                {provide: NavigationService, useValue: makeNavigationService()}
             ],
             schemas: [NO_ERRORS_SCHEMA]
         }).compileComponents().then(() => {
@@ -138,6 +154,45 @@ describe('OnboardVendorPageComponent', () => {
         expect(registry.render.mock.calls.length).toBeGreaterThan(renderCallsBefore);
     });
 
+    it('returns the punch-out to the onboarding catalog when ONBOARD re-navigates to this page', () => {
+        const {comp, navigationService} = createComp();
+        comp.ngOnInit();
+        comp.ngAfterViewInit();
+        comp.handleVendorEvent('breadcrumbsupdated', [
+            {selectedKey: 'onboarding', menuItems: [{key: 'onboarding', displayText: 'Onboarding'}]},
+            {selectedKey: 'license-model', menuItems: [{key: 'license-model', displayText: 'Licenses'}]},
+            {selectedKey: 'vlm-1', menuItems: [{key: 'vlm-1', displayText: 'foo'}]}
+        ]);
+        expect(comp.vendorData.breadcrumbs.selectedKeys).toEqual(['onboarding', 'license-model', 'vlm-1']);
+        const renderCallsBefore = registry.render.mock.calls.length;
+
+        navigationService.emitNavigationSuccess();
+
+        expect(comp.vendorData.breadcrumbs.selectedKeys).toEqual([]);
+        expect(registry.render).toHaveBeenCalledTimes(renderCallsBefore + 1);
+        expect(registry.render.mock.calls[renderCallsBefore][0].options.data).toEqual({breadcrumbs: {selectedKeys: []}});
+    });
+
+    it('does not re-render the punch-out on a navigation while it already shows the onboarding catalog', () => {
+        const {comp, navigationService} = createComp();
+        comp.ngOnInit();
+        comp.ngAfterViewInit();
+        const renderCallsBefore = registry.render.mock.calls.length;
+
+        navigationService.emitNavigationSuccess();
+
+        expect(registry.render).toHaveBeenCalledTimes(renderCallsBefore);
+    });
+
+    it('stops listening for navigations on destroy', () => {
+        const {comp, navigationService} = createComp();
+        comp.ngOnInit();
+
+        comp.ngOnDestroy();
+
+        expect(navigationService.deregister).toHaveBeenCalled();
+    });
+
     // Test 3a: ngOnDestroy after a mount calls unmount
     it('ngOnDestroy calls PunchOutRegistry.unmount after the punch-out was mounted', () => {
         const {comp, hostEl} = createComp();
@@ -164,7 +219,7 @@ describe('OnboardVendorPageComponent', () => {
             cookie: {userIdSuffix: 'USER_ID', userFirstName: 'FN', userLastName: 'LN', userEmail: 'EM'}
         };
 
-        const comp = new OnboardVendorPageComponent(cacheService, cdr, el, sdcConfig);
+        const comp = new OnboardVendorPageComponent(cacheService, cdr, el, sdcConfig, makeNavigationService() as any);
         comp.ngOnInit();
         comp.ngAfterViewInit();
 

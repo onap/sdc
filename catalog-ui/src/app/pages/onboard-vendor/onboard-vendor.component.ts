@@ -32,6 +32,7 @@ import {CacheService} from 'app/services/cache.service';
 import {MenuItem, MenuItemGroup} from 'app/utils/menu-handler';
 import {SdcConfigToken} from 'app/config/sdc-config.config';
 import {IUserProperties} from 'app/models/user';
+import {NavigationService} from 'app/services/navigation.service';
 // Side-effect import: defines the global window.PunchOutRegistry used below. The old AngularJS
 // <punch-out> directive carried the only require() of this bundle; it was removed with the
 // directive layer, so this consumer must load it itself (the IIFE self-guards, so importing it
@@ -79,12 +80,14 @@ export class OnboardVendorPageComponent implements OnInit, AfterViewInit, OnDest
     private viewReady: boolean = false;
     private mounted: boolean = false;
     private pendingMount: boolean = false;
+    private deregisterNavigation: () => void;
 
     constructor(
         private cacheService: CacheService,
         private cdr: ChangeDetectorRef,
         private el: ElementRef,
-        @Inject(SdcConfigToken) private sdcConfig: any
+        @Inject(SdcConfigToken) private sdcConfig: any,
+        private navigationService: NavigationService
     ) {}
 
     ngOnInit(): void {
@@ -92,6 +95,9 @@ export class OnboardVendorPageComponent implements OnInit, AfterViewInit, OnDest
         this.user = this.cacheService.get('user');
         this.vendorData = {breadcrumbs: {selectedKeys: []}};
         this.topNavMenuModel = [];
+        // ONBOARD in the top nav navigates to this same URL, and the router reuses this instance,
+        // so without this the punch-out would stay on the license model or VSP it is showing.
+        this.deregisterNavigation = this.navigationService.onNavigationSuccess(() => this.returnToOnboardingCatalog());
 
         window['PunchOutRegistry'].loadOnBoarding(() => {
             if (this.destroyed) { return; }
@@ -111,6 +117,9 @@ export class OnboardVendorPageComponent implements OnInit, AfterViewInit, OnDest
 
     ngOnDestroy(): void {
         this.destroyed = true;
+        if (this.deregisterNavigation) {
+            this.deregisterNavigation();
+        }
         const host = this.getHost();
         if (host && this.mounted) {
             try {
@@ -131,6 +140,12 @@ export class OnboardVendorPageComponent implements OnInit, AfterViewInit, OnDest
     }
 
     // ── private helpers ────────────────────────────────────────────────────────
+
+    private returnToOnboardingCatalog(): void {
+        if (!this.destroyed && this.vendorData.breadcrumbs.selectedKeys.length) {
+            this.updateBreadcrumbsPath([]);
+        }
+    }
 
     private tryRender(): void {
         if (this.destroyed || this.mounted || !this.viewReady || !this.pendingMount) { return; }
