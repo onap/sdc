@@ -8,7 +8,7 @@ import { GetArtifactsByTypeAction } from "../../../store/actions/artifacts.actio
 import { Observable } from "rxjs/index";
 import { ArtifactsState } from "../../../store/states/artifacts.state";
 import { map } from "rxjs/operators";
-import { ArtifactType, ComponentState, ComponentType } from "app/utils/constants"
+import { ArtifactType, ComponentType } from "app/utils/constants"
 import { TopologyTemplateService } from "app/services/component-services/topology-template.service";
 import { SdcUiServices } from "onap-ui-angular";
 import { NotificationSettings } from "onap-ui-angular/dist/notifications/utilities/notification.config";
@@ -61,10 +61,6 @@ export class ToscaArtifactPageComponent implements OnInit {
 
     isService() {
         return ComponentType.SERVICE === this.componentType;
-    }
-
-    isCheckedOut() {
-        return this.workspaceService.metadata.lifecycleState === ComponentState.NOT_CERTIFIED_CHECKOUT;
     }
 
     onFileUpload(file, artifactType) {

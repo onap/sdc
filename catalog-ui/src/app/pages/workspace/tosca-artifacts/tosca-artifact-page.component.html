@@ -39,14 +39,13 @@
                 {{ row.artifactVersion }}
             </ng-template>
         </ngx-datatable-column>
-        <ngx-datatable-column *ngIf="isService() && isCheckedOut()" [resizeable]="false" name="Upload" [flexGrow]="1">
+        <ngx-datatable-column *ngIf="isService() && !(isViewOnly$ | async)" [resizeable]="false" name="Upload" [flexGrow]="1">
             <ng-template ngx-datatable-cell-template let-row="row">
                 <div class="download-artifact-button">
                     <upload-artifact
                         [artifact]="row"
                         [componentId]="componentId"
                         [componentType]="componentType"
-                        [disabled]="!isCheckedOut()"
                         [extensions]="getExtension(row.artifactType)"
                         (onFileUpload)="onFileUpload($event, row.artifactType)"
                         testId="upload_{{row.artifactDisplayName}}"

@@ -32,11 +32,13 @@ export class CapabilitiesComponent {
     }
 
     editCapability(cap: CapabilityUI) {
+        const isReadonly = this.reqAndCapabilitiesService.isViewOnly();
+        const closeButton = {text: 'Close', type: SdcUiCommon.ButtonType.secondary, size: 'x-small', closeModal: true};
         let modalConfig = {
             size: 'md',
-            title: 'Update Capability',
+            title: isReadonly ? 'Capability' : 'Update Capability',
             type: SdcUiCommon.ModalType.custom,
-            buttons: [
+            buttons: isReadonly ? [closeButton] : [
                 {
                     id: 'saveButton',
                     text: ('Update'),
@@ -49,11 +51,14 @@ export class CapabilitiesComponent {
         let modalInputs = {
             capability: cap,
             capabilityTypesList: this.reqAndCapabilitiesService.getCapabilityTypesList(),
+            isReadonly,
         };
 
         this.customModalInstance = this.modalService.openCustomModal(modalConfig, CapabilitiesEditorComponent, {input: modalInputs});
-        this.customModalInstance.innerModalContent.instance.
-        onValidationChange.subscribe((isValid) => this.customModalInstance.getButtonById('saveButton').disabled = !isValid);
+        if (!isReadonly) {
+            this.customModalInstance.innerModalContent.instance.
+            onValidationChange.subscribe((isValid) => this.customModalInstance.getButtonById('saveButton').disabled = !isValid);
+        }
     }
 
     expendRow(row) {

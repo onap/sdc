@@ -321,7 +321,7 @@ export class InterfaceOperationComponent implements OnInit, OnDestroy {
             title: modalData.modalTitle,
             size: 'l',
             type: SdcUiCommon.ModalType.custom,
-            buttons: [saveButton, cancelButton] as IModalButtonComponent[]
+            buttons: (this.readonly ? [cancelButton] : [saveButton, cancelButton]) as IModalButtonComponent[]
         };
 
         this.modalInstance = this.ModalServiceSdcUI.openCustomModal(modalConfig, OperationCreatorComponent, input);
@@ -372,7 +372,9 @@ export class InterfaceOperationComponent implements OnInit, OnDestroy {
 
     private enableOrDisableSaveButton = (shouldEnable: boolean): void => {
         const saveButton = this.modalInstance.getButtonById('saveButton');
-        saveButton.disabled = !shouldEnable;
+        if (saveButton) {
+            saveButton.disabled = !shouldEnable;
+        }
     }
 
     private createOperation = (operation: OperationModel): void => {
