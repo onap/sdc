@@ -9,6 +9,8 @@ import 'rxjs/add/observable/of';
 import {ReqAndCapabilitiesComponent} from "./req-and-capabilities.component";
 import {ReqAndCapabilitiesService} from "./req-and-capabilities.service";
 import {CapabilitiesComponent} from "./capabilities/capabilities.component";
+import {RequirementsComponent} from "./requirements/requirements.component";
+import {CapabilitiesPropertiesComponent} from "./capabilities/capabilities-properties/capabilities-properties";
 import {WorkspaceService} from "../workspace.service";
 import {
     capabilitiesMock,
@@ -168,5 +170,51 @@ describe('req and capabilities template', () => {
             expect(el.getAttribute('[type]')).toBe(`'tertiary'`);
             expect(el.getAttribute('[icon_name]')).toBe(`'plus'`);
         });
+    });
+});
+
+describe('req and capabilities while the workspace is view-only', () => {
+    const reqAndCapService = (viewOnly: boolean): any => ({
+        isViewOnly: jest.fn(() => viewOnly),
+        getCapabilityTypesList: jest.fn(), getRelationsShipeTypeList: jest.fn(), getNodeTypesList: jest.fn()
+    });
+    const modalService = (): any => ({
+        openCustomModal: jest.fn(() => ({
+            innerModalContent: {instance: {onValidationChange: {subscribe: jest.fn()}}},
+            getButtonById: jest.fn()
+        }))
+    });
+
+    it('offers Add only while the workspace is editable', () => {
+        expect(new ReqAndCapabilitiesComponent(null, null, null, null, reqAndCapService(false), null, null).showAdd()).toBe(true);
+        expect(new ReqAndCapabilitiesComponent(null, null, null, null, reqAndCapService(true), null, null).showAdd()).toBe(false);
+    });
+
+    [
+        ['capability', (service, modal) => new CapabilitiesComponent(null, null, null, service, modal, null).editCapability(<any>{})],
+        ['requirement', (service, modal) => new RequirementsComponent(null, null, null, service, modal, null).editRequirement({})]
+    ].forEach(([kind, open]: [string, (service, modal) => void]) => {
+        it(`opens a ${kind} for update while editable`, () => {
+            const modal = modalService();
+            open(reqAndCapService(false), modal);
+            const [config, , {input}] = modal.openCustomModal.mock.calls[0];
+            expect(config.buttons.map((b) => b.text)).toEqual(['Update', 'Cancel']);
+            expect(input.isReadonly).toBe(false);
+        });
+
+        it(`opens a ${kind} read-only with only Close while view-only`, () => {
+            const modal = modalService();
+            open(reqAndCapService(true), modal);
+            const [config, , {input}] = modal.openCustomModal.mock.calls[0];
+            expect(config.buttons.map((b) => b.text)).toEqual(['Close']);
+            expect(input.isReadonly).toBe(true);
+        });
+    });
+
+    it('opens a capability property view-only while the workspace is view-only', () => {
+        const modalsHandler: any = {openEditPropertyModal: jest.fn()};
+        const properties = new CapabilitiesPropertiesComponent(modalsHandler, <any>{metadata: {uniqueId: 'vf-id'}}, reqAndCapService(true));
+        (properties as any).updateProperty(<any>{name: 'p1'});
+        expect(modalsHandler.openEditPropertyModal.mock.calls[0][6]).toBe(true);
     });
 });

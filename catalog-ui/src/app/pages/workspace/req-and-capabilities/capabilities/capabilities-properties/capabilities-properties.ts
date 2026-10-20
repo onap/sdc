@@ -4,6 +4,7 @@ import {SdcUiServices} from "onap-ui-angular";
 import { ModalsHandler } from "../../../../../utils/modals-handler";
 import { WorkspaceService } from "../../../workspace.service";
 import { PropertyModel } from "../../../../../models/properties";
+import { ReqAndCapabilitiesService } from "../../req-and-capabilities.service";
 
 
 @Component({
@@ -21,13 +22,14 @@ export class CapabilitiesPropertiesComponent {
         {name: 'Description', prop: 'description', flexGrow: 1},
     ];
     constructor(private modalsHandler: ModalsHandler,
-                private workspaceService: WorkspaceService) {}
+                private workspaceService: WorkspaceService,
+                private reqAndCapabilitiesService: ReqAndCapabilitiesService) {}
 
     private updateProperty(property: PropertyModel): void {
         _.forEach(this.capabilitiesProperties, (prop: PropertyModel) => {
             prop.readonly = true;
         });
         this.modalsHandler.openEditPropertyModal(property, this.workspaceService.metadata, this.capabilitiesProperties, false, 'component',
-        this.workspaceService.metadata.uniqueId);
+        this.workspaceService.metadata.uniqueId, this.reqAndCapabilitiesService.isViewOnly());
     }
 }

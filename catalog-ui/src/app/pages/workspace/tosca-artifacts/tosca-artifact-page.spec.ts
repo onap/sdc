@@ -66,3 +66,13 @@ describe('tosca artifacts page', () => {
     })
 
 });
+describe('tosca artifacts page template', () => {
+    // tslint:disable-next-line:no-var-requires
+    const template: string = require('./tosca-artifact-page.component.html');
+    const doc = new DOMParser().parseFromString(`<body>${template}</body>`, 'text/html');
+
+    it('offers Upload only while the workspace is editable', () => {
+        const upload = doc.querySelector('upload-artifact');
+        expect(upload.closest('ngx-datatable-column').getAttribute('*ngif')).toBe('isService() && !(isViewOnly$ | async)');
+    });
+});

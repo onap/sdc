@@ -187,7 +187,7 @@ export class InputsTableComponent {
                 modelProperty.constraints = tempProperty.constraints;
             });
         }
-        this.modalsHandler.newOpenEditPropertyModal(modelProperty, [],true, 'component', modelProperty.resourceInstanceUniqueId, this.parentComponent, inputProperty).then(result => {
+        this.modalsHandler.newOpenEditPropertyModal(modelProperty, [],true, 'component', modelProperty.resourceInstanceUniqueId, this.parentComponent, inputProperty, this.readonly).then(result => {
             let newInputs : Array<InputFEModel> = [];
             this.inputs.forEach(input => {
                 if (input.uniqueId != inputProperty.uniqueId) {

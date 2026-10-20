@@ -52,13 +52,13 @@ function createComp(opts: any = {}) {
     };
     const workflowService: any = {getWorkflows: jest.fn(() => Observable.of([]))};
     const modalService: any = {};
-    const modalServiceSdcUI: any = {};
+    const modalServiceSdcUI: any = {openCustomModal: jest.fn(() => ({getButtonById: jest.fn()}))};
     const eventListenerService = new EventListenerService();
 
     const comp = new InterfaceOperationComponent(
         sdcConfig, navigationService, translateService, pluginsService, componentService,
         workflowService, modalService, modalServiceSdcUI, workspaceService, eventListenerService);
-    return {comp, component, workspaceService, componentService, eventListenerService};
+    return {comp, component, workspaceService, componentService, eventListenerService, modalServiceSdcUI};
 }
 
 describe('InterfaceOperationComponent', () => {
@@ -89,6 +89,24 @@ describe('InterfaceOperationComponent', () => {
         comp.ngOnInit();
         comp.ngOnDestroy();
         expect(eventListenerService.observerCallbacks.containsKey(EVENTS.ON_CERTIFY)).toBe(false);
+    });
+
+    it('offers Save on an operation while editable', () => {
+        const {comp, modalServiceSdcUI} = createComp({mode: WorkspaceMode.EDIT});
+        comp.ngOnInit();
+        comp.onEditOperation(<any>{uniqueId: 'op-1'});
+        const config = modalServiceSdcUI.openCustomModal.mock.calls[0][0];
+        expect(config.buttons.map((button) => button.id)).toEqual(['saveButton', 'cancelButton']);
+    });
+
+    it('opens an operation without Save while read-only', () => {
+        const {comp, modalServiceSdcUI} = createComp({mode: WorkspaceMode.VIEW});
+        comp.ngOnInit();
+        comp.onEditOperation(<any>{uniqueId: 'op-1'});
+        const [config, , input] = modalServiceSdcUI.openCustomModal.mock.calls[0];
+        expect(config.buttons.map((button) => button.id)).toEqual(['cancelButton']);
+        expect(input.readonly).toBe(true);
+        expect(() => input.validityChangedCallback(true)).not.toThrow();
     });
 
     it('reads the component from WorkspaceService, not an @Input', () => {

@@ -13,7 +13,6 @@ import {CapabilitiesEditorComponent} from "./capabilities/capabilities-editor/ca
 import {ModalComponent} from "onap-ui-angular/dist/modals/modal.component";
 import {EventListenerService} from "../../../services/event-listener.service";
 import {RequirementsEditorComponent} from "./requirements/requirements-editor/requirements-editor.component";
-import {ComponentState} from "../../../utils/constants";
 
 @Component({
     selector: 'req-and-capabilities',
@@ -108,7 +107,7 @@ export class ReqAndCapabilitiesComponent implements OnInit {
     }
 
     showAdd() {
-        return this.workspaceService.metadata.lifecycleState === ComponentState.NOT_CERTIFIED_CHECKOUT;
+        return !this.reqAndCapabilitiesService.isViewOnly();
     }
 
     private async loadReqOrCap() {
@@ -203,7 +202,6 @@ export class ReqAndCapabilitiesComponent implements OnInit {
             relationshipTypesList: this.reqAndCapabilitiesService.getRelationsShipeTypeList(),
             nodeTypesList: this.reqAndCapabilitiesService.getNodeTypesList(),
             capabilityTypesList: this.reqAndCapabilitiesService.getCapabilityTypesList(),
-            // isReadonly: this.$scope.isViewMode() || !this.$scope.isDesigner(),
         };
 
         this.customModalInstance = this.modalService.openCustomModal(modalConfig, RequirementsEditorComponent, {input: modalInputs});

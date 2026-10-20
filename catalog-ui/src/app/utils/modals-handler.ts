@@ -129,7 +129,7 @@ export class ModalsHandler implements IModalsHandler {
      * @param isPropertyValueOwner - boolean telling if the component is eligible of editing the property
      * @returns {Promise<T>} - Promise telling if the modal has opened or not
      */
-    newOpenEditPropertyModal = (property: PropertyModel, filteredProperties: PropertyModel[], isPropertyValueOwner: boolean, propertyOwnerType: string, propertyOwnerId: string, component: Component, inputProperty: InputFEModel): Promise<any> => {
+    newOpenEditPropertyModal = (property: PropertyModel, filteredProperties: PropertyModel[], isPropertyValueOwner: boolean, propertyOwnerType: string, propertyOwnerId: string, component: Component, inputProperty: InputFEModel, isViewOnly: boolean = false): Promise<any> => {
         return new Promise<any>((resolve) => {
             const inputs = {
                 property,
@@ -138,7 +138,7 @@ export class ModalsHandler implements IModalsHandler {
                 isPropertyValueOwner,
                 propertyOwnerType,
                 propertyOwnerId,
-                isViewOnly: false,
+                isViewOnly,
                 inputProperty
             };
 
