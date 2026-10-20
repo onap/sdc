@@ -23,6 +23,7 @@
                       (propertyChanged)="propertyValueChanged($event)"
                       [fePropertiesMap]="capabilityPropertiesMap"
                       [selectedPropertyId]="''"
-                      [hidePropertyType]="true">
+                      [hidePropertyType]="true"
+                      [readonly]="isViewOnly$ | async">
     </properties-table>
 </div>

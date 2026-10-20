@@ -1,7 +1,7 @@
 <panel-wrapper-component *ngIf="compositionState$ | async as state">   <!-- HEADER -->
 
     <ng2-composition-panel-header
-        [isViewOnly]="state.isViewOnly"
+        [isViewOnly]="isViewOnly$ | async"
         [selectedComponent]="state.selectedComponent">
     </ng2-composition-panel-header>
 

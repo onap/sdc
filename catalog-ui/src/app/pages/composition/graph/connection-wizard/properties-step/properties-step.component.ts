@@ -10,6 +10,9 @@ import {PropertyFEModel} from "app/models/properties-inputs/property-fe-model";
 import {InstanceFePropertiesMap} from "app/models/properties-inputs/property-fe-map";
 import {PropertiesUtils} from "app/pages/properties-assignment/services/properties.utils";
 import { ComponentInstanceService } from "app/services/component-instance-services/component-instance.service";
+import {Select} from "@ngxs/store";
+import {Observable} from "rxjs";
+import {WorkspaceState} from "app/store/states/workspace.state";
 
 @Component({
     selector: 'properties-step',
@@ -21,6 +24,7 @@ export class PropertiesStepComponent implements IStepComponent{
 
     capabilityPropertiesMap: InstanceFePropertiesMap;
     savingProperty:boolean = false;
+    @Select(WorkspaceState.isViewOnly) isViewOnly$: Observable<boolean>;
 
     constructor(@Inject(forwardRef(() => ConnectionWizardService)) public connectWizardService: ConnectionWizardService, private componentInstanceService:ComponentInstanceService, private propertiesUtils:PropertiesUtils) {
 

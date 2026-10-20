@@ -794,10 +794,10 @@ export class CompositionGraphComponent implements AfterViewInit {
                     this.modalService.closeCurrentModal();
                 });
             });
-            const cancelButton: ButtonModel = new ButtonModel('Cancel', 'white', () => {
+            const cancelButton: ButtonModel = new ButtonModel(this.isViewOnly() ? 'Close' : 'Cancel', 'white', () => {
                 this.modalService.closeCurrentModal();
             });
-            const modal = new ModalModel('xl', title, '', [saveButton, cancelButton]);
+            const modal = new ModalModel('xl', title, '', this.isViewOnly() ? [cancelButton] : [saveButton, cancelButton]);
             const modalInstance = this.modalService.createCustomModal(modal);
             this.modalService.addDynamicContentToModal(modalInstance, ConnectionPropertiesViewComponent);
             modalInstance.instance.open();

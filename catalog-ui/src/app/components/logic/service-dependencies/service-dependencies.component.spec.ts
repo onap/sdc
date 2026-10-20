@@ -19,6 +19,10 @@ describe('ServiceDependenciesComponent template', () => {
     const template: string = require('./service-dependencies.component.html');
     const doc = new DOMParser().parseFromString(`<body>${template}</body>`, 'text/html');
 
+    it('hides the directive selector while read-only', () => {
+        expect(doc.querySelector('select-directives').getAttribute('*ngif')).toBe('!readonly && (!isDependent || isEditable)');
+    });
+
     it('hides both Add Node Filter buttons while read-only instead of disabling them', () => {
         const adds = Array.from(doc.querySelectorAll('sdc-button')).filter((el) => el.getAttribute('[testId]') === `'add-rule-button'`);
         expect(adds.length).toBe(2);

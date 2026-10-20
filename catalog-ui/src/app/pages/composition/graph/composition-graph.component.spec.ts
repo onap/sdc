@@ -343,6 +343,34 @@ describe('composition graph component', () => {
         })
     })
 
+    describe('viewing a relation', () => {
+        let modal;
+
+        const viewRelation = (viewOnly: boolean) => {
+            jest.spyOn(instance, 'isViewOnly').mockReturnValue(viewOnly);
+            instance['compositionGraphLinkUtils'].getRelationRequirementCapability = jest.fn(() => Promise.resolve({capability: {properties: []}, requirement: {}}));
+            instance['modalService'] = <any>{
+                createCustomModal: jest.fn((model) => { modal = model; return {instance: {open: jest.fn()}}; }),
+                addDynamicContentToModal: jest.fn()
+            };
+            const node = {data: () => ({componentInstance: {}})};
+            instance['viewRelation'](<any>{
+                data: () => ({source: 'source-id', target: 'target-id', relation: {relationships: [{}]}}),
+                source: () => node,
+                target: () => node
+            });
+            return Promise.resolve();
+        };
+
+        it('offers Save while the workspace is editable', () => viewRelation(false).then(() => {
+            expect(modal.buttons.map((button) => button.text)).toEqual(['Save', 'Cancel']);
+        }));
+
+        it('only offers Close while the workspace is view-only', () => viewRelation(true).then(() => {
+            expect(modal.buttons.map((button) => button.text)).toEqual(['Close']);
+        }));
+    });
+
     it('initial view mode will turn off all cytoscape events', () => {
         jest.spyOn(instance, 'isViewOnly').mockReturnValue(true);
         jest.spyOn(instance._cy, 'off');

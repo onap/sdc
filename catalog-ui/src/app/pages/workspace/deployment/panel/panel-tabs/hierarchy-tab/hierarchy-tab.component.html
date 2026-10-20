@@ -50,8 +50,8 @@
                 <div class="module-name-container">
                     <div class="module-name module-text-overflow" [attr.data-tests-id]="'selected-module-name'"
                          tooltip="{{selectedModule.name}}">{{selectedModule.name}}</div>
-                    <div class="edit-name-container" *ngIf="topologyTemplateType != 'SERVICE'">
-                        <svg-icon name="edit-o" [size]="'medium'" [ngClass]="{'hand-pointer': !isViewOnly}" [clickable]="true" ariaLabel="Edit module name" (click)="openEditModuleNamePopup($event)"></svg-icon>
+                    <div class="edit-name-container" *ngIf="topologyTemplateType != 'SERVICE' && !isViewOnly">
+                        <svg-icon name="edit-o" [size]="'medium'" class="hand-pointer" [clickable]="true" ariaLabel="Edit module name" (click)="openEditModuleNamePopup($event)"></svg-icon>
                     </div>
                 </div>
                 <div [attr.data-tests-id]="'selected-module-group-uuid'" tooltip="{{selectedModule.groupUUID}}">
