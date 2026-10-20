@@ -56,6 +56,8 @@ test.describe('Workspace keyboard operation', () => {
         const properties = sdcPage.locator('[data-tests-id="Properties"][role="tab"]');
         const inputs = sdcPage.locator('[data-tests-id="Inputs"][role="tab"]');
         await expect(properties).toHaveAttribute('aria-selected', 'true', { timeout: 15_000 });
+        // Inputs only renders once the instance list has loaded; an arrow pressed before that wraps onto Properties.
+        await expect(inputs).toBeVisible({ timeout: 15_000 });
 
         await properties.focus();
         await sdcPage.keyboard.press('ArrowRight');
