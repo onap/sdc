@@ -1,5 +1,6 @@
 /*
  * Copyright © 2016-2018 European Support Limited
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,6 +74,32 @@ describe('SoftwareProduct Attachments - View: ', function () {
 		renderer.render(<SoftwareProductAttachmentsView {...params}/>);
 		var renderedOutput = renderer.getRenderOutput();
 		expect(renderedOutput).toBeTruthy();
+	});
+
+	const renderCandidateControls = isReadOnlyMode => {
+		const renderer = new ShallowRenderer();
+		renderer.render(<SoftwareProductAttachmentsView
+			activeTab={tabsMapping.SETUP}
+			candidateInProcess={true}
+			isValidationAvailable={true}
+			isReadOnlyMode={isReadOnlyMode}
+			setActiveTab={() => {}}/>);
+		const controllers = renderer.getRenderOutput().props.children[0];
+		return React.Children.toArray(controllers.props.children)
+			.filter(child => child && child.props)
+			.map(child => child.props['data-test-id']);
+	};
+
+	it('shows proceed-to-validation and abort for an editable candidate', () => {
+		const testIds = renderCandidateControls(false);
+		expect(testIds).toContain('proceed-to-validation-btn');
+		expect(testIds).toContain('abort-btn');
+	});
+
+	it('hides proceed-to-validation and abort in read-only mode', () => {
+		const testIds = renderCandidateControls(true);
+		expect(testIds).not.toContain('proceed-to-validation-btn');
+		expect(testIds).not.toContain('abort-btn');
 	});
 
 });

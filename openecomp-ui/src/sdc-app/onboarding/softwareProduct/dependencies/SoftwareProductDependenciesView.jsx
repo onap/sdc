@@ -34,7 +34,8 @@ const TableActionRow = ({
     dependency,
     sourceOptions,
     targetOptions,
-    onDataChanged
+    onDataChanged,
+    isReadOnlyMode
 }) => {
     return (
         <SelectActionTableRow
@@ -52,6 +53,7 @@ const TableActionRow = ({
                 selected={dependency.sourceId}
                 placeholder={i18n('Select VFC...')}
                 clearable={false}
+                disabled={isReadOnlyMode}
                 onChange={newVal => {
                     dependency.sourceId = newVal;
                     onDataChanged(dependency);
@@ -69,6 +71,7 @@ const TableActionRow = ({
                 options={targetOptions}
                 selected={dependency.targetId}
                 clearable={false}
+                disabled={isReadOnlyMode}
                 onChange={newVal => {
                     dependency.targetId = newVal;
                     onDataChanged(dependency);
@@ -218,7 +221,8 @@ export default class SoftwareProductDependenciesView extends React.Component {
                                 selectedTargetId: dependency.targetId
                             })}
                             onDataChanged={onDataChanged}
-                            showAction={true}
+                            isReadOnlyMode={isReadOnlyMode}
+                            showAction={!isReadOnlyMode}
                         />
                     ))}
                 </SelectActionTable>

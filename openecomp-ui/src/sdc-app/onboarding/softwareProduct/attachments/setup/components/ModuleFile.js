@@ -95,6 +95,7 @@ class ModuleFile extends React.Component {
                                 <SVGIcon
                                     name="pencil"
                                     ariaLabel={i18n('Rename module')}
+                                    disabled={isReadOnlyMode}
                                     onClick={() =>
                                         this.setState({ isInNameEdit: true })
                                     }
@@ -110,6 +111,7 @@ class ModuleFile extends React.Component {
                         onClick={() => onModuleDelete(name)}
                         data-test-id="module-delete"
                         ariaLabel={i18n('Delete module')}
+                        disabled={isReadOnlyMode}
                     />
                 </div>
                 <div className="modules-list-item-selectors">
@@ -118,12 +120,14 @@ class ModuleFile extends React.Component {
                         files={files}
                         selected={yaml}
                         onChange={onModuleFileTypeChange}
+                        isReadOnlyMode={isReadOnlyMode}
                     />
                     <SelectWithFileType
                         type={fileTypes.ENV}
                         files={files}
                         selected={env}
                         onChange={onModuleFileTypeChange}
+                        isReadOnlyMode={isReadOnlyMode}
                     />
                     {displayVolumes && (
                         <SelectWithFileType
@@ -131,6 +135,7 @@ class ModuleFile extends React.Component {
                             files={files}
                             selected={vol}
                             onChange={onModuleFileTypeChange}
+                            isReadOnlyMode={isReadOnlyMode}
                         />
                     )}
                     {displayVolumes && (
@@ -139,6 +144,7 @@ class ModuleFile extends React.Component {
                             files={files}
                             selected={volEnv}
                             onChange={onModuleFileTypeChange}
+                            isReadOnlyMode={isReadOnlyMode}
                         />
                     )}
                     <AddOrDeleteVolumeFiles

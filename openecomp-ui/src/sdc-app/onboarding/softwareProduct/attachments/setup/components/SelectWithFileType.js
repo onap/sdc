@@ -1,5 +1,6 @@
 /*
  * Copyright © 2016-2018 European Support Limited
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +17,13 @@
 import React from 'react';
 import SelectInput from 'nfvo-components/input/SelectInput.jsx';
 
-const SelectWithFileType = ({ type, selected, files, onChange }) => {
+const SelectWithFileType = ({
+    type,
+    selected,
+    files,
+    onChange,
+    isReadOnlyMode
+}) => {
     let filteredFiledAccordingToType = files.filter(
         file => file.label.search(type.regex) > -1
     );
@@ -35,7 +42,9 @@ const SelectWithFileType = ({ type, selected, files, onChange }) => {
             onChange={value =>
                 value !== selected && onChange(value, type.label)
             }
-            disabled={filteredFiledAccordingToType.length === 0}
+            disabled={
+                isReadOnlyMode || filteredFiledAccordingToType.length === 0
+            }
             placeholder={
                 filteredFiledAccordingToType.length === 0 ? '' : undefined
             }

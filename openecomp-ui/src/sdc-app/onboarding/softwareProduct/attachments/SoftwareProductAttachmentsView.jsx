@@ -61,7 +61,8 @@ class HeatScreenView extends Component {
             <div className="vsp-attachments-view">
                 <div className="attachments-view-controllers">
                     {activeTab === tabsMapping.SETUP &&
-                        candidateInProcess && (
+                        candidateInProcess &&
+                        !isReadOnlyMode && (
                             <Button
                                 size="default"
                                 data-test-id="proceed-to-validation-btn"
@@ -71,17 +72,18 @@ class HeatScreenView extends Component {
                                 {i18n('PROCEED TO VALIDATION')}
                             </Button>
                         )}
-                    {candidateInProcess && (
-                        <SVGIcon
-                            onClick={onUploadAbort}
-                            name="close"
-                            className="icon-component abort-btn"
-                            label={i18n('ABORT')}
-                            labelPosition="right"
-                            color="secondary"
-                            data-test-id="abort-btn"
-                        />
-                    )}
+                    {candidateInProcess &&
+                        !isReadOnlyMode && (
+                            <SVGIcon
+                                onClick={onUploadAbort}
+                                name="close"
+                                className="icon-component abort-btn"
+                                label={i18n('ABORT')}
+                                labelPosition="right"
+                                color="secondary"
+                                data-test-id="abort-btn"
+                            />
+                        )}
                     {activeTab === tabsMapping.VALIDATION &&
                         softwareProductId &&
                         goToOverview && (

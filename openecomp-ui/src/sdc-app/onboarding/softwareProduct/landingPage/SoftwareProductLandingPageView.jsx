@@ -177,6 +177,7 @@ class SoftwareProductLandingPageView extends React.Component {
                                     licenceChange={licenceChange}
                                     onLicenseChange={onLicenseChange}
                                     externalLicenceEnabled={this.getExternalLicenceFeatureState()}
+                                    isReadOnlyMode={isReadOnlyMode}
                                 />
                                 <div className="details-panel">
                                     {this.renderProductAttachments(
@@ -349,7 +350,8 @@ const ProductSummary = ({
     currentSoftwareProduct,
     licenceChange,
     onLicenseChange,
-    externalLicenceEnabled
+    externalLicenceEnabled,
+    isReadOnlyMode
 }) => {
     let {
         name = '',
@@ -410,6 +412,7 @@ const ProductSummary = ({
                                         externalLicenceEnabled={
                                             externalLicenceEnabled
                                         }
+                                        isReadOnlyMode={isReadOnlyMode}
                                     />
                                 </div>
                             </div>
@@ -428,7 +431,8 @@ const ProductSummary = ({
 const LicenseAgreementWithExternal = ({
     licenceChange,
     currentSoftwareProduct,
-    onLicenseChange
+    onLicenseChange,
+    isReadOnlyMode
 }) => {
     return (
         <div className="missing-license">
@@ -449,6 +453,7 @@ const LicenseAgreementWithExternal = ({
                         checked={
                             currentSoftwareProduct.licenseType === 'INTERNAL'
                         }
+                        disabled={isReadOnlyMode}
                         name="license"
                     />
                     <label
@@ -471,6 +476,7 @@ const LicenseAgreementWithExternal = ({
                         checked={
                             currentSoftwareProduct.licenseType === 'EXTERNAL'
                         }
+                        disabled={isReadOnlyMode}
                         name="license"
                     />
                     <label
@@ -487,13 +493,15 @@ const LicenseAgreementWithExternal = ({
 const LicenseAgreementWithoutExternal = ({
     licenceChange,
     currentSoftwareProduct,
-    onLicenseChange
+    onLicenseChange,
+    isReadOnlyMode
 }) => {
     if (!currentSoftwareProduct.licenseAgreementName) {
         return (
             <button
                 type="button"
                 className="missing-license clickable"
+                disabled={isReadOnlyMode}
                 onClick={event =>
                     licenceChange(
                         event,
@@ -513,7 +521,8 @@ const LicenseAgreement = ({
     licenceChange,
     currentSoftwareProduct,
     onLicenseChange,
-    externalLicenceEnabled
+    externalLicenceEnabled,
+    isReadOnlyMode
 }) => {
     if (externalLicenceEnabled) {
         return (
@@ -521,6 +530,7 @@ const LicenseAgreement = ({
                 licenceChange={licenceChange}
                 currentSoftwareProduct={currentSoftwareProduct}
                 onLicenseChange={onLicenseChange}
+                isReadOnlyMode={isReadOnlyMode}
             />
         );
     } else {
@@ -529,6 +539,7 @@ const LicenseAgreement = ({
                 licenceChange={licenceChange}
                 currentSoftwareProduct={currentSoftwareProduct}
                 onLicenseChange={onLicenseChange}
+                isReadOnlyMode={isReadOnlyMode}
             />
         );
     }
