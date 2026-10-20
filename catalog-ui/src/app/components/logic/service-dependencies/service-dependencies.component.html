@@ -1,6 +1,6 @@
 <div class="service-dependencies">
   <loader [display]="isLoading" [size]="'medium'" [relative]="true"></loader>
-  <select-directives *ngIf="!isDependent || isEditable" (onAddClick)="onAddDirectives($event)" [updateDirectives]="getActualDirectiveValue()">
+  <select-directives *ngIf="!readonly && (!isDependent || isEditable)" (onAddClick)="onAddDirectives($event)" [updateDirectives]="getActualDirectiveValue()">
   </select-directives>
   <div *ngIf="isDependent && !isEditable" class="checkbox-label-mark-as-dependent">
     <label class="i-sdc-form-label">Directive: {{getActualDirectiveValue()}}</label>

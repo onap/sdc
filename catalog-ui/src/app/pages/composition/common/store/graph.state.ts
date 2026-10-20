@@ -20,7 +20,6 @@ import {WorkspaceService} from "../../../workspace/workspace.service";
 
 export class CompositionStateModel {
 
-    isViewOnly?: boolean;
     panelLoading?: boolean;
     selectedComponentType?: SelectedComponentType;
     selectedComponent?: PolicyInstance | GroupInstance | TopologyTemplate | ComponentInstance;

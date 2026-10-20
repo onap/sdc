@@ -164,4 +164,10 @@ describe('HierarchyTabComponent template', () => {
         expect(button.getAttribute('*ngif')).toBe('!isViewOnly');
         expect(button.getAttribute('(click)')).toBe('openEditPropertyModal(property)');
     });
+
+    it('offers the module name edit only outside view mode', () => {
+        const edit = doc.querySelector(`svg-icon[name='edit-o']`);
+        expect(edit.getAttribute('(click)')).toBe('openEditModuleNamePopup($event)');
+        expect(edit.parentElement.getAttribute('*ngif')).toBe(`topologyTemplateType != 'SERVICE' && !isViewOnly`);
+    });
 });

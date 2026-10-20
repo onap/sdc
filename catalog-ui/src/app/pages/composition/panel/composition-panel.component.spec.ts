@@ -325,3 +325,14 @@ describe('composition-panel component', () => {
     });
 
 });
+
+describe('composition-panel template', () => {
+    // tslint:disable-next-line:no-var-requires
+    const template: string = require('./composition-panel.component.html');
+    const doc = new DOMParser().parseFromString(`<body>${template}</body>`, 'text/html');
+
+    it('passes the workspace view-only state to the header, like to the tabs', () => {
+        expect(doc.querySelector('ng2-composition-panel-header').getAttribute('[isviewonly]')).toBe('isViewOnly$ | async');
+        expect(doc.querySelector('panel-tab').getAttribute('[isviewonly]')).toBe('isViewOnly$ | async');
+    });
+});
