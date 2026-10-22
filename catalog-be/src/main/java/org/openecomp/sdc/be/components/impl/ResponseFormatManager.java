@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,18 +35,16 @@ public class ResponseFormatManager {
 
     private static final Logger log = Logger.getLogger(ResponseFormatManager.class);
     private volatile static ResponseFormatManager instance;
-    private static ConfigurationManager configurationManager;
 
     public static ResponseFormatManager getInstance() {
         if (instance == null) {
             instance = new ResponseFormatManager();
-            configurationManager = ConfigurationManager.getConfigurationManager();
         }
         return instance;
     }
 
     public ResponseFormat getResponseFormat(ActionStatus responseEnum, String... variables) {
-        ErrorConfiguration errorConfiguration = configurationManager.getErrorConfiguration();
+        ErrorConfiguration errorConfiguration = ConfigurationManager.getConfigurationManager().getErrorConfiguration();
         ErrorInfo errorInfo = errorConfiguration.getErrorInfo(responseEnum.name());
         if (errorInfo == null) {
             log.debug("failed to locate {} in error configuration", responseEnum);
