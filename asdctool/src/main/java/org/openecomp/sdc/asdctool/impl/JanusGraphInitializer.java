@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +21,11 @@
 package org.openecomp.sdc.asdctool.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.janusgraph.core.JanusGraph;
@@ -34,8 +38,10 @@ import org.janusgraph.core.schema.JanusGraphIndex;
 import org.janusgraph.core.schema.JanusGraphManagement;
 import org.openecomp.sdc.be.dao.graph.datatype.ActionEnum;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphElementTypeEnum;
+import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.jsongraph.utils.IdBuilderUtils;
+import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgePropertiesDictionary;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.dao.utils.UserStatusEnum;
@@ -184,9 +190,34 @@ public class JanusGraphInitializer {
         logger.info("** createEdgeIndixes ended");
     }
 
+    private static void createEdgeLabels() {
+        logger.info("** createEdgeLabels started");
+        JanusGraphManagement graphMgt = graph.openManagement();
+        createEdgeLabels(graphMgt);
+        graphMgt.commit();
+        logger.info("** createEdgeLabels ended");
+    }
+
+    /**
+     * Every label has to exist before the backend serves requests. Otherwise JanusGraph creates it inside the first
+     * transaction that uses it, and when several requests are first at once, all but one fail at commit on the
+     * locked schema name index.
+     */
+    static void createEdgeLabels(JanusGraphManagement graphMgt) {
+        Set<String> labels = new LinkedHashSet<>();
+        Arrays.stream(EdgeLabelEnum.values()).map(Enum::name).forEach(labels::add);
+        Arrays.stream(GraphEdgeLabels.values()).map(GraphEdgeLabels::getProperty).forEach(labels::add);
+        for (String label : labels) {
+            if (!graphMgt.containsRelationType(label)) {
+                graphMgt.makeEdgeLabel(label).make();
+            }
+        }
+    }
+
     private static void createIndexesAndDefaults() {
         createVertexIndixes();
         createEdgeIndixes();
+        createEdgeLabels();
         createDefaultAdminUser();
         createRootVertex(VertexTypeEnum.CATALOG_ROOT);
         createRootVertex(VertexTypeEnum.ARCHIVE_ROOT);
