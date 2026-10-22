@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +37,7 @@ import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.common.api.Constants;
@@ -114,15 +116,22 @@ public class BeServletFilter extends AuditLogContainerFilter {
         }
     }
 
-    private void writeToJanusGraph(ContainerResponseContext responseContext) {
+    void writeToJanusGraph(ContainerResponseContext responseContext) {
         log.debug("Close transaction from filter");
         HealingJanusGraphDao janusGraphDao = getJanusGraphDao();
         if (janusGraphDao != null) {
             int status = responseContext.getStatus();
             if (status == Response.Status.OK.getStatusCode() || status == Response.Status.CREATED.getStatusCode()
                 || status == Response.Status.NO_CONTENT.getStatusCode()) {
-                janusGraphDao.commit();
+                JanusGraphOperationStatus commitStatus = janusGraphDao.commit();
                 log.debug("Doing commit from filter");
+                if (commitStatus != JanusGraphOperationStatus.OK) {
+                    log.error("Commit failed with {}, answering {} {} with 500 instead of {}", commitStatus, sr.getMethod(),
+                        sr.getRequestURI(), status);
+                    ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR);
+                    responseContext.setStatus(responseFormat.getStatus());
+                    responseContext.setEntity(new GsonBuilder().setPrettyPrinting().create().toJson(responseFormat.getRequestError()));
+                }
             } else {
                 janusGraphDao.rollback();
                 log.debug("Doing rollback from filter");
