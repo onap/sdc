@@ -72,27 +72,28 @@ public class ResourcesServletTest {
     }
 
 
-    private static MultitenancyConfig currentMultitenancyConfig() {
-        ConfigurationManager manager = ConfigurationManager.getConfigurationManager();
-        return manager == null || manager.getConfiguration() == null ? null : manager.getConfiguration().getMultitenancy();
-    }
-
-    private static void setMultitenancyConfig(MultitenancyConfig config) {
+    // Replaces the Configuration instead of mutating it: an earlier test class in the same fork may have left a
+    // Mockito mock in the singleton (DummyConfigurationManager), on which setMultitenancy() is a no-op.
+    private static Configuration installMultitenancyConfig(MultitenancyConfig config) {
         ConfigurationManager manager = ConfigurationManager.getConfigurationManager();
         if (manager == null) {
             manager = new ConfigurationManager();
         }
-        if (manager.getConfiguration() == null) {
-            manager.setConfiguration(new Configuration());
-        }
-        manager.getConfiguration().setMultitenancy(config);
+        Configuration previous = manager.getConfiguration();
+        Configuration configuration = new Configuration();
+        configuration.setMultitenancy(config);
+        manager.setConfiguration(configuration);
+        return previous;
+    }
+
+    private static void restoreConfiguration(Configuration previous) {
+        ConfigurationManager.getConfigurationManager().setConfiguration(previous);
     }
 
     @Test
     public void testCreateResourceDisabledInvokesBusinessLogic() throws Exception {
-        MultitenancyConfig previous = currentMultitenancyConfig();
+        Configuration previous = installMultitenancyConfig(null);
         try {
-            setMultitenancyConfig(null);
             ComponentsUtils componentsUtils = mock(ComponentsUtils.class);
             ServletUtils servletUtils = mock(ServletUtils.class);
             ResourceBusinessLogic resourceBusinessLogic = mock(ResourceBusinessLogic.class);
@@ -117,18 +118,16 @@ public class ResourcesServletTest {
             assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
             verify(resourceBusinessLogic).createResource(eq(resource), eq(AuditingActionEnum.CREATE_RESOURCE), any(User.class), isNull(), isNull());
         } finally {
-            setMultitenancyConfig(previous);
+            restoreConfiguration(previous);
         }
     }
 
     @Test
     public void testCreateResourceEnabledRefusesAnotherTenant() throws Exception {
-        MultitenancyConfig previous = currentMultitenancyConfig();
+        MultitenancyConfig enabled = new MultitenancyConfig();
+        enabled.setEnabled(true);
+        Configuration previous = installMultitenancyConfig(enabled);
         try {
-            MultitenancyConfig enabled = new MultitenancyConfig();
-            enabled.setEnabled(true);
-            setMultitenancyConfig(enabled);
-
             ComponentsUtils componentsUtils = mock(ComponentsUtils.class);
             ServletUtils servletUtils = mock(ServletUtils.class);
             ResourceBusinessLogic resourceBusinessLogic = mock(ResourceBusinessLogic.class);
@@ -152,7 +151,7 @@ public class ResourcesServletTest {
             assertThat(response.getStatusInfo().getReasonPhrase()).isEqualTo(TenantGuard.TENANT_NOT_PERMITTED);
             verify(resourceBusinessLogic, never()).createResource(any(), any(), any(), any(), any());
         } finally {
-            setMultitenancyConfig(previous);
+            restoreConfiguration(previous);
         }
     }
 
