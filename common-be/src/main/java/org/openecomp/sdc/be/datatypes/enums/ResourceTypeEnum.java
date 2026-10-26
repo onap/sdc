@@ -30,7 +30,7 @@ public enum ResourceTypeEnum {
     VFC("VFC"/* (Virtual Function Component)"*/, true),
     VF("VF"/* (Virtual Function)" */, false),
 
-    CR("CR"/* (Complex Resource"*/, false),
+    CR("CR"/* (Collection Resource)"*/, false),
     CP("CP"/* (Connection Point)"*/, true),
 
     PNF("PNF"/* (Physical Network Function)" */, false),
