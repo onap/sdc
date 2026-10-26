@@ -67,6 +67,18 @@ function decodeContent(base64Contents) {
     };
 }
 
+// A list item carries only the artifact metadata; saving its details as-is would replace the stored diagram with
+// none.
+function withStoredDiagram(flow) {
+    return RestAPIUtil.fetch(baseUrl(flow.serviceID, flow.uniqueId)).then(
+        ({ base64Contents }) => ({
+            ...flow,
+            sequenceDiagramModel: decodeContent(base64Contents)
+                .sequenceDiagramModel
+        })
+    );
+}
+
 function createOrUpdate(flowData) {
     let createOrUpdateRequest = {
         payloadData: encodeContent(flowData),
@@ -147,6 +159,15 @@ const FlowsActions = Object.freeze({
     },
 
     createOrUpdateFlow(dispatch, { flow }, isNew) {
+        if (!isNew && !flow.sequenceDiagramModel) {
+            return withStoredDiagram(flow).then(storedFlow =>
+                FlowsActions.saveFlow(dispatch, storedFlow, isNew)
+            );
+        }
+        return FlowsActions.saveFlow(dispatch, flow, isNew);
+    },
+
+    saveFlow(dispatch, flow, isNew) {
         if (!isNew && flow.sequenceDiagramModel) {
             flow.sequenceDiagramModel = SequenceDiagramModelHelper.updateModel(
                 flow.sequenceDiagramModel,
@@ -209,7 +230,7 @@ const FlowsActions = Object.freeze({
             data: {
                 modalComponentName: modalContentMapper.FLOWS_EDITOR,
                 modalComponentProps: {
-                    isNewArtifact: Boolean(flow && flow.uniqueId)
+                    isNewArtifact: !(flow && flow.uniqueId)
                 },
                 title
             }

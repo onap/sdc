@@ -1374,11 +1374,24 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
     public void testValidateArtifactType_groupTypeNotSupportedByArtifactType() {
         final ArtifactsBusinessLogic artifactsBusinessLogic = createTestSubject();
         final ArtifactDefinition artifactInfo = buildArtifactPayload();
-        artifactInfo.setArtifactType(ArtifactTypeEnum.WORKFLOW.getType());
+        artifactInfo.setArtifactType(ArtifactTypeEnum.AAI_SERVICE_MODEL.getType());
         artifactInfo.setArtifactGroupType(ArtifactGroupTypeEnum.INFORMATIONAL);
 
         Deencapsulation
             .invoke(artifactsBusinessLogic, "validateArtifactType", artifactInfo, ComponentTypeEnum.SERVICE);
+    }
+
+    @Test
+    public void testValidateArtifactType_flowEditorTypesAreInformationalOnService() {
+        final ArtifactsBusinessLogic artifactsBusinessLogic = createTestSubject();
+        final ArtifactDefinition artifactInfo = buildArtifactPayload();
+        artifactInfo.setArtifactGroupType(ArtifactGroupTypeEnum.INFORMATIONAL);
+        for (final ArtifactTypeEnum type : new ArtifactTypeEnum[]{ArtifactTypeEnum.WORKFLOW, ArtifactTypeEnum.NETWORK_CALL_FLOW}) {
+            artifactInfo.setArtifactType(type.getType());
+
+            Deencapsulation
+                .invoke(artifactsBusinessLogic, "validateArtifactType", artifactInfo, ComponentTypeEnum.SERVICE);
+        }
     }
 
     @Test

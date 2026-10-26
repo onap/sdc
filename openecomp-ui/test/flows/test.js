@@ -230,6 +230,53 @@ describe('Workflows and Management Flows Module Tests:', function() {
         });
     });
 
+    it('Saving details of a listed flow keeps its stored diagram', () => {
+        deepFreeze(store.getState());
+        const { sequenceDiagramModel, ...listedFlow } = FlowUpdateRequestFactory.build();
+        const storedPayload = window.btoa(
+            JSON.stringify({
+                VERSION: { major: 1, minor: 0 },
+                description: listedFlow.description,
+                sequenceDiagramModel
+            })
+        );
+
+        mockRest.addHandler('fetch', ({ baseUrl }) => {
+            expect(baseUrl).toBe(
+                `/sdc1/feProxy/rest/v1/catalog/services/${
+                    listedFlow.serviceID
+                }/artifacts/${listedFlow.uniqueId}`
+            );
+            return { artifactName: listedFlow.artifactName, base64Contents: storedPayload };
+        });
+        mockRest.addHandler('post', ({ data }) => {
+            const posted = JSON.parse(window.atob(data.payloadData));
+            expect(posted.sequenceDiagramModel.lifelines).toEqual(
+                sequenceDiagramModel.lifelines
+            );
+            return buildFromExistingObject(FlowPostResponseFactory, listedFlow);
+        });
+
+        return FlowsActions.createOrUpdateFlow(
+            store.dispatch,
+            { flow: listedFlow },
+            !NEW_FLOW
+        );
+    });
+
+    it('details modal treats only a flow without an id as new', () => {
+        FlowsActions.openEditCreateWFModal(store.dispatch, undefined, enums.WORKFLOW);
+        expect(store.getState().modal.modalComponentProps.isNewArtifact).toBe(true);
+
+        FlowsActions.openEditCreateWFModal(
+            store.dispatch,
+            { uniqueId: '1234.flow' },
+            enums.WORKFLOW
+        );
+        expect(store.getState().modal.modalComponentProps.isNewArtifact).toBe(false);
+        FlowsActions.closeEditCreateWFModal(store.dispatch);
+    });
+
     it('Delete Flow', () => {
         deepFreeze(store.getState());
 

@@ -649,6 +649,7 @@ artifacts:
   - type: WORKFLOW
     categories:
       - DEPLOYMENT
+      - INFORMATIONAL
     componentTypes:
       - SERVICE
     resourceTypes:
@@ -1156,7 +1157,9 @@ artifacts:
       - yaml
   - type: NETWORK_CALL_FLOW
     categories:
+      - INFORMATIONAL
     componentTypes:
+      - SERVICE
     resourceTypes:
     acceptedTypes:
   - type: ICON
