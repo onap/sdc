@@ -273,7 +273,7 @@ describe('certify', () => {
         jest.spyOn(comp as any, 'verifyIfDependenciesExist').mockImplementation(() => undefined);
         comp.handleChangeLifecycleState('certify');
         const onSuccess = ctx.changeLifecycleStateHandler.changeLifecycleState.mock.calls[0][3];
-        onSuccess({lifecycleState: 'CERTIFIED'}, 'lifecycleState/certify');
+        onSuccess({lifecycleState: 'CERTIFIED', uniqueId: 'uid-2', componentType: 'RESOURCE'}, 'lifecycleState/certify');
         return ctx;
     }
 
@@ -286,6 +286,34 @@ describe('certify', () => {
     it('tells the mounted tabs the component was certified', () => {
         const {eventListenerService} = certifyFromEditMode();
         expect(eventListenerService.notifyObservers).toHaveBeenCalledWith('onCertify');
+    });
+
+    it('moves the open tab to the certified version', () => {
+        const {navigationService} = certifyFromEditMode();
+        expect(navigationService.navigate).toHaveBeenCalledWith('workspace.deployment',
+            expect.objectContaining({id: 'uid-2', type: 'resource'}));
+    });
+});
+
+describe('check out', () => {
+    it('moves the open tab to the checked-out version', () => {
+        const ctx = createComponent();
+        const {comp, navigationService} = ctx;
+        (comp as any).eventBusService.notify = jest.fn(() => ({subscribe: (cb: () => void) => cb()}));
+        (comp as any).workspaceService.setComponentMetadata = jest.fn();
+        comp.components = [];
+        comp.component = {uuid: 'uuid-1', version: '2.0', lifecycleState: 'CERTIFIED'};
+        comp.changeLifecycleStateButtons = {checkOut: {text: 'Check Out', url: 'lifecycleState/CHECKOUT'}};
+        ['initViewMode', 'initChangeLifecycleStateButtons', 'initVersionObject'].forEach((m) =>
+            jest.spyOn(comp as any, m).mockImplementation(() => undefined));
+        comp.handleChangeLifecycleState('checkOut');
+        const onSuccess = ctx.changeLifecycleStateHandler.changeLifecycleState.mock.calls[0][3];
+
+        onSuccess({uuid: 'uuid-1', uniqueId: 'uid-2.1', componentType: 'SERVICE', lifecycleState: 'NOT_CERTIFIED_CHECKOUT'},
+            'lifecycleState/CHECKOUT');
+
+        expect(navigationService.navigate).toHaveBeenCalledWith('workspace.general',
+            expect.objectContaining({id: 'uid-2.1', type: 'service'}));
     });
 });
 
