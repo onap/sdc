@@ -20,6 +20,7 @@ import {mapStateToProps} from 'sdc-app/flows/FlowsListEditor.js';
 import FlowsListEditorView from 'sdc-app/flows/FlowsListEditorView.jsx';
 
 import {FlowUpdateRequestFactory, FlowBasicFactory} from 'test-utils/factories/flows/FlowsFactories.js';
+import {enums} from 'sdc-app/flows/FlowsConstants.js';
 
 describe('Flows List Editor Mapper and View Classes: ', function () {
 
@@ -137,4 +138,21 @@ describe('Flows List Editor Mapper and View Classes: ', function () {
 	});
 
 
+	it('mapStateToProps mapper - passes the diagram type through', () => {
+		let results = mapStateToProps({flows: {diagramType: enums.NETWORK}});
+		expect(results.diagramType).toEqual(enums.NETWORK);
+	});
+
+	it('list add button is labelled and opened for the diagram type', () => {
+		[[enums.WORKFLOW, 'Add Workflow'], [enums.NETWORK, 'Add Network Call Flow']].forEach(([diagramType, title]) => {
+			const onAddWorkflowClick = jest.fn();
+			const renderer = new ShallowRenderer();
+			renderer.render(<FlowsListEditorView shouldShowWorkflowsEditor={true} flowList={[]} isCheckedOut={true}
+				diagramType={diagramType} onAddWorkflowClick={onAddWorkflowClick}/>);
+			const listEditor = renderer.getRenderOutput().props.children;
+			expect(listEditor.props.plusButtonTitle).toBe(title);
+			listEditor.props.onAdd();
+			expect(onAddWorkflowClick).toHaveBeenCalledWith(diagramType);
+		});
+	});
 });
