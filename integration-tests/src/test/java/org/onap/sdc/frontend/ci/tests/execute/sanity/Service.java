@@ -345,6 +345,7 @@ public class Service extends SetupCDTest {
         ServiceUIUtils.createService(serviceMetadata);
 
         ServiceGeneralPage.getServiceLeftMenu().moveToManagmentWorkflow();
+        ServiceGeneralPage.clickAddWorkflow();
         ServiceGeneralPage.fillAndAddNewWorkflow(descriptionText, descriptionText);
         ServiceVerificator.verifyManagmentWorkflow(descriptionText, descriptionText);
 

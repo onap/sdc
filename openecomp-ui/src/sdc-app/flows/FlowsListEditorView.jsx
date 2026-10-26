@@ -20,6 +20,7 @@ import i18n from 'nfvo-utils/i18n/i18n.js';
 import ListEditorView from 'nfvo-components/listEditor/ListEditorView.jsx';
 import ListEditorItemView from 'nfvo-components/listEditor/ListEditorItemView.jsx';
 import SequenceDiagram from './SequenceDiagram.jsx';
+import { enums } from './FlowsConstants.js';
 
 class FlowsListEditorView extends Component {
     static propTypes = {
@@ -28,6 +29,7 @@ class FlowsListEditorView extends Component {
         isCheckedOut: PropTypes.bool,
         shouldShowWorkflowsEditor: PropTypes.bool,
         readonly: PropTypes.bool,
+        diagramType: PropTypes.string,
 
         onAddWorkflowClick: PropTypes.func,
         onEditFlowDetailsClick: PropTypes.func,
@@ -53,14 +55,18 @@ class FlowsListEditorView extends Component {
     }
 
     renderWorkflowsEditor() {
-        let { onAddWorkflowClick, isCheckedOut } = this.props;
+        let { onAddWorkflowClick, isCheckedOut, diagramType } = this.props;
         const { localFilter } = this.state;
 
         return (
             <div className="workflows license-agreement-list-editor">
                 <ListEditorView
-                    plusButtonTitle={i18n('Add Workflow')}
-                    onAdd={onAddWorkflowClick}
+                    plusButtonTitle={
+                        diagramType === enums.NETWORK
+                            ? i18n('Add Network Call Flow')
+                            : i18n('Add Workflow')
+                    }
+                    onAdd={() => onAddWorkflowClick(diagramType)}
                     filterValue={localFilter}
                     onFilter={filter => this.setState({ localFilter: filter })}
                     isReadOnlyMode={!isCheckedOut}>
@@ -113,13 +119,14 @@ class FlowsListEditorView extends Component {
         let {
             onEditFlowDetailsClick,
             onEditFlowDiagramClick,
-            onDeleteFlowClick
+            onDeleteFlowClick,
+            diagramType
         } = this.props;
         return (
             <ListEditorItemView
                 itemName={artifactName}
                 key={uniqueId}
-                onSelect={() => onEditFlowDetailsClick(flow)}
+                onSelect={() => onEditFlowDetailsClick(flow, diagramType)}
                 onDelete={() => onDeleteFlowClick(flow)}
                 onEdit={() => onEditFlowDiagramClick(flow)}
                 className="list-editor-item-view"

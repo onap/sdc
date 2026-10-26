@@ -22,7 +22,8 @@ export const mapStateToProps = ({ flows }) => {
         flowList = [],
         shouldShowWorkflowsEditor = true,
         data = undefined,
-        readonly
+        readonly,
+        diagramType
     } = flows;
     let isCheckedOut = !readonly;
     if (data && data.readonly) {
@@ -34,15 +35,21 @@ export const mapStateToProps = ({ flows }) => {
         isCheckedOut,
         shouldShowWorkflowsEditor,
         currentFlow: data,
-        readonly
+        readonly,
+        diagramType
     };
 };
 
 const mapActionsToProps = dispatch => {
     return {
-        onAddWorkflowClick: () => FlowsActions.openEditCreateWFModal(dispatch),
-        onEditFlowDetailsClick: flow =>
-            FlowsActions.openEditCreateWFModal(dispatch, flow),
+        onAddWorkflowClick: diagramType =>
+            FlowsActions.openEditCreateWFModal(
+                dispatch,
+                undefined,
+                diagramType
+            ),
+        onEditFlowDetailsClick: (flow, diagramType) =>
+            FlowsActions.openEditCreateWFModal(dispatch, flow, diagramType),
         onEditFlowDiagramClick: flow =>
             FlowsActions.fetchArtifact(dispatch, { flow }),
         onDeleteFlowClick: flow => FlowsActions.deleteFlow(dispatch, { flow }),

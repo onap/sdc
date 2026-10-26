@@ -89,37 +89,20 @@ const FlowsActions = Object.freeze({
         dispatch,
         { artifacts, diagramType, participants, serviceID, readonly }
     ) {
-        let results = [];
-        if (!Object.keys(artifacts).length) {
-            dispatch({
-                type: actionTypes.FLOW_LIST_LOADED,
-                results,
-                participants,
-                serviceID,
-                diagramType,
-                readonly
-            });
-            if (!readonly) {
-                FlowsActions.openEditCreateWFModal(dispatch);
-            }
-        } else {
-            Object.keys(artifacts).forEach(artifact =>
-                results.push({
-                    artifactType: diagramType,
-                    participants,
-                    serviceID,
-                    ...artifacts[artifact]
-                })
-            );
-            dispatch({
-                type: actionTypes.FLOW_LIST_LOADED,
-                results,
-                participants,
-                serviceID,
-                diagramType,
-                readonly
-            });
-        }
+        let results = Object.keys(artifacts).map(artifact => ({
+            artifactType: diagramType,
+            participants,
+            serviceID,
+            ...artifacts[artifact]
+        }));
+        dispatch({
+            type: actionTypes.FLOW_LIST_LOADED,
+            results,
+            participants,
+            serviceID,
+            diagramType,
+            readonly
+        });
     },
 
     fetchArtifact(dispatch, { flow }) {
@@ -208,7 +191,18 @@ const FlowsActions = Object.freeze({
     reset(dispatch) {
         dispatch({ type: actionTypes.RESET });
     },
-    openEditCreateWFModal(dispatch, flow) {
+    openEditCreateWFModal(dispatch, flow, diagramType) {
+        const isNetworkCallFlow = diagramType === enums.NETWORK;
+        let title;
+        if (flow) {
+            title = isNetworkCallFlow
+                ? i18n('Edit Network Call Flow')
+                : i18n('Edit Workflow');
+        } else {
+            title = isNetworkCallFlow
+                ? i18n('Create New Network Call Flow')
+                : i18n('Create New Workflow');
+        }
         dispatch({ type: actionTypes.OPEN_FLOW_DETAILS_EDITOR, flow });
         dispatch({
             type: modalActionTypes.GLOBAL_MODAL_SHOW,
@@ -217,9 +211,7 @@ const FlowsActions = Object.freeze({
                 modalComponentProps: {
                     isNewArtifact: Boolean(flow && flow.uniqueId)
                 },
-                title: flow
-                    ? i18n('Edit Workflow')
-                    : i18n('Create New Workflow')
+                title
             }
         });
     },

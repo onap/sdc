@@ -44,7 +44,7 @@ let assertFlowDataAfterCreateFetchAndUpdate = data => {
 };
 
 describe('Workflows and Management Flows Module Tests:', function() {
-    it('empty artifact should open flow creation modal', () => {
+    it('empty artifact list loads without opening the creation modal', () => {
         const artifacts = {};
 
         deepFreeze(store.getState());
@@ -53,10 +53,44 @@ describe('Workflows and Management Flows Module Tests:', function() {
             artifacts,
             diagramType: enums.WORKFLOW,
             participants: [],
-            serviceID: '1234'
+            serviceID: '1234',
+            readonly: false
         });
         let state = store.getState();
-        expect(state.modal).toBeDefined();
+        expect(state.flows.flowList).toEqual([]);
+        expect(state.modal).toBeFalsy();
+    });
+
+    it('creation modal title follows the diagram type', () => {
+        FlowsActions.openEditCreateWFModal(
+            store.dispatch,
+            undefined,
+            enums.WORKFLOW
+        );
+        expect(store.getState().modal.title).toBe('Create New Workflow');
+
+        FlowsActions.openEditCreateWFModal(
+            store.dispatch,
+            undefined,
+            enums.NETWORK
+        );
+        expect(store.getState().modal.title).toBe(
+            'Create New Network Call Flow'
+        );
+    });
+
+    it('edit modal title follows the diagram type', () => {
+        const flow = { uniqueId: '1234.flow', artifactName: 'flow' };
+
+        FlowsActions.openEditCreateWFModal(
+            store.dispatch,
+            flow,
+            enums.WORKFLOW
+        );
+        expect(store.getState().modal.title).toBe('Edit Workflow');
+
+        FlowsActions.openEditCreateWFModal(store.dispatch, flow, enums.NETWORK);
+        expect(store.getState().modal.title).toBe('Edit Network Call Flow');
     });
 
     it('Close flow details editor modal', () => {
