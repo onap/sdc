@@ -511,6 +511,7 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
                             this.translateService.translate('CHECKOUT_SUCCESS_MESSAGE_TEXT'),
                             this.translateService.translate('CHECKOUT_SUCCESS_MESSAGE_TITLE'),
                             5000));
+                        this.showNewVersion(component);
                         this.cdr.detectChanges();
                     });
                     break;
@@ -534,18 +535,15 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
                     });
                     break;
                 case 'lifecycleState/certify':
-                    // Refresh in place rather than a reload transition. A parent-state reload
-                    // tears down and asynchronously re-mounts this downgraded OnPush shell, leaving
-                    // a window where .w-sdc-main-right-container is absent from the DOM; Selenium's
-                    // post-certify ComponentPage.isLoaded() (5s) hits that gap and fails. The certify
-                    // response + handleCertification already update this.component/version/buttons in
-                    // place, and the next tab navigation (e.g. goToToscaArtifacts) loads fresh data,
-                    // so the parent reload is unnecessary here and only introduced the race.
+                    // Not a reload: rebuilding the shell drops .w-sdc-main-right-container from the
+                    // DOM for a moment, and Selenium's post-certify ComponentPage.isLoaded() (5s)
+                    // hits that gap. The shell is updated in place; showNewVersion rebuilds only the tab.
                     this.component.lifecycleState = component.lifecycleState;
                     this.mode = this.initViewMode();
                     this.eventListenerService.notifyObservers(EVENTS.ON_CERTIFY);
                     this.handleCertification(component);
                     this.verifyIfDependenciesExist();
+                    this.showNewVersion(component);
                     this.cdr.detectChanges();
                     break;
                 case 'distribution/PROD/activate':
@@ -749,6 +747,20 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
                 type: this.component.componentType.toLowerCase(),
                 components: this.components
             });
+        });
+    }
+
+    /**
+     * Certify and check-out create a new version with a new uniqueId, which changeLifecycleState
+     * has already written into the shared component. The open tab still holds data loaded for the
+     * previous version, and the URL still names it, so move both to the new id. Only :id changes, so
+     * SdcRouteReuseStrategy rebuilds the tab and keeps this shell.
+     */
+    private showNewVersion(component: Component): void {
+        this.navigationService.navigate(this.navigationService.getCurrentStateName(), {
+            id: component.uniqueId,
+            type: component.componentType.toLowerCase(),
+            components: this.components
         });
     }
 
