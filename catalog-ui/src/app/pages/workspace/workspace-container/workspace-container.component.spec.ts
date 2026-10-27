@@ -526,3 +526,40 @@ describe('workspace menu', () => {
         expect(menuTextsFor('NewServiceType', false)).toEqual([]);
     });
 });
+
+describe('automated upgrade eligibility', () => {
+    function certifiedResource(subType: string, configuredTypes: string[]) {
+        const cacheService: any = {
+            get: jest.fn((key: string) => key === 'automatedUpgradeResourceTypes' ? configuredTypes : undefined),
+            set: jest.fn(), remove: jest.fn()
+        };
+        const {comp} = createComponent({cacheService});
+        comp.role = 'DESIGNER';
+        comp.mode = 'view';
+        comp.component = {lifecycleState: 'CERTIFIED', getComponentSubType: () => subType,
+            isService: () => false, isResource: () => true};
+        return comp;
+    }
+
+    it('offers the upgrade for VF by default', () => {
+        expect(certifiedResource('VF', ['VF']).showUpgradeServicesButton()).toBe(true);
+    });
+
+    it('does not offer it for CR unless configured', () => {
+        expect(certifiedResource('CR', ['VF']).showUpgradeServicesButton()).toBe(false);
+    });
+
+    it('offers it for every configured resource type', () => {
+        expect(certifiedResource('CR', ['VF', 'CR']).showUpgradeServicesButton()).toBe(true);
+    });
+
+    it('checks the dependencies of a configured type after certify', () => {
+        const comp = certifiedResource('CR', ['VF', 'CR']);
+        comp.component.componentType = 'RESOURCE';
+        comp.component.uniqueId = 'uid-1';
+        comp.componentService.getDependencies.mockReturnValue({subscribe: jest.fn()});
+        jest.spyOn(comp, 'onSuccessWithoutUpgradeNeeded').mockImplementation(() => undefined);
+        comp.handleCertification(comp.component);
+        expect(comp.componentService.getDependencies).toHaveBeenCalledWith('RESOURCE', 'uid-1');
+    });
+});

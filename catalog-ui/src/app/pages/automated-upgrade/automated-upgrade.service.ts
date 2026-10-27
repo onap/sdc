@@ -210,7 +210,8 @@ export class AutomatedUpgradeService {
 
         let isAllComponentsUpgraded = this.isAllComponentsUpgraded();
         let isAllComponentsLocked = this.isAllComponentsLocked();
-        let params = {vspName: this.vspComponent.name, vspVersion: this.vspComponent.version};
+        let params = {vspName: this.vspComponent.name, vspVersion: this.vspComponent.version,
+            resourceType: this.vspComponent.getComponentSubType()};
 
         if (this.uiComponentsToUpgrade.length === 0) {
             return this.getTextByComponentType("_NOTHING_TO_UPGRADE", params);
@@ -245,7 +246,8 @@ export class AutomatedUpgradeService {
         this.convertToComponentsToUpgradeUiObjArray(componentsToUpgrade);
         let informationalText = this.getInformationTextToDisplay();
         let modalTitle = this.getTextByComponentType("_UPGRADE_TITLE");
-        let certificationText = isAfterCertification ? this.getTextByComponentType("_CERTIFICATION_STATUS_TEXT", {resourceName: this.vspComponent.name}) : undefined;
+        let certificationText = isAfterCertification ? this.getTextByComponentType("_CERTIFICATION_STATUS_TEXT",
+            {resourceName: this.vspComponent.name, resourceType: this.vspComponent.getComponentSubType()}) : undefined;
 
         let upgradeVspModalConfig = {
             title: modalTitle,

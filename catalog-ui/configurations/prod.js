@@ -28,6 +28,7 @@ const SDC_CONFIG = {
         "GET_resource_api_artifact": "/v1/catalog/:type/:entityId/artifacts/api/:id",
         "GET_configuration_ui": "/v1/configuration/ui",
         "GET_plugins_configuration": "/config/ui/plugins",
+        "GET_workspace_configuration": "/config/ui/workspace",
         "GET_plugin_online_state": "/config/ui/plugins/:pluginId/online",
         "GET_resource_validate_name": "/v1/catalog/resources/validate-name/:name",
         "GET_activity_log": "/v1/catalog/audit-records/:type/:id",

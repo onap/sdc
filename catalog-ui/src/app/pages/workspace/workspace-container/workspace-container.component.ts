@@ -304,7 +304,12 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
     showUpgradeServicesButton(): boolean {
         return this.isDesigner() && !this.isCreateMode() &&
             this.component.lifecycleState === ComponentState.CERTIFIED &&
-            (this.component.isService() || this.component.getComponentSubType() === ResourceType.VF);
+            this.supportsAutomatedUpgrade();
+    }
+
+    private supportsAutomatedUpgrade(): boolean {
+        const resourceTypes: string[] = this.cacheService.get('automatedUpgradeResourceTypes') || [ResourceType.VF];
+        return this.component.isService() || resourceTypes.indexOf(this.component.getComponentSubType()) > -1;
     }
 
     showRestoreButton(): boolean {
@@ -569,7 +574,7 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
     }
 
     private handleCertification(certifyComponent: Component): void {
-        if (this.component.getComponentSubType() === ResourceType.VF || this.component.isService()) {
+        if (this.supportsAutomatedUpgrade()) {
             this.componentService.getDependencies(this.component.componentType, this.component.uniqueId).subscribe((response: IDependenciesServerResponse[]) => {
                 this.isLoading = false;
                 const isUpgradeNeeded = response.filter((c) => c.dependencies && c.dependencies.length > 0);
@@ -968,7 +973,7 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
     private verifyIfDependenciesExist(): void {
         if (this.component.componentType && this.component.uniqueId &&
             this.component.lifecycleState === 'CERTIFIED' &&
-            (this.component.isService() || this.component.getComponentSubType() === 'VF')) {
+            this.supportsAutomatedUpgrade()) {
             this.componentService.getDependencies(this.component.componentType, this.component.uniqueId).subscribe((response: IDependenciesServerResponse[]) => {
                 const containsDependencies = response.filter((version) => version.dependencies);
                 this.hasNoDependencies = containsDependencies.length === 0;

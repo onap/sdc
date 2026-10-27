@@ -197,3 +197,6 @@ workspaceMenuConfiguration:
   - text: Req. & Capabilities
     action: onMenuItemPressed
     state: workspace.reqAndCapEditable
+automatedUpgradeResourceTypes:
+  - VF
+  - CR

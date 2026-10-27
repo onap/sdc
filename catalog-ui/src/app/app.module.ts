@@ -147,6 +147,7 @@ export function configServiceFactory(config: ConfigService, authService: Authent
         config.loadSdcSetupData(),
         config.loadValidationConfiguration(),
         config.loadPluginsConfiguration(),
+        config.loadWorkspaceConfiguration(),
       ])
     }).then(() => {
       // Moved here from the deleted AngularJS run block (app.ts:593), which primed the default-model

@@ -120,11 +120,12 @@ module.exports = function (env) {
               proxy(['/sdc1/feProxy/uicache'], uiCacheOptions));
 
             // Redirect all '/sdc1/rest' to feHost
-            // NOT rewritten to '/sdc2/rest': the only caller is '/sdc1/rest/config/ui/plugins',
-            // which catalog-fe serves from its own plugins-configuration.yaml and the BE does not
-            // serve at all (every '/sdc2/rest/**/plugins' spelling returns 500). A rewrite would
-            // turn a 404 into a 500, so the dev server leaves this 404 and the Playwright fixture
-            // stubs the response instead — see stubPluginsConfig() in the playwright suite.
+            // NOT rewritten to '/sdc2/rest': the only callers are '/sdc1/rest/config/ui/plugins' and
+            // '/sdc1/rest/config/ui/workspace', which catalog-fe serves from its own plugins- and
+            // workspace-configuration.yaml and the BE does not serve at all (every
+            // '/sdc2/rest/**/plugins' spelling returns 500). A rewrite would turn a 404 into a 500,
+            // so the dev server leaves these 404 and the UI falls back to defaults (the Playwright
+            // fixture stubs the plugins response — see stubPluginsConfig() in the playwright suite).
             middlewares.push(
                 proxy(['/sdc1/rest'],{
                     target: protocol + '://' + feHost + ':' + fePort,

@@ -1435,6 +1435,12 @@ FE-workspace-configuration.yaml
     #   - state: the state for the screen
     #   - action: action associated
     #   - index: optional - an integer that will be used to decide on the order of appearance
+    #
+    # automatedUpgradeResourceTypes: the resource types whose certified versions offer the automated
+    # upgrade of the services that use them. Optional, defaults to [VF]. Only list types the backend
+    # can upgrade. A frontend older than this setting fails to load the file when the key is present.
+    automatedUpgradeResourceTypes:
+      - VF
     # following are 2 example
     workspaceMenuConfiguration:
       VFC:

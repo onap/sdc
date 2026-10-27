@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.fe.config;
 
+import java.util.Arrays;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,5 +53,11 @@ public class WorkspaceConfigurationTest {
         workspaceConfiguration = configurationManager.getWorkspaceConfiguration();
         assertEquals(7,workspaceConfiguration.getWorkspaceMenuConfiguration().size());
         assertTrue(workspaceConfiguration.getWorkspaceMenuConfiguration().containsKey("VFC"));
+    }
+
+    @Test
+    public void validateAutomatedUpgradeResourceTypesAreRead() {
+        workspaceConfiguration = configurationManager.getWorkspaceConfiguration();
+        assertEquals(Arrays.asList("VF", "CR"), workspaceConfiguration.getAutomatedUpgradeResourceTypes());
     }
 }

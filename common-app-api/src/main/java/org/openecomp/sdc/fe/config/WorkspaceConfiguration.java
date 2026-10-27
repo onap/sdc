@@ -30,6 +30,7 @@ import org.openecomp.sdc.common.api.BasicConfiguration;
 public class WorkspaceConfiguration extends BasicConfiguration {
 
     private Map<String, List<MenuConfiguration>> workspaceMenuConfiguration;
+    private List<String> automatedUpgradeResourceTypes;
 
     @Getter
     @Setter

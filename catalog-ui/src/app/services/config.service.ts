@@ -16,7 +16,7 @@
  *
  */
 
-import { HttpClient } from '@angular/common/http';
+import { HttpBackend, HttpClient } from '@angular/common/http';
 import { Inject, Injectable, Injector } from '@angular/core';
 import {IAppConfigurtaion} from 'app/models/app-config';
 import {Plugins, PluginsConfiguration} from 'app/models/plugins-config';
@@ -25,6 +25,7 @@ import { IApi } from 'app/models/app-config';
 import 'rxjs/add/operator/toPromise';
 import { ISdcConfig, SdcConfigToken } from '../config/sdc-config.config';
 import { CacheService } from './cache.service';
+import { ResourceType } from 'app/utils/constants';
 
 @Injectable()
 export class ConfigService {
@@ -37,7 +38,8 @@ export class ConfigService {
                 @Inject(SdcConfigToken) private sdcConfig: ISdcConfig,
                 private cacheService: CacheService,
                 private injector: Injector,
-                private http: HttpClient
+                private http: HttpClient,
+                private httpBackend: HttpBackend
         ) {
             this.api = this.sdcConfig.api;
             this.baseUrl = this.api.root + this.sdcConfig.api.component_api_root;
@@ -98,6 +100,19 @@ export class ConfigService {
                 resolve();
             });
         });
+    }
+
+    loadWorkspaceConfiguration = (): Promise<void> => {
+        const url: string = this.api.no_proxy_root + this.api.GET_workspace_configuration;
+        // Past the interceptors: this file is optional, and through them a 404 or 500 would open the
+        // global error modal although the UI carries on with the defaults.
+        return new HttpClient(this.httpBackend).get<any>(url).toPromise()
+            .then((workspaceConfiguration: any) => workspaceConfiguration && workspaceConfiguration.automatedUpgradeResourceTypes)
+            .catch(() => undefined)
+            .then((resourceTypes: any) => {
+                this.cacheService.set('automatedUpgradeResourceTypes',
+                    Array.isArray(resourceTypes) ? resourceTypes : [ResourceType.VF]);
+            });
     }
 
 }

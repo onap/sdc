@@ -81,6 +81,7 @@ public class ConfigServletTest {
         String expected = gson.toJson(configManager.getWorkspaceConfiguration());
         assertEquals(expected, response.getEntity().toString());
         assertEquals(response.getStatus(), HttpStatus.SC_OK);
+        assertTrue(response.getEntity().toString().contains("\"automatedUpgradeResourceTypes\""));
     }
     @Test
     public void validateGetPluginsConfigurationReturnsCorrectConfiguration() {
