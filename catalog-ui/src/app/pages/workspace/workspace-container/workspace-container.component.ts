@@ -846,8 +846,7 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
     private initMenuItems(): void {
         const inCreateMode = this.isCreateMode();
         this.leftBarTabs = new MenuItemGroup();
-        let menuItemsObjects: any[] = this.updateMenuItemByRole(
-            this.sdcMenu.component_workspace_menu_option[this.component.getComponentSubType()], this.role);
+        let menuItemsObjects: any[] = this.updateMenuItemByRole(this.getWorkspaceMenuOptions(), this.role);
 
         if (this.component.getComponentSubType() === 'SERVICE') {
             menuItemsObjects = this.updateMenuItemByCategory(menuItemsObjects, this.category);
@@ -881,6 +880,17 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
         } else {
             this.initBreadcrumbsComponents();
         }
+    }
+
+    // menu.js is bundled at build time, so a resource type a deployment adds through its own normatives
+    // has no entry there; it gets the VF workspace rather than no workspace at all.
+    private getWorkspaceMenuOptions(): any[] {
+        const menuOptions = this.sdcMenu.component_workspace_menu_option;
+        const ownMenu = menuOptions[this.component.getComponentSubType()];
+        if (ownMenu) {
+            return ownMenu;
+        }
+        return this.component.isResource() ? menuOptions[ResourceType.VF] : [];
     }
 
     private updateMenuItemByRole(menuItems: any[], role: string): any[] {

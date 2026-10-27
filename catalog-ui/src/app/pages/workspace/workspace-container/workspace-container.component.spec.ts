@@ -34,12 +34,13 @@ const WorkspaceContainerComponent = require('./workspace-container.component').W
 // compiling a template that hosts <router-outlet> and <top-nav> for tests that only exercise
 // pure methods.
 function createComponent(overrides: any = {}) {
-    const sdcMenu: any = {roles: {}, LifeCycleStatuses: {}, DistributionStatuses: {}, component_workspace_menu_option: {}};
+    const sdcMenu: any = overrides.sdcMenu ||
+        {roles: {}, LifeCycleStatuses: {}, DistributionStatuses: {}, component_workspace_menu_option: {}};
     const componentFactory: any = {createComponent: (c: any) => c};
     const menuHandler: any = {generateBreadcrumbsModelFromComponents: jest.fn()};
     const changeLifecycleStateHandler: any = {changeLifecycleState: jest.fn()};
     const progressService: any = {initCreateComponentProgress: jest.fn(), deleteProgressValue: jest.fn()};
-    const cacheService: any = {get: jest.fn(), set: jest.fn(), remove: jest.fn()};
+    const cacheService: any = overrides.cacheService || {get: jest.fn(), set: jest.fn(), remove: jest.fn()};
     const eventListenerService: any = {registerObserverCallback: jest.fn(), unRegisterObserver: jest.fn(), notifyObservers: jest.fn()};
     const homeService: any = {getAllComponents: jest.fn()};
     const catalogService: any = {getCatalog: jest.fn()};
@@ -69,7 +70,7 @@ function createComponent(overrides: any = {}) {
         notificationsService, cdr, sdcMenu, componentFactory, menuHandler,
         changeLifecycleStateHandler, progressService, routeMetadataService
     );
-    return {comp, workspaceService, navigationService, cdr, eventListenerService, changeLifecycleStateHandler, workspaceNg1BridgeService};
+    return {comp, workspaceService, navigationService, cdr, eventListenerService, changeLifecycleStateHandler, workspaceNg1BridgeService, cacheService};
 }
 
 describe('menu state matching', () => {
@@ -491,5 +492,37 @@ describe('workspace-container template', () => {
         expect(notice.parentElement.classList.contains('w-sdc-main-container-body-content-header')).toBe(true);
         expect(notice.previousElementSibling.tagName).toBe('H2');
         expect(notice.getAttribute('*ngIf')).toBe('readOnlyNotice()');
+    });
+});
+
+describe('workspace menu', () => {
+    const VF_MENU = [
+        {text: 'General', action: 'onMenuItemPressed', state: 'workspace.general'},
+        {text: 'Composition', action: 'onMenuItemPressed', state: 'workspace.composition.details'}
+    ];
+
+    function menuTextsFor(subType: string, isResource: boolean): string[] {
+        const sdcMenu = {
+            roles: {}, LifeCycleStatuses: {}, DistributionStatuses: {},
+            component_workspace_menu_option: {
+                VF: VF_MENU,
+                CR: [{text: 'General', action: 'onMenuItemPressed', state: 'workspace.general'}]
+            }
+        };
+        const {comp} = createComponent({sdcMenu});
+        comp.component = {getComponentSubType: () => subType, isResource: () => isResource, isService: () => !isResource};
+        return comp.getWorkspaceMenuOptions().map((item: any) => item.text);
+    }
+
+    it('uses the menu configured for the resource type', () => {
+        expect(menuTextsFor('CR', true)).toEqual(['General']);
+    });
+
+    it('gives a resource type without its own menu the VF menu', () => {
+        expect(menuTextsFor('NewResourceType', true)).toEqual(['General', 'Composition']);
+    });
+
+    it('gives a non-resource without its own menu an empty menu', () => {
+        expect(menuTextsFor('NewServiceType', false)).toEqual([]);
     });
 });
