@@ -1442,14 +1442,13 @@ FE-workspace-configuration.yaml
     automatedUpgradeResourceTypes:
       - VF
     #
-    # crBaseTypes: per resource category, the base node types a Custom Resource (CR) can be created
-    # from; the CR create form offers them as "Base Type". Optional; a category that is not listed
-    # offers no choice and its CRs derive from the generic CR type. The backend picks the latest
-    # version of the chosen type. A frontend older than this setting fails to load the file when
-    # the key is present.
-    #crBaseTypes:
-    #  Task:
-    #    - org.openecomp.resource.abstract.nodes.RANTemplateExecutionTask
+    # crBaseTypes is deprecated and ignored by the CR create form. Existing entries remain
+    # accepted for compatibility. Base Type suggestions are fetched from the runtime nodeTypes
+    # catalog on opening the form and on model changes, independently of category.
+    # The field also accepts names absent from discovery; the creation API validates the name.
+    # No version is sent, so the backend resolves it. An empty field uses backend defaults
+    # (category/subcategory mappings, then the generic resource-type default).
+    # Discovery failures leave manual entry and the backend default available.
     # following are 2 example
     workspaceMenuConfiguration:
       VFC:

@@ -39,6 +39,7 @@ import {ModalsHandler} from 'app/utils/modals-handler';
 import {ImportVSPService} from '../../../components/modals/onboarding-modal/import-vsp.service';
 import {ElementService} from '../../../services/element.service';
 import {ModelService} from '../../../services/model.service';
+import {ToscaTypesService} from '../../../services/tosca-types.service';
 import {FileUtilsService} from '../../../services/file-utils.service';
 import {NavigationService} from '../../../services/navigation.service';
 import {TranslateService} from '../../../shared/translator/translate.service';
@@ -77,6 +78,10 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
     environmentContextObj: any = null;
     categories: any[] = [];
     isHiddenCategorySelected: boolean = false;
+    crBaseTypesLoading: boolean = false;
+    crBaseTypesLoadFailed: boolean = false;
+    private crBaseTypes: string[] = [];
+    private crBaseTypesRequest: number = 0;
 
     // "Browse to select file" widget state (ported from GeneralViewModel.initScope,
     // general-view-model.ts:278-330 + 353-369). isShowFileBrowse defaults FALSE and is turned on for
@@ -118,7 +123,8 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
         private importVSPService: ImportVSPService,
         private modelService: ModelService,
         private elementService: ElementService,
-        private modalsHandler: ModalsHandler
+        private modalsHandler: ModalsHandler,
+        private toscaTypesService: ToscaTypesService
     ) {}
 
     ngOnInit(): void {
@@ -176,6 +182,7 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
         this.initInstantiationTypes();
         this.initModel();
         this.initBaseTypes();
+        this.loadCrBaseTypes();
         this.initFileBrowse();
         // Resolve the Service Role / Function dropdown selection from the loaded values — must run
         // after the category (and thus its metadataKeys/validValues) is resolved above. Mirrors the
@@ -197,6 +204,7 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
+        ++this.crBaseTypesRequest;
         this.eventListenerService.unRegisterObserver(EVENTS.ON_LIFECYCLE_CHANGE_WITH_SAVE);
         this.eventListenerService.unRegisterObserver(EVENTS.ON_LIFECYCLE_CHANGE);
         this.eventListenerService.unRegisterObserver(EVENTS.ON_CERTIFY, this.onCertify);
@@ -514,11 +522,9 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
             this.loadBaseTypesForSelectedCategory();
         } else {
             this.component.categories = undefined;
-            this.clearBaseTypes();
-        }
-        if (this.isCrComponent() && this.isCreateMode()
-            && this.crBaseTypeOptions().indexOf(this.component.derivedFromGenericType) === -1) {
-            this.onCrBaseTypeChange('');
+            if (!this.isCrComponent()) {
+                this.clearBaseTypes();
+            }
         }
         this.detectChangesSafe();
     }
@@ -745,6 +751,7 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
         // (it would resolve an empty datatype scope — see the note in syncFormToComponent).
         const selected = this.form.get('model').value;
         this.component.model = selected ? selected : null;
+        this.loadCrBaseTypes();
         if (this.component.componentType === ComponentType.SERVICE) {
             const modelName = this.component.model ? this.component.model : null;
             this.component.categories = undefined;
@@ -1028,14 +1035,32 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
     }
 
     crBaseTypeOptions(): string[] {
-        const category = this.component.categories && this.component.categories[0];
-        const crBaseTypes = this.cacheService.get('crBaseTypes') || {};
-        return (category && crBaseTypes[category.name]) || [];
+        return this.crBaseTypes;
+    }
+
+    loadCrBaseTypes(): void {
+        if (!this.showCrBaseType()) { return; }
+        const request = ++this.crBaseTypesRequest;
+        this.crBaseTypes = [];
+        this.crBaseTypesLoading = true;
+        this.crBaseTypesLoadFailed = false;
+        this.toscaTypesService.fetchNodeTypes(this.component.model, true).then((types) => {
+            if (request !== this.crBaseTypesRequest) { return; }
+            this.crBaseTypes = Object.keys(types || {}).sort();
+            this.crBaseTypesLoading = false;
+            this.detectChangesSafe();
+        }, () => {
+            if (request !== this.crBaseTypesRequest) { return; }
+            this.crBaseTypesLoading = false;
+            this.crBaseTypesLoadFailed = true;
+            this.detectChangesSafe();
+        });
+        this.detectChangesSafe();
     }
 
     // CREATE only: the backend ignores a resource's base-type change on update.
     showCrBaseType(): boolean {
-        return this.isCrComponent() && this.isCreateMode() && this.crBaseTypeOptions().length > 0;
+        return this.isCrComponent() && this.isCreateMode();
     }
 
     onCrBaseTypeChange(value: string): void {

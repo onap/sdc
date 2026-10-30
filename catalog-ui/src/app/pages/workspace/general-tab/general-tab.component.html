@@ -504,13 +504,20 @@
             <div class="w-sdc-form-column">
               <div class="i-sdc-form-item">
                 <label class="i-sdc-form-label" for="gt-cr-base-type">Base Type</label>
-                <select id="gt-cr-base-type" class="i-sdc-form-select"
-                        (change)="onCrBaseTypeChange($event.target.value)"
-                        data-tests-id="selectCrBaseType">
-                  <option value="" [selected]="!component?.derivedFromGenericType">Default</option>
-                  <option *ngFor="let type of crBaseTypeOptions()" [value]="type"
-                          [selected]="type === component?.derivedFromGenericType">{{type}}</option>
-                </select>
+                <input id="gt-cr-base-type" class="i-sdc-form-input" type="text"
+                       list="gt-cr-base-types" placeholder="Default" autocomplete="off"
+                       [value]="component?.derivedFromGenericType || ''"
+                       (input)="onCrBaseTypeChange($event.target.value)"
+                       data-tests-id="selectCrBaseType">
+                <datalist id="gt-cr-base-types">
+                  <option *ngFor="let type of crBaseTypeOptions()" [value]="type"></option>
+                </datalist>
+                <span *ngIf="crBaseTypesLoading" role="status">Loading base types...</span>
+                <div *ngIf="crBaseTypesLoadFailed" role="alert">
+                  Could not load base types.
+                  <button type="button" class="i-sdc-form-button" (click)="loadCrBaseTypes()"
+                          data-tests-id="retryCrBaseTypes">Retry</button>
+                </div>
               </div>
             </div>
           </div>

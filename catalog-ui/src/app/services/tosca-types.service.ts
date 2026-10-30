@@ -14,7 +14,7 @@
  * permissions and limitations under the License.
  */
 
-import {HttpClient} from '@angular/common/http';
+import {HttpBackend, HttpClient} from '@angular/common/http';
 import {Inject, Injectable} from '@angular/core';
 import {Response} from '@angular/http';
 import {CapabilityTypeModel, CapabilityTypesMap} from 'app/models/capability-types';
@@ -23,6 +23,7 @@ import {NodeTypesMap} from 'app/models/node-types';
 import {RelationshipTypesMap} from 'app/models/relationship-types';
 import {Observable} from 'rxjs/Observable';
 import {ISdcConfig, SdcConfigToken} from '../config/sdc-config.config';
+import {CookieService} from './cookie.service';
 import 'rxjs/add/operator/toPromise';
 
 @Injectable()
@@ -30,7 +31,8 @@ export class ToscaTypesService {
 
   protected baseUrl;
 
-  constructor(protected http: HttpClient, @Inject(SdcConfigToken) sdcConfig: ISdcConfig) {
+  constructor(protected http: HttpClient, @Inject(SdcConfigToken) sdcConfig: ISdcConfig,
+              private httpBackend: HttpBackend, private cookieService: CookieService) {
     this.baseUrl = sdcConfig.api.root + sdcConfig.api.component_api_root;
   }
 
@@ -41,7 +43,13 @@ export class ToscaTypesService {
     return this.http.get<RelationshipTypesMap>(this.baseUrl + 'relationshipTypes').toPromise();
   }
 
-  async fetchNodeTypes(modelName: string): Promise<NodeTypesMap> {
+  async fetchNodeTypes(modelName: string, handleErrorsLocally: boolean = false): Promise<NodeTypesMap> {
+    if (handleErrorsLocally) {
+      return new HttpClient(this.httpBackend).get<NodeTypesMap>(this.baseUrl + 'nodeTypes', {
+        params: modelName ? {model: modelName} : {},
+        headers: {[this.cookieService.getUserIdSuffix()]: this.cookieService.getUserId()}
+      }).toPromise();
+    }
     if(modelName) {
       return this.http.get<NodeTypesMap>(this.baseUrl + 'nodeTypes', {params: {model: modelName}}).toPromise();
     }

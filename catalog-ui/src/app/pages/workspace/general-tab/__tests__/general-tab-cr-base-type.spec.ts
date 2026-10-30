@@ -19,6 +19,7 @@
  */
 
 import {NO_ERRORS_SCHEMA} from '@angular/core';
+import {HttpErrorResponse, HttpRequest, HttpResponse} from '@angular/common/http';
 import {ComponentFixture} from '@angular/core/testing';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {EventListenerService} from 'app/services/event-listener.service';
@@ -33,6 +34,7 @@ import {SdcConfigToken} from '../../../../config/sdc-config.config';
 import {SdcMenuToken} from '../../../../config/sdc-menu.config';
 import {ElementService} from '../../../../services/element.service';
 import {ModelService} from '../../../../services/model.service';
+import {ToscaTypesService} from '../../../../services/tosca-types.service';
 import {FileUtilsService} from '../../../../services/file-utils.service';
 import {NavigationService} from '../../../../services/navigation.service';
 import {TranslateService} from '../../../../shared/translator/translate.service';
@@ -41,8 +43,7 @@ import {ComponentMetadataService} from '../component-metadata.service';
 import {GeneralFormService} from '../general-form.service';
 import {GeneralTabComponent} from '../general-tab.component';
 
-const RAN = 'org.openecomp.resource.abstract.nodes.RANTemplateExecutionTask';
-const DAY0 = 'org.openecomp.resource.abstract.nodes.DayZeroGenerationTask';
+const GENERIC_VF = 'org.openecomp.resource.abstract.nodes.VF';
 const GENERIC_CR = 'org.openecomp.resource.abstract.nodes.CR';
 
 describe('GeneralTabComponent - CR base type select', () => {
@@ -50,22 +51,38 @@ describe('GeneralTabComponent - CR base type select', () => {
     let fixture: ComponentFixture<GeneralTabComponent>;
     let baseTypes$: Subject<any>;
     let elementService: any;
+    let toscaTypesService: any;
+    let requests: Array<{request: HttpRequest<any>, model: string, resolve: (types: any) => void, reject: (error: any) => void}>;
 
     function crComponent(overrides: any = {}) {
         return Object.assign({
-            name: 'MyTask', description: 'd', contactId: 'cs0008', tags: [], vendorName: 'v', vendorRelease: '1',
+            name: 'MyResource', description: 'd', contactId: 'cs0008', tags: [], vendorName: 'v', vendorRelease: '1',
             componentType: 'RESOURCE', resourceType: 'CR', lifecycleState: 'NOT_CERTIFIED_CHECKOUT',
-            lastUpdaterUserId: 'cs0008', selectedCategory: 'Task_#_RANTemplateExecutionTask',
-            categories: [{name: 'Task', subcategories: [{name: 'RANTemplateExecutionTask'}]}],
+            lastUpdaterUserId: 'cs0008', selectedCategory: 'Generic_#_Abstract',
+            categories: [{name: 'Generic', subcategories: [{name: 'Abstract'}]}],
             componentMetadata: {}, categorySpecificMetadata: {},
             isService: () => false, isResource: () => true, isCsarComponent: () => false,
             getComponentSubType: () => 'CR', isAlreadyCertified: () => false
         }, overrides);
     }
 
-    async function render(component: any, {create = true, crBaseTypes = {Task: [RAN, DAY0]} as any} = {}) {
+    async function render(component: any, {create = true} = {}) {
         baseTypes$ = new Subject<any>();
         elementService = {getCategoryBaseTypes: jest.fn(() => baseTypes$.asObservable())};
+        requests = [];
+        const backend: any = {handle: (request: HttpRequest<any>) => {
+            const response = new Subject<HttpResponse<any>>();
+            requests.push({request, model: request.params.get('model'),
+                resolve: (body) => {
+                    response.next(new HttpResponse({body}));
+                    response.complete();
+                },
+                reject: (error) => response.error(error)});
+            return response.asObservable();
+        }};
+        toscaTypesService = new ToscaTypesService(null,
+            {api: {root: '/sdc1/feProxy/rest', component_api_root: '/v1/catalog/'}} as any,
+            backend, {getUserIdSuffix: () => 'USER_ID', getUserId: () => 'cs0008'} as any);
         // A REAL NavigationService over a mocked Router/ActivatedRoute, so the route-data facade the
         // component depends on (getParam / setUnsavedChanges / navigate) behaves as it does at runtime.
         const router: any = {
@@ -90,9 +107,7 @@ describe('GeneralTabComponent - CR base type select', () => {
                                                            setComponent: jest.fn()}},
                     {provide: CacheService, useValue: {get: (k: string) => {
                         if (k === 'user') { return {userId: 'cs0008', role: 'DESIGNER'}; }
-                        if (k === 'resourceCategories') { return [{name: 'Task', subcategories: [{name: 'RANTemplateExecutionTask'}]},
-                                                           {name: 'Generic', subcategories: [{name: 'Abstract'}]}]; }
-                        if (k === 'crBaseTypes') { return crBaseTypes; }
+                        if (k === 'resourceCategories') { return [{name: 'Generic', subcategories: [{name: 'Abstract'}, {name: 'Network Elements'}]}]; }
                         return null;
                     }, set: jest.fn(), remove: jest.fn(), contains: () => false}},
                     {provide: EventListenerService, useValue: {registerObserverCallback: jest.fn(),
@@ -110,6 +125,7 @@ describe('GeneralTabComponent - CR base type select', () => {
                     {provide: ModelService, useValue: {getModels: () => baseTypes$.asObservable().filter(() => false),
                                                       getModelsOfType: () => baseTypes$.asObservable().filter(() => false)}},
                     {provide: ElementService, useValue: elementService},
+                    {provide: ToscaTypesService, useValue: toscaTypesService},
                     {provide: ModalsHandler, useValue: {}}
                 ]
             });
@@ -120,71 +136,104 @@ describe('GeneralTabComponent - CR base type select', () => {
         fixture.detectChanges();
     }
 
-    function select(testId: string): HTMLSelectElement {
-        const el: HTMLSelectElement = fixture.nativeElement.querySelector(`[data-tests-id="${testId}"]`);
-        expect(el).toBeTruthy();
-        return el;
-    }
+    const crInput = () => fixture.nativeElement.querySelector('[data-tests-id="selectCrBaseType"]') as HTMLInputElement;
+    const optionValues = () => Array.from(fixture.nativeElement.querySelectorAll('#gt-cr-base-types option'))
+        .map((option: HTMLOptionElement) => option.value);
 
-    /** The label the user actually reads in the closed <select>. */
-    function displayedOption(testId: string): string {
-        const el = select(testId);
-        // jsdom does not implement selectedOptions, so resolve via selectedIndex.
-        const option = el.options[el.selectedIndex];
-        return option ? option.textContent.trim() : null;
-    }
-
-    const crSelect = () => fixture.nativeElement.querySelector('[data-tests-id="selectCrBaseType"]') as HTMLSelectElement;
-    const optionValues = () => Array.prototype.map.call(crSelect().options, (o: HTMLOptionElement) => o.value);
-
-    it('offers the configured types for the CR category', async () => {
-        await render(crComponent());
-        expect(crSelect().disabled).toBe(false);
-        expect(optionValues()).toEqual(['', RAN, DAY0]);
-        expect(displayedOption('selectCrBaseType')).toBe('Default');
-    });
-
-    it('puts the chosen type, without a version, on the component', async () => {
-        await render(crComponent());
-        fixture.componentInstance.onCrBaseTypeChange(RAN);
-        expect(fixture.componentInstance.component.derivedFromGenericType).toBe(RAN);
-        expect(fixture.componentInstance.component.derivedFromGenericVersion).toBeUndefined();
-        fixture.componentInstance.onCrBaseTypeChange('');
-        expect(fixture.componentInstance.component.derivedFromGenericType).toBeUndefined();
-    });
-
-    it('shows nothing without configuration', async () => {
-        await render(crComponent(), {crBaseTypes: {}});
-        expect(crSelect()).toBeNull();
-        expect(fixture.componentInstance.component.derivedFromGenericType).toBeUndefined();
-    });
-
-    it('shows nothing for an unlisted category', async () => {
-        await render(crComponent({selectedCategory: 'Generic_#_Abstract',
-                                  categories: [{name: 'Generic', subcategories: [{name: 'Abstract'}]}]}));
-        expect(crSelect()).toBeNull();
-    });
-
-    it('drops the chosen type when the category changes to an unlisted one', async () => {
-        await render(crComponent());
-        fixture.componentInstance.onCrBaseTypeChange(RAN);
-        fixture.componentInstance.form.get('category').setValue('Generic_#_Abstract');
-        fixture.componentInstance.onCategoryChange();
+    async function flush() {
+        await fixture.whenStable();
         fixture.detectChanges();
+    }
+
+    function enterType(value: string) {
+        crInput().value = value;
+        crInput().dispatchEvent(new Event('input'));
+        fixture.detectChanges();
+    }
+
+    it('offers runtime TOSCA names without requiring configuration or selecting a default', async () => {
+        await render(crComponent());
+        expect(crInput()).toBeTruthy();
+        expect(crInput().disabled).toBe(false);
+        expect(requests.length).toBe(1);
+        expect(requests[0].model).toBeFalsy();
+        expect(requests[0].request.url).toBe('/sdc1/feProxy/rest/v1/catalog/nodeTypes');
+        expect(requests[0].request.headers.get('USER_ID')).toBe('cs0008');
+        requests[0].resolve({[GENERIC_VF]: {componentMetadataDefinition: {}}, [GENERIC_CR]: {componentMetadataDefinition: {}}});
+        await flush();
+        expect(optionValues()).toEqual([GENERIC_CR, GENERIC_VF]);
+        expect(crInput().value).toBe('');
         expect(fixture.componentInstance.component.derivedFromGenericType).toBeUndefined();
-        expect(crSelect()).toBeNull();
     });
 
-    it('keeps the chosen type when the new category lists it too', async () => {
+    it('accepts a name absent from suggestions and clears its version, with empty input restoring default', async () => {
+        await render(crComponent({derivedFromGenericVersion: '1.0'}));
+        enterType('example.nodes.CustomBase');
+        expect(fixture.componentInstance.component.derivedFromGenericType).toBe('example.nodes.CustomBase');
+        expect(fixture.componentInstance.component.derivedFromGenericVersion).toBeUndefined();
+        enterType('');
+        expect(fixture.componentInstance.component.derivedFromGenericType).toBeUndefined();
+    });
+
+    it('preserves an explicit base when the category changes or is cleared', async () => {
+        await render(crComponent({derivedFromGenericType: GENERIC_VF}));
+        expect(crInput().value).toBe(GENERIC_VF);
+        for (const category of ['Generic_#_Network Elements', '']) {
+            fixture.componentInstance.form.get('category').setValue(category);
+            fixture.componentInstance.onCategoryChange();
+            fixture.detectChanges();
+            expect(crInput().value).toBe(GENERIC_VF);
+            expect(fixture.componentInstance.component.derivedFromGenericType).toBe(GENERIC_VF);
+        }
+    });
+
+    it('refreshes for the model and ignores an older response without clearing the entered name', async () => {
+        await render(crComponent({model: 'Model A'}));
+        expect(requests[0].model).toBe('Model A');
+        enterType(GENERIC_VF);
+        fixture.componentInstance.form.get('model').setValue('Model B');
+        fixture.componentInstance.onModelChange();
+        expect(requests[1].model).toBe('Model B');
+        requests[1].resolve({[GENERIC_CR]: {}});
+        await flush();
+        requests[0].resolve({[GENERIC_VF]: {}});
+        await flush();
+        expect(optionValues()).toEqual([GENERIC_CR]);
+        expect(crInput().value).toBe(GENERIC_VF);
+        fixture.componentInstance.form.get('model').setValue('');
+        fixture.componentInstance.onModelChange();
+        fixture.detectChanges();
+        expect(requests[2].model).toBeFalsy();
+        expect(optionValues()).toEqual([]);
+    });
+
+    it('allows manual entry after discovery fails and retries discovery', async () => {
         await render(crComponent());
-        fixture.componentInstance.onCrBaseTypeChange(RAN);
-        fixture.componentInstance.onCategoryChange();
-        expect(fixture.componentInstance.component.derivedFromGenericType).toBe(RAN);
+        requests[0].reject(new HttpErrorResponse({status: 503}));
+        await flush();
+        expect(fixture.nativeElement.querySelector('[role="alert"]')).toBeTruthy();
+        enterType(GENERIC_VF);
+        expect(fixture.componentInstance.component.derivedFromGenericType).toBe(GENERIC_VF);
+        fixture.nativeElement.querySelector('[data-tests-id="retryCrBaseTypes"]').click();
+        expect(requests.length).toBe(2);
+        requests[1].resolve({[GENERIC_VF]: {}});
+        await flush();
+        expect(optionValues()).toEqual([GENERIC_VF]);
+        expect(fixture.nativeElement.querySelector('[role="alert"]')).toBeNull();
+    });
+
+    it('ignores an outstanding response after destruction', async () => {
+        await render(crComponent());
+        fixture.destroy();
+        requests[0].resolve({[GENERIC_VF]: {}});
+        await Promise.resolve();
+        expect(fixture.componentInstance.crBaseTypeOptions()).toEqual([]);
     });
 
     it('never offers a base type on a VF', async () => {
         await render(crComponent({resourceType: 'VF', getComponentSubType: () => 'VF'}));
-        expect(crSelect()).toBeNull();
+        expect(crInput()).toBeNull();
+        expect(requests.length).toBe(0);
     });
 
     it('does not ask for Service base types for a CR', async () => {
@@ -194,6 +243,7 @@ describe('GeneralTabComponent - CR base type select', () => {
 
     it('shows no base type on an existing CR', async () => {
         await render(crComponent({uniqueId: 'id-1', derivedFromGenericType: GENERIC_CR}), {create: false});
-        expect(crSelect()).toBeNull();
+        expect(crInput()).toBeNull();
+        expect(requests.length).toBe(0);
     });
 });

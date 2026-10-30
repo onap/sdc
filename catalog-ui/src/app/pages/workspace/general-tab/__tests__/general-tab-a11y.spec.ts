@@ -35,6 +35,7 @@ import {SdcConfigToken} from '../../../../config/sdc-config.config';
 import {SdcMenuToken} from '../../../../config/sdc-menu.config';
 import {ElementService} from '../../../../services/element.service';
 import {ModelService} from '../../../../services/model.service';
+import {ToscaTypesService} from '../../../../services/tosca-types.service';
 import {FileUtilsService} from '../../../../services/file-utils.service';
 import {NavigationService} from '../../../../services/navigation.service';
 import {TranslateService} from '../../../../shared/translator/translate.service';
@@ -109,7 +110,8 @@ describe('GeneralTabComponent - required fields and errors for assistive technol
                                                       getModelsOfType: () => baseTypes$.asObservable().filter(() => false)}},
                     // Deferred on purpose — this is what makes the options arrive after the first CD pass.
                     {provide: ElementService, useValue: {getCategoryBaseTypes: () => baseTypes$.asObservable()}},
-                    {provide: ModalsHandler, useValue: {}}
+                    {provide: ModalsHandler, useValue: {}},
+                    {provide: ToscaTypesService, useValue: {fetchNodeTypes: () => Promise.resolve({})}}
                 ]
             });
         };

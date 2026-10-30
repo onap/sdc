@@ -18,31 +18,17 @@
  * ============LICENSE_END=========================================================
  */
 
-/**
- * The Base Type select on the Add CR form, driven by the frontend's optional crBaseTypes setting.
- *
- * The setting is stubbed rather than deployed, so the CI stack's own workspace-configuration.yaml
- * stays as Selenium sees it. The offered type is the normative generic VF: it exists in every stack
- * and its properties (nf_role, …) differ from the generic CR's (cr_role, …), so the created CR's
- * inputs prove which type the backend actually derived it from.
- */
-
 import { Page } from '@playwright/test';
 import { test, expect, login, stubPluginsConfig, settles, IS_DEV_SERVER } from './fixtures/sdc';
 
 const VF_TYPE = 'org.openecomp.resource.abstract.nodes.VF';
+const CR_TYPE = 'org.openecomp.resource.abstract.nodes.CR';
 const CATEGORY = 'Generic_#_Abstract';
-const CR_SELECT = '[data-tests-id="selectCrBaseType"]';
 const CREATE_POST = /\/v1\/catalog\/resources$/;
 
-async function openAddCrForm(page: Page, crBaseTypes?: object): Promise<void> {
-    // Before login: the setting is read once, at bootstrap.
+async function openAddCrForm(page: Page): Promise<void> {
     if (IS_DEV_SERVER) {
         await stubPluginsConfig(page);
-    }
-    if (crBaseTypes) {
-        await page.route('**/sdc1/rest/config/ui/workspace', (route) =>
-            route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ crBaseTypes }) }));
     }
     await login(page);
     await page.locator('.w-sdc-dashboard-card-new').first().hover();
@@ -53,13 +39,28 @@ async function openAddCrForm(page: Page, crBaseTypes?: object): Promise<void> {
 
 test.describe('CR Base Type', () => {
 
-    test('creates the CR from the chosen base type', async ({ page, api }) => {
-        await openAddCrForm(page, { Generic: [VF_TYPE] });
-        await expect(page.locator(CR_SELECT)).toHaveCount(0);
+    for (const scenario of [
+        {name: 'runtime suggestion', value: VF_TYPE, discovered: true, base: VF_TYPE, input: 'nf_role', absent: 'cr_role'},
+        {name: 'manual name absent from discovery', value: VF_TYPE, discovered: false, base: VF_TYPE, input: 'nf_role', absent: 'cr_role'},
+        {name: 'backend default', value: '', discovered: true, base: CR_TYPE, input: 'cr_role', absent: 'nf_role'}
+    ]) {
+    test(`creates the CR using ${scenario.name}`, async ({ page, api }) => {
+        if (!scenario.discovered) {
+            await page.route('**/v1/catalog/nodeTypes*', route => route.fulfill({
+                status: 200, contentType: 'application/json', body: '{}'
+            }));
+        }
+        await openAddCrForm(page);
+        await expect(page.getByLabel('Base Type', { exact: true })).toBeVisible();
+        if (scenario.discovered) {
+            await expect(page.locator(`#gt-cr-base-types option[value="${VF_TYPE}"]`)).toHaveCount(1);
+        } else {
+            await expect(page.locator('#gt-cr-base-types option')).toHaveCount(0);
+        }
 
         await page.locator('[data-tests-id="selectGeneralCategory"]').selectOption(CATEGORY);
-        await expect(page.locator(`${CR_SELECT} option`)).toHaveText(['Default', VF_TYPE]);
-        await page.locator(CR_SELECT).selectOption(VF_TYPE);
+        await page.getByLabel('Base Type', { exact: true }).fill(VF_TYPE);
+        await page.getByLabel('Base Type', { exact: true }).fill(scenario.value);
 
         const name = 'PwCrBaseType' + Date.now();
         await page.locator('[data-tests-id="name"]').fill(name);
@@ -73,42 +74,52 @@ test.describe('CR Base Type', () => {
         const resp = await created;
 
         const sent = resp.request().postDataJSON();
-        expect(sent.derivedFromGenericType).toBe(VF_TYPE);
+        expect(sent.derivedFromGenericType).toBe(scenario.value || undefined);
         expect(sent.derivedFromGenericVersion).toBeUndefined();
 
         const body = await resp.json();
         try {
             expect(resp.status(), JSON.stringify(body).slice(0, 400)).toBe(201);
-            expect(body.derivedFromGenericType).toBe(VF_TYPE);
+            expect(body.derivedFromGenericType).toBe(scenario.base);
             const inputs = (body.inputs || []).map((input: any) => input.name);
-            expect(inputs).toContain('nf_role');
-            expect(inputs).not.toContain('cr_role');
+            expect(inputs).toContain(scenario.input);
+            expect(inputs).not.toContain(scenario.absent);
         } finally {
             if (body.uniqueId) {
                 await api.deleteAsset({ id: body.uniqueId, name, type: 'resource' });
             }
         }
     });
+    }
 
-    test('drops the chosen type when the category changes to an unlisted one', async ({ page }) => {
-        await openAddCrForm(page, { Generic: [VF_TYPE] });
+    test('preserves the chosen type when the category changes', async ({ page }) => {
+        await openAddCrForm(page);
         await page.locator('[data-tests-id="selectGeneralCategory"]').selectOption(CATEGORY);
-        await page.locator(CR_SELECT).selectOption(VF_TYPE);
+        await page.getByLabel('Base Type', { exact: true }).fill(VF_TYPE);
 
         const other = await page.locator('[data-tests-id="selectGeneralCategory"] option')
             .evaluateAll((options: HTMLOptionElement[]) =>
                 options.map(o => o.value).find(v => v.indexOf('_#_') > 0 && !v.startsWith('Generic_#_')));
         await page.locator('[data-tests-id="selectGeneralCategory"]').selectOption(other);
-        await expect(page.locator(CR_SELECT)).toHaveCount(0);
+        await expect(page.getByLabel('Base Type', { exact: true })).toHaveValue(VF_TYPE);
 
         await page.locator('[data-tests-id="selectGeneralCategory"]').selectOption(CATEGORY);
-        await expect(page.locator(CR_SELECT)).toHaveValue('');
+        await expect(page.getByLabel('Base Type', { exact: true })).toHaveValue(VF_TYPE);
     });
 
-    test('offers no base type without the setting', async ({ page }) => {
+    test('retains manual entry and default when discovery fails, and can retry', async ({ page }) => {
+        await page.route('**/v1/catalog/nodeTypes*', route => route.fulfill({
+            status: 503, contentType: 'application/json', body: '{}'
+        }));
         await openAddCrForm(page);
-        await page.locator('[data-tests-id="selectGeneralCategory"]').selectOption(CATEGORY);
-        await expect(page.locator('[data-tests-id="selectGeneralCategory"]')).toHaveValue(CATEGORY);
-        await expect(page.locator(CR_SELECT)).toHaveCount(0);
+        await expect(page.getByRole('alert')).toContainText('Could not load base types.');
+        await page.getByLabel('Base Type', { exact: true }).fill('example.nodes.CustomBase');
+        await expect(page.getByLabel('Base Type', { exact: true })).toHaveValue('example.nodes.CustomBase');
+        await page.getByLabel('Base Type', { exact: true }).fill('');
+        await expect(page.getByLabel('Base Type', { exact: true })).toHaveValue('');
+        await page.unroute('**/v1/catalog/nodeTypes*');
+        await page.getByRole('button', { name: 'Retry', exact: true }).click();
+        await expect(page.locator(`#gt-cr-base-types option[value="${VF_TYPE}"]`)).toHaveCount(1);
+        await expect(page.getByRole('alert')).toHaveCount(0);
     });
 });

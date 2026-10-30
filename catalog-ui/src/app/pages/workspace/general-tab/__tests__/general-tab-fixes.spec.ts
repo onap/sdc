@@ -121,7 +121,8 @@ function createComp(opts: any = {}) {
         translateService, notificationsService, cdr, navigationService,
         opts.sdcConfig || {toscaFileExtension: 'yaml,yml', csarFileExtension: 'csar'},
         deps.sdcMenu, deps.componentFactory, deps.importVSPService,
-        deps.modelService, deps.elementService, deps.modalsHandler
+        deps.modelService, deps.elementService, deps.modalsHandler,
+        {fetchNodeTypes: () => Promise.resolve({})} as any
     );
     return {comp, workspaceService, cacheService, eventListener, cdr, fileUtils, sdcUiModalService, translateService, notificationsService, navigationService};
 }

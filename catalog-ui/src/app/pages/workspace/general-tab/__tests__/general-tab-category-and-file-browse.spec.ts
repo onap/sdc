@@ -110,7 +110,8 @@ function createComp(opts: any = {}) {
         {} as any,
         {getModels: jest.fn(() => of([])), getModelsOfType: jest.fn(() => of([]))} as any,
         {getCategoryBaseTypes: jest.fn(() => of({required: false, baseTypes: []}))} as any,
-        {} as any
+        {} as any,
+        {fetchNodeTypes: () => Promise.resolve({})} as any
     );
     return {comp, component, workspaceService};
 }
