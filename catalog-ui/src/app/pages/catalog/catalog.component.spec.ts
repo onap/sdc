@@ -671,7 +671,7 @@ describe('catalog component', () => {
         catalog.buildChecklistModelForTypes();
         const resource = catalog.typesChecklistModel.checkboxes[0].subLevelChecklist.checkboxes;
         expect(resource.map((c) => c.label)).toEqual([
-            'Virtual Function (VF)', 'Virtual Function Component (VFC)', 'Collection Resource (CR)',
+            'Virtual Function (VF)', 'Virtual Function Component (VFC)', 'Custom Resource (CR)',
             'Physical Network Function (PNF)', 'Connection Point (CP)', 'Virtual Link (VL)']);
         expect(resource.map((c) => c.testId)).toEqual(
             ['checkbox-vf', 'checkbox-vfc', 'checkbox-cr', 'checkbox-pnf', 'checkbox-cp', 'checkbox-vl']);

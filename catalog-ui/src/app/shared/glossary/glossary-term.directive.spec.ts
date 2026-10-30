@@ -121,7 +121,7 @@ describe('GlossaryTermDirective', () => {
 
     it('shows immediately on focus of a focusable descendant and hides on focusout', () => {
         fire(el('inner'), 'focusin');
-        expect(tooltip().textContent).toContain('Collection Resource (CR)');
+        expect(tooltip().textContent).toContain('Custom Resource (CR)');
         fire(el('inner'), 'focusout');
         expect(tooltip()).toBeNull();
     });

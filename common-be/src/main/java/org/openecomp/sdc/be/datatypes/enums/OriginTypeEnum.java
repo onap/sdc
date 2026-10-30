@@ -31,7 +31,7 @@ public enum OriginTypeEnum {
     VFCMT("VFCMT", "VFCMT (VFC Monitoring Template)", "resource instance", ComponentTypeEnum.RESOURCE, true),
     CVFC("CVFC", "CVFC (Complex Virtual Function Component)", "resource instance", ComponentTypeEnum.RESOURCE, false),
     PNF("PNF", "PNF (Physical Network Function)", "resource instance", ComponentTypeEnum.RESOURCE, false),
-    CR("CR", "CR (Collection Resource)", "resource instance", ComponentTypeEnum.RESOURCE, false),
+    CR("CR", "CR (Custom Resource)", "resource instance", ComponentTypeEnum.RESOURCE, false),
     ServiceProxy("Service Proxy", "Service Proxy", "service proxy", ComponentTypeEnum.RESOURCE, false),
     ServiceSubstitution("Service Substitution", "Service Substitution", "service substitution", ComponentTypeEnum.RESOURCE, false);
     // @formatter:on

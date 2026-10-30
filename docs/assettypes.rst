@@ -63,7 +63,7 @@ library.
      - A network function realised by equipment that **already exists in the field** — a gNB, a
        router, an OLT. ONAP does not create it; it recognises, configures and monitors it.
    * - CR
-     - Collection Resource
+     - Custom Resource
      - *Add CR*
      - A composite resource that is not a network function, and therefore carries none of the
        network-function property contract.
