@@ -16,11 +16,10 @@
   
 
 import { ITranslateServiceConfig } from "../shared/translator/translate.service.config";
-
-declare const __ENV__:string;
+import { environment } from '../../environments/environment';
 
 export function getTranslationServiceConfig() : ITranslateServiceConfig {
-    const pathPrefix = (__ENV__ === 'prod') ? 'sdc1/' : '';
+    const pathPrefix = environment.production ? 'sdc1/' : '';
     return {
         filePrefix: pathPrefix + 'assets/languages/',
         fileSuffix: '.json',

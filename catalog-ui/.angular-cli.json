@@ -1,0 +1,44 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "project": {
+    "name": "catalog-ui"
+  },
+  "apps": [
+    {
+      "root": "src",
+      "outDir": "dist",
+      "assets": [
+        "assets/preloading.css",
+        "assets/languages",
+        "assets/styles/fonts",
+        "assets/styles/images",
+        "assets/styles/app.css",
+        {
+          "glob": "**/*",
+          "input": "../configurations",
+          "output": "configurations"
+        }
+      ],
+      "index": "index.html",
+      "main": "main.ts",
+      "polyfills": "polyfills.ts",
+      "tsconfig": "tsconfig.app.json",
+      "styles": ["styles.less"],
+      "scripts": [
+        "../node_modules/jquery/dist/jquery.min.js",
+        "../node_modules/lodash/lodash.min.js",
+        "../node_modules/jqueryui/jquery-ui.min.js",
+        "../node_modules/cytoscape/dist/cytoscape.min.js",
+        "../node_modules/perfect-scrollbar/dist/js/perfect-scrollbar.jquery.min.js",
+        "../node_modules/qtip2/dist/jquery.qtip.min.js",
+        "../node_modules/@bardit/cytoscape-qtip/cytoscape-qtip.js",
+        "../node_modules/js-md5/build/md5.min.js"
+      ],
+      "environmentSource": "environments/environment.ts",
+      "environments": {
+        "dev": "environments/environment.ts",
+        "prod": "environments/environment.prod.ts"
+      }
+    }
+  ]
+}

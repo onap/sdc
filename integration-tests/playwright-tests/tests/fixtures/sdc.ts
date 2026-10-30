@@ -59,12 +59,12 @@ export const DESIGNER_USER = 'cs0008';
 export const ADMIN_USER = 'jh0003';
 
 /**
- * True when SDC_BASE_URL points at the webpack dev server rather than the webseal-simulator
+ * True when SDC_BASE_URL points at the CLI development gateway rather than the webseal-simulator
  * (:8285). The dev server injects its own auth cookies and serves a built-in /login page, but it
  * has no plugins-config endpoint, so it raises a transient "Not Found" modal that must be
  * dismissed before clicks land.
  *
- * Matches :9000-:9009, not just :9000, because `webpack.server.js` honours SDC_DEV_PORT: verifying
+ * Matches :9000-:9009, not just :9000, because the gateway honours SDC_DEV_PORT: verifying
  * a bootstrap change means running a baseline and a patched dev server side by side, and a
  * hardcoded :9000 silently skipped the plugins stub on every other port — which surfaces as a dozen
  * unrelated click timeouts rather than as a configuration error. The range stops at :9009 on

@@ -15,7 +15,7 @@ const mock = () => {
 
   });
 
-  // webpack.common.js:17 script-loads lodash.min.js into the vendor bundle, so `_` is an ambient
+  // .angular-cli.json loads lodash.min.js as a global script, so `_` is an ambient
   // global at runtime and 6 files under app/ rely on that (`import Dictionary = _.Dictionary`, plus
   // `_.keyBy` at automated-upgrade.service.ts:89). Jest never mirrored it, so a spec that reaches
   // any of them — even transitively, e.g. via workspace-container.component.ts — died with
