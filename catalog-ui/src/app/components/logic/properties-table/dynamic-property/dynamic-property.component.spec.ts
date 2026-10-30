@@ -93,6 +93,42 @@ describe('dynamic-property component', () => {
         expect(cmp.emitter.emit).toHaveBeenCalled();
     });
 
+    describe('deleting a list entry', () => {
+        const listWithOneEntry = (beProperty: any): { listProp: PropertyFEModel, entry: DerivedFEProperty } => {
+            const listProp = new PropertyFEModel(beProperty);
+            listProp.valueObj = ['a'];
+            const entry = new DerivedFEProperty(listProp, listProp.propertiesName, true, '', 'a');
+            listProp.flattenedChildren = [entry];
+            const cmp = fixture.componentInstance;
+            cmp.property = listProp;
+            cmp.rootProperty = listProp;
+            return { listProp, entry };
+        };
+
+        it('removes the entry when the backend omits subPropertyToscaFunctions', () => {
+            const { listProp, entry } = listWithOneEntry({
+                name: 'patterns', type: PROPERTY_TYPES.LIST, schema: { property: { type: PROPERTY_TYPES.STRING } }
+            });
+
+            fixture.componentInstance.deleteListOrMapItem(entry);
+
+            expect(listProp.valueObj).toEqual([]);
+            expect(listProp.flattenedChildren).toEqual([]);
+        });
+
+        it('removes the entry when subPropertyToscaFunctions is null', () => {
+            const { listProp, entry } = listWithOneEntry({
+                name: 'patterns', type: PROPERTY_TYPES.LIST, schema: { property: { type: PROPERTY_TYPES.STRING } },
+                subPropertyToscaFunctions: null
+            });
+
+            fixture.componentInstance.deleteListOrMapItem(entry);
+
+            expect(listProp.valueObj).toEqual([]);
+            expect(listProp.flattenedChildren).toEqual([]);
+        });
+    });
+
     describe('map entry checkbox', () => {
         const renderMapWithOneEntry = (hideCheckBox: boolean): HTMLElement => {
             const mapProp = new PropertyFEModel({

@@ -257,7 +257,7 @@ export class DynamicPropertyComponent {
                 return;
             }
             let oldKey = item.getActualMapKey();
-            if (this.property.subPropertyToscaFunctions !== null) {
+            if (this.property.subPropertyToscaFunctions != null) {
                 let deletedIndex = item.toscaPath.length > 0 ? Number(item.toscaPath[item.toscaPath.length - 1]) : null;
                 let parentIndex = item.toscaPath.length > 1 ? item.toscaPath.splice(0,item.toscaPath.length - 2) : null;
                 let tempSubToscaFunction: SubPropertyToscaFunction[] = [];
