@@ -162,13 +162,15 @@ export class CompositionGraphPaletteUtils {
     // }
 
     public isDragValid(cy:Cy.Instance, position: Point):boolean {
-        if (position.x < GraphUIObjects.DIAGRAM_PALETTE_WIDTH_OFFSET || position.y < GraphUIObjects.DIAGRAM_HEADER_OFFSET) { //hovering over palette. Dont bother computing validity of drop
+        // The palette is resizable, so the canvas origin has to be measured rather than assumed.
+        const canvasRect: ClientRect = (<any>cy).container().getBoundingClientRect();
+        if (position.x < canvasRect.left || position.y < canvasRect.top) { //hovering over palette. Dont bother computing validity of drop
             return false;
         }
         
         let offsetPosition = {
-            x: position.x - GraphUIObjects.DIAGRAM_PALETTE_WIDTH_OFFSET,
-            y: position.y - GraphUIObjects.DIAGRAM_HEADER_OFFSET
+            x: position.x - canvasRect.left,
+            y: position.y - canvasRect.top
         };
         let bbox = this._getNodeBBox(cy, null, offsetPosition, position);
 

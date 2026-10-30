@@ -375,6 +375,7 @@ export class GRAPH_EVENTS {
     static ON_PALETTE_COMPONENT_DRAG_START = 'onPaletteComponentDragStart';
     static ON_PALETTE_COMPONENT_DRAG_ACTION = 'onPaletteComponentDragAction';
     static ON_PALETTE_COMPONENT_DROP = 'onPaletteComponentDrop';
+    static ON_PALETTE_RESIZED = 'onPaletteResized';
     static ON_COMPONENT_INSTANCE_NAME_CHANGED = 'onComponentInstanceNameChanged';
     static ON_COMPONENT_INSTANCE_REQUIREMENT_EXTERNAL_CHANGED = 'onComponentInstanceRequirementExternalChanged'
     static ON_COMPONENT_INSTANCE_CAPABILITY_EXTERNAL_CHANGED = 'onComponentInstanceCapabilityExternalChanged'

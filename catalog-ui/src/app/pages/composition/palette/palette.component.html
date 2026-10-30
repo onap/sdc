@@ -1,4 +1,4 @@
-<div class="composition-palette-component">
+<div class="composition-palette-component" [style.width.px]="width">
     <div class="palette-elements-count">Elements
         <span class="palette-elements-count-value">{{numberOfElements}}</span>
     </div>
@@ -33,6 +33,11 @@
         </sdc-accordion>
     </div>
 </div>
+
+<div class="palette-resize-handle" role="separator" aria-orientation="vertical" aria-label="Resize elements palette" tabindex="0"
+     [attr.aria-valuenow]="width" [attr.aria-valuemin]="minWidth" [attr.aria-valuemax]="maxWidth"
+     (mousedown)="onResizeStart($event)" (dblclick)="resetWidth()" (keydown)="onResizeKeydown($event)"
+     data-tests-id="palette-resize-handle"></div>
 
 <div id="draggable_element" dndDropzone (dndDrop)="onDrop($event)" [dndAllowExternal]="true">
     <sdc-element-icon *ngIf="paletteDraggedElement" [iconName]="paletteDraggedElement.icon"

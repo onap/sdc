@@ -3,15 +3,25 @@
 exports[`palette component should match current snapshot of palette component 1`] = `
 <composition-palette
   buildPaletteByCategories={[Function Function]}
+  changeDetectorRef={[Function ViewRef_]}
   compositionPaletteService={[Function Object]}
   eventListenerService={[Function Object]}
+  maxWidth={[Function Number]}
+  minWidth={[Function Number]}
   numberOfElements="0"
   onDragStart={[Function Function]}
   onDraggableMoved={[Function Function]}
   onDrop={[Function Function]}
+  onResizeEnd={[Function Function]}
+  onResizeKeydown={[Function Function]}
+  onResizeMove={[Function Function]}
+  onResizeStart={[Function Function]}
   onSearchChanged={[Function Function]}
   openAccordion="false"
   position={[Function Point]}
+  resetWidth={[Function Function]}
+  width={[Function Number]}
+  zone={[Function NgZone]}
 >
   <div
     class="composition-palette-component"
@@ -42,6 +52,13 @@ exports[`palette component should match current snapshot of palette component 1`
       
     </div>
   </div><div
+    aria-label="Resize elements palette"
+    aria-orientation="vertical"
+    class="palette-resize-handle"
+    data-tests-id="palette-resize-handle"
+    role="separator"
+    tabindex="0"
+  /><div
     dnddropzone=""
     id="draggable_element"
   >

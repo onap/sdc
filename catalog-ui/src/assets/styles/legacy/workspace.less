@@ -334,7 +334,8 @@
                 //overflow-y: scroll;
                 .sdc-workspace-top-bar {
                     position: absolute;
-                    left: 245px;
+                    // The composition palette is resizable and publishes its width (PaletteComponent).
+                    left: ~"calc(var(--composition-palette-width, 244px) + 1px)";
                     right: 0;
                     z-index: 1;
                     .not-latest{

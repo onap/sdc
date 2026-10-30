@@ -695,6 +695,10 @@ export class CompositionGraphComponent implements AfterViewInit {
             this.onDrop(event);
         });
 
+        this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_PALETTE_RESIZED, () => {
+            this._cy.resize();
+        });
+
         this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_COMPONENT_INSTANCE_NAME_CHANGED, (component: ComponentInstance) => {
             const selectedNode = this._cy.getElementById(component.uniqueId);
             selectedNode.data().componentInstance.name = component.name;

@@ -6,6 +6,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +22,7 @@
  * ============LICENSE_END=========================================================
  */
 
-import { Component, HostListener } from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener, NgZone } from '@angular/core';
 import { Select } from '@ngxs/store';
 import { LeftPaletteComponent, LeftPaletteMetadataTypes } from 'app/models/components/display-component';
 import { Point } from 'app/models/graph/point';
@@ -41,7 +42,16 @@ import {GenericBrowserDomAdapter} from "@angular/platform-browser/src/browser/ge
 })
 export class PaletteComponent {
 
-    constructor(private compositionPaletteService: CompositionPaletteService, private eventListenerService: EventListenerService) {}
+    public static readonly DEFAULT_WIDTH = 244;
+    public static readonly MAX_WIDTH = 600;
+    public static readonly KEYBOARD_STEP = 20;
+    public static readonly WIDTH_STORAGE_KEY = 'sdc.palette.width';
+    public static readonly WIDTH_CSS_PROPERTY = '--composition-palette-width';
+
+    constructor(private compositionPaletteService: CompositionPaletteService,
+                private eventListenerService: EventListenerService,
+                private changeDetectorRef: ChangeDetectorRef,
+                private zone: NgZone) {}
 
     @Select(WorkspaceState.isViewOnly) isViewOnly$: boolean;
     public paletteElements: Dictionary<Dictionary<LeftPaletteComponent[]>>;
@@ -53,8 +63,14 @@ export class PaletteComponent {
     // to be recorded wherever numberOfElements is recomputed rather than in the search handler.
     public searchText: string;
     private openAccordion: boolean = false;
+    public readonly minWidth = PaletteComponent.DEFAULT_WIDTH;
+    public readonly maxWidth = PaletteComponent.MAX_WIDTH;
+    public width: number = this.readStoredWidth();
+    private resizeStartX: number;
+    private resizeStartWidth: number;
 
     ngOnInit() {
+        this.publishWidth();
         this.isPaletteLoading = true;
 
         this.compositionPaletteService.subscribeToLeftPaletteElements((leftPaletteElementsResponse) => {
@@ -111,6 +127,81 @@ export class PaletteComponent {
             }
         }
         return counter;
+    }
+
+    ngOnDestroy() {
+        this.stopResizeListeners();
+        document.documentElement.style.removeProperty(PaletteComponent.WIDTH_CSS_PROPERTY);
+    }
+
+    //---------------------------------------Resize-----------------------------------------//
+
+    public onResizeStart = (event: MouseEvent) => {
+        if (event.button !== 0) {
+            return;
+        }
+        // Otherwise the drag selects the element names under the cursor.
+        event.preventDefault();
+        this.resizeStartX = event.clientX;
+        this.resizeStartWidth = this.width;
+        // Outside the zone, so each mousemove re-renders only the palette, not the whole workspace.
+        this.zone.runOutsideAngular(() => {
+            document.addEventListener('mousemove', this.onResizeMove);
+            document.addEventListener('mouseup', this.onResizeEnd);
+        });
+    }
+
+    private onResizeMove = (event: MouseEvent) => {
+        this.width = this.clampWidth(this.resizeStartWidth + event.clientX - this.resizeStartX);
+        this.publishWidth();
+        this.changeDetectorRef.detectChanges();
+    }
+
+    private onResizeEnd = () => {
+        this.stopResizeListeners();
+        this.commitWidth();
+    }
+
+    public onResizeKeydown = (event: KeyboardEvent) => {
+        const step = PaletteComponent.KEYBOARD_STEP;
+        const widths = {ArrowLeft: this.width - step, ArrowRight: this.width + step, Home: this.minWidth, End: this.maxWidth};
+        if (!(event.key in widths)) {
+            return;
+        }
+        event.preventDefault();
+        this.width = this.clampWidth(widths[event.key]);
+        this.commitWidth();
+    }
+
+    public resetWidth = () => {
+        this.width = PaletteComponent.DEFAULT_WIDTH;
+        this.commitWidth();
+    }
+
+    private commitWidth() {
+        this.publishWidth();
+        // The graph measures its container on resize, so the new width must be rendered first.
+        this.changeDetectorRef.detectChanges();
+        localStorage.setItem(PaletteComponent.WIDTH_STORAGE_KEY, String(this.width));
+        this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_PALETTE_RESIZED);
+    }
+
+    private publishWidth() {
+        document.documentElement.style.setProperty(PaletteComponent.WIDTH_CSS_PROPERTY, this.width + 'px');
+    }
+
+    private stopResizeListeners() {
+        document.removeEventListener('mousemove', this.onResizeMove);
+        document.removeEventListener('mouseup', this.onResizeEnd);
+    }
+
+    private clampWidth(width: number): number {
+        return Math.round(Math.min(this.maxWidth, Math.max(this.minWidth, width)));
+    }
+
+    private readStoredWidth(): number {
+        const stored = Number(localStorage.getItem(PaletteComponent.WIDTH_STORAGE_KEY));
+        return stored ? this.clampWidth(stored) : PaletteComponent.DEFAULT_WIDTH;
     }
 
     @HostListener('document:dragover', ['$event'])

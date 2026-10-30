@@ -2,6 +2,8 @@
 
 :host(composition-graph) {
   flex: 1;
+  // Otherwise the cytoscape canvas holds the host at its old width while cy.resize() measures it.
+  min-width: 0;
   padding-top: 53px;
 }
 

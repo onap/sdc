@@ -2,7 +2,8 @@
 
 :host(composition-palette) {
   display:flex;
-  flex: 0 0 244px;
+  flex: 0 0 auto;
+  position: relative;
 }
 
 sdc-loader.inactive {
@@ -23,7 +24,6 @@ sdc-loader.inactive {
   display: flex;
   flex-direction: column;
   position:relative;
-  width: 244px;
   box-shadow: 7px -3px 6px -8px @sdcui_color_gray;
 
   .palette-elements-count {
@@ -59,6 +59,25 @@ sdc-loader.inactive {
       background-color: @sdcui_color_lighter-silver;
       line-height: 35px;
     }
+  }
+}
+
+.palette-resize-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: -3px;
+  width: 6px;
+  cursor: col-resize;
+  z-index: 10;
+
+  &:hover {
+    background-color: @sdcui_color_gray;
+  }
+
+  &:focus-visible {
+    outline: 2px solid @sdcui_color_blue;
+    outline-offset: -2px;
   }
 }
 
