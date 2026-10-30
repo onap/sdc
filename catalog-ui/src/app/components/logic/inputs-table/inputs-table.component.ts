@@ -17,11 +17,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2026 Deutsche Telekom AG
  */
 
 /**
  * Created by rc2122 on 5/4/2017.
  */
+import * as _ from "lodash";
 import { Component, Input, Output, EventEmitter, ViewChildren, QueryList } from "@angular/core";
 import {Component as ComponentData} from 'app/models/components/component';
 import {PropertiesGroup, PropertyModel} from 'app/models/properties';
@@ -33,6 +35,9 @@ import { InstanceFePropertiesMap } from "../../../models/properties-inputs/prope
 import { DataTypeService } from "../../../services/data-type.service";
 import { MetadataEntry } from "app/models/metadata-entry";
 import { DynamicElementComponent } from "../../ui/dynamic-element/dynamic-element.component";
+import { DerivedPropertyType, PropertyBEModel } from "app/models/properties-inputs/property-be-model";
+import { PropertyFEModel } from "app/models/properties-inputs/property-fe-model";
+import { PropertiesUtils } from "../../../pages/properties-assignment/services/properties.utils";
 
 @Component({
     selector: 'inputs-table',
@@ -59,6 +64,7 @@ export class InputsTableComponent {
     sortBy: String;
     reverse: boolean;
     selectedInputToDelete: InputFEModel;
+    private entryEditors = new Map<InputFEModel, { source: any, property: PropertyFEModel }>();
 
     sort = (sortBy) => {
         this.reverse = (this.sortBy === sortBy) ? !this.reverse : true;
@@ -89,7 +95,8 @@ export class InputsTableComponent {
     };
 
 
-    constructor(private modalService: ModalService, private dataTypeService: DataTypeService, private modalsHandler: ModalsHandler){
+    constructor(private modalService: ModalService, private dataTypeService: DataTypeService, private modalsHandler: ModalsHandler,
+                private propertiesUtils: PropertiesUtils){
         var x = 5
     }
 
@@ -98,6 +105,36 @@ export class InputsTableComponent {
         input.updateDefaultValueObj(event.value, event.isValid);
         this.inputChanged.emit(input);
     };
+
+    hasEntryEditor(input: InputFEModel): boolean {
+        return input.derivedDataType === DerivedPropertyType.LIST || input.derivedDataType === DerivedPropertyType.MAP;
+    }
+
+    /**
+     * The editor is rebuilt whenever the input's defaultValueObj is replaced from outside (Discard, reload), and
+     * kept otherwise, so a newly added empty entry survives until the user fills it in.
+     */
+    getEntryEditor(input: InputFEModel): PropertyFEModel {
+        let editor = this.entryEditors.get(input);
+        if (!editor || editor.source !== input.defaultValueObj) {
+            // No defaultValue on the editor's model: PropertyFEModel merges it into the value, which would bring
+            // deleted list entries back.
+            const property = this.propertiesUtils.convertAddPropertyBAToPropertyFE(new PropertyBEModel(<PropertyBEModel>{
+                name: input.name, type: input.type, schema: input.schema, value: input.getJSONDefaultValue()
+            }));
+            editor = { source: input.defaultValueObj, property };
+            this.entryEditors.set(input, editor);
+        }
+        return editor.property;
+    }
+
+    onEntriesChanged(input: InputFEModel): void {
+        const editor = this.entryEditors.get(input);
+        // A copy, because updateDefaultValueObj strips empty entries in place and the editor still shows them.
+        input.updateDefaultValueObj(_.cloneDeep(editor.property.valueObj), editor.property.valueObjIsValid);
+        editor.source = input.defaultValueObj;
+        this.inputChanged.emit(input);
+    }
 
     onRequiredChanged = (input: InputFEModel, event) => {
         this.inputChanged.emit(input);

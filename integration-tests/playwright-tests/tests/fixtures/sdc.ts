@@ -733,6 +733,58 @@ export class SdcApi {
             expect(resp.status(), `adding Compute to ${vf.name} failed: ${await resp.text()}`).toBe(201);
         }
     }
+
+    /**
+     * Drops one normative NovaServer onto a VF and declares its `security_groups` property (a list of
+     * strings) as a VF input. Returns the input's name.
+     */
+    async addListInput(vf: CreatedAsset): Promise<string> {
+        const r = await this.request.get(
+            this.url('/catalog/resources/resourceName/NovaServer/resourceVersion/1.0'), { headers: this.headers });
+        expect(r.status(), 'normative NovaServer 1.0 is not readable').toBe(200);
+        const nova = await r.json();
+        const inst = await this.request.post(this.url(`/catalog/resources/${vf.id}/resourceInstance`), {
+            headers: this.headers,
+            data: {
+                componentUid: nova.uniqueId, componentVersion: '1.0', name: 'NovaServer',
+                originType: 'VFC', icon: nova.icon, posX: '200', posY: '200',
+            },
+        });
+        if (inst.status() !== 201) {
+            expect(inst.status(), `adding NovaServer to ${vf.name} failed: ${await inst.text()}`).toBe(201);
+        }
+        const instanceId: string = (await inst.json()).uniqueId;
+
+        const props = await this.request.get(
+            this.url(`/catalog/resources/${vf.id}/componentInstances/${instanceId}/properties`), { headers: this.headers });
+        const securityGroups = (await props.json()).find((p: any) => p.name === 'security_groups');
+        expect(securityGroups, 'NovaServer has no security_groups property').toBeTruthy();
+
+        const inputName = 'novaserver0_security_groups';
+        const declare = await this.request.post(this.url(`/catalog/resources/${vf.id}/create/inputs`), {
+            headers: this.headers,
+            data: {
+                componentInstanceInputsMap: {},
+                componentInstanceProperties: { [instanceId]: [{ ...securityGroups, inputName }] },
+                groupProperties: {},
+                policyProperties: {},
+            },
+        });
+        if (declare.status() !== 200) {
+            expect(declare.status(), `declaring ${inputName} failed: ${await declare.text()}`).toBe(200);
+        }
+        return inputName;
+    }
+
+    /** The stored default of a component input, as the backend returns it (a JSON string or null). */
+    async inputDefaultValue(asset: CreatedAsset, inputName: string): Promise<string | null> {
+        const r = await this.request.get(
+            this.url(`/catalog/${SdcApi.collectionOf(asset.type)}/${asset.id}/filteredDataByParams?include=inputs`),
+            { headers: this.headers });
+        const input = ((await r.json()).inputs || []).find((i: any) => i.name === inputName);
+        expect(input, `${asset.name} has no input ${inputName}`).toBeTruthy();
+        return input.defaultValue === undefined ? null : input.defaultValue;
+    }
 }
 
 // ---------------------------------------------------------------------------

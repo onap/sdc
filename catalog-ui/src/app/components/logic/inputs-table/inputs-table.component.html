@@ -118,8 +118,18 @@
                 </div>
                 <!-- Value -->
                 <div class="table-cell valueCol" [class.inner-table-container]="input.childrenProperties || !input.isSimpleType">
-                    <dynamic-element class="value-input"
-                                     
+                    <dynamic-property *ngIf="hasEntryEditor(input)"
+                                      [property]="getEntryEditor(input)"
+                                      [rootProperty]="getEntryEditor(input)"
+                                      [readonly]="readonly"
+                                      [hideCheckBox]="true"
+                                      [expandedChildId]="getEntryEditor(input).expandedChildPropertyId"
+                                      (propertyChanged)="onEntriesChanged(input)"
+                                      (expandChild)="getEntryEditor(input).updateExpandedChildPropertyId($event)">
+                    </dynamic-property>
+                    <dynamic-element *ngIf="!hasEntryEditor(input)"
+                                     class="value-input"
+
                                      pattern="validationUtils.getValidationPattern(input.type)"
                                      [value]="input.defaultValueObj"
                                      [type]="input.type"
