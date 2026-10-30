@@ -31,6 +31,7 @@ public class WorkspaceConfiguration extends BasicConfiguration {
 
     private Map<String, List<MenuConfiguration>> workspaceMenuConfiguration;
     private List<String> automatedUpgradeResourceTypes;
+    private Map<String, List<String>> crBaseTypes;
 
     @Getter
     @Setter

@@ -516,6 +516,10 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
             this.component.categories = undefined;
             this.clearBaseTypes();
         }
+        if (this.isCrComponent() && this.isCreateMode()
+            && this.crBaseTypeOptions().indexOf(this.component.derivedFromGenericType) === -1) {
+            this.onCrBaseTypeChange('');
+        }
         this.detectChangesSafe();
     }
 
@@ -1017,6 +1021,27 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
     /** base type (general-view.html:624): CSAR OR not in an editable mode. */
     isBaseTypeDisabled(): boolean {
         return this.isCsarComponent() || !(this.isEditMode() || this.isCreateMode());
+    }
+
+    isCrComponent(): boolean {
+        return this.component.componentType === ComponentType.RESOURCE && this.component.resourceType === ResourceType.CR;
+    }
+
+    crBaseTypeOptions(): string[] {
+        const category = this.component.categories && this.component.categories[0];
+        const crBaseTypes = this.cacheService.get('crBaseTypes') || {};
+        return (category && crBaseTypes[category.name]) || [];
+    }
+
+    // CREATE only: the backend ignores a resource's base-type change on update.
+    showCrBaseType(): boolean {
+        return this.isCrComponent() && this.isCreateMode() && this.crBaseTypeOptions().length > 0;
+    }
+
+    onCrBaseTypeChange(value: string): void {
+        this.component.derivedFromGenericType = value || undefined;
+        this.component.derivedFromGenericVersion = undefined;
+        this.detectChangesSafe();
     }
 
     /** Angular 5-compatible substitute for the Angular 6.1+ `keyvalue` pipe.

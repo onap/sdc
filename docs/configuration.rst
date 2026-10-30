@@ -1441,6 +1441,15 @@ FE-workspace-configuration.yaml
     # can upgrade. A frontend older than this setting fails to load the file when the key is present.
     automatedUpgradeResourceTypes:
       - VF
+    #
+    # crBaseTypes: per resource category, the base node types a Custom Resource (CR) can be created
+    # from; the CR create form offers them as "Base Type". Optional; a category that is not listed
+    # offers no choice and its CRs derive from the generic CR type. The backend picks the latest
+    # version of the chosen type. A frontend older than this setting fails to load the file when
+    # the key is present.
+    #crBaseTypes:
+    #  Task:
+    #    - org.openecomp.resource.abstract.nodes.RANTemplateExecutionTask
     # following are 2 example
     workspaceMenuConfiguration:
       VFC:

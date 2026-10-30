@@ -82,6 +82,7 @@ public class ConfigServletTest {
         assertEquals(expected, response.getEntity().toString());
         assertEquals(response.getStatus(), HttpStatus.SC_OK);
         assertTrue(response.getEntity().toString().contains("\"automatedUpgradeResourceTypes\""));
+        assertTrue(response.getEntity().toString().contains("\"crBaseTypes\""));
     }
     @Test
     public void validateGetPluginsConfigurationReturnsCorrectConfiguration() {

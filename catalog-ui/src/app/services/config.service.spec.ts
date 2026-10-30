@@ -61,3 +61,37 @@ describe('ConfigService.loadWorkspaceConfiguration', () => {
         expect(cacheService.set).toHaveBeenCalledWith('automatedUpgradeResourceTypes', ['VF']);
     });
 });
+
+describe('ConfigService.loadWorkspaceConfiguration crBaseTypes', () => {
+    const RAN = 'org.openecomp.resource.abstract.nodes.RANTemplateExecutionTask';
+
+    it('caches the CR base types per category', async () => {
+        const {service, cacheService} = serviceAnswering({crBaseTypes: {Task: [RAN]}});
+        await service.loadWorkspaceConfiguration();
+        expect(cacheService.set).toHaveBeenCalledWith('crBaseTypes', {Task: [RAN]});
+    });
+
+    it('caches none when the key is absent', async () => {
+        const {service, cacheService} = serviceAnswering({workspaceMenuConfiguration: {}});
+        await service.loadWorkspaceConfiguration();
+        expect(cacheService.set).toHaveBeenCalledWith('crBaseTypes', {});
+    });
+
+    it('drops malformed entries', async () => {
+        const {service, cacheService} = serviceAnswering({crBaseTypes: {Task: RAN, Other: [RAN, 7], Empty: [], Ok: [RAN]}});
+        await service.loadWorkspaceConfiguration();
+        expect(cacheService.set).toHaveBeenCalledWith('crBaseTypes', {Ok: [RAN]});
+    });
+
+    it('caches none when crBaseTypes is not a map', async () => {
+        const {service, cacheService} = serviceAnswering({crBaseTypes: [RAN]});
+        await service.loadWorkspaceConfiguration();
+        expect(cacheService.set).toHaveBeenCalledWith('crBaseTypes', {});
+    });
+
+    it('caches none when the FE has no workspace configuration', async () => {
+        const {service, cacheService} = serviceAnswering(null, 404);
+        await expect(service.loadWorkspaceConfiguration()).resolves.toBeUndefined();
+        expect(cacheService.set).toHaveBeenCalledWith('crBaseTypes', {});
+    });
+});
