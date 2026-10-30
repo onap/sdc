@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": ["core-js", "node"],
+    "paths": {
+      "app/*": ["app/*"],
+      "onap-ui-angular": ["../node_modules/onap-ui-angular/dist/index"]
+    }
+  },
+  "exclude": ["**/*.spec.ts", "jest"]
+}

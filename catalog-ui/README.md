@@ -2,15 +2,23 @@
 
 ## Development server
 
-1. Run `npm start` for a dev server.
+Use the Node 16.20.0 / npm 6.14.13 runtime installed by Maven. The Angular 5
+application uses Angular CLI 1.7.4 and `.angular-cli.json`; it does not have
+an Angular 6+ `angular.json` workspace. This build migration does not upgrade Angular.
+
+1. Run `npm install`, then `npm start` for a dev server.
 2. Navigate to <http://localhost:9000/>.
    * The app will automatically reload if you change any of the source files.
 
 To Specify the user role:
 
-`npm start --env.role designer`
+`npm start -- --env.role designer`
 
-`npm run <role>`
+`npm run designer` or `npm run admin`
+
+The loopback-only gateway exposes `/login`, simulates WebSeal identities and
+forwards to `ng serve` on an automatically selected internal port. Live reload
+passes through the gateway. Stop the command to close both servers.
 
 
 ## Build
@@ -25,26 +33,35 @@ The build artifacts will be stored in the `dist/` directory.
 Run `npm run build:prod` to build the project.
 The build artifacts will be stored in the `dist/` directory.
 
+Production uses AOT, CLI-generated content hashes and `/sdc1/` asset URLs.
+`tools/package-production.js` emits `.jsgz` files and updates the generated
+index for catalog-fe's gzip filter, retaining `.js` files for lazy chunks.
+Maven copies `dist/` to catalog-fe as before. Do not copy only an index or
+individual chunks from a different build.
+
 ## Configuration
 
-### webpack.server.js
+### Development Proxies
 
-Development server is configured in `/webpack.server.js` file. Configure the constants accordingly:
-- `devPort`: the webpack server port;
-- `feHost`: the catalog front-end container host;
-- `fePort`: the catalog front-end container port.
+`proxy.conf.js` and `tools/dev-proxy.js` configure the API proxies. Configure
+the target with environment variables, not webpack internals:
 
-For example:
+```bash
+# Direct backend, the default
+SDC_BACKEND_HOST=localhost SDC_BACKEND_PORT=8080 npm start
 
-```js
-const fePort = 443;
-const feHost = "sdc-fe-ui.example.com";
-const protocol="https";
+# catalog-fe, which performs the REST/uicache rewrites itself
+SDC_BACKEND_HOST=localhost SDC_BACKEND_PORT=8181 SDC_DIRECT_FE=true npm start
+
+# Remote frontend
+SDC_BACKEND_HOST=sdc-fe-ui.example.com SDC_BACKEND_PORT=443 \
+   SDC_BACKEND_PROTOCOL=https SDC_DIRECT_FE=true npm start
 ```
 
-The server will create a proxy to the front end calls based on the  __feHost__ and __fePort__.
+`SDC_DEV_PORT` changes the public port from 9000. Use 9000-9009 locally.
+Pair `SDC_DIRECT_FE=true` with the frontend target; leave it unset for a backend.
 
-It will also create authorization cookies to those requests. The cookies and user information comes from the
+The gateway creates development-only authorization cookies and headers. The cookies and user information come from the
 `/configurations/mock.json` file under the nodes `sdcConfig.cookie` and `sdcConfig.userTypes` respectively.
 
 The default user role is the node `sdcConfig.userTypes.designer` (configurable with the npm parameter --env.role).
@@ -52,12 +69,17 @@ The default user role is the node `sdcConfig.userTypes.designer` (configurable w
 
 ### Application Configuration
 
-Application configuration `dev.js` or `prod.js` and `menu.js` are located in `/configuration` folder and required by `app.ts` according to __ENV__ parameter from webpack.
+Application configuration `dev.js` or `prod.js` and `menu.js` are located in
+`configurations/`. CLI replaces `src/environments/environment.ts` with its
+production counterpart for the production build, selecting both the configuration
+and production mode. Asset copying and global-script order live in `.angular-cli.json`.
 
 
 ## Running unit tests
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+Run `npm test -- --runInBand` for the Jest application suite and coverage.
+The npm pretest hook also runs the Node tooling tests for packaging, login and
+proxy behavior. Run `npm run test:tools` for only those tests. Karma is not used.
 
 ## Running end-to-end tests
 

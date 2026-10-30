@@ -18,15 +18,8 @@
  * ============LICENSE_END=========================================================
  */
 
-// Swapped for environment.prod.ts by AngularCompilerPlugin's hostReplacementPaths — see
-// webpack.common.js for why the replacement has to happen in the TypeScript compiler host and
-// not via NormalModuleReplacementPlugin.
-//
-// This must be a real exported const rather than the `__ENV__` DefinePlugin global that
-// app.module.ts used before. AOT evaluates @NgModule metadata off the TypeScript AST, which
-// happens before DefinePlugin's textual substitution, so `declare const __ENV__` is an
-// unresolvable symbol there and the comparison folds to the wrong value with no diagnostic.
-// (A `declare const` is still fine inside a function body — only decorator metadata is affected.)
+export const sdcConfig = require('../../configurations/dev.js');
+
 export const environment = {
   production: false
 };

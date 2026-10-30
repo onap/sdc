@@ -22,22 +22,14 @@ import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
 import {enableProdMode} from '@angular/core';
 import {AppModule} from './app/app.module';
 import {IAppConfigurtaion} from "./app/models/app-config";
+import {environment, sdcConfig} from './environments/environment';
 
-declare const __ENV__: string;
-export declare let sdc2Config: IAppConfigurtaion;
+export const sdc2Config: IAppConfigurtaion = sdcConfig;
 
-if (__ENV__ === 'prod') {
-  sdc2Config = require('./../configurations/prod.js');
+if (environment.production) {
   enableProdMode();
-} else {
-  sdc2Config = require('./../configurations/dev.js');
 }
 
-// Uglify fix because the cookie received from webseal change his value after some seconds.
-let timeout: number = 0;
-if (__ENV__ === 'dev') {
-  timeout = 0;
-}
 window.setTimeout(() => {
   platformBrowserDynamic().bootstrapModule(AppModule);
-}, timeout);
+}, 0);

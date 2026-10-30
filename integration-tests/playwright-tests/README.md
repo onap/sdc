@@ -165,7 +165,7 @@ login.
 
 ```bash
 # from the repo root, after editing catalog-ui/
-(cd catalog-ui && npx webpack --config webpack.production.js)
+(cd catalog-ui && npm run build:prod)
 cp -r catalog-ui/dist/. catalog-fe/src/main/webapp/
 mvn package -pl catalog-fe -DskipTests -Dcheckstyle.skip -Djacoco.skip=true -DskipPMD -q
 cp catalog-fe/target/catalog-fe-*-SNAPSHOT.war catalog-fe/sdc-frontend/
@@ -218,7 +218,7 @@ anything.
 
 ---
 
-## Fast iteration with webpack-dev-server
+## Fast iteration with the CLI development server
 
 Rebuilding the FE image per change costs ~3 minutes; the dev server costs ~2 seconds. The same
 specs run against both targets; the fixture detects which one via `IS_DEV_SERVER` and compensates
@@ -226,8 +226,8 @@ for the two dev-server gaps below. One test — the simulator's user-table check
 the dev server, which serves its own minimal `/login` with no such table. So expect
 **23 passed / 1 skipped** here versus **24 passed** against Docker.
 
-Restarting is required after editing `webpack.server.js`: HMR reloads application code, not the
-dev-server config.
+Restart after editing `proxy.conf.js`, `tools/dev-proxy.js`, or `tools/dev-server.js`:
+live reload rebuilds application code, not the proxy or login gateway.
 
 ```bash
 cd catalog-ui
@@ -252,7 +252,7 @@ SDC_BASE_URL=http://localhost:9001 npx playwright test
 
 ### Pair the port with `SDC_DIRECT_FE` correctly, or every API call 404s
 
-`webpack.server.js:83` rewrites `^/sdc1/feProxy/rest` → `/sdc2/rest` **only when
+`catalog-ui/tools/dev-proxy.js` rewrites `^/sdc1/feProxy/rest` → `/sdc2/rest` **only when
 `SDC_DIRECT_FE` is not `true`**. So there are two valid configurations and two broken ones:
 
 | `SDC_BACKEND_PORT` | `SDC_DIRECT_FE` | Rewrite | Result |
@@ -284,7 +284,7 @@ that failed seconds earlier and several DOM layers away. Two dev-server-only 404
 
 | Failing call | Why | Fix |
 | --- | --- | --- |
-| `/sdc1/feProxy/uicache/v1/catalog` | `uicache` is a **catalog-fe** concept. `FeProxyServlet` rewrites it to the BE's `rest/v1/screen`; nothing did that when the dev server targets the BE directly, so the CATALOG page 404'd. | Fixed at source in `catalog-ui/webpack.server.js` — the proxy now mirrors the servlet's mapping. Verified: BE `/sdc2/rest/v1/screen` returns the identical payload (same keys, 178 resources / 31 services). |
+| `/sdc1/feProxy/uicache/v1/catalog` | `uicache` is a **catalog-fe** concept. `FeProxyServlet` rewrites it to the BE's `rest/v1/screen`; nothing did that when the dev server targets the BE directly, so the CATALOG page 404'd. | `catalog-ui/tools/dev-proxy.js` mirrors the servlet's mapping to BE `/sdc2/rest/v1/screen`. |
 | `/sdc1/feProxy/uicache/v1/catalog/resources/latestversion/notabstract/metadata` | The composition **left palette**. `FeProxyServlet:242-246` maps this one path to `rest/v1/**catalog**`, not `rest/v1/screen` — the same facade prefix, a different target. | Same fix, but as a **rule that must be listed first**: see the ordering note below. |
 | `/sdc1/rest/config/ui/plugins` | catalog-fe serves this from its own `plugins-configuration.yaml`; **the BE does not serve it at all** — every `/sdc2/rest/**/plugins` spelling returns 500, so a rewrite would turn a 404 into a 500. | Stubbed in the fixture (`stubPluginsConfig`, empty array), dev-server only. |
 
@@ -313,15 +313,15 @@ CATALOG navigation, so the modal reappears mid-spec. Prefer removing the 404 to 
 
 ### `npm start` reaped with exit 144
 
-In some agent/harness sessions, launching webpack-dev-server as a backgrounded shell job (`&`,
+In some agent/harness sessions, launching the development server as a backgrounded shell job (`&`,
 `nohup`, even `setsid`) gets its whole process group killed when the launching call returns. Use
 the harness's own background-run mechanism, then leave it strictly alone: poll readiness with
 read-only `curl http://localhost:9000` in *separate* commands, and never `pkill`/restart it
 mid-wait — issuing a process-touching command is what triggers the reap. The JIT dev bundle takes
 60–120 s to compile; wait before the first probe.
 
-`npm start` and `npm run start:local` are **the same command** (`webpack-dev-server`); the
-distinction in older docs was never real.
+`npm start` and `npm run start:local` both run `node tools/dev-server.js`, which owns the
+development-only login gateway and starts `ng serve` on an internal loopback port.
 
 ### Pointing at a remote backend
 

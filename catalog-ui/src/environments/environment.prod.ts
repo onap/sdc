@@ -18,6 +18,8 @@
  * ============LICENSE_END=========================================================
  */
 
+export const sdcConfig = require('../../configurations/prod.js');
+
 export const environment = {
   production: true
 };
