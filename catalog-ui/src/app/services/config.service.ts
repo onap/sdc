@@ -107,12 +107,26 @@ export class ConfigService {
         // Past the interceptors: this file is optional, and through them a 404 or 500 would open the
         // global error modal although the UI carries on with the defaults.
         return new HttpClient(this.httpBackend).get<any>(url).toPromise()
-            .then((workspaceConfiguration: any) => workspaceConfiguration && workspaceConfiguration.automatedUpgradeResourceTypes)
             .catch(() => undefined)
-            .then((resourceTypes: any) => {
+            .then((workspaceConfiguration: any) => {
+                const resourceTypes = workspaceConfiguration && workspaceConfiguration.automatedUpgradeResourceTypes;
                 this.cacheService.set('automatedUpgradeResourceTypes',
                     Array.isArray(resourceTypes) ? resourceTypes : [ResourceType.VF]);
+                this.cacheService.set('crBaseTypes',
+                    ConfigService.toCrBaseTypes(workspaceConfiguration && workspaceConfiguration.crBaseTypes));
             });
+    }
+
+    private static toCrBaseTypes(raw: any): {[category: string]: string[]} {
+        const crBaseTypes: {[category: string]: string[]} = {};
+        if (!raw || typeof raw !== 'object' || Array.isArray(raw)) { return crBaseTypes; }
+        Object.keys(raw).forEach((category: string) => {
+            const types = raw[category];
+            if (Array.isArray(types) && types.length > 0 && types.every((type: any) => typeof type === 'string')) {
+                crBaseTypes[category] = types;
+            }
+        });
+        return crBaseTypes;
     }
 
 }

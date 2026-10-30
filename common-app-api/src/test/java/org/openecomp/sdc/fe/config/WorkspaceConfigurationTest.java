@@ -60,4 +60,11 @@ public class WorkspaceConfigurationTest {
         workspaceConfiguration = configurationManager.getWorkspaceConfiguration();
         assertEquals(Arrays.asList("VF", "CR"), workspaceConfiguration.getAutomatedUpgradeResourceTypes());
     }
+
+    @Test
+    public void validateCrBaseTypesAreRead() {
+        workspaceConfiguration = configurationManager.getWorkspaceConfiguration();
+        assertEquals(Arrays.asList("org.openecomp.resource.abstract.nodes.RANTemplateExecutionTask",
+            "org.openecomp.resource.abstract.nodes.DayZeroGenerationTask"), workspaceConfiguration.getCrBaseTypes().get("Task"));
+    }
 }

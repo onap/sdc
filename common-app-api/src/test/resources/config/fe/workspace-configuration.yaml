@@ -200,3 +200,7 @@ workspaceMenuConfiguration:
 automatedUpgradeResourceTypes:
   - VF
   - CR
+crBaseTypes:
+  Task:
+    - org.openecomp.resource.abstract.nodes.RANTemplateExecutionTask
+    - org.openecomp.resource.abstract.nodes.DayZeroGenerationTask

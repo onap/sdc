@@ -499,6 +499,22 @@
             </div>
           </div>
 
+          <!-- BASE TYPE (CR) -->
+          <div class="w-sdc-form-columns-wrapper" *ngIf="showCrBaseType()">
+            <div class="w-sdc-form-column">
+              <div class="i-sdc-form-item">
+                <label class="i-sdc-form-label" for="gt-cr-base-type">Base Type</label>
+                <select id="gt-cr-base-type" class="i-sdc-form-select"
+                        (change)="onCrBaseTypeChange($event.target.value)"
+                        data-tests-id="selectCrBaseType">
+                  <option value="" [selected]="!component?.derivedFromGenericType">Default</option>
+                  <option *ngFor="let type of crBaseTypeOptions()" [value]="type"
+                          [selected]="type === component?.derivedFromGenericType">{{type}}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
           <!-- METADATA (created/modified/uuid) -->
           <div class="meta-data" *ngIf="component?.creationDate">
             <div><strong>Created:</strong></div>
