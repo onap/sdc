@@ -13,7 +13,7 @@ import {DataTypesService} from "../../../services/data-types.service";
 export class TypeWorkspaceToscaArtifactPageComponent implements OnInit {
 
     @Input() dataType: DataTypeModel = new DataTypeModel();
-    @ViewChild('toscaArtifactsTable') table: any;
+    @ViewChild('toscaArtifactsTable', {static: false}) table: any;
     public toscaArtifacts: Array<ArtifactModel> = [];
     public componentId: string;
     public componentType: string;

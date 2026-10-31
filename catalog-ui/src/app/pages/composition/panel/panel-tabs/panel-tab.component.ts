@@ -16,7 +16,7 @@ import {Component as TopologyTemplate} from 'app/models/components/component';
   template: `<div #content></div>`
 })
 export class PanelTabComponent implements OnChanges, OnDestroy, AfterViewInit {
-  @ViewChild('content', { read: ViewContainerRef }) content;
+  @ViewChild('content', { read: ViewContainerRef, static: false }) content;
   @Input() isActive:boolean;
   @Input() panelTabType;
   @Input() input;

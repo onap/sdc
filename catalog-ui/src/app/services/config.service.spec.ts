@@ -19,8 +19,7 @@
  */
 
 import {HttpErrorResponse, HttpResponse} from '@angular/common/http';
-import {of} from 'rxjs/observable/of';
-import {_throw} from 'rxjs/observable/throw';
+import {of, throwError as _throw} from 'rxjs';
 import {ConfigService} from './config.service';
 
 function serviceAnswering(body: any, status: number = 200) {

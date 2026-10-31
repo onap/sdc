@@ -21,8 +21,8 @@ import {RequirementsEditorComponent} from "./requirements/requirements-editor/re
 })
 export class ReqAndCapabilitiesComponent implements OnInit {
 
-    @ViewChild('requirementsContainer', { read: ViewContainerRef }) requirementsContainer: ViewContainerRef;
-    @ViewChild('capabilitiesContainer', { read: ViewContainerRef }) capabilitiesContainer: ViewContainerRef;
+    @ViewChild('requirementsContainer', { read: ViewContainerRef, static: true }) requirementsContainer: ViewContainerRef;
+    @ViewChild('capabilitiesContainer', { read: ViewContainerRef, static: true }) capabilitiesContainer: ViewContainerRef;
     requirements: Requirement[] = [];
     private requirementsUI: RequirementUI[] = [];
     capabilities: Capability[] = [];

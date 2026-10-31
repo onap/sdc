@@ -1,3 +1,5 @@
+
+import {map} from 'rxjs/operators';
 /**
  * Created by rc2122 on 6/4/2018.
  */
@@ -24,7 +26,7 @@
 'use strict';
 import {Inject, Injectable} from "@angular/core";
 import {SdcConfigToken, ISdcConfig} from "app/config/sdc-config.config";
-import {Observable} from "rxjs/Observable";
+import {Observable} from "rxjs";
 import { HttpClient, HttpResponse } from "@angular/common/http";
 import { ComponentFactory } from "../utils/component-factory";
 import { DEFAULT_ICON, ComponentType } from "../utils/constants";
@@ -53,20 +55,20 @@ export class OnboardingService {
     }
 
     getOnboardingVSPs = (): Observable<Array<ICsarComponent>> =>{
-        return this.http.get<OnboardingComponents>(this.api.GET_onboarding).map((onboardingVSPs) =>{
+        return this.http.get<OnboardingComponents>(this.api.GET_onboarding).pipe(map((onboardingVSPs) =>{
             return onboardingVSPs.results
-        });
+        }));
     }
 
     getOnboardingComponents = ():Observable<Array<IComponentMetadata>> => {
-        return this.getOnboardingVSPs().map((onboardingComponents) => {
+        return this.getOnboardingVSPs().pipe(map((onboardingComponents) => {
             let componentsMetadataList: Array<IComponentMetadata> = new Array();
             onboardingComponents.forEach((obc:ICsarComponent) => {
                 let componentMetaData: ComponentMetadata = this.createFromCsarComponent(obc);
                 componentsMetadataList.push(componentMetaData);
             });
             return componentsMetadataList;
-        });
+        }));
     };
     
     public createFromCsarComponent = (csar:ICsarComponent): ComponentMetadata => {
@@ -132,8 +134,8 @@ export class OnboardingService {
     };
 
     getComponentFromCsarUuid = (csarUuid:string):Observable<ComponentMetadata> => {
-        return this.http.get<ComponentMetadata>(this.api.root + this.api.GET_component_from_csar_uuid.replace(':csar_uuid', csarUuid))
-            .map((response: any) => {
+        return this.http.get<ComponentMetadata>(this.api.root + this.api.GET_component_from_csar_uuid.replace(':csar_uuid', csarUuid)).pipe(
+            map((response: any) => {
                 // If the status is 400, this means that the component not found.
                 // I do not want to return error from server, because a popup will appear in client with the error.
                 // So returning success (200) with status 400.
@@ -142,7 +144,7 @@ export class OnboardingService {
                     componentMetadata = response;
                     return componentMetadata;
                 }
-            });
+            }));
     };
 
     //TODO remove when workspace page convert to angular5

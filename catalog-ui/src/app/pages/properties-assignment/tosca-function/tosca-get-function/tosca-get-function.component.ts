@@ -33,7 +33,7 @@ import {DataTypeService} from "../../../../services/data-type.service";
 import {ToscaGetFunctionType} from "../../../../models/tosca-get-function-type";
 import {TranslateService} from "../../../../shared/translator/translate.service";
 import {ComponentGenericResponse} from '../../../../services/responses/component-generic-response';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {PropertySource} from "../../../../models/property-source";
 import {InstanceFeDetails} from "../../../../models/instance-fe-details";
 import {ToscaGetFunction} from "../../../../models/tosca-get-function";

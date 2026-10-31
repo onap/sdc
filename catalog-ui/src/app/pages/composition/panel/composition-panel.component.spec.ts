@@ -1,7 +1,7 @@
+import {of,  Observable } from 'rxjs';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture } from '@angular/core/testing';
 import { NgxsModule, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
 import { Mock } from 'ts-mockery';
 import { ConfigureFn, configureTests } from '../../../../jest/test-config.helper';
 import { Service } from '../../../models/components/service';
@@ -174,7 +174,7 @@ describe('composition-panel component', () => {
         selectedComponent.isResource = jest.fn(() => false);
         selectedComponent.isService = jest.fn(() => true);
         selectedComponent.isSubstituteCandidate = jest.fn(() => true);
-        fixture.componentInstance.store.select = jest.fn(() => Observable.of(selectedComponent));
+        fixture.componentInstance.store.select = jest.fn(() => of(selectedComponent));
 
         fixture.componentInstance.topologyTemplate = selectedComponent;
 
@@ -198,7 +198,7 @@ describe('composition-panel component', () => {
         selectedComponent.isResource = jest.fn(() => false);
         selectedComponent.isService = jest.fn(() => true);
         selectedComponent.isSubstituteCandidate = jest.fn(() => false);
-        fixture.componentInstance.store.select = jest.fn(() => Observable.of(selectedComponent));
+        fixture.componentInstance.store.select = jest.fn(() => of(selectedComponent));
 
         fixture.componentInstance.topologyTemplate = selectedComponent;
 
@@ -221,7 +221,7 @@ describe('composition-panel component', () => {
         selectedComponent.isResource = jest.fn(() => true);
         selectedComponent.isService = jest.fn(() => false );
 
-        fixture.componentInstance.store.select = jest.fn(() => Observable.of(selectedComponent));
+        fixture.componentInstance.store.select = jest.fn(() => of(selectedComponent));
 
         fixture.componentInstance.topologyTemplate = selectedComponent;
 
@@ -246,7 +246,7 @@ describe('composition-panel component', () => {
         selectedComponent.isService = jest.fn(() => true );
         selectedComponent.isSubstituteCandidate = jest.fn(() => true );
 
-        fixture.componentInstance.store.select = jest.fn(() => Observable.of(selectedComponent));
+        fixture.componentInstance.store.select = jest.fn(() => of(selectedComponent));
         fixture.componentInstance.selectedComponentIsServiceProxyInstance = jest.fn(() => true);
 
         fixture.componentInstance.topologyTemplate = selectedComponent;
@@ -271,7 +271,7 @@ describe('composition-panel component', () => {
         topologyTemplate.isService = jest.fn(() => false );
 
         const vlMock = Mock.of<Resource>({ resourceType : 'VL', isResource : () => true, isService : () => false });
-        fixture.componentInstance.store.select = jest.fn(() => Observable.of(vlMock));
+        fixture.componentInstance.store.select = jest.fn(() => of(vlMock));
 
         fixture.componentInstance.topologyTemplate = topologyTemplate;
 
@@ -296,7 +296,7 @@ describe('composition-panel component', () => {
         topologyTemplate.isService = jest.fn(() => false );
 
         const vlMock = Mock.of<Resource>({ resourceType : 'VL', isResource : () => true, isService : () => false });
-        fixture.componentInstance.store.select = jest.fn(() => Observable.of(vlMock));
+        fixture.componentInstance.store.select = jest.fn(() => of(vlMock));
 
         fixture.componentInstance.topologyTemplate = topologyTemplate;
 

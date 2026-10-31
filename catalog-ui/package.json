@@ -13,7 +13,7 @@
     "admin": "npm start -- --env.role admin",
     "start": "node tools/dev-server.js",
     "start:local": "node tools/dev-server.js",
-    "build": "ng build --target development --aot=false",
+    "build": "ng build --configuration development --aot=false",
     "build:prod": "ng build --prod --aot --build-optimizer=false --deploy-url /sdc1/ && node tools/package-production.js",
     "lint": "tslint -c tslint.json 'src/**/*.ts'",
     "pretest": "npm run test:tools",
@@ -43,7 +43,19 @@
         "statements": 38
       }
     },
-    "setupTestFrameworkScriptFile": "<rootDir>/src/jest/setup-jest.ts",
+    "setupFilesAfterEnv": [
+      "<rootDir>/src/jest/setup-jest.ts"
+    ],
+    "globals": {
+      "ts-jest": {
+        "isolatedModules": true,
+        "tsConfig": "<rootDir>/src/tsconfig.spec.json",
+        "stringifyContentPathRegex": "\\.html$",
+        "astTransformers": [
+          "jest-preset-angular/InlineHtmlStripStylesTransformer"
+        ]
+      }
+    },
     "transformIgnorePatterns": [
       "<rootDir>/node_modules/(?!onap-ui-angular)"
     ],
@@ -51,28 +63,39 @@
     "roots": [
       "<rootDir>/src/app/"
     ],
-    "testEnvironment": "jsdom",
+    "testEnvironment": "jest-environment-jsdom-thirteen",
     "testURL": "http://localhost/",
     "transform": {
-      "^.+\\.(ts|html)$": "<rootDir>/node_modules/jest-preset-angular/preprocessor.js",
-      "^.+\\.js$": "babel-jest"
+      "^.+\\.(ts|html)$": "ts-jest",
+      "^.+\\.js$": [
+        "babel-jest",
+        {
+          "presets": [
+            "@babel/preset-env"
+          ]
+        }
+      ]
     }
   },
   "devDependencies": {
-    "@angular/cli": "1.7.4",
-    "@types/jest": "^21.1.2",
+    "@angular/cli": "8.3.29",
+    "@angular-devkit/build-angular": "0.803.29",
+    "@types/jest": "24.9.1",
+    "@babel/core": "7.12.17",
+    "@babel/preset-env": "7.12.17",
+    "babel-jest": "24.9.0",
     "axe-core": "^4.4.0",
     "cypress-axe": "^1.0.0",
     "jest-axe": "^5.0.1",
-    "codelyzer": "^4.5.0",
+    "codelyzer": "5.2.2",
     "apache-server-configs": "^2.7.1",
     "cors": "2.7.1",
     "cypress": "^9.7.0",
     "express": "^4.14.0",
     "http-proxy-middleware": "^0.14.0",
-    "jest": "^23.1.0",
+    "jest": "24.9.0",
     "jest-dom": "^1.3.1",
-    "jest-preset-angular": "^5.2.2",
+    "jest-preset-angular": "7.1.1",
     "jshint-stylish": "2.2.1",
     "json-loader": "^0.5.4",
     "load-grunt-tasks": "3.5.2",
@@ -82,33 +105,30 @@
   },
   "engines": {},
   "dependencies": {
-    "@angular/animations": "^5.0.0",
-    "@angular/common": "^5.0.0",
-    "@angular/compiler": "^5.0.0",
-    "@angular/compiler-cli": "^5.0.0",
-    "@angular/core": "^5.0.0",
-    "@angular/forms": "^5.0.0",
-    "@angular/http": "^5.0.0",
-    "@angular/platform-browser": "^5.0.0",
-    "@angular/platform-browser-dynamic": "^5.0.0",
-    "@angular/router": "^5.0.0",
+    "@angular/animations": "8.2.14",
+    "@angular/common": "8.2.14",
+    "@angular/compiler": "8.2.14",
+    "@angular/compiler-cli": "8.2.14",
+    "@angular/core": "8.2.14",
+    "@angular/forms": "8.2.14",
+    "@angular/platform-browser": "8.2.14",
+    "@angular/platform-browser-dynamic": "8.2.14",
+    "@angular/router": "8.2.14",
     "@bardit/cytoscape-expand-collapse": "^2.0.3",
     "@bardit/cytoscape-qtip": "^2.5.1",
-    "@ng-select/ng-select": "^1.0.2",
-    "@ngxs/devtools-plugin": "3.3.4",
-    "@ngxs/logger-plugin": "3.3.4",
-    "@ngxs/store": "^2.1.0-dev.d538580",
-    "@swimlane/ngx-datatable": "^14.0.0",
+    "@ng-select/ng-select": "3.7.3",
+    "@ngxs/devtools-plugin": "3.5.1",
+    "@ngxs/logger-plugin": "3.5.1",
+    "@ngxs/store": "3.5.1",
+    "@swimlane/ngx-datatable": "15.0.2",
     "@types/core-js": "^0.9.35",
     "@types/jquery": "^2.0.52",
     "@types/js-md5": "^0.4.0",
-    "@types/lodash": "4.14.85",
     "@types/node": "7.0.7",
     "@types/q": "0.0.32",
     "angular2-draggable": "1.1.0",
     "angular2-uuid": "^1.1.1",
     "animate.css": "^3.5.2",
-    "babel-preset-env": "^1.7.0",
     "bootstrap": "^3.3.7",
     "core-js": "^2.4.1",
     "cytoscape": "^2.7.15",
@@ -119,18 +139,17 @@
     "jszip": "^3.10.0",
     "less": "~3.9.0",
     "lodash": "^4.17.2",
-    "ngx-drag-drop": "v2.0.0-rc.4",
-    "onap-ui-angular": "5.10.0",
+    "ngx-drag-drop": "2.0.0",
+    "onap-ui-angular": "6.0.0",
     "perfect-scrollbar": "^0.6.16",
     "qtip2": "^3.0.3",
-    "rxjs": "6.2.2",
-    "rxjs-compat": "6.2.0",
+    "rxjs": "6.5.5",
     "sdc-pubsub": "^1.0.30",
     "ts-mockery": "^1.1.0",
     "tslint": "^5.12.1",
-    "typescript": "2.4.2",
+    "typescript": "3.5.3",
     "underscore": "^1.8.3",
-    "zone.js": "0.8.5"
+    "zone.js": "0.9.1"
   },
   "resolutions": {}
 }

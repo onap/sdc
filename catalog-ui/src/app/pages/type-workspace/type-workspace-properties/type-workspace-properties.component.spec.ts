@@ -20,6 +20,8 @@
  *  ============LICENSE_END=========================================================
  */
 
+
+import {of as observableOf, Observable} from 'rxjs';
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {TypeWorkspacePropertiesComponent} from './type-workspace-properties.component';
@@ -27,7 +29,6 @@ import {FormsModule} from "@angular/forms";
 import {TranslateModule} from "../../../shared/translator/translate.module";
 import {TranslateService} from "../../../shared/translator/translate.service";
 import {DataTypeService} from "../../../services/data-type.service";
-import {Observable} from "rxjs/Observable";
 import {DataTypeModel} from "../../../models/data-types";
 import {Component, ViewChild} from "@angular/core";
 import {PropertyBEModel} from "../../../models/properties-inputs/property-be-model";
@@ -46,9 +47,9 @@ describe('TypeWorkspacePropertiesComponent', () => {
                 const property1 = new PropertyBEModel();
                 property1.name = 'property1'
                 property1.type = 'string'
-                return Observable.of([property1]);
+                return observableOf([property1]);
             }
-            return Observable.of([]);
+            return observableOf([]);
         })
     };
 
@@ -138,7 +139,7 @@ describe('TypeWorkspacePropertiesComponent', () => {
         template: `<app-type-workspace-properties></app-type-workspace-properties>`
     })
     class TestHostComponent {
-        @ViewChild(TypeWorkspacePropertiesComponent)
+        @ViewChild(TypeWorkspacePropertiesComponent, {static: true})
         public typeWorkspacePropertiesComponent: TypeWorkspacePropertiesComponent;
     }
 

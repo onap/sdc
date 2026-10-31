@@ -19,6 +19,8 @@
  *  ============LICENSE_END=========================================================
  */
 
+
+import {of as observableOf, Observable} from 'rxjs';
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {ToscaConcatFunctionComponent} from '../tosca-concat-function/tosca-concat-function.component';
@@ -31,7 +33,6 @@ import {UiElementsModule} from "../../../../components/ui/ui-elements.module";
 import {YamlFunctionComponent} from "../yaml-function/yaml-function.component";
 import {SvgIconModule} from "onap-ui-angular/dist/svg-icon/svg-icon.module";
 import {TopologyTemplateService} from "../../../../services/component-services/topology-template.service";
-import {Observable} from "rxjs/Observable";
 import {defaultCustomFunctionsMock} from "../../../../../jest/mocks/default-custom-tosca-function.mock";
 
 describe('ToscaCustomFunctionComponent', () => {
@@ -41,7 +42,7 @@ describe('ToscaCustomFunctionComponent', () => {
 
     beforeEach(async(() => {
         topologyTemplateServiceMock = {
-            getDefaultCustomFunction: jest.fn().mockImplementation(() => Observable.of(defaultCustomFunctionsMock))
+            getDefaultCustomFunction: jest.fn().mockImplementation(() => observableOf(defaultCustomFunctionsMock))
         };
         TestBed.configureTestingModule({
             declarations: [

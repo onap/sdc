@@ -16,7 +16,7 @@ import {EventListenerService} from "../../../../services/event-listener.service"
 })
 export class CapabilitiesComponent {
     @Input() public capabilities: Array<Capability>;
-    @ViewChild('capabilitiesTable') capabilitiesTable: any;
+    @ViewChild('capabilitiesTable', {static: false}) capabilitiesTable: any;
     private customModalInstance: ModalComponent;
 
     constructor(

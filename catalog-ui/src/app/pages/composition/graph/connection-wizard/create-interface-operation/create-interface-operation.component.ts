@@ -17,11 +17,12 @@
  *  ============LICENSE_END=========================================================
  */
 
+
+import {of as observableOf, Observable} from 'rxjs';
 import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {IDropDownOption} from "onap-ui-angular/dist/form-elements/dropdown/dropdown-models";
 import {DropDownComponent} from "onap-ui-angular/dist/components";
 import {PropertyAssignment} from "../../../../../models/properties-inputs/property-assignment";
-import {Observable} from "rxjs";
 import {Operation} from "./model/operation";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 
@@ -34,7 +35,7 @@ export class CreateInterfaceOperationComponent implements OnInit {
   @Input('interfaceTypeMap') interfaceTypeMap: Map<string, Array<string>>;
   @Input('operation') private operation: Operation;
   @Output('addOperation') addOperation: EventEmitter<Operation> = new EventEmitter<Operation>();
-  @ViewChild('operationDropdown') operationDropdown: DropDownComponent;
+  @ViewChild('operationDropdown', {static: true}) operationDropdown: DropDownComponent;
 
   form: FormGroup;
   isLoading: boolean;
@@ -115,7 +116,7 @@ export class CreateInterfaceOperationComponent implements OnInit {
 
   private loadOperationInputs() {
     this.inputs = new Array<PropertyAssignment>();
-    this.inputs$ = Observable.of(this.inputs);
+    this.inputs$ = observableOf(this.inputs);
   }
 
   descriptionValue(): string {

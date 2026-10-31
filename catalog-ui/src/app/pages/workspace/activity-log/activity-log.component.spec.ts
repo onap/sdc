@@ -1,9 +1,9 @@
+
+import {of as observableOf,  Observable } from 'rxjs';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture } from '@angular/core/testing';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { SdcUiServices } from 'onap-ui-angular';
-import 'rxjs/add/observable/of';
-import { Observable } from 'rxjs/Observable';
 import { ConfigureFn, configureTests } from '../../../../jest/test-config.helper';
 import { ComponentMetadata } from '../../../models/component-metadata';
 import { ActivityLogService } from '../../../services/activity-log.service';
@@ -32,7 +32,7 @@ describe('activity log component', () => {
             componentMetadataMock.componentType = 'SERVICE';
 
             activityLogServiceMock = {
-                getActivityLog : jest.fn().mockImplementation((type, id) => Observable.of(JSON.parse(mockLogs)) )
+                getActivityLog : jest.fn().mockImplementation((type, id) => observableOf(JSON.parse(mockLogs)) )
             };
 
             workspaceServiceMock = {
