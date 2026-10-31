@@ -1,14 +1,27 @@
 @import '../../../../../assets/styles/variables';
 
 /deep/ ui-element-dropdown {
+    display: block;
+    position: relative;
 
     select {
         text-indent: 6px;
         border: solid 1px @control_border;
         height: 30px;
-        padding: 0 4px;
+        padding: 0 28px 0 4px;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
         background-color: @main_color_p;
         width: 100%;
+    }
+
+    .dropdown-arrow {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%) rotate(180deg);
+        pointer-events: none;
     }
 
 }
