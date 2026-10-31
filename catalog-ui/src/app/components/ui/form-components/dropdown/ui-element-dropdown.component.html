@@ -17,3 +17,4 @@
 <select name='{{name}}' [(ngModel)]="value" (change)="onChange()"  [ngClass]="{'disabled':readonly}" [attr.data-tests-id]="'value-' + testId" [attr.aria-label]="ariaLabel" [attr.id]="inputId">
   <option *ngFor="let ddvalue of values" [ngValue]="ddvalue.label != undefined ? ddvalue.value : ddvalue" [hidden]="ddvalue.hidden" [selected] = "ddvalue.selected || ddvalue.value === value">{{ddvalue.label||ddvalue}}</option>
 </select>
+<span class="dropdown-arrow sprite-new arrow-up" [class.disabled]="readonly" aria-hidden="true"></span>

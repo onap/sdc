@@ -43,9 +43,61 @@ describe('UiElementDropDownComponent', () => {
     it('renders no empty aria-label without one', () => {
         expect(select().hasAttribute('aria-label')).toBe(false);
     });
+
+    it('dims the decorative arrow with the readonly select', () => {
+        const fixture = TestBed.createComponent(UiElementDropDownComponent);
+        fixture.componentInstance.values = [];
+        fixture.componentInstance.readonly = true;
+        fixture.detectChanges();
+        expect(fixture.nativeElement.querySelector('select').classList.contains('disabled')).toBe(true);
+        expect(fixture.nativeElement.querySelector('.dropdown-arrow').classList.contains('disabled')).toBe(true);
+    });
+
+    it('renders a decorative SDC arrow without intercepting select clicks', async () => {
+        const control = select('Boolean value');
+        const arrow = control.parentElement.querySelector('.dropdown-arrow');
+        expect(arrow).not.toBeNull();
+        expect(arrow.getAttribute('aria-hidden')).toBe('true');
+        expect(arrow.classList.contains('sprite-new')).toBe(true);
+        expect(arrow.classList.contains('arrow-up')).toBe(true);
+
+        const filename = path.join(__dirname, '../ui-element-dropdown.component.less');
+        const result = await require('less').render(fs.readFileSync(filename, 'utf8'), { filename });
+        const style = document.createElement('style');
+        style.textContent = result.css.replace(/\/deep\//g, '');
+        document.head.appendChild(style);
+        try {
+            const rules = Array.from((style.sheet as CSSStyleSheet).cssRules) as CSSStyleRule[];
+            const selectStyle = rules.find(rule => rule.selectorText === 'ui-element-dropdown select').style;
+            const arrowStyle = rules.find(rule => rule.selectorText === 'ui-element-dropdown .dropdown-arrow').style;
+            expect(selectStyle.getPropertyValue('appearance')).toBe('none');
+            expect(selectStyle.padding).toBe('0 28px 0 4px');
+            expect(arrowStyle.right).toBe('10px');
+            expect(arrowStyle.top).toBe('50%');
+            expect(arrowStyle.getPropertyValue('pointer-events')).toBe('none');
+            expect(arrowStyle.transform).toBe('translateY(-50%) rotate(180deg)');
+        } finally {
+            document.head.removeChild(style);
+        }
+    });
 });
 
 describe('service-path-selector template', () => {
+    it('preserves the shared dropdown arrow clearance', async () => {
+        const filename = path.join(__dirname, '../../../../../pages/composition/graph/service-path-selector/service-path-selector.component.less');
+        const result = await require('less').render(fs.readFileSync(filename, 'utf8'), { filename });
+        const style = document.createElement('style');
+        style.textContent = result.css.replace(/\/deep\//g, '');
+        document.head.appendChild(style);
+        try {
+            const rules = Array.from((style.sheet as CSSStyleSheet).cssRules) as CSSStyleRule[];
+            const selectStyle = rules.find(rule => rule.selectorText.replace(/\s+/g, ' ').trim() === '.service-path-selector .path-dropdown select').style;
+            expect(selectStyle.padding).toBe('4px 28px 4px 10px');
+        } finally {
+            document.head.removeChild(style);
+        }
+    });
+
     it('names the Service Flows dropdown after its visible label', () => {
         const dir = path.join(__dirname, '../../../../../pages/composition/graph/service-path-selector');
         const html = fs.readFileSync(path.join(dir, 'service-path-selector.component.html'), 'utf8');
