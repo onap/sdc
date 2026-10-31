@@ -27,12 +27,13 @@ import {ReactiveFormsModule} from "@angular/forms";
 import {TranslateModule} from "../../../shared/translator/translate.module";
 import {TranslateService} from "../../../shared/translator/translate.service";
 import {SdcUiComponentsModule} from "onap-ui-angular/dist";
-import {Observable} from "rxjs/Observable";
+import {Observable, of} from "rxjs";
 import {DataTypeModel} from "../../../models/data-types";
 import {DataTypeService} from "../../../services/data-type.service";
 import {ModelService} from "../../../services/model.service";
 import {TypeWorkspaceService} from "../type-workspace.service";
 import {NavigationService} from "../../../services/navigation.service";
+import {ServiceDataTypeReader} from '../../../utils/service-data-type-reader';
 
 describe('TypeWorkspaceGeneralComponent', () => {
   let component: TypeWorkspaceGeneralComponent;
@@ -77,6 +78,28 @@ describe('TypeWorkspaceGeneralComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('preserves imported file timestamps as dates using the standard File API', async () => {
+    const lastModified = 1600000000000;
+    const importedFile = new File(['data type'], 'type.yaml', {lastModified});
+    const importedType = new DataTypeModel();
+    importedType.name = 'ImportedType';
+    importedType.derivedFromName = 'tosca.datatypes.Root';
+    const readSpy = jest.spyOn(ServiceDataTypeReader.prototype, 'read').mockResolvedValue(importedType);
+    (component as any).modelService = {getDataTypeModels: jest.fn(() => of([null]))};
+    stateParamsMock.importedFile = importedFile;
+
+    try {
+      component.ngOnInit();
+      await Promise.resolve();
+      expect(readSpy).toHaveBeenCalledWith(importedFile);
+      expect(component.dataType.creationTime).toEqual(new Date(lastModified));
+      expect(component.dataType.modificationTime).toEqual(new Date(lastModified));
+    } finally {
+      stateParamsMock.importedFile = null;
+      readSpy.mockRestore();
+    }
   });
 
   it('names the description field by its visible label', () => {

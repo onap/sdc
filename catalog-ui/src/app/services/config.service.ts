@@ -22,7 +22,7 @@ import {IAppConfigurtaion} from 'app/models/app-config';
 import {Plugins, PluginsConfiguration} from 'app/models/plugins-config';
 import {ValidationConfiguration, Validations} from 'app/models/validation-config';
 import { IApi } from 'app/models/app-config';
-import 'rxjs/add/operator/toPromise';
+
 import { ISdcConfig, SdcConfigToken } from '../config/sdc-config.config';
 import { CacheService } from './cache.service';
 import { ResourceType } from 'app/utils/constants';

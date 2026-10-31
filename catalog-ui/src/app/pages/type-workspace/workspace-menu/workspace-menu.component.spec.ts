@@ -29,7 +29,7 @@ import {IAppMenu} from "../../../models/app-config";
 import {SdcMenuToken} from "../../../config/sdc-menu.config";
 import {TypeWorkspaceService} from "../type-workspace.service";
 import {NavigationService} from "../../../services/navigation.service";
-import {Subject} from "rxjs/Subject";
+import {Subject} from "rxjs";
 
 describe('WorkspaceMenuComponent', () => {
   let component: WorkspaceMenuComponent;

@@ -23,7 +23,7 @@ export class AttributesComponent implements OnInit {
   @Select(WorkspaceState.isViewOnly)
   isViewOnly$: boolean;
 
-  @ViewChild('componentAttributesTable')
+  @ViewChild('componentAttributesTable', {static: false})
   private table: any;
 
   private componentType: string;

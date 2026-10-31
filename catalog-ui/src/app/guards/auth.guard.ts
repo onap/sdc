@@ -19,12 +19,15 @@
  * ============LICENSE_END=========================================================
  */
 
+
+import {of as observableOf, Observable} from 'rxjs';
+
+import {catchError, switchMap} from 'rxjs/operators';
 import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot} from '@angular/router';
-import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/observable/of';
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/operator/switchMap';
+
+
+
 import {IUserProperties} from '../models/user';
 import {Role} from '../utils/constants';
 import {AuthenticationService} from '../services/authentication.service';
@@ -54,21 +57,21 @@ export class AuthGuard implements CanActivate {
     public canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
         const cached: IUserProperties = this.authService.getLoggedinUser();
         if (cached) {
-            return Observable.of(this.decide(cached, route));
+            return observableOf(this.decide(cached, route));
         }
 
-        return this.authService.authenticate()
-            .switchMap((user: IUserProperties) => {
+        return this.authService.authenticate().pipe(
+            switchMap((user: IUserProperties) => {
                 this.authService.setLoggedinUser(user);
-                return Observable.of(this.decide(user, route));
-            })
+                return observableOf(this.decide(user, route));
+            }),
             // A guard that ERRORS leaves the router with `navigated === false`, so every later
             // navigation is treated as the initial one and `onSameUrlNavigation` stops working.
             // A failed authentication therefore has to resolve to false rather than propagate.
-            .catch(() => {
+            catchError(() => {
                 this.navigationService.navigate('error-403');
-                return Observable.of(false);
-            });
+                return observableOf(false);
+            }),);
     }
 
     private decide(user: IUserProperties, route: ActivatedRouteSnapshot): boolean {

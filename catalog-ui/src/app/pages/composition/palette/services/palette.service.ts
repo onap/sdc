@@ -1,3 +1,5 @@
+
+import {forkJoin as observableForkJoin,  Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { LeftPaletteComponent, LeftPaletteMetadataTypes } from 'app/models/components/display-component';
@@ -7,8 +9,6 @@ import { IComponentMetadata } from 'app/models/component-metadata';
 import { SdcConfigToken } from 'app/config/sdc-config.config';
 import { ISdcConfig } from 'app/config/sdc-config.config.factory';
 import { WorkspaceService } from 'app/pages/workspace/workspace.service';
-import 'rxjs/add/observable/forkJoin';
-import { Observable } from 'rxjs/Rx';
 import Dictionary = _.Dictionary;
 
 
@@ -39,7 +39,7 @@ export class CompositionPaletteService {
         const loadInstances = this.http.get(this.facadeUrl, {params});
         const loadGroups = this.http.get(this.baseUrl + 'groupTypes', {params});
         const loadPolicies = this.http.get(this.baseUrl + 'policyTypes', {params});
-        Observable.forkJoin(loadInstances, loadGroups, loadPolicies).subscribe( ([resInstances, resGrouops, resPolicies]) => {
+        observableForkJoin(loadInstances, loadGroups, loadPolicies).subscribe( ([resInstances, resGrouops, resPolicies]) => {
             const combinedDictionary = this.combineResoponses(resInstances, resGrouops, resPolicies);
             this.leftPaletteComponents = combinedDictionary;
             next(this.leftPaletteComponents);

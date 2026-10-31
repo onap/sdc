@@ -42,7 +42,7 @@ export class FilterPropertiesAssignmentComponent {
     selectedTypes:Object = {};
     allSelected:boolean = false;//if all option selected
     filterData:FilterPropertiesAssignmentData = new FilterPropertiesAssignmentData();
-    @ViewChild('filterPopover') filterPopover: PopoverComponent;
+    @ViewChild('filterPopover', {static: false}) filterPopover: PopoverComponent;
 
     ngOnInit() {
         this.footerButtons['Apply'] = new ButtonModel('Apply', 'blue', this.search, this.someTypesSelectedAndThereIsPropertyName);

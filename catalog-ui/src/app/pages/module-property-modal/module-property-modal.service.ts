@@ -1,3 +1,5 @@
+
+import {tap} from 'rxjs/operators';
 /*-
  * ============LICENSE_START=======================================================
  * SDC
@@ -20,8 +22,8 @@
  */
 import {Injectable} from '@angular/core';
 import * as _ from 'lodash';
-import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/operator/do';
+import {Observable} from 'rxjs';
+
 import {Component} from 'app/models/components/component';
 import {DisplayModule} from 'app/models/modules/base-module';
 import {PropertyModel} from 'app/models/properties';
@@ -56,14 +58,14 @@ export class ModulePropertyModalService {
         // without a reload. Mirrors the old Resource.updateResourceGroupProperties / Service.updateGroupInstanceProperties
         // onSuccess (_.extend(_.find(module.properties, {uniqueId}), property)); the modal edits a copy, so without
         // this the caller keeps rendering the stale value.
-        return beCall.do((updatedProperties) => {
+        return beCall.pipe(tap((updatedProperties) => {
             _.forEach(updatedProperties, (updated) => {
                 const target = _.find(selectedModule.properties, {uniqueId: updated.uniqueId});
                 if (target) {
                     _.extend(target, updated);
                 }
             });
-        });
+        }));
     }
 
     private resolveServiceInstanceId(component: Component, selectedModule: DisplayModule): string {

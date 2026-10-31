@@ -19,9 +19,11 @@
  * ============LICENSE_END=========================================================
  */
 
+
+import {map} from 'rxjs/operators';
 import {Injectable, Inject} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {IMainCategory, ISubCategory} from 'app/models/category';
 import {SdcConfigToken, ISdcConfig} from 'app/config/sdc-config.config';
 import {HttpHelperService} from 'app/services/http-helper.service';
@@ -41,7 +43,7 @@ export class CategoryManagementService {
             this.sdcConfig.api.POST_category,
             {types: type + 's'}
         );
-        return this.http.post(url, category).map(resp => <IMainCategory>resp);
+        return this.http.post(url, category).pipe(map(resp => <IMainCategory>resp));
     }
 
     /**
@@ -53,6 +55,6 @@ export class CategoryManagementService {
             this.sdcConfig.api.POST_subcategory,
             {types: type + 's', categoryId: categoryId}
         );
-        return this.http.post(url, subCategory).map(resp => <ISubCategory>resp);
+        return this.http.post(url, subCategory).pipe(map(resp => <ISubCategory>resp));
     }
 }

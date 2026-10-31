@@ -1,6 +1,8 @@
+
+import {map} from 'rxjs/operators';
 import {IZoneInstanceAssignment} from '../models/graph/zones/zone-instance';
 import {Injectable, Inject} from "@angular/core";
-import {Observable} from "rxjs/Observable";
+import {Observable} from "rxjs";
 import {SdcConfigToken, ISdcConfig} from "../config/sdc-config.config";
 import {GroupInstance} from '../models/graph/zones/group-instance';
 import {UiBaseObject} from "../models/ui-models/ui-base-object";
@@ -23,9 +25,9 @@ export class GroupsService implements IZoneService {
     }
 
     public createGroupInstance(componentType:string, componentUniqueId:string, groupType:string): Observable<GroupInstance>{
-        return this.http.post<GroupInstance>(this.baseUrl + '/v1/catalog/' + this.mapApiDirections[componentType.toUpperCase()] + '/' + componentUniqueId + '/groups/' + groupType, {}).map(resp => {
+        return this.http.post<GroupInstance>(this.baseUrl + '/v1/catalog/' + this.mapApiDirections[componentType.toUpperCase()] + '/' + componentUniqueId + '/groups/' + groupType, {}).pipe(map(resp => {
             return new GroupInstance(resp);
-        });
+        }));
     };
 
     public addGroupMember(topologyTemplateType:string, topologyTemplateId:string, group:GroupInstance, memberId:string) {
@@ -50,10 +52,10 @@ export class GroupsService implements IZoneService {
     }
 
     public getSpecificGroup(topologyTemplateType:string, topologyTemplateId:string, groupId:string):Observable<GroupInstance> {
-        return this.http.get<GroupInstance>(this.baseUrl + '/v1/catalog/' + this.mapApiDirections[topologyTemplateType.toUpperCase()] + '/' + topologyTemplateId + '/groups/' + groupId)
-            .map(res => {
+        return this.http.get<GroupInstance>(this.baseUrl + '/v1/catalog/' + this.mapApiDirections[topologyTemplateType.toUpperCase()] + '/' + topologyTemplateId + '/groups/' + groupId).pipe(
+            map(res => {
                 return new GroupInstance(res);
-            });
+            }));
     }
 
     public updateName(topologyTemplateType:string, topologyTemplateId:string, groupId:string, newName:string):Observable<GroupInstance> {

@@ -16,14 +16,13 @@
 
 import {HttpClient} from '@angular/common/http';
 import {Inject, Injectable} from '@angular/core';
-import {Response} from '@angular/http';
 import {CapabilityTypeModel, CapabilityTypesMap} from 'app/models/capability-types';
 import {IComponentsArray} from 'app/models/components-array';
 import {NodeTypesMap} from 'app/models/node-types';
 import {RelationshipTypesMap} from 'app/models/relationship-types';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {ISdcConfig, SdcConfigToken} from '../config/sdc-config.config';
-import 'rxjs/add/operator/toPromise';
+
 
 @Injectable()
 export class ToscaTypesService {

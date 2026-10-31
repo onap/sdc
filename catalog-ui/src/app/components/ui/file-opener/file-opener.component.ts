@@ -31,7 +31,7 @@ export class FileOpenerComponent {
                 filename: importFile.name,
                 filetype: importFile.type,
                 filesize: importFile.size,
-                base64: btoa(reader.result)
+                base64: btoa(reader.result as string)
             });
         };
     }

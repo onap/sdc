@@ -18,10 +18,12 @@
  * ============LICENSE_END=========================================================
  */
 
+
+import {map} from 'rxjs/operators';
 import { Injectable, Inject } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/toPromise';
+import { Observable } from 'rxjs';
+
+
 import {Service} from 'app/models/components/service';
 
 import {SdcConfigToken, ISdcConfig} from "../../config/sdc-config.config";
@@ -66,9 +68,9 @@ export class ServiceService extends ComponentService {
 
     createServicePath(serviceId: string, inputsToCreate: ForwardingPath):Observable<ForwardingPath> {
         let input = new ServicePathRequestData(inputsToCreate);
-        return this.http.post<ForwardingPath>(this.baseUrl  + 'services/' + serviceId +   '/paths', input).map((res:any) => {
+        return this.http.post<ForwardingPath>(this.baseUrl  + 'services/' + serviceId +   '/paths', input).pipe(map((res:any) => {
             return this.parseServicePathResponse(res);
-        });
+        }));
     }
 
     deleteServicePath(serviceId: string, id: string):Observable<any> {
@@ -78,10 +80,10 @@ export class ServiceService extends ComponentService {
     updateServicePath(serviceId: string, inputsToUpdate:ForwardingPath):Observable<ForwardingPath> {
         let input = new ServicePathRequestData(inputsToUpdate);
 
-        return this.http.put<{[key:string]:ForwardingPath}>(this.baseUrl  + 'services/' + serviceId + '/paths', input)
-            .map((res) => {
+        return this.http.put<{[key:string]:ForwardingPath}>(this.baseUrl  + 'services/' + serviceId + '/paths', input).pipe(
+            map((res) => {
                 return this.parseServicePathResponse(res);
-            });
+            }));
     }
 
     getServiceConsumptionData(service: Service):Observable<ComponentGenericResponse> {
@@ -115,9 +117,9 @@ export class ServiceService extends ComponentService {
         });
 
         let url = this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/paths-to-delete';
-        return this.http.get<any>(url, {params: params}).map((res) => {
+        return this.http.get<any>(url, {params: params}).pipe(map((res) => {
             return res.forwardingPathToDelete;
-        });
+        }));
     }
 
     getComponentCompositionData(component:Component):Observable<ComponentGenericResponse> {

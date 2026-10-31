@@ -1,4 +1,4 @@
-import {Subject} from 'rxjs/Subject';
+import {Subject} from 'rxjs';
 import {AdminDashboardComponent} from './admin-dashboard.component';
 import {SdcConfigToken} from 'app/config/sdc-config.config';
 

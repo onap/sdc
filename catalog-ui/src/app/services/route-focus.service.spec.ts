@@ -19,7 +19,7 @@
  */
 
 import {NavigationEnd, NavigationStart} from '@angular/router';
-import {Subject} from 'rxjs/Subject';
+import {Subject} from 'rxjs';
 import {MAX_POLLS, POLL_INTERVAL_MS, RouteFocusService} from './route-focus.service';
 
 describe('RouteFocusService', () => {

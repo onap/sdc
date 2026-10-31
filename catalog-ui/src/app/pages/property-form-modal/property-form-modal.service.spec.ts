@@ -1,25 +1,6 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * Modifications copyright (c) 2026 Deutsche Telekom AG
- * ================================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ============LICENSE_END=========================================================
- */
-import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/observable/of';
+
+import {of as observableOf, Observable} from 'rxjs';
+
 import {PropertyModel} from 'app/models/properties';
 import {InputFEModel} from 'app/models/properties-inputs/input-fe-model';
 import {PropertyFormModalService, PropertyFormModalSaveContext} from './property-form-modal.service';
@@ -70,17 +51,17 @@ describe('PropertyFormModalService', () => {
 
     beforeEach(() => {
         componentService = {
-            updateComponentInputs: jest.fn(() => Observable.of([]))
+            updateComponentInputs: jest.fn(() => observableOf([]))
         };
         componentInstanceService = {
-            updateComponentGroupInstanceProperties: jest.fn(() => Observable.of([makeProperty()])),
-            updateComponentPolicyInstanceProperties: jest.fn(() => Observable.of([makeProperty()])),
-            updateInstanceProperties: jest.fn(() => Observable.of([makeProperty()]))
+            updateComponentGroupInstanceProperties: jest.fn(() => observableOf([makeProperty()])),
+            updateComponentPolicyInstanceProperties: jest.fn(() => observableOf([makeProperty()])),
+            updateInstanceProperties: jest.fn(() => observableOf([makeProperty()]))
         };
         topologyTemplateService = {
-            addProperty: jest.fn(() => Observable.of(makeProperty())),
-            updateProperty: jest.fn(() => Observable.of(makeProperty())),
-            deleteProperty: jest.fn(() => Observable.of(undefined))
+            addProperty: jest.fn(() => observableOf(makeProperty())),
+            updateProperty: jest.fn(() => observableOf(makeProperty())),
+            deleteProperty: jest.fn(() => observableOf(undefined))
         };
         compositionService = {
             componentInstancesProperties: {}

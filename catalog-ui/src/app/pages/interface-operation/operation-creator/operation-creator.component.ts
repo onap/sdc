@@ -1,7 +1,7 @@
 import * as _ from "lodash";
 import {Component, ViewChild} from '@angular/core';
 
-import {Subscription} from "rxjs/Subscription";
+import {Subscription} from "rxjs";
 
 import {TranslateService} from "app/shared/translator/translate.service";
 import {WorkflowService} from 'app/services/workflow.service';
@@ -101,9 +101,9 @@ export class OperationCreatorComponent implements OperationCreatorInput {
     INTERFACE_OTHER_HEADER = 'Local Interfaces';
     INTERFACE_OTHER = 'Local';
 
-    @ViewChild('propertyInputTabs') propertyInputTabs: Tabs;
-    @ViewChild('operationNamesDropdown') operationNamesDropdown: DropDownComponent;
-    @ViewChild('workflowAssignmentDropdown') workflowAssignmentDropdown: DropDownComponent;
+    @ViewChild('propertyInputTabs', {static: false}) propertyInputTabs: Tabs;
+    @ViewChild('operationNamesDropdown', {static: false}) operationNamesDropdown: DropDownComponent;
+    @ViewChild('workflowAssignmentDropdown', {static: false}) workflowAssignmentDropdown: DropDownComponent;
     currentTab: String;
 
     constructor(private workflowService: WorkflowService, private translateService: TranslateService) {

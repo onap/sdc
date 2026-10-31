@@ -19,7 +19,7 @@
  */
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {DatePipe} from '@angular/common';
-import {Subscription} from 'rxjs/Subscription';
+import {Subscription} from 'rxjs';
 import {IUserProperties} from 'app/models/user';
 import {UserService} from 'app/services/user.service';
 import {TranslateService} from 'app/shared/translator/translate.service';

@@ -22,8 +22,8 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {FormControl, FormGroup, ValidatorFn, Validators} from '@angular/forms';
 import * as _ from 'lodash';
-import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/observable/of';
+import {Observable} from 'rxjs';
+
 import {Component as IComponent} from 'app/models/components/component';
 import {PropertyModel} from 'app/models/properties';
 import {InputFEModel} from 'app/models/properties-inputs/input-fe-model';

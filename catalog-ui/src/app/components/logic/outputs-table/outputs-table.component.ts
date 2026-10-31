@@ -36,7 +36,7 @@ export class OutputsTableComponent implements OnInit {
   @Select(WorkspaceState.isViewOnly)
   isViewOnly$: boolean;
 
-  @ViewChild('componentOutputsTable')
+  @ViewChild('componentOutputsTable', {static: false})
   private table: any;
 
   @Input() outputs: Array<OutputFEModel>;

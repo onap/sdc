@@ -19,6 +19,8 @@
  * Modifications Copyright (C) 2026 Deutsche Telekom AG.
  */
 
+
+import {forkJoin as observableForkJoin, Observable} from 'rxjs';
 import * as _ from "lodash";
 import {Component, ViewChild} from "@angular/core";
 import {PropertiesService} from "../../services/properties.service";
@@ -64,7 +66,6 @@ import {DeclareListComponent} from "./declare-list/declare-list.component";
 import {ToscaFunctionComponent, ToscaFunctionValidationEvent} from "./tosca-function/tosca-function.component";
 import {CapabilitiesGroup, Capability} from "../../models/capability";
 import {ToscaPresentationData} from "../../models/tosca-presentation";
-import {Observable} from "rxjs";
 import {TranslateService} from "../../shared/translator/translate.service";
 import {ToscaFunction} from "../../models/tosca-function";
 import {SubPropertyToscaFunction} from "../../models/sub-property-tosca-function";
@@ -130,9 +131,9 @@ export class PropertiesAssignmentComponent implements UnsavedChangesAware {
     defaultInputName: string;
     doNotExtendBaseType: boolean;
 
-    @ViewChild('hierarchyNavTabs') hierarchyNavTabs: Tabs;
-    @ViewChild('propertyInputTabs') propertyInputTabs: Tabs;
-    @ViewChild('advanceSearch') advanceSearch: FilterPropertiesAssignmentComponent;
+    @ViewChild('hierarchyNavTabs', {static: false}) hierarchyNavTabs: Tabs;
+    @ViewChild('propertyInputTabs', {static: false}) propertyInputTabs: Tabs;
+    @ViewChild('advanceSearch', {static: false}) advanceSearch: FilterPropertiesAssignmentComponent;
 
     constructor(private propertiesService: PropertiesService,
                 private hierarchyNavService: HierarchyNavService,
@@ -1096,7 +1097,7 @@ export class PropertiesAssignmentComponent implements UnsavedChangesAware {
                     if (this.isInput(this.selectedInstanceData.originType)) {
                         changedInputsProperties = _.filter(changedProperties, prop => !this.isCapabilityProperty(prop));
                         if (changedInputsProperties.length && changedCapabilitiesProperties.length) {
-                            request = Observable.forkJoin(
+                            request = observableForkJoin(
                                 this.componentInstanceService.updateInstanceInputs(this.component, this.selectedInstanceData.uniqueId, changedInputsProperties),
                                 this.componentInstanceService.updateInstanceProperties(this.component.componentType, this.component.uniqueId,
                                     this.selectedInstanceData.uniqueId, changedCapabilitiesProperties)

@@ -1,7 +1,7 @@
 import {NO_ERRORS_SCHEMA} from '@angular/core';
 import {async, ComponentFixture} from '@angular/core/testing';
 import {SdcUiServices} from 'onap-ui-angular';
-import 'rxjs/add/observable/of';
+
 import {ConfigureFn, configureTests} from '../../../../jest/test-config.helper';
 import {CompositionGraphComponent} from "./composition-graph.component";
 import {WorkspaceService} from "../../workspace/workspace.service";

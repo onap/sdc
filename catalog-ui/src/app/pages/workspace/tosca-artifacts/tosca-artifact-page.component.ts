@@ -22,7 +22,7 @@ import { NotificationSettings } from "onap-ui-angular/dist/notifications/utiliti
 export class ToscaArtifactPageComponent implements OnInit {
 
     @Select(WorkspaceState.isViewOnly) isViewOnly$: boolean;
-    @ViewChild('toscaArtifactsTable') table: any;
+    @ViewChild('toscaArtifactsTable', {static: false}) table: any;
     public toscaArtifacts$: Observable<ArtifactModel[]>;
     public componentId: string;
     public componentType:string;

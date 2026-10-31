@@ -1,7 +1,7 @@
+import {throwError, of,  Observable } from 'rxjs';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture } from '@angular/core/testing';
 import { SdcUiCommon, SdcUiComponents, SdcUiServices } from 'onap-ui-angular';
-import { Observable } from 'rxjs/Rx';
 import { Mock } from 'ts-mockery';
 import { ConfigureFn, configureTests } from '../../../../../../jest/test-config.helper';
 import { ComponentMetadata } from '../../../../../models/component-metadata';
@@ -39,9 +39,9 @@ describe('group members tab component', () => {
                 {
                     updateMembers: jest.fn().mockImplementation((compType, uid, groupUniqueId, updatedMembers) => {
                             if (updatedMembers === undefined) {
-                                return Observable.throwError('error');
+                                return throwError('error');
                             } else {
-                                return Observable.of(updatedMembers);
+                                return of(updatedMembers);
                             }
                         }
                     )});

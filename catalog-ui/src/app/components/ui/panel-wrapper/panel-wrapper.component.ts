@@ -1,6 +1,6 @@
 import {Component} from "@angular/core";
 import {Select, Store} from "@ngxs/store";
-import {Subscription} from "rxjs/Subscription";
+import {Subscription} from "rxjs";
 import {GraphState} from "../../../pages/composition/common/store/graph.state";
 import {OnSidebarOpenOrCloseAction} from "../../../pages/composition/common/store/graph.actions";
 

@@ -20,6 +20,8 @@
  *  ============LICENSE_END=========================================================
  */
 
+
+import {of as observableOf, Observable} from 'rxjs';
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {TypeWorkspaceComponent} from './type-workspace.component';
@@ -37,7 +39,6 @@ import {AuthenticationService} from "../../services/authentication.service";
 import {ISdcConfig, SdcConfigToken} from "../../config/sdc-config.config";
 import {States} from "../../utils/constants";
 import {IUserProperties} from "../../models/user";
-import {Observable} from "rxjs/Observable";
 import {TypeWorkspacePropertiesComponent} from "./type-workspace-properties/type-workspace-properties.component";
 import {TypeWorkspaceToscaArtifactPageComponent} from "./type-workspace-tosca-artifacts/type-workspace-tosca-artifact-page.component";
 import {NgxDatatableModule} from "@swimlane/ngx-datatable";
@@ -53,7 +54,7 @@ describe('TypeWorkspaceComponent', () => {
   let component: TypeWorkspaceComponent;
   let fixture: ComponentFixture<TypeWorkspaceComponent>;
   let translateServiceMock: Partial<TranslateService> = {
-    'languageChangedObservable': Observable.of(),
+    'languageChangedObservable': observableOf(),
     'translate': jest.fn()
   };
   let dataTypeServiceMock: Partial<DataTypeService>;

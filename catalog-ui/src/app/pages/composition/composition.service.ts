@@ -1,5 +1,5 @@
 import {Injectable} from "@angular/core";
-import 'rxjs/add/observable/forkJoin';
+
 import {AttributesGroup} from 'app/models/attributes';
 import {Component} from 'app/models/components/component';
 import {PolicyInstance} from 'app/models/graph/zones/policy-instance';

@@ -21,8 +21,9 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component as NgComponent, In
 import {ISdcConfig, SdcConfigToken} from '../../../config/sdc-config.config';
 import {IAppMenu, SdcMenuToken} from '../../../config/sdc-menu.config';
 import {FormGroup, Validators} from '@angular/forms';
-import {Subject} from 'rxjs/Subject';
-import 'rxjs/add/operator/takeUntil';
+import {Subject} from 'rxjs';
+import {takeUntil} from 'rxjs/operators';
+
 import * as _ from 'lodash';
 
 import {SdcUiServices} from 'onap-ui-angular';
@@ -329,7 +330,7 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
 
         if (!this.isCreateMode() && this.isVspImport()) {
             if (this.modelService) {
-                this.modelService.getModels().takeUntil(this.destroy$).subscribe((modelsFound: any[]) => {
+                this.modelService.getModels().pipe(takeUntil(this.destroy$)).subscribe((modelsFound: any[]) => {
                     (modelsFound || []).sort().forEach((model: any) => {
                         if (this.component.model !== undefined) {
                             if (model.modelType === 'NORMATIVE_EXTENSION') {
@@ -350,7 +351,7 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
 
         // Default (normative) path
         if (this.modelService) {
-            this.modelService.getModelsOfType('normative').takeUntil(this.destroy$).subscribe((modelsFound: any[]) => {
+            this.modelService.getModelsOfType('normative').pipe(takeUntil(this.destroy$)).subscribe((modelsFound: any[]) => {
                 (modelsFound || []).sort().forEach((model: any) => {
                     this.models.push(model.name);
                 });
@@ -372,7 +373,7 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
         const categoryName = this.component.categories[0].name;
         if (this.elementService) {
             this.elementService.getCategoryBaseTypes(categoryName, modelName)
-                .takeUntil(this.destroy$)
+                .pipe(takeUntil(this.destroy$))
                 .subscribe((data: any) => {
                     this.baseTypes = [];
                     this.baseTypeVersions = [];
@@ -535,7 +536,7 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
         const modelName = this.component.model ? this.component.model : null;
         const categoryName = this.component.categories[0].name;
         this.elementService.getCategoryBaseTypes(categoryName, modelName)
-            .takeUntil(this.destroy$)
+            .pipe(takeUntil(this.destroy$))
             .subscribe((data: any) => {
                 if (this.isCreateMode()) {
                     this.loadBaseTypes(data);
@@ -719,7 +720,7 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
         const categoryName = this.component.categories[0].name;
         if (this.elementService) {
             this.elementService.getCategoryBaseTypes(categoryName, modelName)
-                .takeUntil(this.destroy$)
+                .pipe(takeUntil(this.destroy$))
                 .subscribe((data: any) => {
                     this.baseTypeVersions = [];
                     (data.baseTypes || []).forEach((baseType: any) => {
@@ -1080,7 +1081,7 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
     }
 
     private wireFormToWorkspace(): void {
-        this.form.statusChanges.takeUntil(this.destroy$).subscribe(() => {
+        this.form.statusChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
             this.workspaceService.isValidForm = this.form.valid;
             // Only report unsaved changes outside CREATE mode — in CREATE there is nothing to lose,
             // and reporting dirty here disables the shell's Create button (it is [disabled] on unsavedChanges),
@@ -1089,7 +1090,7 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
             const dirty = this.form.dirty && !this.isCreateMode();
             this.eventListenerService.notifyObservers(EVENTS.ON_WORKSPACE_UNSAVED_CHANGES, dirty, undefined);
         });
-        this.form.valueChanges.takeUntil(this.destroy$).subscribe(() => {
+        this.form.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
             this.syncFormToComponent();
             // Mirror the AngularJS $watch('editForm.$dirty') → setUnsavedChanges(true) logic.
             // Only track dirty in EDIT mode — in CREATE mode there is nothing to lose.
@@ -1107,7 +1108,7 @@ export class GeneralTabComponent implements OnInit, OnDestroy {
         const csarUUID = this.component.csarUUID;
         const csarVersion = this.component.csarVersion;
         this.importVSPService.openOnboardingModal(csarUUID, csarVersion)
-            .takeUntil(this.destroy$)
+            .pipe(takeUntil(this.destroy$))
             .subscribe((result: any) => {
                 this.componentFactory.getComponentWithMetadataFromServer(result.type.toUpperCase(), result.previousComponent.uniqueId)
                     .then((component: any) => {

@@ -1,5 +1,5 @@
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/toPromise';
+
+
 import {TestBed} from '@angular/core/testing';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {TopologyTemplateService} from './topology-template.service';

@@ -50,7 +50,7 @@ export class PopoverContentComponent implements AfterViewInit, OnDestroy {
     @Input()
     hideArrow: boolean = false;
 
-    @ViewChild('popoverDiv')
+    @ViewChild('popoverDiv', {static: false})
     popoverDiv: ElementRef;
 
     buttonsNames: string[];

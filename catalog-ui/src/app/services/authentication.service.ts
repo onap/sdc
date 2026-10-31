@@ -21,7 +21,7 @@
 import {Injectable, Inject} from '@angular/core';
 import {IAppConfigurtaion, ICookie} from "../models/app-config";
 import {CookieService} from "./cookie.service";
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import {SdcConfigToken, ISdcConfig} from "../config/sdc-config.config";
 import {IUserProperties} from 'app/models/user';
 import { CacheService } from "app/services/cache.service";

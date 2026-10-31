@@ -1,3 +1,5 @@
+
+import {of as observableOf, Observable} from 'rxjs';
 /*-
  * ============LICENSE_START=======================================================
  * SDC
@@ -21,10 +23,6 @@ import * as _ from 'lodash';
 // The component under test calls `_.isUndefined` / `_.forEach` off the bare global that webpack
 // supplies via script-loader (lodash.min.js); Jest has no such global.
 (window as any)._ = _;
-
-import 'rxjs/add/observable/forkJoin';
-import 'rxjs/add/observable/of';
-import {Observable} from 'rxjs/Observable';
 import {EVENTS, WorkspaceMode} from 'app/utils/constants';
 import {EventListenerService} from 'app/services/event-listener.service';
 import {InterfaceDefinitionComponent} from './interface-definition.page.component';
@@ -48,15 +46,15 @@ function createComp(opts: any = {}) {
     const navigationService: any = {navigate: jest.fn()};
     const notificationsService: any = {push: jest.fn()};
     const translateService: any = {
-        languageChangedObservable: Observable.of('en_US'),
+        languageChangedObservable: observableOf('en_US'),
         translate: jest.fn((k: string) => k)
     };
     const componentService: any = {
-        getInterfaceOperations: jest.fn(() => Observable.of({interfaces: []})),
-        getComponentInputs: jest.fn(() => Observable.of({inputs: []})),
-        getInterfaceTypes: jest.fn(() => Observable.of({})),
-        getCapabilitiesAndRequirements: jest.fn(() => Observable.of({capabilities: {}})),
-        getComponentResourcePropertiesData: jest.fn(() => Observable.of({componentInstances: []}))
+        getInterfaceOperations: jest.fn(() => observableOf({interfaces: []})),
+        getComponentInputs: jest.fn(() => observableOf({inputs: []})),
+        getInterfaceTypes: jest.fn(() => observableOf({})),
+        getCapabilitiesAndRequirements: jest.fn(() => observableOf({capabilities: {}})),
+        getComponentResourcePropertiesData: jest.fn(() => observableOf({componentInstances: []}))
     };
     const modalService: any = {
         createCustomModal: jest.fn(() => ({instance: {open: jest.fn()}})),
@@ -64,8 +62,8 @@ function createComp(opts: any = {}) {
     };
     const modalServiceSdcUI: any = {};
     const topologyTemplateService: any = {};
-    const toscaArtifactService: any = {getToscaArtifacts: jest.fn(() => Observable.of(null))};
-    const workflowService: any = {getWorkflows: jest.fn(() => Observable.of([]))};
+    const toscaArtifactService: any = {getToscaArtifacts: jest.fn(() => observableOf(null))};
+    const workflowService: any = {getWorkflows: jest.fn(() => observableOf([]))};
     const pluginsService: any = {getPluginByStateUrl: jest.fn(() => undefined)};
     const eventListenerService = new EventListenerService();
 

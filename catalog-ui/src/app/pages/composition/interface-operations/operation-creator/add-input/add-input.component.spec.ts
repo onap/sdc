@@ -25,7 +25,7 @@ import {AddInputComponent} from './add-input.component';
 import {TranslateModule} from '../../../../../shared/translator/translate.module';
 import {ReactiveFormsModule} from '@angular/forms';
 import {SdcUiComponentsModule} from 'onap-ui-angular/dist';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {DataTypesMap} from '../../../../../models/data-types-map';
 import {TranslateService} from '../../../../../shared/translator/translate.service';
 

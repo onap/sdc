@@ -18,11 +18,12 @@
  * ============LICENSE_END=========================================================
  */
 
+
+import {of as observableOf, Observable} from 'rxjs';
 import {async, ComponentFixture} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {SdcUiComponentsModule} from 'onap-ui-angular';
-import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/observable/of';
+
 import {ConfigureFn, configureTests} from '../../../../../../jest/test-config.helper';
 import {TranslatePipe} from '../../../../../shared/translator/translate.pipe';
 import {TranslateService} from '../../../../../shared/translator/translate.service';
@@ -46,7 +47,7 @@ describe('requirements editor component', () => {
     // replace the component-level provider as well as the module-level one.
     const translateServiceMock = {
         activeLanguage: 'en_US',
-        languageChangedObservable: Observable.of('en_US'),
+        languageChangedObservable: observableOf('en_US'),
         translate: (phrase: string) => phrase
     };
 

@@ -20,7 +20,6 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import { Response } from '@angular/http';
 import { Observable } from 'rxjs';
 import { ISdcConfig, SdcConfigToken } from '../config/sdc-config.config';
 
@@ -48,7 +47,7 @@ export class GabService {
     this.gabUrl = sdcConfig.api.POST_GAB_Search;
   }
 
-  public getArtifact(artifactUniqueId: string, resourceId: string, columns: string[]): Observable<Response> {
+  public getArtifact(artifactUniqueId: string, resourceId: string, columns: string[]): Observable<IServerResponse> {
     const finalUrl: string = this.baseUrl + this.gabUrl;
     const request: GabRequest = {
       fields: columns,
@@ -56,6 +55,6 @@ export class GabService {
       artifactUniqueId
     };
 
-    return this.http.post<Response>(finalUrl, request);
+    return this.http.post<IServerResponse>(finalUrl, request);
   }
 }

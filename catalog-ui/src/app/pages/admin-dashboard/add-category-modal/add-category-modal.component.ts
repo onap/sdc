@@ -21,7 +21,7 @@
 
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {IMainCategory, ISubCategory} from 'app/models/category';
 import {CategoryManagementService} from '../services/category-management.service';
 

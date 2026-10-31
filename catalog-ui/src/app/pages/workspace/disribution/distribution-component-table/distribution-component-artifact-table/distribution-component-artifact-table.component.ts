@@ -11,7 +11,7 @@ import { DistributionService } from '../../distribution.service';
 })
 export class DistributionComponentArtifactTableComponent implements OnInit {
 
-    @ViewChild('statusTable', {}) table: any;
+    @ViewChild('statusTable', {static: false}) table: any;
 
     @Input() componentName: string;
     @Input() rowDistributionID: string;

@@ -1,4 +1,6 @@
 
+import {throwError, of as observableOf, Observable} from 'rxjs';
+
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 import {ConfigureFn, configureTests} from "../../../jest/test-config.helper";
 import {NO_ERRORS_SCHEMA} from "@angular/core";
@@ -13,7 +15,6 @@ import {TranslatePipe} from "../../shared/translator/translate.pipe";
 import {TranslateService} from "../../shared/translator/translate.service";
 import {GlossaryService} from "../../shared/glossary/glossary.service";
 import {translateServiceStub} from "../../shared/glossary/glossary.testing";
-import {Observable} from "rxjs";
 import {LoaderService} from "onap-ui-angular/dist/loader/loader.service";
 import {categoriesElements} from "../../../jest/mocks/categories.mock";
 import {sdcMenu} from "../../../jest/mocks/sdc-menu.mock";
@@ -110,8 +111,8 @@ describe('catalog component', () => {
             };
             catalogServiceMock = {
                 //TODO create mock function of archive
-                getCatalog: jest.fn().mockImplementation(()=>  Observable.of(categoriesElements)),
-                getArchiveCatalog: jest.fn().mockImplementation(()=>  Observable.of(categoriesElements))
+                getCatalog: jest.fn().mockImplementation(()=>  observableOf(categoriesElements)),
+                getArchiveCatalog: jest.fn().mockImplementation(()=>  observableOf(categoriesElements))
             };
             const configure: ConfigureFn = testBed => {
                 testBed.configureTestingModule({
@@ -430,7 +431,7 @@ describe('catalog component', () => {
 
     it ('should call on catalog component getActiveCatalogItems with true observable return error' , () => {
         const component = TestBed.createComponent(CatalogComponent);
-        catalogServiceMock.getCatalog.mockImplementation(()=>  Observable.throwError('error'));
+        catalogServiceMock.getCatalog.mockImplementation(()=>  throwError('error'));
         component.componentInstance.getActiveCatalogItems(true);
         expect(component.componentInstance.loaderService.activate).toHaveBeenCalled();
         expect(console.info).toHaveBeenCalledWith('Failed to load catalog CatalogViewModel::getActiveCatalogItems');
@@ -452,7 +453,7 @@ describe('catalog component', () => {
 
     it ('should call on catalog component getArchiveCatalogItems with false' , () => {
         const component = TestBed.createComponent(CatalogComponent);
-        component.componentInstance.updateCatalogItems = jest.fn().mockImplementation((resp) => Observable.of());
+        component.componentInstance.updateCatalogItems = jest.fn().mockImplementation((resp) => observableOf());
         component.componentInstance.getArchiveCatalogItems(false);
         expect(component.componentInstance.cacheService.contains).toHaveBeenCalled();
         expect(component.componentInstance.cacheService.get).toHaveBeenCalled();
@@ -462,7 +463,7 @@ describe('catalog component', () => {
 
     it ('should call on catalog component getArchiveCatalogItems with true observable return error' , () => {
         const component = TestBed.createComponent(CatalogComponent);
-        catalogServiceMock.getArchiveCatalog.mockImplementation(()=>  Observable.throwError('error'));
+        catalogServiceMock.getArchiveCatalog.mockImplementation(()=>  throwError('error'));
         component.componentInstance.getArchiveCatalogItems(true);
         expect(component.componentInstance.loaderService.activate).toHaveBeenCalled();
         expect(component.componentInstance.catalogService.getArchiveCatalog).toHaveBeenCalled();

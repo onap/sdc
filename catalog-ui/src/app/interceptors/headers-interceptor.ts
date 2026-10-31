@@ -1,10 +1,12 @@
+
+import {defer, Observable} from 'rxjs';
+import {finalize, tap} from 'rxjs/operators';
 import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Injectable, Injector, Testability } from '@angular/core';
 import { SdcUiComponents, SdcUiServices } from 'onap-ui-angular';
 import { ButtonType } from 'onap-ui-angular/dist/common';
-import 'rxjs/add/observable/defer';
-import 'rxjs/add/operator/finally';
-import { Observable } from 'rxjs/Observable';
+
+
 import { ServerErrorResponse } from '../models/server-error-response';
 import { CookieService } from '../services/cookie.service';
 import { HttpHelperService } from '../services/http-helper.service';
@@ -24,17 +26,17 @@ export class HeadersInterceptor implements HttpInterceptor {
         // screen. Counting here (rather than relying on NgZone stability) is deliberate:
         // the hybrid runtime keeps a macrotask pending for as long as AngularJS is loaded,
         // so Testability.isStable()/whenStable() never resolve in this app.
-        return Observable.defer(() => {
+        return defer(() => {
             const testability: Testability | null = this.injector.get(Testability, null);
             if (testability) {
                 testability.increasePendingRequestCount();
             }
-            return this.addHeadersAndHandle(req, next)
-                .finally(() => {
+            return this.addHeadersAndHandle(req, next).pipe(
+                finalize(() => {
                     if (testability) {
                         testability.decreasePendingRequestCount();
                     }
-                });
+                }));
         });
     }
 
@@ -57,7 +59,7 @@ export class HeadersInterceptor implements HttpInterceptor {
         if (uuidValue !== '') {
             authReq = authReq.clone({ headers: authReq.headers.set(this.cookieService.getUserIdSuffix(), this.cookieService.getUserId())});
         }
-        return next.handle(authReq).do(
+        return next.handle(authReq).pipe(tap(
 
             (event: HttpEvent<any>) => { /* Do Nothing */ },
 
@@ -87,8 +89,7 @@ export class HeadersInterceptor implements HttpInterceptor {
                         modalService.openErrorDetailModal('Error', errorResponse.message, 'error-modal', errorDetails);
                     }
 
-                    return Observable.throwError(err);
                 }
-            });
+            }));
     }
 }

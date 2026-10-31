@@ -1,7 +1,7 @@
+import {throwError, of,  Observable } from 'rxjs';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { SdcUiCommon, SdcUiComponents, SdcUiServices } from 'onap-ui-angular';
-import { Observable } from 'rxjs/Rx';
 import { Mock } from 'ts-mockery';
 import { ConfigureFn, configureTests } from '../../../../../../jest/test-config.helper';
 import { ComponentMetadata } from '../../../../../models/component-metadata';
@@ -31,9 +31,9 @@ describe('policy targets tab component', () => {
         {
             updateTargets: jest.fn().mockImplementation((compType, uid, policyUniqueId, updatedTargets) => {
                     if (updatedTargets === undefined) {
-                        return Observable.throwError('error');
+                        return throwError('error');
                     } else {
-                        return Observable.of(updatedTargets);
+                        return of(updatedTargets);
                     }
                 }
     )});

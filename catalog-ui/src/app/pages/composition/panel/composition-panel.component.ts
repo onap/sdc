@@ -36,8 +36,7 @@ import { PropertiesTabComponent } from 'app/pages/composition/panel/panel-tabs/p
 import { ReqAndCapabilitiesTabComponent } from 'app/pages/composition/panel/panel-tabs/req-capabilities-tab/req-capabilities-tab.component';
 import {ComponentType, ResourceType} from 'app/utils/constants';
 import * as _ from 'lodash';
-import { Subscription } from 'rxjs';
-import { Observable } from 'rxjs/Observable';
+import { Subscription ,  Observable } from 'rxjs';
 import { ArtifactGroupType, COMPONENT_FIELDS } from '../../../utils/constants';
 import { WorkspaceState } from '../../../store/states/workspace.state';
 import { OnSidebarOpenOrCloseAction } from '../common/store/graph.actions';

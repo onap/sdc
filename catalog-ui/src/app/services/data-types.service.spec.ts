@@ -30,7 +30,7 @@
  *   - the `tosca.datatypes.Root` cache pruning, and
  *   - the pure derived-type logic (getFirsLevelOfDataTypeProperties, isDataTypeFor*).
  */
-import 'rxjs/add/operator/map';
+
 import {TestBed} from '@angular/core/testing';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {DataTypesService} from './data-types.service';

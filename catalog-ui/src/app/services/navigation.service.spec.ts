@@ -19,7 +19,7 @@
  */
 
 import {NavigationEnd, NavigationStart} from '@angular/router';
-import {Subject} from 'rxjs/Subject';
+import {Subject} from 'rxjs';
 import {NavigationService} from './navigation.service';
 
 /**

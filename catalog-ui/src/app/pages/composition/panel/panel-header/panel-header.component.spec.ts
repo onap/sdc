@@ -1,3 +1,4 @@
+import {throwError, Observable, of} from 'rxjs';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {CompositionService} from 'app/pages/composition/composition.service';
@@ -15,8 +16,7 @@ import {FullComponentInstance} from 'app/models/components-instances/full-compon
 import {GroupInstance} from 'app/models/graph/zones/group-instance';
 import {PolicyInstance} from 'app/models/graph/zones/policy-instance';
 import {Requirement, RequirementsGroup} from 'app/models/requirement';
-import {Observable, of} from "rxjs";
-import 'rxjs/add/observable/throw';
+
 
 describe('CompositionPanelHeaderComponent', () => {
     let component: CompositionPanelHeaderComponent;
@@ -107,7 +107,7 @@ describe('CompositionPanelHeaderComponent', () => {
     it('if update fails, name is reverted to old value', () => {
         component.selectedComponent = new GroupInstance(<GroupInstance>{name: "GROUP NAME"});
         component.valueEditModalInstance = valueEditModalInstance;
-        jest.spyOn(component.groupService, 'updateName').mockReturnValue(Observable.throw(new Error('Error')));
+        jest.spyOn(component.groupService, 'updateName').mockReturnValue(throwError(new Error('Error')));
         component.saveInstanceName();
         expect(component.selectedComponent.name).toEqual("GROUP NAME");
     });

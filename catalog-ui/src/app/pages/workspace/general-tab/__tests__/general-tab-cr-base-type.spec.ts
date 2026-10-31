@@ -24,7 +24,8 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {EventListenerService} from 'app/services/event-listener.service';
 import {CacheService} from 'app/services/cache.service';
 import {SdcUiServices} from 'onap-ui-angular';
-import {Subject} from 'rxjs/Subject';
+import {Subject} from 'rxjs';
+import {filter} from 'rxjs/operators';
 import {ComponentFactory} from 'app/utils/component-factory';
 import {ModalsHandler} from 'app/utils/modals-handler';
 import {ConfigureFn, configureTests} from '../../../../../jest/test-config.helper';
@@ -107,8 +108,8 @@ describe('GeneralTabComponent - CR base type select', () => {
                     {provide: SdcMenuToken, useValue: {component_workspace_menu_option: {SERVICE: [{hiddenCategories: []}], RESOURCE: [{hiddenCategories: []}]}}},
                     {provide: ComponentFactory, useValue: {createComponent: (c: any) => Object.assign({}, c)}},
                     {provide: ImportVSPService, useValue: {}},
-                    {provide: ModelService, useValue: {getModels: () => baseTypes$.asObservable().filter(() => false),
-                                                      getModelsOfType: () => baseTypes$.asObservable().filter(() => false)}},
+                    {provide: ModelService, useValue: {getModels: () => baseTypes$.asObservable().pipe(filter(() => false)),
+                                                      getModelsOfType: () => baseTypes$.asObservable().pipe(filter(() => false))}},
                     {provide: ElementService, useValue: elementService},
                     {provide: ModalsHandler, useValue: {}}
                 ]

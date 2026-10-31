@@ -20,6 +20,7 @@
  *  ============LICENSE_END=========================================================
  */
 
+import {throwError, Observable} from 'rxjs';
 import {Component, Inject, Injector, OnInit} from '@angular/core';
 import {SdcMenuToken, IAppMenu} from "../../config/sdc-menu.config";
 import {MenuItem, MenuItemGroup} from "../../utils/menu-handler";
@@ -32,7 +33,6 @@ import {NavigationService} from "../../services/navigation.service";
 import {RouteMetadataService} from "../../services/route-metadata.service";
 import {HttpErrorResponse} from "@angular/common/http";
 import {ServerErrorResponse} from "../../models/server-error-response";
-import {Observable} from "rxjs/Observable";
 import {SdcUiCommon, SdcUiServices} from "onap-ui-angular/dist";
 import {NotificationSettings} from "onap-ui-angular/dist/notifications/utilities/notification.config";
 
@@ -112,7 +112,7 @@ export class TypeWorkspaceComponent implements OnInit {
                           'Status Code': errorResponse.status
                       };
                       modalService.openErrorDetailModal('Error', errorResponse.status != 409 ? errorResponse.message : "Data Type already exists", 'error-modal', errorDetails);
-                      return Observable.throwError(error);
+                      return throwError(error);
                   }
               });
       }

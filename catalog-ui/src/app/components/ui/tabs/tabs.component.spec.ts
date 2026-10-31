@@ -34,7 +34,7 @@ import { Tabs } from './tabs.component';
         </tabs>`
 })
 class HostComponent {
-    @ViewChild(Tabs) tabs: Tabs;
+    @ViewChild(Tabs, {static: false}) tabs: Tabs;
     changed: string[] = [];
     indication: number = 3;
 }

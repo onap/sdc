@@ -13,7 +13,7 @@ import { EVENTS } from '../../../utils/constants';
 })
 export class DistributionComponent implements OnInit {
 
-  @ViewChild('distributionTable', { }) table: any;
+  @ViewChild('distributionTable', {static: false}) table: any;
 
   @Input() isModal: boolean = false;
   @Input() statusFilter: string;

@@ -1,10 +1,10 @@
 // import ' rxjs/add/observable/of';
+import {of,  Observable } from 'rxjs';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture } from '@angular/core/testing';
 import { NgxsModule, Store } from '@ngxs/store';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { SdcUiServices } from 'onap-ui-angular';
-import { Observable } from 'rxjs/Observable';
 import { deploymentArtifactMock } from '../../../../jest/mocks/artifacts-mock';
 import { ConfigureFn, configureTests } from '../../../../jest/test-config.helper';
 import { ComponentMetadata } from '../../../models/component-metadata';
@@ -30,7 +30,7 @@ describe('deployment artifacts page', () => {
         async(() => {
 
             topologyTemplateServiceMock = {
-                getArtifactsByType: jest.fn().mockImplementation((componentType, id, artifactType) => Observable.of(deploymentArtifactMock))
+                getArtifactsByType: jest.fn().mockImplementation((componentType, id, artifactType) => of(deploymentArtifactMock))
             };
             workspaceServiceMock = {
                 metadata: <ComponentMetadata>{

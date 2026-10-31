@@ -1,3 +1,5 @@
+
+import {map} from 'rxjs/operators';
 /*-
  * ============LICENSE_START=======================================================
  * SDC
@@ -20,8 +22,8 @@
  */
 import {Injectable} from '@angular/core';
 import * as _ from 'lodash';
-import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/operator/map';
+import {Observable} from 'rxjs';
+
 import {Component} from 'app/models/components/component';
 import {PropertyModel} from 'app/models/properties';
 import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
@@ -85,36 +87,36 @@ export class PropertyFormModalService {
             const input: InputBEModel = ctx.inputProperty;
             input.constraints = property.constraints;
             input.metadata = property.metadata;
-            return this.componentService.updateComponentInputs(ctx.component, [input])
-                .map((response) => {
+            return this.componentService.updateComponentInputs(ctx.component, [input]).pipe(
+                map((response) => {
                     console.debug('Input property updated');
                     return;
-                });
+                }));
         }
 
         // Branch 3: group owner (old VM lines 401-403).
         if (ctx.propertyOwnerType === 'group') {
             return this.componentInstanceService
-                .updateComponentGroupInstanceProperties(metadata.componentType, metadata.uniqueId, ctx.propertyOwnerId, [property])
-                .map((propertiesFromBE) => this.onPropertySuccess(ctx, <PropertyModel>propertiesFromBE[0]));
+                .updateComponentGroupInstanceProperties(metadata.componentType, metadata.uniqueId, ctx.propertyOwnerId, [property]).pipe(
+                map((propertiesFromBE) => this.onPropertySuccess(ctx, <PropertyModel>propertiesFromBE[0])));
         }
 
         // Branch 4: policy owner (old VM lines 404-411).
         if (ctx.propertyOwnerType === 'policy') {
             return this.componentInstanceService
-                .updateComponentPolicyInstanceProperties(metadata.componentType, metadata.uniqueId, ctx.propertyOwnerId, [property])
-                .map((propertiesFromBE) => this.onPropertySuccess(ctx, <PropertyModel>propertiesFromBE[0]));
+                .updateComponentPolicyInstanceProperties(metadata.componentType, metadata.uniqueId, ctx.propertyOwnerId, [property]).pipe(
+                map((propertiesFromBE) => this.onPropertySuccess(ctx, <PropertyModel>propertiesFromBE[0])));
         }
 
         // Branch 5a: instance value-owner (old VM lines 414-419).
         if (ctx.isPropertyValueOwner) {
-            return this.updateInstanceProperties(property.resourceInstanceUniqueId, [property])
-                .map((propertiesFromBE) => this.onPropertySuccess(ctx, propertiesFromBE[0]));
+            return this.updateInstanceProperties(property.resourceInstanceUniqueId, [property]).pipe(
+                map((propertiesFromBE) => this.onPropertySuccess(ctx, propertiesFromBE[0])));
         }
 
         // Branch 5b: plain property add/update (old VM lines 420-428 -> addOrUpdateProperty).
-        return this.addOrUpdateProperty(ctx, property)
-            .map((propertyFromBE) => this.onPropertySuccess(ctx, propertyFromBE));
+        return this.addOrUpdateProperty(ctx, property).pipe(
+            map((propertyFromBE) => this.onPropertySuccess(ctx, propertyFromBE)));
     }
 
     // Old VM onPropertySuccess (lines 389-398), minus the modal-close: keep the shared filteredProperties
@@ -128,8 +130,8 @@ export class PropertyFormModalService {
     private updateInstanceProperties(componentInstanceId: string, properties: PropertyModel[]): Observable<PropertyModel[]> {
         const metadata = this.workspaceService.metadata;
         return this.componentInstanceService
-            .updateInstanceProperties(metadata.componentType, metadata.uniqueId, componentInstanceId, properties)
-            .map((newProperties) => {
+            .updateInstanceProperties(metadata.componentType, metadata.uniqueId, componentInstanceId, properties).pipe(
+            map((newProperties) => {
                 newProperties.forEach((newProperty) => {
                     if (!_.isNil(newProperty.path)) {
                         if (newProperty.path[0] === newProperty.resourceInstanceUniqueId) {
@@ -145,7 +147,7 @@ export class PropertyFormModalService {
                     }
                 });
                 return newProperties;
-            });
+            }));
     }
 
     // Ported verbatim from property-form-view-model.ts:618-636.
@@ -156,7 +158,7 @@ export class PropertyFormModalService {
                 ctx.filteredProperties.push(newProperty);
                 return newProperty;
             };
-            return this.topologyTemplateService.addProperty(metadata.componentType, metadata.uniqueId, property).map(onSuccess);
+            return this.topologyTemplateService.addProperty(metadata.componentType, metadata.uniqueId, property).pipe(map(onSuccess));
         } else {
             const onSuccess = (newProperty: PropertyModel): PropertyModel => {
                 // find exist instance property in parent component for update the new value ( find bu uniqueId )
@@ -165,7 +167,7 @@ export class PropertyFormModalService {
                 ctx.filteredProperties[propertyIndex] = newProperty;
                 return newProperty;
             };
-            return this.topologyTemplateService.updateProperty(metadata.componentType, metadata.uniqueId, property).map(onSuccess);
+            return this.topologyTemplateService.updateProperty(metadata.componentType, metadata.uniqueId, property).pipe(map(onSuccess));
         }
     }
 
@@ -177,6 +179,6 @@ export class PropertyFormModalService {
         const onFailed = (): void => {
             console.debug('Failed to delete property');
         };
-        return this.topologyTemplateService.deleteProperty(componentType, componentId, propertyId).map(onSuccess, onFailed);
+        return this.topologyTemplateService.deleteProperty(componentType, componentId, propertyId).pipe(map(onSuccess, onFailed));
     }
 }

@@ -1,25 +1,5 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
- * ================================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ============LICENSE_END=========================================================
- */
-import 'rxjs/add/observable/forkJoin';
-import 'rxjs/add/observable/of';
-import {Observable} from 'rxjs/Observable';
+
+import {of as observableOf, Observable} from 'rxjs';
 import {EVENTS, WorkspaceMode} from 'app/utils/constants';
 import {EventListenerService} from 'app/services/event-listener.service';
 import {InterfaceOperationComponent} from './interface-operation.page.component';
@@ -40,17 +20,17 @@ function createComp(opts: any = {}) {
     const sdcConfig: any = {enableWorkflowAssociation: false};
     const navigationService: any = {navigate: jest.fn()};
     const translateService: any = {
-        languageChangedObservable: Observable.of('en_US'),
+        languageChangedObservable: observableOf('en_US'),
         translate: jest.fn((k: string) => k)
     };
     const pluginsService: any = {getPluginByStateUrl: jest.fn(() => undefined)};
     const componentService: any = {
-        getInterfaceOperations: jest.fn(() => Observable.of({interfaces: []})),
-        getComponentInputs: jest.fn(() => Observable.of({inputs: []})),
-        getInterfaceTypes: jest.fn(() => Observable.of({})),
-        getCapabilitiesAndRequirements: jest.fn(() => Observable.of({capabilities: {}}))
+        getInterfaceOperations: jest.fn(() => observableOf({interfaces: []})),
+        getComponentInputs: jest.fn(() => observableOf({inputs: []})),
+        getInterfaceTypes: jest.fn(() => observableOf({})),
+        getCapabilitiesAndRequirements: jest.fn(() => observableOf({capabilities: {}}))
     };
-    const workflowService: any = {getWorkflows: jest.fn(() => Observable.of([]))};
+    const workflowService: any = {getWorkflows: jest.fn(() => observableOf([]))};
     const modalService: any = {};
     const modalServiceSdcUI: any = {openCustomModal: jest.fn(() => ({getButtonById: jest.fn()}))};
     const eventListenerService = new EventListenerService();

@@ -2,9 +2,15 @@
 
 ## Development server
 
-Use the Node 16.20.0 / npm 6.14.13 runtime installed by Maven. The Angular 5
-application uses Angular CLI 1.7.4 and `.angular-cli.json`; it does not have
-an Angular 6+ `angular.json` workspace. This build migration does not upgrade Angular.
+Use the Node 16.20.0 / npm 6.14.13 runtime installed by Maven. The application
+uses Angular 8.2.14, Angular CLI 8.3.29 and the `angular.json` workspace.
+Production AOT and development JIT use View Engine; Ivy is disabled.
+Angular 8 is an end-of-life migration checkpoint, not a supported final platform.
+
+The `onap-ui-angular` 6.0.0 dependency must be published by the sibling library
+release before merging the consumer pin. During coordinated local development,
+install the library's `npm pack` tarball with `npm install --no-save
+--no-package-lock /path/to/onap-ui-angular-6.0.0.tgz`; do not commit a local path.
 
 1. Run `npm install`, then `npm start` for a dev server.
 2. Navigate to <http://localhost:9000/>.
@@ -60,6 +66,8 @@ SDC_BACKEND_HOST=sdc-fe-ui.example.com SDC_BACKEND_PORT=443 \
 
 `SDC_DEV_PORT` changes the public port from 9000. Use 9000-9009 locally.
 Pair `SDC_DIRECT_FE=true` with the frontend target; leave it unset for a backend.
+Use the frontend target when testing onboarding: the catalog backend does not
+serve the onboarding JavaScript or API proxy routes.
 
 The gateway creates development-only authorization cookies and headers. The cookies and user information come from the
 `/configurations/mock.json` file under the nodes `sdcConfig.cookie` and `sdcConfig.userTypes` respectively.
@@ -72,7 +80,7 @@ The default user role is the node `sdcConfig.userTypes.designer` (configurable w
 Application configuration `dev.js` or `prod.js` and `menu.js` are located in
 `configurations/`. CLI replaces `src/environments/environment.ts` with its
 production counterpart for the production build, selecting both the configuration
-and production mode. Asset copying and global-script order live in `.angular-cli.json`.
+and production mode. Asset copying and global-script order live in `angular.json`.
 
 
 ## Running unit tests

@@ -1,3 +1,5 @@
+
+import {of as observableOf, Observable} from 'rxjs';
 import {async, ComponentFixture, TestBed} from "@angular/core/testing";
 import {NO_ERRORS_SCHEMA} from "@angular/core";
 import {ConfigureFn, configureTests} from "../../../../jest/test-config.helper";
@@ -5,9 +7,8 @@ import {NgxDatatableModule} from "@swimlane/ngx-datatable";
 import {WorkspaceService} from "../workspace.service";
 import {SdcUiServices} from "onap-ui-angular";
 import {TopologyTemplateService} from "../../../services/component-services/topology-template.service";
-import {Observable} from "rxjs/Observable";
 import {ComponentMetadata} from "../../../models/component-metadata";
-import 'rxjs/add/observable/of';
+
 import {NgxsModule, Store} from "@ngxs/store";
 import {ArtifactsState} from "../../../store/states/artifacts.state";
 import {InformationArtifactPageComponent} from "./information-artifact-page.component";
@@ -28,7 +29,7 @@ describe('informational artifacts page', () => {
         async(() => {
 
             topologyTemplateServiceMock = {
-                getArtifactsByType: jest.fn().mockImplementation((componentType, id, artifactType) => Observable.of(informationalArtifactsMock))
+                getArtifactsByType: jest.fn().mockImplementation((componentType, id, artifactType) => observableOf(informationalArtifactsMock))
             };
             workspaceServiceMock = {metadata: <ComponentMetadata>{uniqueId: 'service_unique_id', componentType: 'SERVICE'}}
 
@@ -80,7 +81,7 @@ describe('informational artifacts page', () => {
 
     // No artifact rows: the mock rows are plain objects without ArtifactModel's methods.
     const renderWithoutRows = (isViewOnly: boolean) => {
-        (topologyTemplateServiceMock.getArtifactsByType as jest.Mock).mockImplementation(() => Observable.of([]));
+        (topologyTemplateServiceMock.getArtifactsByType as jest.Mock).mockImplementation(() => observableOf([]));
         store.dispatch(new UpdateIsViewOnly(isViewOnly));
         fixture.detectChanges();
     };
@@ -88,6 +89,7 @@ describe('informational artifacts page', () => {
     it('shows the add actions on an editable asset', () => {
         renderWithoutRows(false);
         fixture.detectChanges();
+        expect(fixture.componentInstance.table).toBeDefined();
         expect(addButtons().length).toBe(2);
     });
 

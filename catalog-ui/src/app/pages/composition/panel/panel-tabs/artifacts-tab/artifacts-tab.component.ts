@@ -10,7 +10,7 @@ import { ComponentInstanceService } from 'app/services/component-instance-servic
 import { TopologyTemplateService } from 'app/services/component-services/topology-template.service';
 import {ArtifactType} from 'app/utils/constants';
 import * as _ from 'lodash';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ArtifactsService } from '../../../../../components/forms/artifacts-form/artifacts.service';
 import { GetArtifactsByTypeAction } from '../../../../../store/actions/artifacts.action';

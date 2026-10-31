@@ -37,7 +37,7 @@ export class DataTypeCatalogComponent {
     public componentType:string;
     public icon:string;
     public iconSprite:string;
-    public lastUpdateDate:string;
+    public lastUpdateDate:string | Date;
     public filterTerm:string;
 
     constructor(dataTypeCatalogComponent?: DataTypeModel) {

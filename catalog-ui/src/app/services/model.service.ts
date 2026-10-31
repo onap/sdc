@@ -18,7 +18,7 @@
 */
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { ISdcConfig, SdcConfigToken } from '../config/sdc-config.config';
 import {Model} from "../models/model";
 

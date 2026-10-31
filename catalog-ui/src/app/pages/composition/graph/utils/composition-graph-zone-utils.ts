@@ -6,6 +6,7 @@ import {ZoneInstance, ZoneInstanceAssignmentType, ZoneInstanceType} from 'app/mo
 import {CanvasHandleTypes} from 'app/utils/constants';
 import * as $ from 'jquery';
 import {Observable} from "rxjs";
+import {map} from 'rxjs/operators';
 import {GroupInstance} from "app/models/graph/zones/group-instance";
 import {Injectable} from "@angular/core";
 import {DynamicComponentService} from "app/services/dynamic-component.service";
@@ -96,17 +97,17 @@ export class CompositionGraphZoneUtils {
     public createZoneInstanceFromLeftPalette = (zoneType: ZoneInstanceType, paletteComponentType: string): Observable<ZoneInstance> => {
 
         if (zoneType === ZoneInstanceType.POLICY) {
-            return this.policiesService.createPolicyInstance(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId, paletteComponentType).map(response => {
+            return this.policiesService.createPolicyInstance(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId, paletteComponentType).pipe(map(response => {
                 let newInstance = new PolicyInstance(response);
                 this.compositionService.addPolicyInstance(newInstance);
                 return new ZoneInstance(newInstance, this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId);
-            });
+            }));
         } else if (zoneType === ZoneInstanceType.GROUP) {
-            return this.groupsService.createGroupInstance(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId, paletteComponentType).map(response => {
+            return this.groupsService.createGroupInstance(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId, paletteComponentType).pipe(map(response => {
                 let newInstance = new GroupInstance(response);
                 this.compositionService.addGroupInstance(newInstance);
                 return new ZoneInstance(newInstance, this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId);
-            });
+            }));
         }
     }
 

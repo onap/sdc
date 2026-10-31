@@ -62,7 +62,7 @@ enum DynamicElementComponentCreatorIdentifier {
 })
 export class DynamicElementComponent {
 
-    @ViewChild('target', { read: ViewContainerRef }) target: any;
+    @ViewChild('target', { read: ViewContainerRef, static: true }) target: any;
     @Input() type: any;
     @Input() operator: any;
     @Input() childType: any;

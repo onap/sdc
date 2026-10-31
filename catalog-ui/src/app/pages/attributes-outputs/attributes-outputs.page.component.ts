@@ -74,7 +74,7 @@ const SERVICE_SELF_TITLE = "SELF";
 export class AttributesOutputsComponent implements UnsavedChangesAware {
   title = "Attributes & Outputs";
 
-  @ViewChild('componentAttributesTable')
+  @ViewChild('componentAttributesTable', {static: false})
   private table: any;
 
   component: ComponentData;
@@ -110,8 +110,8 @@ export class AttributesOutputsComponent implements UnsavedChangesAware {
   savingChangedData: boolean;
   serviceBeAttributesMap: InstanceBeAttributesMap;
 
-  @ViewChild('hierarchyNavTabs') hierarchyNavTabs: Tabs;
-  @ViewChild('attributeOutputTabs') attributeOutputTabs: Tabs;
+  @ViewChild('hierarchyNavTabs', {static: false}) hierarchyNavTabs: Tabs;
+  @ViewChild('attributeOutputTabs', {static: false}) attributeOutputTabs: Tabs;
 
 
   constructor(

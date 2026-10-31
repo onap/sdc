@@ -4,7 +4,7 @@
 import { Component, Input } from '@angular/core';
 import * as _ from 'lodash';
 import { IDropDownOption } from 'onap-ui-angular/dist/form-elements/dropdown/dropdown-models';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import {ArtifactModel} from '../../../models/artifacts';
 import {ArtifactType, ComponentType} from '../../../utils/constants';
 import { Dictionary } from '../../../utils/dictionary';
@@ -120,12 +120,14 @@ export class ArtifactFormComponent {
     // sdc-validation for Description
     public onDescriptionChange = (isValid: boolean): void => {
         this.descriptionIsValid = isValid;
-        this.onValidationChange.next(isValid) && this.verifyTypeAndFileWereFilled();
+        this.onValidationChange.next(isValid);
+        this.verifyTypeAndFileWereFilled();
     };
 
     // sdc-validation for Label
     private onLabelChange = (isValid: boolean): void => {
         this.labelIsValid = isValid;
-        this.onValidationChange.next(isValid) && this.verifyTypeAndFileWereFilled();
+        this.onValidationChange.next(isValid);
+        this.verifyTypeAndFileWereFilled();
     };
 }

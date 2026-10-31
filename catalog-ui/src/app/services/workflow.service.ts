@@ -1,5 +1,7 @@
+
+import {map} from 'rxjs/operators';
 import { Injectable, Inject } from "@angular/core";
-import { Observable } from "rxjs/Observable";
+import { Observable } from "rxjs";
 import { SdcConfigToken, ISdcConfig } from "../config/sdc-config.config";
 import { HttpClient } from "@angular/common/http";
 import {Component} from 'app/models/components/component';
@@ -42,10 +44,10 @@ export class WorkflowService {
     }
 
     public getWorkflowVersions(workflowId: string, filterCertified: boolean = true): Observable<any> {
-        return this.http.get<any>(this.baseUrl + '/workflows/' + workflowId + '/versions' + (filterCertified ? '?state=' + this.VERSION_STATE_CERTIFIED : ''))
-            .map((res) => {
+        return this.http.get<any>(this.baseUrl + '/workflows/' + workflowId + '/versions' + (filterCertified ? '?state=' + this.VERSION_STATE_CERTIFIED : '')).pipe(
+            map((res) => {
                 return res.items;
-            });
+            }));
     }
 
     public updateWorkflowVersion(workflowId: string, versionId: string, payload: any): Observable<any> {

@@ -19,9 +19,10 @@
  * ============LICENSE_END=========================================================
  */
 
-import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/observable/of';
-import 'rxjs/add/observable/throw';
+
+import {throwError as observableThrowError, of as observableOf, Observable} from 'rxjs';
+
+
 import {AuthGuard} from './auth.guard';
 
 /**
@@ -125,7 +126,7 @@ describe('AuthGuard', () => {
         });
 
         it('authenticates, caches the user and then decides', () => {
-            authService.authenticate.mockReturnValue(Observable.of(designer));
+            authService.authenticate.mockReturnValue(observableOf(designer));
             return decide(route({permissions: ['DESIGNER']})).then((ok) => {
                 expect(ok).toBe(true);
                 expect(authService.authenticate).toHaveBeenCalledTimes(1);
@@ -134,7 +135,7 @@ describe('AuthGuard', () => {
         });
 
         it('applies the permission check to the freshly-authenticated user', () => {
-            authService.authenticate.mockReturnValue(Observable.of(designer));
+            authService.authenticate.mockReturnValue(observableOf(designer));
             return decide(route({permissions: ['ADMIN']})).then((ok) => {
                 expect(ok).toBe(false);
                 expect(navigationService.navigate).toHaveBeenCalledWith('error-403');
@@ -142,7 +143,7 @@ describe('AuthGuard', () => {
         });
 
         it('sends an ADMIN that authenticates on a DESIGNER route to adminDashboard', () => {
-            authService.authenticate.mockReturnValue(Observable.of(admin));
+            authService.authenticate.mockReturnValue(observableOf(admin));
             return decide(route({permissions: ['DESIGNER']})).then((ok) => {
                 expect(ok).toBe(false);
                 expect(navigationService.navigate).toHaveBeenCalledWith('adminDashboard');
@@ -150,7 +151,7 @@ describe('AuthGuard', () => {
         });
 
         it('sends a failed authentication to error-403 instead of erroring the navigation', () => {
-            authService.authenticate.mockReturnValue(Observable.throw(new Error('401')));
+            authService.authenticate.mockReturnValue(observableThrowError(new Error('401')));
             return decide().then((ok) => {
                 expect(ok).toBe(false);
                 expect(navigationService.navigate).toHaveBeenCalledWith('error-403');
@@ -163,7 +164,7 @@ describe('AuthGuard', () => {
          * usable after a failed auth — hence the assertion that nothing rejects.
          */
         it('never rejects, so the router is not left wedged', () => {
-            authService.authenticate.mockReturnValue(Observable.throw(new Error('boom')));
+            authService.authenticate.mockReturnValue(observableThrowError(new Error('boom')));
             return decide().then(() => undefined, () => fail('canActivate must not error'));
         });
     });

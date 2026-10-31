@@ -20,7 +20,7 @@
 
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { SdcUiCommon, SdcUiServices } from 'onap-ui-angular';
-import { Subject } from 'rxjs/Rx';
+import { Subject } from 'rxjs';
 import { ArtifactModel } from '../../../models/artifacts';
 import { CacheService } from '../../../services/cache.service';
 import { popoverAnchor } from '../../../utils/popover-anchor';
@@ -36,7 +36,7 @@ export class EnvParamsComponent implements OnInit {
     @Input() public isInstanceSelected: boolean;
     @Input() public isViewOnly: boolean;
 
-    @ViewChild('textArea') textArea: ElementRef;
+    @ViewChild('textArea', {static: false}) textArea: ElementRef;
     private copiedWorkingArtifactHeatParameters = [];
     private onValidationChange: Subject<boolean> = new Subject();
     private displayRegexValid = SdcUiCommon.RegexPatterns.numberOrEmpty;

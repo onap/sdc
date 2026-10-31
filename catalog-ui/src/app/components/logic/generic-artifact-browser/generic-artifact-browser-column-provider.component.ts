@@ -36,7 +36,7 @@ export class GenericArtifactBrowserColumnProviderComponent {
   @Output()
   onSave = new EventEmitter();
 
-  @ViewChild('generalForm') generalForm;
+  @ViewChild('generalForm', {static: false}) generalForm;
   name: string;
   path: string;
 

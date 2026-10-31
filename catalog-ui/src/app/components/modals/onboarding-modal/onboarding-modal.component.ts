@@ -41,7 +41,7 @@ export interface IPoint {
 export class OnboardingModalComponent implements OnInit {
     @Input() currentCsarUUID: string;
     @Input() currentCsarVersion: string;
-    @ViewChild('componentsMetadataTable') table: any;
+    @ViewChild('componentsMetadataTable', {static: false}) table: any;
     @Output() closeModalEvent: EventEmitter<ImportVSPdata> = new EventEmitter<ImportVSPdata>();
 
     public columns = [

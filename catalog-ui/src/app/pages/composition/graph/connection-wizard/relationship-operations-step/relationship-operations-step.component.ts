@@ -18,12 +18,13 @@
  *  ============LICENSE_END=========================================================
  */
 
+
+import {of as observableOf, Observable} from 'rxjs';
 import {Component, OnInit} from '@angular/core';
 import {IStepComponent} from "../../../../../models/wizard-step";
 import {ConnectionWizardService} from "../connection-wizard.service";
 import {Component as IComponent} from "../../../../../models/components/component";
 import {ComponentService} from "../../../../../services/component-services/component.service";
-import {Observable} from "rxjs";
 import {Operation} from "../create-interface-operation/model/operation";
 import {WorkspaceService} from "../../../../workspace/workspace.service";
 
@@ -64,7 +65,7 @@ export class RelationshipOperationsStepComponent implements OnInit, IStepCompone
     } else {
       this.operationList = new Array<Operation>();
     }
-    this.operationList$ = Observable.of(this.operationList);
+    this.operationList$ = observableOf(this.operationList);
   }
 
   private loadInterfaceTypeMap(): void {

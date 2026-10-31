@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { IDropDownOption } from 'onap-ui-angular/dist/form-elements/dropdown/dropdown-models';
 import { InputComponent } from 'onap-ui-angular/dist/form-elements/text-elements/input/input.component';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import { AttributeModel } from '../../../models/attributes';
 import { ValidationUtils } from '../../../utils/validation-utils';
 import { CacheService } from '../../../services/cache.service';
@@ -15,7 +15,7 @@ import { AttributeOptions } from './attributes-options';
 })
 export class AttributeModalComponent implements OnInit {
 
-    @ViewChild('_default') validatedInput: InputComponent;
+    @ViewChild('_default', {static: false}) validatedInput: InputComponent;
 
     public readonly types = AttributeOptions.types;                         // integer, string, boolean etc.
 

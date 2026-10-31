@@ -6,7 +6,6 @@ exports[`filter-properties-assignemnt component should match current snapshot of
   clearAll={[Function Function]}
   close={[Function Function]}
   filterData={[Function FilterPropertiesAssignmentData]}
-  filterPopover={[Function ElementRef]}
   footerButtons={[Function Object]}
   onTypeSelected={[Function Function]}
   search={[Function Function]}

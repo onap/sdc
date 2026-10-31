@@ -42,7 +42,7 @@ export class LiveStatusComponent implements OnChanges, OnDestroy {
     @Input() message: string = null;
     @Input() delay: number = 0;
     @Input() announceInitial: boolean = true;
-    @ViewChild('region') region: ElementRef;
+    @ViewChild('region', {static: true}) region: ElementRef;
 
     private known: boolean = false;
     private timer: any = null;

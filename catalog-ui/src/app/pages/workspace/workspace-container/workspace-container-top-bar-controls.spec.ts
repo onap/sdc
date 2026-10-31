@@ -18,6 +18,8 @@
  * ============LICENSE_END=========================================================
  */
 
+
+import {throwError as observableThrowError, of as observableOf, Observable} from 'rxjs';
 /**
  * Pins the five workspace top-bar controls that f89b30141 dropped when it replaced the AngularJS
  * WorkspaceViewModel: Upgrade/Update Services, Restore, Delete version, Delete (archived) and
@@ -34,9 +36,6 @@ const WorkspaceContainerComponent = require('./workspace-container.component').W
 const template: string = require('./workspace-container.component.html');
 
 import {Role, WorkspaceMode} from 'app/utils/constants';
-import 'rxjs/add/observable/of';
-import 'rxjs/add/observable/throw';
-import {Observable} from 'rxjs/Observable';
 import { unlabelledControls } from '../../../../jest/a11y-helpers';
 
 function makeComponent(overrides: any = {}) {
@@ -209,7 +208,7 @@ describe('archiveComponent', () => {
     it('archives, drops the archive cache and notifies', () => {
         const componentService: any = {
             getDependencies: jest.fn(), restoreComponent: jest.fn(), deleteComponent: jest.fn(),
-            archiveComponent: jest.fn(() => Observable.of({}))
+            archiveComponent: jest.fn(() => observableOf({}))
         };
         const {comp, cacheService, notificationsService} = createComponent({componentService});
         comp.archiveComponent();
@@ -223,7 +222,7 @@ describe('archiveComponent', () => {
     it('clears the loader and leaves the state alone when the request fails', () => {
         const componentService: any = {
             getDependencies: jest.fn(), restoreComponent: jest.fn(), deleteComponent: jest.fn(),
-            archiveComponent: jest.fn(() => Observable.throw('boom'))
+            archiveComponent: jest.fn(() => observableThrowError('boom'))
         };
         const {comp, notificationsService} = createComponent({componentService});
         comp.archiveComponent();
@@ -235,7 +234,7 @@ describe('archiveComponent', () => {
     it('returns to the catalog it was opened from', () => {
         const componentService: any = {
             getDependencies: jest.fn(), restoreComponent: jest.fn(), deleteComponent: jest.fn(),
-            archiveComponent: jest.fn(() => Observable.of({}))
+            archiveComponent: jest.fn(() => observableOf({}))
         };
         const navigationService: any = {
             getParam: jest.fn(() => 'catalog'),
@@ -255,7 +254,7 @@ describe('archiveComponent', () => {
     it('navigates nowhere without a previousState', () => {
         const componentService: any = {
             getDependencies: jest.fn(), restoreComponent: jest.fn(), deleteComponent: jest.fn(),
-            archiveComponent: jest.fn(() => Observable.of({}))
+            archiveComponent: jest.fn(() => observableOf({}))
         };
         const {comp, navigationService} = createComponent({componentService});
         comp.archiveComponent();
@@ -267,7 +266,7 @@ describe('restoreComponent', () => {
     it('restores, flips the flag, drops the cache and reloads', () => {
         const componentService: any = {
             getDependencies: jest.fn(), archiveComponent: jest.fn(), deleteComponent: jest.fn(),
-            restoreComponent: jest.fn(() => Observable.of({}))
+            restoreComponent: jest.fn(() => observableOf({}))
         };
         const {comp, cacheService, notificationsService, navigationService} =
             createComponent({componentService, component: makeComponent({isArchived: true})});
@@ -282,7 +281,7 @@ describe('restoreComponent', () => {
     it('clears the loader when the request fails', () => {
         const componentService: any = {
             getDependencies: jest.fn(), archiveComponent: jest.fn(), deleteComponent: jest.fn(),
-            restoreComponent: jest.fn(() => Observable.throw('boom'))
+            restoreComponent: jest.fn(() => observableThrowError('boom'))
         };
         const {comp, navigationService} = createComponent({componentService, component: makeComponent({isArchived: true})});
         comp.restoreComponent();
@@ -308,7 +307,7 @@ describe('deleteArchivedComponent', () => {
     it('deletes, drops the cache, notifies success and leaves for the dashboard', () => {
         const componentService: any = {
             getDependencies: jest.fn(), archiveComponent: jest.fn(), restoreComponent: jest.fn(),
-            deleteComponent: jest.fn(() => Observable.of({}))
+            deleteComponent: jest.fn(() => observableOf({}))
         };
         const navigationService: any = {
             getParam: jest.fn(() => 'workspace.general'),
@@ -332,7 +331,7 @@ describe('deleteArchivedComponent', () => {
     it('notifies an error and stays put when the delete fails', () => {
         const componentService: any = {
             getDependencies: jest.fn(), archiveComponent: jest.fn(), restoreComponent: jest.fn(),
-            deleteComponent: jest.fn(() => Observable.throw('boom'))
+            deleteComponent: jest.fn(() => observableThrowError('boom'))
         };
         const {comp, notificationsService, navigationService} =
             createComponent({componentService, component: makeComponent({isArchived: true})});
@@ -349,7 +348,7 @@ describe('openAutomatedUpgradeModal', () => {
         const dependencies = [{version: '1.0', dependencies: [{name: 'svc'}]}];
         const componentService: any = {
             archiveComponent: jest.fn(), restoreComponent: jest.fn(), deleteComponent: jest.fn(),
-            getDependencies: jest.fn(() => Observable.of(dependencies))
+            getDependencies: jest.fn(() => observableOf(dependencies))
         };
         const component = makeComponent({lifecycleState: 'CERTIFIED'});
         const {comp, automatedUpgradeService} = createComponent({componentService, component});
@@ -372,7 +371,7 @@ describe('hasNoDependencies', () => {
     it('goes false once a dependent version comes back', () => {
         const componentService: any = {
             archiveComponent: jest.fn(), restoreComponent: jest.fn(), deleteComponent: jest.fn(),
-            getDependencies: jest.fn(() => Observable.of([{version: '1.0', dependencies: [{name: 'svc'}]}]))
+            getDependencies: jest.fn(() => observableOf([{version: '1.0', dependencies: [{name: 'svc'}]}]))
         };
         const {comp} = createComponent({componentService, component: makeComponent({lifecycleState: 'CERTIFIED'})});
         (comp as any).verifyIfDependenciesExist();
