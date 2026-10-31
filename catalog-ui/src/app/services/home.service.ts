@@ -1,3 +1,5 @@
+
+import {map} from 'rxjs/operators';
 /*-
  * ============LICENSE_START=======================================================
  * SDC
@@ -50,8 +52,8 @@ export class HomeService {
     }
 
     public getAllComponents(smallObjects?: boolean): Observable<Component[]> {
-        return this.http.get<IComponentsArray>(this.api.root + this.api.GET_element)
-            .map((response) => {
+        return this.http.get<IComponentsArray>(this.api.root + this.api.GET_element).pipe(
+            map((response) => {
                 const componentResponse: IComponentsArray = response;
                 let componentsList: Component[] = [];
 
@@ -72,6 +74,6 @@ export class HomeService {
                 componentsList = _.orderBy(componentsList, ['lastUpdateDate'], ['desc']);
 
                 return componentsList;
-            });
+            }));
     }
 }

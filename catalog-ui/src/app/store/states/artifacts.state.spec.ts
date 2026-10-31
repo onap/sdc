@@ -1,5 +1,6 @@
+
+import {of as observableOf,  Observable, Subject } from 'rxjs';
 import { Store } from '@ngxs/store';
-import { Observable, Subject } from 'rxjs/Rx';
 import { Mock } from 'ts-mockery';
 import { ArtifactModel } from '../../models/artifacts';
 import { ArtifactGroupType } from '../../utils/constants';
@@ -42,8 +43,8 @@ describe('Test Artifact State', () => {
     });
 
     const componentInstanceServiceMock: ComponentInstanceService = Mock.of<ComponentInstanceService>({
-        updateInstanceArtifact: jest.fn().mockImplementation(() => Observable.of(updatedArtifact)),
-        getComponentInstanceArtifactsByGroupType: jest.fn().mockImplementation(() => Observable.of([heat1, updatedArtifact]))
+        updateInstanceArtifact: jest.fn().mockImplementation(() => observableOf(updatedArtifact)),
+        getComponentInstanceArtifactsByGroupType: jest.fn().mockImplementation(() => observableOf([heat1, updatedArtifact]))
     });
 
     const actionMock: UpdateInstanceArtifactAction = Mock.of<UpdateInstanceArtifactAction>({

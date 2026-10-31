@@ -84,20 +84,24 @@
                 <sdc-loader [global]="false" [active]="isLoad" [size]="'small'"[relative]="true"></sdc-loader>
             </ng-template>
         </ngx-datatable-row-detail>
-        <ngx-datatable-column *ngFor="let column of columns" [ngSwitch]="column.prop" [resizeable]="false" [draggable]="false" name={{column.name}}
+        <ngx-datatable-column *ngFor="let column of columns" [resizeable]="false" [draggable]="false" name={{column.name}}
             [flexGrow]="column.flexGrow">
-            <ng-template ngx-datatable-cell-template let-row="row" *ngSwitchCase="'name'">
-                <span data-tests-id="csar-row" class="sprite table-arrow" [ngClass]="{'opened': selectedComponent && row.packageId === selectedComponent.packageId}"></span>
-                    {{row[column.prop]}}
-            </ng-template>
-            <ng-template  ngx-datatable-cell-template let-row="row" *ngSwitchCase="'categories'">
-                <span *ngIf="row[column.prop][0]">
-                    {{row[column.prop][0].name}}&nbsp;
-                    <span *ngIf="row[column.prop][0].subcategories[0]">{{row[column.prop][0].subcategories[0].name}}</span>
-                </span> 
-            </ng-template>
-            <ng-template ngx-datatable-cell-template let-row="row" *ngSwitchDefault>
-                {{row[column.prop]}}
+            <ng-template ngx-datatable-cell-template let-row="row">
+                <ng-container [ngSwitch]="column.prop">
+                    <ng-container *ngSwitchCase="'name'">
+                        <span data-tests-id="csar-row" class="sprite table-arrow" [ngClass]="{'opened': selectedComponent && row.packageId === selectedComponent.packageId}"></span>
+                            {{row[column.prop]}}
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'categories'">
+                        <span *ngIf="row[column.prop][0]">
+                            {{row[column.prop][0].name}}&nbsp;
+                            <span *ngIf="row[column.prop][0].subcategories[0]">{{row[column.prop][0].subcategories[0].name}}</span>
+                        </span>
+                    </ng-container>
+                    <ng-container *ngSwitchDefault>
+                        {{row[column.prop]}}
+                    </ng-container>
+                </ng-container>
             </ng-template>
         </ngx-datatable-column>
     </ngx-datatable>

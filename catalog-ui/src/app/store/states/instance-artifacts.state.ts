@@ -49,7 +49,7 @@ export class InstanceArtifactsState {
     getInstanceArtifactsByType({getState, patchState}: StateContext<InstanceArtifactsStateModel>, action: GetInstanceArtifactsByTypeAction) {
         const state = getState();
         return this.componentInstanceService.getComponentInstanceArtifactsByGroupType(action.payload.componentType, action.payload.componentId, action.payload.instanceId, action.payload.artifactType)
-            .pipe(tap((resp: ComponentGenericResponse) => {
+            .pipe(tap(resp => {
                 switch (action.payload.artifactType) {
                     case ArtifactGroupType.INFORMATION:
                         patchState({

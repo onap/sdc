@@ -1,3 +1,4 @@
+import {of,  Observable } from 'rxjs';
 import { async, ComponentFixture} from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { Store } from '@ngxs/store';
@@ -10,7 +11,6 @@ import { ComponentInstanceService } from '../../../../../services/component-inst
 import {EventListenerService} from '../../../../../services/event-listener.service';
 import { InfoTabComponent } from './info-tab.component';
 import { ConfigureFn, configureTests } from "../../../../../../jest/test-config.helper";
-import { Observable } from "rxjs";
 import { leftPaletteElements } from "../../../../../../jest/mocks/left-paeltte-elements.mock";
 import { TranslatePipe } from "../../../../../shared/translator/translate.pipe";
 import { TranslateService } from "../../../../../shared/translator/translate.service";
@@ -46,14 +46,14 @@ describe('InfoTabComponent', () => {
                 notifyObservers: jest.fn()
             }
             compositionPaletteServiceStub = {
-                getLeftPaletteElements:  jest.fn().mockImplementation(()=>  Observable.of(leftPaletteElements))
+                getLeftPaletteElements:  jest.fn().mockImplementation(()=>  of(leftPaletteElements))
             }
             componentGenericResponseStub = {
               metadata: new ComponentMetadata()
             }
             componentGenericResponseStub.metadata.allVersions = serviceMetadata.allVersions;
             topologyTemplateServiceStub = {
-                getComponentMetadata: jest.fn().mockImplementation(() => Observable.of(componentGenericResponseStub))
+                getComponentMetadata: jest.fn().mockImplementation(() => of(componentGenericResponseStub))
             }
             const configure: ConfigureFn = testBed => {
                 testBed.configureTestingModule({

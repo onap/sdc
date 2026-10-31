@@ -5,17 +5,17 @@
         [rowHeight]="35" 
         [rows]="capabilitiesProperties"
         [sorts]="[{prop: 'name', dir: 'desc'}]">
-        <ngx-datatable-column *ngFor="let column of capabilityPropertiesColumns" [ngSwitch]="column.prop" [resizeable]="false" 
+        <ngx-datatable-column *ngFor="let column of capabilityPropertiesColumns" [resizeable]="false" 
             [draggable]="false" name={{column.name}} [flexGrow]="column.flexGrow">
-            <ng-template ngx-datatable-cell-template let-row="row" *ngSwitchCase="'name'">
-                <button type="button" class="edit-property" data-tests-id="row[column.prop]" sdc-tooltip [tooltip-text]="row[column.prop]" (click)="updateProperty(row)">{{row[column.prop]}}</button>
-            </ng-template>
-            <ng-template ngx-datatable-cell-template let-row="row" *ngSwitchCase="'schema'">
-                <span *ngIf="row[column.prop] && row[column.prop].property" data-tests-id="row[column.prop].property.type" 
-                sdc-tooltip [tooltip-text]="row[column.prop].property.type">{{row[column.prop].property.type}}</span>
-            </ng-template>
-            <ng-template ngx-datatable-cell-template let-row="row" *ngSwitchDefault>
-                <span data-tests-id="row[column.prop]" sdc-tooltip [tooltip-text]="row[column.prop]" [tooltip-placement]="3">{{row[column.prop]}}</span>
+            <ng-template ngx-datatable-cell-template let-row="row">
+                <ng-container [ngSwitch]="column.prop">
+                    <button *ngSwitchCase="'name'" type="button" class="edit-property" data-tests-id="row[column.prop]" sdc-tooltip [tooltip-text]="row[column.prop]" (click)="updateProperty(row)">{{row[column.prop]}}</button>
+                    <ng-container *ngSwitchCase="'schema'">
+                        <span *ngIf="row[column.prop] && row[column.prop].property" data-tests-id="row[column.prop].property.type" 
+                        sdc-tooltip [tooltip-text]="row[column.prop].property.type">{{row[column.prop].property.type}}</span>
+                    </ng-container>
+                    <span *ngSwitchDefault data-tests-id="row[column.prop]" sdc-tooltip [tooltip-text]="row[column.prop]" [tooltip-placement]="3">{{row[column.prop]}}</span>
+                </ng-container>
             </ng-template>
         </ngx-datatable-column>
     </ngx-datatable>

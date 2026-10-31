@@ -33,7 +33,6 @@ import { GRAPH_EVENTS } from 'app/utils/constants';
 import { DndDropEvent } from 'ngx-drag-drop/ngx-drag-drop';
 import { CompositionPaletteService } from './services/palette.service';
 import {PolicyMetadata} from "../../../models/policy-metadata";
-import {GenericBrowserDomAdapter} from "@angular/platform-browser/src/browser/generic_browser_adapter";
 
 @Component({
     selector: 'composition-palette',

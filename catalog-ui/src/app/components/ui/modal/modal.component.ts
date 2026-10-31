@@ -40,7 +40,7 @@ export class ModalComponent implements OnInit, OnDestroy {
     @Input() isMovable: boolean;
     @Input() input: ModalModel;
     @Input() dynamicContent: any;
-    @ViewChild('dynamicContentContainer', { read: ViewContainerRef }) dynamicContentContainer: ViewContainerRef;
+    @ViewChild('dynamicContentContainer', { read: ViewContainerRef, static: true }) dynamicContentContainer: ViewContainerRef;
     modalId: number;
     private modalElement: JQuery;
     private focusTrap: FocusTrap;

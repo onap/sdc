@@ -1,6 +1,7 @@
 import {Inject, Injectable} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
-import {Http, Response} from '@angular/http';
+import {Observable, of} from 'rxjs';
+import {catchError} from 'rxjs/operators';
+import {HttpBackend, HttpClient} from '@angular/common/http';
 import {IApi, IAppConfigurtaion} from 'app/models/app-config';
 import {Plugin, PluginsConfiguration} from 'app/models/plugins-config';
 import {ISdcConfig, SdcConfigToken} from "../config/sdc-config.config";
@@ -11,8 +12,10 @@ export class PluginsService {
     public configuration: IAppConfigurtaion;
     public api: IApi;
     private baseUrl;
+    private http: HttpClient;
 
-    constructor(private http: Http, @Inject(SdcConfigToken) private sdcConfig: ISdcConfig) {
+    constructor(httpBackend: HttpBackend, @Inject(SdcConfigToken) private sdcConfig: ISdcConfig) {
+        this.http = new HttpClient(httpBackend);
         this.api = this.sdcConfig.api;
         this.baseUrl = this.api.root + this.sdcConfig.api.component_api_root;
     }
@@ -33,9 +36,6 @@ export class PluginsService {
 
     public isPluginOnline = (pluginId: string): Observable<boolean> => {
         let url: string = this.api.no_proxy_root + this.api.GET_plugin_online_state.replace(':pluginId', pluginId);
-        return this.http.get(url).map((res: Response) => {
-            return res.json()
-        })
-            .catch(error => Observable.of(false));
+        return this.http.get<boolean>(url).pipe(catchError(() => of(false)));
     }
 }

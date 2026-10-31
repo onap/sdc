@@ -21,7 +21,7 @@
 import {DOCUMENT} from '@angular/common';
 import {Inject, Injectable, NgZone} from '@angular/core';
 import {ActivatedRouteSnapshot, NavigationEnd, NavigationStart, Router} from '@angular/router';
-import {Subscription} from 'rxjs/Subscription';
+import {Subscription} from 'rxjs';
 
 export const PAGE_HEADING_SELECTOR = '#main-content h1';
 export const TAB_HEADING_SELECTOR = '[data-tab-heading]';

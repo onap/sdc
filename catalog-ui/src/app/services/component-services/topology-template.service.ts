@@ -1,3 +1,5 @@
+
+import {map} from 'rxjs/operators';
 /**
  * Created by ob0695 on 6/26/2018.
  */
@@ -24,9 +26,9 @@
 
 import * as _ from "lodash";
 import {Inject, Injectable} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/toPromise';
+import {Observable} from 'rxjs';
+
+
 import {ArtifactModel} from 'app/models/artifacts';
 import {AttributeModel} from 'app/models/attributes';
 import {Capability} from 'app/models/capability';
@@ -55,7 +57,6 @@ import {HttpHelperService} from "../http-helper.service";
 import {ConsumptionInput} from "../../components/logic/service-consumption/service-consumption.component";
 import {PolicyInstance} from "../../models/graph/zones/policy-instance";
 import {PropertyBEModel} from "../../models/properties-inputs/property-be-model";
-import {map} from "rxjs/operators";
 import {BEInterfaceOperationModel, InterfaceOperationModel} from "../../models/interface-operation";
 import {AttributeBEModel} from "../../models/attributes-outputs/attribute-be-model";
 import {InstanceAttributesAPIMap} from "../../models/attributes-outputs/attribute-fe-map";
@@ -208,17 +209,17 @@ export class TopologyTemplateService {
     }
 
     deleteInput(component: Component, input: InputBEModel): Observable<InputBEModel> {
-        return this.http.delete<InputBEModel>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/delete/' + input.uniqueId + '/input')
-            .map((res) => {
+        return this.http.delete<InputBEModel>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/delete/' + input.uniqueId + '/input').pipe(
+            map((res) => {
                 return new InputBEModel(res);
-            });
+            }));
     }
 
     updateComponentInputs(component: Component, inputs: InputBEModel[]): Observable<InputBEModel[]> {
-        return this.http.post<InputBEModel[]>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/update/inputs', inputs)
-            .map((res) => {
+        return this.http.post<InputBEModel[]>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/update/inputs', inputs).pipe(
+            map((res) => {
                 return res.map((input) => new InputBEModel(input));
-            });
+            }));
     }
 
     filterComponentInstanceProperties(component: Component, filterData: FilterPropertiesAssignmentData): Observable<InstanceBePropertiesMap> {// instance-property-be-map
@@ -234,83 +235,83 @@ export class TopologyTemplateService {
      createServiceProperty(componentId: string, propertyModel: PropertyBEModel): Observable<PropertyBEModel> {
         const serverObject = {};
         serverObject[propertyModel.name] = propertyModel;
-        return this.http.post<PropertyBEModel>(this.baseUrl + 'services/' + componentId + '/properties', serverObject)
-            .map((res) => {
+        return this.http.post<PropertyBEModel>(this.baseUrl + 'services/' + componentId + '/properties', serverObject).pipe(
+            map((res) => {
                 const property: PropertyBEModel = new PropertyBEModel(res);
                 return property;
-            });
+            }));
     }
 
     createServiceAttribute(componentId: string, attributeModel: AttributeBEModel): Observable<AttributeBEModel> {
         const serverObject = {};
         serverObject[attributeModel.name] = attributeModel;
-        return this.http.post<AttributeBEModel>(this.baseUrl + 'services/' + componentId + '/attributes', serverObject)
-            .map((res) => {
+        return this.http.post<AttributeBEModel>(this.baseUrl + 'services/' + componentId + '/attributes', serverObject).pipe(
+            map((res) => {
                 const attribute: AttributeBEModel = new AttributeBEModel(res);
                 return attribute;
-            });
+            }));
     }
 
     getServiceProperties(componentId: string): Observable<PropertyBEModel[]> {
-        return this.http.get<any>(this.baseUrl + 'services/' + componentId + '/properties')
-            .map((res) => {
+        return this.http.get<any>(this.baseUrl + 'services/' + componentId + '/properties').pipe(
+            map((res) => {
                 if (!res) {
                     return new Array<PropertyBEModel>();
                 }
                 return CommonUtils.initBeProperties(res);
-            });
+            }));
     }
 
     getServiceAttributes(componentId: string): Observable<AttributeBEModel[]> {
-        return this.http.get<any>(this.baseUrl + 'services/' + componentId + '/attributes')
-            .map((res) => {
+        return this.http.get<any>(this.baseUrl + 'services/' + componentId + '/attributes').pipe(
+            map((res) => {
                 if (!res) {
                     return new Array<AttributeBEModel>();
                 }
                 return CommonUtils.initAttributes(res);
-            });
+            }));
     }
 
     updateServiceProperties(componentId: string, properties: PropertyBEModel[]) {
-        return this.http.put<any>( this.baseUrl + 'services/' + componentId + '/properties', properties)
-            .map((res) => {
+        return this.http.put<any>( this.baseUrl + 'services/' + componentId + '/properties', properties).pipe(
+            map((res) => {
                 const resJson = res;
                 return _.map(resJson,
                     (resValue: PropertyBEModel) => new PropertyBEModel(resValue));
-            });
+            }));
     }
 
     updateServiceAttributes(componentId: string, attributes: AttributeBEModel[]) {
-        return this.http.put<any>( this.baseUrl + 'services/' + componentId + '/attributes', attributes)
-            .map((res) => {
+        return this.http.put<any>( this.baseUrl + 'services/' + componentId + '/attributes', attributes).pipe(
+            map((res) => {
                 const resJson = res;
                 return _.map(resJson,
                     (resValue: AttributeBEModel) => new AttributeBEModel(resValue));
-            });
+            }));
     }
 
     deleteServiceProperty(componentId: string, property: PropertyBEModel): Observable<string> {
-        return this.http.delete(this.baseUrl + 'services/' + componentId + '/properties/' + property.uniqueId )
-            .map((res: Response) => {
+        return this.http.delete(this.baseUrl + 'services/' + componentId + '/properties/' + property.uniqueId ).pipe(
+            map((res: Response) => {
                 return property.uniqueId;
-            });
+            }));
     }
 
     createServiceInput(componentId: string, inputModel: InputBEModel): Observable<InputBEModel> {
         const serverObject = {};
         serverObject[inputModel.name] = inputModel;
-        return this.http.post<InputBEModel>(this.baseUrl + 'services/' + componentId + '/create/input', serverObject)
-            .map((res) => {
+        return this.http.post<InputBEModel>(this.baseUrl + 'services/' + componentId + '/create/input', serverObject).pipe(
+            map((res) => {
                 const input: InputBEModel = new InputBEModel(res);
                 return input;
-            });
+            }));
     }
 
     deleteServiceAttribute(componentId: string, attribute: AttributeBEModel): Observable<string> {
-        return this.http.delete(this.baseUrl + 'services/' + componentId + '/attributes/' + attribute.uniqueId )
-            .map((res: Response) => {
+        return this.http.delete(this.baseUrl + 'services/' + componentId + '/attributes/' + attribute.uniqueId ).pipe(
+            map((res: Response) => {
                 return attribute.uniqueId;
-            });
+            }));
     }
 
     getDependencies(componentType: string, componentId: string): Observable<IDependenciesServerResponse[]> {
@@ -326,45 +327,45 @@ export class TopologyTemplateService {
     }
 
     updateMultipleComponentInstances(componentId: string, componentType: string, instances: ComponentInstance[]): Observable<ComponentInstance[]> {
-        return this.http.post<ComponentInstance[]>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/resourceInstance/multipleComponentInstance', instances)
-            .map((res) => {
+        return this.http.post<ComponentInstance[]>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/resourceInstance/multipleComponentInstance', instances).pipe(
+            map((res) => {
                 return CommonUtils.initComponentInstances(res);
-            });
+            }));
     }
 
     createRelation(componentId: string, componentType: string, link: RelationshipModel): Observable<RelationshipModel> {
-        return this.http.post<RelationshipModel>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/resourceInstance/associate', link)
-            .map((res) => {
+        return this.http.post<RelationshipModel>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/resourceInstance/associate', link).pipe(
+            map((res) => {
                 return new RelationshipModel(res);
-            });
+            }));
     }
 
     deleteRelation(componentId: string, componentType: string, link: RelationshipModel): Observable<RelationshipModel> {
-        return this.http.put<RelationshipModel>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/resourceInstance/dissociate', link)
-            .map((res) => {
+        return this.http.put<RelationshipModel>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/resourceInstance/dissociate', link).pipe(
+            map((res) => {
                 return new RelationshipModel(res);
-            });
+            }));
     }
 
     createComponentInstance(componentType: string, componentId: string, componentInstance: ComponentInstance): Observable<ComponentInstance> {
-        return this.http.post<ComponentInstance>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/resourceInstance', componentInstance)
-            .map((res) => {
+        return this.http.post<ComponentInstance>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/resourceInstance', componentInstance).pipe(
+            map((res) => {
                 return new ComponentInstance(res);
-            });
+            }));
     }
 
     deleteComponentInstance(componentType: string, componentId: string, componentInstanceId: string): Observable<ComponentInstance> {
-        return this.http.delete<ComponentInstance>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/resourceInstance/' + componentInstanceId)
-            .map((res) => {
+        return this.http.delete<ComponentInstance>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/resourceInstance/' + componentInstanceId).pipe(
+            map((res) => {
                 return new ComponentInstance(res);
-            });
+            }));
     }
 
     fetchRelation(componentType: string, componentId: string, linkId: string): Observable<RelationshipModel> {
-        return this.http.get<RelationshipModel>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/relationId/' + linkId)
-            .map((res) => {
+        return this.http.get<RelationshipModel>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/relationId/' + linkId).pipe(
+            map((res) => {
                 return new RelationshipModel(res);
-            });
+            }));
     }
 
     addOrUpdateArtifact = (componentType: string, componentId: string, artifact: ArtifactModel): Observable<ArtifactModel> => {
@@ -377,14 +378,14 @@ export class TopologyTemplateService {
         if (artifact.uniqueId) {
             artifactID = '/' + artifact.uniqueId;
         }
-        return this.http.post<ArtifactModel>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/artifacts' + artifactID, JSON.stringify(artifact), {headers: headerObj}).map(
+        return this.http.post<ArtifactModel>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/artifacts' + artifactID, JSON.stringify(artifact), {headers: headerObj}).pipe(map(
             (res) => new ArtifactModel(res)
-        );
+        ));
     }
 
     deleteArtifact = (componentId: string, componentType: string, artifactId: string, artifactLabel: string): Observable<ArtifactModel> => {
-        return this.http.delete<ArtifactModel>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/artifacts/' + artifactId + '?operation=' + artifactLabel)
-            .map((res) => new ArtifactModel(res));
+        return this.http.delete<ArtifactModel>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/artifacts/' + artifactId + '?operation=' + artifactLabel).pipe(
+            map((res) => new ArtifactModel(res)));
     }
 
     downloadArtifact = (componentType: string, componentId: string, artifactId: string): Observable<IFileDownload> => {
@@ -393,18 +394,18 @@ export class TopologyTemplateService {
 
     // ------------------------------------------------ Properties API --------------------------------------------------//
     addProperty = (componentType: string, componentId: string, property: PropertyModel):Observable<PropertyModel> => {
-        return this.http.post<PropertyModel>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/properties', property.convertToServerObject())
-        .map((response) => {
+        return this.http.post<PropertyModel>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/properties', property.convertToServerObject()).pipe(
+        map((response) => {
             return new PropertyModel(response);
-        });
+        }));
     }
 
     updateProperty = (componentType: string, componentId: string, property: PropertyModel): Observable<PropertyModel> => {
         const propertiesList: PropertyBEModel[] = [property];
-        return this.http.put<PropertyModel>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/properties', propertiesList)
-        .map((response) => {
+        return this.http.put<PropertyModel>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/properties', propertiesList).pipe(
+        map((response) => {
             return new PropertyModel(response[Object.keys(response)[0]]);
-        });
+        }));
     }
 
     deleteProperty = (componentType: string, componentId: string, propertyId: string): Observable<PropertyModel> => {
@@ -413,19 +414,19 @@ export class TopologyTemplateService {
 
     // ------------------------------------------------ Attributes API --------------------------------------------------//
     addAttribute = (componentType: string, componentId: string, attribute: AttributeModel): Observable<AttributeModel> => {
-        return this.http.post<AttributeModel>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/attributes', attribute.convertToServerObject())
-            .map((response) => {
+        return this.http.post<AttributeModel>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/attributes', attribute.convertToServerObject()).pipe(
+            map((response) => {
                 return new AttributeModel(response);
-            });
+            }));
     }
 
     updateAttribute = (componentType: string, componentId: string, attribute: AttributeModel): Observable<AttributeModel> => {
         const payload = attribute.convertToServerObject();
 
-        return this.http.put<AttributeModel>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/attributes/' + attribute.uniqueId, payload)
-            .map((response) => {
+        return this.http.put<AttributeModel>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/attributes/' + attribute.uniqueId, payload).pipe(
+            map((response) => {
                 return new AttributeModel(response);
-            });
+            }));
     }
 
     // Async Methods
@@ -570,11 +571,11 @@ export class TopologyTemplateService {
             params = params.append(API_QUERY_PARAMS.INCLUDE, field);
         });
         // tslint:disable-next-line:object-literal-shorthand
-        return this.http.get<ComponentGenericResponse>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/filteredDataByParams', {params: params})
-            .map((res) => {
+        return this.http.get<ComponentGenericResponse>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/filteredDataByParams', {params: params}).pipe(
+            map((res) => {
                 return componentType === ComponentType.SERVICE ? new ServiceGenericResponse().deserialize(res) :
                         new ComponentGenericResponse().deserialize(res);
-            });
+            }));
     }
 
     private getServerTypeUrl = (componentType: string): string => {
@@ -686,8 +687,8 @@ export class TopologyTemplateService {
                 }
             }
         };
-        return this.http.post<any>(this.baseUrl + 'services/' + componentMetaDataId + '/componentInstance/' + componentInstanceId + '/interfaceOperation', operationList)
-        .map((res: any) => {
+        return this.http.post<any>(this.baseUrl + 'services/' + componentMetaDataId + '/componentInstance/' + componentInstanceId + '/interfaceOperation', operationList).pipe(
+        map((res: any) => {
             const interf: InterfaceModel = _.find(res.interfaces, interf => interf.type === operation.interfaceType);
             const newOperation: OperationModel = _.find(interf.operations, op => op.name === operation.name);
 
@@ -696,7 +697,7 @@ export class TopologyTemplateService {
                 interfaceType: interf.type,
                 interfaceId: interf.uniqueId,
             });
-        });
+        }));
     }
 
 }

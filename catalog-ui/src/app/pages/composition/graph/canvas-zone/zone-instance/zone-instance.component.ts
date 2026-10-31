@@ -34,7 +34,7 @@ export class ZoneInstanceComponent implements OnInit {
     @Output() assignmentSaveStart: EventEmitter<void> = new EventEmitter<void>();
     @Output() assignmentSaveComplete: EventEmitter<boolean> = new EventEmitter<boolean>();
     @Output() tagHandleClick: EventEmitter<ZoneInstance> = new EventEmitter<ZoneInstance>();
-    @ViewChild('currentComponent') currentComponent: ElementRef;
+    @ViewChild('currentComponent', {static: true}) currentComponent: ElementRef;
     MODE = ZoneInstanceMode;
     private zoneService:IZoneService;
 
