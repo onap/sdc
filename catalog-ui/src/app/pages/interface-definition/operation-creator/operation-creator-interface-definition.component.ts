@@ -122,9 +122,9 @@ export class OperationCreatorInterfaceDefinitionComponent implements OperationCr
     INTERFACE_OTHER_HEADER = 'Local Interfaces';
     INTERFACE_OTHER = 'Local';
 
-    @ViewChild('propertyInputTabs') propertyInputTabs: Tabs;
-    @ViewChild('operationNamesDropdown') operationNamesDropdown: DropDownComponent;
-    @ViewChild('workflowAssignmentDropdown') workflowAssignmentDropdown: DropDownComponent;
+    @ViewChild('propertyInputTabs', {static: false}) propertyInputTabs: Tabs;
+    @ViewChild('operationNamesDropdown', {static: false}) operationNamesDropdown: DropDownComponent;
+    @ViewChild('workflowAssignmentDropdown', {static: false}) workflowAssignmentDropdown: DropDownComponent;
     currentTab: String;
 
     constructor(private workflowService: WorkflowService, private translateService: TranslateService) {

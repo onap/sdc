@@ -9,8 +9,7 @@ import { CompositionService } from 'app/pages/composition/composition.service';
 import { ZoneInstanceComponent } from './zone-instance.component';
 import {IZoneInstanceAssignment, ZoneInstance, ZoneInstanceAssignmentType, ZoneInstanceMode, ZoneInstanceType} from 'app/models/graph/zones/zone-instance';
 import { PolicyInstance } from "app/models/graph/zones/policy-instance";
-import { Subject, of } from 'rxjs';
-import { _throw } from 'rxjs/observable/throw';
+import { Subject, of ,  throwError as _throw } from 'rxjs';
 
 describe('ZoneInstanceComponent', () => {
   let component: ZoneInstanceComponent;

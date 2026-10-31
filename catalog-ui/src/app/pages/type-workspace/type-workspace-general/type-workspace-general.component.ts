@@ -33,7 +33,7 @@ import {NavigationService} from "../../../services/navigation.service";
 import {Model} from "../../../models/model";
 import {DataTypesMap} from "../../../models/data-types-map";
 import {DataTypeService} from "../../../services/data-type.service";
-import {Observable} from "rxjs/Observable";
+import {Observable} from "rxjs";
 import {IDropDownOption} from "onap-ui-angular/dist/form-elements/dropdown/dropdown-models";
 
 @Component({
@@ -81,13 +81,14 @@ export class TypeWorkspaceGeneralComponent implements OnInit {
       if (!this.isViewOnly) {
           console.log("file size: " + this.importedFile.size);
           console.log("file type: " + this.importedFile.type);
-          console.log("file lastModifiedDate: " + this.importedFile.lastModifiedDate);
+          const lastModifiedDate = new Date(this.importedFile.lastModified);
+          console.log("file lastModifiedDate: " + lastModifiedDate);
 
           new ServiceDataTypeReader().read(this.importedFile).then(
               (serviceType) => {
                   this.dataType = serviceType;
-                  this.dataType.modificationTime = this.importedFile.lastModifiedDate;
-                  this.dataType.creationTime = this.importedFile.lastModifiedDate;
+                  this.dataType.modificationTime = lastModifiedDate;
+                  this.dataType.creationTime = lastModifiedDate;
                   this.derivedFromName = serviceType.derivedFromName;
                   this.dataType.uniqueId = this.dataType.model ? this.dataType.model + "." + this.dataType.name : this.dataType.name + ".datatype";
                   this.typeWorkspaceService.dataType = this.dataType;

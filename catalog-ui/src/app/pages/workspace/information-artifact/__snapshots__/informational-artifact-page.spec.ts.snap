@@ -6,7 +6,6 @@ exports[`informational artifacts page should match current snapshot of informati
   artifactsService={[Function Object]}
   deleteArtifact={[Function Function]}
   store={[Function Store]}
-  table={[Function DatatableComponent]}
   workspaceService={[Function Object]}
 >
   <div

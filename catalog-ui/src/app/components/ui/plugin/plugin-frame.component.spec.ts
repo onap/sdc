@@ -18,7 +18,60 @@
  * ============LICENSE_END=========================================================
  */
 
-import {pluginDisplayName} from './plugin-frame.component';
+import * as _ from 'lodash';
+import {of, Subject} from 'rxjs';
+import {PluginFrameComponent, pluginDisplayName} from './plugin-frame.component';
+
+(window as any)._ = _;
+
+describe('plugin frame URL and lifecycle', () => {
+    let frame: PluginFrameComponent;
+    let status: Subject<boolean>;
+    let listener: Function;
+    let unregister: jest.Mock;
+    let eventBus: any;
+    let navigation: any;
+
+    beforeEach(() => {
+        status = new Subject<boolean>();
+        unregister = jest.fn();
+        eventBus = {on: jest.fn(), off: jest.fn(), notify: jest.fn(() => of(undefined)), unregister: jest.fn(), NoWindowOutEvents: [], lastEventNotified: 'READY'};
+        navigation = {onNavigationStart: jest.fn(callback => {listener = callback; return unregister;}), navigate: jest.fn()};
+        frame = new PluginFrameComponent(eventBus, {isPluginOnline: () => status} as any, navigation);
+        frame.plugin = {pluginId: 'workflow', pluginSourceUrl: 'https://plugin.test/frame'} as any;
+    });
+
+    it('preserves reserved punctuation, spaces, repeated inputs and empty query values in the emitted URL', () => {
+        frame.queryParams = {context: 'a b+c&d=e', reserved: '@:$,;?/', repeated: ['one', 'two'], empty: '', absent: null, missing: undefined};
+        frame.ngOnInit();
+        expect(frame.pluginUrl).toBeUndefined();
+        status.next(true);
+        expect(frame.pluginUrl).toBe('https://plugin.test/frame?context=a%20b+c%26d=e&reserved=@:$,;?/&repeated=one,two&empty=');
+    });
+
+    it('waits for WINDOW_OUT before navigating and removes the listener on destruction', () => {
+        frame.ngOnInit();
+        status.next(true);
+        const event = {fromState: 'plugins', toState: 'home', fromParams: {}, toParams: {}, preventDefault: jest.fn()};
+        listener(event);
+        expect(event.preventDefault).toHaveBeenCalled();
+        expect(eventBus.notify).toHaveBeenCalledWith('WINDOW_OUT');
+        expect(eventBus.unregister).toHaveBeenCalledWith('workflow');
+        expect(navigation.navigate).toHaveBeenCalledWith('home', {});
+        frame.ngOnDestroy();
+        expect(unregister).toHaveBeenCalledTimes(1);
+    });
+
+    it('finishes loading without initializing an offline plugin', () => {
+        const done = jest.fn();
+        frame.onLoadingDone.subscribe(done);
+        frame.ngOnInit();
+        status.next(false);
+        expect(done).toHaveBeenCalledTimes(1);
+        expect(frame.pluginUrl).toBeUndefined();
+        expect(navigation.onNavigationStart).not.toHaveBeenCalled();
+    });
+});
 
 describe('plugin frame title', () => {
     const plugin: any = {

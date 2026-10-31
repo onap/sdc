@@ -1,3 +1,5 @@
+
+import {of as observableOf, Observable} from 'rxjs';
 /*-
  * ============LICENSE_START=======================================================
  * SDC
@@ -21,8 +23,7 @@ import {ChangeDetectorRef, NO_ERRORS_SCHEMA} from '@angular/core';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {By} from '@angular/platform-browser';
-import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/observable/of';
+
 import {PropertyModel} from 'app/models/properties';
 import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
 import {PropertyFEModel} from 'app/models/properties-inputs/property-fe-model';
@@ -94,8 +95,8 @@ function makeWorkspaceService(isService = false, isVfc = false): any {
 
 function makePropertyFormModalService(): any {
     return {
-        save: jest.fn((ctx: any) => Observable.of(ctx.property)),
-        deleteProperty: jest.fn(() => Observable.of(undefined))
+        save: jest.fn((ctx: any) => observableOf(ctx.property)),
+        deleteProperty: jest.fn(() => observableOf(undefined))
     };
 }
 
@@ -106,7 +107,7 @@ function makeCompositionService(instances: any[] = []): any {
 
 // Stand-in for TopologyTemplateService (getDefaultCustomFunction feeds customToscaFunctions).
 function makeTopologyTemplateService(customFns: any[] = []): any {
-    return {getDefaultCustomFunction: jest.fn(() => Observable.of(customFns))};
+    return {getDefaultCustomFunction: jest.fn(() => observableOf(customFns))};
 }
 
 // Stand-in for TranslateService (delete-confirm title/text).

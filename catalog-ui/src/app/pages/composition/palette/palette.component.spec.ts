@@ -1,3 +1,5 @@
+
+import {of as observableOf, Observable} from 'rxjs';
 import {async, ComponentFixture, TestBed} from "@angular/core/testing";
 import {NO_ERRORS_SCHEMA} from "@angular/core";
 import {CompositionPaletteService} from "./services/palette.service";
@@ -7,7 +9,6 @@ import {PaletteComponent} from "./palette.component";
 import {ConfigureFn, configureTests} from "../../../../jest/test-config.helper";
 import {KeyValuePipe} from "../../../pipes/key-value.pipe";
 import {ResourceNamePipe} from "../../../pipes/resource-name.pipe";
-import {Observable} from "rxjs/Observable";
 import {leftPaletteElements} from "../../../../jest/mocks/left-paeltte-elements.mock";
 import {NgxsModule, Select} from '@ngxs/store';
 import { WorkspaceState } from 'app/store/states/workspace.state';
@@ -28,7 +29,7 @@ describe('palette component', () => {
                 notifyObservers: jest.fn()
             }
             compositionPaletteMockService = {
-                subscribeToLeftPaletteElements:  jest.fn().mockImplementation(()=>  Observable.of(leftPaletteElements)),
+                subscribeToLeftPaletteElements:  jest.fn().mockImplementation(()=>  observableOf(leftPaletteElements)),
                 getLeftPaletteElements: jest.fn().mockImplementation(()=>  leftPaletteElements)
             }
             const configure: ConfigureFn = testBed => {

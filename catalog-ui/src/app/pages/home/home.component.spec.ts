@@ -18,7 +18,7 @@ import {SdcUiServices} from "onap-ui-angular";
 import {ComponentType, ResourceType} from "../../utils/constants";
 import {HomeFilter} from "../../models/home-filter";
 import {NavigationService} from "../../services/navigation.service";
-import {Subject} from "rxjs/Subject";
+import {Subject} from "rxjs";
 
 
 describe('home component', () => {

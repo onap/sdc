@@ -1,3 +1,4 @@
+import {of,  Observable } from 'rxjs';
 import { async, ComponentFixture } from '@angular/core/testing';
 import { ConfigureFn, configureTests } from '../../../../../../jest/test-config.helper';
 import { NgxsModule, Store } from '@ngxs/store';
@@ -15,7 +16,6 @@ import { FullComponentInstance } from '../../../../../models/components-instance
 import { ComponentInstance } from '../../../../../models/components-instances/component-instance';
 import { Component } from '../../../../../models/components/component';
 import { GetInstanceArtifactsByTypeAction } from '../../../../../store/actions/instance-artifacts.actions';
-import { Observable } from 'rxjs';
 
 
 describe('artifact-tab component', () => {
@@ -294,7 +294,7 @@ describe('artifact-tab component', () => {
             artifactType: 'type'
         }))
 
-        fixture.componentInstance.store.dispatch = jest.fn(() => Observable.of(true));
+        fixture.componentInstance.store.dispatch = jest.fn(() => of(true));
         fixture.componentInstance.loadArtifacts();
 
         expect(store.dispatch).toBeCalledWith(action);

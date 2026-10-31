@@ -64,7 +64,7 @@ export class DynamicAttributeComponent {
   @Output() mapKeyChanged: EventEmitter<string> = new EventEmitter<string>();
   @Output() addChildAttribsToParent: EventEmitter<Array<DerivedFEAttribute>> = new EventEmitter<Array<DerivedFEAttribute>>();
 
-  @ViewChild('mapKeyInput') public mapKeyInput: DynamicElementComponent;
+  @ViewChild('mapKeyInput', {static: false}) public mapKeyInput: DynamicElementComponent;
 
   constructor(private attributesUtils: AttributesUtils, private dataTypeService: DataTypeService) {
   }

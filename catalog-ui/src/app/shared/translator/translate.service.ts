@@ -18,9 +18,12 @@
  * ============LICENSE_END=========================================================
  */
 
+
+import {of as observableOf, throwError as observableThrowError,  Observer, Subscription, Observable, ConnectableObservable } from 'rxjs';
+
+import {publish, publishReplay, refCount, catchError} from 'rxjs/operators';
 import { Injectable, Inject } from "@angular/core";
 import { ITranslateServiceConfig, TranslateServiceConfigToken } from "./translate.service.config";
-import { Observer, Subscription, Observable, ConnectableObservable } from 'rxjs/Rx';
 import { HttpClient } from "@angular/common/http";
 
 export { ITranslateServiceConfig, TranslateServiceConfigToken };
@@ -34,7 +37,7 @@ export interface ITranslateArgs {
 }
 
 export class PhraseTranslator {
-    private _observable:ConnectableObservable<string>;
+    private _observable:Observable<string>;
     private _observer:Observer<string>;
     private _languageChangeSubscription:Subscription;
 
@@ -54,7 +57,7 @@ export class PhraseTranslator {
     };
 
     constructor(private translateService:TranslateService) {
-        this._observable = Observable.create(observer => {
+        this._observable = new Observable<string>(observer => {
             this._observer = observer;
             this._languageChangeSubscription = this.translateService.languageChangedObservable.subscribe(language => {
                 // using the active language, then force update
@@ -62,7 +65,7 @@ export class PhraseTranslator {
                     this.update(true);
                 }
             });
-        }).publishReplay(1).refCount();
+        }).pipe(publishReplay(1), refCount());
     }
 
     public get observable() {
@@ -159,26 +162,26 @@ export class TranslateService {
     }
 
     private initLanguageObservable() {
-        this._languageChangedObservable = ConnectableObservable.create(observer => {
+        this._languageChangedObservable = new Observable<string>(observer => {
             this._languageChangedObserver = observer;
-        }).publishReplay(1);  // replay last emitted change on subscribe
+        }).pipe(publishReplay(1)) as ConnectableObservable<string>;
         this._languageChangedObservable.connect();
     }
 
     private loadLanguageJsonFile(language:string, emitOnLoad:boolean=true) : Observable<ITranslateLanguageJson> {
         if (this.config.allowedLanguages.indexOf(language) === -1) {
-            return Observable.throw(`Language "${language}" is not available.`);
+            return observableThrowError(`Language "${language}" is not available.`);
         }
 
         if (this._cacheLanguagesJsons[language]) {
-            return Observable.of(this._cacheLanguagesJsons[language]);
+            return observableOf(this._cacheLanguagesJsons[language]);
         }
 
         if (!(language in this._cacheLanguagesLoaders)) {
             const filePath = `${this.config.filePrefix}${language}${this.config.fileSuffix}`;
-            this._cacheLanguagesLoaders[language] = this.http.get<ITranslateLanguageJson>(filePath)
-                .catch(() => Observable.throw(`Failed to load language file for "${language}"`))
-                .publish();
+            this._cacheLanguagesLoaders[language] = this.http.get<ITranslateLanguageJson>(filePath).pipe(
+                catchError(() => observableThrowError(`Failed to load language file for "${language}"`)),
+                publish(),);
             (<ConnectableObservable<ITranslateLanguageJson>>this._cacheLanguagesLoaders[language]).connect();
             this._cacheLanguagesLoaders[language].subscribe(languageJson => {
                     this._cacheLanguagesJsons[language] = languageJson;

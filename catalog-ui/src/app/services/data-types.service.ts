@@ -19,6 +19,8 @@
  * ============LICENSE_END=========================================================
  */
 
+
+import {map} from 'rxjs/operators';
 'use strict';
 import {Inject, Injectable} from "@angular/core";
 import {HttpClient, HttpParams} from "@angular/common/http";
@@ -35,7 +37,7 @@ import {SchemaProperty} from '../models/schema-property';
 import {SdcConfigToken} from "../config/sdc-config.config";
 import {PROPERTY_DATA} from "../utils/constants";
 import {List} from "lodash";
-import {Observable} from "rxjs/Observable";
+import {Observable} from "rxjs";
 
 export interface IDataTypesService {
 
@@ -130,8 +132,8 @@ export class DataTypesService implements IDataTypesService {
     }
 
     public getDataTypesFromAllModelExcludePrimitives = (): Observable<Array<DataTypeModel>> => {
-        return this.http.get<List<DataTypesMap>>(this.baseUrl + "allDataTypes?excludePrimitives=true")
-            .map((dataTypesListOfMap: List<DataTypesMap>) => this.getDataTypesItems(dataTypesListOfMap));
+        return this.http.get<List<DataTypesMap>>(this.baseUrl + "allDataTypes?excludePrimitives=true").pipe(
+            map((dataTypesListOfMap: List<DataTypesMap>) => this.getDataTypesItems(dataTypesListOfMap)));
     }
 
     private getDataTypesItems(dataTypesListOfMap: List<DataTypesMap>):Array<DataTypeModel> {

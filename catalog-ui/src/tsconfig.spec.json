@@ -6,7 +6,7 @@
     "module": "commonjs",
     "target": "es5",
     "emitDecoratorMetadata": true,
-    "lib": [ "es2015" ],
+    "lib": [ "es2015", "dom" ],
     "baseUrl": ".",
     "types": [
       "jest",

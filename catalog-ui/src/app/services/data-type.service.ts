@@ -18,6 +18,8 @@
  * ============LICENSE_END=========================================================
  */
 
+
+import {map} from 'rxjs/operators';
 import * as _ from "lodash";
 import {Inject, Injectable} from '@angular/core';
 import {DataTypeModel} from 'app/models/data-types';
@@ -31,7 +33,7 @@ import {DerivedFEAttribute} from "../models/attributes-outputs/derived-fe-attrib
 import {ISdcConfig} from "../config/sdc-config.config.factory";
 import {SdcConfigToken} from "../config/sdc-config.config";
 import {HttpBackend, HttpClient, HttpHeaders} from "@angular/common/http";
-import {Observable} from "rxjs/Observable";
+import {Observable} from "rxjs";
 import {AuthenticationService} from "./authentication.service";
 
 /** This is a new service for NG2, to eventually replace app/services/data-types.service.ts
@@ -112,18 +114,18 @@ export class DataTypeService {
         const url = `${this.dataTypeUrl}/${dataTypeId}/${propertyId}`;
         let headers = new HttpHeaders({'USER_ID': this.authService.getLoggedinUser().userId});
         let options = {headers: headers};
-        return this.httpClient.delete(url, options).map((res: Response) => {
+        return this.httpClient.delete(url, options).pipe(map((res: Response) => {
             return propertyId;
-        });
+        }));
     }
 
     public deleteDataType(dataTypeId: string): Observable<Object> {
         const url = `${this.dataTypeUrl}/${dataTypeId}`;
         let headers = new HttpHeaders({'USER_ID': this.authService.getLoggedinUser().userId});
         let options = {headers: headers};
-        return this.httpClient.delete(url, options).map((res: Response) => {
+        return this.httpClient.delete(url, options).pipe(map((res: Response) => {
             return dataTypeId;
-        });
+        }));
     }
 
     public createImportedType(model: string, importingFile: File): Observable<any> {

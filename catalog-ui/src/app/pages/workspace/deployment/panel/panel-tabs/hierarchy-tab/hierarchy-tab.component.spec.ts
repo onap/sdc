@@ -1,3 +1,4 @@
+import {of, throwError, Observable} from 'rxjs';
 import {async, ComponentFixture} from "@angular/core/testing";
 import {HierarchyTabComponent} from "./hierarchy-tab.component";
 import {ConfigureFn, configureTests} from "../../../../../../../jest/test-config.helper";
@@ -12,7 +13,6 @@ import {ModalsHandler} from "../../../../../../utils/modals-handler";
 import {ComponentFactory} from "../../../../../../utils/component-factory";
 import {NgxsModule} from "@ngxs/store";
 import {  SdcUiServices } from "onap-ui-angular";
-import {Observable} from "rxjs";
 import {DisplayModule, Module} from "../../../../../../models/modules/base-module";
 import {DeploymentGraphService} from "../../../../../composition/deployment/deployment-graph.service";
 import {ComponentMetadata} from "../../../../../../models/component-metadata";
@@ -25,7 +25,7 @@ describe('HierarchyTabComponent', () => {
     let modulesServiceMock: Partial<ModulesService>;
     let modalsHandlerMock: Partial<ModalsHandler>;
 
-    let editModuleNameInstanceMock = {innerPopoverContent:{instance: { clickButtonEvent: Observable.of("new heat name")}},
+    let editModuleNameInstanceMock = {innerPopoverContent:{instance: { clickButtonEvent: of("new heat name")}},
         closePopover: jest.fn()};
     let eventMock  = {x: 1650, y: 350};
     let moduleMock: Array<Module> = [{name: "NewVf2..base_vepdg..module-0", uniqueId: '1'}];
@@ -52,7 +52,7 @@ describe('HierarchyTabComponent', () => {
                 createPopOverWithInnerComponent: jest.fn().mockImplementation(() => {return editModuleNameInstanceMock})
             }
             modulesServiceMock = {
-                updateModuleMetadata: jest.fn().mockReturnValue(Observable.of({}))
+                updateModuleMetadata: jest.fn().mockReturnValue(of({}))
             }
             modalsHandlerMock = {
                 openEditModulePropertyModal: jest.fn().mockReturnValue(Promise.resolve())
@@ -97,7 +97,7 @@ describe('HierarchyTabComponent', () => {
     })
     it('Try to update heat name and name and get error from server', () => {
         updateSelectedModuleMock();
-        modulesServiceMock.updateModuleMetadata.mockImplementation(() => Observable.throwError({}));
+        modulesServiceMock.updateModuleMetadata.mockImplementation(() => throwError({}));
         fixture.componentInstance.openEditModuleNamePopup(eventMock);
         expect(fixture.componentInstance.selectedModule.updateName).toHaveBeenCalled();
         expect(modulesServiceMock.updateModuleMetadata).toHaveBeenCalled();
@@ -129,7 +129,7 @@ describe('HierarchyTabComponent', () => {
 
     it('Open edit  module name popover and not change the heat name', () => {
         updateSelectedModuleMock();
-        editModuleNameInstanceMock.innerPopoverContent.instance.clickButtonEvent = Observable.of(null);
+        editModuleNameInstanceMock.innerPopoverContent.instance.clickButtonEvent = of(null);
         fixture.componentInstance.openEditModuleNamePopup(eventMock);
         expect(popoverServiceMock.createPopOverWithInnerComponent).toHaveBeenCalled();
         expect(fixture.componentInstance.selectedModule.heatName).toEqual("base_vepdg");

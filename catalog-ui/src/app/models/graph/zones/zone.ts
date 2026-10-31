@@ -2,7 +2,7 @@
  * Created by ob0695 on 10.04.2018.
  */
 import {ZoneInstanceType, ZoneInstance, IZoneInstanceAssignment} from "./zone-instance";
-import {Observable} from "rxjs/Rx";
+import {Observable} from "rxjs";
 import { CANVAS_TAG_MODE } from "app/utils/constants";
 
 export class Zone {

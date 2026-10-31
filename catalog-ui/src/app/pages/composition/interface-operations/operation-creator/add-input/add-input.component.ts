@@ -22,7 +22,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {InputOperationParameter} from '../../../../../models/interface-operation';
 import {IDropDownOption} from 'onap-ui-angular/dist/form-elements/dropdown/dropdown-models';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
 import {PROPERTY_TYPES} from '../../../../../utils/constants';
 import {SchemaProperty, SchemaPropertyGroupModel} from '../../../../../models/schema-property';
