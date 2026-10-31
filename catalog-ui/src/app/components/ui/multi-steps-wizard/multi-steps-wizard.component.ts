@@ -51,7 +51,7 @@ export class MultiStepsWizardComponent extends ModalComponent {
     @Input() data:any;
     @Input() dynamicHeader: ComponentRef<WizardHeaderBaseComponent>;
 
-    @ViewChild('dynamicHeaderContainer', { read: ViewContainerRef }) dynamicHeaderContainer: ViewContainerRef;
+    @ViewChild('dynamicHeaderContainer', { read: ViewContainerRef, static: true }) dynamicHeaderContainer: ViewContainerRef;
     constructor(@Inject(forwardRef(() => ModalService)) public modalService: ModalService, el: ElementRef ) {
         super(el);
     }

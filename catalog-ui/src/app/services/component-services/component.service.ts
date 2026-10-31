@@ -18,11 +18,13 @@
  * ============LICENSE_END=========================================================
  */
 
+
+import {map} from 'rxjs/operators';
 import * as _ from "lodash";
 import {Inject, Injectable} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/toPromise';
+import {Observable} from 'rxjs';
+
+
 import {Component} from 'app/models/components/component';
 import {FilterPropertiesAssignmentData} from 'app/models/filter-properties-assignment-data';
 import {OperationModel} from 'app/models/operation';
@@ -69,10 +71,10 @@ export class ComponentService {
             params = params.append(API_QUERY_PARAMS.INCLUDE, field);
         });
 
-        return this.http.get<ComponentGenericResponse>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/filteredDataByParams', {params: params})
-        .map((res) => {
+        return this.http.get<ComponentGenericResponse>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/filteredDataByParams', {params: params}).pipe(
+        map((res) => {
             return new ComponentGenericResponse().deserialize(res);
-        });
+        }));
     }
 
     protected getServerTypeUrl = (componentType: string): string => {
@@ -85,10 +87,10 @@ export class ComponentService {
     }
 
     getFullComponent(uniqueId: string): Observable<ComponentGenericResponse> {
-        return this.http.get<ComponentGenericResponse>(this.baseUrl + uniqueId)
-        .map((res) => {
+        return this.http.get<ComponentGenericResponse>(this.baseUrl + uniqueId).pipe(
+        map((res) => {
             return new ComponentGenericResponse().deserialize(res);
-        });
+        }));
     }
 
     getComponentMetadata(uniqueId: string, type: string): Observable<ComponentGenericResponse> {
@@ -173,8 +175,8 @@ export class ComponentService {
                 }
             }
         };
-        return this.http.post<any>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/interfaceOperations', operationList)
-        .map((res: any) => {
+        return this.http.post<any>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/interfaceOperations', operationList).pipe(
+        map((res: any) => {
             const interf: InterfaceModel = _.find(res.interfaces, interf => interf.type === operation.interfaceType);
             const newOperation: OperationModel = _.find(interf.operations, op => op.name === operation.name);
             return new OperationModel({
@@ -183,7 +185,7 @@ export class ComponentService {
                 interfaceId: interf.uniqueId,
                 artifactFileName: operation.artifactFileName
             });
-        });
+        }));
     }
 
     // tslint:disable-next-line:member-ordering
@@ -198,8 +200,8 @@ export class ComponentService {
                 }
             }
         };
-        return this.http.put<any>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/interfaceOperations', operationList)
-        .map((res: any) => {
+        return this.http.put<any>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/interfaceOperations', operationList).pipe(
+        map((res: any) => {
             const interf: InterfaceModel = _.find(res.interfaces, interf => interf.type === operation.interfaceType);
             const newOperation: OperationModel = _.find(interf.operations, op => op.name === operation.name);
             return new OperationModel({
@@ -208,7 +210,7 @@ export class ComponentService {
                 interfaceId: interf.uniqueId,
                 artifactFileName: operation.artifactFileName
             });
-        });
+        }));
     }
 
     updateComponentInterfaceOperation(componentMetaDataId: string,
@@ -223,8 +225,8 @@ export class ComponentService {
                 }
             }
         };
-        return this.http.put<any>(this.baseUrl + 'resources/' + componentMetaDataId + '/interfaceOperation', operationList)
-        .map((res: any) => {
+        return this.http.put<any>(this.baseUrl + 'resources/' + componentMetaDataId + '/interfaceOperation', operationList).pipe(
+        map((res: any) => {
             const interf: InterfaceModel = _.find(res.interfaces, interf => interf.type === operation.interfaceType);
             const newOperation: OperationModel = _.find(interf.operations, op => op.name === operation.name);
 
@@ -233,7 +235,7 @@ export class ComponentService {
                 interfaceType: interf.type,
                 interfaceId: interf.uniqueId,
             });
-        });
+        }));
     }
 
     createComponentInterfaceOperation(componentMetaDataId: string,
@@ -251,8 +253,8 @@ export class ComponentService {
         };
         console.log(operationList);
         console.log(this.baseUrl + componentMetaDataType + componentMetaDataId + '/resource/interfaceOperation')
-        return this.http.post<any>(this.baseUrl + componentMetaDataType + componentMetaDataId + '/resource/interfaceOperation', operationList)
-        .map((res: any) => {
+        return this.http.post<any>(this.baseUrl + componentMetaDataType + componentMetaDataId + '/resource/interfaceOperation', operationList).pipe(
+        map((res: any) => {
             const interf: InterfaceModel = _.find(res.interfaces, interf => interf.type === operation.interfaceType);
             const newOperation: OperationModel = _.find(interf.operations, op => op.name === operation.name);
 
@@ -261,7 +263,7 @@ export class ComponentService {
                 interfaceType: interf.type,
                 interfaceId: interf.uniqueId,
             });
-        });
+        }));
     }
 
     deleteInterfaceOperation(component: Component, operation: OperationModel): Observable<OperationModel> {
@@ -273,8 +275,8 @@ export class ComponentService {
     }
 
     getInterfaceTypesByModel(model: string): Observable<{ [id: string]: Array<string> }> {
-        return this.http.get<any>(this.baseUrl + 'interfaceLifecycleTypes' + ((model) ? '?model=' + model : ''))
-        .map((res: any) => {
+        return this.http.get<any>(this.baseUrl + 'interfaceLifecycleTypes' + ((model) ? '?model=' + model : '')).pipe(
+        map((res: any) => {
             const interfaceMap = {};
             if (!res) {
                 return interfaceMap;
@@ -287,7 +289,7 @@ export class ComponentService {
                 interfaceMap[interface1.toscaPresentation.type] = Object.keys(interface1.toscaPresentation.operations);
             });
             return interfaceMap;
-        });
+        }));
     }
 
     uploadInterfaceOperationArtifact(component: Component, newOperation: OperationModel, oldOperation: OperationModel) {
@@ -302,11 +304,11 @@ export class ComponentService {
 
         return this.http.post(this.baseUrl + component.getTypeUrl() + component.uuid + '/interfaces/' + newOperation.interfaceId + '/operations/' + newOperation.uniqueId + '/artifacts/' + newOperation.implementation.artifactUUID,
             payload, {headers: headers}
-        ).map((res: any) => {
+        ).pipe(map((res: any) => {
             const fileName = res.artifactDisplayName || res.artifactName;
             newOperation.artifactFileName = fileName;
             return res;
-        });
+        }));
     }
 
     getCapabilitiesAndRequirements(componentType: string, componentId: string): Observable<ComponentGenericResponse> {
@@ -368,34 +370,34 @@ export class ComponentService {
 
     deleteInput(component: Component, input: InputBEModel): Observable<InputBEModel> {
 
-        return this.http.delete<InputBEModel>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/delete/' + input.uniqueId + '/input')
-        .map((res) => {
+        return this.http.delete<InputBEModel>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/delete/' + input.uniqueId + '/input').pipe(
+        map((res) => {
             return new InputBEModel(res);
-        })
+        }))
     }
 
     deleteOutput(component: Component, output: OutputBEModel): Observable<OutputBEModel> {
 
-        return this.http.delete<OutputBEModel>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/delete/' + output.uniqueId + '/output')
-        .map((res) => {
+        return this.http.delete<OutputBEModel>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/delete/' + output.uniqueId + '/output').pipe(
+        map((res) => {
             return new OutputBEModel(res);
-        })
+        }))
     }
 
     updateComponentInputs(component: Component, inputs: InputBEModel[]): Observable<InputBEModel[]> {
 
-        return this.http.post<InputBEModel[]>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/update/inputs', inputs)
-        .map((res) => {
+        return this.http.post<InputBEModel[]>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/update/inputs', inputs).pipe(
+        map((res) => {
             return res.map((input) => new InputBEModel(input));
-        })
+        }))
     }
 
     updateComponentOutputs(component: Component, outputs: OutputBEModel[]): Observable<OutputBEModel[]> {
 
-        return this.http.post<OutputBEModel[]>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/update/outputs', outputs)
-        .map((res) => {
+        return this.http.post<OutputBEModel[]>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/update/outputs', outputs).pipe(
+        map((res) => {
             return res.map((output) => new OutputBEModel(output));
-        })
+        }))
     }
 
     filterComponentInstanceProperties(component: Component, filterData: FilterPropertiesAssignmentData): Observable<InstanceBePropertiesMap> {//instance-property-be-map
@@ -423,37 +425,37 @@ export class ComponentService {
     createServiceProperty(component: Component, propertyModel: PropertyBEModel): Observable<PropertyBEModel> {
         let serverObject = {};
         serverObject[propertyModel.name] = propertyModel;
-        return this.http.post(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/properties', serverObject)
-        .map((res: PropertyBEModel) => {
+        return this.http.post(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/properties', serverObject).pipe(
+        map((res: PropertyBEModel) => {
             const property: PropertyBEModel = new PropertyBEModel(res);
             return property;
-        })
+        }))
     }
 
     getServiceProperties(component: Component): Observable<PropertyBEModel[]> {
-        return this.http.get(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/properties')
-        .map((res: PropertyBEModel[]) => {
+        return this.http.get(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/properties').pipe(
+        map((res: PropertyBEModel[]) => {
             if (!res) {
                 return new Array<PropertyBEModel>();
             }
             return CommonUtils.initBeProperties(res);
-        });
+        }));
     }
 
     updateServiceProperties(component: Component, properties: PropertyBEModel[]) {
-        return this.http.put<PropertyBEModel[]>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/properties', properties)
-        .map((res) => {
+        return this.http.put<PropertyBEModel[]>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/properties', properties).pipe(
+        map((res) => {
             const resJson = res;
             return _.map(resJson,
                 (resValue: PropertyBEModel) => new PropertyBEModel(resValue));
-        });
+        }));
     }
 
     deleteServiceProperty(component: Component, property: PropertyBEModel): Observable<string> {
-        return this.http.delete(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/properties/' + property.uniqueId)
-        .map((res: Response) => {
+        return this.http.delete(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/properties/' + property.uniqueId).pipe(
+        map((res: Response) => {
             return property.uniqueId;
-        })
+        }))
     }
 
     getDependencies(componentType: string, componentId: string): Observable<IDependenciesServerResponse[]> {

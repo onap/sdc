@@ -19,15 +19,14 @@
 *  ============LICENSE_END=========================================================
 */
 
+
+import {throwError as observableThrowError,  Observable ,  of } from 'rxjs';
 import { async, TestBed } from "@angular/core/testing";
 import { ConfigureFn, configureTests } from "../../jest/test-config.helper";
 import { NO_ERRORS_SCHEMA, Testability } from "@angular/core";
 import { HeadersInterceptor } from './headers-interceptor';
 import { SdcConfigToken } from "../config/sdc-config.config";
 import { Injector } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/throw';
-import { of } from 'rxjs';
 import { TranslateService } from '../shared/translator/translate.service';
 import { CookieService } from '../services/cookie.service';
 import { HttpHelperService } from '../services/http-helper.service';
@@ -150,7 +149,7 @@ describe('HeadersInterceptor service', () => {
 
         it('should stop reporting a request as pending when it fails', done => {
             const mockHandler = {
-                handle: jest.fn(() => Observable.throw(new HttpErrorResponse({ status: 500 })))
+                handle: jest.fn(() => observableThrowError(new HttpErrorResponse({ status: 500 })))
             };
 
             interceptor.intercept(new HttpRequest<any>('GET', '/test'), mockHandler).subscribe(undefined, () => {

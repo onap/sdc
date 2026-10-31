@@ -248,7 +248,8 @@ test.each(['SIGINT', 'SIGTERM'])('launcher uses loopback JIT/proxy flags, serves
     resources.push(() => running.close());
     expect(running.server.address().address).toBe('127.0.0.1');
     expect(invocation.command).toBe(process.execPath);
-    expect(invocation.args).toEqual(expect.arrayContaining(['serve', '--host', '127.0.0.1', '--target', 'development', '--aot=false', '--proxy-config', '--public-host']));
+    expect(invocation.args).toEqual(expect.arrayContaining(['serve', '--host', '127.0.0.1', '--configuration', 'development', '--aot=false', '--proxy-config', '--public-host']));
+    expect(invocation.args).not.toContain('--target');
     expect(invocation.args[invocation.args.indexOf('--port') + 1]).not.toBe(String(running.server.address().port));
     expect(invocation.args[invocation.args.indexOf('--public-host') + 1]).toBe(`http://127.0.0.1:${running.server.address().port}`);
     await childReady;

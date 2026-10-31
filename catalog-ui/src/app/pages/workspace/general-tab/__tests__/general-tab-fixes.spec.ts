@@ -36,8 +36,7 @@ import {GeneralTabComponent} from '../general-tab.component';
 import {GeneralFormService} from '../general-form.service';
 import {ComponentMetadataService} from '../component-metadata.service';
 import {NavigationService} from '../../../../services/navigation.service';
-import {of} from 'rxjs';
-import {Subject} from 'rxjs/Subject';
+import {of, Subject} from 'rxjs';
 
 function makeComponent(overrides: any = {}) {
     return Object.assign({

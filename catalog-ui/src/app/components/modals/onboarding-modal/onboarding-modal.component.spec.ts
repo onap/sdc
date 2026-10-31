@@ -1,11 +1,10 @@
+import {of, Observable} from 'rxjs';
 import {async, ComponentFixture, TestBed} from "@angular/core/testing";
 import { NO_ERRORS_SCHEMA} from "@angular/core";
 import {ConfigureFn, configureTests} from "../../../../jest/test-config.helper";
-
-import {Observable} from "rxjs/Observable";
 import {NgxDatatableModule} from "@swimlane/ngx-datatable";
 import {SdcUiServices, SdcUiCommon} from "onap-ui-angular";
-import 'rxjs/add/observable/of';
+
 import {OnboardingService} from "../../../services/onboarding.service";
 import {TranslateService} from "../../../shared/translator/translate.service";
 import {CacheService} from "../../../services/cache.service";
@@ -28,13 +27,16 @@ describe('onboarding modal component', () => {
         async(() => {
 
             onboardingServiceMock = {
-                getOnboardingComponents: jest.fn().mockImplementation(()=>  Observable.of(onboardingModalUniqueVSPMock)),
-                getComponentFromCsarUuid: jest.fn().mockImplementation(()=>  Observable.of(vspFromServerMock))
+                getOnboardingComponents: jest.fn().mockImplementation(()=>  of(onboardingModalUniqueVSPMock)),
+                getComponentFromCsarUuid: jest.fn().mockImplementation(()=>  of(vspFromServerMock))
             };
 
             cacheServiceMock = {
-                set: jest.fn()
+                set: jest.fn(),
+                get: jest.fn(() => ({role: 'DESIGNER'}))
             };
+
+            translateServiceMock = {translate: jest.fn((key) => key)};
 
             loaderServiceMock = {
                 activate: jest.fn(),
@@ -79,7 +81,7 @@ describe('onboarding modal component', () => {
     });
 
     it('when get a list of vsp initMaxVersionOfItemsInList will return a list with unique items with the latest versions for each packageId', () => {
-        onboardingServiceMock.getOnboardingComponents = jest.fn().mockImplementation(() => Observable.of(onboardingModalVSPMock));
+        onboardingServiceMock.getOnboardingComponents = jest.fn().mockImplementation(() => of(onboardingModalVSPMock));
         fixture.componentInstance.initOnboardingComponentsList();
         expect(fixture.componentInstance.componentsMetadataList.length).toBe(2);
     });
@@ -98,6 +100,7 @@ describe('onboarding modal component', () => {
     });
 
     it('When select the selected vsp the row details closed and call onSelectComponent function', () => {
+        fixture.detectChanges();
         fixture.componentInstance.initOnboardingComponentsList();
         fixture.componentInstance.onSelectComponent({selected: []});
         expect(fixture.componentInstance.selectedComponent).toEqual(undefined);
@@ -105,6 +108,7 @@ describe('onboarding modal component', () => {
     });
 
     it('When select vsp a row with its details will be opened and call onSelectComponent function', () => {
+        fixture.detectChanges();
         fixture.componentInstance.initOnboardingComponentsList();
         fixture.componentInstance.onSelectComponent({selected: onboardingModalVSPMock});
         expect(fixture.componentInstance.selectedComponent).not.toEqual(null);
@@ -112,8 +116,9 @@ describe('onboarding modal component', () => {
         expect(fixture.componentInstance.isCsarComponentExists).toEqual(true);
     });
     it('When select new vsp a row with import and download buttons will be opened and call onSelectComponent function', () => {
+        fixture.detectChanges();
         fixture.componentInstance.initOnboardingComponentsList();
-        onboardingServiceMock.getComponentFromCsarUuid.mockImplementation(() => Observable.of(undefined));
+        onboardingServiceMock.getComponentFromCsarUuid.mockImplementation(() => of(undefined));
         fixture.componentInstance.onSelectComponent({selected: onboardingModalVSPMock});
         expect(fixture.componentInstance.selectedComponent).not.toEqual(null);
         expect(fixture.componentInstance.componentFromServer).toEqual(undefined);

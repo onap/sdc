@@ -18,8 +18,10 @@
  * ============LICENSE_END=========================================================
  */
 
+
+import {map} from 'rxjs/operators';
 import { Injectable, Inject } from "@angular/core";
-import { Observable } from "rxjs/Observable";
+import { Observable } from "rxjs";
 import { IUserProperties } from "../models/user";
 
 import {SdcConfigToken, ISdcConfig} from "../config/sdc-config.config";
@@ -41,12 +43,12 @@ export class UserService {
     public getAllUsers() :Observable<IUserProperties[]> {
         return this.http.get(
             this.sdcConfig.api.root + this.sdcConfig.api.GET_all_users
-        ).map(resp => <IUserProperties[]> resp) ;
+        ).pipe(map(resp => <IUserProperties[]> resp)) ;
     }
 
     public getUser(userId:string) :Observable<IUserProperties> {
         return this.http.get(
             HttpHelperService.replaceUrlParams(this.url, { id: userId })
-        ).map(resp => <IUserProperties> resp);
+        ).pipe(map(resp => <IUserProperties> resp));
     }
 }

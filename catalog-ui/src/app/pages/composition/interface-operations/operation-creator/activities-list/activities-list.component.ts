@@ -26,7 +26,7 @@ import {
   ActivityTypesEnum
 } from "../../../../../models/interface-operation";
 import { DataTypeModel } from "../../../../../models/data-types";
-import { Observable } from "rxjs/Observable";
+import { Observable } from "rxjs";
 import { InstanceFeDetails } from "../../../../../models/instance-fe-details";
 import {
   AbstractControl,

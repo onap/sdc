@@ -18,9 +18,11 @@
  * ============LICENSE_END=========================================================
  */
 
+
+import {map} from 'rxjs/operators';
 import {Inject, Injectable} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/operator/map';
+import {Observable} from 'rxjs';
+
 import {ArtifactGroupModel, ArtifactModel} from 'app/models/artifacts';
 import {AttributeModel} from 'app/models/attributes';
 import {Capability} from 'app/models/capability';
@@ -58,17 +60,17 @@ export class ComponentInstanceService {
         }
     }
     getComponentInstanceProperties(component: Component, componentInstanceId: string): Observable<Array<PropertyBEModel>> {
-        return this.http.get<Array<PropertyBEModel>>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/componentInstances/' + componentInstanceId + '/properties')
-            .map(res => {
+        return this.http.get<Array<PropertyBEModel>>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/componentInstances/' + componentInstanceId + '/properties').pipe(
+            map(res => {
                 return CommonUtils.initBeProperties(res);
-        })
+        }))
     }
 
     getComponentInstanceAttributes(component: Component, componentInstanceId: string): Observable<Array<AttributeBEModel>> {
-        return this.http.get<Array<AttributeBEModel>>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/componentInstances/' + componentInstanceId + '/attributes')
-            .map(res => {
+        return this.http.get<Array<AttributeBEModel>>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/componentInstances/' + componentInstanceId + '/attributes').pipe(
+            map(res => {
                 return CommonUtils.initBeAttributes(res);
-        })
+        }))
     }
 
     getComponentInstanceInputs(component: Component, componentInstance: ComponentInstance): Observable<Array<PropertyBEModel>> {
@@ -77,86 +79,86 @@ export class ComponentInstanceService {
 
 
     getComponentInstanceInputsByIdAndType(componentId: string, componentType:string, componentInstance: ComponentInstance): Observable<Array<PropertyBEModel>> {
-        return this.http.get<Array<InputBEModel>>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/componentInstances/' + componentInstance.uniqueId + '/' + componentInstance.componentUid + '/inputs')
-            .map(res => {
+        return this.http.get<Array<InputBEModel>>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/componentInstances/' + componentInstance.uniqueId + '/' + componentInstance.componentUid + '/inputs').pipe(
+            map(res => {
                 return CommonUtils.initInputs(res);
-            })
+            }))
     }
 
     getComponentInstanceOutputs(component: Component, componentInstance: ComponentInstance): Observable<Array<AttributeBEModel>> {
-        return this.http.get<Array<OutputBEModel>>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/componentInstances/' + componentInstance.uniqueId + '/' + componentInstance.componentUid + '/outputs')
-            .map(res => {
+        return this.http.get<Array<OutputBEModel>>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/componentInstances/' + componentInstance.uniqueId + '/' + componentInstance.componentUid + '/outputs').pipe(
+            map(res => {
                 return CommonUtils.initOutputs(res);
-            })
+            }))
     }
 
     getComponentInstanceArtifactsByGroupType = (componentType:string, componentId:string, componentInstanceId:string, artifactGroupType:string):Observable<ArtifactGroupModel> => {
 
-        return this.http.get<ArtifactGroupModel>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + "/resourceInstances/" + componentInstanceId + "/artifactsByType/" + artifactGroupType)
-            .map(res => {
+        return this.http.get<ArtifactGroupModel>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + "/resourceInstances/" + componentInstanceId + "/artifactsByType/" + artifactGroupType).pipe(
+            map(res => {
                 return new ArtifactGroupModel(res);
-            });
+            }));
     };
 
     getArtifactByGroupType = (componentType:string, componentId:string, artifactGroupType:string):Observable<ArtifactGroupModel> => {
 
-        return this.http.get<ArtifactGroupModel>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + "/artifactsByType/" + artifactGroupType)
-            .map(response => new ArtifactGroupModel(response));
+        return this.http.get<ArtifactGroupModel>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + "/artifactsByType/" + artifactGroupType).pipe(
+            map(response => new ArtifactGroupModel(response)));
     };
 
     changeResourceInstanceVersion = (componentType:string, componentId:string, componentInstanceId:string, componentUid:string):Observable<ComponentInstance> => {
-        return this.http.post<ComponentInstance>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/resourceInstance/' + componentInstanceId + '/changeVersion', {'componentUid': componentUid})
-        .map((res) => {
+        return this.http.post<ComponentInstance>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/resourceInstance/' + componentInstanceId + '/changeVersion', {'componentUid': componentUid}).pipe(
+        map((res) => {
             return ComponentInstanceFactory.createComponentInstance(res);
-        })
+        }))
     };
 
     updateComponentInstance = (componentType:string, componentId:string, componentInstance:ComponentInstance):Observable<ComponentInstance> => {
-        return this.http.post<ComponentInstance>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/resourceInstance/' + componentInstance.uniqueId, componentInstance.toJSON())
-            .map((response) => {
+        return this.http.post<ComponentInstance>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/resourceInstance/' + componentInstance.uniqueId, componentInstance.toJSON()).pipe(
+            map((response) => {
                 return ComponentInstanceFactory.createComponentInstance(response);
-            });
+            }));
     };
 
     updateInstanceProperties(componentType:string, componentId:string, componentInstanceId: string, properties: PropertyBEModel[]) {
 
-        return this.http.post<Array<PropertyModel>>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/resourceInstance/' + componentInstanceId + '/properties', properties)
-            .map((res) => {
+        return this.http.post<Array<PropertyModel>>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/resourceInstance/' + componentInstanceId + '/properties', properties).pipe(
+            map((res) => {
                 return res.map((resProperty) => {
                     let newProp = new PropertyModel(resProperty);
                     newProp.resourceInstanceUniqueId = componentInstanceId;
                     return newProp;
                 });
-            });
+            }));
     }
 
     updateInstanceAttributes(componentType:string, componentId:string, componentInstanceId: string, attributes: AttributeBEModel[]) {
 
-        return this.http.post<Array<AttributeModel>>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/resourceInstance/' + componentInstanceId + '/attributes', attributes)
-            .map((res) => {
+        return this.http.post<Array<AttributeModel>>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/resourceInstance/' + componentInstanceId + '/attributes', attributes).pipe(
+            map((res) => {
                 return res.map((resAttribute) => {
                     let newAttrib = new AttributeModel(resAttribute);
                     newAttrib.resourceInstanceUniqueId = componentInstanceId;
                     return newAttrib;
                 });
-            });
+            }));
     }
 
     getInstanceCapabilityProperties(componentType: string, componentId: string, componentInstanceId: string, capability: Capability): Observable<Array<PropertyModel>> {
 
         return this.http.get<Array<PropertyModel>>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/componentInstances/' + componentInstanceId + '/capability/' + capability.type +
-            '/capabilityName/' +  capability.name + '/ownerId/' + capability.ownerId + '/properties')
-            .map((res) => {
+            '/capabilityName/' +  capability.name + '/ownerId/' + capability.ownerId + '/properties').pipe(
+            map((res) => {
                 capability.properties = res.map((capProp) => new PropertyModel(capProp));  // update capability properties
                 return capability.properties;
-            })
+            }))
     }
 
     updateInstanceCapabilityProperties(component: Component, componentInstanceId: string, capability: Capability, properties: PropertyBEModel[]): Observable<Array<PropertyModel>> {
 
         return this.http.put<Array<PropertyModel>>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/componentInstances/' + componentInstanceId + '/capability/' +  capability.type +
-            '/capabilityName/' +  capability.name + '/ownerId/' + capability.ownerId + '/properties', properties)
-            .map((res) => {
+            '/capabilityName/' +  capability.name + '/ownerId/' + capability.ownerId + '/properties', properties).pipe(
+            map((res) => {
                 const savedProperties: PropertyModel[] = res.map((resProperty) => new PropertyModel(resProperty));
                 savedProperties.forEach((savedProperty) => {
                     const propIdx = capability.properties.findIndex((p) => p.uniqueId === savedProperty.uniqueId);
@@ -165,7 +167,7 @@ export class ComponentInstanceService {
                     }
                 });
                 return savedProperties;
-            })
+            }))
     }
 
     updateInstanceRequirement(componentType: string, componentId: string, componentInstanceId: string, requirement: Requirement): Observable<Requirement> {
@@ -180,32 +182,32 @@ export class ComponentInstanceService {
 
     updateInstanceInputs(component: Component, componentInstanceId: string, inputs: PropertyBEModel[]): Observable<PropertyBEModel[]> {
 
-        return this.http.post<Array<PropertyModel>>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/resourceInstance/' + componentInstanceId + '/inputs', inputs)
-            .map((res) => {
+        return this.http.post<Array<PropertyModel>>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/resourceInstance/' + componentInstanceId + '/inputs', inputs).pipe(
+            map((res) => {
                 return res.map((resInput) => new PropertyBEModel(resInput));
-            });
+            }));
     }
 
     updateInstanceOutputs(component: Component, componentInstanceId: string, outputs: AttributeBEModel[]): Observable<AttributeBEModel[]> {
 
-        return this.http.post<Array<AttributeModel>>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/resourceInstance/' + componentInstanceId + '/outputs', outputs)
-            .map((res) => {
+        return this.http.post<Array<AttributeModel>>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/resourceInstance/' + componentInstanceId + '/outputs', outputs).pipe(
+            map((res) => {
                 return res.map((resOutput) => new AttributeBEModel(resOutput));
-            });
+            }));
     }
 
     getComponentGroupInstanceProperties(component: Component, groupInstanceId: string): Observable<Array<PropertyBEModel>> {
-        return this.http.get<Array<PropertyBEModel>>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/groups/' + groupInstanceId + '/properties')
-            .map((res) => {
+        return this.http.get<Array<PropertyBEModel>>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/groups/' + groupInstanceId + '/properties').pipe(
+            map((res) => {
                 return CommonUtils.initBeProperties(res);
-            });
+            }));
     }
 
     updateComponentGroupInstanceProperties(componentType:string, componentId:string, groupInstanceId: string, properties: PropertyBEModel[]): Observable<Array<PropertyBEModel>> {
-        return this.http.put<Array<PropertyBEModel>>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/groups/' + groupInstanceId + '/properties', properties)
-            .map((res) => {
+        return this.http.put<Array<PropertyBEModel>>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/groups/' + groupInstanceId + '/properties', properties).pipe(
+            map((res) => {
                 return res.map((resProperty) => new PropertyBEModel(resProperty));
-            });
+            }));
     }
 
     // Service group-instance property update: PUT {svcId}/resourceInstance/{ri}/groupInstance/{gi}. Mirrors the
@@ -213,24 +215,24 @@ export class ComponentInstanceService {
     // module-property modal for a service (a resource uses updateComponentGroupInstanceProperties above instead).
     updateGroupInstanceProperties(componentType: string, componentId: string, resourceInstanceId: string, groupInstanceId: string, properties: PropertyBEModel[]): Observable<Array<PropertyBEModel>> {
         return this.http.put<Array<PropertyBEModel>>(
-            this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/resourceInstance/' + resourceInstanceId + '/groupInstance/' + groupInstanceId, properties)
-            .map((res) => {
+            this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/resourceInstance/' + resourceInstanceId + '/groupInstance/' + groupInstanceId, properties).pipe(
+            map((res) => {
                 return res.map((resProperty) => new PropertyBEModel(resProperty));
-            });
+            }));
     }
 
     getComponentPolicyInstanceProperties(componentType:string, componentId:string, policyInstanceId: string): Observable<Array<PropertyBEModel>> {
-        return this.http.get<Array<PropertyBEModel>>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/policies/' + policyInstanceId + '/properties')
-            .map((res) => {
+        return this.http.get<Array<PropertyBEModel>>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/policies/' + policyInstanceId + '/properties').pipe(
+            map((res) => {
                 return CommonUtils.initBeProperties(res);
-            });
+            }));
     }
 
     updateComponentPolicyInstanceProperties(componentType:string, componentId:string, policyInstanceId: string, properties: PropertyBEModel[]): Observable<Array<PropertyBEModel>> {
-        return this.http.put<Array<PropertyBEModel>>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/policies/' + policyInstanceId + '/properties', properties)
-            .map((res) => {
+        return this.http.put<Array<PropertyBEModel>>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/policies/' + policyInstanceId + '/properties', properties).pipe(
+            map((res) => {
                 return res.map((resProperty) => new PropertyBEModel(resProperty));
-            });
+            }));
     }
 
     addInstanceArtifact = (componentType:string, componentId:string, instanceId:string, artifact:ArtifactModel):Observable<ArtifactModel> => {
@@ -238,23 +240,23 @@ export class ComponentInstanceService {
         if (artifact.payloadData) {
             headerObj = headerObj.set('Content-MD5', HttpHelperService.getHeaderMd5(artifact));
         }
-        return this.http.post<ArtifactModel>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/resourceInstance/' + instanceId + '/artifacts', JSON.stringify(artifact), {headers: headerObj})
-        .map((res) => {
+        return this.http.post<ArtifactModel>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/resourceInstance/' + instanceId + '/artifacts', JSON.stringify(artifact), {headers: headerObj}).pipe(
+        map((res) => {
             return new ArtifactModel(res);
-        });
+        }));
     };
 
     updateInstanceArtifact = (componentType:string, componentId:string, instanceId:string, artifact:ArtifactModel):Observable<ArtifactModel> => {
-        return this.http.post<ArtifactModel>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/resourceInstance/' + instanceId + '/artifacts/' + artifact.uniqueId, artifact).map((res) => {
+        return this.http.post<ArtifactModel>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/resourceInstance/' + instanceId + '/artifacts/' + artifact.uniqueId, artifact).pipe(map((res) => {
             return new ArtifactModel(res);
-        });
+        }));
     };
 
     deleteInstanceArtifact = (componentId:string, componentType:string, instanceId:string, artifactId:string, artifactLabel:string):Observable<ArtifactModel> => {
-        return this.http.delete<ArtifactModel>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + "/resourceInstance/" + instanceId + '/artifacts/' + artifactId + '?operation=' + artifactLabel)
-            .map((res) => {
+        return this.http.delete<ArtifactModel>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + "/resourceInstance/" + instanceId + '/artifacts/' + artifactId + '?operation=' + artifactLabel).pipe(
+            map((res) => {
                 return new ArtifactModel(res);
-            });
+            }));
     }
 
     downloadInstanceArtifact = (componentType:string, componentId:string, instanceId:string, artifactId:string):Observable<IFileDownload> => {
@@ -272,13 +274,13 @@ export class ComponentInstanceService {
 
     updateInstanceAttribute = (componentType:string, componentId:string, attribute:AttributeModel):Observable<AttributeModel> => {
         let instanceId = attribute.resourceInstanceUniqueId;
-        return this.http.post<AttributeModel>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + "/resourceInstance/" + instanceId + "/attribute", attribute)
-            .map((response) => {
+        return this.http.post<AttributeModel>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + "/resourceInstance/" + instanceId + "/attribute", attribute).pipe(
+            map((response) => {
                 let newAttribute = new AttributeModel(response);
                 newAttribute.readonly = true;
                 newAttribute.resourceInstanceUniqueId = instanceId;
                 return newAttribute;
-            });
+            }));
     };
 
 }

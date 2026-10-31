@@ -35,6 +35,12 @@ describe('filter-properties-assignemnt component', () => {
         expect(fixture).toMatchSnapshot();
     });
 
+    it('resolves the filter popover after rendering', () => {
+        fixture.componentInstance.componentType = 'resource';
+        fixture.detectChanges();
+        expect(fixture.componentInstance.filterPopover).toBeDefined();
+    });
+
     it('on selectAll', () => {
         let filterData:FilterPropertiesAssignmentData = new FilterPropertiesAssignmentData();
         filterData.propertyName = 'testVal';
