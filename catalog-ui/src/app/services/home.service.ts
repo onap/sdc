@@ -17,6 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+import {map} from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import {IApi} from 'app/models/app-config';
@@ -50,8 +51,8 @@ export class HomeService {
     }
 
     public getAllComponents(smallObjects?: boolean): Observable<Component[]> {
-        return this.http.get<IComponentsArray>(this.api.root + this.api.GET_element)
-            .map((response) => {
+        return this.http.get<IComponentsArray>(this.api.root + this.api.GET_element).pipe(
+            map((response) => {
                 const componentResponse: IComponentsArray = response;
                 let componentsList: Component[] = [];
 
@@ -72,6 +73,6 @@ export class HomeService {
                 componentsList = _.orderBy(componentsList, ['lastUpdateDate'], ['desc']);
 
                 return componentsList;
-            });
+            }));
     }
 }

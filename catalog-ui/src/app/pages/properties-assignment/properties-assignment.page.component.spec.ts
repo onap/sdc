@@ -271,3 +271,15 @@ describe('PropertiesAssignmentComponent instance selection', () => {
         expect(Object.keys(comp.instanceFePropertiesMap)).toEqual(['nf-1']);
     });
 });
+
+describe('PropertiesAssignmentComponent tab queries', () => {
+    // Tabs emits the first (tabChanged) from its ngAfterContentInit, and tabChanged reads
+    // propertyInputTabs.tabs: a dynamic query is still undefined then, so the handler throws
+    // before it selects the Properties tab and no edited value ever enables Save.
+    it('resolves the tab queries statically', () => {
+        const metadata = (PropertiesAssignmentComponent as any).__prop__metadata__;
+        expect(metadata.propertyInputTabs[0].static).toBe(true);
+        expect(metadata.hierarchyNavTabs[0].static).toBe(true);
+    });
+});
+

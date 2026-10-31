@@ -19,6 +19,7 @@
 *  ============LICENSE_END=========================================================
 *  Modifications Copyright (C) 2026 Deutsche Telekom AG.
 */
+import {forkJoin as observableForkJoin, Observable} from 'rxjs';
 import {Component, ComponentRef, Inject, OnDestroy, OnInit} from '@angular/core';
 import {Component as IComponent} from 'app/models/components/component';
 import {WorkflowService} from 'app/services/workflow.service';
@@ -47,7 +48,6 @@ import {DropdownValue} from "../../components/ui/form-components/dropdown/ui-ele
 import {ToscaArtifactModel} from "../../models/tosca-artifact";
 import {ToscaArtifactService} from "../../services/tosca-artifact.service";
 import {InterfaceOperationComponent} from "../interface-operation/interface-operation.page.component";
-import {Observable} from "rxjs/Observable";
 import {PluginsService} from 'app/services/plugins.service';
 import {NavigationService} from 'app/services/navigation.service';
 import { InstanceFeDetails } from 'app/models/instance-fe-details';
@@ -206,7 +206,7 @@ export class InterfaceDefinitionComponent implements OnInit, OnDestroy {
         this.isLoading = true;
         this.interfaces = [];
         this.workflowIsOnline = !_.isUndefined(this.PluginsService.getPluginByStateUrl('workflowDesigner'));
-        Observable.forkJoin(
+        observableForkJoin(
             this.ComponentService.getInterfaceOperations(this.component),
             this.ComponentService.getComponentInputs(this.component),
             this.ComponentService.getInterfaceTypes(this.component),

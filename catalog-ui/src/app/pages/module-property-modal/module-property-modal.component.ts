@@ -18,9 +18,8 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+import {of as observableOf, Observable} from 'rxjs';
 import {ChangeDetectionStrategy, Component as NgComponent, OnInit} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/observable/of';
 import {Component} from 'app/models/components/component';
 import {DisplayModule} from 'app/models/modules/base-module';
 import {PropertyModel} from 'app/models/properties';
@@ -214,7 +213,7 @@ export class ModulePropertyModalComponent implements OnInit {
         // editable AND its value actually changed; otherwise it just closed the modal. Preserve that guard so a Save
         // on a read-only or unchanged property does not fire a redundant BE write.
         if (this.property.readonly || this.property.value === this.input.property.value) {
-            return Observable.of([]);
+            return observableOf([]);
         }
         return this.modulePropertyModalService.save(this.component, this.input.selectedModule, this.property);
     }

@@ -34,8 +34,8 @@ export class DataTypeModel {
     derivedFromName: string;
     derivedFrom: DataTypeModel;
     description: string;
-    creationTime: string;
-    modificationTime: string;
+    creationTime: string | Date;
+    modificationTime: string | Date;
     properties: Array<PropertyBEModel>;
     attributes: Array<AttributeBEModel>;
     model: Model;

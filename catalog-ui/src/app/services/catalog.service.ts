@@ -18,8 +18,9 @@
  * ============LICENSE_END=========================================================
  */
 
+import {map} from 'rxjs/operators';
 import { Injectable, Inject } from "@angular/core";
-import { Observable } from "rxjs/Observable";
+import { Observable , zip} from "rxjs";
 import { SdcConfigToken, ISdcConfig } from "../config/sdc-config.config";
 import {IApi} from 'app/models/app-config';
 import {IComponentsArray} from 'app/models/components-array';
@@ -31,8 +32,6 @@ import {SharingService} from "./sharing.service";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import {DataTypesService} from "./data-types.service";
 import {DataTypeCatalogComponent} from "../models/data-type-catalog-component";
-import {zip} from "rxjs";
-import {map} from "rxjs/operators";
 
 @Injectable()
 export class CatalogService {
@@ -60,8 +59,8 @@ export class CatalogService {
     }
 
     public getArchiveCatalog() {
-        return this.http.get<IComponentsArray>(this.baseUrl + '/v1/catalog/archive/', {})
-            .map(res => this.processComponentsResponse([res, []]));
+        return this.http.get<IComponentsArray>(this.baseUrl + '/v1/catalog/archive/', {}).pipe(
+            map(res => this.processComponentsResponse([res, []])));
     }
 
     private processComponentsResponse(componentsArr: [IComponentsArray, DataTypeModel[]], addSharing:boolean = false) {

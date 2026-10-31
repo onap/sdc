@@ -1,4 +1,3 @@
-import 'rxjs/add/operator/map';
 import {of, throwError, Subject} from 'rxjs';
 import {IUserProperties} from 'app/models/user';
 import {UserManagementComponent} from '../user-management.component';

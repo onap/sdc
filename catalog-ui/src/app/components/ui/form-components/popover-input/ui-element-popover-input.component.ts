@@ -30,8 +30,8 @@ import * as _ from 'lodash';
     styleUrls: ['./ui-element-popover-input.component.less']
 })
 export class UiElementPopoverInputComponent extends UiElementBase implements UiElementBaseInterface {
-    @ViewChild('textArea') textArea: ElementRef;
-    @ViewChild('popoverForm') popoverContentComponent: PopoverContentComponent;
+    @ViewChild('textArea', {static: true}) textArea: ElementRef;
+    @ViewChild('popoverForm', {static: true}) popoverContentComponent: PopoverContentComponent;
 
     editValue: any;
     saveButton: ButtonModel;

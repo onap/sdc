@@ -18,9 +18,8 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+import {of as observableOf, Observable} from 'rxjs';
 import {ModulePropertyModalService} from './module-property-modal.service';
-import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/observable/of';
 
 describe('ModulePropertyModalService', () => {
     let service: ModulePropertyModalService;
@@ -28,8 +27,8 @@ describe('ModulePropertyModalService', () => {
 
     beforeEach(() => {
         ciServiceMock = {
-            updateComponentGroupInstanceProperties: jest.fn(() => Observable.of([{name: 'p', value: '1'}])),
-            updateGroupInstanceProperties: jest.fn(() => Observable.of([{name: 'p', value: '1'}]))
+            updateComponentGroupInstanceProperties: jest.fn(() => observableOf([{name: 'p', value: '1'}])),
+            updateGroupInstanceProperties: jest.fn(() => observableOf([{name: 'p', value: '1'}]))
         };
         service = new ModulePropertyModalService(ciServiceMock);
     });
@@ -63,7 +62,7 @@ describe('ModulePropertyModalService', () => {
 
     it('merges the saved property back into selectedModule.properties so the hierarchy list is not stale', (done) => {
         ciServiceMock.updateComponentGroupInstanceProperties = jest.fn(() =>
-            Observable.of([{uniqueId: 'p1', value: '7'}]));
+            observableOf([{uniqueId: 'p1', value: '7'}]));
         const component: any = {isResource: () => true, isService: () => false, componentType: 'RESOURCE', uniqueId: 'vf1'};
         const staleProperty: any = {uniqueId: 'p1', name: 'initial_count', value: '2'};
         const selectedModule: any = {uniqueId: 'g1', properties: [staleProperty]};

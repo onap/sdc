@@ -3,7 +3,7 @@
  */
 import { Component, Input } from "@angular/core";
 import {ValidationConfiguration} from 'app/models/validation-config';
-import { Subject } from "rxjs/Subject";
+import { Subject } from "rxjs";
 
 @Component({
     selector: 'comment-modal',

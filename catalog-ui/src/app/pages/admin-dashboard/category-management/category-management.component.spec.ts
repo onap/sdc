@@ -1,6 +1,4 @@
-import 'rxjs/add/observable/of';
-import {Observable} from 'rxjs/Observable';
-import {Subject} from 'rxjs/Subject';
+import {of as observableOf, Observable, Subject} from 'rxjs';
 import {IMainCategory, ISubCategory} from 'app/models/category';
 import {CategoryManagementComponent} from './category-management.component';
 
@@ -191,7 +189,7 @@ describe('CategoryManagementComponent', () => {
         const {dynamicContentInstance, modalInstance} = createComp();  // get fresh mock
         // reuse the already-created comp's modalService which has been configured
         modalService.createCustomModal.mockReturnValue({
-            instance: {dynamicContent: {instance: {save: jest.fn(() => Observable.of(created)), isValid: jest.fn(() => true)}}, open: jest.fn()}
+            instance: {dynamicContent: {instance: {save: jest.fn(() => observableOf(created)), isValid: jest.fn(() => true)}}, open: jest.fn()}
         });
         comp.createCategoryModal(resourceCategories[0]);
         expect(modalService.createCustomModal).toHaveBeenCalled();
@@ -203,7 +201,7 @@ describe('CategoryManagementComponent', () => {
 
         // Make dynamicContent.instance.save return Observable
         const created = makeCategory('New Cat');
-        modalInstance.instance.dynamicContent.instance.save.mockReturnValue(Observable.of(created));
+        modalInstance.instance.dynamicContent.instance.save.mockReturnValue(observableOf(created));
 
         comp.createCategoryModal(null);
 
@@ -219,7 +217,7 @@ describe('CategoryManagementComponent', () => {
         comp.ngOnInit();
 
         const created = makeCategory('New Cat');
-        modalInstance.instance.dynamicContent.instance.save.mockReturnValue(Observable.of(created));
+        modalInstance.instance.dynamicContent.instance.save.mockReturnValue(observableOf(created));
 
         comp.createCategoryModal(null);
 
@@ -237,7 +235,7 @@ describe('CategoryManagementComponent', () => {
         cdr.detectChanges.mockClear();
 
         const created = makeCategory('New Cat');
-        modalInstance.instance.dynamicContent.instance.save.mockReturnValue(Observable.of(created));
+        modalInstance.instance.dynamicContent.instance.save.mockReturnValue(observableOf(created));
 
         comp.createCategoryModal(null);
         const okBtn = (modalService.createCustomModal.mock.calls[0][0] as any).buttons[0];
@@ -259,7 +257,7 @@ describe('CategoryManagementComponent', () => {
         const created = makeSub('New Sub') as any;
         const subModalInstance: any = {
             instance: {
-                dynamicContent: {instance: {save: jest.fn(() => Observable.of(created)), isValid: jest.fn(() => true)}},
+                dynamicContent: {instance: {save: jest.fn(() => observableOf(created)), isValid: jest.fn(() => true)}},
                 open: jest.fn()
             }
         };
@@ -285,7 +283,7 @@ describe('CategoryManagementComponent', () => {
         const created = makeSub('New Sub') as any;
         const subModalInstance: any = {
             instance: {
-                dynamicContent: {instance: {save: jest.fn(() => Observable.of(created)), isValid: jest.fn(() => true)}},
+                dynamicContent: {instance: {save: jest.fn(() => observableOf(created)), isValid: jest.fn(() => true)}},
                 open: jest.fn()
             }
         };
@@ -305,7 +303,7 @@ describe('CategoryManagementComponent', () => {
     it('OK button getDisabled returns true when dynamicContent.instance.isValid() is false', () => {
         const {comp, modalService, modalInstance} = createComp();
         comp.ngOnInit();
-        modalInstance.instance.dynamicContent.instance.save.mockReturnValue(Observable.of(makeCategory('x')));
+        modalInstance.instance.dynamicContent.instance.save.mockReturnValue(observableOf(makeCategory('x')));
         modalInstance.instance.dynamicContent.instance.isValid.mockReturnValue(false);
 
         comp.createCategoryModal(null);
@@ -317,7 +315,7 @@ describe('CategoryManagementComponent', () => {
     it('OK button getDisabled returns false when dynamicContent.instance.isValid() is true', () => {
         const {comp, modalService, modalInstance} = createComp();
         comp.ngOnInit();
-        modalInstance.instance.dynamicContent.instance.save.mockReturnValue(Observable.of(makeCategory('x')));
+        modalInstance.instance.dynamicContent.instance.save.mockReturnValue(observableOf(makeCategory('x')));
         modalInstance.instance.dynamicContent.instance.isValid.mockReturnValue(true);
 
         comp.createCategoryModal(null);
@@ -331,7 +329,7 @@ describe('CategoryManagementComponent', () => {
     it('Cancel button callback calls closeCurrentModal', () => {
         const {comp, modalService, modalInstance} = createComp();
         comp.ngOnInit();
-        modalInstance.instance.dynamicContent.instance.save.mockReturnValue(Observable.of(makeCategory('x')));
+        modalInstance.instance.dynamicContent.instance.save.mockReturnValue(observableOf(makeCategory('x')));
 
         comp.createCategoryModal(null);
 

@@ -34,7 +34,7 @@ import { Tabs } from './tabs.component';
         </tabs>`
 })
 class HostComponent {
-    @ViewChild(Tabs) tabs: Tabs;
+    @ViewChild(Tabs, {static: false}) tabs: Tabs;
     changed: string[] = [];
     indication: number = 3;
 }
@@ -175,5 +175,33 @@ describe('Tabs', () => {
         expect(indication.parentElement).toBe(inputs);
         expect(indication.tagName).toBe('SPAN');
         expect(inputs.className).toContain('tab');
+    });
+});
+
+@Component({
+    template: `
+        <tabs #queried (tabChanged)="record()">
+            <tab tabTitle="Properties">properties body</tab>
+            <tab tabTitle="Inputs">inputs body</tab>
+        </tabs>`
+})
+class StaticQueryHostComponent {
+    @ViewChild('queried', {static: true}) queried: Tabs;
+    seen: number[] = [];
+
+    record() {
+        this.seen.push(this.queried ? this.queried.tabs.length : undefined);
+    }
+}
+
+describe('Tabs initial selection', () => {
+    it('reaches a consumer that reads its static Tabs query in (tabChanged)', () => {
+        TestBed.configureTestingModule({
+            imports: [NoopAnimationsModule],
+            declarations: [StaticQueryHostComponent, Tabs, Tab]
+        });
+        const fixture = TestBed.createComponent(StaticQueryHostComponent);
+        fixture.detectChanges();
+        expect(fixture.componentInstance.seen).toEqual([2]);
     });
 });

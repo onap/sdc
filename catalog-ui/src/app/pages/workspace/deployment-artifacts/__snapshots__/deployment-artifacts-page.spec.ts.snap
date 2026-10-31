@@ -10,11 +10,9 @@ exports[`deployment artifacts page should match current snapshot of informationa
   modalService={[Function Object]}
   openGenericArtifactBrowserModal={[Function Function]}
   openPopOver={[Function Function]}
-  popoverContentComponent="undefined"
   popoverService={[Function Object]}
   sortArtifacts={[Function Function]}
   store={[Function Store]}
-  table="undefined"
   translateService={[Function Object]}
   updateEnvParams={[Function Function]}
   workspaceService={[Function Object]}

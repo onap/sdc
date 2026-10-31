@@ -33,8 +33,8 @@ export class DeploymentArtifactsPageComponent implements OnInit {
     public isComponentInstanceSelected: boolean;
 
     @Select(WorkspaceState) workspaceState$: Observable<WorkspaceStateModel>;
-    @ViewChild('informationArtifactsTable') table: any;
-    @ViewChild('popoverForm') popoverContentComponent: PopoverContentComponent;
+    @ViewChild('informationArtifactsTable', {static: false}) table: any;
+    @ViewChild('popoverForm', {static: false}) popoverContentComponent: PopoverContentComponent;
 
     constructor(private workspaceService: WorkspaceService,
                 private artifactsService: ArtifactsService,

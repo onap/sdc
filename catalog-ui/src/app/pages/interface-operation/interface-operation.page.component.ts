@@ -19,14 +19,13 @@
 *  ============LICENSE_END=========================================================
 *  Modifications Copyright (C) 2026 Deutsche Telekom AG.
 */
+import {forkJoin as observableForkJoin, Observable} from 'rxjs';
 import * as _ from "lodash";
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {Component as IComponent} from 'app/models/components/component';
 
 import {ISdcConfig, SdcConfigToken} from "app/config/sdc-config.config";
 import {TranslateService} from "app/shared/translator/translate.service";
-
-import {Observable} from "rxjs/Observable";
 
 import {ModalComponent} from 'onap-ui-angular/dist/modals/modal.component';
 import {ModalService} from 'app/services/modal.service';
@@ -182,7 +181,7 @@ export class InterfaceOperationComponent implements OnInit, OnDestroy {
         this.eventListenerService.registerObserverCallback(EVENTS.ON_CERTIFY, this.updateReadonly);
         this.isLoading = true;
         this.workflowIsOnline = !_.isUndefined(this.PluginsService.getPluginByStateUrl('workflowDesigner'));
-        Observable.forkJoin(
+        observableForkJoin(
             this.ComponentService.getInterfaceOperations(this.component),
             this.ComponentService.getComponentInputs(this.component),
             this.ComponentService.getInterfaceTypes(this.component),
