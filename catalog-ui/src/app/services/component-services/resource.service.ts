@@ -18,10 +18,12 @@
  * ============LICENSE_END=========================================================
  */
 
+
+import {map} from 'rxjs/operators';
 import {Inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {ISdcConfig, SdcConfigToken} from "../../config/sdc-config.config";
-import {Observable} from "rxjs/Observable";
+import {Observable} from "rxjs";
 import {ComponentMetadata} from "../../models/component-metadata";
 import {ComponentLifecycleState} from "../../models/component-lifecycle-state.enum";
 
@@ -40,10 +42,10 @@ export class ResourceService {
 
   private changeLifecycleState(componentUniqueId: string, state: ComponentLifecycleState): Observable<ComponentMetadata> {
     const url: string = this.baseUrl + 'resources/' + componentUniqueId + '/lifecycleState/' + state;
-    return this.http.post<ComponentMetadata>(url, {}).map(value => {
+    return this.http.post<ComponentMetadata>(url, {}).pipe(map(value => {
           return value;
         }
-    );
+    ));
   }
 
 }

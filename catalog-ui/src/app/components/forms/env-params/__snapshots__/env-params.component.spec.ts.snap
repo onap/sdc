@@ -13,7 +13,6 @@ exports[`environment parameters component should match current snapshot of env-p
   onValidityChange={[Function Function]}
   openPopOver={[Function Function]}
   popoverService={[Function Object]}
-  textArea="undefined"
 >
   <div
     class="filter-bar"

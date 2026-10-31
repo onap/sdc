@@ -156,7 +156,7 @@ async function start(options = {}) {
         child = (options.spawn || spawn)(process.execPath, [
             require.resolve('@angular/cli/bin/ng'), 'serve',
             '--host', '127.0.0.1', '--port', String(internalPort),
-            '--target', 'development', '--aot=false',
+            '--configuration', 'development', '--aot=false',
             '--proxy-config', path.resolve(__dirname, '../proxy.conf.js'),
             '--public-host', `http://127.0.0.1:${publicPort}`
         ], { cwd: path.resolve(__dirname, '..'), env, stdio: 'inherit' });

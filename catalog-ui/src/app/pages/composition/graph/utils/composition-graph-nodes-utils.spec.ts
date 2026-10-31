@@ -1,6 +1,7 @@
+
+import {of as observableOf,  Observable } from 'rxjs';
 import { TestBed } from '@angular/core/testing';
 import { SdcUiServices } from 'onap-ui-angular';
-import { Observable } from 'rxjs/Rx';
 import CollectionNodes = Cy.CollectionNodes;
 import { Mock } from 'ts-mockery';
 import {ComponentInstance} from '../../../../models/components-instances/component-instance';
@@ -53,7 +54,7 @@ describe('composition graph nodes utils', () => {
     });
 
     const serviceServiceMock = Mock.of<ServiceService>({
-        getComponentCompositionData : () => Observable.of(Mock.of<ComponentGenericResponse>())
+        getComponentCompositionData : () => observableOf(Mock.of<ComponentGenericResponse>())
     });
 
     // Instances on the graph cp, vl, cp2
@@ -69,7 +70,7 @@ describe('composition graph nodes utils', () => {
         };
 
         topologyServiceMock = Mock.of<TopologyTemplateService>({
-            deleteComponentInstance : () => Observable.of(cpInstanceMock)
+            deleteComponentInstance : () => observableOf(cpInstanceMock)
         });
 
         queueServiceMock = Mock.of<QueueServiceUtils>({

@@ -34,8 +34,7 @@
  *    isShowFileBrowse to FALSE and enabled it in only four narrow cases. The native picker also
  *    never wrote component.importedFile, so a selected file could not reach the create payload.
  */
-import {of} from 'rxjs';
-import {Subject} from 'rxjs/Subject';
+import {of, Subject} from 'rxjs';
 import {ComponentMetadataService} from '../component-metadata.service';
 import {GeneralFormService} from '../general-form.service';
 import {GeneralTabComponent} from '../general-tab.component';

@@ -200,24 +200,26 @@ describe('artifact form component', () => {
 
     it('should verify onDescriptionChange -> verifyTypeAndFileWereFilled is being called', () => {
         fixture.componentInstance.verifyTypeAndFileWereFilled = jest.fn();
-        fixture.componentInstance.onValidationChange.next = jest.fn(() => true);
+        fixture.componentInstance.onValidationChange.next = jest.fn();
 
         fixture.componentInstance.artifact = artifactModel;
-        fixture.componentInstance.onDescriptionChange();
+        fixture.componentInstance.onDescriptionChange(true);
 
         const spy1 = jest.spyOn(fixture.componentInstance,'verifyTypeAndFileWereFilled');
         expect(spy1).toHaveBeenCalled();
+        expect(fixture.componentInstance.onValidationChange.next).toHaveBeenCalledWith(true);
     });
 
     it('should verify onLabelChange -> verifyTypeAndFileWereFilled is being called', () => {
         fixture.componentInstance.verifyTypeAndFileWereFilled = jest.fn();
-        fixture.componentInstance.onValidationChange.next = jest.fn(() => true);
+        fixture.componentInstance.onValidationChange.next = jest.fn();
 
         fixture.componentInstance.artifact = artifactModel;
         fixture.componentInstance.onLabelChange(true);
 
         const spy1 = jest.spyOn(fixture.componentInstance,'verifyTypeAndFileWereFilled');
         expect(spy1).toHaveBeenCalled();
+        expect(fixture.componentInstance.onValidationChange.next).toHaveBeenCalledWith(true);
     });
 
     it('should verify verifyTypeAndFileWereFilled -> verify branch this.artifact.artifactType !== \'DEPLOYMENT\' ==>> onValidationChange.next(false)', () => {

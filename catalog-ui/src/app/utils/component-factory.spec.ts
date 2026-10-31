@@ -20,7 +20,7 @@
 
 import {ComponentFactory} from './component-factory';
 import {ComponentType} from './constants';
-import {Subject} from 'rxjs/Subject';
+import {Subject} from 'rxjs';
 
 describe('ComponentFactory', () => {
     let factory: ComponentFactory;

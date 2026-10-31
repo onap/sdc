@@ -1,9 +1,19 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from "@angular/core";
-import {URLSearchParams} from '@angular/http';
+import {HttpParams, HttpUrlEncodingCodec} from '@angular/common/http';
 import {Plugin} from 'app/models/plugins-config';
 import {EventBusService} from "../../../services/event-bus.service";
 import {NavigationService} from "../../../services/navigation.service";
 import {PluginsService} from "../../../services/plugins.service";
+
+class PluginQueryEncoder extends HttpUrlEncodingCodec {
+    encodeKey(key: string): string {
+        return super.encodeKey(key).replace(/%2B/gi, '+');
+    }
+
+    encodeValue(value: string): string {
+        return super.encodeValue(value).replace(/%2B/gi, '+');
+    }
+}
 
 /** The name the plugin is shown under for `displayType` ('tab' or 'context'), else any it has, else its id. */
 export function pluginDisplayName(plugin: Plugin, displayType?: string): string {
@@ -26,7 +36,7 @@ export class PluginFrameComponent implements OnInit, OnDestroy {
     @Input() queryParams: Object;
     @Output() onLoadingDone: EventEmitter<void> = new EventEmitter<void>();
     pluginUrl: string;
-    private urlSearchParams: URLSearchParams;
+    private urlSearchParams: HttpParams;
     private isClosed: boolean;
     private isReady: boolean;
     isPluginCheckDone: boolean;
@@ -35,7 +45,7 @@ export class PluginFrameComponent implements OnInit, OnDestroy {
     constructor(private eventBusService: EventBusService,
                 private pluginsService: PluginsService,
                 private navigationService: NavigationService) {
-        this.urlSearchParams = new URLSearchParams();
+        this.urlSearchParams = new HttpParams({encoder: new PluginQueryEncoder()});
         this.isPluginCheckDone = false;
     }
 
@@ -73,7 +83,9 @@ export class PluginFrameComponent implements OnInit, OnDestroy {
 
         if (this.queryParams && !_.isEmpty(this.queryParams)) {
             _.forOwn(this.queryParams, (value, key) => {
-                this.urlSearchParams.set(key, value);
+                if (value !== null && value !== undefined) {
+                    this.urlSearchParams = this.urlSearchParams.set(key, String(value));
+                }
             });
 
             this.pluginUrl += '?';

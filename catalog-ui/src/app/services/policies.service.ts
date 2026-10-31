@@ -18,8 +18,10 @@
  * ============LICENSE_END=========================================================
  */
 
+
+import {map} from 'rxjs/operators';
 import {Injectable, Inject} from "@angular/core";
-import {Observable} from "rxjs/Observable";
+import {Observable} from "rxjs";
 import {SdcConfigToken, ISdcConfig} from "../config/sdc-config.config";
 import {PolicyInstance, PolicyTargetsRequest} from '../models/graph/zones/policy-instance';
 import {IZoneInstanceAssignment} from "../models/graph/zones/zone-instance";
@@ -75,8 +77,8 @@ export class PoliciesService implements IZoneService {
     }
 
     public updatePolicyTargets(topologyTemplateType:string, topologyTemplateId:string, policyId:string, targets:PolicyTargetsRequest): Observable<PolicyInstance> {
-        return this.http.post<PolicyInstance>(this.baseUrl + '/v1/catalog/' + this.mapApiDirections[topologyTemplateType.toUpperCase()] + '/' + topologyTemplateId + '/policies/' + policyId + '/targets', targets.requestItems)
-            .map(response => new PolicyInstance(response));
+        return this.http.post<PolicyInstance>(this.baseUrl + '/v1/catalog/' + this.mapApiDirections[topologyTemplateType.toUpperCase()] + '/' + topologyTemplateId + '/policies/' + policyId + '/targets', targets.requestItems).pipe(
+            map(response => new PolicyInstance(response)));
     }
 
     public updateTargets(topologyTemplateType:string, topologyTemplateId:string, policyId:string, targets:Array<TargetUiObject>):Observable<PolicyInstance> {
@@ -93,10 +95,10 @@ export class PoliciesService implements IZoneService {
     }
 
     public getSpecificPolicy(topologyTemplateType:string, topologyTemplateId:string, policyId:string):Observable<PolicyInstance> {
-        return this.http.get<PolicyInstance>(this.baseUrl + '/v1/catalog/' + this.mapApiDirections[topologyTemplateType.toUpperCase()] + '/' + topologyTemplateId + '/policies/' + policyId)
-            .map(res => {
+        return this.http.get<PolicyInstance>(this.baseUrl + '/v1/catalog/' + this.mapApiDirections[topologyTemplateType.toUpperCase()] + '/' + topologyTemplateId + '/policies/' + policyId).pipe(
+            map(res => {
                 return new PolicyInstance(res);
-            });
+            }));
     }
 
     public updateName(topologyTemplateType:string, topologyTemplateId:string, policyId:string, newName:string):Observable<any> {

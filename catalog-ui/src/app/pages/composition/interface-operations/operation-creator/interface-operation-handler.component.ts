@@ -42,7 +42,7 @@ import {IDropDownOption} from 'onap-ui-angular/dist/form-elements/dropdown/dropd
 import {ComponentService} from "../../../../services/component-services/component.service";
 import {DropDownComponent} from "onap-ui-angular/dist/form-elements/dropdown/dropdown.component";
 import {DataTypeService} from "../../../../services/data-type.service";
-import {Observable} from "rxjs/Observable";
+import {Observable} from "rxjs";
 import {DataTypeModel} from "../../../../models/data-types";
 import {InstanceFeDetails} from "../../../../models/instance-fe-details";
 import {TopologyTemplateService} from "app/services/component-services/topology-template.service";
@@ -57,7 +57,7 @@ import {CustomToscaFunction} from "../../../../models/default-custom-functions";
 export class InterfaceOperationHandlerComponent {
 
     @Output('propertyChanged') emitter: EventEmitter<PropertyFEModel> = new EventEmitter<PropertyFEModel>();
-    @ViewChild('interfaceOperationDropDown') interfaceOperationDropDown: DropDownComponent;
+    @ViewChild('interfaceOperationDropDown', {static: true}) interfaceOperationDropDown: DropDownComponent;
 
     input: {
         componentInstanceMap: Map<string, InstanceFeDetails>;

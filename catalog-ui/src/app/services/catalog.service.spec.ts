@@ -1,5 +1,7 @@
-import 'rxjs/add/operator/map';
-import 'rxjs/add/observable/of';
+
+import {of as observableOf, Observable} from 'rxjs';
+
+
 import {TestBed} from '@angular/core/testing';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {CatalogService} from './catalog.service';
@@ -8,7 +10,6 @@ import {SharingService} from './sharing.service';
 import {ComponentFactory} from 'app/utils/component-factory';
 import {DataTypesService} from './data-types.service';
 import {mockSdcConfig} from '../../jest/mocks/sdc-config.mock';
-import {Observable} from 'rxjs/Observable';
 
 describe('CatalogService', () => {
     let service: CatalogService;
@@ -29,7 +30,7 @@ describe('CatalogService', () => {
 
         dataTypesServiceMock = {
             getDataTypesFromAllModelExcludePrimitives: jest.fn(() => {
-                return Observable.of([]);
+                return observableOf([]);
             })
         };
 

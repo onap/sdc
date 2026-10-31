@@ -5,7 +5,7 @@ import {CommonModule} from "@angular/common";
 import {UiElementsModule} from "../../components/ui/ui-elements.module";
 import {PluginTabViewPageComponent} from "./plugin-tab-view/plugin-tab-view.page.component";
 import {LayoutModule} from "../../components/layout/layout.module";
-import {HttpModule} from "@angular/http";
+import {HttpClientModule} from "@angular/common/http";
 
 @NgModule({
     declarations: [
@@ -17,7 +17,7 @@ import {HttpModule} from "@angular/http";
         PluginFrameModule,
         UiElementsModule,
         LayoutModule,
-        HttpModule
+        HttpClientModule
     ],
     exports: [
         PluginContextViewPageComponent,

@@ -660,7 +660,7 @@ export class CatalogComponent implements OnInit, OnDestroy {
                 default:
                     return;
             }
-            this.filterParams[k] = changedFilterParams[k];
+            Object.assign(this.filterParams, {[k]: changedFilterParams[k]});
             newParams['filter.' + k] = newVal;
         });
         this.navigationService.navigate('.', newParams, {location: 'replace', notify: false}).then(() => {
@@ -705,7 +705,7 @@ export class CatalogComponent implements OnInit, OnDestroy {
         return filteredCategories;
     }
 
-    private makeSortedCategories(categories:Array<IMainCategory|ISubCategory|ICategoryBase>, sortBy?:any): Array<IMainCategory|ISubCategory|ICategoryBase> {
+    private makeSortedCategories<Category extends ICategoryBase>(categories: Array<Category>, sortBy?:any): Array<Category> {
         sortBy = (sortBy !== undefined) ? sortBy : ['name'];
         let sortedCategories = categories.map(cat => Object.assign({}, cat));  // copy each object in the array
         sortedCategories = _.sortBy(sortedCategories, sortBy);

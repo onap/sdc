@@ -24,7 +24,7 @@ export class InformationArtifactPageComponent implements OnInit {
     public informationArtifacts$: Observable<ArtifactModel[]>;
     public informationArtifactsAsButtons$: Observable<ArtifactModel[]>;
     @Select(WorkspaceState.isViewOnly) isViewOnly$: boolean;
-    @ViewChild('informationArtifactsTable') table: any;
+    @ViewChild('informationArtifactsTable', {static: false}) table: any;
 
     constructor(private workspaceService: WorkspaceService,
                 private artifactsService: ArtifactsService,

@@ -1,11 +1,11 @@
+
+import {of as observableOf, Observable} from 'rxjs';
 import {async, ComponentFixture, TestBed} from "@angular/core/testing";
 import { NO_ERRORS_SCHEMA} from "@angular/core";
 import {ConfigureFn, configureTests} from "../../../../jest/test-config.helper";
-
-import {Observable} from "rxjs/Observable";
 import {NgxDatatableModule} from "@swimlane/ngx-datatable";
 import {SdcUiServices, SdcUiCommon} from "onap-ui-angular";
-import 'rxjs/add/observable/of';
+
 import {ReqAndCapabilitiesComponent} from "./req-and-capabilities.component";
 import {ReqAndCapabilitiesService} from "./req-and-capabilities.service";
 import {CapabilitiesComponent} from "./capabilities/capabilities.component";
@@ -43,7 +43,7 @@ describe('req and capabilities component', () => {
 
             topologyTemplateServiceMock = {
                 getRequirementsAndCapabilitiesWithProperties: jest.fn().mockImplementation(() =>
-                Observable.of({requirements: {'tosca.requirements.Node': requirementMock},
+                observableOf({requirements: {'tosca.requirements.Node': requirementMock},
                 capabilities: {'tosca.capabilities.Node': capabilitiesMock}}))
             };
 
@@ -54,6 +54,11 @@ describe('req and capabilities component', () => {
             createDynamicComponentServiceMock = {
                 insertComponentDynamically: jest.fn()
             }
+
+            reqAndCapabilitiesService = {
+                initInputs: jest.fn(() => Promise.resolve()),
+                isViewOnly: jest.fn(() => false)
+            };
 
             const configure: ConfigureFn = testBed => {
                 testBed.configureTestingModule({
@@ -134,6 +139,30 @@ describe('req and capabilities component', () => {
         fixture.componentInstance.selectTab({title: 'Capabilities(2)'});
         expect(fixture.componentInstance.selectTabName).not.toBe('REQUIREMENTS');
         expect(createDynamicComponentServiceMock.insertComponentDynamically.mock.calls[0][0]).toBe(CapabilitiesComponent);
+    });
+
+    it('resolves dynamic table containers before synchronous initialization and tab switching', async () => {
+        const component = fixture.componentInstance as any;
+        component.reqAndCapabilitiesService = {initInputs: jest.fn(() => Promise.resolve()), isViewOnly: () => false};
+        component.eventListenerService = {registerObserverCallback: jest.fn()};
+        createDynamicComponentServiceMock.insertComponentDynamically.mockImplementation((table, inputs) => ({
+            instance: inputs,
+            destroy: jest.fn()
+        }));
+
+        fixture.detectChanges();
+        await Promise.resolve();
+        const requirementContainer = createDynamicComponentServiceMock.insertComponentDynamically.mock.calls[0][2];
+        expect(requirementContainer).toBeDefined();
+        expect(typeof requirementContainer.createComponent).toBe('function');
+        expect(requirementContainer).toBe(component.requirementsContainer);
+
+        component.selectTab({title: 'Capabilities(2)'});
+        await Promise.resolve();
+        const capabilityContainer = createDynamicComponentServiceMock.insertComponentDynamically.mock.calls[1][2];
+        expect(capabilityContainer).toBeDefined();
+        expect(typeof capabilityContainer.createComponent).toBe('function');
+        expect(capabilityContainer).toBe(component.capabilitiesContainer);
     });
 
     it('opens the add dialogs with Create as the primary button and Cancel as the secondary one', () => {

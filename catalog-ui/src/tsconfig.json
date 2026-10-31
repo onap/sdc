@@ -35,5 +35,8 @@
     "forceConsistentCasingInFileNames": true
   },
   "exclude": [
-  ]
+  ],
+  "angularCompilerOptions": {
+    "enableIvy": false
+  }
 }

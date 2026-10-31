@@ -148,6 +148,7 @@ test('API target connection failures stay 502 even when HTML is requested', asyn
     expect(response.body).not.toContain('application');
 });
 
+// Loading webpack and compiling the fixture can exceed five seconds on cold CI workers.
 test('installed CLI dev-server serves navigation/assets without masking API errors', async () => {
     const cliRoot = path.dirname(require.resolve('@angular/cli/package.json'));
     const webpack = require(require.resolve('webpack', { paths: [cliRoot] }));
@@ -187,7 +188,7 @@ test('installed CLI dev-server serves navigation/assets without masking API erro
     const response = await request(port, '/sdc1/feProxy/rest/missing', { headers: { accept: 'text/html' } });
     expect(response.status).toBe(404);
     expect(JSON.parse(response.body).url).toBe('/sdc2/rest/missing');
-});
+}, 30000);
 
 test('gateway delegates deep links and root/sdc1 assets unchanged and returns 502 on refused target', async () => {
     const target = await backend();
@@ -248,7 +249,8 @@ test.each(['SIGINT', 'SIGTERM'])('launcher uses loopback JIT/proxy flags, serves
     resources.push(() => running.close());
     expect(running.server.address().address).toBe('127.0.0.1');
     expect(invocation.command).toBe(process.execPath);
-    expect(invocation.args).toEqual(expect.arrayContaining(['serve', '--host', '127.0.0.1', '--target', 'development', '--aot=false', '--proxy-config', '--public-host']));
+    expect(invocation.args).toEqual(expect.arrayContaining(['serve', '--host', '127.0.0.1', '--configuration', 'development', '--aot=false', '--proxy-config', '--public-host']));
+    expect(invocation.args).not.toContain('--target');
     expect(invocation.args[invocation.args.indexOf('--port') + 1]).not.toBe(String(running.server.address().port));
     expect(invocation.args[invocation.args.indexOf('--public-host') + 1]).toBe(`http://127.0.0.1:${running.server.address().port}`);
     await childReady;

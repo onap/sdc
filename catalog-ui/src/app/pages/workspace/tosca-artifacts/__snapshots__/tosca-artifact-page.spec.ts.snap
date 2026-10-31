@@ -6,7 +6,6 @@ exports[`tosca artifacts page should match current snapshot of tosca artifact pa
   isLoading="false"
   notificationsService={[Function Object]}
   store={[Function Store]}
-  table={[Function DatatableComponent]}
   workspaceService={[Function Object]}
 >
   <div
