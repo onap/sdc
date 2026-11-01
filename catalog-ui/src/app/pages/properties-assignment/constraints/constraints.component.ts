@@ -40,7 +40,12 @@ export class ConstraintsComponent implements OnInit {
   @Input() isViewOnly: boolean = false;
   @Output() onConstraintChange: EventEmitter<any> = new EventEmitter<any>();
 
-  constraintTypes: string[];
+  get constraintTypes(): ConstraintTypes[] {
+    return Object.keys(ConstraintTypes)
+      .map(key => ConstraintTypes[key])
+      .filter(type => !this.notAllowedConstraint(type));
+  }
+
   ConstraintTypesMapping = ConstraintTypesMapping;
   valid: boolean = false;
   constraintForm: FormGroup;
@@ -51,6 +56,14 @@ export class ConstraintsComponent implements OnInit {
 
   get constraintsArray() {
     return this.constraintForm.get('constraint') as FormArray;
+  }
+
+  get constraintTypeValidators(): ValidatorFn {
+    return Validators.compose([
+      Validators.required,
+      (control: AbstractControl): ValidationErrors | null =>
+        control.value && this.notAllowedConstraint(control.value) ? { incompatibleConstraint: true } : null
+    ]);
   }
 
   get constraintValidators(): ValidatorFn {
@@ -81,7 +94,6 @@ export class ConstraintsComponent implements OnInit {
 
   ngOnInit() {
     console.groupEnd();
-    this.constraintTypes = Object.keys(ConstraintTypes).map((key) => ConstraintTypes[key]);
 
     // This is only used by the spec test
     if (!this.constraintForm) {
@@ -98,7 +110,8 @@ export class ConstraintsComponent implements OnInit {
         { type: 'invalidString', message: 'String contains invalid characters'}
       ],
       type : [
-        { type: 'required', message: 'Constraint type is required'}
+        { type: 'required', message: 'Constraint type is required'},
+        { type: 'incompatibleConstraint', message: 'Constraint is not supported for this property type'}
       ]
     };
 
@@ -124,24 +137,18 @@ export class ConstraintsComponent implements OnInit {
     }
 
     if (changes.propertyType) {
-      if (!this.init) {
-        // Reset constraints on property type change
-        console.warn('Property type changed. Resetting constraints');
-        this.constraintForm = this.formBuilder.group({
-          constraint: this.formBuilder.array([])
-        });
-      }
-
-      if (!this.propertyType || changes.propertyType.currentValue == this.propertyType) {
-        this.propertyType = changes.propertyType.currentValue;
-      } else {
-        this.propertyType = changes.propertyType;
-        this.emitOnConstraintChange();
-      }
+      this.propertyType = changes.propertyType.currentValue;
 
       this.constraintsArray.controls.forEach((control: AbstractControl) => {
-        control.get('value').setValidators(this.constraintValidators);
+        control.get('type').updateValueAndValidity();
+        const value = control.get('value');
+        const values = value instanceof FormArray ? value.controls : [value];
+        values.forEach(entry => {
+          entry.setValidators(this.constraintValidators);
+          entry.updateValueAndValidity();
+        });
       });
+      this.emitOnConstraintChange(this.init);
     }
 
     console.log('constraints', this.constraintsArray);
@@ -167,7 +174,7 @@ export class ConstraintsComponent implements OnInit {
         type: new FormControl({
           value: newType,
           disabled: this.isViewOnly
-        }, Validators.required),
+        }, this.constraintTypeValidators),
         value: this.formBuilder.array([])});
 
       this.constraintsArray.removeAt(constraintIndex);
@@ -177,7 +184,7 @@ export class ConstraintsComponent implements OnInit {
         type: new FormControl({
           value: newType,
           disabled: this.isViewOnly
-        }, Validators.required),
+        }, this.constraintTypeValidators),
         value: this.formBuilder.array([])});
 
       const valRef = newConstraint.get('value') as FormArray;
@@ -212,7 +219,7 @@ export class ConstraintsComponent implements OnInit {
       type: new FormControl({
         value: ConstraintTypes.null,
         disabled: this.isViewOnly
-      }, Validators.required),
+      }, this.constraintTypeValidators),
       value: new FormControl({
         value: '',
         disabled: this.isViewOnly
@@ -262,8 +269,9 @@ export class ConstraintsComponent implements OnInit {
         }
         break;
       case ConstraintTypes.valid_values:
-      case ConstraintTypes.equal:
         return false;
+      case ConstraintTypes.equal:
+        return !this.isComparable(this.propertyType) && this.propertyType !== PROPERTY_TYPES.BOOLEAN;
     }
     return true;
   }
@@ -335,7 +343,7 @@ export class ConstraintsComponent implements OnInit {
         type: new FormControl({
           value: constraintType,
           disabled: this.isViewOnly
-        }, Validators.required),
+        }, this.constraintTypeValidators),
         value: new FormControl({
           value: constraintValue,
           disabled: this.isViewOnly
@@ -346,7 +354,7 @@ export class ConstraintsComponent implements OnInit {
         type: new FormControl({
           value: constraintType,
           disabled: this.isViewOnly
-        }, Validators.required),
+        }, this.constraintTypeValidators),
         value: this.formBuilder.array([])
       });
 
@@ -478,7 +486,7 @@ export class ConstraintsComponent implements OnInit {
     return false;
   }
 
-  private emitOnConstraintChange(): void {
+  private emitOnConstraintChange(defer: boolean = false): void {
     console.log('constraints', this.constraintsArray);
 
     this.validateConstraints();
@@ -487,10 +495,15 @@ export class ConstraintsComponent implements OnInit {
     this.valid = this.constraintForm.valid;
     console.log('emitOnConstraintChange.valid', this.valid);
 
-    this.onConstraintChange.emit({
+    const change = {
       constraints: newConstraints,
       valid: this.valid
-    });
+    };
+    if (defer) {
+      Promise.resolve().then(() => this.onConstraintChange.emit(change));
+    } else {
+      this.onConstraintChange.emit(change);
+    }
   }
 
 }
