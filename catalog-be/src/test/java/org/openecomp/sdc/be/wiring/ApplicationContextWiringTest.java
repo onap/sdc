@@ -21,14 +21,14 @@
 package org.openecomp.sdc.be.wiring;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.core.io.ClassPathResource;
+import org.openecomp.sdc.config.CatalogBeApplicationConfig;
 
 class ApplicationContextWiringTest {
 
     @Test
     void applicationContextDefinesTheSnapshottedBeans() throws Exception {
         WiringSnapshot.assertMatches(
-            BeanDefinitionSnapshot.render(BeanDefinitionSnapshot.load(new ClassPathResource("application-context.xml"))),
-            "application-context.txt");
+            BeanDefinitionSnapshot.render(BeanDefinitionSnapshot.load(CatalogBeApplicationConfig.class)),
+            "catalog-be-application-config.txt");
     }
 }

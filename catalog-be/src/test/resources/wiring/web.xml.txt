@@ -1,4 +1,5 @@
-context-param contextConfigLocation = classpath:application-context.xml
+context-param contextClass = org.springframework.web.context.support.AnnotationConfigWebApplicationContext
+context-param contextConfigLocation = org.openecomp.sdc.config.CatalogBeApplicationConfig
 context-param org.eclipse.jetty.servlet.Default.dirAllowed = false
 context-param org.togglz.core.manager.TogglzConfig = org.openecomp.sdc.be.togglz.TogglzConfiguration
 listener org.openecomp.sdc.be.listen.BEAppContextListener
