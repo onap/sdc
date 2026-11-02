@@ -50,7 +50,6 @@ import org.openecomp.sdc.common.log.elements.LoggerSupportability;
 import org.openecomp.sdc.common.log.enums.LoggerSupportabilityActions;
 import org.openecomp.sdc.common.log.enums.StatusCode;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
@@ -153,7 +152,7 @@ public class ArchiveEndpoint extends BeGenericServlet {
         @ApiResponse(responseCode = "200", description = "Success"), @ApiResponse(responseCode = "400", description = "Bad request"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "500", description = "Internal Error. A list of the failed CSAR IDs may be returned.")})
-    public Response onVspArchived(@HeaderParam(value = Constants.USER_ID_HEADER) String userId, @RequestBody List<String> csarIds) {
+    public Response onVspArchived(@HeaderParam(value = Constants.USER_ID_HEADER) String userId, List<String> csarIds) {
         List<String> failedCsarIds = this.archiveBusinessLogic.onVspArchive(userId, csarIds);
         if (!failedCsarIds.isEmpty()) {
             //There are some failed CSAR IDs, return 500 and the list of failed CSAR IDs
@@ -170,7 +169,7 @@ public class ArchiveEndpoint extends BeGenericServlet {
         @ApiResponse(responseCode = "200", description = "Success"), @ApiResponse(responseCode = "400", description = "Bad request"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "500", description = "Internal Error. A list of the failed CSAR IDs may be returned.")})
-    public Response onVspRestored(@HeaderParam(value = Constants.USER_ID_HEADER) String userId, @RequestBody List<String> csarIds) {
+    public Response onVspRestored(@HeaderParam(value = Constants.USER_ID_HEADER) String userId, List<String> csarIds) {
         List<String> failedCsarIds = this.archiveBusinessLogic.onVspRestore(userId, csarIds);
         if (!failedCsarIds.isEmpty()) {
             //There are some failed CSAR IDs, return 500 and the list of failed CSAR IDs

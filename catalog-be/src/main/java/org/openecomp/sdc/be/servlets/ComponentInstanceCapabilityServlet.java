@@ -58,7 +58,6 @@ import org.openecomp.sdc.common.log.enums.StatusCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  * Handles component instance capabilities operations
@@ -101,7 +100,7 @@ public class ComponentInstanceCapabilityServlet {
                                               @PathParam("containerComponentId") final String containerComponentId,
                                               @PathParam("componentInstanceUniqueId") final String componentInstanceUniqueId,
                                               @Parameter(description = "Component instance capability to update", required = true)
-                                              @Valid @RequestBody @NotNull final ComponentInstanceCapabilityUpdateModel capabilityUpdateModel,
+                                              @Valid @NotNull final ComponentInstanceCapabilityUpdateModel capabilityUpdateModel,
                                               @Context final HttpServletRequest request,
                                               @HeaderParam(value = Constants.USER_ID_HEADER) final String userId) {
         if (LOGGER.isDebugEnabled()) {
