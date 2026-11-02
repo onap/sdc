@@ -34,7 +34,7 @@ artifactTypeBusinessLogic : org.openecomp.sdc.be.components.impl.ArtifactTypeBus
 artifactTypeImportManager : org.openecomp.sdc.be.components.impl.ArtifactTypeImportManager
 artifacts-operations : org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations
 asdcComponentsCleaner : org.openecomp.sdc.be.components.scheduledtasks.AsdcComponentsCleanerTask
-asset-metadata-utils : org.openecomp.sdc.config.CatalogBESpringConfig#0#assetMetadataConverter -> org.openecomp.sdc.be.ecomp.converters.AssetMetadataConverter destroy-method=(inferred)
+asset-metadata-utils : org.openecomp.sdc.config.CatalogBESpringConfig#assetMetadataConverter -> org.openecomp.sdc.be.ecomp.converters.AssetMetadataConverter destroy-method=(inferred)
 assetsDataServlet : org.openecomp.sdc.be.externalapi.servlet.AssetsDataServlet
 attribute-operation : org.openecomp.sdc.be.model.operations.impl.AttributeOperation
 attributeBusinessLogic : org.openecomp.sdc.be.components.impl.AttributeBusinessLogic
@@ -58,6 +58,7 @@ capabilty-requirement-convertor : org.openecomp.sdc.be.tosca.CapabilityRequireme
 cassandra-client : org.openecomp.sdc.be.dao.cassandra.CassandraClient
 cassandra-health-check : org.openecomp.sdc.be.components.impl.CassandraHealthCheck
 cassandraCustomStateRepository : org.openecomp.sdc.be.togglz.CassandraCustomStateRepository
+catalogBeApplicationConfig : org.openecomp.sdc.config.CatalogBeApplicationConfig
 catalogOperation : org.openecomp.sdc.be.facade.operations.CatalogOperation
 categoriesImportManager : org.openecomp.sdc.be.components.impl.CategoriesImportManager
 category-operation : org.openecomp.sdc.be.model.jsonjanusgraph.operations.CategoryOperation
@@ -95,7 +96,7 @@ componentInstanceRelationMergeCommand : org.openecomp.sdc.be.components.merge.in
 componentInstanceServlet : org.openecomp.sdc.be.servlets.ComponentInstanceServlet
 componentInterfaceOperationBusinessLogic : org.openecomp.sdc.be.components.impl.ComponentInterfaceOperationBusinessLogic
 componentInterfaceOperationServlet : org.openecomp.sdc.be.servlets.ComponentInterfaceOperationServlet
-componentLockAspect : org.openecomp.sdc.config.CatalogBESpringConfig#0#componentLockAspect -> org.openecomp.sdc.be.components.impl.lock.ComponentLockAspect destroy-method=(inferred)
+componentLockAspect : org.openecomp.sdc.config.CatalogBESpringConfig#componentLockAspect -> org.openecomp.sdc.be.components.impl.lock.ComponentLockAspect destroy-method=(inferred)
 componentLocker : org.openecomp.sdc.be.components.impl.ComponentLocker
 componentNameValidator : org.openecomp.sdc.be.components.validation.component.ComponentNameValidator
 componentNodeFilterBusinessLogic : org.openecomp.sdc.be.components.impl.ComponentNodeFilterBusinessLogic
@@ -110,8 +111,8 @@ componentValidations : org.openecomp.sdc.be.components.validation.ComponentValid
 componentValidator : org.openecomp.sdc.be.components.validation.component.ComponentValidator
 componentsCleanBusinessLogic : org.openecomp.sdc.be.components.scheduledtasks.ComponentsCleanBusinessLogic
 compositionBusinessLogic : org.openecomp.sdc.be.components.impl.CompositionBusinessLogic
-configuration : org.openecomp.sdc.config.CatalogBESpringConfig#0#configuration -> org.openecomp.sdc.be.config.Configuration destroy-method=(inferred)
-configurationProvider : org.openecomp.sdc.config.CatalogBESpringConfig#0#configurationProvider -> org.openecomp.sdc.be.auditing.impl.ConfigurationProvider destroy-method=(inferred)
+configuration : org.openecomp.sdc.config.CatalogBESpringConfig#configuration -> org.openecomp.sdc.be.config.Configuration destroy-method=(inferred)
+configurationProvider : org.openecomp.sdc.config.CatalogBESpringConfig#configurationProvider -> org.openecomp.sdc.be.auditing.impl.ConfigurationProvider destroy-method=(inferred)
 constraintViolationExceptionMapper : org.openecomp.sdc.be.servlets.exception.ConstraintViolationExceptionMapper
 consumer-operation : org.openecomp.sdc.be.model.operations.impl.ConsumerOperation
 containerInstanceTypesData : org.openecomp.sdc.be.model.jsonjanusgraph.config.ContainerInstanceTypesData
@@ -126,12 +127,12 @@ dataType-operation : org.openecomp.sdc.be.model.operations.impl.DataTypeOperatio
 dataTypeBusinessLogic : org.openecomp.sdc.be.components.impl.DataTypeBusinessLogic
 dataTypeImportManager : org.openecomp.sdc.be.components.impl.DataTypeImportManager
 dataTypeServlet : org.openecomp.sdc.be.servlets.DataTypeServlet
-dataTypeValidatorConverter : org.openecomp.sdc.be.config.CatalogModelSpringConfig#0#dataTypeValidatorConverter -> org.openecomp.sdc.be.model.tosca.validators.DataTypeValidatorConverter destroy-method=(inferred)
+dataTypeValidatorConverter : org.openecomp.sdc.be.config.CatalogModelSpringConfig#dataTypeValidatorConverter -> org.openecomp.sdc.be.model.tosca.validators.DataTypeValidatorConverter destroy-method=(inferred)
 dataTypeWriteTracker : org.openecomp.sdc.be.model.cache.DataTypeWriteTracker
 dataTypesService : org.openecomp.sdc.be.components.impl.DataTypesService
 declaredInputsResolver : org.openecomp.sdc.be.components.merge.input.DeclaredInputsResolver
 declaredOutputsResolver : org.openecomp.sdc.be.components.merge.output.DeclaredOutputsResolver
-defaultCsarGenerator : org.openecomp.sdc.config.CatalogBESpringConfig#0#defaultCsarGenerator -> org.openecomp.sdc.be.tosca.DefaultCsarGenerator destroy-method=(inferred)
+defaultCsarGenerator : org.openecomp.sdc.config.CatalogBESpringConfig#defaultCsarGenerator -> org.openecomp.sdc.be.tosca.DefaultCsarGenerator destroy-method=(inferred)
 defaultDerivedFromOperation : org.openecomp.sdc.be.model.operations.impl.DefaultDerivedFromOperation
 defaultExceptionMapper : org.openecomp.sdc.be.servlets.exception.DefaultExceptionMapper
 derived-resource-resolver : org.openecomp.sdc.be.model.jsonjanusgraph.operations.ByToscaNameDerivedNodeTypeResolver
@@ -191,7 +192,7 @@ healingPipelineDao : org.openecomp.sdc.be.dao.config.JanusGraphSpringConfig#heal
 healthCheckBusinessLogic : org.openecomp.sdc.be.components.health.HealthCheckBusinessLogic
 heat-parameter-operation : org.openecomp.sdc.be.model.operations.impl.HeatParametersOperation
 heatEnvArtifactsMergeBusinessLogic : org.openecomp.sdc.be.components.merge.heat.HeatEnvArtifactsMergeBusinessLogic
-httpClientConnectionManager : org.openecomp.sdc.config.CatalogBESpringConfig#0#httpClientConnectionManager -> org.apache.http.impl.client.CloseableHttpClient destroy-method=(inferred)
+httpClientConnectionManager : org.openecomp.sdc.config.CatalogBESpringConfig#httpClientConnectionManager -> org.apache.http.impl.client.CloseableHttpClient destroy-method=(inferred)
 idMapper : org.openecomp.sdc.be.model.jsonjanusgraph.utils.IdMapper
 importUtils : org.openecomp.sdc.be.components.impl.ImportUtils
 input-operation : org.openecomp.sdc.be.model.operations.impl.InputsOperation
@@ -212,11 +213,10 @@ janusgraph-client : org.openecomp.sdc.be.dao.config.JanusGraphSpringConfig#janus
 janusgraph-dao : org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphDao
 janusgraph-generic-dao : org.openecomp.sdc.be.dao.config.JanusGraphSpringConfig#janusGraphGenericDao -> org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao primary destroy-method=(inferred)
 kafkaHandler : org.openecomp.sdc.be.components.kafka.KafkaHandler
-lifecycleBusinessLogic : org.openecomp.sdc.config.CatalogBESpringConfig#0#lifecycleBusinessLogic -> org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic destroy-method=(inferred)
+lifecycleBusinessLogic : org.openecomp.sdc.config.CatalogBESpringConfig#lifecycleBusinessLogic -> org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic destroy-method=(inferred)
 lifecycleServlet : org.openecomp.sdc.be.servlets.LifecycleServlet
 lockServlet : org.openecomp.sdc.be.servlets.LockServlet
-lockingTransaction : org.springframework.aop.aspectj.AspectJExpressionPointcut scope=prototype
-  property expression = @annotation(org.openecomp.sdc.be.components.impl.lock.LockingTransactional) and args(componentId, componentType,..)
+lockingTransactionAdvisor : catalogBeApplicationConfig#lockingTransactionAdvisor -> org.springframework.aop.aspectj.AspectJPointcutAdvisor destroy-method=(inferred)
 mapFromModelCsarGeneratorService : org.openecomp.sdc.be.tosca.MapFromModelCsarGeneratorService
 mergeCommandsFactory : org.openecomp.sdc.be.components.merge.resource.MergeCommandsFactory
 mergeInstanceUtils : org.openecomp.sdc.be.components.merge.utils.MergeInstanceUtils
@@ -232,30 +232,12 @@ onboarding-client : org.openecomp.sdc.be.client.onboarding.impl.OnboardingClient
 operationExceptionMapper : org.openecomp.sdc.be.servlets.exception.OperationExceptionMapper
 operationUtils : org.openecomp.sdc.be.model.operations.impl.OperationUtils
 operational-environment-dao : org.openecomp.sdc.be.dao.cassandra.OperationalEnvironmentDao
-org.openecomp.sdc.be.components.distribution.engine.config.DistributionEngineSpringConfig#0 : org.openecomp.sdc.be.components.distribution.engine.config.DistributionEngineSpringConfig
-  alias org.openecomp.sdc.be.components.distribution.engine.config.DistributionEngineSpringConfig
-org.openecomp.sdc.be.components.kafka.KafkaHandler#0 : org.openecomp.sdc.be.components.kafka.KafkaHandler
-  alias org.openecomp.sdc.be.components.kafka.KafkaHandler
-org.openecomp.sdc.be.config.CatalogModelSpringConfig#0 : org.openecomp.sdc.be.config.CatalogModelSpringConfig
-  alias org.openecomp.sdc.be.config.CatalogModelSpringConfig
-org.openecomp.sdc.be.dao.config.DAOSpringConfig#0 : org.openecomp.sdc.be.dao.config.DAOSpringConfig
-  alias org.openecomp.sdc.be.dao.config.DAOSpringConfig
+org.openecomp.sdc.be.components.distribution.engine.config.DistributionEngineSpringConfig : org.openecomp.sdc.be.components.distribution.engine.config.DistributionEngineSpringConfig
+org.openecomp.sdc.be.config.CatalogModelSpringConfig : org.openecomp.sdc.be.config.CatalogModelSpringConfig
+org.openecomp.sdc.be.dao.config.DAOSpringConfig : org.openecomp.sdc.be.dao.config.DAOSpringConfig
 org.openecomp.sdc.be.dao.config.JanusGraphSpringConfig : org.openecomp.sdc.be.dao.config.JanusGraphSpringConfig
-org.openecomp.sdc.config.CatalogBESpringConfig#0 : org.openecomp.sdc.config.CatalogBESpringConfig
-  alias org.openecomp.sdc.config.CatalogBESpringConfig
-org.openecomp.sdc.config.MicrometerSpringConfig#0 : org.openecomp.sdc.config.MicrometerSpringConfig
-  alias org.openecomp.sdc.config.MicrometerSpringConfig
-org.springframework.aop.aspectj.AspectJPointcutAdvisor#0 : org.springframework.aop.aspectj.AspectJPointcutAdvisor
-  constructor-arg = bean org.springframework.aop.aspectj.AspectJAroundAdvice
-      constructor-arg 0 = bean org.springframework.aop.config.MethodLocatingFactoryBean
-          property targetBeanName = componentLockAspect
-          property methodName = lock
-      constructor-arg 1 = ref lockingTransaction
-      constructor-arg 2 = bean org.springframework.aop.config.SimpleBeanFactoryAwareAspectInstanceFactory
-          property aspectBeanName = componentLockAspect
-      property aspectName = componentLockAspect
-      property declarationOrder = 3
-      property argumentNames = proceedingJoinPoint,componentId,componentType
+org.openecomp.sdc.config.CatalogBESpringConfig : org.openecomp.sdc.config.CatalogBESpringConfig
+org.openecomp.sdc.config.MicrometerSpringConfig : org.openecomp.sdc.config.MicrometerSpringConfig
 org.springframework.aop.config.internalAutoProxyCreator : org.springframework.aop.aspectj.annotation.AnnotationAwareAspectJAutoProxyCreator
   property order = -2147483648
   property proxyTargetClass = true
@@ -285,13 +267,13 @@ policyTypeBusinessLogic : org.openecomp.sdc.be.components.impl.PolicyTypeBusines
 policyTypeImportManager : org.openecomp.sdc.be.components.impl.PolicyTypeImportManager
 policyTypesEndpoint : org.openecomp.sdc.be.servlets.PolicyTypesEndpoint
 policyVersionUpdater : org.openecomp.sdc.be.components.impl.policy.PolicyVersionUpdater
-portalClient : org.openecomp.sdc.config.CatalogBESpringConfig#0#portalClient -> org.onap.sdc.security.PortalClient destroy-method=(inferred)
-portalConfiguration : org.openecomp.sdc.config.CatalogBESpringConfig#0#portalConfiguration -> org.openecomp.sdc.be.filters.PortalConfiguration destroy-method=(inferred)
+portalClient : org.openecomp.sdc.config.CatalogBESpringConfig#portalClient -> org.onap.sdc.security.PortalClient destroy-method=(inferred)
+portalConfiguration : org.openecomp.sdc.config.CatalogBESpringConfig#portalConfiguration -> org.openecomp.sdc.be.filters.PortalConfiguration destroy-method=(inferred)
 portalHealthCheckBusinessLogic : org.openecomp.sdc.be.components.health.PortalHealthCheckBuilder
 privateKeyReaderImpl : org.openecomp.sdc.be.csar.security.PrivateKeyReaderImpl
 productBusinessLogic : org.openecomp.sdc.be.components.impl.ProductBusinessLogic
 prometheusMetricsServlet : org.openecomp.sdc.be.servlets.PrometheusMetricsServlet
-prometheusRegistry : org.openecomp.sdc.config.MicrometerSpringConfig#0#prometheusRegistry -> io.micrometer.prometheus.PrometheusMeterRegistry destroy-method=(inferred)
+prometheusRegistry : org.openecomp.sdc.config.MicrometerSpringConfig#prometheusRegistry -> io.micrometer.prometheus.PrometheusMeterRegistry destroy-method=(inferred)
 property-operation : org.openecomp.sdc.be.model.operations.impl.PropertyOperation
 propertyBusinessLogic : org.openecomp.sdc.be.components.impl.PropertyBusinessLogic
 propertyConstraintExceptionMapper : org.openecomp.sdc.be.servlets.exception.PropertyConstraintExceptionMapper
@@ -342,7 +324,7 @@ softwareInformationBusinessLogic : org.openecomp.sdc.be.components.impl.Software
 storageExceptionMapper : org.openecomp.sdc.be.servlets.exception.StorageExceptionMapper
 substitution-filter-operations : org.openecomp.sdc.be.model.jsonjanusgraph.operations.SubstitutionFilterOperation
 switchover-detector : org.openecomp.sdc.be.switchover.detector.SwitchoverDetector
-threadLocalUtils : org.openecomp.sdc.config.CatalogBESpringConfig#0#threadLocalUtils -> org.openecomp.sdc.be.filters.ThreadLocalUtils destroy-method=(inferred)
+threadLocalUtils : org.openecomp.sdc.config.CatalogBESpringConfig#threadLocalUtils -> org.openecomp.sdc.be.filters.ThreadLocalUtils destroy-method=(inferred)
 togglingBusinessLogic : org.openecomp.sdc.be.components.impl.TogglingBusinessLogic
 topology-template-operation : org.openecomp.sdc.be.model.jsonjanusgraph.operations.TopologyTemplateOperation
 topologyComparator : org.openecomp.sdc.be.components.merge.TopologyComparator

@@ -40,17 +40,17 @@ import org.openecomp.sdc.be.components.impl.lock.ComponentLockAspect;
 import org.openecomp.sdc.be.components.impl.lock.LockingTransactional;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+import org.openecomp.sdc.config.CatalogBeApplicationConfig;
 import org.springframework.aop.PointcutAdvisor;
+import org.springframework.aop.config.AopConfigUtils;
 import org.springframework.aop.support.AopUtils;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
-import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.support.GenericApplicationContext;
-import org.springframework.core.io.ClassPathResource;
 
 /**
- * Starts only the AOP part of the production context - every Spring infrastructure bean it defines, plus the
+ * Starts only the AOP part of the production context - its auto-proxy settings and lock advisor, plus the
  * lock aspect over a mocked {@link ComponentLocker} - to prove that {@code @LockingTransactional} methods are
  * really advised. {@code ComponentLockAspectTest} calls the advice directly and cannot notice a pointcut that no
  * longer applies.
@@ -61,18 +61,17 @@ class ComponentLockAspectWiringTest {
     private GenericApplicationContext context;
 
     @BeforeEach
-    void startAopInfrastructure() {
-        DefaultListableBeanFactory factory = new DefaultListableBeanFactory();
-        new XmlBeanDefinitionReader(factory).loadBeanDefinitions(new ClassPathResource("application-context.xml"));
-        for (String name : factory.getBeanDefinitionNames()) {
-            String beanClass = factory.getBeanDefinition(name).getBeanClassName();
-            if (!name.startsWith("org.springframework.") && (beanClass == null || !beanClass.startsWith("org.springframework.aop."))) {
-                factory.removeBeanDefinition(name);
-            }
+    void startAopInfrastructure() throws Exception {
+        context = new GenericApplicationContext();
+        EnableAspectJAutoProxy autoProxy = CatalogBeApplicationConfig.class.getAnnotation(EnableAspectJAutoProxy.class);
+        AopConfigUtils.registerAspectJAnnotationAutoProxyCreatorIfNecessary(context);
+        if (autoProxy.proxyTargetClass()) {
+            AopConfigUtils.forceAutoProxyCreatorToUseClassProxying(context);
         }
-        factory.registerSingleton("componentLockAspect", new ComponentLockAspect(componentLocker));
-        factory.registerBeanDefinition("lockedOperations", new RootBeanDefinition(LockedOperations.class));
-        context = new GenericApplicationContext(factory);
+        context.getBeanFactory().registerSingleton("componentLockAspect", new ComponentLockAspect(componentLocker));
+        context.getBeanFactory().registerSingleton("lockingTransactionAdvisor",
+            new CatalogBeApplicationConfig().lockingTransactionAdvisor(context.getBeanFactory()));
+        context.registerBeanDefinition("lockedOperations", new RootBeanDefinition(LockedOperations.class));
         context.refresh();
     }
 

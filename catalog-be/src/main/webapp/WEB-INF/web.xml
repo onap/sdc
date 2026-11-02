@@ -181,8 +181,12 @@
         <location>/sdc2/rest/v1/catalog/handleException/</location>
     </error-page>
     <context-param>
+        <param-name>contextClass</param-name>
+        <param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
+    </context-param>
+    <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>classpath:application-context.xml</param-value>
+        <param-value>org.openecomp.sdc.config.CatalogBeApplicationConfig</param-value>
     </context-param>
 
     <context-param>

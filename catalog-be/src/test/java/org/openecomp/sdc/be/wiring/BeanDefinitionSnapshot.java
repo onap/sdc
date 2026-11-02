@@ -34,14 +34,14 @@ import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.config.TypedStringValue;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
+import org.springframework.context.annotation.AnnotatedBeanDefinitionReader;
 import org.springframework.context.annotation.ConfigurationClassPostProcessor;
 import org.springframework.core.env.StandardEnvironment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 /**
- * Loads the bean definitions a production context would create - XML, component scans, {@code @Configuration}
+ * Loads the bean definitions a production context would create - component scans, {@code @Configuration}
  * classes and their imports - without instantiating any bean, so no graph database or Cassandra is needed, and
  * renders them one bean per line. Component scans only see {@code target/classes} and dependency jars: the test
  * classpath also holds test classes in production packages, which the deployed WAR does not.
@@ -51,14 +51,11 @@ final class BeanDefinitionSnapshot {
     private BeanDefinitionSnapshot() {
     }
 
-    static DefaultListableBeanFactory load(Resource... xml) {
+    static DefaultListableBeanFactory load(Class<?>... configurations) {
         DefaultListableBeanFactory factory = new DefaultListableBeanFactory();
         StandardEnvironment environment = new StandardEnvironment();
         MainClassesOnly resourceLoader = new MainClassesOnly();
-        XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(factory);
-        reader.setEnvironment(environment);
-        reader.setResourceLoader(resourceLoader);
-        reader.loadBeanDefinitions(xml);
+        new AnnotatedBeanDefinitionReader(factory, environment).register(configurations);
         ConfigurationClassPostProcessor configurationClasses = new ConfigurationClassPostProcessor();
         configurationClasses.setEnvironment(environment);
         configurationClasses.setResourceLoader(resourceLoader);
