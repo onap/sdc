@@ -32,8 +32,6 @@ import org.glassfish.jersey.jackson.internal.jackson.jaxrs.json.JacksonJaxbJsonP
 import org.glassfish.jersey.jackson.internal.jackson.jaxrs.json.JacksonJsonProvider;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.TestProperties;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -53,16 +51,6 @@ class ExceptionHandlerEndpointTest extends JerseySpringBaseTest {
         ExceptionHandlerEndpoint exceptionHandlerEndpoint() {
             return new ExceptionHandlerEndpoint(componentUtils);
         }
-    }
-
-    @BeforeEach
-    public void before() throws Exception {
-        super.setUp();
-    }
-
-    @AfterEach
-    void after() throws Exception {
-        super.tearDown();
     }
 
     @Override

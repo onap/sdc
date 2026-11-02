@@ -33,9 +33,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.glassfish.jersey.server.ResourceConfig;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -90,16 +88,8 @@ class ComponentInstanceCapabilityServletTest extends JerseySpringBaseTest {
     }
 
     //workaround for JerseyTest + Junit5
-    @BeforeEach
-    void beforeEach() throws Exception {
-        super.setUp();
-    }
 
     //workaround for JerseyTest + Junit5
-    @AfterEach
-    void afterEach() throws Exception {
-        super.tearDown();
-    }
 
     @Test
     void updateInstanceRequirementSuccessTest() throws JsonProcessingException {

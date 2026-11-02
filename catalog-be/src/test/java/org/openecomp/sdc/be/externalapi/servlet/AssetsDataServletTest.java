@@ -42,9 +42,7 @@ import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.TestProperties;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
@@ -153,16 +151,6 @@ class AssetsDataServletTest extends JerseyTest {
         configuration.setJanusGraphInMemoryGraph(true);
 
         configurationManager.setConfiguration(configuration);
-    }
-
-    @BeforeEach
-    public void before() throws Exception {
-        super.setUp();
-    }
-
-    @AfterEach
-    public void tearDown() throws Exception {
-        super.tearDown();
     }
 
     private static void mockResponseFormat() {

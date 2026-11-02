@@ -46,7 +46,6 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.TestProperties;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -118,17 +117,13 @@ class ModelServletTest extends JerseyTest {
     private final Path rootPath = Path.of("/v1/catalog/model");
     private final Path importsPath = rootPath.resolve("imports");
 
+    @Override
     @BeforeEach
-    void resetMock() throws Exception {
+    public void setUp() throws Exception {
         super.setUp();
         initMocks();
         initConfig();
         initTestData();
-    }
-
-    @AfterEach
-    void after() throws Exception {
-        super.tearDown();
     }
 
     private void initMocks() {

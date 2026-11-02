@@ -35,7 +35,6 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.TestProperties;
 import org.json.JSONException;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -137,13 +136,9 @@ class ResourceServletTest extends JerseyTest {
         ExternalConfiguration.setAppName("catalog-be");
     }
 
-    @AfterEach
-    void after() throws Exception {
-        super.tearDown();
-    }
-
+    @Override
     @BeforeEach
-    public void beforeTest() throws Exception {
+    public void setUp() throws Exception {
         super.setUp();
         Mockito.reset(componentUtils);
         Mockito.reset(resourceBusinessLogic);

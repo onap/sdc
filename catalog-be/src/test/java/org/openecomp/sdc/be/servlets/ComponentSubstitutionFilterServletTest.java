@@ -50,7 +50,6 @@ import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.TestProperties;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -138,16 +137,12 @@ public class ComponentSubstitutionFilterServletTest extends JerseyTest {
         ExternalConfiguration.setAppName("catalog-be");
     }
 
+    @Override
     @BeforeEach
-    public void resetMock() throws Exception {
+    public void setUp() throws Exception {
         super.setUp();
         reset(componentSubstitutionFilterBusinessLogic);
         initComponentData();
-    }
-
-    @AfterEach
-    void after() throws Exception {
-        super.tearDown();
     }
 
     @Test

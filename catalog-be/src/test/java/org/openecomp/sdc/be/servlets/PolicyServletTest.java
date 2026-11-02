@@ -50,7 +50,6 @@ import org.glassfish.jersey.jackson.internal.jackson.jaxrs.json.JacksonJsonProvi
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.TestProperties;
 import org.json.simple.JSONObject;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -135,8 +134,9 @@ class PolicyServletTest extends JerseySpringBaseTest {
         when(servletUtils.getComponentsUtils()).thenReturn(componentsUtils);
     }
 
+    @Override
     @BeforeEach
-    public void before() throws Exception {
+    public void setUp() throws Exception {
         super.setUp();
         Mockito.reset(businessLogic);
         final JacksonJsonProvider jacksonJsonProvider = new JacksonJaxbJsonProvider()
@@ -145,11 +145,6 @@ class PolicyServletTest extends JerseySpringBaseTest {
         ThreadLocalsHolder.setApiType(FilterDecisionEnum.EXTERNAL);
         when(request.isUserInRole(anyString())).thenReturn(true);
 
-    }
-
-    @AfterEach
-    void after() throws Exception {
-        super.tearDown();
     }
 
     @Test

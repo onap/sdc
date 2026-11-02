@@ -45,9 +45,7 @@ import javax.ws.rs.core.Response;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.TestProperties;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.openecomp.sdc.be.catalog.enums.ChangeTypeEnum;
@@ -356,16 +354,6 @@ class ArchiveEndpointTest extends JerseyTest {
         configurationManager.setConfiguration(configuration);
 
         ExternalConfiguration.setAppName("catalog-be");
-    }
-
-    @BeforeEach
-    public void before() throws Exception {
-        super.setUp();
-    }
-
-    @AfterEach
-    public void tearDown() throws Exception {
-        super.tearDown();
     }
 
     @Test

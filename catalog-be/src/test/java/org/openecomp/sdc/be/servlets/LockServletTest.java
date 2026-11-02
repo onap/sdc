@@ -29,7 +29,6 @@ import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.TestProperties;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -63,15 +62,11 @@ class LockServletTest extends JerseyTest {
     private static final String postUrl = "/v1/catalog/lock";
     private static final String USER_ID = "cs0008";
 
+    @Override
     @BeforeEach
-    void init() throws Exception {
+    public void setUp() throws Exception {
         super.setUp();
         initConfig();
-    }
-
-    @AfterEach
-    void destory() throws Exception {
-        super.tearDown();
     }
 
     private void initConfig() {

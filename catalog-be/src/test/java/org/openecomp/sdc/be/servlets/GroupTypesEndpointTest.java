@@ -43,7 +43,6 @@ import org.glassfish.jersey.jackson.internal.jackson.jaxrs.json.JacksonJaxbJsonP
 import org.glassfish.jersey.jackson.internal.jackson.jaxrs.json.JacksonJsonProvider;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.TestProperties;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -130,18 +129,14 @@ class GroupTypesEndpointTest extends JerseySpringBaseTest {
         user = mock(User.class);
     }
 
+    @Override
     @BeforeEach
-    public void before() throws Exception {
+    public void setUp() throws Exception {
         super.setUp();
         when(userValidations.validateUserExists(USER_ID)).thenReturn(user);
         when(
             janusGraphGenericDao.getByCriteriaWithPredicate(eq(NodeTypeEnum.GroupType), any(), eq(GroupTypeData.class), any()))
             .thenReturn(Either.left(buildGroupTypeDataList()));
-    }
-
-    @AfterEach
-    void after() throws Exception {
-        super.tearDown();
     }
 
     @Override

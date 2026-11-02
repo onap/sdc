@@ -53,7 +53,6 @@ import org.glassfish.jersey.test.TestProperties;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -126,17 +125,13 @@ class ResourceUploadServletTest extends JerseyTest {
     private final String multipartPath = "/v1/catalog/upload/multipart";
     private User user;
 
+    @Override
     @BeforeEach
-    void resetMock() throws Exception {
+    public void setUp() throws Exception {
         super.setUp();
         initMocks();
         initConfig();
         initTestData();
-    }
-
-    @AfterEach
-    void after() throws Exception {
-        super.tearDown();
     }
 
     @Override

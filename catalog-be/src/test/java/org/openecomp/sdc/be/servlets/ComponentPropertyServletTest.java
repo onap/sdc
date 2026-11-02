@@ -32,7 +32,6 @@ import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.Response;
 import org.glassfish.grizzly.http.util.HttpStatus;
 import org.junit.Assert;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -84,18 +83,14 @@ class ComponentPropertyServletTest extends JerseySpringBaseTest {
     Map<String, DataTypeDefinition> mapreturn = new HashMap<>();
     Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes;
 
+    @Override
     @BeforeEach
-    public void before() throws Exception {
+    public void setUp() throws Exception {
         super.setUp();
         when(request.getSession()).thenReturn(session);
         mapreturn.put("Demo",new DataTypeDefinition());
         allDataTypes = Either.left(mapreturn);
         when(applicationDataTypeCache.getAll(null)).thenReturn(allDataTypes);
-    }
-
-    @AfterEach
-    void after() throws Exception {
-        super.tearDown();
     }
 
     @Test

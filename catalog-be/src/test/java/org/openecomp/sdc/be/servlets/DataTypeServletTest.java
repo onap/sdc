@@ -34,7 +34,6 @@ import javax.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.TestProperties;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -85,19 +84,15 @@ class DataTypeServletTest extends JerseySpringBaseTest {
         webAppContextWrapper = Mockito.mock(WebAppContextWrapper.class);
     }
 
+    @Override
     @BeforeEach
-    void before() throws Exception {
+    public void setUp() throws Exception {
         super.setUp();
         when(request.getSession()).thenReturn(session);
         when(session.getServletContext()).thenReturn(servletContext);
         when(webApplicationContext.getBean(ComponentsUtils.class)).thenReturn(componentsUtils);
         when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR)).thenReturn(webAppContextWrapper);
         when(webAppContextWrapper.getWebAppContext(servletContext)).thenReturn(webApplicationContext);
-    }
-
-    @AfterEach
-    void after() throws Exception {
-        super.tearDown();
     }
 
     @Test

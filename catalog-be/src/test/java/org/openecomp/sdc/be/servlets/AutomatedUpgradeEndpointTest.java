@@ -39,7 +39,6 @@ import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.jackson.internal.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 import org.glassfish.jersey.jackson.internal.jackson.jaxrs.json.JacksonJsonProvider;
 import org.glassfish.jersey.server.ResourceConfig;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -148,8 +147,9 @@ class AutomatedUpgradeEndpointTest extends JerseySpringBaseTest {
         user = mock(User.class);
     }
 
+    @Override
     @BeforeEach
-    public void init() throws Exception {
+    public void setUp() throws Exception {
         super.setUp();
         prepareComponents();
         when(userValidations.validateUserExists(eq(USER_ID))).thenReturn(user);
@@ -175,11 +175,6 @@ class AutomatedUpgradeEndpointTest extends JerseySpringBaseTest {
                 eq(LifeCycleTransitionEnum.CHECKIN), any(LifecycleChangeInfoWithAction.class),
                 eq(false), eq(true));
 
-    }
-
-    @AfterEach
-    void after() throws Exception {
-        super.tearDown();
     }
 
     @Override

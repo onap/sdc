@@ -50,7 +50,6 @@ import org.glassfish.jersey.jackson.internal.jackson.jaxrs.json.JacksonJsonProvi
 import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.TestProperties;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -150,8 +149,9 @@ class GroupEndpointTest extends JerseySpringBaseTest {
             .property(LoggingFeature.LOGGING_FEATURE_LOGGER_LEVEL_SERVER, "WARNING");
     }
 
+    @Override
     @BeforeEach
-    public void before() throws Exception {
+    public void setUp() throws Exception {
         super.setUp();
         cr = new Resource();
         cr.setSystemName("CR1");
@@ -168,11 +168,6 @@ class GroupEndpointTest extends JerseySpringBaseTest {
         ci.setName(VL1);
         happyScenarioSetup();
         unhappyScenarioSetup();
-    }
-
-    @AfterEach
-    void after() throws Exception {
-        super.tearDown();
     }
 
     private void unhappyScenarioSetup() {

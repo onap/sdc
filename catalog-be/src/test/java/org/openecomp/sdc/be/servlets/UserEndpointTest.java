@@ -45,7 +45,6 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.TestProperties;
 import org.janusgraph.graphdb.types.system.EmptyVertex;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -120,8 +119,9 @@ class UserEndpointTest extends JerseySpringBaseTest {
         facadeUserOperation = mock(UserOperation.class);
     }
 
+    @Override
     @BeforeEach
-    public void before() throws Exception {
+    public void setUp() throws Exception {
         super.setUp();
         setUserProperties(userData, USER_ID, DESIGNER, ACTIVE);
         setUserProperties(modifierData, MODIFIER_ID, ADMIN, ACTIVE);
@@ -135,11 +135,6 @@ class UserEndpointTest extends JerseySpringBaseTest {
         when(janusGraphGenericDao
             .getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.User), NEW_USER_ID, UserData.class))
             .thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
-    }
-
-    @AfterEach
-    void after() throws Exception {
-        super.tearDown();
     }
 
     private void setUserProperties(UserData user, String userId, Role role, UserStatusEnum statusEnum) {

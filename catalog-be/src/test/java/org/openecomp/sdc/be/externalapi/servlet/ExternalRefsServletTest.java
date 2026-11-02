@@ -43,7 +43,6 @@ import javax.ws.rs.core.Response;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.TestProperties;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -197,8 +196,9 @@ class ExternalRefsServletTest extends JerseyTest {
         ExternalConfiguration.setAppName("catalog-be");
     }
 
+    @Override
     @BeforeEach
-    public void before() throws Exception {
+    public void setUp() throws Exception {
         super.setUp();
 
         when(resourceComponentMock.getVersion()).thenReturn(VERSION);
@@ -215,11 +215,6 @@ class ExternalRefsServletTest extends JerseyTest {
         when(toscaOperationFacadeMock.getComponentByUuidAndVersion(resourceVertexUuid, VERSION)).thenReturn(Either.left(resourceComponentMock));
         when(toscaOperationFacadeMock.getLatestComponentByUuid(eq(serviceVertexUuid), any())).thenReturn(Either.left(listComponents.get(0)));
         when(toscaOperationFacadeMock.getLatestComponentByUuid(eq(resourceVertexUuid), any())).thenReturn(Either.left(resourceComponentMock));
-    }
-
-    @AfterEach
-    void after() throws Exception {
-        super.tearDown();
     }
 
     @Test

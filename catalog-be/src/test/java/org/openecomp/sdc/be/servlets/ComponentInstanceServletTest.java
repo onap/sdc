@@ -58,9 +58,7 @@ import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.TestProperties;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
@@ -152,16 +150,6 @@ class ComponentInstanceServletTest extends JerseyTest {
         configuration.setJanusGraphInMemoryGraph(true);
         configurationManager.setConfiguration(configuration);
         ExternalConfiguration.setAppName("catalog-be");
-    }
-
-    @BeforeEach
-    public void before() throws Exception {
-        super.setUp();
-    }
-
-    @AfterEach
-    public void tearDown() throws Exception {
-        super.tearDown();
     }
 
     private void initTestData() {

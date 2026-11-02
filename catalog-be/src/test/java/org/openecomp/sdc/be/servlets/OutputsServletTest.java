@@ -42,7 +42,6 @@ import org.glassfish.grizzly.http.util.HttpStatus;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -100,12 +99,6 @@ class OutputsServletTest extends JerseyTest {
         when(wrapper.getWebAppContext(any())).thenReturn(webApplicationContext);
         when(webApplicationContext.getBean(OutputsBusinessLogic.class)).thenReturn(outputsBusinessLogic);
         when(servletUtils.getComponentsUtils()).thenReturn(componentsUtils);
-    }
-
-    @Override
-    @AfterEach
-    public void tearDown() throws Exception {
-        super.tearDown();
     }
 
     @Test

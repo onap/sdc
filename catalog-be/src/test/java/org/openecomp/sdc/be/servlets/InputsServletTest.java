@@ -49,7 +49,6 @@ import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.TestProperties;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -142,8 +141,9 @@ class InputsServletTest extends JerseyTest {
 
     }
 
+    @Override
     @BeforeEach
-    public void before() throws Exception {
+    public void setUp() throws Exception {
         super.setUp();
         Mockito.reset(resourceImportManager);
         Mockito.reset(servletUtils);
@@ -165,11 +165,6 @@ class InputsServletTest extends JerseyTest {
         when(servletContext.getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE))
             .thenReturn(webApplicationContext);
         when(servletUtils.getComponentsUtils()).thenReturn(componentsUtils);
-    }
-
-    @AfterEach
-    public void tearDown() throws Exception {
-        super.tearDown();
     }
 
     @Override

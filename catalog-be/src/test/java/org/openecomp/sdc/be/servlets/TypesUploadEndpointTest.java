@@ -52,9 +52,7 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.TestProperties;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.openecomp.sdc.be.components.impl.CommonImportManager;
@@ -95,16 +93,6 @@ class TypesUploadEndpointTest extends JerseySpringBaseTest {
         modelOperation = mock(ModelOperation.class);
         componentUtils = Mockito.mock(ComponentsUtils.class);
         operationUtils = Mockito.mock(OperationUtils.class);
-    }
-
-    @BeforeEach
-    public void before() throws Exception {
-        super.setUp();
-    }
-
-    @AfterEach
-    void after() throws Exception {
-        super.tearDown();
     }
 
     @Override

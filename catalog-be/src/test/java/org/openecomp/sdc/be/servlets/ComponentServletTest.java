@@ -36,7 +36,6 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.TestProperties;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogicProvider;
@@ -62,11 +61,6 @@ class ComponentServletTest extends JerseySpringBaseTest {
         super.setUp();
         policy1 = buildPolicy("p1");
         policy2 = buildPolicy("p2");
-    }
-
-    @AfterEach
-    void after() throws Exception {
-        super.tearDown();
     }
 
     @Override

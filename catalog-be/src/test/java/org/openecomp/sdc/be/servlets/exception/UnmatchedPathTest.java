@@ -24,22 +24,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.servlets.JerseySpringBaseTest;
 
 class UnmatchedPathTest extends JerseySpringBaseTest {
-
-    @BeforeEach
-    public void before() throws Exception {
-        super.setUp();
-    }
-
-    @AfterEach
-    public void after() throws Exception {
-        super.tearDown();
-    }
 
     @Test
     void shouldAnswerAnUnmatchedPathWithNotFound() {

@@ -49,9 +49,7 @@ import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.TestProperties;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
@@ -154,16 +152,6 @@ class TypesUploadServletTest extends JerseyTest {
         when(responseFormat.getStatus()).thenReturn(HttpStatus.CREATED_201);
         when(componentUtils.getResponseFormat(ActionStatus.CREATED)).thenReturn(responseFormat);
         when(componentUtils.getResponseFormat(ActionStatus.OK)).thenReturn(responseFormat);
-    }
-
-    @BeforeEach
-    public void before() throws Exception {
-        super.setUp();
-    }
-
-    @AfterEach
-    void after() throws Exception {
-        super.tearDown();
     }
 
     @Test

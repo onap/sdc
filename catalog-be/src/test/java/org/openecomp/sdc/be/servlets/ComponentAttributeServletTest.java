@@ -32,7 +32,6 @@ import javax.ws.rs.core.Response;
 import org.assertj.core.api.Assertions;
 import org.glassfish.grizzly.http.util.HttpStatus;
 import org.junit.Assert;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -75,15 +74,11 @@ class ComponentAttributeServletTest extends JerseySpringBaseTest {
     private static final String INVALID_PROPERTY_NAME = "invalid_name_$.&";
     private static final String STRING_TYPE = "string";
 
+    @Override
     @BeforeEach
-    public void initClass() throws Exception {
+    public void setUp() throws Exception {
         super.setUp();
         when(request.getSession()).thenReturn(session);
-    }
-
-    @AfterEach
-    public void tearDown() throws Exception {
-        super.tearDown();
     }
 
     @Test

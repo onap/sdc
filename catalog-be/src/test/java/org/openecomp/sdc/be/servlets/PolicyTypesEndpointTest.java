@@ -32,8 +32,6 @@ import javax.ws.rs.core.MediaType;
 import org.apache.http.HttpStatus;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.TestProperties;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.components.impl.PolicyTypeBusinessLogic;
 import org.openecomp.sdc.be.components.utils.PolicyTypeBuilder;
@@ -51,15 +49,6 @@ class PolicyTypesEndpointTest extends JerseySpringBaseTest {
     private PolicyTypeBusinessLogic policyTypeBusinessLogic;
     private ComponentsUtils componentUtils;
 
-    @BeforeEach
-    public void before() throws Exception {
-        super.setUp();
-    }
-
-    @AfterEach
-    void after() throws Exception {
-        super.tearDown();
-    }
 
     @Override
     protected ResourceConfig configure() {

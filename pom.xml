@@ -49,9 +49,8 @@ Modifications copyright (c) 2018-2019 Nokia
     <spring.version>5.3.39</spring.version>
     <mvn.assembly.version>3.6.0</mvn.assembly.version>
 
-    <!-- update to 2.36 bring error-->
-    <!-- java.lang.NoClassDefFoundError: com/fasterxml/jackson/databind/AnnotationIntrospector$XmlExtensions-->
-    <jersey-bom.version>2.34</jersey-bom.version>
+    <!-- the Jersey line Spring Boot 2.7.18 manages -->
+    <jersey-bom.version>2.35</jersey-bom.version>
     <jakarta.el.version>3.0.4</jakarta.el.version>
 
     <netty.version>4.1.92.Final</netty.version>

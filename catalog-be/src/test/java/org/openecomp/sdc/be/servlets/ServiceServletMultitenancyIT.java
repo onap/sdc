@@ -43,9 +43,7 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.TestProperties;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ElementBusinessLogic;
@@ -117,16 +115,6 @@ class ServiceServletMultitenancyIT extends JerseyTest {
         configuration.setMultitenancy(KeycloakTestRealm.config(keycloak.issuer(), null));
         configurationManager.setConfiguration(configuration);
         ExternalConfiguration.setAppName("catalog-be");
-    }
-
-    @BeforeEach
-    void before() throws Exception {
-        super.setUp();
-    }
-
-    @AfterEach
-    void after() throws Exception {
-        super.tearDown();
     }
 
     @Override
