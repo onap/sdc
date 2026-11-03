@@ -22,11 +22,13 @@ package org.openecomp.server.wiring;
 
 import java.io.File;
 import org.junit.jupiter.api.Test;
+import org.openecomp.server.configuration.OnboardingWebRegistrations;
 
 class WebXmlWiringTest {
 
     @Test
     void webXmlRegistersTheSnapshottedServletsFiltersAndListeners() throws Exception {
-        WiringSnapshot.assertMatches(WebXmlSnapshot.render(new File("src/main/webapp/WEB-INF/web.xml")), "web.xml.txt");
+        WiringSnapshot.assertMatches(WebXmlSnapshot.render(new File("src/main/webapp/WEB-INF/web.xml"), OnboardingWebRegistrations::register),
+            "web.xml.txt");
     }
 }
