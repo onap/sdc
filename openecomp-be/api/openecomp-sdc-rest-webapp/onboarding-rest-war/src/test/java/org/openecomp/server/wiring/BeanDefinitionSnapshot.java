@@ -35,6 +35,7 @@ import org.springframework.beans.factory.config.TypedStringValue;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
+import org.springframework.context.annotation.AnnotatedBeanDefinitionReader;
 import org.springframework.context.annotation.ConfigurationClassPostProcessor;
 import org.springframework.core.env.StandardEnvironment;
 import org.springframework.core.io.Resource;
@@ -53,15 +54,23 @@ final class BeanDefinitionSnapshot {
 
     static DefaultListableBeanFactory load(Resource... xml) {
         DefaultListableBeanFactory factory = new DefaultListableBeanFactory();
-        StandardEnvironment environment = new StandardEnvironment();
-        MainClassesOnly resourceLoader = new MainClassesOnly();
         XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(factory);
-        reader.setEnvironment(environment);
-        reader.setResourceLoader(resourceLoader);
+        reader.setEnvironment(new StandardEnvironment());
+        reader.setResourceLoader(new MainClassesOnly());
         reader.loadBeanDefinitions(xml);
+        return processConfigurationClasses(factory);
+    }
+
+    static DefaultListableBeanFactory load(Class<?>... configurations) {
+        DefaultListableBeanFactory factory = new DefaultListableBeanFactory();
+        new AnnotatedBeanDefinitionReader(factory, new StandardEnvironment()).register(configurations);
+        return processConfigurationClasses(factory);
+    }
+
+    private static DefaultListableBeanFactory processConfigurationClasses(DefaultListableBeanFactory factory) {
         ConfigurationClassPostProcessor configurationClasses = new ConfigurationClassPostProcessor();
-        configurationClasses.setEnvironment(environment);
-        configurationClasses.setResourceLoader(resourceLoader);
+        configurationClasses.setEnvironment(new StandardEnvironment());
+        configurationClasses.setResourceLoader(new MainClassesOnly());
         configurationClasses.postProcessBeanDefinitionRegistry(factory);
         return factory;
     }

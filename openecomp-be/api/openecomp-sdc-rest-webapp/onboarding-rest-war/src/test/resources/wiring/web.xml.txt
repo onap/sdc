@@ -1,4 +1,5 @@
-context-param contextConfigLocation = WEB-INF/beans-services.xml
+context-param contextClass = org.springframework.web.context.support.AnnotationConfigWebApplicationContext
+context-param contextConfigLocation = org.openecomp.server.configuration.OnboardingApplicationConfig
 context-param org.eclipse.jetty.servlet.Default.dirAllowed = false
 context-param org.togglz.core.manager.TogglzConfig = org.openecomp.sdc.be.togglz.TogglzConfiguration
 listener org.openecomp.server.listeners.OnboardingAppStartupListener
