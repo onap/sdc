@@ -34,6 +34,7 @@ import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.listener.AppContextListener;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.config.CatalogBeWebRegistrations;
 
 public class BEAppContextListener extends AppContextListener implements ServletContextListener {
 
@@ -50,6 +51,7 @@ public class BEAppContextListener extends AppContextListener implements ServletC
         // Monitoring service
         BeMonitoringService bms = new BeMonitoringService(context.getServletContext());
         bms.start(configurationManager.getConfiguration().getSystemMonitoring().getProbeIntervalInSeconds(15));
+        CatalogBeWebRegistrations.register(context.getServletContext());
         log.debug("After executing {}", this.getClass());
     }
 

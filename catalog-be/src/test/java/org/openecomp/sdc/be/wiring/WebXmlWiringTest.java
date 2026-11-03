@@ -22,11 +22,13 @@ package org.openecomp.sdc.be.wiring;
 
 import java.io.File;
 import org.junit.jupiter.api.Test;
+import org.openecomp.sdc.config.CatalogBeWebRegistrations;
 
 class WebXmlWiringTest {
 
     @Test
     void webXmlRegistersTheSnapshottedServletsFiltersAndListeners() throws Exception {
-        WiringSnapshot.assertMatches(WebXmlSnapshot.render(new File("src/main/webapp/WEB-INF/web.xml")), "web.xml.txt");
+        WiringSnapshot.assertMatches(WebXmlSnapshot.render(new File("src/main/webapp/WEB-INF/web.xml"), CatalogBeWebRegistrations::register),
+            "web.xml.txt");
     }
 }
