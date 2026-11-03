@@ -76,6 +76,19 @@ public class ExternalConfiguration {
         return changeListener;
     }
 
+    /**
+     * Reads the configuration of {@code appName} from {@code <configHome>/<appName>} and watches that directory for
+     * changes until {@link #stopListenForFileChanges()}.
+     */
+    public static ConfigurationSource load(String appName, String appVersion, String configHome) {
+        setAppName(appName);
+        setAppVersion(appVersion);
+        setConfigDir(configHome);
+        setConfigurationSource(new FSConfigurationSource(changeListener, configHome + File.separator + appName));
+        listenForChanges();
+        return configurationSource;
+    }
+
     public static void listenForChanges() {
         if (enableReconfigure) {
             monitor = new FileAlterationMonitor();

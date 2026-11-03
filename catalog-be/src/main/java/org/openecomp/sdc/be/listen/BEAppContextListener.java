@@ -19,22 +19,14 @@
  */
 package org.openecomp.sdc.be.listen;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.apache.commons.io.filefilter.FileFilterUtils;
-import org.apache.commons.io.filefilter.IOFileFilter;
-import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
-import org.apache.commons.io.monitor.FileAlterationMonitor;
-import org.apache.commons.io.monitor.FileAlterationObserver;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.monitoring.BeMonitoringService;
@@ -50,8 +42,7 @@ public class BEAppContextListener extends AppContextListener implements ServletC
 
     public void contextInitialized(ServletContextEvent context) {
         super.contextInitialized(context);
-        ConfigurationManager configurationManager = new ConfigurationManager(ExternalConfiguration.getConfigurationSource());
-        log.debug("loading configuration from configDir: {} appName: {}", ExternalConfiguration.getConfigDir(), ExternalConfiguration.getAppName());
+        ConfigurationManager configurationManager = BeConfigurationBootstrap.start(ExternalConfiguration.getConfigurationSource());
         context.getServletContext().setAttribute(Constants.CONFIGURATION_MANAGER_ATTR, configurationManager);
         WebAppContextWrapper webAppContextWrapper = new WebAppContextWrapper();
         context.getServletContext().setAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR, webAppContextWrapper);
@@ -59,7 +50,6 @@ public class BEAppContextListener extends AppContextListener implements ServletC
         // Monitoring service
         BeMonitoringService bms = new BeMonitoringService(context.getServletContext());
         bms.start(configurationManager.getConfiguration().getSystemMonitoring().getProbeIntervalInSeconds(15));
-        initTlsFileMonitoring();
         log.debug("After executing {}", this.getClass());
     }
 
@@ -80,47 +70,5 @@ public class BEAppContextListener extends AppContextListener implements ServletC
             log.warn("failed to read ASDC version from MANIFEST", e);
         }
         return version;
-    }
-    
-    private void initTlsFileMonitoring() {
-        final Map<String, IOFileFilter> tlsFileFilters = createTlsFileFilters();
-        if (!tlsFileFilters.isEmpty()) {
-            final TlsFileChangeHandler tlsFileChangeHandler = new TlsFileChangeHandler();
-            tlsFileFilters.entrySet().stream().forEach(entry -> listenForChanges(entry.getKey(), tlsFileChangeHandler, entry.getValue()));
-        }
-    }
-    
-    private Map<String, IOFileFilter> createTlsFileFilters() {        
-        final Map<String, IOFileFilter> filters = new HashMap<>();
-        addFilter(filters, ConfigurationManager.getConfigurationManager().getConfiguration().getTlsCert());
-        addFilter(filters, ConfigurationManager.getConfigurationManager().getConfiguration().getTlsKey());
-        addFilter(filters, ConfigurationManager.getConfigurationManager().getConfiguration().getCaCert());
-        return filters;
-    }
-    
-    private void addFilter(final Map<String, IOFileFilter> filters, final String path) {
-        if (path != null) {
-            final File file = new File(path);
-            final IOFileFilter caCertFileFilter =
-                    FileFilterUtils.and(FileFilterUtils.fileFileFilter(), FileFilterUtils.nameFileFilter(file.getName()));
-            
-            if (filters.containsKey(file.getParent())) {
-                filters.put(file.getParent(), FileFilterUtils.or(filters.get(file.getParent()), caCertFileFilter));
-            } else {
-                filters.put(file.getParent(), caCertFileFilter);  
-            }
-        }
-    }
-    
-    private void listenForChanges(String path, FileAlterationListenerAdaptor changeListener, IOFileFilter ioFileFilter) {
-        FileAlterationMonitor monitor = new FileAlterationMonitor();
-        final FileAlterationObserver observer = new FileAlterationObserver(path, ioFileFilter);
-        observer.addListener(changeListener);
-        monitor.addObserver(observer);
-        try {
-            monitor.start();
-        } catch (final Exception exception) {
-            log.error("Error starting monitoring of TLS files", exception);
-        }
     }
 }

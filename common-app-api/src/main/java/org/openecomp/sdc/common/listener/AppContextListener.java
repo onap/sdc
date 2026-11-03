@@ -19,7 +19,6 @@
  */
 package org.openecomp.sdc.common.listener;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -32,7 +31,6 @@ import javax.servlet.ServletContextListener;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
-import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
 public class AppContextListener implements ServletContextListener {
@@ -46,15 +44,8 @@ public class AppContextListener implements ServletContextListener {
         Map<String, String> manifestAttr = getManifestInfo(context.getServletContext());
         String appName = setAndGetAttributeInContext(context, manifestAttr, Constants.APPLICATION_NAME);
         String appVersion = setAndGetAttributeInContext(context, manifestAttr, Constants.APPLICATION_VERSION);
-        ExternalConfiguration.setAppName(appName);
-        ExternalConfiguration.setAppVersion(appVersion);
-        String configHome = System.getProperty(Constants.CONFIG_HOME);
-        ExternalConfiguration.setConfigDir(configHome);
-        String appConfigDir = configHome + File.separator + appName;
-        ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
+        ConfigurationSource configurationSource = ExternalConfiguration.load(appName, appVersion, System.getProperty(Constants.CONFIG_HOME));
         context.getServletContext().setAttribute(Constants.CONFIGURATION_SOURCE_ATTR, configurationSource);
-        ExternalConfiguration.setConfigurationSource(configurationSource);
-        ExternalConfiguration.listenForChanges();
     }
 
     @Override
