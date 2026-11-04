@@ -26,7 +26,6 @@
         <dependency>
             <groupId>org.openecomp.sdc.onboarding</groupId>
             <artifactId>onboarding-be</artifactId>
-            <type>war</type>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
@@ -55,6 +54,8 @@
                                             <followSymlinks>false</followSymlinks>
                                             <includes>
                                                 <include>*.war</include>
+                                                <include>*.jar</include>
+                                                <include>lib/**</include>
                                                 <include>onboarding_configuration.yaml</include>
                                                 <include>logback.xml</include>
                                             </includes>
@@ -91,7 +92,8 @@
                                                 ${project.parent.basedir}/../../openecomp-be/api/openecomp-sdc-rest-webapp/onboarding-rest-war/target
                                             </directory>
                                             <includes>
-                                                <include>onboarding-be-${project.version}.war</include>
+                                                <include>onboarding-be-${project.version}.jar</include>
+                                                <include>lib/*.jar</include>
                                             </includes>
                                         </resource>
                                         <resource>

@@ -36,14 +36,14 @@ import java.util.List;
  * {@code src/test/resources/wiring}. Run with {@code -Dwiring.snapshot.update=true} to rewrite the file when a
  * change to the wiring is intended, so that the change shows up in review as a diff of that file.
  */
-final class WiringSnapshot {
+public final class WiringSnapshot {
 
     private static final Path DIRECTORY = Paths.get("src/test/resources/wiring");
 
     private WiringSnapshot() {
     }
 
-    static void assertMatches(String actual, String snapshotName) throws IOException {
+    public static void assertMatches(String actual, String snapshotName) throws IOException {
         Path snapshot = DIRECTORY.resolve(snapshotName);
         if (Boolean.getBoolean("wiring.snapshot.update")) {
             Files.createDirectories(DIRECTORY);

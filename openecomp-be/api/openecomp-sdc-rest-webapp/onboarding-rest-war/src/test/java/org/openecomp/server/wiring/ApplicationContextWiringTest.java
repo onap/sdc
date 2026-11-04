@@ -41,7 +41,6 @@ import org.openecomp.server.configuration.OnboardingApplicationConfig;
 import org.openecomp.server.interceptors.EmptyOutputOutInterceptor;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.StaticListableBeanFactory;
-import org.springframework.core.io.FileSystemResource;
 
 class ApplicationContextWiringTest {
 
@@ -74,12 +73,6 @@ class ApplicationContextWiringTest {
         } finally {
             bus.shutdown(true);
         }
-    }
-
-    @Test
-    void springMapperServletDefinesTheSnapshottedBeans() throws Exception {
-        WiringSnapshot.assertMatches(BeanDefinitionSnapshot.render(BeanDefinitionSnapshot.load(
-            new FileSystemResource("src/main/webapp/WEB-INF/spring-mapper-servlet.xml"))), "spring-mapper-servlet.txt");
     }
 
     @Test

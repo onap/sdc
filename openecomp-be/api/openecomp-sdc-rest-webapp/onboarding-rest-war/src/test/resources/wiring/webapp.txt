@@ -1,8 +1,8 @@
-context-param contextClass = org.springframework.web.context.support.AnnotationConfigWebApplicationContext
-context-param contextConfigLocation = org.openecomp.server.configuration.OnboardingApplicationConfig
+context-path /
 context-param org.eclipse.jetty.servlet.Default.dirAllowed = false
 context-param org.togglz.core.manager.TogglzConfig = org.openecomp.sdc.be.togglz.TogglzConfiguration
-listener org.openecomp.server.listeners.OnboardingAppStartupListener
+listener org.onap.config.impl.ContextListener
+listener ch.qos.logback.classic.servlet.LogbackServletContextListener
 filter AuthN org.openecomp.server.filters.ActionAuthenticationFilter
 filter AuthZ org.openecomp.server.filters.ActionAuthorizationFilter
 filter BasicAuth org.openecomp.server.filters.BasicAuthenticationFilter
@@ -10,17 +10,21 @@ filter PermissionsFilter org.openecomp.sdc.itempermissions.servlet.PermissionsFi
 filter RestrictionAccessFilter org.openecomp.server.filters.RestrictionAccessFilter async-supported=true
 filter SessionContextFilter org.openecomp.server.filters.OnboardingSessionContextFilter
 filter TenantTokenFilter org.openecomp.server.filters.OnboardingTenantTokenFilter
-filter TogglzFilter org.togglz.servlet.TogglzFilter async-supported=true [web-fragment]
+filter TogglzFilter org.togglz.servlet.TogglzFilter async-supported=true
 filter contentSecurityPolicyHeaderFilter org.openecomp.sdc.common.filters.ContentSecurityPolicyHeaderFilter async-supported=true
 filter cross-origin org.eclipse.jetty.servlets.CrossOriginFilter
   init-param allowedHeaders = *
   init-param allowedMethods = *
   init-param allowedOrigins = *
 filter dataValidatorFilter org.openecomp.sdc.common.filters.DataValidatorFilter
+filter org.onap.config.impl.ConfigurationFilter org.onap.config.impl.ConfigurationFilter
 filter-mapping TenantTokenFilter
   url-pattern /v1.0/vendor-license-models/*
+filter-mapping TenantTokenFilter
   url-pattern /v1.0/vendor-software-products
+filter-mapping TenantTokenFilter
   url-pattern /v1.0/vendor-software-products/
+filter-mapping TenantTokenFilter
   url-pattern /v1.0/items/*
 filter-mapping dataValidatorFilter
   url-pattern /v1.0/*
@@ -28,6 +32,7 @@ filter-mapping contentSecurityPolicyHeaderFilter
   url-pattern /*
 filter-mapping PermissionsFilter
   url-pattern /v1.0/vendor-license-models/*
+filter-mapping PermissionsFilter
   url-pattern /v1.0/vendor-software-products/*
 filter-mapping cross-origin
   url-pattern /*
@@ -41,17 +46,36 @@ filter-mapping AuthZ
   url-pattern /workflow/v1.0/actions/*
 filter-mapping SessionContextFilter
   url-pattern /*
+filter-mapping org.onap.config.impl.ConfigurationFilter
+  url-pattern /
 filter-mapping TogglzFilter
   url-pattern /*
 servlet CXFServlet org.apache.cxf.transport.servlet.CXFServlet load-on-startup=1
   init-param redirect-attributes = javax.servlet.include.request_uri
   init-param redirect-servlet-name = default
   init-param redirects-list = /docs/(\S)+\.json
-servlet TogglzConsoleServlet org.togglz.console.TogglzConsoleServlet [web-fragment]
-servlet spring-mapper org.springframework.web.servlet.DispatcherServlet load-on-startup=1
+servlet TogglzConsoleServlet org.togglz.console.TogglzConsoleServlet
+servlet default org.eclipse.jetty.servlet.DefaultServlet load-on-startup=0
+  init-param acceptRanges = true
+  init-param dirAllowed = true
+  init-param etags = false
+  init-param maxCacheSize = 256000000
+  init-param maxCachedFileSize = 200000000
+  init-param maxCachedFiles = 2048
+  init-param redirectWelcome = false
+  init-param useFileMappedBuffer = true
+  init-param welcomeServlets = false
 servlet-mapping CXFServlet
   url-pattern /*
 servlet-mapping TogglzConsoleServlet
   url-pattern /togglz/*
-servlet-mapping spring-mapper
-  url-pattern /ws/*
+servlet-mapping default
+  url-pattern /
+welcome-file index.html
+welcome-file index.htm
+welcome-file index.jsp
+protected-targets /WEB-INF /META-INF
+alias-check SymlinkAllowedResourceAliasChecker
+error-handler ErrorPageErrorHandler
+constraint / TRACE forbidden
+constraint / all but TRACE open

@@ -51,7 +51,6 @@ limitations under the License.
 	<it.catalog.resource>${project.build.directory}/catalog-be-resources</it.catalog.resource>
 	<it.sdc-onboard.probe>${project.build.directory}/openecomp-be-config</it.sdc-onboard.probe>
         <it.sdc-onboard.config>${project.build.directory}/openecomp-be-config/onboard-backend-config</it.sdc-onboard.config>
-        <it.sdc-onboard.jetty>${project.build.directory}/openecomp-be-config/jetty-config</it.sdc-onboard.jetty>
         <it.sdc-be.plugins>${project.build.directory}/plugins/sdc-be</it.sdc-be.plugins>
         <it.shared.volume>/tmp/sdc-integration-tests</it.shared.volume>
         <it.docker.version>latest</it.docker.version>
@@ -604,25 +603,6 @@ limitations under the License.
                         </configuration>
                     </execution>
                     <execution>
-                        <id>copy-onboard-backend-http-config</id>
-                        <phase>pre-integration-test</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${it.sdc-onboard.jetty}</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>openecomp-be-config/jetty-config</directory>
-                                    <filtering>false</filtering>
-                                    <includes>
-                                        <include>**/*</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>copy-onboard-backend-probe</id>
                         <phase>pre-integration-test</phase>
                         <goals>
@@ -1048,9 +1028,6 @@ limitations under the License.
                                         <volume>${it.sdc-onboard.config}/config-helmvalidator.yaml:/app/jetty/config/onboarding-be/config-helmvalidator.yaml</volume>
                                         <volume>${it.sdc-onboard.config}/externaltesting-configuration.yaml:/app/jetty/config/onboarding-be/externaltesting-configuration.yaml</volume>
                                         <volume>${it.sdc-onboard.config}/features.properties:/app/jetty/config/onboarding-be/features.properties</volume>
-                                        <volume>${it.sdc-onboard.jetty}/http.ini:/app/jetty/start.d/http.ini</volume>
-                                        <volume>${it.sdc-onboard.jetty}/https.ini:/app/jetty/start.d/https.ini</volume>
-                                        <volume>${it.sdc-onboard.jetty}/ssl.ini:/app/jetty/start.d/ssl.ini</volume>
                                         <volume>${it.sdc-onboard.probe}/ready-probe.sh:/app/jetty/ready.probe.sh</volume>
                                         <volume>${project.basedir}/src/test/resources/cert/onboarding-be:/app/jetty/onap/cert
                                         </volume>

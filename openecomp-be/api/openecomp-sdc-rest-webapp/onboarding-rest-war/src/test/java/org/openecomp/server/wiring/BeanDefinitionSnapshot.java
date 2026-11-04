@@ -34,7 +34,6 @@ import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.config.TypedStringValue;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.annotation.AnnotatedBeanDefinitionReader;
 import org.springframework.context.annotation.ConfigurationClassPostProcessor;
 import org.springframework.core.env.StandardEnvironment;
@@ -50,15 +49,6 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 final class BeanDefinitionSnapshot {
 
     private BeanDefinitionSnapshot() {
-    }
-
-    static DefaultListableBeanFactory load(Resource... xml) {
-        DefaultListableBeanFactory factory = new DefaultListableBeanFactory();
-        XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(factory);
-        reader.setEnvironment(new StandardEnvironment());
-        reader.setResourceLoader(new MainClassesOnly());
-        reader.loadBeanDefinitions(xml);
-        return processConfigurationClasses(factory);
     }
 
     static DefaultListableBeanFactory load(Class<?>... configurations) {

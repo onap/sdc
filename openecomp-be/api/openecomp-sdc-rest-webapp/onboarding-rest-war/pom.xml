@@ -6,7 +6,7 @@
     <groupId>org.openecomp.sdc.onboarding</groupId>
     <artifactId>onboarding-be</artifactId>
     <name>onboarding-rest-war</name>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
     <parent>
         <groupId>org.openecomp.sdc</groupId>
@@ -139,6 +139,32 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-webapp</artifactId>
+            <version>${jetty.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>javax.servlet-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>${servlet-api.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.onap.sdc.common</groupId>
+            <artifactId>onap-configuration-management-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.openecomp.sdc</groupId>
             <artifactId>openecomp-sdc-application-config-manager</artifactId>
             <version>${project.version}</version>
@@ -211,25 +237,6 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
-            <version>${spring.framework.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-expression</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-core</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-web</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
             <version>${aspectj.version}</version>
@@ -261,40 +268,33 @@
     <build>
         <plugins>
             <plugin>
-                <artifactId>maven-war-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
-                    <webResources>
-                        <resource>
-                            <!-- this is relative to the pom.xml directory -->
-                            <directory>${basedir}/target/generated/swagger-ui</directory>
-                            <directory>${basedir}/target</directory>
-                            <includes>
-                                <include>docs/*.*</include>
-                            </includes>
-                        </resource>
-                    </webResources>
+                    <archive>
+                        <manifest>
+                            <mainClass>org.openecomp.server.OnboardingBeApplication</mainClass>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <useUniqueVersions>false</useUniqueVersions>
+                        </manifest>
+                    </archive>
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>${maven-antrun-plugin.version}</version>
+                <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>generate-sources</id>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <target>
-                                <property name="version" value="${project.version}"/>
-                                <mkdir dir="target/docs"/>
-                                <echo file="target/docs/build-info.json">{"Version":
-                                    "${project.version}"}
-                                </echo>
-                            </target>
-                        </configuration>
+                        <id>copy-lib</id>
+                        <phase>package</phase>
                         <goals>
-                            <goal>run</goal>
+                            <goal>copy-dependencies</goal>
                         </goals>
+                        <configuration>
+                            <includeScope>runtime</includeScope>
+                            <excludeTypes>pom</excludeTypes>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

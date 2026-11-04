@@ -1,0 +1,10 @@
+thread-pool min=10 max=200 idle-timeout=60000
+connector http/1.1 port=8081 idle-timeout=30000 compliance=RFC7230_LEGACY
+  send-server-version=false send-date-header=false header-cache-size=1024 secure-port=8443 customizers=[]
+connector ssl+http/1.1 port=8445 idle-timeout=30000 compliance=RFC7230
+  send-server-version=false send-date-header=false header-cache-size=1024 secure-port=8443 customizers=[SecureRequestCustomizer]
+handler HandlerCollection
+  handler ContextHandlerCollection
+    handler WebAppContext /onboarding-api
+    handler WebAppContext /api-docs war=api-docs.war
+  handler DefaultHandler show-contexts=true

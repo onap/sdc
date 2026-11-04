@@ -1,3 +1,0 @@
-org.springframework.web.servlet.handler.SimpleUrlHandlerMapping#0 : org.springframework.web.servlet.handler.SimpleUrlHandlerMapping
-  alias org.springframework.web.servlet.handler.SimpleUrlHandlerMapping
-  property mappings =

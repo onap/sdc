@@ -20,7 +20,11 @@ JAVA_OPTIONS="$JAVA_OPTIONS \
             -XX:+HeapDumpOnOutOfMemoryError \
             -Dconfig.location=$JETTY_BASE/config/onboarding-be/."
 
-cd $JETTY_HOME
-echo "jetty.httpConfig.sendServerVersion=false" >> $JETTY_HOME/start.d/start.ini
-
-java $OTEL_OPTS $JAVA_OPTIONS -jar "${JETTY_HOME}/start.jar"
+# The passwords of the image's etc/org.onap.sdc.p12 come before JAVA_OPTIONS, so a deployment's own take precedence.
+# resources/ holds base_template.yaml and .env; lib/ comes from the jar's manifest.
+cd $JETTY_BASE
+java $OTEL_OPTS \
+     "-Djetty.sslContext.keyStorePassword=?(kP!Yur![*!Y5!E^f(ZKc31" \
+     "-Djetty.sslContext.keyManagerPassword=?(kP!Yur![*!Y5!E^f(ZKc31" \
+     "-Djetty.sslContext.trustStorePassword=z+KEj;t+,KN^iimSiS89e#p0" \
+     $JAVA_OPTIONS -cp "$JETTY_BASE/onboarding-be.jar:$JETTY_BASE/resources" org.openecomp.server.OnboardingBeApplication

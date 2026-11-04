@@ -11,39 +11,27 @@ RUN set -ex && \
     apk add --no-cache --virtual .build-deps \
         build-base libffi-dev libxml2-dev libressl-dev wget
 
-ENV JETTY_HOME=$JETTY_FOLDER
 ENV JETTY_BASE=$JETTY_FOLDER
 ENV JETTY_USER=onap
 ENV JETTY_GROUP=onap
 
 
 RUN addgroup -S $JETTY_GROUP && adduser -S $JETTY_USER -G $JETTY_GROUP && \
-    mkdir -p $JETTY_FOLDER && chown $JETTY_USER:$JETTY_GROUP $JETTY_FOLDER
+    mkdir -p $JETTY_FOLDER/config/onboarding-be $JETTY_FOLDER/etc $JETTY_FOLDER/logs $JETTY_FOLDER/otel \
+    $JETTY_FOLDER/resources $JETTY_FOLDER/temp $JETTY_FOLDER/webapps && chown -R $JETTY_USER:$JETTY_GROUP $JETTY_FOLDER
 
 USER onap
 
-# Download jetty
-RUN wget -q https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/${jetty-distribution.version}/jetty-distribution-${jetty-distribution.version}.tar.gz \
-    --tries=3 -O $JETTY_FOLDER/jetty.tar.gz && \
-    tar xz -C $JETTY_FOLDER -f $JETTY_FOLDER/jetty.tar.gz --strip 1 && \
-    rm -rf $JETTY_FOLDER/jetty.tar.gz
-
-RUN sed -i 's/"jetty"/"onap"/g' $JETTY_FOLDER/etc/jetty-setuid.xml
 # Download OpenTelemetry Java Agent
-RUN mkdir -p $JETTY_FOLDER/otel && \
-    wget -q https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v${opentelemetry-javaagent.version}/opentelemetry-javaagent.jar \
+RUN wget -q https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v${opentelemetry-javaagent.version}/opentelemetry-javaagent.jar \
     --tries=3 -O $JETTY_FOLDER/otel/opentelemetry-javaagent.jar
 
-ADD --chown=onap:onap onboarding-be-*.war $JETTY_FOLDER/webapps/
-ADD --chown=onap:onap api-docs.war $JETTY_FOLDER/webapps/
+COPY --chown=onap:onap lib/ $JETTY_FOLDER/lib/
+COPY --chown=onap:onap onboarding-be-*.jar $JETTY_FOLDER/onboarding-be.jar
+COPY --chown=onap:onap api-docs.war $JETTY_FOLDER/webapps/
 COPY --chown=onap:onap startup.sh $JETTY_FOLDER/
-COPY --chown=onap:onap scripts/cleanup_jettydir.sh $JETTY_FOLDER/
-COPY --chown=onap:onap scripts/create_jetty_modules.sh $JETTY_FOLDER/
 
-# Set executable permissions on the startup script
-RUN chmod 770 $JETTY_FOLDER/startup.sh && \
-    chmod 770 $JETTY_FOLDER/cleanup_jettydir.sh && $JETTY_FOLDER/cleanup_jettydir.sh && \
-    chmod +x $JETTY_FOLDER/create_jetty_modules.sh && $JETTY_FOLDER/create_jetty_modules.sh
+RUN chmod 770 $JETTY_FOLDER/startup.sh
 
 #Copy configuration files
 COPY --chown=onap:onap files/logback.xml $JETTY_FOLDER/config/onboarding-be/
@@ -56,4 +44,5 @@ USER root
 RUN apk del .build-deps
 
 USER onap
-ENTRYPOINT ["sh", "-c", "${JETTY_HOME}/startup.sh"]
+WORKDIR $JETTY_FOLDER
+ENTRYPOINT ["sh", "-c", "${JETTY_BASE}/startup.sh"]

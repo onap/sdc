@@ -20,29 +20,31 @@
 
 package org.openecomp.server.filters;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.File;
-import java.nio.file.Files;
-import javax.servlet.FilterRegistration;
-import javax.servlet.ServletContext;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.eclipse.jetty.servlet.FilterHolder;
+import org.eclipse.jetty.servlet.FilterMapping;
+import org.eclipse.jetty.webapp.WebAppContext;
 import org.junit.jupiter.api.Test;
-import org.openecomp.server.configuration.OnboardingWebRegistrations;
+import org.openecomp.server.OnboardingBeWebApp;
 
 class OnboardingTenantTokenFilterWiringTest {
 
     @Test
-    void tenantFilterGuardsTheTenantAwareEndpoints() throws Exception {
-        ServletContext servletContext = mock(ServletContext.class, RETURNS_DEEP_STUBS);
+    void tenantFilterGuardsTheTenantAwareEndpoints() {
+        WebAppContext context = new WebAppContext();
 
-        OnboardingWebRegistrations.register(servletContext);
+        new OnboardingBeWebApp().configure(context);
 
-        FilterRegistration.Dynamic tenantFilter = servletContext.addFilter("TenantTokenFilter", OnboardingTenantTokenFilter.class);
-        verify(tenantFilter).addMappingForUrlPatterns(null, false,
-            "/v1.0/vendor-license-models/*", "/v1.0/vendor-software-products", "/v1.0/vendor-software-products/", "/v1.0/items/*");
-        assertFalse(new String(Files.readAllBytes(new File("src/main/webapp/WEB-INF/web.xml").toPath())).contains("Keycloak"));
+        List<String> pathSpecs = Arrays.stream(context.getServletHandler().getFilterMappings())
+            .filter(mapping -> "TenantTokenFilter".equals(mapping.getFilterName()))
+            .map(FilterMapping::getPathSpecs).flatMap(Arrays::stream).collect(Collectors.toList());
+        assertEquals(List.of("/v1.0/vendor-license-models/*", "/v1.0/vendor-software-products", "/v1.0/vendor-software-products/",
+            "/v1.0/items/*"), pathSpecs);
+        assertTrue(Arrays.stream(context.getServletHandler().getFilters()).map(FilterHolder::getName).noneMatch(name -> name.contains("Keycloak")));
     }
 }
