@@ -70,10 +70,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-core</artifactId>
-        </exclusion>
-        <exclusion>
           <groupId>org.eclipse.jetty</groupId>
           <artifactId>jetty-server</artifactId>
         </exclusion>
