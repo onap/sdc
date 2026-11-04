@@ -748,9 +748,6 @@ limitations under the License.
 
                                 <chmod file="${it.catalog.resource}/resource/portal.properties" perm="755" />
                                 <chmod file="${it.catalog.resource}/resource/key.properties" perm="755" />
-                                <chmod file="${it.catalog.resource}/start.d/http.ini" perm="755" />
-                                <chmod file="${it.catalog.resource}/start.d/https.ini" perm="755" />
-                                <chmod file="${it.catalog.resource}/start.d/ssl.ini" perm="755" />
 
 
                             </target>
@@ -1115,9 +1112,6 @@ limitations under the License.
                                         <volume>${it.catalog.resource}/catalog-be/janusgraph.properties:/app/jetty/config/catalog-be/janusgraph.properties</volume>
                                         <volume>${it.catalog.resource}/resource/key.properties:/app/jetty/resources/key.properties</volume>
                                         <volume>${it.catalog.resource}/resource/portal.properties:/app/jetty/resources/portal.properties</volume>
-                                        <volume>${it.catalog.resource}/start.d/http.ini:/app/jetty/start.d/http.ini</volume>
-                                        <volume>${it.catalog.resource}/start.d/https.ini:/app/jetty/start.d/https.ini</volume>
-                                        <volume>${it.catalog.resource}/start.d/ssl.ini:/app/jetty/start.d/ssl.ini</volume>
                                         <volume>${it.catalog.resource}/ready-probe.sh:/app/jetty/ready-probe.sh</volume>
                                         <volume>${it.shared.volume}:/app/jetty/logs</volume>
 

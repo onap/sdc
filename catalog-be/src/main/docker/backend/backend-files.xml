@@ -33,7 +33,9 @@
         <!-- include config files -->
         <fileSet>
             <includes>
-                <include>${project.build.finalName}.war</include>
+                <include>${project.build.finalName}.jar</include>
+                <include>lib/*.jar</include>
+                <include>webapp/**</include>
             </includes>
             <directory>${project.build.directory}</directory>
             <outputDirectory></outputDirectory>

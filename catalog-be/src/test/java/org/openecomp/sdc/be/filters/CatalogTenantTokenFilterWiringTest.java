@@ -19,29 +19,30 @@
  */
 package org.openecomp.sdc.be.filters;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.File;
-import java.nio.file.Files;
-import javax.servlet.FilterRegistration;
-import javax.servlet.ServletContext;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.eclipse.jetty.servlet.FilterHolder;
+import org.eclipse.jetty.servlet.FilterMapping;
+import org.eclipse.jetty.webapp.WebAppContext;
 import org.junit.jupiter.api.Test;
-import org.openecomp.sdc.config.CatalogBeWebRegistrations;
+import org.openecomp.sdc.be.server.CatalogBeWebApp;
 
 class CatalogTenantTokenFilterWiringTest {
 
     @Test
-    void tenantFilterGuardsTheTenantAwareEndpoints() throws Exception {
-        ServletContext servletContext = mock(ServletContext.class, RETURNS_DEEP_STUBS);
+    void tenantFilterGuardsTheTenantAwareEndpoints() {
+        WebAppContext context = new WebAppContext();
 
-        CatalogBeWebRegistrations.register(servletContext);
+        new CatalogBeWebApp().configure(context);
 
-        FilterRegistration.Dynamic tenantFilter = servletContext.addFilter("TenantTokenFilter", CatalogTenantTokenFilter.class);
-        verify(tenantFilter).addMappingForUrlPatterns(null, false,
-            "/sdc2/rest/v1/catalog/resources/*", "/sdc2/rest/v1/catalog/services/*", "/sdc2/rest/v1/followed");
-        assertFalse(new String(Files.readAllBytes(new File("src/main/webapp/WEB-INF/web.xml").toPath())).contains("Multitenancy"));
+        List<String> pathSpecs = Arrays.stream(context.getServletHandler().getFilterMappings())
+            .filter(mapping -> "TenantTokenFilter".equals(mapping.getFilterName()))
+            .map(FilterMapping::getPathSpecs).flatMap(Arrays::stream).collect(Collectors.toList());
+        assertEquals(List.of("/sdc2/rest/v1/catalog/resources/*", "/sdc2/rest/v1/catalog/services/*", "/sdc2/rest/v1/followed"), pathSpecs);
+        assertTrue(Arrays.stream(context.getServletHandler().getFilters()).map(FilterHolder::getName).noneMatch(name -> name.contains("Multitenancy")));
     }
 }

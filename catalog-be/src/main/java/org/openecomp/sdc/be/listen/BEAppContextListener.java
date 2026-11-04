@@ -19,11 +19,6 @@
  */
 package org.openecomp.sdc.be.listen;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
@@ -34,11 +29,9 @@ import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.listener.AppContextListener;
 import org.openecomp.sdc.common.log.wrappers.Logger;
-import org.openecomp.sdc.config.CatalogBeWebRegistrations;
 
 public class BEAppContextListener extends AppContextListener implements ServletContextListener {
 
-    private static final String MANIFEST_FILE_NAME = "/META-INF/MANIFEST.MF";
     private static final Logger log = Logger.getLogger(BEAppContextListener.class);
 
     public void contextInitialized(ServletContextEvent context) {
@@ -47,30 +40,11 @@ public class BEAppContextListener extends AppContextListener implements ServletC
         context.getServletContext().setAttribute(Constants.CONFIGURATION_MANAGER_ATTR, configurationManager);
         WebAppContextWrapper webAppContextWrapper = new WebAppContextWrapper();
         context.getServletContext().setAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR, webAppContextWrapper);
-        context.getServletContext().setAttribute(Constants.ASDC_RELEASE_VERSION_ATTR, getVersionFromManifest(context));
+        context.getServletContext()
+            .setAttribute(Constants.ASDC_RELEASE_VERSION_ATTR, context.getServletContext().getAttribute(Constants.APPLICATION_VERSION));
         // Monitoring service
         BeMonitoringService bms = new BeMonitoringService(context.getServletContext());
         bms.start(configurationManager.getConfiguration().getSystemMonitoring().getProbeIntervalInSeconds(15));
-        CatalogBeWebRegistrations.register(context.getServletContext());
         log.debug("After executing {}", this.getClass());
-    }
-
-    private String getVersionFromManifest(ServletContextEvent context) {
-        ServletContext servletContext = context.getServletContext();
-        InputStream inputStream = servletContext.getResourceAsStream(MANIFEST_FILE_NAME);
-        String version = null;
-        try {
-            Manifest mf = new Manifest(inputStream);
-            Attributes atts = mf.getMainAttributes();
-            version = atts.getValue(Constants.ASDC_RELEASE_VERSION_ATTR);
-            if (version == null || version.isEmpty()) {
-                log.warn("failed to read ASDC version from MANIFEST.");
-            } else {
-                log.info("ASDC version from MANIFEST is {}", version);
-            }
-        } catch (IOException e) {
-            log.warn("failed to read ASDC version from MANIFEST", e);
-        }
-        return version;
     }
 }

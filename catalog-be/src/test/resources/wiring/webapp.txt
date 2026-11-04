@@ -1,37 +1,57 @@
-context-param contextClass = org.springframework.web.context.support.AnnotationConfigWebApplicationContext
-context-param contextConfigLocation = org.openecomp.sdc.config.CatalogBeApplicationConfig
+context-path /
 context-param org.eclipse.jetty.servlet.Default.dirAllowed = false
 context-param org.togglz.core.manager.TogglzConfig = org.openecomp.sdc.be.togglz.TogglzConfiguration
 listener org.openecomp.sdc.be.listen.BEAppContextListener
-listener org.springframework.web.context.ContextLoaderListener
+listener org.onap.portalsdk.core.onboarding.listener.UserSessionListener
+listener org.onap.portalsdk.core.onboarding.listener.UserContextListener
+listener org.onap.config.impl.ContextListener
+listener ch.qos.logback.classic.servlet.LogbackServletContextListener
 filter TenantTokenFilter org.openecomp.sdc.be.filters.CatalogTenantTokenFilter
-filter TogglzFilter org.togglz.servlet.TogglzFilter async-supported=true [web-fragment]
+filter TogglzFilter org.togglz.servlet.TogglzFilter async-supported=true
 filter contentSecurityPolicyHeaderFilter org.openecomp.sdc.be.filters.ContentSecurityPolicyHeaderFilter async-supported=true
 filter dataValidatorFilter org.openecomp.sdc.be.filters.DataValidatorFilter
 filter gatewayFilter org.springframework.web.filter.DelegatingFilterProxy
   init-param targetFilterLifecycle = true
+filter org.onap.config.impl.ConfigurationFilter org.onap.config.impl.ConfigurationFilter
 filter reqValidationFilter org.springframework.web.filter.DelegatingFilterProxy
   init-param targetFilterLifecycle = true
 filter-mapping contentSecurityPolicyHeaderFilter
   url-pattern /*
 filter-mapping gatewayFilter
   url-pattern /sdc2/rest/*
+filter-mapping gatewayFilter
   url-pattern /sdc/*
 filter-mapping reqValidationFilter
   url-pattern /sdc2/rest/*
+filter-mapping reqValidationFilter
   url-pattern /sdc/*
 filter-mapping dataValidatorFilter
   url-pattern /sdc2/rest/*
+filter-mapping dataValidatorFilter
   url-pattern /sdc/*
 filter-mapping TenantTokenFilter
   url-pattern /sdc2/rest/v1/catalog/resources/*
+filter-mapping TenantTokenFilter
   url-pattern /sdc2/rest/v1/catalog/services/*
+filter-mapping TenantTokenFilter
   url-pattern /sdc2/rest/v1/followed
 filter-mapping TogglzFilter
   url-pattern /*
+filter-mapping org.onap.config.impl.ConfigurationFilter
+  url-pattern /
 servlet ECOMPServlet org.onap.portalsdk.core.onboarding.crossapi.PortalRestAPIProxy load-on-startup=3 async-supported=true
 servlet TogglzConsoleServlet org.togglz.console.TogglzConsoleServlet
 servlet ViewStatusMessages ch.qos.logback.classic.ViewStatusMessagesServlet async-supported=true
+servlet default org.eclipse.jetty.servlet.DefaultServlet load-on-startup=0
+  init-param acceptRanges = true
+  init-param dirAllowed = true
+  init-param etags = false
+  init-param maxCacheSize = 256000000
+  init-param maxCachedFileSize = 200000000
+  init-param maxCachedFiles = 2048
+  init-param redirectWelcome = false
+  init-param useFileMappedBuffer = true
+  init-param welcomeServlets = false
 servlet jersey org.glassfish.jersey.servlet.ServletContainer load-on-startup=1
   init-param exclude_url_endpoints =
     /api/v3/analytics
@@ -66,13 +86,23 @@ servlet jerseyDistribution org.glassfish.jersey.servlet.ServletContainer load-on
     io.swagger.v3.jaxrs2.integration.resources
     org.openecomp.sdc.be.distribution.servlet
     org.openecomp.sdc.be.externalapi.servlet
+servlet org.onap.portalsdk.core.onboarding.crossapi.PortalRestAPIProxy org.onap.portalsdk.core.onboarding.crossapi.PortalRestAPIProxy
 servlet-mapping TogglzConsoleServlet
   url-pattern /catalog/togglz/*
 servlet-mapping ViewStatusMessages
   url-pattern /lbClassicStatus
+servlet-mapping default
+  url-pattern /
 servlet-mapping jersey
   url-pattern /sdc2/rest/*
 servlet-mapping jerseyDistribution
   url-pattern /sdc/*
-error-page java.lang.RuntimeException -> /sdc2/rest/v1/catalog/handleException/
+servlet-mapping org.onap.portalsdk.core.onboarding.crossapi.PortalRestAPIProxy
+  url-pattern /api/v3/*
 welcome-file swagger-ui/index.html
+protected-targets /WEB-INF /META-INF
+alias-check SymlinkAllowedResourceAliasChecker
+error-handler ErrorPageErrorHandler
+  error-page java.lang.RuntimeException -> /sdc2/rest/v1/catalog/handleException/
+constraint / TRACE forbidden
+constraint / all but TRACE open

@@ -23,7 +23,6 @@
             <groupId>org.openecomp.sdc</groupId>
             <artifactId>catalog-be</artifactId>
             <version>${project.version}</version>
-            <classifier>classes</classifier>
             <exclusions>
                 <exclusion>
                     <groupId>org.eclipse.jetty</groupId>

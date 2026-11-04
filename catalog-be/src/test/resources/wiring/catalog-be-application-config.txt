@@ -267,6 +267,7 @@ policyTypeBusinessLogic : org.openecomp.sdc.be.components.impl.PolicyTypeBusines
 policyTypeImportManager : org.openecomp.sdc.be.components.impl.PolicyTypeImportManager
 policyTypesEndpoint : org.openecomp.sdc.be.servlets.PolicyTypesEndpoint
 policyVersionUpdater : org.openecomp.sdc.be.components.impl.policy.PolicyVersionUpdater
+portalApiApplicationContext : org.openecomp.sdc.config.CatalogBESpringConfig#portalApiApplicationContext -> org.openecomp.sdc.be.ecomp.PortalApiApplicationContext destroy-method=(inferred)
 portalClient : org.openecomp.sdc.config.CatalogBESpringConfig#portalClient -> org.onap.sdc.security.PortalClient destroy-method=(inferred)
 portalConfiguration : org.openecomp.sdc.config.CatalogBESpringConfig#portalConfiguration -> org.openecomp.sdc.be.filters.PortalConfiguration destroy-method=(inferred)
 portalHealthCheckBusinessLogic : org.openecomp.sdc.be.components.health.PortalHealthCheckBuilder

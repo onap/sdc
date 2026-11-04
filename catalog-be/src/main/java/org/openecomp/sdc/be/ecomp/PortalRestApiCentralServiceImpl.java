@@ -40,7 +40,6 @@ import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.context.ApplicationContext;
-import org.springframework.web.context.ContextLoader;
 
 public final class PortalRestApiCentralServiceImpl implements IPortalRestCentralService {
 
@@ -64,11 +63,11 @@ public final class PortalRestApiCentralServiceImpl implements IPortalRestCentral
 
     public PortalRestApiCentralServiceImpl() throws PortalAPIException {
         try {
-            ApplicationContext ctx = ContextLoader.getCurrentWebApplicationContext();
+            ApplicationContext ctx = PortalApiApplicationContext.get();
             if (ctx == null) {
-                log.debug("Failed to get CurrentWebApplicationContext.");
-                BeEcompErrorManager.getInstance().logInternalUnexpectedError("constructor", "Failed to get CurrentWebApplicationContext. Can't get UserBusinessLogic and userBusinessLogicExt", BeEcompErrorManager.ErrorSeverity.ERROR);
-                throw new PortalAPIException("CurrentWebApplicationContext is null. Failed to get Bean userBusinessLogic and userBusinessLogicExt");
+                log.debug("Failed to get the application context.");
+                BeEcompErrorManager.getInstance().logInternalUnexpectedError("constructor", "Failed to get the application context. Can't get UserBusinessLogic and userBusinessLogicExt", BeEcompErrorManager.ErrorSeverity.ERROR);
+                throw new PortalAPIException("The application context is null. Failed to get Bean userBusinessLogic and userBusinessLogicExt");
             } else {
                 userBusinessLogic = (UserBusinessLogic) ctx.getBean("userBusinessLogic");
                 userBusinessLogicExt = (UserBusinessLogicExt) ctx.getBean("userBusinessLogicExt");

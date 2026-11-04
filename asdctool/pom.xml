@@ -89,9 +89,6 @@
       <artifactId>catalog-be</artifactId>
       <version>${project.version}</version>
 
-      <!-- Comment Out in order to debug in eclipse -->
-      <classifier>classes</classifier>
-
       <exclusions>
         <exclusion>
           <groupId>com.fasterxml.jackson.core</groupId>
@@ -104,6 +101,18 @@
         <exclusion>
           <groupId>org.eclipse.jetty</groupId>
           <artifactId>jetty-servlets</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-webapp</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-rewrite</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-autoconfigure</artifactId>
         </exclusion>
         <exclusion>
           <groupId>org.openecomp.ecompsdkos</groupId>

@@ -29,6 +29,7 @@ import org.openecomp.sdc.be.components.impl.ComponentLocker;
 import org.openecomp.sdc.be.components.impl.lock.ComponentLockAspect;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.be.ecomp.PortalApiApplicationContext;
 import org.openecomp.sdc.be.ecomp.converters.AssetMetadataConverter;
 import org.openecomp.sdc.be.filters.PortalConfiguration;
 import org.openecomp.sdc.be.filters.ThreadLocalUtils;
@@ -93,6 +94,11 @@ public class CatalogBESpringConfig {
     @Bean(name = "asset-metadata-utils")
     public AssetMetadataConverter assetMetadataConverter() {
         return new AssetMetadataConverter();
+    }
+
+    @Bean
+    public PortalApiApplicationContext portalApiApplicationContext() {
+        return new PortalApiApplicationContext();
     }
 
     @Bean(name = "componentLockAspect")

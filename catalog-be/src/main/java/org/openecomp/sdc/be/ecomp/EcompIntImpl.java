@@ -45,7 +45,6 @@ import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.context.ApplicationContext;
-import org.springframework.web.context.ContextLoader;
 
 public class EcompIntImpl implements IPortalRestAPIService {
 
@@ -314,30 +313,30 @@ public class EcompIntImpl implements IPortalRestAPIService {
     }
 
     private UserBusinessLogic getUserBusinessLogic(String context) throws PortalAPIException {
-        ApplicationContext ctx = ContextLoader.getCurrentWebApplicationContext();
+        ApplicationContext ctx = PortalApiApplicationContext.get();
 
         if (ctx == null) {
-            log.debug("Failed to get CurrentWebApplicationContext. Can't get UserBusinessLogic");
+            log.debug("Failed to get the application context. Can't get UserBusinessLogic");
 
             // Context used to aid in debugging
             BeEcompErrorManager.getInstance().logInternalUnexpectedError(context,
-                "Failed to get CurrentWebApplicationContext. Can't get UserBusinessLogic", ErrorSeverity.ERROR);
-            throw new PortalAPIException("CurrentWebApplicationContext is null. Failed to get Bean userBusinessLogic");
+                "Failed to get the application context. Can't get UserBusinessLogic", ErrorSeverity.ERROR);
+            throw new PortalAPIException("The application context is null. Failed to get Bean userBusinessLogic");
         }
 
         return (UserBusinessLogic) ctx.getBean("userBusinessLogic");
     }
 
     private UserBusinessLogicExt getUserBusinessLogicExt(String context) throws PortalAPIException {
-        ApplicationContext ctx = ContextLoader.getCurrentWebApplicationContext();
+        ApplicationContext ctx = PortalApiApplicationContext.get();
 
         if (ctx == null) {
-            log.debug("Failed to get CurrentWebApplicationContext. Can't get UserBusinessLogicExt");
+            log.debug("Failed to get the application context. Can't get UserBusinessLogicExt");
             
             // Context used to aid in debugging
             BeEcompErrorManager.getInstance().logInternalUnexpectedError(context,
-                "Failed to get CurrentWebApplicationContext. Can't get UserBusinessLogicExt", ErrorSeverity.ERROR);
-            throw new PortalAPIException("CurrentWebApplicationContext is null. Failed to get Bean userBusinessLogicExt");
+                "Failed to get the application context. Can't get UserBusinessLogicExt", ErrorSeverity.ERROR);
+            throw new PortalAPIException("The application context is null. Failed to get Bean userBusinessLogicExt");
         }
 
         return (UserBusinessLogicExt) ctx.getBean("userBusinessLogicExt");

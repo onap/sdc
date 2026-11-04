@@ -18,17 +18,29 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.be.wiring;
+package org.openecomp.sdc.be.ecomp;
 
-import java.io.File;
-import org.junit.jupiter.api.Test;
-import org.openecomp.sdc.config.CatalogBeWebRegistrations;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
-class WebXmlWiringTest {
+/**
+ * The application context for the portal API implementations, which the portal SDK instantiates by class name rather
+ * than through Spring.
+ */
+public class PortalApiApplicationContext implements ApplicationContextAware {
 
-    @Test
-    void webXmlRegistersTheSnapshottedServletsFiltersAndListeners() throws Exception {
-        WiringSnapshot.assertMatches(WebXmlSnapshot.render(new File("src/main/webapp/WEB-INF/web.xml"), CatalogBeWebRegistrations::register),
-            "web.xml.txt");
+    private static volatile ApplicationContext applicationContext;
+
+    static ApplicationContext get() {
+        return applicationContext;
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext context) {
+        setContext(context);
+    }
+
+    private static void setContext(ApplicationContext context) {
+        applicationContext = context;
     }
 }
