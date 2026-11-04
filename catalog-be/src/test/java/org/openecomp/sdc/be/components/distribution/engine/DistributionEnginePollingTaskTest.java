@@ -33,8 +33,6 @@ import static org.mockito.Mockito.when;
 import fj.data.Either;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import mockit.Deencapsulation;
 import org.junit.jupiter.api.BeforeAll;
@@ -48,7 +46,6 @@ import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
 import org.openecomp.sdc.be.distribution.api.client.CambriaOperationStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
 import org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
@@ -76,9 +73,8 @@ class DistributionEnginePollingTaskTest extends BeConfDependentTest {
 
     private DistributionEnginePollingTask createKafkaTestSubject() {
         componentsUtils = Mockito.mock(ComponentsUtils.class);
-        when(kafkaHandler.isKafkaActive()).thenReturn(true);
         DistributionEnginePollingTask task = new DistributionEnginePollingTask(configurationManager.getDistributionEngineConfiguration(),
-            new DistributionCompleteReporterMock(), componentsUtils, clusterHealth, new OperationalEnvironmentEntry(), kafkaHandler);
+            new DistributionCompleteReporterMock(), componentsUtils, clusterHealth, kafkaHandler);
         Deencapsulation.setField(task, "topicName", TOPIC);
         return task;
     }
@@ -89,22 +85,14 @@ class DistributionEnginePollingTaskTest extends BeConfDependentTest {
             .getDistributionEngineConfiguration();
         distributionEngineConfiguration.setDistributionNotifTopicName("StamName");
         distributionEngineConfiguration.setDistributionStatusTopicName("StamName");
-        List uebList = new LinkedList<>();
-        uebList.add("FirstUEBserver.com");
-        distributionEngineConfiguration.setUebServers(uebList);
-
-        OperationalEnvironmentEntry environmentEntry = new OperationalEnvironmentEntry();
-        HashSet<String> dmaapUebAddress = new HashSet<>();
-        dmaapUebAddress.add("STAM");
-        environmentEntry.setDmaapUebAddress(dmaapUebAddress);
         return new DistributionEnginePollingTask(distributionEngineConfiguration,
-            new DistributionCompleteReporterMock(), componentsUtils, new DistributionEngineClusterHealth(), environmentEntry);
+            new DistributionCompleteReporterMock(), componentsUtils, new DistributionEngineClusterHealth(), kafkaHandler);
     }
 
     @Test
     void testStartTask() throws Exception {
         DistributionEnginePollingTask testSubject;
-        String topicName = "UEBTopic";
+        String topicName = "StatusTopic";
 
         // default test
         testSubject = createTestSubject();

@@ -624,20 +624,6 @@
             <scope>compile</scope>
         </dependency>
 
-        <!-- CAMBRIA CLIENT for U-EB -->
-        <dependency>
-            <groupId>com.att.nsa</groupId>
-            <artifactId>cambriaClient</artifactId>
-            <version>1.2.1-oss</version>
-            <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.att.nsa</groupId>
-                    <artifactId>saClientLibrary</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
@@ -933,20 +919,6 @@
                     <artifactId>spring-core</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-java</artifactId>
-            <version>${cucumber.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-junit</artifactId>
-            <version>${cucumber.version}</version>
-            <scope>test</scope>
         </dependency>
 
         <dependency>

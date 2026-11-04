@@ -55,10 +55,6 @@ public class BeEcompErrorManager extends AbsEcompErrorManager {
         return configurationManager;
     }
 
-    public void logBeUebAuthenticationError(String context, String reason) {
-        processEcompError(context, EcompErrorEnum.BeUebAuthenticationError, reason);
-    }
-
     public void logBeHealthCheckRecovery(String context) {
         processEcompError(context, EcompErrorEnum.BeHealthCheckRecovery);
     }
@@ -107,14 +103,6 @@ public class BeEcompErrorManager extends AbsEcompErrorManager {
      * @param context
      * @param reason
      */
-    public void logBeUebConnectionError(String context, String reason) {
-        processEcompError(context, EcompErrorEnum.BeUebConnectionError, reason);
-    }
-
-    public void logBeUebUnkownHostError(String context, String host) {
-        processEcompError(context, EcompErrorEnum.BeUebUnkownHostError, host);
-    }
-
     public void logBeComponentMissingError(String context, String componentType, String name) {
         processEcompError(context, EcompErrorEnum.BeComponentMissingError, componentType, name);
     }
@@ -125,10 +113,6 @@ public class BeEcompErrorManager extends AbsEcompErrorManager {
 
     public void logBeInvalidConfigurationError(String context, String parameterName, String parameterValue) {
         processEcompError(context, EcompErrorEnum.BeInvalidConfigurationError, parameterName, parameterValue);
-    }
-
-    public void logBeUebObjectNotFoundError(String context, String notFoundObjectName) {
-        processEcompError(context, EcompErrorEnum.BeUebObjectNotFoundError, notFoundObjectName);
     }
 
     public void logBeDistributionEngineInvalidArtifactType(String context, String artifactType, String validArtifactTypes) {

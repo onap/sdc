@@ -21,15 +21,16 @@
  */
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import lombok.Setter;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.openecomp.sdc.be.components.distribution.engine.report.DistributionCompleteReporter;
 import org.openecomp.sdc.be.components.kafka.KafkaHandler;
 import org.openecomp.sdc.be.components.validation.ServiceDistributionValidation;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -46,21 +47,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Component("distributionEngine")
 public class DistributionEngine implements IDistributionEngine {
 
+    public static final String INIT_DISTRIBUTION_ENGINE_FLOW = "initDistributionEngine";
     private static final Logger logger = Logger.getLogger(DistributionEngine.class.getName());
-    private static final Pattern FQDN_PATTERN = Pattern.compile(
-            "^([A-Z0-9]|[A-Z0-9][A-Z0-9\\-]{0,61}[A-Z0-9])(\\.([A-Z0-9]|[A-Z0-9][A-Z0-9\\-]{0,61}[A-Z0-9]))*(:[0-9]{2,4})*$",
-            Pattern.CASE_INSENSITIVE);
     @Autowired
     private EnvironmentsEngine environmentsEngine;
-    @Autowired
-    @Setter
-    private KafkaHandler kafkaHandler;
     @Resource
     private DistributionNotificationSender distributionNotificationSender;
     @Resource
@@ -71,19 +65,21 @@ public class DistributionEngine implements IDistributionEngine {
     private ServiceDistributionValidation serviceDistributionValidation;
     @Resource
     private DistributionDeleteNotificationSender distributionDeleteNotificationSender;
+    @Resource
+    private DistributionCompleteReporter distributionCompleteReporter;
+    @Resource
+    private ComponentsUtils componentUtils;
 
-    private Map<String, DistributionEngineInitTask> envNamePerInitTask = new HashMap<>();
     private Map<String, DistributionEnginePollingTask> envNamePerPollingTask = new HashMap<>();
     private Map<String, AtomicBoolean> envNamePerStatus = new HashMap<>();
 
     @Override
     public boolean isActive() {
-        if (envNamePerInitTask.isEmpty()) {
+        if (envNamePerStatus.isEmpty()) {
             return false;
         }
-        for (DistributionEngineInitTask task : envNamePerInitTask.values()) {
-            boolean active = task.isActive();
-            if (!active) {
+        for (AtomicBoolean status : envNamePerStatus.values()) {
+            if (!status.get()) {
                 return false;
             }
         }
@@ -91,7 +87,7 @@ public class DistributionEngine implements IDistributionEngine {
     }
 
     @PostConstruct
-    private void init() {
+    void init() {
         logger.trace("Enter init method of DistributionEngine");
         DistributionEngineConfiguration distributionEngineConfiguration = ConfigurationManager.getConfigurationManager()
                 .getDistributionEngineConfiguration();
@@ -105,34 +101,35 @@ public class DistributionEngine implements IDistributionEngine {
         boolean isValidConfig = validateConfiguration(distributionEngineConfiguration);
         if (!isValidConfig) {
             BeEcompErrorManager.getInstance()
-                    .logBeUebSystemError(DistributionEngineInitTask.INIT_DISTRIBUTION_ENGINE_FLOW, "validate distribution configuration in init phase");
+                    .logBeUebSystemError(INIT_DISTRIBUTION_ENGINE_FLOW, "validate distribution configuration in init phase");
             this.distributionEngineClusterHealth.setHealthCheckUebConfigurationError();
             return;
         }
-        List<String> environments = distributionEngineConfiguration.getEnvironments();
-        for (String envName : environments) {
-            logger.debug("init task for environment {}", envName);
-            AtomicBoolean status = new AtomicBoolean(false);
-            envNamePerStatus.put(envName, status);
-            environmentsEngine.connectUebTopicForDistributionConfTopic(envName, status, envNamePerInitTask, envNamePerPollingTask);
+        for (String envName : distributionEngineConfiguration.getEnvironments()) {
+            String topicName = DistributionTopics.buildTopicName(distributionEngineConfiguration.getDistributionStatusTopicName(), envName);
+            logger.debug("start polling distribution status topic {} for environment {}", topicName, envName);
+            DistributionEnginePollingTask pollingTask = createPollingTask(distributionEngineConfiguration);
+            pollingTask.startTask(topicName);
+            envNamePerPollingTask.put(envName, pollingTask);
+            envNamePerStatus.put(envName, new AtomicBoolean(true));
         }
-        logger.debug("init UEB health check");
-        distributionEngineClusterHealth.startHealthCheckTask(envNamePerStatus);
         logger.trace("Exit init method of DistributionEngine");
+    }
+
+    /**
+     * Each polling task polls from its own thread, and a KafkaConsumer must not be shared between threads, so every task gets its own
+     * KafkaHandler.
+     */
+    DistributionEnginePollingTask createPollingTask(DistributionEngineConfiguration distributionEngineConfiguration) {
+        return new DistributionEnginePollingTask(distributionEngineConfiguration, distributionCompleteReporter, componentUtils,
+                distributionEngineClusterHealth, new KafkaHandler());
     }
 
     @PreDestroy
     public void shutdown() {
         logger.info("distribution engine shutdown - start");
-        if (envNamePerInitTask != null) {
-            for (DistributionEngineInitTask task : envNamePerInitTask.values()) {
-                task.destroy();
-            }
-        }
-        if (envNamePerPollingTask != null) {
-            for (DistributionEnginePollingTask task : envNamePerPollingTask.values()) {
-                task.destroy();
-            }
+        for (DistributionEnginePollingTask task : envNamePerPollingTask.values()) {
+            task.destroy();
         }
     }
 
@@ -145,13 +142,6 @@ public class DistributionEngine implements IDistributionEngine {
     protected boolean validateConfiguration(DistributionEngineConfiguration deConfiguration) {
         String methodName = "validateConfiguration";
         boolean result = isValidParam(deConfiguration.getEnvironments(), methodName, "environments");
-
-        if (!kafkaHandler.isKafkaActive()) {
-            result = isValidServers(deConfiguration.getUebServers(), methodName, "uebServers") && result;
-            result = isValidParam(deConfiguration.getUebPublicKey(), methodName, "uebPublicKey") && result;
-            result = isValidParam(deConfiguration.getUebSecretKey(), methodName, "uebSecretKey") && result;
-            result = isValidObject(deConfiguration.getCreateTopic(), methodName, "createTopic") && result;
-        }
         result = isValidParam(deConfiguration.getDistributionNotifTopicName(), methodName, "distributionNotifTopicName") && result;
         result = isValidParam(deConfiguration.getDistributionStatusTopicName(), methodName, "distributionStatusTopicName") && result;
         result = isValidObject(deConfiguration.getDistributionStatusTopic(), methodName, "distributionStatusTopic") && result;
@@ -164,34 +154,6 @@ public class DistributionEngine implements IDistributionEngine {
         result = isValidObject(deConfiguration.getDistributionStatusTopic().getFetchTimeSec(), methodName, "fetchTimeSec") && result;
         result = isValidObject(deConfiguration.getDistributionStatusTopic().getPollingIntervalSec(), methodName, "pollingIntervalSec") && result;
         return result;
-    }
-
-    private boolean isValidServers(List<String> uebServers, String methodName, String paramName) {
-        if (uebServers == null || uebServers.isEmpty()) {
-            BeEcompErrorManager.getInstance().logBeMissingConfigurationError(methodName, paramName);
-            return false;
-        }
-        if (uebServers.size() < 2) {
-            BeEcompErrorManager.getInstance().logBeConfigurationInvalidListSizeError(methodName, paramName, 2);
-            return false;
-        }
-        for (String serverFqdn : uebServers) {
-            if (!isValidFqdn(serverFqdn)) {
-                BeEcompErrorManager.getInstance().logBeInvalidConfigurationError(methodName, paramName, serverFqdn);
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private boolean isValidFqdn(String serverFqdn) {
-        try {
-            Matcher matcher = FQDN_PATTERN.matcher(serverFqdn);
-            return matcher.matches();
-        } catch (Exception e) {
-            logger.debug("Failed to match value of address {}", serverFqdn, e);
-            return false;
-        }
     }
 
     private boolean isValidParam(String paramValue, String methodName, String paramName) {
@@ -280,12 +242,10 @@ public class DistributionEngine implements IDistributionEngine {
     }
 
     private ActionStatus reportKafkaPublishHealth(ActionStatus publishStatus) {
-        if (Boolean.TRUE.equals(kafkaHandler.isKafkaActive())) {
-            if (publishStatus == ActionStatus.OK) {
-                distributionEngineClusterHealth.setHealthCheckOkAndReportInCaseLastStateIsDown();
-            } else {
-                distributionEngineClusterHealth.setHealthCheckUnavailableAndReportInCaseLastStateIsUp();
-            }
+        if (publishStatus == ActionStatus.OK) {
+            distributionEngineClusterHealth.setHealthCheckOkAndReportInCaseLastStateIsDown();
+        } else {
+            distributionEngineClusterHealth.setHealthCheckUnavailableAndReportInCaseLastStateIsUp();
         }
         return publishStatus;
     }
@@ -293,7 +253,7 @@ public class DistributionEngine implements IDistributionEngine {
     private String buildTopicName(String envName) {
         DistributionEngineConfiguration deConfiguration = ConfigurationManager.getConfigurationManager().getDistributionEngineConfiguration();
         String distributionNotifTopicName = deConfiguration.getDistributionNotifTopicName();
-        return DistributionEngineInitTask.buildTopicName(distributionNotifTopicName, envName);
+        return DistributionTopics.buildTopicName(distributionNotifTopicName, envName);
     }
 
     @Override
@@ -310,11 +270,6 @@ public class DistributionEngine implements IDistributionEngine {
     @Override
     public OperationalEnvironmentEntry getEnvironmentById(String opEnvId) {
         return environmentsEngine.getEnvironmentById(opEnvId);
-    }
-
-    @Override
-    public OperationalEnvironmentEntry getEnvironmentByDmaapUebAddress(List<String> dmaapUebAddress) {
-        return environmentsEngine.getEnvironmentByDmaapUebAddress(dmaapUebAddress);
     }
 
     @Override
@@ -382,6 +337,6 @@ public class DistributionEngine implements IDistributionEngine {
     private String buildDeleteNotificationTopicName(String envName) {
         String deleteTopicName = ConfigurationManager.getConfigurationManager().getDistributionEngineConfiguration()
                 .getDistributionDeleteTopicName();
-        return DistributionEngineInitTask.buildTopicName(deleteTopicName, envName);
+        return DistributionTopics.buildTopicName(deleteTopicName, envName);
     }
 }

@@ -19,6 +19,7 @@
  */
 package org.openecomp.sdc.be.components.kafka;
 
+import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 import org.apache.kafka.clients.CommonClientConfigs;
@@ -33,9 +34,11 @@ import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
 public class KafkaCommonConfig {
 
     private final DistributionEngineConfiguration deConfiguration;
+    private final Map<String, String> environment;
 
-    public KafkaCommonConfig(DistributionEngineConfiguration config){
+    public KafkaCommonConfig(DistributionEngineConfiguration config, Map<String, String> environment){
         this.deConfiguration = config;
+        this.environment = environment;
     }
 
     public Properties getConsumerProperties(){
@@ -55,12 +58,15 @@ public class KafkaCommonConfig {
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,  "org.apache.kafka.common.serialization.StringSerializer");
         props.put(ProducerConfig.CLIENT_ID_CONFIG, deConfiguration.getDistributionStatusTopic().getConsumerId() + "-producer-" + UUID.randomUUID());
+        // send() waits up to max.block.ms (default 60 s) for broker metadata before the caller's send timeout even starts
+        props.put(ProducerConfig.MAX_BLOCK_MS_CONFIG,
+            String.valueOf(deConfiguration.getDistributionNotificationTopic().getMaxWaitingAfterSendingSeconds() * 1000L));
 
         return props;
     }
 
     private void setCommonProperties(Properties props) {
-        String securityProtocolConfig = System.getenv().getOrDefault("SECURITY_PROTOCOL", "SASL_PLAINTEXT");
+        String securityProtocolConfig = environment.getOrDefault("SECURITY_PROTOCOL", "SASL_PLAINTEXT");
         props.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, securityProtocolConfig);
         props.put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, deConfiguration.getKafkaBootStrapServers());
 
@@ -82,7 +88,7 @@ public class KafkaCommonConfig {
      * @return The Sasl Jaas Configuration
      */
     private String getKafkaSaslJaasConfig() throws KafkaException {
-        String saslJaasConfFromEnv = System.getenv("SASL_JAAS_CONFIG");
+        String saslJaasConfFromEnv = environment.get("SASL_JAAS_CONFIG");
         if(saslJaasConfFromEnv != null) {
             return saslJaasConfFromEnv;
         } else {

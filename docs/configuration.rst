@@ -52,13 +52,6 @@ environment.json
                 "portal_pass": "j85yNhyIs7zKYbR1VlwEfNhS6b7Om4l0Gx5O8931sCI="
             },
 
-            # Configuration parameters used by SDC to work with Dmaap
-            "UEB": {
-                "PublicKey": "iPIxkpAMI8qTcQj8",
-                "SecretKey": "Ehq3WyT4bkif4zwgEbvshGal",
-                "fqdn": ["10.0.11.1", "10.0.11.1"]
-            },
-
             # Kafka config
             "Kafka": {
              "bootstrap": "kafka-bootstrap:9092"
@@ -205,12 +198,6 @@ BE-configuration.yaml
 
     # The read timeout towards JanusGraph DB when health check is invoked
     janusGraphHealthCheckReadTimeout: 1
-
-    # The interval to try and reconnect to UEB health check when it is down during SDC startup
-    uebHealthCheckReconnectIntervalInSeconds: 15
-
-    # The read timeout towards UEB when health check is invoked
-    uebHealthCheckReadTimeout: 4
 
     # Protocols being used in SDC
     protocols:
@@ -930,38 +917,6 @@ BE-configuration.yaml
            - Needed_Non-Revenue
            - Useful_Non-Revenue
            - General_Non-Revenue
-    # tenant isolation configuration
-    dmaapConsumerConfiguration:
-        hosts: localhost:3905
-        consumerGroup: sdc
-        consumerId: mama
-        timeoutMs: 15000
-        limit: 1
-        pollingInterval: 2
-        topic: topic
-        latitude: 32.109333
-        longitude: 34.855499
-        version: 1.0
-        serviceName: localhost/events
-        environment: TEST
-        partner: BOT_R
-        routeOffer: MR1
-        protocol: https
-        contenttype: application/json
-        dme2TraceOn: true
-        aftEnvironment: AFTUAT
-        aftDme2ConnectionTimeoutMs: 15000
-        aftDme2RoundtripTimeoutMs: 240000
-        aftDme2ReadTimeoutMs: 50000
-        dme2preferredRouterFilePath: DME2preferredRouter.txt
-        timeLimitForNotificationHandleMs: 120000
-        credential:
-            username: user
-            password:
-    # tenant isolation configuration
-    dmeConfiguration:
-        dme2Search: DME2SEARCH
-        dme2Resolve: DME2RESOLVE
     # definition for policies types that cannot by created by api
     excludedPolicyTypesMapping:
        # VF:
@@ -1004,18 +959,6 @@ BE-distribution-engine-configuration.yaml
 *****************************************
 
 ::
-
-    # UEB servers list
-    uebServers:
-        <% node['UEB']['fqdn'].each do |conn| -%>
-            - <%= conn %>
-        <% end -%>
-
-    # UEB public key
-    uebPublicKey: <%= node['UEB']['PublicKey'] %>
-
-    # UEB secret key
-    uebSecretKey: <%= node['UEB']['SecretKey'] %>
 
     # Topic name for receiving distribution notification
     distributionNotifTopicName:  SDC-DISTR-NOTIF-TOPIC
@@ -1069,36 +1012,10 @@ BE-distribution-engine-configuration.yaml
         # Maximum waiting time after sending a notification
         maxWaitingAfterSendingSeconds: 5
 
-    # Deprecated. Will be removed in future releases
-    createTopic:
-        partitionCount: 1
-        replicationCount: 1
-
     # STarting the distribution engine
     startDistributionEngine: true
 
-    #This is false by default, since ONAP Dmaap currently doesn't support https
-    # Should https be used with Dmaap
-    useHttpsWithDmaap: false
     opEnvRecoveryIntervalSec: 180
-    allowedTimeBeforeStaleSec: 300
-    # aai configuration for tenant isolation
-    aaiConfig:
-       httpRequestConfig:
-          serverRootUrl: https://aai.onap.org:8443
-          resourceNamespaces:
-             operationalEnvironments: /aai/v12/cloud-infrastructure/operational-environments
-
-       httpClientConfig:
-          timeouts:
-             readTimeoutMs: 5000
-             connectTimeoutMs: 1000
-          clientCertificate:
-             keyStore: /opt/app/jetty/base/be/etc/non-prod.jks
-             keyStorePassword: changeme
-          headers:
-             X-FromAppId: asdc
-          numOfRetries: 3
     # mso configuration for tenant isolation
     msoConfig:
        httpRequestConfig:

@@ -27,9 +27,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -44,49 +41,18 @@ public class DistributionDeleteNotificationSenderTest {
     private KafkaHandler kafkaHandler;
     private DistributionEngineConfiguration distributionConfig;
     private DistributionDeleteNotificationSender deleteNotificationSender;
-    private CambriaHandler cambriaHandler;
     private static final String TOPIC_NAME = "delete_topic";
 
     @Before
     public void setUp() {
         kafkaHandler = Mockito.mock(KafkaHandler.class);
         distributionConfig = Mockito.mock(DistributionEngineConfiguration.class);
-        cambriaHandler = Mockito.mock(CambriaHandler.class);
-        deleteNotificationSender = new DistributionDeleteNotificationSender(kafkaHandler, distributionConfig,
-                cambriaHandler);
+        deleteNotificationSender = new DistributionDeleteNotificationSender(kafkaHandler, distributionConfig);
     }
 
     @Test
-    public void testSendNotificationForDeleteService_WhenKafkaIsInactive() {
-        when(kafkaHandler.isKafkaActive()).thenReturn(false);
-        DistributionDeleteTopicConfig deleteTopicConfig = mock(
-                DistributionEngineConfiguration.DistributionDeleteTopicConfig.class);
-        when(distributionConfig.getDistributionDeleteTopic()).thenReturn(deleteTopicConfig);
-        when(deleteTopicConfig.getMaxWaitingAfterSendingSeconds()).thenReturn(10);
-
-        EnvironmentMessageBusData messageBusData = mock(EnvironmentMessageBusData.class);
-        List<String> serverList = Collections.singletonList("uebEndpoint");
-        when(messageBusData.getUebPublicKey()).thenReturn("uebPublicKey");
-        when(messageBusData.getUebPrivateKey()).thenReturn("uebPrivateKey");
-        when(messageBusData.getDmaaPuebEndpoints()).thenReturn(serverList);
-
+    public void testSendNotificationForDeleteService() {
         INotificationData notificationData = new NotificationDataImpl();
-
-        when(cambriaHandler.sendNotificationAndClose(TOPIC_NAME, "uebPublicKey", "uebPrivateKey", serverList,
-                notificationData, 10)).thenReturn(new CambriaErrorResponse(CambriaOperationStatus.OK, 200));
-
-        ActionStatus result = deleteNotificationSender.sendNotificationForDeleteService(
-                TOPIC_NAME, ThreadLocalsHolder.getUuid(), messageBusData, notificationData);
-
-        assertEquals(ActionStatus.OK, result);
-        verify(cambriaHandler, times(1)).sendNotificationAndClose(eq(TOPIC_NAME), eq("uebPublicKey"),
-                eq("uebPrivateKey"), eq(serverList), eq(notificationData), eq(10L));
-    }
-
-    @Test
-    public void testSendNotificationForDeleteService_WhenKafkaIsActive() {
-        INotificationData notificationData = new NotificationDataImpl();
-        when(kafkaHandler.isKafkaActive()).thenReturn(true);
         stubDeleteTopicTimeout(10);
         when(kafkaHandler.sendNotification(TOPIC_NAME, notificationData, 10L))
                 .thenReturn(new CambriaErrorResponse(CambriaOperationStatus.OK, 200));
@@ -101,7 +67,6 @@ public class DistributionDeleteNotificationSenderTest {
     @Test
     public void testSendNotificationForDeleteService_WhenKafkaNotificationFails() {
         INotificationData notificationData = new NotificationDataImpl();
-        when(kafkaHandler.isKafkaActive()).thenReturn(true);
         stubDeleteTopicTimeout(10);
         when(kafkaHandler.sendNotification(TOPIC_NAME, notificationData, 10L))
                 .thenReturn(new CambriaErrorResponse(CambriaOperationStatus.INTERNAL_SERVER_ERROR, 200));

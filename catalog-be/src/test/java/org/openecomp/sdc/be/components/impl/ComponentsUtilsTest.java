@@ -44,7 +44,6 @@ import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.resources.data.auditing.DistributionDownloadEvent;
-import org.openecomp.sdc.be.resources.data.auditing.EcompOperationalEnvironmentEvent;
 import org.openecomp.sdc.be.resources.data.auditing.ExternalApiEvent;
 import org.openecomp.sdc.be.resources.data.auditing.ResourceAdminEvent;
 import org.openecomp.sdc.be.resources.data.auditing.UserAdminEvent;
@@ -78,10 +77,6 @@ import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.MODIFIER_FIRST_N
 import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.MODIFIER_ID;
 import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.MODIFIER_LAST_NAME;
 import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.MODIFIER_UID;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.OP_ENV_ACTION;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.OP_ENV_ID;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.OP_ENV_NAME;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.OP_ENV_TYPE;
 import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.PREV_RESOURCE_STATE;
 import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.PREV_RESOURCE_VERSION;
 import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.REQUEST_ID;
@@ -89,7 +84,6 @@ import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.RESOURCE_NAME;
 import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.SERVICE_INSTANCE_ID;
 import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.STATUS_500;
 import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.STATUS_OK;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.TENANT_CONTEXT;
 import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.TESTER_USER_ROLE;
 import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.TOSCA_NODE_TYPE;
 import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.UPDATED_USER_EXTENDED_NAME;
@@ -326,21 +320,6 @@ public class ComponentsUtilsTest {
         assertThat(event.getAction()).isEqualTo(AuditingActionEnum.ADD_USER.getName());
         assertThat(event.getUserBefore()).isNull();
         assertThat(event.getUserAfter()).isEqualTo(UPDATED_USER_EXTENDED_NAME);
-    }
-
-    @Test
-    public void auditEcompOpEnvEvent() {
-
-        utils.auditEnvironmentEngine(AuditingActionEnum.CREATE_ENVIRONMENT, OP_ENV_ID, OP_ENV_TYPE, OP_ENV_ACTION, OP_ENV_NAME, TENANT_CONTEXT);
-        verify(manager).auditEvent(factoryCaptor.capture(), audit.capture());
-        AuditEventFactory factory = factoryCaptor.getValue();
-        EcompOperationalEnvironmentEvent event = (EcompOperationalEnvironmentEvent)factory.getDbEvent();
-        assertThat(event.getAction()).isEqualTo(AuditingActionEnum.CREATE_ENVIRONMENT.getName());
-        assertThat(event.getOperationalEnvironmentId()).isEqualTo(OP_ENV_ID);
-        assertThat(event.getOperationalEnvironmentType()).isEqualTo(OP_ENV_TYPE);
-        assertThat(event.getOperationalEnvironmentName()).isEqualTo(OP_ENV_NAME);
-        assertThat(event.getOperationalEnvironmentAction()).isEqualTo(OP_ENV_ACTION);
-        assertThat(event.getTenantContext()).isEqualTo(TENANT_CONTEXT);
     }
 
     @Test

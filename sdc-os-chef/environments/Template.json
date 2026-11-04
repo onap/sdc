@@ -22,11 +22,6 @@
          "portal_pass": "j85yNhyIs7zKYbR1VlwEfNhS6b7Om4l0Gx5O8931sCI=",
          "portal_app_name": "Ipwxi2oLvDxctMA1royaRw1W0jhucLx+grHzci3ePIA="
       },
-      "UEB": {
-         "PublicKey": "iPIxkpAMI8qTcQj8",
-         "SecretKey": "Ehq3WyT4bkif4zwgEbvshGal",
-         "fqdn": ["10.0.11.1", "10.0.11.1"]
-      },
       "Kafka": {
          "bootstrap": "kafka-bootstrap:9092"
       },
@@ -98,15 +93,6 @@
          "cassandra_truststore_password": "cassandra_truststore_password"
       },
       "DMAAP": {
-         "consumer": {
-            "host": "dcae-mrtr.com:3905",
-            "topic": "operationalEnvironmentEvent",
-            "serviceName": "dcae-mrtr.com:3905/events",
-            "environment": "TEST",
-            "partner": "BOT_R",
-            "username": "user1@sdc.com",
-            "password": "password=="
-         },
          "producer": {
             "host": "olsd004.com:3905",
             "topic": "SDC-FACADE-NOTIF-v1 ",

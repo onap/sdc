@@ -242,9 +242,6 @@ public class TestExternalConfiguration {
 		assertEquals(deConfiguration.getDistribNotifServiceArtifactTypes().getInfo().size(), 1);
 		assertTrue(deConfiguration.getDistribNotifServiceArtifactTypes().getInfo().contains("MURANO-PKG"));
 
-		assertEquals(deConfiguration.getUebPublicKey(), "fff");
-		assertEquals(deConfiguration.getUebSecretKey(), "ffff");
-		assertEquals(deConfiguration.getUebServers().size(), 3);
 		assertEquals(deConfiguration.getInitRetryIntervalSec().intValue(), 5);
 
 	}

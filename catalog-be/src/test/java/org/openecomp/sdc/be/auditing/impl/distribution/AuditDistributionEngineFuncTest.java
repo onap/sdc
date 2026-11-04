@@ -53,7 +53,6 @@ import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.DIST_ROLE;
 import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.DIST_STATUS_TOPIC;
 import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.EXPECTED_DIST_ADD_KEY_ENGINE_LOG_STR;
 import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.EXPECTED_DIST_CREATE_TOPIC_ENGINE_LOG_STR;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.EXPECTED_DIST_REG_ENGINE_LOG_STR;
 import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.REQUEST_ID;
 import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.SERVICE_INSTANCE_ID;
 import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.STATUS_OK;
@@ -117,28 +116,6 @@ public class AuditDistributionEngineFuncTest {
 
         assertThat(auditingManager.auditEvent(factory)).isEqualTo(EXPECTED_DIST_CREATE_TOPIC_ENGINE_LOG_STR);
         verifyEvent(AuditingActionEnum.CREATE_DISTRIBUTION_TOPIC.getName());
-    }
-
-    @Test
-    public void testRegisterEvent() {
-        AuditEventFactory factory = new AuditRegUnregDistributionEngineEventFactory(
-                AuditingActionEnum.DISTRIBUTION_REGISTER,
-                CommonAuditData.newBuilder()
-                        .description(DESCRIPTION)
-                        .status(STATUS_OK)
-                        .requestId(REQUEST_ID)
-                        .serviceInstanceId(SERVICE_INSTANCE_ID)
-                        .build(),
-                DistributionTopicData.newBuilder()
-                        .statusTopic(DIST_STATUS_TOPIC)
-                        .notificationTopic(DIST_NOTIFY_TOPIC)
-                        .build(),
-                DIST_CONSUMER_ID, DIST_API_KEY, DIST_ENV_NAME);
-
-        when(cassandraDao.saveRecord(any(AuditingGenericEvent.class))).thenReturn(CassandraOperationStatus.OK);
-
-        assertThat(auditingManager.auditEvent(factory)).isEqualTo(EXPECTED_DIST_REG_ENGINE_LOG_STR);
-        verifyEvent(AuditingActionEnum.DISTRIBUTION_REGISTER.getName());
     }
 
     private void verifyEvent(String action) {

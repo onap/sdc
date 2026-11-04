@@ -1,10 +1,3 @@
-uebServers:
-        - 127.0.0.1
-        - 127.0.0.1
-
-uebPublicKey: iPIxkpAMI8qTcQj8
-uebSecretKey: Ehq3WyT4bkif4zwgEbvshGal
-
 distributionNotifTopicName: SDC-DISTR-NOTIF-TOPIC-INT
 
 distributionStatusTopicName: SDC-DISTR-STATUS-TOPIC
@@ -38,33 +31,9 @@ distributionNotificationTopic:
    maxThreadPoolSize: 10
    maxWaitingAfterSendingSeconds: 5
 
-createTopic:
-   partitionCount: 1
-   replicationCount: 1
-
 startDistributionEngine: true
 
-#This is false by default, since ONAP Dmaap currently doesn't support https
-useHttpsWithDmaap: false
 opEnvRecoveryIntervalSec: 180
-allowedTimeBeforeStaleSec: 300
-
-aaiConfig:
-   httpRequestConfig:
-      serverRootUrl: https://localhost:8443
-      resourceNamespaces:
-         operationalEnvironments: /aai/v12/cloud-infrastructure/operational-environments
-
-   httpClientConfig:
-      timeouts:
-         readTimeoutMs: 5000
-         connectTimeoutMs: 1000
-      clientCertificate:
-         keyStore: /app/jetty/base/be/etc/non-prod.jks
-         keyStorePassword: hmXYcznAljMSisdy8zgcag==
-      headers:
-         X-FromAppId: asdc
-      numOfRetries: 3
 
 msoConfig:
    httpRequestConfig:

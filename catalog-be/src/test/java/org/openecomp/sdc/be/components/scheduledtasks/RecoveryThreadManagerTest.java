@@ -34,16 +34,14 @@ import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.dao.cassandra.OperationalEnvironmentDao;
 import org.openecomp.sdc.be.datatypes.enums.EnvironmentStatusEnum;
 import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
-import org.openecomp.sdc.common.datastructure.Wrapper;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -69,71 +67,24 @@ public class RecoveryThreadManagerTest extends BeConfDependentTest {
     public void testInit() {
         verify(scheduledService, Mockito.times(1)).scheduleAtFixedRate(recoveryThreadManager.task,
                 NumberUtils.LONG_ZERO, 180L, TimeUnit.SECONDS);
-
-    }
-    @SuppressWarnings("unchecked")
-    @Test
-    public void testTaskNoRecords() {
-        FixEnvironmentTask fixEnvironmentTask = recoveryThreadManager.task;
-        Either<List<OperationalEnvironmentEntry>, CassandraOperationStatus> emptyList = Either.left(Arrays.asList());
-        when(operationalEnvironmentDao.getByEnvironmentsStatus(EnvironmentStatusEnum.FAILED)).thenReturn(emptyList);
-        fixEnvironmentTask.run();
-        verify(environmentsEngine, Mockito.times(0)).buildOpEnv(Mockito.any(Wrapper.class), Mockito.any(OperationalEnvironmentEntry.class));
-
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void testTaskCassandraCrash() {
         FixEnvironmentTask fixEnvironmentTask = recoveryThreadManager.task;
         Either<List<OperationalEnvironmentEntry>, CassandraOperationStatus> eitherResult = Either.right(CassandraOperationStatus.GENERAL_ERROR);
-        when(operationalEnvironmentDao.getByEnvironmentsStatus(EnvironmentStatusEnum.FAILED)).thenReturn(eitherResult);
+        when(operationalEnvironmentDao.getByEnvironmentsStatus(EnvironmentStatusEnum.COMPLETED)).thenReturn(eitherResult);
         fixEnvironmentTask.run();
-        verify(environmentsEngine, Mockito.times(0)).buildOpEnv(Mockito.any(Wrapper.class), Mockito.any(OperationalEnvironmentEntry.class));
-
+        verify(environmentsEngine, never()).addToMap(Mockito.any(OperationalEnvironmentEntry.class));
     }
 
-    @SuppressWarnings("unchecked")
     @Test
-    public void testTaskMultipleFailedRecords() {
-        FixEnvironmentTask fixEnvironmentTask = recoveryThreadManager.task;
-        OperationalEnvironmentEntry mockEntry = Mockito.mock(OperationalEnvironmentEntry.class);
-        Either<List<OperationalEnvironmentEntry>, CassandraOperationStatus> nonEmptyList = Either.left(Arrays.asList(mockEntry, mockEntry, mockEntry));
-        Either<List<OperationalEnvironmentEntry>, CassandraOperationStatus> emptyList = Either.left(Arrays.asList());
-        when(operationalEnvironmentDao.getByEnvironmentsStatus(EnvironmentStatusEnum.FAILED)).thenReturn(nonEmptyList);
-        when(operationalEnvironmentDao.getByEnvironmentsStatus(EnvironmentStatusEnum.IN_PROGRESS)).thenReturn(emptyList);
-        fixEnvironmentTask.run();
-        verify(environmentsEngine, Mockito.times(3)).buildOpEnv(Mockito.any(Wrapper.class), Mockito.any(OperationalEnvironmentEntry.class));
-
+    public void testOnlyCompletedRecordsAreRead() {
+        when(operationalEnvironmentDao.getByEnvironmentsStatus(EnvironmentStatusEnum.COMPLETED)).thenReturn(Either.left(Arrays.asList()));
+        recoveryThreadManager.task.run();
+        verify(operationalEnvironmentDao, never()).getByEnvironmentsStatus(EnvironmentStatusEnum.FAILED);
+        verify(operationalEnvironmentDao, never()).getByEnvironmentsStatus(EnvironmentStatusEnum.IN_PROGRESS);
     }
-
-    @SuppressWarnings("unchecked")
-    @Test
-    public void testTaskStaleRecords() {
-        FixEnvironmentTask fixEnvironmentTask = recoveryThreadManager.task;
-        OperationalEnvironmentEntry mockFailedEntryFirst = Mockito.mock(OperationalEnvironmentEntry.class);
-        OperationalEnvironmentEntry mockFailedEntrySecond = Mockito.mock(OperationalEnvironmentEntry.class);
-        Either<List<OperationalEnvironmentEntry>, CassandraOperationStatus> failedRecordsList = Either.left(Arrays.asList(mockFailedEntryFirst, mockFailedEntrySecond));
-        when(operationalEnvironmentDao.getByEnvironmentsStatus(EnvironmentStatusEnum.FAILED)).thenReturn(failedRecordsList);
-
-        OperationalEnvironmentEntry mockInProgressNonStaleEntry = Mockito.mock(OperationalEnvironmentEntry.class);
-        OperationalEnvironmentEntry mockInProgressStaleEntry = Mockito.mock(OperationalEnvironmentEntry.class);
-        doReturn(new Date(System.currentTimeMillis() - recoveryThreadManager.allowedTimeBeforeStaleSec * 1000 /2)).when(mockInProgressNonStaleEntry).getLastModified();
-        doReturn(new Date(System.currentTimeMillis() - recoveryThreadManager.allowedTimeBeforeStaleSec * 1000 * 2)).when(mockInProgressStaleEntry).getLastModified();
-        Either<List<OperationalEnvironmentEntry>, CassandraOperationStatus> inProgressList = Either.left(Arrays.asList(mockInProgressNonStaleEntry, mockInProgressStaleEntry));
-        when(operationalEnvironmentDao.getByEnvironmentsStatus(EnvironmentStatusEnum.IN_PROGRESS)).thenReturn(inProgressList);
-        fixEnvironmentTask.run();
-
-        verify(environmentsEngine).buildOpEnv(Mockito.any(Wrapper.class), Mockito.eq(mockFailedEntryFirst));
-        verify(environmentsEngine).buildOpEnv(Mockito.any(Wrapper.class), Mockito.eq(mockFailedEntrySecond));
-        verify(environmentsEngine).buildOpEnv(Mockito.any(Wrapper.class), Mockito.eq(mockInProgressStaleEntry));
-        verify(environmentsEngine, times(0)).buildOpEnv(Mockito.any(Wrapper.class), Mockito.eq(mockInProgressNonStaleEntry));
-
-        verify(environmentsEngine, times(3)).buildOpEnv(Mockito.any(Wrapper.class), Mockito.any(OperationalEnvironmentEntry.class));
-
-    }
-
-
 
     @Test
     public void testUnconnectedRecords() {
@@ -144,15 +95,9 @@ public class RecoveryThreadManagerTest extends BeConfDependentTest {
         when(environmentsEngine.isInMap(mockCompleteConnected)).thenReturn(true);
         when(environmentsEngine.isInMap(mockCompleteUnconnected)).thenReturn(false);
         when(operationalEnvironmentDao.getByEnvironmentsStatus(EnvironmentStatusEnum.COMPLETED)).thenReturn(completeRecordsList);
-        when(operationalEnvironmentDao.getByEnvironmentsStatus(EnvironmentStatusEnum.FAILED)).thenReturn(Either.left(Arrays.asList()));
-        when(operationalEnvironmentDao.getByEnvironmentsStatus(EnvironmentStatusEnum.IN_PROGRESS)).thenReturn(Either.left(Arrays.asList()));
         fixEnvironmentTask.run();
 
-        verify(environmentsEngine).createUebTopicsForEnvironment(mockCompleteUnconnected);
-        verify(environmentsEngine, times(0)).createUebTopicsForEnvironment(mockCompleteConnected);
         verify(environmentsEngine).addToMap(mockCompleteUnconnected);
         verify(environmentsEngine, times(0)).addToMap(mockCompleteConnected);
-        verify(environmentsEngine, times(1)).createUebTopicsForEnvironment(Mockito.any(OperationalEnvironmentEntry.class));
-
     }
 }

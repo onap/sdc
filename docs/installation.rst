@@ -21,6 +21,6 @@ SDC troubleshooting:
 
 Kafka
 ===================
-As of London release, SDC distribution can be configured to use Kakfa as an alternative to DMaaP message Router (MR) for publishing and consuming distribution events. This is controlled via the global SDC helm chart value:
- kafka:
-    useKafka: true/false
+SDC publishes and consumes distribution events on Kafka only; DMaaP Message Router is not
+supported. Keep the global helm chart value ``global.kafka.useKafka`` at ``true``: the sdc-be
+chart only passes the ``SASL_JAAS_CONFIG`` credentials to the backend when it is set.

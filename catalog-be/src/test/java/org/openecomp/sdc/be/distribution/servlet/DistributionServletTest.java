@@ -21,7 +21,6 @@
 package org.openecomp.sdc.be.distribution.servlet;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.apache.http.HttpStatus;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -30,25 +29,19 @@ import org.glassfish.jersey.test.TestProperties;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.openecomp.sdc.be.components.distribution.engine.DistributionEngine;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.SpringConfig;
-import org.openecomp.sdc.be.distribution.AuditHandler;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.distribution.DistributionBusinessLogic;
-import org.openecomp.sdc.be.distribution.api.client.RegistrationRequest;
-import org.openecomp.sdc.be.distribution.api.client.TopicRegistrationResponse;
+import org.openecomp.sdc.be.distribution.api.client.KafkaDataResponse;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
-import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.api.FilterDecisionEnum;
-import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.common.util.ThreadLocalsHolder;
@@ -61,10 +54,13 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -79,15 +75,10 @@ public class DistributionServletTest extends JerseyTest {
     public static final WebApplicationContext webApplicationContext = Mockito.mock(WebApplicationContext.class);
     public static final ResponseFormat responseFormat = Mockito.mock(ResponseFormat.class);
     public static final DistributionBusinessLogic distributionBusinessLogic = Mockito.mock(DistributionBusinessLogic.class);
-    public static final DistributionEngine distributionEngine = Mockito.mock(DistributionEngine.class);
+    public static final ComponentsUtils componentsUtils = Mockito.mock(ComponentsUtils.class);
     private static ConfigurationSource configurationSource = new FSConfigurationSource(
             ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be");
     static ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
-
-
-    public static final String ENV_NAME = "myEnv";
-    public static final String NOTIFICATION_TOPIC = ENV_NAME + "_Notification";
-    public static final String STATUS_TOPIC = ENV_NAME + "_Status";
 
     @BeforeClass
     public static void setup() {
@@ -100,82 +91,39 @@ public class DistributionServletTest extends JerseyTest {
         when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR)).thenReturn(webAppContextWrapper);
         when(webAppContextWrapper.getWebAppContext(servletContext)).thenReturn(webApplicationContext);
         when(webApplicationContext.getBean(DistributionBusinessLogic.class)).thenReturn(distributionBusinessLogic);
-        when(distributionBusinessLogic.getDistributionEngine()).thenReturn(distributionEngine);
-        when(distributionEngine.isEnvironmentAvailable(ENV_NAME)).thenReturn(StorageOperationStatus.OK);
-        when(distributionEngine.isEnvironmentAvailable()).thenReturn(StorageOperationStatus.OK);
+        when(webApplicationContext.getBean(ComponentsUtils.class)).thenReturn(componentsUtils);
+        when(responseFormat.getStatus()).thenReturn(HttpStatus.SC_OK);
+        when(componentsUtils.getResponseFormat(ActionStatus.OK)).thenReturn(responseFormat);
 
         when(request.isUserInRole(anyString())).thenReturn(true);
 
-        mockBusinessLogicResponse();
-
-    }
-
-    private static void mockBusinessLogicResponse() {
-        // Mock Register
-        Mockito.doAnswer(new Answer<Object>() {
-            @Override
-            public Object answer(InvocationOnMock invocation) {
-                Object[] args = invocation.getArguments();
-                Wrapper<Response> responseWrapper = (Wrapper<Response>) args[0];
-                TopicRegistrationResponse okTopicResponse = new TopicRegistrationResponse();
-                okTopicResponse.setDistrNotificationTopicName(NOTIFICATION_TOPIC);
-                okTopicResponse.setDistrStatusTopicName(STATUS_TOPIC);
-                responseWrapper.setInnerElement(Response.status(HttpStatus.SC_OK).entity(okTopicResponse).build());
-
-                return true;
-            }
-        }).when(distributionBusinessLogic).handleRegistration(Mockito.any(Wrapper.class), Mockito.any(RegistrationRequest.class), Mockito.any(AuditHandler.class));
-
-        // Mock Unregister
-        Mockito.doAnswer(new Answer<Object>() {
-            @Override
-            public Object answer(InvocationOnMock invocation) {
-                Object[] args = invocation.getArguments();
-                Wrapper<Response> responseWrapper = (Wrapper<Response>) args[0];
-                TopicRegistrationResponse okTopicResponse = new TopicRegistrationResponse();
-                okTopicResponse.setDistrNotificationTopicName(NOTIFICATION_TOPIC);
-                okTopicResponse.setDistrStatusTopicName(STATUS_TOPIC);
-                responseWrapper.setInnerElement(Response.status(HttpStatus.SC_OK).entity(okTopicResponse).build());
-
-                return true;
-            }
-        }).when(distributionBusinessLogic).handleUnRegistration(Mockito.any(Wrapper.class), Mockito.any(RegistrationRequest.class), Mockito.any(AuditHandler.class));
+        when(distributionBusinessLogic.getKafkaData()).thenCallRealMethod();
     }
 
     @Test
-    public void registerSuccessTest() {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        RegistrationRequest registrationRequest = new RegistrationRequest("myPublicKey", ENV_NAME, false);
-        Response response = target().path("/v1/registerForDistribution").request(MediaType.APPLICATION_JSON).post(Entity.json(gson.toJson(registrationRequest)), Response.class);
-        assertEquals(response.getStatus(), HttpStatus.SC_OK);
-
+    public void removedCambriaEndpointsAre404() {
+        for (String path : List.of("/v1/distributionUebCluster", "/v1/registerForDistribution", "/v1/unRegisterForDistribution")) {
+            Invocation.Builder request = target(path).request().headers(defaultHeaders());
+            Response r = path.contains("egister") ? request.post(Entity.json("{}")) : request.get();
+            assertEquals(path, 404, r.getStatus());
+        }
     }
 
     @Test
-    public void registerSuccessOnTenantTest() {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        RegistrationRequest registrationRequest = new RegistrationRequest("myPublicKey", ENV_NAME, Arrays.asList("11","22"),false);
-        Response response = target().path("/v1/registerForDistribution").request(MediaType.APPLICATION_JSON).post(Entity.json(gson.toJson(registrationRequest)), Response.class);
-        assertEquals(response.getStatus(), HttpStatus.SC_OK);
-
+    public void kafkaDataIsUnchanged() {
+        Response r = target("/v1/distributionKafkaData").request().headers(defaultHeaders()).get();
+        assertEquals(200, r.getStatus());
+        KafkaDataResponse body = new Gson().fromJson(r.readEntity(String.class), KafkaDataResponse.class);
+        assertEquals("kafka-bootstrap:9092", body.getKafkaBootStrapServer());
+        assertEquals("ASDC-DISTR-NOTIF-TOPIC-PROD", body.getDistrNotificationTopicName());
+        assertEquals("ASDC-DISTR-STATUS-TOPIC-PROD", body.getDistrStatusTopicName());
     }
 
-    @Test
-    public void unRegisterSuccessTest() {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        RegistrationRequest registrationRequest = new RegistrationRequest("myPublicKey", ENV_NAME, false);
-        Response response = target().path("/v1/unRegisterForDistribution").request(MediaType.APPLICATION_JSON).post(Entity.json(gson.toJson(registrationRequest)), Response.class);
-        assertEquals(response.getStatus(), HttpStatus.SC_OK);
-
-    }
-
-    @Test
-    public void unRegisterSuccessOnTenantTest() {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        RegistrationRequest registrationRequest = new RegistrationRequest("myPublicKey", ENV_NAME, false);
-        Response response = target().path("/v1/unRegisterForDistribution").request(MediaType.APPLICATION_JSON).post(Entity.json(gson.toJson(registrationRequest)), Response.class);
-        assertEquals(response.getStatus(), HttpStatus.SC_OK);
-
+    private static MultivaluedMap<String, Object> defaultHeaders() {
+        MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
+        headers.add(Constants.X_ECOMP_INSTANCE_ID_HEADER, "myApplicationInstanceID");
+        headers.add(Constants.ACCEPT_HEADER, MediaType.APPLICATION_JSON);
+        return headers;
     }
 
     @Override
@@ -183,7 +131,6 @@ public class DistributionServletTest extends JerseyTest {
         UserBusinessLogic userBusinessLogic = Mockito.mock(UserBusinessLogic.class);
         GroupBusinessLogic groupBusinessLogic = Mockito.mock(GroupBusinessLogic.class);
         ComponentInstanceBusinessLogic componentInstanceBusinessLogic = Mockito.mock(ComponentInstanceBusinessLogic.class);
-        ComponentsUtils componentsUtils = Mockito.mock(ComponentsUtils.class);
 
         ApplicationContext context = new AnnotationConfigApplicationContext(SpringConfig.class);
         forceSet(TestProperties.CONTAINER_PORT, "0");

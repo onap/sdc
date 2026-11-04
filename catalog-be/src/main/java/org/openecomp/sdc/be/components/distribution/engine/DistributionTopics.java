@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,12 @@
  */
 package org.openecomp.sdc.be.components.distribution.engine;
 
-public enum SubscriberTypeEnum {
-    CONSUMER, PRODUCER;
+public final class DistributionTopics {
+
+    private DistributionTopics() {
+    }
+
+    public static String buildTopicName(String topicName, String environment) {
+        return topicName + "-" + environment.toUpperCase();
+    }
 }

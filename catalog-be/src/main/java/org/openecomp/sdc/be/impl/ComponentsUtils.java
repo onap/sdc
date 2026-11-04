@@ -41,11 +41,9 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.openecomp.sdc.be.auditing.api.AuditEventFactory;
 import org.openecomp.sdc.be.auditing.impl.AuditAuthRequestEventFactory;
 import org.openecomp.sdc.be.auditing.impl.AuditConsumerEventFactory;
-import org.openecomp.sdc.be.auditing.impl.AuditEcompOpEnvEventFactory;
 import org.openecomp.sdc.be.auditing.impl.AuditGetUebClusterEventFactory;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
 import org.openecomp.sdc.be.auditing.impl.category.AuditCategoryEventFactory;
@@ -55,7 +53,6 @@ import org.openecomp.sdc.be.auditing.impl.distribution.AuditDistributionDownload
 import org.openecomp.sdc.be.auditing.impl.distribution.AuditDistributionEngineEventFactoryManager;
 import org.openecomp.sdc.be.auditing.impl.distribution.AuditDistributionNotificationEventFactory;
 import org.openecomp.sdc.be.auditing.impl.distribution.AuditDistributionStatusEventFactory;
-import org.openecomp.sdc.be.auditing.impl.distribution.AuditRegUnregDistributionEngineEventFactory;
 import org.openecomp.sdc.be.auditing.impl.externalapi.AuditActivateServiceExternalApiEventFactory;
 import org.openecomp.sdc.be.auditing.impl.externalapi.AuditAssetExternalApiEventFactory;
 import org.openecomp.sdc.be.auditing.impl.externalapi.AuditAssetListExternalApiEventFactory;
@@ -68,7 +65,6 @@ import org.openecomp.sdc.be.auditing.impl.resourceadmin.AuditResourceEventFactor
 import org.openecomp.sdc.be.auditing.impl.usersadmin.AuditGetUsersListEventFactory;
 import org.openecomp.sdc.be.auditing.impl.usersadmin.AuditUserAccessEventFactory;
 import org.openecomp.sdc.be.auditing.impl.usersadmin.AuditUserAdminEventFactory;
-import org.openecomp.sdc.be.components.distribution.engine.DmaapConsumer;
 import org.openecomp.sdc.be.components.impl.ImportUtils;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
 import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
@@ -118,14 +114,11 @@ import org.openecomp.sdc.be.ui.model.UIConstraint;
 import org.openecomp.sdc.be.ui.model.UiLeftPaletteComponent;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
-import org.openecomp.sdc.common.log.enums.LogLevel;
-import org.openecomp.sdc.common.log.enums.Severity;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.log.wrappers.LoggerSdcAudit;
 import org.openecomp.sdc.common.util.ThreadLocalsHolder;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.MarkerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @org.springframework.stereotype.Component("componentUtils")
@@ -137,7 +130,6 @@ public class ComponentsUtils {
     private static final String CONVERT_JSON_TO_OBJECT = "convertJsonToObject";
     private static final Logger log = Logger.getLogger(ComponentsUtils.class);
     private static final String PARTNER_NAME = "UNKNOWN";
-    private static final LoggerSdcAudit audit = new LoggerSdcAudit(DmaapConsumer.class);
     private final AuditingManager auditingManager;
     private final ResponseFormatManager responseFormatManager;
 
@@ -1012,27 +1004,6 @@ public class ComponentsUtils {
         }
     }
 
-    public void auditDistributionEngine(AuditingActionEnum action, String environmentName, DistributionTopicData distributionTopicData,
-                                        String status) {
-        auditDistributionEngine(action, environmentName, distributionTopicData, null, null, status);
-    }
-
-    public void auditDistributionEngine(AuditingActionEnum action, String environmentName, DistributionTopicData distributionTopicData, String role,
-                                        String apiKey, String status) {
-        AuditEventFactory factory = AuditDistributionEngineEventFactoryManager
-            .createDistributionEngineEventFactory(action, environmentName, distributionTopicData, role, apiKey, status);
-        getAuditingManager().auditEvent(factory);
-    }
-
-    public void auditEnvironmentEngine(AuditingActionEnum actionEnum, String environmentID, String environmentType, String action,
-                                       String environmentName, String tenantContext) {
-        AuditEventFactory factory = new AuditEcompOpEnvEventFactory(actionEnum, environmentID, environmentName, environmentType, action,
-            tenantContext);
-        audit.startAuditFetchLog(PARTNER_NAME, DmaapConsumer.class.getName());
-        audit.logEntry(LogLevel.INFO, Severity.OK, null, MarkerFactory.getMarker(ONAPLogConstants.Markers.ENTRY.getName()), environmentID);
-        getAuditingManager().auditEvent(factory, audit);
-    }
-
     public void auditDistributionNotification(String serviceUUID, String resourceName, String resourceType, String currVersion, User modifier,
                                               String environmentName, String currState, String topicName, String distributionId, String description,
                                               String status, String workloadContext, String tenant) {
@@ -1067,16 +1038,6 @@ public class ComponentsUtils {
     public void auditMissingInstanceIdAsDistributionEngineEvent(AuditingActionEnum actionEnum, String status) {
         AuditEventFactory factory = AuditDistributionEngineEventFactoryManager
             .createDistributionEngineEventFactory(actionEnum, "", DistributionTopicData.newBuilder().build(), null, null, status);
-        getAuditingManager().auditEvent(factory);
-    }
-
-    public void auditRegisterOrUnRegisterEvent(AuditingActionEnum action, String consumerId, String apiPublicKey, String envName, String status,
-                                               String distributionStatus, String notifTopicName, String statusTopicName) {
-        String appliedStatus = !StringUtils.isEmpty(status) ? status : distributionStatus;
-        AuditEventFactory factory = new AuditRegUnregDistributionEngineEventFactory(action,
-            CommonAuditData.newBuilder().requestId(ThreadLocalsHolder.getUuid()).status(appliedStatus).build(),
-            DistributionTopicData.newBuilder().statusTopic(statusTopicName).notificationTopic(notifTopicName).build(), consumerId, apiPublicKey,
-            envName);
         getAuditingManager().auditEvent(factory);
     }
 

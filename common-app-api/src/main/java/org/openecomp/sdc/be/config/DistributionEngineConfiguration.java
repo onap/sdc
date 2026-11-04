@@ -36,6 +36,8 @@ import java.util.Set;
 @Setter
 public class DistributionEngineConfiguration extends BasicConfiguration {
 
+    /** Ignored; kept until OOM stops rendering the key (YamlToObjectConverter rejects unknown keys). */
+    @Deprecated
     private List<String> uebServers;
     private String distributionNotifTopicName;
     private String distributionStatusTopicName;
@@ -44,19 +46,31 @@ public class DistributionEngineConfiguration extends BasicConfiguration {
     private Integer initMaxIntervalSec;
     private ComponentArtifactTypesConfig distribNotifServiceArtifactTypes;
     private ComponentArtifactTypesConfig distribNotifResourceArtifactTypes;
+    /** Ignored; kept until OOM stops rendering the key (YamlToObjectConverter rejects unknown keys). */
+    @Deprecated
     private String uebPublicKey;
+    /** Ignored; kept until OOM stops rendering the key (YamlToObjectConverter rejects unknown keys). */
+    @Deprecated
     private String uebSecretKey;
     private List<String> environments;
     private DistributionStatusTopicConfig distributionStatusTopic;
+    /** Ignored; kept until OOM stops rendering the key (YamlToObjectConverter rejects unknown keys). */
+    @Deprecated
     private CreateTopicConfig createTopic;
     private boolean startDistributionEngine;
     private DistributionNotificationTopicConfig distributionNotificationTopic;
     private Integer defaultArtifactInstallationTimeout = 60;
     private Integer currentArtifactInstallationTimeout = 120;
+    /** Ignored; kept until OOM stops rendering the key (YamlToObjectConverter rejects unknown keys). */
+    @Deprecated
     private boolean useHttpsWithDmaap;
+    /** Ignored; kept until OOM stops rendering the key (YamlToObjectConverter rejects unknown keys). */
+    @Deprecated
     private ExternalServiceConfig aaiConfig;
     private ExternalServiceConfig msoConfig;
     private Integer opEnvRecoveryIntervalSec;
+    /** Ignored; kept until OOM stops rendering the key (YamlToObjectConverter rejects unknown keys). */
+    @Deprecated
     private Integer allowedTimeBeforeStaleSec;
     private String distributionDeleteTopicName;
     private DistributionDeleteTopicConfig distributionDeleteTopic;
@@ -106,6 +120,8 @@ public class DistributionEngineConfiguration extends BasicConfiguration {
         private List<ArtifcatTypeEnum> lifecycle;
     }
 
+    /** Ignored; kept until OOM stops rendering the key (YamlToObjectConverter rejects unknown keys). */
+    @Deprecated
     @Getter
     @Setter
     @ToString
@@ -113,16 +129,6 @@ public class DistributionEngineConfiguration extends BasicConfiguration {
 
         private Integer partitionCount;
         private Integer replicationCount;
-
-    }
-
-    @Getter
-    @Setter
-    @ToString
-    public static class EnvironmentConfig {
-
-        private String name;
-        private List<String> uebServers;
 
     }
 

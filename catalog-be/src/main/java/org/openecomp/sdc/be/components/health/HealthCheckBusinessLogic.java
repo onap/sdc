@@ -53,7 +53,6 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.openecomp.sdc.be.catalog.impl.DmaapProducerHealth;
 import org.openecomp.sdc.be.components.distribution.engine.DistributionEngineClusterHealth;
-import org.openecomp.sdc.be.components.distribution.engine.DmaapHealth;
 import org.openecomp.sdc.be.components.impl.CassandraHealthCheck;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.Configuration;
@@ -94,8 +93,6 @@ public class HealthCheckBusinessLogic {
     private JanusGraphGenericDao janusGraphGenericDao;
     @Resource
     private DistributionEngineClusterHealth distributionEngineClusterHealth;
-    @Resource
-    private DmaapHealth dmaapHealth;
     @Resource
     private DmaapProducerHealth dmaapProducerHealth;
     @Resource
@@ -145,11 +142,6 @@ public class HealthCheckBusinessLogic {
     private List<HealthCheckInfo> getBeHealthCheckInfos() {
         log.trace("In getBeHealthCheckInfos");
         List<HealthCheckInfo> healthCheckInfos = new ArrayList<>();
-        //Dmaap
-        HealthCheckInfo info;
-        if ((info = getDmaapHealthCheck()) != null) {
-            healthCheckInfos.add(info);
-        }
         //DmaapProducer
         healthCheckInfos.add(getDmaapProducerHealthCheck());
         // BE
@@ -167,20 +159,8 @@ public class HealthCheckBusinessLogic {
         return healthCheckInfos;
     }
 
-    private HealthCheckInfo getDmaapHealthCheck() {
-        HealthCheckInfo healthCheckInfo = null;
-        if (ConfigurationManager.getConfigurationManager().getConfiguration().getDmaapConsumerConfiguration().isActive()) {
-            String appVersion = getAppVersion();
-            dmaapHealth.getHealthCheckInfo().setVersion(appVersion);
-            healthCheckInfo = dmaapHealth.getHealthCheckInfo();
-        } else {
-            log.debug("Dmaap health check disabled");
-        }
-        return healthCheckInfo;
-    }
-
     private HealthCheckInfo getDmaapProducerHealthCheck() {
-        if (ConfigurationManager.getConfigurationManager().getConfiguration().getDmaapConsumerConfiguration().isActive()) {
+        if (Boolean.TRUE.equals(ConfigurationManager.getConfigurationManager().getConfiguration().getDmaapProducerConfiguration().getActive())) {
             String appVersion = getAppVersion();
             dmaapProducerHealth.getHealthCheckInfo().setVersion(appVersion);
             return dmaapProducerHealth.getHealthCheckInfo();

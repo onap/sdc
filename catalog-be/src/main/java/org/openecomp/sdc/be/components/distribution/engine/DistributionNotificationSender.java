@@ -37,27 +37,15 @@ public class DistributionNotificationSender {
     private static final Logger logger = Logger.getLogger(DistributionNotificationSender.class.getName());
     @javax.annotation.Resource
     protected ComponentsUtils componentUtils;
-    private final CambriaHandler cambriaHandler = new CambriaHandler();
-
     private final KafkaHandler kafkaHandler = new KafkaHandler();
 
-//
     private final DistributionEngineConfiguration deConfiguration = ConfigurationManager.getConfigurationManager().getDistributionEngineConfiguration();
 
     public ActionStatus sendNotification(String topicName, String distributionId, EnvironmentMessageBusData messageBusData,
                                          INotificationData notificationData, Service service, User modifier) {
         long startTime = System.currentTimeMillis();
-        CambriaErrorResponse status;
-        if (Boolean.FALSE.equals(kafkaHandler.isKafkaActive())) {
-            status = cambriaHandler
-                .sendNotificationAndClose(topicName, messageBusData.getUebPublicKey(), messageBusData.getUebPrivateKey(),
-                    messageBusData.getDmaaPuebEndpoints(), notificationData,
-                    deConfiguration.getDistributionNotificationTopic().getMaxWaitingAfterSendingSeconds());
-        }
-        else{
-            status = kafkaHandler.sendNotification(topicName, notificationData,
-                deConfiguration.getDistributionNotificationTopic().getMaxWaitingAfterSendingSeconds());
-        }
+        CambriaErrorResponse status = kafkaHandler.sendNotification(topicName, notificationData,
+            deConfiguration.getDistributionNotificationTopic().getMaxWaitingAfterSendingSeconds());
         logger.info("After publishing service {} of version {}. Status is {}", service.getName(), service.getVersion(), status.getHttpCode());
         auditDistributionNotification(
             new AuditDistributionNotificationBuilder().setTopicName(topicName).setDistributionId(distributionId).setStatus(status).setService(service)

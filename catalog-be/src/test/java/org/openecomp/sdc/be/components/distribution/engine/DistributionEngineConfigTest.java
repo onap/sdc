@@ -22,16 +22,11 @@ package org.openecomp.sdc.be.components.distribution.engine;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.openecomp.sdc.be.components.kafka.KafkaHandler;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration.ComponentArtifactTypesConfig;
-import org.openecomp.sdc.be.config.DistributionEngineConfiguration.CreateTopicConfig;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration.DistributionStatusTopicConfig;
-import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 
@@ -41,17 +36,11 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.when;
 
 class DistributionEngineConfigTest {
 
-    @Mock
-    private KafkaHandler kafkaHandler;
-
     @BeforeEach
     public void setup() {
-        MockitoAnnotations.openMocks(this);
-
         ExternalConfiguration.setAppName("catalog-be");
         ExternalConfiguration.setConfigDir("src/test/resources/config");
         ExternalConfiguration.listenForChanges();
@@ -62,27 +51,12 @@ class DistributionEngineConfigTest {
     @Test
     void validateMissingEnvironments() {
 
-        when(kafkaHandler.isKafkaActive()).thenReturn(false);
-
         DistributionEngineConfiguration deConfiguration = new DistributionEngineConfiguration();
 
-        String uebPublicKey = "uebPublicKey";
-        String uebSecretKey = "uebSecretKey";
-
         DistributionEngine distributionEngine = new DistributionEngine();
-        distributionEngine.setKafkaHandler(kafkaHandler);
         List<String> environments = new ArrayList<>();
         environments.add("PROD");
         deConfiguration.setEnvironments(environments);
-
-        List<String> servers = new ArrayList<>();
-        servers.add("server1:80");
-        servers.add("server2:8080");
-
-        CreateTopicConfig createTopic = new CreateTopicConfig();
-        createTopic.setPartitionCount(1);
-        createTopic.setReplicationCount(1);
-        deConfiguration.setCreateTopic(createTopic);
 
         ComponentArtifactTypesConfig distribNotifResourceArtifactTypes = new ComponentArtifactTypesConfig();
         deConfiguration.setDistribNotifResourceArtifactTypes(distribNotifResourceArtifactTypes);
@@ -101,21 +75,10 @@ class DistributionEngineConfigTest {
         distributionStatusTopic.setPollingIntervalSec(20);
         deConfiguration.setDistributionStatusTopic(distributionStatusTopic);
 
-        deConfiguration.setUebServers(servers);
-        deConfiguration.setUebPublicKey(uebPublicKey);
-        deConfiguration.setUebSecretKey(uebSecretKey);
         deConfiguration.setInitMaxIntervalSec(8);
         deConfiguration.setInitRetryIntervalSec(3);
 
         boolean isValid = distributionEngine.validateConfiguration(deConfiguration);
-        assertTrue(isValid, "check empty configuration");
-
-        deConfiguration.setUebServers(null);
-        isValid = distributionEngine.validateConfiguration(deConfiguration);
-        assertFalse(isValid, "check empty configuration");
-
-        deConfiguration.setUebServers(servers);
-        isValid = distributionEngine.validateConfiguration(deConfiguration);
         assertTrue(isValid, "check empty configuration");
 
         deConfiguration.setEnvironments(null);
@@ -126,27 +89,11 @@ class DistributionEngineConfigTest {
         isValid = distributionEngine.validateConfiguration(deConfiguration);
         assertTrue(isValid, "check empty configuration");
 
-        deConfiguration.setUebPublicKey(null);
-        isValid = distributionEngine.validateConfiguration(deConfiguration);
-        assertFalse(isValid, "check empty configuration");
-
-        deConfiguration.setUebPublicKey(uebPublicKey);
-        isValid = distributionEngine.validateConfiguration(deConfiguration);
-        assertTrue(isValid, "check empty configuration");
-
-        deConfiguration.setUebSecretKey(null);
-        isValid = distributionEngine.validateConfiguration(deConfiguration);
-        assertFalse(isValid, "check empty configuration");
-
-        deConfiguration.setUebSecretKey(uebPublicKey);
-        isValid = distributionEngine.validateConfiguration(deConfiguration);
-        assertTrue(isValid, "check empty configuration");
-
         deConfiguration.setDistributionNotifTopicName(null);
         isValid = distributionEngine.validateConfiguration(deConfiguration);
         assertFalse(isValid, "check empty configuration");
 
-        deConfiguration.setDistributionNotifTopicName(uebPublicKey);
+        deConfiguration.setDistributionNotifTopicName("distributionNotifTopicName");
         isValid = distributionEngine.validateConfiguration(deConfiguration);
         assertTrue(isValid, "check empty configuration");
 
@@ -154,7 +101,7 @@ class DistributionEngineConfigTest {
         isValid = distributionEngine.validateConfiguration(deConfiguration);
         assertFalse(isValid, "check empty configuration");
 
-        deConfiguration.setDistributionStatusTopicName(uebPublicKey);
+        deConfiguration.setDistributionStatusTopicName("statusTopic");
         isValid = distributionEngine.validateConfiguration(deConfiguration);
         assertTrue(isValid, "check empty configuration");
 

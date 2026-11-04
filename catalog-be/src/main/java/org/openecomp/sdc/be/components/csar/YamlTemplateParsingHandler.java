@@ -62,10 +62,10 @@ import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.TOPOLOGY_TE
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.TYPE;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.VALID_SOURCE_TYPES;
 
-import com.att.aft.dme2.internal.gson.reflect.TypeToken;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import fj.data.Either;
 import java.lang.reflect.Type;
 import java.util.ArrayList;

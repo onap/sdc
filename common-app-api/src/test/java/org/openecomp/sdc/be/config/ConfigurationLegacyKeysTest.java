@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,20 +17,23 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+package org.openecomp.sdc.be.config;
 
-package com.att.nsa.cambria.client;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.openecomp.sdc.common.util.YamlToObjectConverter;
 
-public class CambriaConsumerTest {
-
-    private CambriaConsumer createTestSubject() {
-        return new CambriaConsumer();
-    }
+/**
+ * The resource is configuration.yaml as OOM renders it for sdc-be. Keep its DMaaP/UEB keys: they are what this test pins.
+ */
+class ConfigurationLegacyKeysTest {
 
     @Test
-    public void testCtor() throws Exception {
-        new CambriaConsumer();
+    void oomRenderedConfigWithDmaapKeysStillLoads() throws Exception {
+        Configuration configuration = new YamlToObjectConverter().convert(
+            "src/test/resources/config/legacy", Configuration.class, "configuration.yaml");
+        assertNotNull(configuration);
+        assertNotNull(configuration.getBeFqdn());
     }
-
 }

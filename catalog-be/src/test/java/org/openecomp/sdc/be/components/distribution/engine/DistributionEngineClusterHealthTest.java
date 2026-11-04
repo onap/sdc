@@ -22,17 +22,10 @@ package org.openecomp.sdc.be.components.distribution.engine;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 import mockit.Deencapsulation;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.components.BeConfDependentTest;
-import org.openecomp.sdc.be.components.distribution.engine.DistributionEngineClusterHealth.HealthCheckScheduledTask;
-import org.openecomp.sdc.be.components.kafka.KafkaHandler;
-import org.openecomp.sdc.common.api.HealthCheckInfo;
 import org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus;
 
 class DistributionEngineClusterHealthTest extends BeConfDependentTest {
@@ -50,117 +43,6 @@ class DistributionEngineClusterHealthTest extends BeConfDependentTest {
     }
 
     @Test
-    void testDestroy() throws Exception {
-        DistributionEngineClusterHealth testSubject;
-
-        // default test
-        testSubject = createTestSubject();
-        Deencapsulation.invoke(testSubject, "destroy");
-    }
-
-    @Test
-    void testStartHealthCheckTask() throws Exception {
-        DistributionEngineClusterHealth testSubject;
-        Map<String, AtomicBoolean> envNamePerStatus = null;
-        boolean startTask = false;
-
-        // default test
-        testSubject = createTestSubject();
-        testSubject.startHealthCheckTask(envNamePerStatus, startTask);
-    }
-
-    @Test
-    void testStartHealthCheckTask_1() {
-        final DistributionEngineClusterHealth distributionEngineClusterHealth = new DistributionEngineClusterHealth();
-        final Map<String, AtomicBoolean> envNamePerStatus = new HashMap<>();
-        distributionEngineClusterHealth.init("myKey");
-        distributionEngineClusterHealth.startHealthCheckTask(envNamePerStatus);
-    }
-
-    @Test
-    void testHealthCheckScheduledTask() throws Exception {
-        DistributionEngineClusterHealth testSubject;
-        Map<String, AtomicBoolean> envNamePerStatus = new HashMap<>();
-
-        // default test
-        testSubject = createTestSubject();
-        HealthCheckScheduledTask healthCheckScheduledTask = testSubject.new HealthCheckScheduledTask(new LinkedList<>());
-        LinkedList<UebHealthCheckCall> healthCheckCalls = new LinkedList<>();
-        UebHealthCheckCall hcc = new UebHealthCheckCall("mock", "mock");
-        healthCheckCalls.add(hcc);
-        healthCheckScheduledTask.healthCheckCalls = healthCheckCalls;
-
-        Deencapsulation.invoke(healthCheckScheduledTask, "queryUeb");
-    }
-
-    @Test
-    void testHealthCheckScheduledTaskRun() throws Exception {
-        DistributionEngineClusterHealth testSubject;
-        Map<String, AtomicBoolean> envNamePerStatus = new HashMap<>();
-        envNamePerStatus.put("mock", new AtomicBoolean(true));
-        // default test
-        testSubject = createTestSubject();
-        testSubject.startHealthCheckTask(envNamePerStatus, false);
-        HealthCheckScheduledTask healthCheckScheduledTask = testSubject.new HealthCheckScheduledTask(new LinkedList<>());
-        LinkedList<UebHealthCheckCall> healthCheckCalls = new LinkedList<>();
-        UebHealthCheckCall hcc = new UebHealthCheckCall("mock", "mock");
-        healthCheckCalls.add(hcc);
-        healthCheckScheduledTask.healthCheckCalls = healthCheckCalls;
-
-        Deencapsulation.invoke(healthCheckScheduledTask, "run");
-    }
-
-    @Test
-    void testHealthCheckScheduledTaskRun_2() throws Exception {
-        DistributionEngineClusterHealth testSubject;
-        Map<String, AtomicBoolean> envNamePerStatus = new HashMap<>();
-        envNamePerStatus.put("mock", new AtomicBoolean(false));
-        // default test
-        testSubject = createTestSubject();
-        testSubject.startHealthCheckTask(envNamePerStatus, false);
-        HealthCheckScheduledTask healthCheckScheduledTask = testSubject.new HealthCheckScheduledTask(new LinkedList<>());
-        LinkedList<UebHealthCheckCall> healthCheckCalls = new LinkedList<>();
-        UebHealthCheckCall hcc = new UebHealthCheckCall("mock", "mock");
-        healthCheckCalls.add(hcc);
-        healthCheckScheduledTask.healthCheckCalls = healthCheckCalls;
-
-        Deencapsulation.invoke(healthCheckScheduledTask, "run");
-    }
-
-    @Test
-    void testHealthCheckScheduledTaskDoesNotForceUpWhenKafkaActive() {
-        Map<String, AtomicBoolean> envNamePerStatus = new HashMap<>();
-        envNamePerStatus.put("mock", new AtomicBoolean(true));
-        DistributionEngineClusterHealth testSubject = createTestSubject();
-        testSubject.setKafkaActive(true);
-        testSubject.startHealthCheckTask(envNamePerStatus, false);
-        HealthCheckScheduledTask healthCheckScheduledTask = testSubject.new HealthCheckScheduledTask(new LinkedList<>());
-
-        Deencapsulation.invoke(healthCheckScheduledTask, "run");
-
-        assertEquals(HealthCheckStatus.UNKNOWN, testSubject.getHealthCheckInfo().getHealthCheckStatus());
-    }
-
-    @Test
-    void testKafkaFlagMatchesKafkaHandler() {
-        boolean healthKafkaActive = Deencapsulation.getField(createTestSubject(), "isKafkaActive");
-        assertEquals(new KafkaHandler().isKafkaActive(), healthKafkaActive);
-    }
-
-    @Test
-    void testHealthCheckScheduledTaskRunWithKafkaActiveEnvDown() throws Exception {
-        DistributionEngineClusterHealth testSubject;
-        Map<String, AtomicBoolean> envNamePerStatus = new HashMap<>();
-        envNamePerStatus.put("mock", new AtomicBoolean(false));
-        // When Kafka is active but env is down, health check should not report UP
-        testSubject = createTestSubject();
-        testSubject.setKafkaActive(true);
-        testSubject.startHealthCheckTask(envNamePerStatus, false);
-        HealthCheckScheduledTask healthCheckScheduledTask = testSubject.new HealthCheckScheduledTask(new LinkedList<>());
-        Deencapsulation.invoke(healthCheckScheduledTask, "run");
-    }
-
-    @Test
     void testLogAlarm() throws Exception {
         DistributionEngineClusterHealth testSubject;
         boolean lastHealthState = false;
@@ -171,39 +53,38 @@ class DistributionEngineClusterHealthTest extends BeConfDependentTest {
     }
 
     @Test
-    void testGetHealthCheckInfo() throws Exception {
-        DistributionEngineClusterHealth testSubject;
-        HealthCheckInfo result;
-
-        // default test
-        testSubject = createTestSubject();
-        result = testSubject.getHealthCheckInfo();
+    void testGetHealthCheckInfoIsUnknownUntilReported() {
+        assertEquals(HealthCheckStatus.UNKNOWN, createTestSubject().getHealthCheckInfo().getHealthCheckStatus());
     }
 
     @Test
-    void testSetHealthCheckUebIsDisabled() throws Exception {
-        DistributionEngineClusterHealth testSubject;
-
-        // default test
-        testSubject = createTestSubject();
+    void testSetHealthCheckUebIsDisabled() {
+        DistributionEngineClusterHealth testSubject = createTestSubject();
         testSubject.setHealthCheckUebIsDisabled();
+        assertEquals(HealthCheckStatus.DOWN, testSubject.getHealthCheckInfo().getHealthCheckStatus());
     }
 
     @Test
-    void testSetHealthCheckUebConfigurationError() throws Exception {
-        DistributionEngineClusterHealth testSubject;
-
-        // default test
-        testSubject = createTestSubject();
+    void testSetHealthCheckUebConfigurationError() {
+        DistributionEngineClusterHealth testSubject = createTestSubject();
         testSubject.setHealthCheckUebConfigurationError();
+        assertEquals(HealthCheckStatus.DOWN, testSubject.getHealthCheckInfo().getHealthCheckStatus());
     }
 
     @Test
-    void testSetHealthCheckOkAndReportInCaseLastStateIsDown() throws Exception {
-        DistributionEngineClusterHealth testSubject;
-
-        // default test
-        testSubject = createTestSubject();
+    void testSetHealthCheckOkAndReportInCaseLastStateIsDown() {
+        DistributionEngineClusterHealth testSubject = createTestSubject();
         testSubject.setHealthCheckOkAndReportInCaseLastStateIsDown();
+        assertEquals(HealthCheckStatus.UP, testSubject.getHealthCheckInfo().getHealthCheckStatus());
+    }
+
+    @Test
+    void testSetHealthCheckUnavailableAfterOk() {
+        DistributionEngineClusterHealth testSubject = createTestSubject();
+        testSubject.setHealthCheckOkAndReportInCaseLastStateIsDown();
+        testSubject.setHealthCheckUnavailableAndReportInCaseLastStateIsUp();
+        assertEquals(HealthCheckStatus.DOWN, testSubject.getHealthCheckInfo().getHealthCheckStatus());
+        testSubject.setHealthCheckOkAndReportInCaseLastStateIsDown();
+        assertEquals(HealthCheckStatus.UP, testSubject.getHealthCheckInfo().getHealthCheckStatus());
     }
 }

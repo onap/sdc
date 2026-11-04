@@ -46,7 +46,7 @@ public class SdcKafkaConsumer {
      */
     public SdcKafkaConsumer(DistributionEngineConfiguration deConfiguration){
         log.info("Create SdcKafkaConsumer via constructor");
-        KafkaCommonConfig kafkaCommonConfig = new KafkaCommonConfig(deConfiguration);
+        KafkaCommonConfig kafkaCommonConfig = new KafkaCommonConfig(deConfiguration, System.getenv());
         Properties properties = kafkaCommonConfig.getConsumerProperties();
         this.deConfiguration = deConfiguration;
         kafkaConsumer = new KafkaConsumer<>(properties);

@@ -55,7 +55,6 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -69,7 +68,6 @@ import org.openecomp.sdc.be.catalog.enums.ChangeTypeEnum;
 import org.openecomp.sdc.be.components.distribution.engine.IDistributionEngine;
 import org.openecomp.sdc.be.components.distribution.engine.INotificationData;
 import org.openecomp.sdc.be.components.distribution.engine.VfModuleArtifactPayload;
-import org.openecomp.sdc.be.components.health.HealthCheckBusinessLogic;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
@@ -116,7 +114,6 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.externalapi.servlet.representation.ServiceDistributionReqInfo;
 import org.openecomp.sdc.be.impl.ForwardingPathUtils;
-import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.Component;
@@ -176,7 +173,6 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.context.WebApplicationContext;
 
 @org.springframework.stereotype.Component("serviceBusinessLogic")
 public class ServiceBusinessLogic extends ComponentBusinessLogic {
@@ -1761,17 +1757,6 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             log.trace("Update environment name to be {} instead of {}", configuredEnvName, envName);
             envName = configuredEnvName;
         }
-        if (!kafkaHandler.isKafkaActive()) {
-            // DE194021
-            ServletContext servletContext = request.getSession().getServletContext();
-            boolean isDistributionEngineUp = getHealthCheckBL(servletContext).isDistributionEngineUp(); // DE
-            if (!isDistributionEngineUp) {
-                BeEcompErrorManager.getInstance().logBeSystemError("Distribution Engine is DOWN");
-                log.debug("Distribution Engine is DOWN");
-                response = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
-                return Either.right(response);
-            }
-        }
         Either<Service, StorageOperationStatus> serviceRes = toscaOperationFacade.getToscaElement(serviceId);
         if (serviceRes.isRight()) {
             log.debug("failed retrieving service");
@@ -2100,13 +2085,6 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     @Override
     public Either<List<String>, ResponseFormat> deleteMarkedComponents() {
         return deleteMarkedComponents(ComponentTypeEnum.SERVICE);
-    }
-
-    private HealthCheckBusinessLogic getHealthCheckBL(ServletContext context) {
-        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context
-            .getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
-        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-        return webApplicationContext.getBean(HealthCheckBusinessLogic.class);
     }
 
     @Override

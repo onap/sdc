@@ -84,7 +84,11 @@ public class Configuration extends BasicConfiguration {
     private Long janusGraphReconnectIntervalInSeconds;
     private List<String> healthStatusExclude;
     private Long janusGraphHealthCheckReadTimeout;
+    /** Ignored; kept until OOM stops rendering the key (YamlToObjectConverter rejects unknown keys). */
+    @Deprecated
     private Long uebHealthCheckReconnectIntervalInSeconds;
+    /** Ignored; kept until OOM stops rendering the key (YamlToObjectConverter rejects unknown keys). */
+    @Deprecated
     private Long uebHealthCheckReadTimeout;
     private List<Map<String, Map<String, String>>> defaultImports;
     private List<String> globalCsarImports;
@@ -132,10 +136,14 @@ public class Configuration extends BasicConfiguration {
     private String autoHealingOwner;
     private boolean enableAutoHealing;
     private Map<String, List<String>> resourcesForUpgrade;
+    /** Ignored; kept until OOM stops rendering the key (YamlToObjectConverter rejects unknown keys). */
+    @Deprecated
     private DmaapConsumerConfiguration dmaapConsumerConfiguration;
     private DmaapProducerConfiguration dmaapProducerConfiguration;
     private boolean skipUpgradeFailedVfs;
     private boolean skipUpgradeVSPs;
+    /** Ignored; kept until OOM stops rendering the key (YamlToObjectConverter rejects unknown keys). */
+    @Deprecated
     private DmeConfiguration dmeConfiguration;
     private boolean supportAllottedResourcesAndProxy;
     private Integer deleteLockTimeoutInSeconds;

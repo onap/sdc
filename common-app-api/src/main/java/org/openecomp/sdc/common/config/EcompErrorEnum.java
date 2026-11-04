@@ -24,7 +24,6 @@ import lombok.Getter;
 @Getter
 public enum EcompErrorEnum {
     // @formatter:off
-    BeUebAuthenticationError(EcompErrorCode.E_100, ErrorType.AUTHENTICATION_PROBLEM, AlarmSeverity.MAJOR, EcompClassification.ERROR),
     DmaapHealthCheckError(EcompErrorCode.E_214, ErrorType.CONNECTION_PROBLEM, AlarmSeverity.MAJOR, EcompClassification.ERROR),
     SessionExpiredAuthenticationError(EcompErrorCode.E_220, ErrorType.AUTHENTICATION_PROBLEM, AlarmSeverity.MAJOR, EcompClassification.ERROR),
     InternalAuthenticationInfo(EcompErrorCode.E_199, ErrorType.AUTHENTICATION_PROBLEM, AlarmSeverity.INFORMATIONAL, EcompClassification.INFORMATION),
@@ -40,8 +39,6 @@ public enum EcompErrorEnum {
     BeHealthCheckJanusGraphError(EcompErrorCode.E_201, ErrorType.SYSTEM_ERROR, AlarmSeverity.CRITICAL, EcompClassification.ERROR, BeHealthCheckJanusGraphRecovery),
     BeHealthCheckUebClusterError(EcompErrorCode.E_203, ErrorType.SYSTEM_ERROR, AlarmSeverity.CRITICAL, EcompClassification.ERROR, BeHealthCheckUebClusterRecovery),
     FeHealthCheckError(EcompErrorCode.E_204, ErrorType.SYSTEM_ERROR, AlarmSeverity.CRITICAL, EcompClassification.ERROR, FeHealthCheckRecovery),
-    BeUebConnectionError(EcompErrorCode.E_210, ErrorType.CONNECTION_PROBLEM, AlarmSeverity.MAJOR, EcompClassification.ERROR),
-    BeUebUnkownHostError(EcompErrorCode.E_211, ErrorType.CONNECTION_PROBLEM, AlarmSeverity.MAJOR, EcompClassification.ERROR),
     FqdnResolveError(EcompErrorCode.E_212, ErrorType.CONNECTION_PROBLEM, AlarmSeverity.MAJOR, EcompClassification.ERROR),
     SiteSwitchoverInfo(EcompErrorCode.E_213, ErrorType.RECOVERY, AlarmSeverity.INFORMATIONAL, EcompClassification.INFORMATION),
     InternalConnectionInfo(EcompErrorCode.E_299, ErrorType.CONNECTION_PROBLEM, AlarmSeverity.INFORMATIONAL, EcompClassification.INFORMATION),
@@ -51,7 +48,6 @@ public enum EcompErrorEnum {
     BeComponentMissingError(EcompErrorCode.E_300, ErrorType.SYSTEM_ERROR, AlarmSeverity.MAJOR, EcompClassification.ERROR),
     BeIncorrectComponentError(EcompErrorCode.E_301, ErrorType.SYSTEM_ERROR, AlarmSeverity.MAJOR, EcompClassification.ERROR),
     BeInvalidConfigurationError(EcompErrorCode.E_302, ErrorType.CONFIG_ERROR, AlarmSeverity.MAJOR, EcompClassification.FATAL),
-    BeUebObjectNotFoundError(EcompErrorCode.E_303, ErrorType.DATA_ERROR, AlarmSeverity.MAJOR, EcompClassification.ERROR),
     BeDistributionEngineInvalidArtifactType(EcompErrorCode.E_304, ErrorType.DATA_ERROR, AlarmSeverity.MAJOR, EcompClassification.WARNING),
     BeMissingConfigurationError(EcompErrorCode.E_305, ErrorType.CONFIG_ERROR, AlarmSeverity.MAJOR, EcompClassification.FATAL),
     BeConfigurationInvalidListSizeError(EcompErrorCode.E_306, ErrorType.CONFIG_ERROR, AlarmSeverity.MAJOR, EcompClassification.FATAL),

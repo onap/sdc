@@ -19,11 +19,10 @@
  */
 package org.openecomp.sdc.be.components.kafka;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import fj.data.Either;
-import lombok.Getter;
-import lombok.Setter;
 import org.apache.http.HttpStatus;
 import org.apache.kafka.common.KafkaException;
 import org.openecomp.sdc.be.components.distribution.engine.CambriaErrorResponse;
@@ -48,34 +47,20 @@ public class KafkaHandler {
 
     private SdcKafkaProducer sdcKafkaProducer;
 
-    @Setter
-    private boolean isKafkaActive;
-
     private DistributionEngineConfiguration deConfiguration;
 
-    public KafkaHandler(SdcKafkaConsumer sdcKafkaConsumer, SdcKafkaProducer sdcKafkaProducer, boolean isKafkaActive) {
+    public KafkaHandler(SdcKafkaConsumer sdcKafkaConsumer, SdcKafkaProducer sdcKafkaProducer) {
         this.sdcKafkaConsumer = sdcKafkaConsumer;
         this.sdcKafkaProducer = sdcKafkaProducer;
-        this.isKafkaActive = isKafkaActive;
     }
 
     public KafkaHandler() {
-        isKafkaActive = isKafkaConfigured();
-        deConfiguration = ConfigurationManager.getConfigurationManager().getDistributionEngineConfiguration();
+        this(ConfigurationManager.getConfigurationManager().getDistributionEngineConfiguration());
     }
 
-    /**
-     * @return whether the deployment selected Kafka instead of DMaaP via the USE_KAFKA environment variable
-     */
-    public static boolean isKafkaConfigured() {
-        return Boolean.parseBoolean(System.getenv().getOrDefault("USE_KAFKA", "false"));
-    }
-
-    /**
-     * @return a user configuration whether Kafka is active for this client
-     */
-    public Boolean isKafkaActive() {
-        return isKafkaActive;
+    @VisibleForTesting
+    KafkaHandler(DistributionEngineConfiguration deConfiguration) {
+        this.deConfiguration = deConfiguration;
     }
 
     /**
@@ -110,10 +95,10 @@ public class KafkaHandler {
      * @return CambriaErrorResponse a status response on success or any errors thrown
      */
     public CambriaErrorResponse sendNotification(String topicName, INotificationData data, long timeoutSeconds) {
-        if (sdcKafkaProducer == null) {
-            sdcKafkaProducer = new SdcKafkaProducer(deConfiguration);
-        }
         try {
+            if (sdcKafkaProducer == null) {
+                sdcKafkaProducer = new SdcKafkaProducer(deConfiguration);
+            }
             String json = gson.toJson(data);
             log.info("Before sending to topic {}", topicName);
             sdcKafkaProducer.send(json, topicName, timeoutSeconds);

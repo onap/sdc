@@ -46,7 +46,7 @@ public class SdcKafkaProducer {
      */
     public SdcKafkaProducer(DistributionEngineConfiguration deConfiguration) {
         log.info("Create SdcKafkaProducer via constructor");
-        KafkaCommonConfig kafkaCommonConfig = new KafkaCommonConfig(deConfiguration);
+        KafkaCommonConfig kafkaCommonConfig = new KafkaCommonConfig(deConfiguration, System.getenv());
         Properties properties = kafkaCommonConfig.getProducerProperties();
         kafkaProducer = new KafkaProducer<>(properties);
     }

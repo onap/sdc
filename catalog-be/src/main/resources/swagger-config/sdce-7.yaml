@@ -2,10 +2,7 @@ resourcePackages:
 - org.openecomp.sdc.be.externalapi.servlet
 - org.openecomp.sdc.be.distribution.servlet
 ignoredRoutes:
-- /v1/distributionUebCluster
-- /v1/registerForDistribution
 - /v1/artifactTypes
-- /v1/unRegisterForDistribution
 prettyPrint: true
 sortOutput: true
 openAPI:

@@ -125,14 +125,6 @@
         </exclusion>
 
         <exclusion>
-          <groupId>com.att.nsa</groupId>
-          <artifactId>cambriaClient</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.att.nsa</groupId>
-          <artifactId>dmaapClient</artifactId>
-        </exclusion>
-        <exclusion>
           <artifactId>slf4j-log4j12</artifactId>
           <groupId>org.slf4j</groupId>
         </exclusion>

@@ -66,9 +66,6 @@ janusGraphReconnectIntervalInSeconds: 3
 # The read timeout towards Janus Graph DB when health check is invoked:
 janusGraphHealthCheckReadTimeout: 1
 
-uebHealthCheckReconnectIntervalInSeconds: 15
-uebHealthCheckReadTimeout: 4
-
 # Protocols
 protocols:
    - http
@@ -802,39 +799,6 @@ gabConfig:
         path: "pmMetaData.pmFields.iMeasInfoId"
         searchable: false
 
-#Tenant isolation consumer
-dmaapConsumerConfiguration:
-    active: true
-    hosts: olsd004.wnsnet.ws.com:3905
-    consumerGroup: asdc
-    consumerId: mama #mama - in Order To Consume Remove This String And Replace It With -> mama
-    timeoutMs: 15000
-    limit: 1
-    pollingInterval: 2
-    topic: com.sdc.23911-SDCforTestDev-v001
-    latitude: 32.109333
-    longitude: 34.855499
-    version: 1.0
-    serviceName: dmaap-v1.dev.dmaap.dt.saat.acsi.com/events
-    environment: TEST
-    partner: BOT_R
-    routeOffer: MR1
-    protocol: https
-    contenttype: application/json
-    dme2TraceOn: true
-    aftEnvironment: AFTUAT
-    aftDme2ConnectionTimeoutMs: 15000
-    aftDme2RoundtripTimeoutMs: 240000
-    aftDme2ReadTimeoutMs: 50000
-    dme2preferredRouterFilePath: DME2preferredRouter.txt
-    timeLimitForNotificationHandleMs: 120000
-    credential:
-        username: sdc@sdc.com
-        password: XyCUPhFx9u70aklYGo6OiA==
-    aftDme2SslEnable: true
-    aftDme2ClientIgnoreSslConfig: false
-    aftDme2ClientSslCertAlias: certman
-
 #Performence microservice dmaap producer
 dmaapProducerConfiguration:
     active: false
@@ -868,9 +832,6 @@ dmaapProducerConfiguration:
     aftDme2ClientSslCertAlias: certman
 
 
-
-dmeConfiguration:
-    lookupUriFormat: "http://DME2RESOLVE/service=%s/version=1.0.0/envContext=%s/routeOffer=DEFAULT"
 
 excludedPolicyTypesMapping:
    # VF:

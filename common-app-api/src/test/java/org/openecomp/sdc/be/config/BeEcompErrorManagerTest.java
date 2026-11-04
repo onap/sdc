@@ -53,17 +53,6 @@ public class BeEcompErrorManagerTest {
 		result = testSubject.getConfigurationManager();
 	}
 
-	
-	@Test
-	public void testLogBeUebAuthenticationError() throws Exception {
-		BeEcompErrorManager testSubject;
-		String context = "";
-		String reason = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.logBeUebAuthenticationError(context, reason);
-	}
 
 	
 	@Test
@@ -151,29 +140,7 @@ public class BeEcompErrorManagerTest {
 		testSubject.logFeHealthCheckError(context);
 	}
 
-	
-	@Test
-	public void testLogBeUebConnectionError() throws Exception {
-		BeEcompErrorManager testSubject;
-		String context = "";
-		String reason = "";
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.logBeUebConnectionError(context, reason);
-	}
-
-	
-	@Test
-	public void testLogBeUebUnkownHostError() throws Exception {
-		BeEcompErrorManager testSubject;
-		String context = "";
-		String host = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.logBeUebUnkownHostError(context, host);
-	}
 
 	
 	@Test
@@ -214,17 +181,6 @@ public class BeEcompErrorManagerTest {
 		testSubject.logBeInvalidConfigurationError(context, parameterName, parameterValue);
 	}
 
-	
-	@Test
-	public void testLogBeUebObjectNotFoundError() throws Exception {
-		BeEcompErrorManager testSubject;
-		String context = "";
-		String notFoundObjectName = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.logBeUebObjectNotFoundError(context, notFoundObjectName);
-	}
 
 	
 	@Test

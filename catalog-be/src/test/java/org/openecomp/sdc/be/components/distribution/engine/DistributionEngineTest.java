@@ -27,32 +27,33 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.openecomp.sdc.be.components.kafka.KafkaHandler;
 import org.openecomp.sdc.be.components.utils.OperationalEnvironmentBuilder;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datatypes.enums.EnvironmentStatusEnum;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
 import org.openecomp.sdc.common.util.ThreadLocalsHolder;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -71,8 +72,6 @@ public class DistributionEngineTest {
 
     @Mock
     private EnvironmentsEngine environmentsEngine;
-    @Mock
-    private KafkaHandler kafkaHandler;
     @Mock
     private DistributionNotificationSender distributionNotificationSender;
     @Mock
@@ -140,7 +139,6 @@ public class DistributionEngineTest {
 
     @Test
     void notifyService_kafkaPublishFailureMarksHealthDown() {
-        when(kafkaHandler.isKafkaActive()).thenReturn(true);
         when(environmentsEngine.getEnvironmentById(ENV_ID)).thenReturn(envs.get(ENV_ID));
         when(distributionEngineConfigurationMock.getConfigurationMock().getDistributionNotifTopicName()).thenReturn("topic");
         when(distributionNotificationSender.sendNotification(eq("topic-ENVID"), eq(DISTRIBUTION_ID), any(EnvironmentMessageBusData.class),
@@ -156,7 +154,6 @@ public class DistributionEngineTest {
 
     @Test
     void notifyService_kafkaPublishSuccessMarksHealthUp() {
-        when(kafkaHandler.isKafkaActive()).thenReturn(true);
         when(environmentsEngine.getEnvironmentById(ENV_ID)).thenReturn(envs.get(ENV_ID));
         when(distributionEngineConfigurationMock.getConfigurationMock().getDistributionNotifTopicName()).thenReturn("topic");
         when(distributionNotificationSender.sendNotification(eq("topic-ENVID"), eq(DISTRIBUTION_ID), any(EnvironmentMessageBusData.class),
@@ -169,11 +166,51 @@ public class DistributionEngineTest {
         verify(distributionEngineClusterHealth, never()).setHealthCheckUnavailableAndReportInCaseLastStateIsUp();
     }
 
+    @Test
+    void notifyServiceSendsForTheConfiguredEnvironmentWithoutUebAddresses() {
+        when(environmentsEngine.getEnvironmentById(ENV_ID)).thenReturn(configuredEnvironment());
+        when(distributionEngineConfigurationMock.getConfigurationMock().getDistributionNotifTopicName()).thenReturn("topic");
+        when(distributionNotificationSender.sendNotification(eq("topic-ENVID"), eq(DISTRIBUTION_ID), any(EnvironmentMessageBusData.class),
+                any(NotificationDataImpl.class), any(Service.class), any(User.class)))
+                .thenReturn(ActionStatus.OK);
+
+        ActionStatus actionStatus = testInstance.notifyService(DISTRIBUTION_ID, new Service(), new NotificationDataImpl(), ENV_ID, modifier);
+
+        assertEquals(ActionStatus.OK, actionStatus);
+        verify(distributionNotificationSender).sendNotification(eq("topic-ENVID"), eq(DISTRIBUTION_ID), any(EnvironmentMessageBusData.class),
+                any(NotificationDataImpl.class), any(Service.class), any(User.class));
+    }
+
+    @Test
+    void notifyServiceForDeleteSendsForTheConfiguredEnvironmentWithoutUebAddresses() {
+        INotificationData notificationData = new NotificationDataImpl();
+        when(environmentsEngine.getEnvironmentById(ENV_ID)).thenReturn(configuredEnvironment());
+        when(distributionEngineConfigurationMock.getConfigurationMock().getDistributionDeleteTopicName()).thenReturn(DELETE_TOPIC);
+        String expectedTopicName = DistributionTopics.buildTopicName(DELETE_TOPIC, ENV_ID);
+        when(distributionDeleteNotificationSender.sendNotificationForDeleteService(eq(expectedTopicName), eq(DISTRIBUTION_ID),
+                any(EnvironmentMessageBusData.class), eq(notificationData))).thenReturn(ActionStatus.OK);
+
+        ActionStatus actionStatus = testInstance.notifyServiceForDelete(DISTRIBUTION_ID, notificationData, new Service(), ENV_ID, modifier);
+
+        assertEquals(ActionStatus.OK, actionStatus);
+        verify(distributionDeleteNotificationSender).sendNotificationForDeleteService(eq(expectedTopicName), eq(DISTRIBUTION_ID),
+                any(EnvironmentMessageBusData.class), eq(notificationData));
+    }
+
+    /**
+     * Shaped like EnvironmentsEngine's entry for the configured environment: no UEB addresses or keys.
+     */
+    private static OperationalEnvironmentEntry configuredEnvironment() {
+        OperationalEnvironmentEntry entry = new OperationalEnvironmentEntry();
+        entry.setEnvironmentId(ENV_ID);
+        entry.setIsProduction(true);
+        entry.setStatus(EnvironmentStatusEnum.COMPLETED);
+        return entry;
+    }
+
     private Map<String, OperationalEnvironmentEntry> getEnvs(String... environmentIds) {
-        Set<String> uebAddress = new HashSet<>();
-        uebAddress.add("someAddress");
         return Stream.of(environmentIds)
-                .map(id -> new OperationalEnvironmentBuilder().setEnvId(id).setDmaapUebAddress(uebAddress).build())
+                .map(id -> new OperationalEnvironmentBuilder().setEnvId(id).build())
                 .collect(Collectors.toMap(OperationalEnvironmentEntry::getEnvironmentId, Function.identity()));
     }
 
@@ -200,45 +237,58 @@ public class DistributionEngineTest {
     }
 
     @Test
-    void testValidateConfiguration() throws Exception {
-        when(kafkaHandler.isKafkaActive()).thenReturn(false);
+    void initStartsOneStatusConsumerPerEnvironmentAndMarksItReady() {
+        DistributionEngineConfiguration configuration = distributionEngineConfigurationMock.getConfigurationMock();
+        stubValidKafkaOnlyConfig(configuration);
+        when(configuration.isStartDistributionEngine()).thenReturn(true);
+        when(configuration.getEnvironments()).thenReturn(List.of("AUTO", "PROD_TEST"));
+        DistributionEnginePollingTask pollingTask = mock(DistributionEnginePollingTask.class);
+        DistributionEngine distributionEngine = spy(testInstance);
+        doReturn(pollingTask).when(distributionEngine).createPollingTask(configuration);
 
-        DistributionEngine testSubject;
-		DistributionEngineConfiguration deConfiguration = new DistributionEngineConfiguration();
-		deConfiguration.setDistributionStatusTopic((new DistributionEngineConfiguration.DistributionStatusTopicConfig()));
-		boolean result;
+        distributionEngine.init();
 
-		// default test
-		testSubject = createTestSubject();
-        testSubject.setKafkaHandler(kafkaHandler);
-		result = Deencapsulation.invoke(testSubject, "validateConfiguration", deConfiguration);
+        assertEquals(StorageOperationStatus.OK, distributionEngine.isReadyForDistribution("AUTO"));
+        assertEquals(StorageOperationStatus.OK, distributionEngine.isReadyForDistribution("PROD_TEST"));
+        assertTrue(distributionEngine.isActive());
+        verify(pollingTask).startTask("status-AUTO");
+        verify(pollingTask).startTask("status-PROD_TEST");
     }
 
     @Test
-    void testIsValidServers() throws Exception {
-        DistributionEngine testSubject;
-        List<String> uebServers = null;
-        String methodName = "";
-        String paramName = "";
-        boolean result;
-
-        // test 1
-        testSubject = createTestSubject();
-        uebServers = null;
-        result = Deencapsulation.invoke(testSubject, "isValidServers",
-                new Object[]{List.class, methodName, paramName});
-        assertEquals(false, result);
+    void validateConfigurationNoLongerRequiresUebSettings() {
+        DistributionEngineConfiguration de = validKafkaOnlyConfig();
+        assertTrue(testInstance.validateConfiguration(de));
     }
 
-    @Test
-    void testIsValidFqdn() throws Exception {
-        DistributionEngine testSubject;
-        String serverFqdn = "";
-        boolean result;
+    private static DistributionEngineConfiguration validKafkaOnlyConfig() {
+        DistributionEngineConfiguration de = new DistributionEngineConfiguration();
+        de.setEnvironments(List.of("AUTO"));
+        de.setDistributionNotifTopicName("notif");
+        de.setDistributionStatusTopicName("status");
+        de.setDistributionDeleteTopicName("delete");
+        de.setInitMaxIntervalSec(8);
+        de.setInitRetryIntervalSec(4);
+        de.setDistributionStatusTopic(statusTopic());
+        return de;
+    }
 
-        // default test
-        testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "isValidFqdn", new Object[]{serverFqdn});
+    private static void stubValidKafkaOnlyConfig(DistributionEngineConfiguration configuration) {
+        when(configuration.getDistributionNotifTopicName()).thenReturn("notif");
+        when(configuration.getDistributionStatusTopicName()).thenReturn("status");
+        when(configuration.getDistributionDeleteTopicName()).thenReturn("delete");
+        when(configuration.getInitMaxIntervalSec()).thenReturn(8);
+        when(configuration.getInitRetryIntervalSec()).thenReturn(4);
+        when(configuration.getDistributionStatusTopic()).thenReturn(statusTopic());
+    }
+
+    private static DistributionEngineConfiguration.DistributionStatusTopicConfig statusTopic() {
+        DistributionEngineConfiguration.DistributionStatusTopicConfig statusTopic = new DistributionEngineConfiguration.DistributionStatusTopicConfig();
+        statusTopic.setConsumerId("sdc-id");
+        statusTopic.setConsumerGroup("sdc");
+        statusTopic.setFetchTimeSec(15);
+        statusTopic.setPollingIntervalSec(1);
+        return statusTopic;
     }
 
     @Test
@@ -420,7 +470,7 @@ public class DistributionEngineTest {
         when(distributionEngineConfigurationMock.getConfigurationMock().getDistributionDeleteTopicName())
                 .thenReturn(DELETE_TOPIC);
 
-        String expectedTopicName = DistributionEngineInitTask.buildTopicName(DELETE_TOPIC, ENV_ID);
+        String expectedTopicName = DistributionTopics.buildTopicName(DELETE_TOPIC, ENV_ID);
         when(distributionDeleteNotificationSender.sendNotificationForDeleteService(
                 eq(expectedTopicName), eq(distributionId), any(EnvironmentMessageBusData.class),
                 eq(notificationData)))
@@ -454,7 +504,7 @@ public class DistributionEngineTest {
         when(distributionEngineConfigurationMock.getConfigurationMock().getDistributionDeleteTopicName())
                 .thenReturn(DELETE_TOPIC);
 
-        String expectedTopicName = DistributionEngineInitTask.buildTopicName(DELETE_TOPIC, ENV_ID);
+        String expectedTopicName = DistributionTopics.buildTopicName(DELETE_TOPIC, ENV_ID);
         when(distributionDeleteNotificationSender.sendNotificationForDeleteService(
                 eq(expectedTopicName), eq(distributionId), any(EnvironmentMessageBusData.class),
                 eq(notificationData)))

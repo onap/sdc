@@ -1,14 +1,3 @@
-uebServers:
-   - uebsb91sfdc.it.att.com
-   - uebsb92sfdc.it.att.com
-   - uebsb93sfdc.it.att.com
-
-# prev Kansas City Sandbox uebPublicKey: 8F3MDAtMSBwwpSMy 
-uebPublicKey: sSJc5qiBnKy2qrlc
-
-# prev Kansas City Sandbox uebSecretKey: gzFmsTxSCtO5RQfAccM6PqqX
-uebSecretKey: 4ZRPzNJfEUK0sSNBvccd2m7X
-
 distributionNotifTopicName: ASDC-DISTR-NOTIF-TOPIC
 distributionStatusTopicName: ASDC-DISTR-STATUS-TOPIC
 
@@ -41,33 +30,9 @@ distributionNotificationTopic:
    maxWaitingAfterSendingSeconds: 5
 
 
-createTopic:
-   partitionCount: 1
-   replicationCount: 1
-
 startDistributionEngine: true
 
-useHttpsWithDmaap: true
-   
 opEnvRecoveryIntervalSec: 180
-allowedTimeBeforeStaleSec: 300
-
-aaiConfig:
-   httpRequestConfig:
-      serverRootUrl: https://aai-uint3.test.att.com:8443
-      resourceNamespaces:
-         operationalEnvironments: /aai/v12/cloud-infrastructure/operational-environments
-
-   httpClientConfig:
-      timeouts:
-         readTimeoutMs: 5000
-         connectTimeoutMs: 1000
-      clientCertificate:
-         keyStore: /app/jetty/opt/base/be/etc/non-prod.jks
-         keyStorePassword: hmXYcznAljMSisdy8zgcag==
-      headers:
-         X-FromAppId: asdc
-      numOfRetries: 3
 
 msoConfig:
    httpRequestConfig:

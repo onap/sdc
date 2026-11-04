@@ -1,12 +1,3 @@
-uebServers:
-   - ueb.fqdn.1:8888
-   - ueb.fqdn.2:8888
-   - ueb.fqdn.3:8888
-
-uebPublicKey: fff
-
-uebSecretKey: ffff
-
 distributionNotifTopicName: ASDC-DISTR-NOTIF-TOPIC
 distributionStatusTopicName: ASDC-DISTR-STATUS-TOPIC
 
@@ -31,27 +22,6 @@ distributionStatusTopic:
    pollingIntervalSec: 60
    fetchTimeSec: 15
    consumerGroup: asdc
-
-createTopic:
-   partitionCount: 1
-   replicationCount: 1
-
-aaiConfig:
-   httpRequestConfig:
-      serverRootUrl: https://127.0.0.1/aai/v1
-      resourceNamespaces:
-         operationalEnvironments: /aai/cloud-infrastructure/operational-environments
-
-   httpClientConfig:
-      timeouts:
-         readTimeoutMs: 5000
-         connectTimeoutMs: 1000
-      clientCertificate:
-         keyStore: /opt/app/jetty/base/be/etc/non-prod.jks
-         keyStorePassword: hmXYcznAljMSisdy8zgcag==
-      headers:
-         X-FromAppId: asdc
-      numOfRetries: 3
 
 msoConfig:
    httpRequestConfig:

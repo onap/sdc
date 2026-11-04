@@ -19,7 +19,6 @@
  */
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import java.util.List;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
@@ -66,10 +65,6 @@ public interface IDistributionEngine {
     }
 
     default OperationalEnvironmentEntry getEnvironmentById(String opEnvId) {
-        return null;
-    }
-
-    default OperationalEnvironmentEntry getEnvironmentByDmaapUebAddress(List<String> dmaapUebAddress) {
         return null;
     }
 

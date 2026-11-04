@@ -5,11 +5,9 @@ ComponentInstanceInterfacesMerge : org.openecomp.sdc.be.components.merge.instanc
 ComponentInstancePropsAndInputsMerge : org.openecomp.sdc.be.components.merge.instance.ComponentInstancePropsAndInputsMerge
 ComponentInstanceRelashionMerge : org.openecomp.sdc.be.components.merge.instance.ComponentInstanceRelationMerge
 ConsumerBusinessLogic : org.openecomp.sdc.be.components.impl.ConsumerBusinessLogic
-DME2EndpointIteratorCreator : org.openecomp.sdc.be.components.distribution.engine.DME2EndpointIteratorCreator
 MSORestClient : org.openecomp.sdc.be.components.distribution.engine.rest.MSORestClient
 NodeFilterValidator : org.openecomp.sdc.be.components.validation.NodeFilterValidator
 ServiceImportManager : org.openecomp.sdc.be.components.impl.ServiceImportManager
-aaiRequestHandler : org.openecomp.sdc.be.components.distribution.engine.AaiRequestHandler
 abstractTemplateBusinessLogic : org.openecomp.sdc.be.components.impl.AbstractTemplateBusinessLogic
 abstractTemplateServlet : org.openecomp.sdc.be.externalapi.servlet.AbstractTemplateServlet
 accessValidations : org.openecomp.sdc.be.components.validation.AccessValidations
@@ -45,7 +43,6 @@ audit-cassandra-dao : org.openecomp.sdc.be.dao.cassandra.AuditCassandraDao
 auditingManager : org.openecomp.sdc.be.auditing.impl.AuditingManager
 automatedUpgradeEndpoint : org.openecomp.sdc.be.servlets.AutomatedUpgradeEndpoint
 beMonitoringServlet : org.openecomp.sdc.be.servlets.BeMonitoringServlet
-cambriaHandler : org.openecomp.sdc.be.components.distribution.engine.CambriaHandler
 capabilities-operation : org.openecomp.sdc.be.model.jsonjanusgraph.operations.CapabilitiesOperation
 capabilitiesBusinessLogic : org.openecomp.sdc.be.components.impl.CapabilitiesBusinessLogic
 capabilitiesValidation : org.openecomp.sdc.be.components.validation.CapabilitiesValidation
@@ -145,8 +142,6 @@ distributionNotificationSender : org.openecomp.sdc.be.components.distribution.en
 distributionServiceServlet : org.openecomp.sdc.be.servlets.DistributionServiceServlet
 distributionServlet : org.openecomp.sdc.be.distribution.servlet.DistributionServlet
 dmaapClientFactory : org.openecomp.sdc.be.components.distribution.engine.DmaapClientFactory
-dmaapConsumer : org.openecomp.sdc.be.components.distribution.engine.DmaapConsumer
-dmaapHealth : org.openecomp.sdc.be.components.distribution.engine.DmaapHealth
 dmaapProducer : org.openecomp.sdc.be.catalog.impl.DmaapProducer
 dmaapProducerHealth : org.openecomp.sdc.be.catalog.impl.DmaapProducerHealth
 element-operation : org.openecomp.sdc.be.model.operations.impl.ElementOperation

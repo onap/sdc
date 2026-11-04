@@ -39,9 +39,6 @@ janusGraphHealthCheckReadTimeout: 1
 
 # The interval to try and reconnect to Elasticsearch when it is down during ASDC startup:
 
-uebHealthCheckReconnectIntervalInSeconds: 15
-uebHealthCheckReadTimeout: 4
-
 # Protocols
 protocols:
    - http
@@ -1128,37 +1125,6 @@ gabConfig:
         friendlyName: "iMeasInfoId"
         path: "pmMetaData.pmFields.iMeasInfoId"
         searchable: false
-
-dmaapConsumerConfiguration:
-    active: false
-    hosts: localhost:3905
-    consumerGroup: sdc
-    consumerId: mama
-    timeoutMs: 15000
-    limit: 1
-    pollingInterval: 2
-    topic: topic
-    latitude: 32.109333
-    longitude: 34.855499
-    version: 1.0
-    serviceName: localhost/events
-    environment: TEST
-    partner: BOT_R
-    routeOffer: MR1
-    protocol: https
-    contenttype: application/json
-    dme2TraceOn: true
-    aftEnvironment: AFTUAT
-    aftDme2ConnectionTimeoutMs: 15000
-    aftDme2RoundtripTimeoutMs: 240000
-    aftDme2ReadTimeoutMs: 50000
-    dme2preferredRouterFilePath: DME2preferredRouter.txt
-    timeLimitForNotificationHandleMs: 120000
-    credential:
-        username: user
-        password:
-    aftDme2SslEnable: true
-    aftDme2ClientSslCertAlias: certman
 
 dmaapProducerConfiguration:
     active: true

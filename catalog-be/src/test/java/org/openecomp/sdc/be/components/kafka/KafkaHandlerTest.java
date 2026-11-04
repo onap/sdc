@@ -30,6 +30,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.openecomp.sdc.be.components.distribution.engine.CambriaErrorResponse;
 import org.openecomp.sdc.be.components.distribution.engine.INotificationData;
 import org.openecomp.sdc.be.components.distribution.engine.NotificationDataImpl;
+import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
+import org.openecomp.sdc.be.config.DistributionEngineConfiguration.DistributionNotificationTopicConfig;
+import org.openecomp.sdc.be.config.DistributionEngineConfiguration.DistributionStatusTopicConfig;
 import org.openecomp.sdc.be.distribution.api.client.CambriaOperationStatus;
 
 import java.util.ArrayList;
@@ -39,7 +42,6 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.common.errors.TimeoutException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -60,18 +62,7 @@ class KafkaHandlerTest {
 
     @BeforeEach
     void setup() {
-        kafkaHandler = new KafkaHandler(mockSdcKafkaConsumer, mockSdcKafkaProducer, true);
-    }
-
-    @Test
-    void testIsKafkaActiveTrue() {
-        assertTrue(kafkaHandler.isKafkaActive());
-    }
-
-    @Test
-    void testIsKafkaActiveFalse() {
-        kafkaHandler.setKafkaActive(false);
-        assertFalse(kafkaHandler.isKafkaActive());
+        kafkaHandler = new KafkaHandler(mockSdcKafkaConsumer, mockSdcKafkaProducer);
     }
 
     @Test
@@ -130,7 +121,7 @@ class KafkaHandlerTest {
     void testSendNotificationReportsFailedDelivery() {
         KafkaProducer<String, String> kafkaProducer = mock(KafkaProducer.class);
         when(kafkaProducer.send(any())).thenReturn(CompletableFuture.failedFuture(new TimeoutException("broker unreachable")));
-        KafkaHandler handler = new KafkaHandler(mockSdcKafkaConsumer, new SdcKafkaProducer(kafkaProducer), true);
+        KafkaHandler handler = new KafkaHandler(mockSdcKafkaConsumer, new SdcKafkaProducer(kafkaProducer));
 
         CambriaErrorResponse response = handler.sendNotification("testTopic", new NotificationDataImpl(), 5);
 
@@ -142,9 +133,28 @@ class KafkaHandlerTest {
     void testSendNotificationReportsUnacknowledgedDelivery() {
         KafkaProducer<String, String> kafkaProducer = mock(KafkaProducer.class);
         when(kafkaProducer.send(any())).thenReturn(new CompletableFuture<>());
-        KafkaHandler handler = new KafkaHandler(mockSdcKafkaConsumer, new SdcKafkaProducer(kafkaProducer), true);
+        KafkaHandler handler = new KafkaHandler(mockSdcKafkaConsumer, new SdcKafkaProducer(kafkaProducer));
 
         CambriaErrorResponse response = handler.sendNotification("testTopic", new NotificationDataImpl(), 0);
+
+        assertEquals(CambriaOperationStatus.INTERNAL_SERVER_ERROR, response.getOperationStatus());
+        assertEquals(500, response.getHttpCode());
+    }
+
+    @Test
+    void testSendNotificationReportsProducerConstructionFailure() {
+        DistributionEngineConfiguration de = new DistributionEngineConfiguration();
+        de.setKafkaBootStrapServers("unresolvable.invalid:9092");
+        DistributionStatusTopicConfig status = new DistributionStatusTopicConfig();
+        status.setConsumerId("sdc-id");
+        status.setConsumerGroup("sdc");
+        de.setDistributionStatusTopic(status);
+        DistributionNotificationTopicConfig notif = new DistributionNotificationTopicConfig();
+        notif.setMaxWaitingAfterSendingSeconds(5);
+        de.setDistributionNotificationTopic(notif);
+        KafkaHandler handler = new KafkaHandler(de);
+
+        CambriaErrorResponse response = handler.sendNotification("testTopic", new NotificationDataImpl(), 5);
 
         assertEquals(CambriaOperationStatus.INTERNAL_SERVER_ERROR, response.getOperationStatus());
         assertEquals(500, response.getHttpCode());

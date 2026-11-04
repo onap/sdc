@@ -315,8 +315,7 @@ whose topology declares no instances is rejected for every asset type except PNF
 Only services are distributed
 -----------------------------
 Distribution is the step that hands a design to the rest of ONAP: SDC publishes a notification on
-the distribution message bus (DMaaP Message Router, or Kafka since the London release) and
-registered consumers download the artifacts they are interested in.
+Kafka and registered consumers download the artifacts they are interested in.
 
 Only a service can be distributed. A certified resource is not delivered anywhere on its own; it
 becomes available in the catalog for a designer to place inside a service. There is no

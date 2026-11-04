@@ -32,8 +32,6 @@ import org.springframework.stereotype.Component;
 public class DistributionDeleteNotificationSender {
     private static final Logger logger = Logger.getLogger(DistributionDeleteNotificationSender.class.getName());
 
-    private final CambriaHandler cambriaHandler;
-
     private final KafkaHandler kafkaHandler;
 
     private final DistributionEngineConfiguration deConfiguration;
@@ -42,14 +40,12 @@ public class DistributionDeleteNotificationSender {
         this.kafkaHandler = new KafkaHandler();
         this.deConfiguration = ConfigurationManager.getConfigurationManager()
                 .getDistributionEngineConfiguration();
-        this.cambriaHandler = new CambriaHandler();
     }
 
     public DistributionDeleteNotificationSender(KafkaHandler kafkaHandler,
-            DistributionEngineConfiguration deConfiguration, CambriaHandler cambriaHandler) {
+            DistributionEngineConfiguration deConfiguration) {
         this.kafkaHandler = kafkaHandler;
         this.deConfiguration = deConfiguration;
-        this.cambriaHandler = cambriaHandler;
     }
 
     /**
@@ -68,19 +64,8 @@ public class DistributionDeleteNotificationSender {
                 topicName,
                 distributionId);
 
-        CambriaErrorResponse status;
-        if (Boolean.FALSE.equals(kafkaHandler.isKafkaActive())) {
-            logger.debug("Kafka is inactive. Using CambriaHandler to send notification for topic={}", topicName);
-            status = cambriaHandler
-                    .sendNotificationAndClose(topicName, messageBusData.getUebPublicKey(),
-                            messageBusData.getUebPrivateKey(),
-                            messageBusData.getDmaaPuebEndpoints(), notificationData,
-                            deConfiguration.getDistributionDeleteTopic().getMaxWaitingAfterSendingSeconds());
-        } else {
-            logger.debug("Kafka is active. Using KafkaHandler to send notification for topic={}", topicName);
-            status = kafkaHandler.sendNotification(topicName, notificationData,
-                    deConfiguration.getDistributionDeleteTopic().getMaxWaitingAfterSendingSeconds());
-        }
+        CambriaErrorResponse status = kafkaHandler.sendNotification(topicName, notificationData,
+                deConfiguration.getDistributionDeleteTopic().getMaxWaitingAfterSendingSeconds());
 
         logger.info("sending notification is completed for topicName={}, with status = {}",
                 topicName, status);

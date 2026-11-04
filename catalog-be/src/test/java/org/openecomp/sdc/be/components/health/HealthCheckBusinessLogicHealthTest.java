@@ -39,7 +39,6 @@ import org.onap.portalsdk.core.onboarding.exception.CipherUtilException;
 import org.openecomp.sdc.be.catalog.impl.DmaapProducerHealth;
 import org.openecomp.sdc.be.components.BeConfDependentTest;
 import org.openecomp.sdc.be.components.distribution.engine.DistributionEngineClusterHealth;
-import org.openecomp.sdc.be.components.distribution.engine.DmaapHealth;
 import org.openecomp.sdc.be.components.impl.CassandraHealthCheck;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.switchover.detector.SwitchoverDetector;
@@ -68,8 +67,6 @@ class HealthCheckBusinessLogicHealthTest extends BeConfDependentTest {
     private HealthCheckBusinessLogic createTestSubject() {
 
         HealthCheckBusinessLogic healthCheckBusinessLogic = new HealthCheckBusinessLogic();
-        DmaapHealth dmaapHealth = new DmaapHealth();
-        ReflectionTestUtils.setField(healthCheckBusinessLogic, "dmaapHealth", dmaapHealth);
         PortalHealthCheckBuilder portalHealthCheckBuilder = new PortalHealthCheckBuilder();
         ReflectionTestUtils.setField(healthCheckBusinessLogic, "portalHealthCheck", portalHealthCheckBuilder);
         DistributionEngineClusterHealth distributionEngineClusterHealth = new DistributionEngineClusterHealth();

@@ -90,14 +90,6 @@ errors:
         description: "Configuration parameter %s is invalid. Value configured is %s",
         alarmSeverity: MAJOR
     }
-   
-    BeUebConnectionError: {
-        type: CONNECTION_PROBLEM,
-        code: ASDC_4001,
-        severity: ERROR,
-        description: "Connection problem towards U-EB server. Reason: %s",
-        alarmSeverity: MAJOR
-    }
     
     BeUebSystemError: {
         type: SYSTEM_ERROR,
@@ -106,36 +98,12 @@ errors:
         description: "Error occured during access to U-EB Server. Operation: %s",
         alarmSeverity: MAJOR
     }
-    
-    BeUebObjectNotFoundError: {
-        type: DATA_ERROR,
-        code: ASDC_4005,
-        severity: ERROR,
-        description: "Error occured during access to U-EB Server. Data not found: %s",
-        alarmSeverity: MAJOR
-    }
 
     BeDistributionEngineSystemError: {
         type: SYSTEM_ERROR,
         code: ASDC_3021,
         severity: ERROR,
         description: "Error occured in Distribution Engine. Failed operation: %s",
-        alarmSeverity: MAJOR
-    }
-    
-    BeUebAuthenticationError: {
-        type: AUTHENTICATION_PROBLEM,
-        code: ASDC_4003,
-        severity: ERROR,
-        description: "Authentication problem towards U-EB server. Reason: %s",
-        alarmSeverity: MAJOR
-    }
-    
-    BeUebUnkownHostError: {
-        type: CONNECTION_PROBLEM,
-        code: ASDC_4002,
-        severity: ERROR,
-        description: "Connection problem towards U-EB server. Cannot reach host %s",
         alarmSeverity: MAJOR
     }
     

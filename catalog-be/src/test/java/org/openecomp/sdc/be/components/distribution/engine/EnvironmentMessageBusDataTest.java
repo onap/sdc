@@ -23,8 +23,7 @@ package org.openecomp.sdc.be.components.distribution.engine;
 import org.junit.Test;
 import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
 
-import java.util.HashSet;
-import java.util.List;
+import static org.junit.Assert.assertEquals;
 
 public class EnvironmentMessageBusDataTest {
 
@@ -33,11 +32,14 @@ public class EnvironmentMessageBusDataTest {
 	}
 
 	@Test
-	public void testConstructor() throws Exception {
+	public void testConstructorCopiesEnvIdAndTenantOfAnEntryWithoutUebAddresses() {
 		OperationalEnvironmentEntry operationalEnvironment = new OperationalEnvironmentEntry();
-		operationalEnvironment.setDmaapUebAddress(new HashSet<>());
-		new EnvironmentMessageBusData(operationalEnvironment);
-	} 
+		operationalEnvironment.setEnvironmentId("AUTO");
+		operationalEnvironment.setTenant("tenant");
+		EnvironmentMessageBusData messageBusData = new EnvironmentMessageBusData(operationalEnvironment);
+		assertEquals("AUTO", messageBusData.getEnvId());
+		assertEquals("tenant", messageBusData.getTenant());
+	}
 	
 	@Test
 	public void testGetTenant() throws Exception {
@@ -57,66 +59,6 @@ public class EnvironmentMessageBusDataTest {
 		// default test
 		testSubject = createTestSubject();
 		testSubject.setTenant(tenant);
-	}
-
-	@Test
-	public void testGetDmaaPuebEndpoints() throws Exception {
-		EnvironmentMessageBusData testSubject;
-		List<String> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getDmaaPuebEndpoints();
-	}
-
-	@Test
-	public void testSetDmaaPuebEndpoints() throws Exception {
-		EnvironmentMessageBusData testSubject;
-		List<String> dmaaPuebEndpoints = null;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setDmaaPuebEndpoints(dmaaPuebEndpoints);
-	}
-
-	@Test
-	public void testGetUebPublicKey() throws Exception {
-		EnvironmentMessageBusData testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getUebPublicKey();
-	}
-
-	@Test
-	public void testSetUebPublicKey() throws Exception {
-		EnvironmentMessageBusData testSubject;
-		String uebPublicKey = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setUebPublicKey(uebPublicKey);
-	}
-
-	@Test
-	public void testGetUebPrivateKey() throws Exception {
-		EnvironmentMessageBusData testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getUebPrivateKey();
-	}
-
-	@Test
-	public void testSetUebPrivateKey() throws Exception {
-		EnvironmentMessageBusData testSubject;
-		String uebPrivateKey = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setUebPrivateKey(uebPrivateKey);
 	}
 
 	@Test

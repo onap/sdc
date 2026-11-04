@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,20 +17,23 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.openecomp.sdc.asdctool.migration.config.mocks;
+package org.openecomp.sdc.be.config;
 
-import org.openecomp.sdc.be.components.distribution.engine.DmaapHealth;
-import org.springframework.stereotype.Component;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@Component("dmaapHealth")
-public class DmaapHealthCheckMock extends DmaapHealth {
+import org.junit.jupiter.api.Test;
+import org.openecomp.sdc.common.util.YamlToObjectConverter;
 
-    @Override
-    public DmaapHealth init() {
-        return null;
-    }
+/**
+ * The resource is distribution-engine-configuration.yaml as OOM renders it for sdc-be. Keep its DMaaP/UEB keys: they are what this test pins.
+ */
+class DistributionEngineConfigurationLegacyKeysTest {
 
-    @Override
-    protected void destroy() {
+    @Test
+    void oomRenderedConfigWithDmaapKeysStillLoads() throws Exception {
+        DistributionEngineConfiguration de = new YamlToObjectConverter().convert(
+            "src/test/resources/config/legacy", DistributionEngineConfiguration.class, "distribution-engine-configuration.yaml");
+        assertNotNull(de);
+        assertNotNull(de.getKafkaBootStrapServers());
     }
 }
