@@ -1,0 +1,15 @@
+thread-pool min=10 max=200 idle-timeout=60000
+stop-at-shutdown=true stop-timeout=5000
+connector http/1.1 port=8181 idle-timeout=30000 compliance=RFC7230_LEGACY
+  send-server-version=false send-date-header=false header-cache-size=1024 secure-port=8443 customizers=[]
+connector ssl+http/1.1 port=9443 idle-timeout=30000 compliance=RFC7230
+  send-server-version=false send-date-header=false header-cache-size=1024 secure-port=8443 customizers=[SecureRequestCustomizer]
+handler RewriteHandler
+  rewrite-request-uri=true rewrite-path-info=false original-path-attribute=requestedPath
+  rule org.eclipse.jetty.rewrite.handler.RedirectPatternRule[HT][][302>/sdc1]
+  handler GzipHandler min-gzip-size=1024 methods=[POST, GET] excluded-mime-types=[application/brotli, application/bzip2, application/compress, application/gzip, application/x-rar-compressed, application/x-xz, application/zip, audio/basic, audio/midi, audio/mpeg, audio/x-aiff, audio/x-pn-realaudio, audio/x-wav, image/apng, image/avif, image/bmp, image/gif, image/ief, image/jpeg, image/jpeg2000, image/png, image/tiff, image/vnd.wap.wbmp, image/webp, image/x-cmu-raster, image/x-icon, image/x-portable-anymap, image/x-portable-bitmap, image/x-portable-graymap, image/x-portable-pixmap, image/x-rgb, image/x-xbitmap, image/x-xpixmap, image/x-xwindowdump, image/xcf, video/mp4, video/mpeg, video/quicktime, video/vnd.rn-realvideo, video/x-msvideo, video/x-sgi-movie, video/x.ms.asf, video/x.ms.asx] excluded-agents=[.*MSIE 6.0.*]
+    handler HandlerCollection
+      handler ContextHandlerCollection
+        handler ServletContextHandler /sdc1
+        handler ServletContextHandler /onboarding
+      handler DefaultHandler show-contexts=false

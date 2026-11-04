@@ -83,6 +83,7 @@ catalog-be/test-output/*
 # catalog-fe
 #------------------------------------------------------------
 catalog-fe/src/main/webapp/*
+catalog-fe/sdc-frontend/webapp/
 
 # catalog-ui
 #------------------------------------------------------------

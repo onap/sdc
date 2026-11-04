@@ -167,9 +167,7 @@ login.
 # from the repo root, after editing catalog-ui/
 (cd catalog-ui && npx webpack --config webpack.production.js)
 cp -r catalog-ui/dist/. catalog-fe/src/main/webapp/
-mvn package -pl catalog-fe -DskipTests -Dcheckstyle.skip -Djacoco.skip=true -DskipPMD -q
-cp catalog-fe/target/catalog-fe-*-SNAPSHOT.war catalog-fe/sdc-frontend/
-mvn process-resources docker:build -pl catalog-fe -P docker -DskipTests -Ddocker.noCache=true -q
+mvn install -pl catalog-fe -P docker -DskipTests -Dcheckstyle.skip -Djacoco.skip=true -DskipPMD -Ddocker.noCache=true -q
 
 docker rm -f sdc-frontend-1                     # the name is NOT reused automatically
 docker run -d --name sdc-frontend-1 --network sdc-network --network-alias sdc-FE \
@@ -182,8 +180,8 @@ docker run -d --name sdc-frontend-1 --network sdc-network --network-alias sdc-FE
 The `docker rm -f` is not optional: `docker run` fails on the existing name, and it is easy to
 read that error as a build failure.
 
-Everything written into `catalog-fe/src/main/webapp/` and `catalog-fe/sdc-frontend/*.war` is a
-build byproduct and is already covered by `.gitignore` (`catalog-fe/src/main/webapp/*`, `*.war`).
+Everything written into `catalog-fe/src/main/webapp/` and the jars and `webapp/` under `catalog-fe/sdc-frontend/`
+is a build byproduct and is already covered by `.gitignore`.
 Never stage it.
 
 ### 2b. Hot-swapping one bundle into the running FE serves the `.jsgz`, not the `.js`
@@ -193,11 +191,11 @@ pre-gzipped sibling of every bundle and jetty serves *that* to any client sendin
 `Accept-Encoding: gzip`, i.e. every browser. Patch only `styles.<hash>.bundle.js` and `curl` will
 confirm your fix while the browser keeps loading the stale `styles.<hash>.bundle.jsgz` — the test
 stays red and the served asset looks correct, which reads as a caching problem and is not one.
-Patch both, in **both** exploded-war dirs (jetty keeps more than one under `/tmp/jetty-*catalog-fe*`):
+Patch both, in `/app/jetty/webapp/sdc1/scripts/`:
 
 ```bash
-docker exec sdc-frontend-1 sh -c 'ls -d /tmp/jetty-*catalog-fe*/webapp/scripts'
 gzip -c -9 patched.js > patched.jsgz      # then docker cp each variant over its counterpart
+docker cp patched.jsgz sdc-frontend-1:/app/jetty/webapp/sdc1/scripts/styles.<hash>.bundle.jsgz
 ```
 
 Confirm from inside the page rather than from `curl` — walk `document.styleSheets` for the rule.

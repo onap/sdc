@@ -4,7 +4,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>catalog-fe</artifactId>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
     <parent>
         <groupId>org.openecomp.sdc</groupId>
@@ -47,6 +47,34 @@
                     <groupId>org.eclipse.jetty</groupId>
                     <artifactId>jetty-http</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>javax.servlet-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>${servlet-api.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlet</artifactId>
+            <version>${jetty.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>javax.servlet-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-rewrite</artifactId>
+            <version>${jetty.version}</version>
+            <exclusions>
                 <exclusion>
                     <groupId>javax.servlet</groupId>
                     <artifactId>javax.servlet-api</artifactId>
@@ -356,25 +384,6 @@
 
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-servlet</artifactId>
-            <version>${jetty.version}</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-security</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-webapp</artifactId>
-            <version>${jetty.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-http</artifactId>
             <version>${jetty.version}</version>
         </dependency>
@@ -399,33 +408,95 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
+                <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
                     <archive>
                         <manifest>
+                            <mainClass>org.openecomp.sdc.fe.server.FeServer</mainClass>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <useUniqueVersions>false</useUniqueVersions>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>
                     </archive>
-
-                    <webResources>
-                        <resource>
-                            <directory>src/main/resources</directory>
-                        </resource>
-                    </webResources>
                 </configuration>
             </plugin>
-
             <plugin>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
-                <version>${jetty.version}</version>
-                <configuration>
-                    <webApp>
-                        <contextPath>/</contextPath>
-                        <webInfIncludeJarPattern>.*/.*jersey-[^/]\.jar$</webInfIncludeJarPattern>
-                    </webApp>
-                    <war>${project.build.directory}/${project.build.finalName}.war</war>
-                </configuration>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.8.1</version>
+                <executions>
+                    <execution>
+                        <id>copy-lib</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeScope>runtime</includeScope>
+                            <excludeTypes>war</excludeTypes>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <!-- The catalog-fe WAR carried the onboarding-fe WAR as an overlay, so /sdc1 serves the
+                         onboarding files too, under the files of its own. -->
+                    <execution>
+                        <id>unpack-onboarding-fe</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeArtifactIds>onboarding-fe</includeArtifactIds>
+                            <includeTypes>war</includeTypes>
+                            <excludes>WEB-INF/**,META-INF/**</excludes>
+                            <outputDirectory>${project.build.directory}/webapp/onboarding</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>overlay-onboarding-fe</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeArtifactIds>onboarding-fe</includeArtifactIds>
+                            <includeTypes>war</includeTypes>
+                            <excludes>WEB-INF/**,META-INF/**</excludes>
+                            <outputDirectory>${project.build.directory}/webapp/sdc1</outputDirectory>
+                            <markersDirectory>${project.build.directory}/dependency-maven-plugin-markers-overlay</markersDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>sdc1-static</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/webapp/sdc1</outputDirectory>
+                            <overwrite>true</overwrite>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/webapp</directory>
+                                    <excludes>
+                                        <exclude>META-INF/**</exclude>
+                                        <exclude>WEB-INF/**</exclude>
+                                    </excludes>
+                                </resource>
+                                <resource>
+                                    <directory>src/main/resources</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
@@ -473,12 +544,14 @@
                         </goals>
                         <configuration>
                             <filesets>
-                                <!-- FE WAR's -->
                                 <fileset>
-                                    <directory>${project.parent.basedir}/catalog-fe/sdc-frontend/</directory>
+                                    <directory>${project.basedir}/sdc-frontend/</directory>
                                     <followSymlinks>false</followSymlinks>
                                     <includes>
                                         <include>*.war</include>
+                                        <include>*.jar</include>
+                                        <include>lib/**</include>
+                                        <include>webapp/**</include>
                                     </includes>
                                 </fileset>
                             </filesets>
@@ -585,15 +658,11 @@
                                     <outputDirectory>${basedir}/sdc-frontend</outputDirectory>
                                     <resources>
                                         <resource>
-                                            <directory>${project.parent.basedir}/catalog-fe/target</directory>
+                                            <directory>${project.build.directory}</directory>
                                             <includes>
-                                                <include>catalog-fe-${project.version}.war</include>
-                                            </includes>
-                                        </resource>
-                                        <resource>
-                                            <directory>${project.parent.basedir}/openecomp-ui/target</directory>
-                                            <includes>
-                                                <include>onboarding-fe-${project.version}.war</include>
+                                                <include>${project.build.finalName}.jar</include>
+                                                <include>lib/*.jar</include>
+                                                <include>webapp/**</include>
                                             </includes>
                                         </resource>
                                     </resources>

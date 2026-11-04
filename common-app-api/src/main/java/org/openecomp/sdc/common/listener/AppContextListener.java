@@ -42,6 +42,9 @@ public class AppContextListener implements ServletContextListener {
         log.debug("ServletContextListener initialized ");
         log.debug("After read values from Manifest {}", getManifestInfo(context.getServletContext()));
         Map<String, String> manifestAttr = getManifestInfo(context.getServletContext());
+        if (manifestAttr.isEmpty()) {
+            manifestAttr = getPackageInfo(getClass().getPackage());
+        }
         String appName = setAndGetAttributeInContext(context, manifestAttr, Constants.APPLICATION_NAME);
         String appVersion = setAndGetAttributeInContext(context, manifestAttr, Constants.APPLICATION_VERSION);
         ConfigurationSource configurationSource = ExternalConfiguration.load(appName, appVersion, System.getProperty(Constants.CONFIG_HOME));
@@ -62,11 +65,29 @@ public class AppContextListener implements ServletContextListener {
         return name;
     }
 
+    /**
+     * An application started from an executable jar has no web-app manifest. The jar that holds the listener carries
+     * the same Implementation-Title and Implementation-Version entries.
+     */
+    private static Map<String, String> getPackageInfo(Package listenerPackage) {
+        Map<String, String> result = new HashMap<>();
+        if (listenerPackage.getImplementationTitle() != null) {
+            result.put(Constants.APPLICATION_NAME, listenerPackage.getImplementationTitle());
+        }
+        if (listenerPackage.getImplementationVersion() != null) {
+            result.put(Constants.APPLICATION_VERSION, listenerPackage.getImplementationVersion());
+        }
+        return result;
+    }
+
     public static Map<String, String> getManifestInfo(ServletContext application) {
         Map<String, String> result = new HashMap<>();
         InputStream inputStream = null;
         try {
             inputStream = application.getResourceAsStream("/META-INF/MANIFEST.MF");
+            if (inputStream == null) {
+                return result;
+            }
             Manifest manifest = new Manifest(inputStream);
             Attributes attr = manifest.getMainAttributes();
             String name = attr.getValue("Implementation-Title");

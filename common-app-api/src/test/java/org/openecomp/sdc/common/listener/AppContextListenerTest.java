@@ -27,6 +27,9 @@ import javax.servlet.ServletContextEvent;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+
 
 public class AppContextListenerTest {
 
@@ -51,6 +54,11 @@ public class AppContextListenerTest {
 
 
 	
+	@Test
+	public void testGetManifestInfoWithoutAManifest() {
+		assertTrue(AppContextListener.getManifestInfo(mock(ServletContext.class)).isEmpty());
+	}
+
 //	@Test
 	public void testGetManifestInfo() throws Exception {
 		ServletContext application = null;

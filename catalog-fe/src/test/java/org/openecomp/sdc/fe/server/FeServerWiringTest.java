@@ -18,15 +18,26 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.fe.wiring;
+package org.openecomp.sdc.fe.server;
 
-import java.io.File;
+import java.util.Properties;
 import org.junit.jupiter.api.Test;
+import org.openecomp.sdc.fe.wiring.WiringSnapshot;
 
-class WebXmlWiringTest {
+class FeServerWiringTest {
 
     @Test
-    void webXmlRegistersTheSnapshottedServletsFiltersAndListeners() throws Exception {
-        WiringSnapshot.assertMatches(WebXmlSnapshot.render(new File("src/main/webapp/WEB-INF/web.xml")), "web.xml.txt");
+    void serverIsWiredAsSnapshotted() throws Exception {
+        WiringSnapshot.assertMatches(ServerSnapshot.render(FeServer.create(new Properties())), "server.txt");
+    }
+
+    @Test
+    void catalogContextIsWiredAsSnapshotted() throws Exception {
+        WiringSnapshot.assertMatches(ServerSnapshot.render(FeServer.catalogContext()), "sdc1-context.txt");
+    }
+
+    @Test
+    void onboardingContextIsWiredAsSnapshotted() throws Exception {
+        WiringSnapshot.assertMatches(ServerSnapshot.render(FeServer.onboardingContext()), "onboarding-context.txt");
     }
 }

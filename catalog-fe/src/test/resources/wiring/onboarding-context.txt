@@ -1,0 +1,18 @@
+context-path /onboarding
+context-param org.eclipse.jetty.servlet.Default.dirAllowed = false
+servlet js org.eclipse.jetty.servlet.DefaultServlet
+  init-param cacheControl = public, no-cache
+  init-param etags = true
+servlet resources org.eclipse.jetty.servlet.DefaultServlet
+  init-param cacheControl = public, max-age=31536000
+  init-param etags = true
+servlet-mapping js
+  url-pattern *.js
+servlet-mapping resources
+  url-pattern /
+welcome-file index.html
+protected-targets /WEB-INF /META-INF
+session-timeout 30 min
+error-handler ErrorPageErrorHandler
+constraint / TRACE forbidden
+constraint / all but TRACE open
