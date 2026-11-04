@@ -24,7 +24,6 @@ import lombok.Getter;
 @Getter
 public enum EcompErrorEnum {
     // @formatter:off
-    DmaapHealthCheckError(EcompErrorCode.E_214, ErrorType.CONNECTION_PROBLEM, AlarmSeverity.MAJOR, EcompClassification.ERROR),
     SessionExpiredAuthenticationError(EcompErrorCode.E_220, ErrorType.AUTHENTICATION_PROBLEM, AlarmSeverity.MAJOR, EcompClassification.ERROR),
     InternalAuthenticationInfo(EcompErrorCode.E_199, ErrorType.AUTHENTICATION_PROBLEM, AlarmSeverity.INFORMATIONAL, EcompClassification.INFORMATION),
     InternalAuthenticationWarning(EcompErrorCode.E_199, ErrorType.AUTHENTICATION_PROBLEM, AlarmSeverity.MINOR, EcompClassification.WARNING),
@@ -34,7 +33,6 @@ public enum EcompErrorEnum {
     BeHealthCheckJanusGraphRecovery(EcompErrorCode.E_206, ErrorType.RECOVERY, AlarmSeverity.INFORMATIONAL, EcompClassification.INFORMATION, null),
     BeHealthCheckUebClusterRecovery(EcompErrorCode.E_208, ErrorType.RECOVERY, AlarmSeverity.INFORMATIONAL, EcompClassification.INFORMATION, null),
     FeHealthCheckRecovery(EcompErrorCode.E_209, ErrorType.RECOVERY, AlarmSeverity.INFORMATIONAL, EcompClassification.INFORMATION, null),
-    DmaapHealthCheckRecovery(EcompErrorCode.E_210, ErrorType.RECOVERY, AlarmSeverity.INFORMATIONAL, EcompClassification.INFORMATION, null),
     BeHealthCheckError(EcompErrorCode.E_200, ErrorType.SYSTEM_ERROR, AlarmSeverity.CRITICAL, EcompClassification.ERROR, BeHealthCheckRecovery),
     BeHealthCheckJanusGraphError(EcompErrorCode.E_201, ErrorType.SYSTEM_ERROR, AlarmSeverity.CRITICAL, EcompClassification.ERROR, BeHealthCheckJanusGraphRecovery),
     BeHealthCheckUebClusterError(EcompErrorCode.E_203, ErrorType.SYSTEM_ERROR, AlarmSeverity.CRITICAL, EcompClassification.ERROR, BeHealthCheckUebClusterRecovery),

@@ -799,40 +799,6 @@ gabConfig:
         path: "pmMetaData.pmFields.iMeasInfoId"
         searchable: false
 
-#Performence microservice dmaap producer
-dmaapProducerConfiguration:
-    active: false
-    consumerGroup: asdc
-    consumerId: mama #mama - in Order To Consume Remove This String And Replace It With -> mama
-    timeoutMs: 15000
-    limit: 1
-    pollingInterval: 2
-    topic: com.sdc.23911-SDCforTestDev-v001
-    latitude: 32.109333
-    longitude: 34.855499
-    version: 1.0
-    serviceName: dmaap-v1.dev.dmaap.dt.saat.acsi.com/events
-    environment: TEST
-    partner: BOT_R
-    routeOffer: MR1
-    protocol: http
-    contenttype: application/json
-    dme2TraceOn: true
-    aftEnvironment: AFTUAT
-    aftDme2ConnectionTimeoutMs: 15000
-    aftDme2RoundtripTimeoutMs: 240000
-    aftDme2ReadTimeoutMs: 50000
-    dme2preferredRouterFilePath: DME2preferredRouter.txt
-    timeLimitForNotificationHandleMs: 120000
-    credential:
-        username: sdc@sdc.com
-        password: XyCUPhFx9u70aklYGo6OiA==
-        aftDme2SslEnable: true
-    aftDme2ClientIgnoreSslConfig: false
-    aftDme2ClientSslCertAlias: certman
-
-
-
 excludedPolicyTypesMapping:
    # VF:
     #  - a.b.c

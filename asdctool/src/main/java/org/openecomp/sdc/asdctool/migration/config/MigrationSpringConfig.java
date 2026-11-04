@@ -28,7 +28,6 @@ import org.openecomp.sdc.asdctool.migration.dao.MigrationTasksDao;
 import org.openecomp.sdc.asdctool.migration.resolver.MigrationResolver;
 import org.openecomp.sdc.asdctool.migration.resolver.SpringBeansMigrationResolver;
 import org.openecomp.sdc.asdctool.migration.service.SdcRepoService;
-import org.openecomp.sdc.be.components.distribution.engine.DmaapClientFactory;
 import org.openecomp.sdc.be.components.health.HealthCheckBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
@@ -91,11 +90,6 @@ public class MigrationSpringConfig {
                                                                      ArtifactsOperations artifactToscaOperation) {
         return new ComponentsCleanBusinessLogic(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, interfaceOperation,
             interfaceLifecycleTypeOperation, resourceBusinessLogic, serviceBusinessLogic, artifactToscaOperation);
-    }
-
-    @Bean(name = "dmaapClientFactory")
-    public DmaapClientFactory getDmaapClientFactory() {
-        return new DmaapClientFactory();
     }
 
     @Bean(name = "healthCheckBusinessLogic")

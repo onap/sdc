@@ -94,7 +94,6 @@ import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.facade.operations.CatalogOperation;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
@@ -181,7 +180,6 @@ class ResourceBusinessLogicTest {
     private final NodeTemplateOperation nodeTemplateOperation = Mockito.mock(NodeTemplateOperation.class);
     private final TopologyTemplateOperation topologyTemplateOperation = Mockito.mock(TopologyTemplateOperation.class);
     private final LifecycleBusinessLogic lifecycleBl = Mockito.mock(LifecycleBusinessLogic.class);
-    private final CatalogOperation catalogOperation = Mockito.mock(CatalogOperation.class);
     private final ICapabilityTypeOperation capabilityTypeOperation = Mockito.mock(ICapabilityTypeOperation.class);
     private final PropertyOperation propertyOperation = Mockito.mock(PropertyOperation.class);
     private final ApplicationDataTypeCache applicationDataTypeCache = Mockito.mock(ApplicationDataTypeCache.class);
@@ -311,7 +309,6 @@ class ResourceBusinessLogicTest {
         resourceResponse = createResourceObject(true);
         Either<Resource, StorageOperationStatus> eitherCreate = Either.left(resourceResponse);
         when(toscaOperationFacade.createToscaComponent(any(Resource.class))).thenReturn(eitherCreate);
-        when(catalogOperation.updateCatalog(Mockito.any(), Mockito.any())).thenReturn(ActionStatus.OK);
         Map<String, DataTypeDefinition> emptyDataTypes = new HashMap<>();
         when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(emptyDataTypes));
         when(mockJanusGraphDao.commit()).thenReturn(JanusGraphOperationStatus.OK);
@@ -337,7 +334,6 @@ class ResourceBusinessLogicTest {
         bl.setJanusGraphDao(mockJanusGraphDao);
         bl.setApplicationDataTypeCache(applicationDataTypeCache);
         bl.setGenericTypeBusinessLogic(genericTypeBusinessLogic);
-        bl.setCatalogOperations(catalogOperation);
         toscaOperationFacade.setNodeTypeOperation(nodeTypeOperation);
         csarBusinessLogic.setComponentsUtils(componentsUtils);
         toscaOperationFacade.setTopologyTemplateOperation(topologyTemplateOperation);

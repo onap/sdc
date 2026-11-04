@@ -22,9 +22,7 @@ package org.openecomp.sdc.be.components.path;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import com.google.common.collect.Lists;
 import fj.data.Either;
@@ -52,7 +50,6 @@ import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.facade.operations.CatalogOperation;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
@@ -96,7 +93,6 @@ public abstract class BaseForwardingPathTest extends BeConfDependentTest impleme
     @javax.annotation.Resource
     protected JanusGraphDao janusGraphDao;
     private ForwardingPathDataDefinition forwardingPathDataDefinition;
-    private CatalogOperation catalogOperation = mock(CatalogOperation.class);
     private ServiceValidator serviceValidator = mock(ServiceValidator.class);
     private CategoryDefinition categoryDefinition;
 
@@ -137,8 +133,6 @@ public abstract class BaseForwardingPathTest extends BeConfDependentTest impleme
     }
 
     private Service createTestService() {
-        when(catalogOperation.updateCatalog(any(), any())).thenReturn(ActionStatus.OK);
-        bl.setCatalogOperations(catalogOperation);
         createCategory();
         createServiceCategory(CATEGORY_NAME);
         initGraph();

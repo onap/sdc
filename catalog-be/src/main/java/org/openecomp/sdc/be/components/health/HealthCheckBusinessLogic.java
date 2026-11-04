@@ -25,7 +25,6 @@ import static org.apache.http.HttpStatus.SC_INTERNAL_SERVER_ERROR;
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_BE;
 import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_CASSANDRA;
-import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_DMAAP_PRODUCER;
 import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_ECOMP_PORTAL;
 import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_JANUSGRAPH;
 import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_ON_BOARDING;
@@ -51,7 +50,6 @@ import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.openecomp.sdc.be.catalog.impl.DmaapProducerHealth;
 import org.openecomp.sdc.be.components.distribution.engine.DistributionEngineClusterHealth;
 import org.openecomp.sdc.be.components.impl.CassandraHealthCheck;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -93,8 +91,6 @@ public class HealthCheckBusinessLogic {
     private JanusGraphGenericDao janusGraphGenericDao;
     @Resource
     private DistributionEngineClusterHealth distributionEngineClusterHealth;
-    @Resource
-    private DmaapProducerHealth dmaapProducerHealth;
     @Resource
     private CassandraHealthCheck cassandraHealthCheck;
     @Resource
@@ -142,8 +138,6 @@ public class HealthCheckBusinessLogic {
     private List<HealthCheckInfo> getBeHealthCheckInfos() {
         log.trace("In getBeHealthCheckInfos");
         List<HealthCheckInfo> healthCheckInfos = new ArrayList<>();
-        //DmaapProducer
-        healthCheckInfos.add(getDmaapProducerHealthCheck());
         // BE
         healthCheckInfos.add(new HealthCheckInfo(HC_COMPONENT_BE, UP, getAppVersion(), "OK"));
         // JanusGraph
@@ -157,18 +151,6 @@ public class HealthCheckBusinessLogic {
         //ECOMP Portal
         healthCheckInfos.add(portalHealthCheck.getHealthCheckInfo());
         return healthCheckInfos;
-    }
-
-    private HealthCheckInfo getDmaapProducerHealthCheck() {
-        if (Boolean.TRUE.equals(ConfigurationManager.getConfigurationManager().getConfiguration().getDmaapProducerConfiguration().getActive())) {
-            String appVersion = getAppVersion();
-            dmaapProducerHealth.getHealthCheckInfo().setVersion(appVersion);
-            return dmaapProducerHealth.getHealthCheckInfo();
-        } else {
-            String description = "Dmaap health check disabled";
-            log.debug(description);
-            return new HealthCheckInfo(HC_COMPONENT_DMAAP_PRODUCER, DOWN, null, description);
-        }
     }
 
     public HealthCheckInfo getJanusGraphHealthCheck() {

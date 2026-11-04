@@ -48,8 +48,6 @@ Modifications copyright (c) 2018 Nokia
           id="tosca-model-import-cassandra-dao"/>
     <bean class="org.openecomp.sdc.be.client.onboarding.impl.OnboardingClientImpl"
           id="onboarding-client"/>
-    <bean class="org.openecomp.sdc.be.catalog.impl.DmaapProducer" id="dmaapProducer"/>
-    <bean class="org.openecomp.sdc.be.catalog.impl.DmaapProducerHealth" id="dmaapProducerHealth"/>
     <bean class="org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic"
           id="lifecycleBusinessLogic"/>
     <bean class="org.openecomp.sdc.be.components.path.beans.DistributionEngineMock"
@@ -74,7 +72,6 @@ Modifications copyright (c) 2018 Nokia
 		org.openecomp.sdc.be.datamodel.utils,
     	org.openecomp.sdc.be.components.distribution.engine,
 		org.openecomp.sdc.be.components.property,
-		org.openecomp.sdc.be.facade.operations,
 		org.openecomp.sdc.be.components.validation,
 	    org.openecomp.sdc.be.auditing.impl,
 		org.openecomp.sdc.be.components.csar,

@@ -37,7 +37,6 @@ import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.utils.UserStatusEnum;
 import org.openecomp.sdc.be.exception.ComponentExceptionMatcher;
-import org.openecomp.sdc.be.facade.operations.UserOperation;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentMetadataDefinition;
@@ -61,10 +60,8 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -82,8 +79,6 @@ public class UserBusinessLogicExtTest {
 
     @Mock
     private LifecycleBusinessLogic lifecycleBusinessLogic;
-    @Mock
-    private static UserOperation facadeUserOperation;
 
 
     @Before
@@ -95,7 +90,7 @@ public class UserBusinessLogicExtTest {
         @SuppressWarnings("unused")
         ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
         ComponentsUtils componentsUtils = new ComponentsUtils(Mockito.mock(AuditingManager.class));
-        UserBusinessLogic userBusinessLogic = new UserBusinessLogic(userAdminOperation, componentsUtils, facadeUserOperation);
+        UserBusinessLogic userBusinessLogic = new UserBusinessLogic(userAdminOperation, componentsUtils);
         testSubject = new UserBusinessLogicExt(userBusinessLogic, userAdminOperation, lifecycleBusinessLogic,
                 componentsUtils);
     }
@@ -103,8 +98,6 @@ public class UserBusinessLogicExtTest {
     @Test(expected = ComponentException.class)
     public void testDeActivateUserMissingID() {
         testSubject.deActivateUser(null, "");
-        
-        verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());  
     }
 
     @Test(expected = ComponentException.class)
@@ -112,8 +105,6 @@ public class UserBusinessLogicExtTest {
         String userUniqueIdToDeactivate = "";
         when(userAdminOperation.getUserData(MOCK_MODIFIER, false)).thenReturn(Either.right(ActionStatus.USER_NOT_FOUND));
         testSubject.deActivateUser(MOCK_MODIFIER, userUniqueIdToDeactivate);
-        
-        verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());
     }
 
     @Test(expected = ComponentException.class)
@@ -123,8 +114,6 @@ public class UserBusinessLogicExtTest {
         String userUniqueIdToDeactivate = "";
         when(userAdminOperation.getUserData(MOCK_MODIFIER, false)).thenReturn(Either.left(modifier));
         testSubject.deActivateUser(MOCK_MODIFIER, userUniqueIdToDeactivate);
-        
-        verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());  
     }
 
     @Test(expected = ComponentException.class)
@@ -136,8 +125,6 @@ public class UserBusinessLogicExtTest {
         when(userAdminOperation.getUserData(MOCK_MODIFIER, false)).thenReturn(Either.left(modifier));
         when(userAdminOperation.getUserData("mockDU", false)).thenReturn(Either.right(ActionStatus.USER_NOT_FOUND));
         testSubject.deActivateUser(MOCK_MODIFIER, userUniqueIdToDeactivate);
-        
-        verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());  
     }
 
     @Test(expected = ComponentException.class)
@@ -147,8 +134,6 @@ public class UserBusinessLogicExtTest {
 
         when(userAdminOperation.getUserData(MOCK_MODIFIER, false)).thenReturn(Either.left(modifier));
         testSubject.deActivateUser(MOCK_MODIFIER, MOCK_MODIFIER);
-        
-        verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());  
     }
 
     @Test(expected = StorageException.class)
@@ -164,8 +149,6 @@ public class UserBusinessLogicExtTest {
         when(userAdminOperation.getUserData("mockDU", false)).thenReturn(Either.left(deacUser));
         when(userAdminOperation.getUserActiveComponents(any(), any())).thenThrow(new StorageException(StorageOperationStatus.INCONSISTENCY));
         testSubject.deActivateUser(MOCK_MODIFIER, userUniqueIdToDeactivate);
-        
-        verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());  
     }
 
     @Test
@@ -189,8 +172,6 @@ public class UserBusinessLogicExtTest {
         when(userAdminOperation.deActivateUser(userToDeactivate)).thenReturn(userToDeactivate);
         testSubject.deActivateUser(MOCK_MODIFIER, userUniqueIdToDeactivate);
         verify(userAdminOperation, times(1)).deActivateUser(userToDeactivate);
-        
-        verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());  
     }
 
     @Rule
@@ -217,8 +198,6 @@ public class UserBusinessLogicExtTest {
         thrown.expect(ComponentException.class);
         thrown.expect(ComponentExceptionMatcher.hasStatus("SVC4569"));
         testSubject.deActivateUser(MOCK_MODIFIER, userUniqueIdToDeactivate);
-        
-        verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());  
     }
 
     @Test
@@ -242,8 +221,6 @@ public class UserBusinessLogicExtTest {
         thrown.expect(ComponentException.class);
         thrown.expect(ComponentExceptionMatcher.hasStatus("SVC4569"));
         testSubject.deActivateUser(MOCK_MODIFIER, userUniqueIdToDeactivate);
-        
-        verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());  
     }
 
     private Resource createComponent(String id, LifecycleStateEnum state) {
@@ -268,8 +245,6 @@ public class UserBusinessLogicExtTest {
         when(userAdminOperation.getUserData("mockDU", false)).thenReturn(Either.left(deacUser));
         when(userAdminOperation.deActivateUser(deacUser)).thenThrow(new StorageException(StorageOperationStatus.BAD_REQUEST));
         testSubject.deActivateUser(MOCK_MODIFIER, userUniqueIdToDeactivate);
-        
-        verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());  
     }
 
     @Test
@@ -288,8 +263,6 @@ public class UserBusinessLogicExtTest {
         when(userAdminOperation.deActivateUser(deacUser)).thenReturn(deacUser);
         User user = testSubject.deActivateUser(MOCK_MODIFIER, userUniqueIdToDeactivate);
         assertThat(user.getUserId()).isEqualTo(userUniqueIdToDeactivate);
-        
-        verify(facadeUserOperation).updateUserCache(UserOperationEnum.DEACTIVATE, deacUser.getUserId(), deacUser.getRole());        
     }
 
     @Test(expected = ComponentException.class)
@@ -303,8 +276,6 @@ public class UserBusinessLogicExtTest {
         when(userAdminOperation.getUserData(MOCK_MODIFIER, false)).thenReturn(Either.left(modifier));
         when(userAdminOperation.getUserData("mockDU", false)).thenReturn(Either.left(deacUser));
         testSubject.deActivateUser(MOCK_MODIFIER, userUniqueIdToDeactivate);
-        
-        verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());  
     }
 
 

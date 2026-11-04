@@ -86,16 +86,6 @@
          "socket_connect_timeout": "40000",
          "janusgraph_connection_timeout": "20000",
          "replication_factor": "1"
-      },
-      "DMAAP": {
-         "producer": {
-            "host": "olsd004.com:3905",
-            "topic": "SDC-FACADE-NOTIF-v1 ",
-            "serviceName": "dmaap.com:3905/events",
-            "environment": "${it.env.name}",
-            "username": "user1@sdc.com",
-            "password": "password=="
-         }
       }
    }
 }

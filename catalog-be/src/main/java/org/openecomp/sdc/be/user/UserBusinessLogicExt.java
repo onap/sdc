@@ -68,8 +68,6 @@ public class UserBusinessLogicExt {
         userAdminOperation.deActivateUser(userToDeactivate);
         componentsUtils.auditUserAccess(userToDeactivate, ActionStatus.OK);
         handleAuditing(modifier, userToDeactivate, null, componentsUtils.getResponseFormat(ActionStatus.OK), AuditingActionEnum.DELETE_USER);
-        userBusinessLogic.getFacadeUserOperation()
-            .updateUserCache(UserOperationEnum.DEACTIVATE, userToDeactivate.getUserId(), userToDeactivate.getRole());
         return userToDeactivate;
     }
 

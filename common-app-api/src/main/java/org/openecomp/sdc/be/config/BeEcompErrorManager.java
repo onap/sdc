@@ -67,16 +67,8 @@ public class BeEcompErrorManager extends AbsEcompErrorManager {
         processEcompError(context, EcompErrorEnum.BeHealthCheckUebClusterRecovery);
     }
 
-    public void logDmaapHealthCheckError(String context) {
-        processEcompError(context, EcompErrorEnum.DmaapHealthCheckError);
-    }
-
     public void logUserSessionExpiredError(String context) {
         processEcompError(context, EcompErrorEnum.SessionExpiredAuthenticationError);
-    }
-
-    public void logDmaapHealthCheckRecovery(String context) {
-        processEcompError(context, EcompErrorEnum.DmaapHealthCheckRecovery);
     }
 
     public void logFeHealthCheckRecovery(String context) {

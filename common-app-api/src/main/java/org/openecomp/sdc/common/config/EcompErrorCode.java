@@ -47,7 +47,6 @@ public enum EcompErrorCode {
         "Please check that that parameter uebServers in distribution-configuration.yaml points to a valid UEB Cluster."),
     E_212("Couldn't resolve hostIP. Desciption: %s"),
     E_213("Site switch over was done. Site is now in %s mode"),
-    E_214("Dmaap Connection problem."),
     E_220("User HTTP session is expired"),
     E_299("Internal Connection problem. Description: %s"),
 

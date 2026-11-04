@@ -16,10 +16,7 @@
   <bean class="org.openecomp.sdc.be.config.ConfigurationManager">
     <constructor-arg ref="fsConfig"/>
   </bean>
-  <bean class="org.openecomp.sdc.be.components.distribution.engine.DmaapClientFactory"/>
   <bean class="org.openecomp.sdc.be.components.distribution.engine.ExecutorFactory"/>
-  <bean class="org.openecomp.sdc.be.catalog.impl.DmaapProducerHealth"/>
-  <bean class="org.openecomp.sdc.be.catalog.impl.DmaapProducer"/>
   <bean class="org.openecomp.sdc.be.impl.ServletUtils"/>
   <bean id="componentUtils" class="org.mockito.Mockito" factory-method="mock">
     <constructor-arg value="org.openecomp.sdc.be.impl.ComponentsUtils" />

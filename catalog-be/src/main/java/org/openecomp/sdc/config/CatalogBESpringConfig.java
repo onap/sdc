@@ -45,14 +45,12 @@ import org.springframework.core.annotation.Order;
 @Configuration
 @ComponentScan({
     "org.openecomp.sdc.be.user",
-    "org.openecomp.sdc.be.facade.operations",
     "org.openecomp.sdc.be.impl",
     "org.openecomp.sdc.be.auditing.impl",
     "org.openecomp.sdc.be.distribution",
     "org.openecomp.sdc.be.switchover.detector",
     "org.openecomp.sdc.be.tosca",
     "org.openecomp.sdc.be.components.validation",
-    "org.openecomp.sdc.be.catalog.impl",
     "org.openecomp.sdc.be.components.impl",
     "org.openecomp.sdc.be.components.path",
     "org.openecomp.sdc.be.components.merge",

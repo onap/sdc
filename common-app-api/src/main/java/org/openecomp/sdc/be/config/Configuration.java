@@ -139,6 +139,8 @@ public class Configuration extends BasicConfiguration {
     /** Ignored; kept until OOM stops rendering the key (YamlToObjectConverter rejects unknown keys). */
     @Deprecated
     private DmaapConsumerConfiguration dmaapConsumerConfiguration;
+    /** Ignored; kept until OOM stops rendering the key (YamlToObjectConverter rejects unknown keys). */
+    @Deprecated
     private DmaapProducerConfiguration dmaapProducerConfiguration;
     private boolean skipUpgradeFailedVfs;
     private boolean skipUpgradeVSPs;

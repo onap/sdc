@@ -21,8 +21,6 @@
  */
 package org.openecomp.sdc.be.components.impl;
 
-import static org.openecomp.sdc.common.datastructure.FunctionalInterfaces.wrapWithTryCatch;
-
 import com.google.common.annotations.VisibleForTesting;
 import fj.data.Either;
 import java.util.HashMap;
@@ -31,14 +29,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import org.openecomp.sdc.be.catalog.enums.ChangeTypeEnum;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.validation.AccessValidations;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
-import org.openecomp.sdc.be.facade.operations.CatalogOperation;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentParametersView;
@@ -50,7 +46,6 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
-import org.openecomp.sdc.exception.ResponseFormat;
 
 @org.springframework.stereotype.Component
 public class ArchiveBusinessLogic {
@@ -61,16 +56,14 @@ public class ArchiveBusinessLogic {
     private final ArchiveOperation archiveOperation;
     private final ToscaOperationFacade toscaOperationFacade;
     private final ComponentsUtils componentUtils;
-    private final CatalogOperation catalogOperations;
 
     public ArchiveBusinessLogic(JanusGraphDao janusGraphDao, AccessValidations accessValidations, ArchiveOperation archiveOperation,
-                                ToscaOperationFacade tof, ComponentsUtils componentsUtils, CatalogOperation catalogOperations) {
+                                ToscaOperationFacade tof, ComponentsUtils componentsUtils) {
         this.janusGraphDao = janusGraphDao;
         this.accessValidations = accessValidations;
         this.archiveOperation = archiveOperation;
         this.toscaOperationFacade = tof;
         this.componentUtils = componentsUtils;
-        this.catalogOperations = catalogOperations;
     }
 
     public void archiveComponent(String containerComponentType, String userId, String componentId) {
@@ -84,8 +77,6 @@ public class ArchiveBusinessLogic {
             throw new ByActionStatusComponentException(status, componentId);
         }
         this.auditAction(ArchiveOperation.Action.ARCHIVE, result.left().value(), user, containerComponentType);
-        // Send Archive Notification To Facade
-        wrapWithTryCatch(() -> sendNotificationToFacade(componentId, ChangeTypeEnum.ARCHIVE));
     }
 
     public void restoreComponent(String containerComponentType, String userId, String componentId) {
@@ -95,8 +86,6 @@ public class ArchiveBusinessLogic {
             throw new ByActionStatusComponentException(result.right().value(), componentId);
         }
         this.auditAction(ArchiveOperation.Action.RESTORE, result.left().value(), user, containerComponentType);
-        // Send Archive Notification To Facade
-        wrapWithTryCatch(() -> sendNotificationToFacade(componentId, ChangeTypeEnum.RESTORE));
     }
 
     public List<String> onVspArchive(String userId, List<String> csarUuids) {
@@ -183,18 +172,5 @@ public class ArchiveBusinessLogic {
                 });
             }
         }
-    }
-
-    protected Either<Component, ResponseFormat> sendNotificationToFacade(String componentId, ChangeTypeEnum changeStatus) {
-        if (log.isDebugEnabled()) {
-            log.debug("build {} notification for facade start", changeStatus.name());
-        }
-        Either<Component, StorageOperationStatus> toscaElement = toscaOperationFacade.getToscaElement(componentId);
-        Component component = toscaElement.left().value();
-        ActionStatus status = catalogOperations.updateCatalog(changeStatus, component);
-        if (status != ActionStatus.OK) {
-            return Either.right(componentUtils.getResponseFormat(status));
-        }
-        return Either.left(component);
     }
 }

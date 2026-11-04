@@ -54,7 +54,6 @@ import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.utils.UserStatusEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.facade.operations.UserOperation;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
@@ -78,7 +77,6 @@ class UserEndpointTest extends JerseySpringBaseTest {
     private static JanusGraphGenericDao janusGraphGenericDao;
     private static ToscaOperationFacade toscaOperationFacade;
     private static LifecycleBusinessLogic lifecycleBusinessLogic;
-    private static UserOperation facadeUserOperation;
 
     private UserData userData = new UserData();
     private UserData modifierData = new UserData();
@@ -95,7 +93,7 @@ class UserEndpointTest extends JerseySpringBaseTest {
 
         @Bean
         UserBusinessLogic userBusinessLogic() {
-            return new UserBusinessLogic(userAdminOperation(), componentUtils, facadeUserOperation);
+            return new UserBusinessLogic(userAdminOperation(), componentUtils);
         }
 
         @Bean
@@ -116,7 +114,6 @@ class UserEndpointTest extends JerseySpringBaseTest {
         componentUtils = mock(ComponentsUtils.class);
         toscaOperationFacade = mock(ToscaOperationFacade.class);
         lifecycleBusinessLogic = mock(LifecycleBusinessLogic.class);
-        facadeUserOperation = mock(UserOperation.class);
     }
 
     @Override

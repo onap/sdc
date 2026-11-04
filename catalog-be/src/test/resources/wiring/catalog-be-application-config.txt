@@ -56,7 +56,6 @@ cassandra-client : org.openecomp.sdc.be.dao.cassandra.CassandraClient
 cassandra-health-check : org.openecomp.sdc.be.components.impl.CassandraHealthCheck
 cassandraCustomStateRepository : org.openecomp.sdc.be.togglz.CassandraCustomStateRepository
 catalogBeApplicationConfig : org.openecomp.sdc.config.CatalogBeApplicationConfig
-catalogOperation : org.openecomp.sdc.be.facade.operations.CatalogOperation
 categoriesImportManager : org.openecomp.sdc.be.components.impl.CategoriesImportManager
 category-operation : org.openecomp.sdc.be.model.jsonjanusgraph.operations.CategoryOperation
 certificateManagerImpl : org.openecomp.sdc.be.csar.security.CertificateManagerImpl
@@ -141,9 +140,6 @@ distributionMonitoringBusinessLogic : org.openecomp.sdc.be.components.impl.Distr
 distributionNotificationSender : org.openecomp.sdc.be.components.distribution.engine.DistributionNotificationSender
 distributionServiceServlet : org.openecomp.sdc.be.servlets.DistributionServiceServlet
 distributionServlet : org.openecomp.sdc.be.distribution.servlet.DistributionServlet
-dmaapClientFactory : org.openecomp.sdc.be.components.distribution.engine.DmaapClientFactory
-dmaapProducer : org.openecomp.sdc.be.catalog.impl.DmaapProducer
-dmaapProducerHealth : org.openecomp.sdc.be.catalog.impl.DmaapProducerHealth
 element-operation : org.openecomp.sdc.be.model.operations.impl.ElementOperation
 elementServlet : org.openecomp.sdc.be.servlets.ElementServlet
 elementsBusinessLogic : org.openecomp.sdc.be.components.impl.ElementBusinessLogic
@@ -344,7 +340,6 @@ userAdminOperation : org.openecomp.sdc.be.model.operations.impl.UserAdminOperati
 userAdminServlet : org.openecomp.sdc.be.servlets.UserAdminServlet
 userBusinessLogic : org.openecomp.sdc.be.user.UserBusinessLogic
 userBusinessLogicExt : org.openecomp.sdc.be.user.UserBusinessLogicExt
-userOperation : org.openecomp.sdc.be.facade.operations.UserOperation
 userValidations : org.openecomp.sdc.be.components.validation.UserValidations
 vesionUpdateHandler : org.openecomp.sdc.be.components.impl.version.VesionUpdateHandler
 webApplicationExceptionMapper : org.openecomp.sdc.be.servlets.exception.WebApplicationExceptionMapper

@@ -29,14 +29,13 @@ import static org.mockito.Mockito.when;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.onap.portalsdk.core.onboarding.exception.CipherUtilException;
-import org.openecomp.sdc.be.catalog.impl.DmaapProducerHealth;
 import org.openecomp.sdc.be.components.BeConfDependentTest;
 import org.openecomp.sdc.be.components.distribution.engine.DistributionEngineClusterHealth;
 import org.openecomp.sdc.be.components.impl.CassandraHealthCheck;
@@ -61,9 +60,6 @@ class HealthCheckBusinessLogicHealthTest extends BeConfDependentTest {
             new ConfigurationManager(new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be"));
     }
 
-    private final DmaapProducerHealth dmaapProducerHealth = mock(DmaapProducerHealth.class);
-    private final HealthCheckInfo dmaapProducerHealthCheckInfo = mock(HealthCheckInfo.class);
-
     private HealthCheckBusinessLogic createTestSubject() {
 
         HealthCheckBusinessLogic healthCheckBusinessLogic = new HealthCheckBusinessLogic();
@@ -76,20 +72,28 @@ class HealthCheckBusinessLogicHealthTest extends BeConfDependentTest {
         ReflectionTestUtils.setField(healthCheckBusinessLogic, "switchoverDetector", switchoverDetector);
         List<HealthCheckInfo> prevBeHealthCheckInfos = new LinkedList<>();
         ReflectionTestUtils.setField(healthCheckBusinessLogic, "prevBeHealthCheckInfos", prevBeHealthCheckInfos);
-        ReflectionTestUtils.setField(healthCheckBusinessLogic, "dmaapProducerHealth", dmaapProducerHealth);
         return healthCheckBusinessLogic;
-    }
-
-    @BeforeEach
-    void beforeTest() {
-        when(dmaapProducerHealth.getHealthCheckInfo())
-            .thenReturn(dmaapProducerHealthCheckInfo);
     }
 
     @Test
     void testInit() throws Exception {
         HealthCheckBusinessLogic testSubject = createTestSubject();
         testSubject.init();
+    }
+
+    @Test
+    void healthCheckNoLongerReportsDmaapComponents() {
+        HealthCheckBusinessLogic testSubject = createTestSubject();
+        testSubject.init();
+        try {
+            List<String> names = testSubject.getBeHealthCheckInfosStatus().getRight().stream()
+                .map(HealthCheckInfo::getHealthCheckComponent).collect(Collectors.toList());
+            Assertions.assertFalse(names.contains("DMAAP"));
+            Assertions.assertFalse(names.contains("DMAAP_PRODUCER"));
+            Assertions.assertTrue(names.contains("DE"));
+        } finally {
+            testSubject.destroy();
+        }
     }
 
     @Test

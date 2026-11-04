@@ -76,7 +76,6 @@ import org.openecomp.sdc.be.externalapi.servlet.representation.ArtifactMetadata;
 import org.openecomp.sdc.be.externalapi.servlet.representation.CopyServiceInfo;
 import org.openecomp.sdc.be.externalapi.servlet.representation.ReplaceVNFInfo;
 import org.openecomp.sdc.be.externalapi.servlet.representation.ResourceInstanceMetadata;
-import org.openecomp.sdc.be.facade.operations.CatalogOperation;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
@@ -143,7 +142,6 @@ public class ServiceImportBussinessLogicBaseTestSetup extends BaseBusinessLogicM
     protected ToscaOperationFacade toscaOperationFacade = mock(ToscaOperationFacade.class);
     protected CsarArtifactsAndGroupsBusinessLogic csarArtifactsAndGroupsBusinessLogic = mock(CsarArtifactsAndGroupsBusinessLogic.class);
     protected UserValidations userValidations = mock(UserValidations.class);
-    protected CatalogOperation catalogOperation = mock(CatalogOperation.class);
     protected ServiceImportParseLogic serviceImportParseLogic = mock(ServiceImportParseLogic.class);
     protected ServiceTypeValidator serviceTypeValidator = new ServiceTypeValidator();
     protected ServiceRoleValidator serviceRoleValidator = new ServiceRoleValidator(componentsUtils);
@@ -203,7 +201,6 @@ public class ServiceImportBussinessLogicBaseTestSetup extends BaseBusinessLogicM
         when(webAppContext.getBean(IElementOperation.class)).thenReturn(mockElementDao);
         when(graphLockOperation.lockComponent(Mockito.anyString(), Mockito.eq(NodeTypeEnum.Service))).thenReturn(StorageOperationStatus.OK);
         when(graphLockOperation.lockComponentByName(Mockito.anyString(), Mockito.eq(NodeTypeEnum.Service))).thenReturn(StorageOperationStatus.OK);
-        when(catalogOperation.updateCatalog(Mockito.any(), Mockito.any())).thenReturn(ActionStatus.OK);
         // artifact bussinesslogic
         ArtifactDefinition artifactDef = new ArtifactDefinition();
         when(artifactsBusinessLogic.createArtifactPlaceHolderInfo(Mockito.any(), Mockito.anyString(), Mockito.anyMap(), Mockito.any(User.class),

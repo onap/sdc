@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import org.apache.commons.lang3.StringUtils;
-import org.openecomp.sdc.be.catalog.enums.ChangeTypeEnum;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ProductBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
@@ -41,7 +40,6 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.facade.operations.CatalogOperation;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
@@ -75,8 +73,6 @@ public class LifecycleBusinessLogic {
     @Autowired
     NodeTemplateOperation nodeTemplateOperation;
     @Autowired
-    CatalogOperation catalogOperations;
-    @Autowired
     VesionUpdateHandler groupUpdateHandler;
     @Autowired
     private IGraphLockOperation graphLockOperation = null;
@@ -107,7 +103,6 @@ public class LifecycleBusinessLogic {
         LifeCycleTransition checkoutOp = new CheckoutTransition(componentUtils, lifecycleOperation, toscaOperationFacade, janusGraphDao);
         stateTransitions.put(checkoutOp.getName().name(), checkoutOp);
         UndoCheckoutTransition undoCheckoutOp = new UndoCheckoutTransition(componentUtils, lifecycleOperation, toscaOperationFacade, janusGraphDao);
-        undoCheckoutOp.setCatalogOperations(catalogOperations);
         stateTransitions.put(undoCheckoutOp.getName().name(), undoCheckoutOp);
         LifeCycleTransition checkinOp = new CheckinTransition(componentUtils, lifecycleOperation, toscaOperationFacade, janusGraphDao,
             groupUpdateHandler);
@@ -203,10 +198,7 @@ public class LifecycleBusinessLogic {
                     modifier,
                     changeInfo,
                     inTransaction, requestUUID);
-            Either<T, ResponseFormat> finalResult = result.left()
-                    .bind(c -> updateCatalog(c, oldComponent, ChangeTypeEnum.LIFECYCLE));
-
-            return finalResult;
+            return result.left().map(c -> c == null ? oldComponent : c);
 
         } finally {
             component.setUniqueId(componentId);
@@ -217,18 +209,6 @@ public class LifecycleBusinessLogic {
                 graphLockOperation.unlockComponent(componentId, nodeType);
             }
         }
-    }
-
-    private <T extends Component> Either<T, ResponseFormat> updateCatalog(T component, T oldComponent, ChangeTypeEnum changeStatus) {
-        log.debug("updateCatalog start");
-        T result = component == null ? oldComponent : component;
-        if (component != null) {
-            ActionStatus status = catalogOperations.updateCatalog(changeStatus, component);
-            if (status != ActionStatus.OK) {
-                return Either.right(componentUtils.getResponseFormat(status));
-            }
-        }
-        return Either.left(result);
     }
 
     private <T extends Component> Either<T, ResponseFormat> checkInBeforeCertifyIfNeeded(ComponentTypeEnum componentType, User modifier,

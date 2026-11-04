@@ -36,7 +36,6 @@ import org.apache.kafka.common.KafkaException;
 import org.apache.kafka.common.errors.TimeoutException;
 import java.util.concurrent.CompletableFuture;
 
-import org.openecomp.sdc.be.catalog.api.IStatus;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
 
 public class SdcKafkaProducerTest {

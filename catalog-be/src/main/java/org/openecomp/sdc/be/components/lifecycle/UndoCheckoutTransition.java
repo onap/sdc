@@ -21,13 +21,11 @@ package org.openecomp.sdc.be.components.lifecycle;
 
 import fj.data.Either;
 import java.util.Arrays;
-import org.openecomp.sdc.be.catalog.enums.ChangeTypeEnum;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.facade.operations.CatalogOperation;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
@@ -46,7 +44,6 @@ import org.openecomp.sdc.exception.ResponseFormat;
 public class UndoCheckoutTransition extends LifeCycleTransition {
 
     private static final Logger log = Logger.getLogger(CheckoutTransition.class);
-    private CatalogOperation catalogOperations;
 
     public UndoCheckoutTransition(ComponentsUtils componentUtils, ToscaElementLifecycleOperation lifecycleOperation,
                                   ToscaOperationFacade toscaOperationFacade, JanusGraphDao janusGraphDao) {
@@ -67,10 +64,6 @@ public class UndoCheckoutTransition extends LifeCycleTransition {
     @Override
     public AuditingActionEnum getAuditingAction() {
         return AuditingActionEnum.UNDO_CHECKOUT_RESOURCE;
-    }
-
-    void setCatalogOperations(CatalogOperation catalogOperations) {
-        this.catalogOperations = catalogOperations;
     }
 
     @Override
@@ -119,7 +112,6 @@ public class UndoCheckoutTransition extends LifeCycleTransition {
                      if (requestUUID != null && !requestUUID.trim().isEmpty()) {
                              element.setUUID(requestUUID);
                     }
-                    catalogOperations.updateCatalog(ChangeTypeEnum.DELETE, component);
                     result = Either.left(null);
                 } else {
                     result = Either.left(ModelConverter.convertFromToscaElement(element));

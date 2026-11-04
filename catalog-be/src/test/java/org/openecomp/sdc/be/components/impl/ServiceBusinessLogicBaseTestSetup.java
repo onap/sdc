@@ -65,7 +65,6 @@ import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.facade.operations.CatalogOperation;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
@@ -116,7 +115,6 @@ class ServiceBusinessLogicBaseTestSetup extends BaseBusinessLogicMock {
     protected GenericTypeBusinessLogic genericTypeBusinessLogic = Mockito.mock(GenericTypeBusinessLogic.class);
     protected UserValidations userValidations = Mockito.mock(UserValidations.class);
     protected ResourceAdminEvent auditArchive1 = Mockito.mock(ResourceAdminEvent.class);
-    protected CatalogOperation catalogOperation = Mockito.mock(CatalogOperation.class);
     protected ResourceAdminEvent auditArchive2 = Mockito.mock(ResourceAdminEvent.class);
     protected ResourceAdminEvent auditRestore = Mockito.mock(ResourceAdminEvent.class);
     protected ModelOperation modelOperation = Mockito.mock(ModelOperation.class);
@@ -180,7 +178,6 @@ class ServiceBusinessLogicBaseTestSetup extends BaseBusinessLogicMock {
         when(webAppContext.getBean(IElementOperation.class)).thenReturn(mockElementDao);
         when(graphLockOperation.lockComponent(Mockito.anyString(), Mockito.eq(NodeTypeEnum.Service))).thenReturn(StorageOperationStatus.OK);
         when(graphLockOperation.lockComponentByName(Mockito.anyString(), Mockito.eq(NodeTypeEnum.Service))).thenReturn(StorageOperationStatus.OK);
-        when(catalogOperation.updateCatalog(Mockito.any(), Mockito.any())).thenReturn(ActionStatus.OK);
         // artifact bussinesslogic
         ArtifactDefinition artifactDef = new ArtifactDefinition();
         when(artifactBl.createArtifactPlaceHolderInfo(Mockito.any(), Mockito.anyString(), Mockito.anyMap(), Mockito.any(User.class),
@@ -223,7 +220,6 @@ class ServiceBusinessLogicBaseTestSetup extends BaseBusinessLogicMock {
         bl.setComponentsUtils(componentsUtils);
         bl.setCassandraAuditingDao(auditingDao);
         bl.setUserValidations(userValidations);
-        bl.setCatalogOperations(catalogOperation);
 
         mockAuditingDaoLogic();
 

@@ -54,7 +54,6 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.openecomp.sdc.be.catalog.enums.ChangeTypeEnum;
 import org.openecomp.sdc.be.components.csar.CsarArtifactsAndGroupsBusinessLogic;
 import org.openecomp.sdc.be.components.csar.CsarBusinessLogic;
 import org.openecomp.sdc.be.components.csar.CsarInfo;
@@ -402,11 +401,9 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         if (StringUtils.isNotEmpty(csarUUID)) {
             csarBusinessLogic.validateCsarBeforeCreate(resource, auditingAction, user, csarUUID);
             log.debug("CsarUUID is {} - going to create resource from CSAR", csarUUID);
-            Resource createResourceFromCsar = createResourceFromCsar(resource, user, csarUIPayload, csarUUID);
-            return updateCatalog(createResourceFromCsar, ChangeTypeEnum.LIFECYCLE).left().map(Resource.class::cast).left().value();
+            return createResourceFromCsar(resource, user, csarUIPayload, csarUUID);
         }
-        final Resource createResourceByDao = createResourceByDao(resource, user, auditingAction, false, false);
-        return updateCatalog(createResourceByDao, ChangeTypeEnum.LIFECYCLE).left().map(Resource.class::cast).left().value();
+        return createResourceByDao(resource, user, auditingAction, false, false);
     }
 
     public Resource validateAndUpdateResourceFromCsar(Resource resource, User user, Map<String, byte[]> csarUIPayload, String payloadName,
@@ -3590,8 +3587,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                                                                          CsarInfo csarInfo) {
         log.debug("resource with name {} does not exist. create new resource", resource.getName());
         validateResourceBeforeCreate(resource, user, AuditingActionEnum.IMPORT_RESOURCE, isInTransaction, csarInfo);
-        final Resource createResourceByDao = createResourceByDao(resource, user, AuditingActionEnum.IMPORT_RESOURCE, isNormative, isInTransaction);
-        Resource createdResource = updateCatalog(createResourceByDao, ChangeTypeEnum.LIFECYCLE).left().map(r -> (Resource) r).left().value();
+        final Resource createdResource = createResourceByDao(resource, user, AuditingActionEnum.IMPORT_RESOURCE, isNormative, isInTransaction);
         ImmutablePair<Resource, ActionStatus> resourcePair = new ImmutablePair<>(createdResource, ActionStatus.CREATED);
         ASDCKpiApi.countImportResourcesKPI();
         return resourcePair;
@@ -3669,7 +3665,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 componentsUtils.auditResource(responseFormat, user, newResource, AuditingActionEnum.IMPORT_RESOURCE);
                 throwComponentException(responseFormat);
             }
-            updateCatalog(overrideResource.left().value(), ChangeTypeEnum.LIFECYCLE);
             log.debug("Resource updated successfully!!!");
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.OK);
             componentsUtils.auditResource(responseFormat, user, newResource, AuditingActionEnum.IMPORT_RESOURCE,
@@ -4205,7 +4200,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 modelOperation.deleteModel(modelOptional.get(), true);
             }
             toscaOperationFacade.commitAndCheck(resource.getUniqueId());
-            updateCatalog(resource, ChangeTypeEnum.DELETE);
         } catch (ComponentException exception) {
             log.debug("Failed to delete resource, {} ", resourceId);
             janusGraphDao.rollback();

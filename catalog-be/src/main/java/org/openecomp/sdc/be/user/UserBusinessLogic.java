@@ -38,7 +38,6 @@ import org.onap.portalsdk.core.onboarding.util.CipherUtil;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.utils.UserStatusEnum;
-import org.openecomp.sdc.be.facade.operations.UserOperation;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.User;
@@ -61,12 +60,10 @@ public class UserBusinessLogic {
     private static UserAdminValidator userAdminValidator = UserAdminValidator.getInstance();
     private final UserAdminOperation userAdminOperation;
     private final ComponentsUtils componentsUtils;
-    private final UserOperation facadeUserOperation;
 
-    public UserBusinessLogic(UserAdminOperation userAdminOperation, ComponentsUtils componentsUtils, UserOperation facadeUserOperation) {
+    public UserBusinessLogic(UserAdminOperation userAdminOperation, ComponentsUtils componentsUtils) {
         this.userAdminOperation = userAdminOperation;
         this.componentsUtils = componentsUtils;
-        this.facadeUserOperation = facadeUserOperation;
     }
 
     public User getUser(String userId, boolean inTransaction) {
@@ -170,7 +167,6 @@ public class UserBusinessLogic {
         }
         ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.CREATED);
         handleAuditing(modifier, null, createdUser, responseFormat, AuditingActionEnum.ADD_USER);
-        getFacadeUserOperation().updateUserCache(UserOperationEnum.CREATE, createdUser.getUserId(), createdUser.getRole());
         return createdUser;
     }
 
@@ -245,7 +241,6 @@ public class UserBusinessLogic {
         newUser.setUserId(userIdToUpdate);
         User updatedUser = userAdminOperation.updateUserData(newUser);
         handleAuditing(modifier, userToUpdate, updatedUser, componentsUtils.getResponseFormat(ActionStatus.OK), UPDATE_USER);
-        getFacadeUserOperation().updateUserCache(UserOperationEnum.CHANGE_ROLE, updatedUser.getUserId(), updatedUser.getRole());
         return updatedUser;
     }
 
@@ -420,9 +415,5 @@ public class UserBusinessLogic {
             default:
         }
         return properties;
-    }
-
-    public UserOperation getFacadeUserOperation() {
-        return facadeUserOperation;
     }
 }

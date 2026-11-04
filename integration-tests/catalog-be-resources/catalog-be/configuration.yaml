@@ -1126,37 +1126,6 @@ gabConfig:
         path: "pmMetaData.pmFields.iMeasInfoId"
         searchable: false
 
-dmaapProducerConfiguration:
-    active: true
-    hosts: olsd004.com:3905
-    consumerGroup: sdc-integration-test-1737011830
-    consumerId: sdc-integration-test1-1737011830
-    timeoutMs: 15000
-    limit: 1
-    pollingInterval: 2
-    topic: SDC-FACADE-NOTIF-v1
-    latitude: 32.109333
-    longitude: 34.855499
-    version: 1.0
-    serviceName: dmaap.com:3905/events
-    environment: integration-test
-    partner: BOT_R
-    routeOffer: MR1
-    protocol:
-    contenttype: application/json
-    dme2TraceOn: true
-    aftEnvironment:
-    aftDme2ConnectionTimeoutMs: 15000
-    aftDme2RoundtripTimeoutMs: 240000
-    aftDme2ReadTimeoutMs: 50000
-    dme2preferredRouterFilePath:
-    timeLimitForNotificationHandleMs: 120000
-    credential:
-        username: user1@sdc.com
-        password: password==
-    aftDme2SslEnable: true
-    aftDme2ClientSslCertAlias: certman
-
 # ToDo: AF - had to remove due to configuration laod class failure
 #dmeConfiguration:
 #    lookupUriFormat: "http://DME2RESOLVE/service=%s/version=1.0.0/envContext=%s/routeOffer=DEFAULT"

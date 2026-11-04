@@ -27,7 +27,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -46,6 +45,7 @@ import org.javatuples.Pair;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -56,7 +56,6 @@ import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.utils.UserStatusEnum;
-import org.openecomp.sdc.be.facade.operations.UserOperation;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.User;
@@ -80,8 +79,6 @@ public class UserBusinessLogicTest {
     @Mock
     private ComponentsUtils componentsUtils;
     @Mock
-    private UserOperation facadeUserOperation;
-    @Mock
     private User user;
     @Mock
     private User userNull;
@@ -103,8 +100,6 @@ public class UserBusinessLogicTest {
         when(userAdminOperation.getUserData(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(Either.right(ActionStatus.USER_NOT_FOUND));
         // default test
         testSubject.createUser("mock", newUser);
-
-        verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());
     }
 
     @Test(expected = ComponentException.class)
@@ -174,8 +169,6 @@ public class UserBusinessLogicTest {
         userFromDb.setRole(UserRoleEnum.DESIGNER.getName());
         when(userAdminOperation.getUserData(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(Either.left(userFromDb));
         testSubject.createUser("mock", newUser);
-
-        verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());
     }
 
     @Test(expected = ComponentException.class)
@@ -188,8 +181,6 @@ public class UserBusinessLogicTest {
 
         // default test
         testSubject.createUser(MOCK_MODIFIER, newUser);
-
-        verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());
     }
 
     @Test(expected = ComponentException.class)
@@ -202,8 +193,6 @@ public class UserBusinessLogicTest {
 
         // default test
         testSubject.createUser(MOCK_MODIFIER, newUser);
-
-        verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());
     }
 
     @Test(expected = ComponentException.class)
@@ -215,8 +204,6 @@ public class UserBusinessLogicTest {
         when(userAdminOperation.getUserData(MOCK_MODIFIER, false)).thenReturn(Either.left(modifierFromDb));
         when(userAdminOperation.getUserData(MOCK_NEW_USER, false)).thenReturn(Either.left(userFromDb2));
         testSubject.createUser(MOCK_MODIFIER, newUser);
-
-        verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());
     }
 
     @Test(expected = ComponentException.class)
@@ -232,8 +219,6 @@ public class UserBusinessLogicTest {
         when(userAdminOperation.getUserData(MOCK_MODIFIER, false)).thenReturn(Either.left(userFromDbAdmin));
         when(userAdminOperation.getUserData(MOCK_NEW_USER, false)).thenReturn(Either.left(userFromDbNew));
         testSubject.createUser(MOCK_MODIFIER, newUser);
-
-        verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());
     }
 
     @Test(expected = ComponentException.class)
@@ -249,8 +234,6 @@ public class UserBusinessLogicTest {
         when(userAdminOperation.getUserData(MOCK_MODIFIER, false)).thenReturn(Either.left(userFromDbAdmin));
         when(userAdminOperation.getUserData(MOCK_NEW_USER, false)).thenReturn(Either.left(userFromDbNew));
         testSubject.createUser(MOCK_MODIFIER, newUser);
-
-        verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());
     }
 
     @Test
@@ -275,8 +258,6 @@ public class UserBusinessLogicTest {
         // test
         User resultUser = testSubject.createUser(MOCK_MODIFIER, newUser);
         assertThat(resultUser).isEqualTo(newUser);
-
-        verify(facadeUserOperation).updateUserCache(UserOperationEnum.CREATE, newUser.getUserId(), newUser.getRole());
     }
 
     @Test(expected = ComponentException.class)
@@ -287,8 +268,6 @@ public class UserBusinessLogicTest {
 
         when(userAdminOperation.getUserData(modifier.getUserId(), false)).thenReturn(Either.right(ActionStatus.USER_NOT_FOUND));
         testSubject.updateUserRole(MOCK_MODIFIER, userIdToUpdate, userRole);
-
-        verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());
     }
 
     @Test(expected = ComponentException.class)
@@ -300,8 +279,6 @@ public class UserBusinessLogicTest {
 
         when(userAdminOperation.getUserData(modifier.getUserId(), false)).thenReturn(Either.left(modifier));
         testSubject.updateUserRole(MOCK_MODIFIER, userIdToUpdate, userRole);
-
-        verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());
     }
 
     @Test(expected = ComponentException.class)
@@ -312,8 +289,6 @@ public class UserBusinessLogicTest {
 
         when(userAdminOperation.getUserData(modifier.getUserId(), false)).thenReturn(Either.left(modifier));
         testSubject.updateUserRole(MOCK_MODIFIER, MOCK_MODIFIER, userRole);
-
-        verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());
     }
 
     @Test(expected = ComponentException.class)
@@ -327,8 +302,6 @@ public class UserBusinessLogicTest {
         when(userAdminOperation.getUserData(userIdToUpdate, false)).thenReturn(Either.right(ActionStatus.ECOMP_USER_NOT_FOUND));
 
         testSubject.updateUserRole(MOCK_MODIFIER, userIdToUpdate, userRole);
-
-        verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());
     }
 
     @Test(expected = ComponentException.class)
@@ -342,8 +315,6 @@ public class UserBusinessLogicTest {
         when(userAdminOperation.getUserData(userIdToUpdate, false)).thenReturn(Either.left(modifier));
 
         testSubject.updateUserRole(MOCK_MODIFIER, userIdToUpdate, userRole);
-
-        verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());
     }
 
     @Test(expected = StorageException.class)
@@ -364,8 +335,6 @@ public class UserBusinessLogicTest {
 
         // default test
         testSubject.updateUserRole(MOCK_MODIFIER, userIdToUpdate, userRole);
-
-        verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());
     }
 
     @Test
@@ -390,8 +359,6 @@ public class UserBusinessLogicTest {
         // default test
         User user = testSubject.updateUserRole(MOCK_MODIFIER, userIdToUpdate, userRole);
         assertThat(user).isEqualToComparingFieldByField(updatedUser);
-
-        verify(facadeUserOperation).updateUserCache(UserOperationEnum.CHANGE_ROLE, userIdToUpdate, UserRoleEnum.TESTER.name());
     }
 
     @Test(expected = ComponentException.class)
@@ -414,8 +381,6 @@ public class UserBusinessLogicTest {
         list.add(new DetachedEdge("sdas", "fdfs", new HashMap<>(), Pair.with("sadas", "sadasd"), "",
             Pair.with("sadas", "sadasd"), ""));
         testSubject.updateUserRole(MOCK_MODIFIER, userIdToUpdate, userRole);
-
-        verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());
     }
 
     @Test(expected = StorageException.class)
@@ -434,8 +399,6 @@ public class UserBusinessLogicTest {
         when(userAdminOperation.updateUserData(Mockito.any())).thenThrow(new StorageException(StorageOperationStatus.INCONSISTENCY));
         // default test
         testSubject.updateUserRole(MOCK_MODIFIER, userIdToUpdate, userRole);
-
-        verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());
     }
 
     @Test
@@ -453,9 +416,12 @@ public class UserBusinessLogicTest {
         when(userAdminOperation.getUserData(userIdToUpdate, false)).thenReturn(Either.left(updatedUser));
         when(userAdminOperation.getUserPendingTasksList(Mockito.any(), Mockito.any())).thenReturn(new LinkedList<>());
         when(userAdminOperation.updateUserData(Mockito.any())).thenReturn(updatedUser);
-        testSubject.updateUserRole(MOCK_MODIFIER, userIdToUpdate, userRole);
+        assertThat(testSubject.updateUserRole(MOCK_MODIFIER, userIdToUpdate, userRole)).isSameAs(updatedUser);
 
-        verify(facadeUserOperation).updateUserCache(UserOperationEnum.CHANGE_ROLE, userIdToUpdate, UserRoleEnum.TESTER.name());
+        ArgumentCaptor<User> written = ArgumentCaptor.forClass(User.class);
+        verify(userAdminOperation).updateUserData(written.capture());
+        assertThat(written.getValue().getUserId()).isEqualTo(userIdToUpdate);
+        assertThat(written.getValue().getRole()).isEqualTo(userRole);
     }
 
     @Test(expected = ComponentException.class)

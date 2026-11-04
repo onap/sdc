@@ -34,7 +34,5 @@ public enum EcompErrorName {
     // BeRepositoryQueryError,
     BeDaoSystemError, BeSystemError, BeInvalidConfigurationError, BeMissingConfigurationError, BeUebSystemError, BeDistributionEngineSystemError, BeDistributionEngineInvalidArtifactType, BeConfigurationInvalidListSizeError, BeInvalidTypeError, BeInvalidValueError, BeFailedLockObjectError, BeInvalidJsonInput, BeDistributionMissingError, ErrorConfigFileFormat,
     // model
-    BeFailedCreateNodeError, BeFailedUpdateNodeError, BeFailedDeleteNodeError, BeFailedRetrieveNodeError, BeExecuteRollbackError, BeFailedFindParentError, BeFailedFindAllNodesError, BeFailedFindAssociationError, BeFailedToAssociateError, BeComponentCleanerSystemError,
-    //dmaap
-    DmaapHealthCheckRecovery, DmaapHealthCheckError;
+    BeFailedCreateNodeError, BeFailedUpdateNodeError, BeFailedDeleteNodeError, BeFailedRetrieveNodeError, BeExecuteRollbackError, BeFailedFindParentError, BeFailedFindAllNodesError, BeFailedFindAssociationError, BeFailedToAssociateError, BeComponentCleanerSystemError;
 }

@@ -52,7 +52,7 @@ public class HealthCheckBusinessLogicTest {
         HealthCheckInfo checkInfoJanusGraphUp = new HealthCheckInfo(Constants.HC_COMPONENT_JANUSGRAPH, HealthCheckStatus.UP, null, null);
         HealthCheckInfo checkInfoJanusGraphDown = new HealthCheckInfo(Constants.HC_COMPONENT_JANUSGRAPH, HealthCheckStatus.DOWN, null, null);
 
-        HealthCheckInfo checkInfoDmaapProducerUp = new HealthCheckInfo(Constants.HC_COMPONENT_DMAAP_PRODUCER, HealthCheckStatus.UP, null, null);
+        HealthCheckInfo checkInfoCassandraUp = new HealthCheckInfo(Constants.HC_COMPONENT_CASSANDRA, HealthCheckStatus.UP, null, null);
 
         HealthCheckInfo healthCheckInfoCADIUp = new HealthCheckInfo(Constants.HC_COMPONENT_CADI, HealthCheckStatus.UP, null, null);
 
@@ -64,9 +64,9 @@ public class HealthCheckBusinessLogicTest {
 
         checkInfosRight.add(checkInfoJanusGraphUp);
 
-        checkInfosLeft.add(checkInfoDmaapProducerUp);
+        checkInfosLeft.add(checkInfoCassandraUp);
 
-        checkInfosRight.add(checkInfoDmaapProducerUp);
+        checkInfosRight.add(checkInfoCassandraUp);
 
         checkInfosLeft.add(healthCheckInfoCADIUp);
 

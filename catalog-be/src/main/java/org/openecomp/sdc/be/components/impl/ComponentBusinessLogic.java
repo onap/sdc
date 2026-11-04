@@ -34,7 +34,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.openecomp.sdc.be.catalog.enums.ChangeTypeEnum;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
@@ -59,7 +58,6 @@ import org.openecomp.sdc.be.datatypes.enums.FilterKeyEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-import org.openecomp.sdc.be.facade.operations.CatalogOperation;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.AttributeDefinition;
@@ -110,7 +108,6 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
     protected GenericTypeBusinessLogic genericTypeBusinessLogic;
     protected ComponentDescriptionValidator componentDescriptionValidator;
     protected ComponentProjectCodeValidator componentProjectCodeValidator;
-    protected CatalogOperation catalogOperations;
     protected ComponentIconValidator componentIconValidator;
     protected ComponentTagsValidator componentTagsValidator;
     protected ComponentNameValidator componentNameValidator;
@@ -571,7 +568,6 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
             return markResourceToDelete;
         } else {
             log.debug("Component {}  of type {} was marked as deleted", uniqueId, componentType);
-            updateCatalog(component, ChangeTypeEnum.DELETE);
             return StorageOperationStatus.OK;
         }
     }
@@ -991,23 +987,6 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
     public Either<Component, ActionStatus> shouldUpgradeToLatestDerived(Component clonedComponent) {
         //general implementation. Must be error for service, VF . In ResourceBuisnessLogic exist override
         return Either.right(ActionStatus.GENERAL_ERROR);
-    }
-
-    protected Either<Component, ResponseFormat> updateCatalog(Component component, ChangeTypeEnum changeStatus) {
-        if (log.isDebugEnabled()) {
-            log.debug("update Catalog start with Component Type {} And Componet Name {} with change status {}",
-                component.getComponentType().name(), component.getName(), changeStatus.name());
-        }
-        ActionStatus status = catalogOperations.updateCatalog(changeStatus, component);
-        if (status != ActionStatus.OK) {
-            return Either.right(componentsUtils.getResponseFormat(status));
-        }
-        return Either.left(component);
-    }
-
-    @Autowired
-    public void setCatalogOperations(CatalogOperation catalogOperations) {
-        this.catalogOperations = catalogOperations;
     }
 
     public List<GroupDefinition> throwComponentException(ResponseFormat responseFormat) {

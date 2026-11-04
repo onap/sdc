@@ -141,7 +141,6 @@ public final class Constants {
     public static final String HC_COMPONENT_JANUSGRAPH = "JANUSGRAPH";
     public static final String HC_COMPONENT_CASSANDRA = "CASSANDRA";
     public static final String HC_COMPONENT_DISTRIBUTION_ENGINE = "DE";
-    public static final String HC_COMPONENT_DMAAP_PRODUCER = "DMAAP_PRODUCER";
     public static final String HC_COMPONENT_CATALOG_FACADE_MS = "CATALOG_FACADE_MS";
     //external HealthCheck components
     public static final String HC_COMPONENT_ON_BOARDING = "ON_BOARDING";

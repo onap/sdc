@@ -48,7 +48,6 @@ import org.glassfish.jersey.test.TestProperties;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.openecomp.sdc.be.catalog.enums.ChangeTypeEnum;
 import org.openecomp.sdc.be.components.impl.ArchiveBusinessLogic;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
@@ -73,11 +72,9 @@ import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.facade.operations.CatalogOperation;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
-import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.catalog.CatalogComponent;
@@ -122,7 +119,6 @@ class ArchiveEndpointTest extends JerseyTest {
     private static final ServletUtils servletUtils = mock(ServletUtils.class);
     private static final UserBusinessLogic userAdmin = mock(UserBusinessLogic.class);
     private static final ComponentsUtils componentUtils = mock(ComponentsUtils.class);
-    private static final CatalogOperation catalogOperations = mock(CatalogOperation.class);
     private static final ToscaOperationFacade toscaOperationFacade = Mockito.spy(new ToscaOperationFacade());
 
     private static final ResponseFormat responseFormat = mock(ResponseFormat.class);
@@ -170,7 +166,7 @@ class ArchiveEndpointTest extends JerseyTest {
         @Bean
         ArchiveBusinessLogic archiveBusinessLogic() {
             return new ArchiveBusinessLogic(janusGraphDao(), accessValidations(), archiveOperation(),
-                toscaOperationFacade(), componentUtils, catalogOperations);
+                toscaOperationFacade(), componentUtils);
         }
 
         @Bean
@@ -363,10 +359,7 @@ class ArchiveEndpointTest extends JerseyTest {
 
     @Test
     void archiveAndGetArchivedService_SingleService() {
-        Component serviceComponent = mock(Component.class);
         final String serviceUniqueId = serviceVertex.getUniqueId();
-        when(toscaOperationFacade.getToscaElement(serviceUniqueId)).thenReturn(Either.left(serviceComponent));
-        when(catalogOperations.updateCatalog(ChangeTypeEnum.ARCHIVE, serviceComponent)).thenReturn(ActionStatus.OK);
         archiveService(serviceUniqueId, HttpStatus.OK.value());
         assertOnGetArchivedComponents(ComponentTypeEnum.SERVICE_PARAM_NAME, 1);
         //restoreService(serviceUniqueId, 200);
@@ -374,10 +367,7 @@ class ArchiveEndpointTest extends JerseyTest {
 
     @Test
     void archiveAndGetArchivedResource_SingleResource() {
-        Component component = mock(Component.class);
         final String uniqueId = resourceVertex.getUniqueId();
-        when(toscaOperationFacade.getToscaElement(uniqueId)).thenReturn(Either.left(component));
-        when(catalogOperations.updateCatalog(ChangeTypeEnum.ARCHIVE, component)).thenReturn(ActionStatus.OK);
         archiveResource(uniqueId, HttpStatus.OK.value());
         assertOnGetArchivedComponents(ComponentTypeEnum.RESOURCE_PARAM_NAME, 1);
         //restoreResource(uniqueId, 200);

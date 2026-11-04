@@ -64,7 +64,6 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.openecomp.sdc.be.catalog.enums.ChangeTypeEnum;
 import org.openecomp.sdc.be.components.distribution.engine.IDistributionEngine;
 import org.openecomp.sdc.be.components.distribution.engine.INotificationData;
 import org.openecomp.sdc.be.components.distribution.engine.VfModuleArtifactPayload;
@@ -687,7 +686,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         if (createServiceResponse.isRight()) {
             return createServiceResponse;
         }
-        return createServiceByDao(service, user).left().bind(c -> updateCatalog(c, ChangeTypeEnum.LIFECYCLE).left().map(Service.class::cast));
+        return createServiceByDao(service, user);
     }
 
     private void checkFieldsForOverideAttempt(Service service) {
@@ -886,7 +885,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
                 BeEcompErrorManager.getInstance().logBeSystemError("Update Service Metadata");
                 log.debug("failed to update sevice {}", serviceToUpdate.getUniqueId());
                 return (componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
-            }).left().bind(this::updateCatalogAndCommit);
+            }).left().bind(this::commitUpdate);
         } catch (ComponentException e) {
             janusGraphDao.rollback();
             BeEcompErrorManager.getInstance().logBeSystemError("Update Service Metadata");
@@ -897,10 +896,9 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         }
     }
 
-    private Either<Service, ResponseFormat> updateCatalogAndCommit(Service service) {
-        Either<Service, ResponseFormat> res = updateCatalog(service, ChangeTypeEnum.LIFECYCLE).left().map(Service.class::cast);
+    private Either<Service, ResponseFormat> commitUpdate(Service service) {
         janusGraphDao.commit();
-        return res;
+        return Either.left(service);
     }
 
     public Set<String> deleteForwardingPaths(String serviceId, Set<String> pathIdsToDelete, User user, boolean lock) {
@@ -1529,7 +1527,6 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
                 modelOperation.deleteModel(modelOptional.get(), false);
             }
             toscaOperationFacade.commitAndCheck(service.getUniqueId());
-            updateCatalog(service, ChangeTypeEnum.DELETE);
 
             String distributionId = ThreadLocalsHolder.getUuid();
             String envName = getEnvNameFromConfiguration();
@@ -1828,7 +1825,6 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
                 return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
             }
             janusGraphDao.commit();
-            updateCatalog(service, ChangeTypeEnum.LIFECYCLE);
             return Either.left(result.left().value());
         } finally {
             graphLockOperation.unlockComponent(serviceId, NodeTypeEnum.Service);

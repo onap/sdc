@@ -49,7 +49,6 @@ import org.springframework.context.annotation.Import;
     "org.openecomp.sdc.be.servlets",
     "org.openecomp.sdc.be.externalapi.servlet",
     "org.openecomp.sdc.be.components.scheduledtasks",
-    "org.openecomp.sdc.be.facade.operations",
     "org.openecomp.sdc.be.components.kafka",
     "org.openecomp.sdc.be.components.impl"})
 @Import({
