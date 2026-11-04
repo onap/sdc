@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +20,11 @@
  */
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import org.openecomp.sdc.be.components.kafka.KafkaHandler;
+import org.openecomp.sdc.be.components.kafka.DistributionNotificationPublisher;
+import org.openecomp.sdc.be.components.kafka.DistributionNotificationPublisher.PublishResult;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.distribution.api.client.CambriaOperationStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
@@ -35,18 +36,22 @@ public class DistributionNotificationSender {
 
     protected static final String DISTRIBUTION_NOTIFICATION_SENDING = "distributionNotificationSending";
     private static final Logger logger = Logger.getLogger(DistributionNotificationSender.class.getName());
-    @javax.annotation.Resource
-    protected ComponentsUtils componentUtils;
-    private final KafkaHandler kafkaHandler = new KafkaHandler();
+    private final ComponentsUtils componentUtils;
+    private final DistributionNotificationPublisher publisher;
 
     private final DistributionEngineConfiguration deConfiguration = ConfigurationManager.getConfigurationManager().getDistributionEngineConfiguration();
+
+    public DistributionNotificationSender(ComponentsUtils componentUtils, DistributionNotificationPublisher publisher) {
+        this.componentUtils = componentUtils;
+        this.publisher = publisher;
+    }
 
     public ActionStatus sendNotification(String topicName, String distributionId, EnvironmentMessageBusData messageBusData,
                                          INotificationData notificationData, Service service, User modifier) {
         long startTime = System.currentTimeMillis();
-        CambriaErrorResponse status = kafkaHandler.sendNotification(topicName, notificationData,
+        PublishResult status = publisher.publish(topicName, notificationData,
             deConfiguration.getDistributionNotificationTopic().getMaxWaitingAfterSendingSeconds());
-        logger.info("After publishing service {} of version {}. Status is {}", service.getName(), service.getVersion(), status.getHttpCode());
+        logger.info("After publishing service {} of version {}. Status is {}", service.getName(), service.getVersion(), status.httpCode());
         auditDistributionNotification(
             new AuditDistributionNotificationBuilder().setTopicName(topicName).setDistributionId(distributionId).setStatus(status).setService(service)
                 .setEnvId(messageBusData.getEnvId()).setModifier(modifier).setWorkloadContext(notificationData.getWorkloadContext())
@@ -55,57 +60,16 @@ public class DistributionNotificationSender {
         if (logger.isDebugEnabled()) {
             logger.debug("After building and publishing artifacts object. Total took {} milliseconds", endTime - startTime);
         }
-        return convertCambriaResponse(status);
+        return status == PublishResult.OK ? ActionStatus.OK : ActionStatus.GENERAL_ERROR;
     }
 
     private void auditDistributionNotification(AuditDistributionNotificationBuilder builder) {
         if (this.componentUtils != null) {
-            Integer httpCode = builder.getStatus().getHttpCode();
-            String httpCodeStr = String.valueOf(httpCode);
-            String desc = getDescriptionFromErrorResponse(builder.getStatus());
+            String httpCodeStr = String.valueOf(builder.getStatus().httpCode());
+            String desc = builder.getStatus().description();
             this.componentUtils.auditDistributionNotification(builder.getService().getUUID(), builder.getService().getName(), "Service",
                 builder.getService().getVersion(), builder.getModifier(), builder.getEnvId(), builder.getService().getLifecycleState().name(),
                 builder.getTopicName(), builder.getDistributionId(), desc, httpCodeStr, builder.getWorkloadContext(), builder.getTenant());
-        }
-    }
-
-    private String getDescriptionFromErrorResponse(CambriaErrorResponse status) {
-        CambriaOperationStatus operationStatus = status.getOperationStatus();
-        switch (operationStatus) {
-            case OK:
-                return "OK";
-            case AUTHENTICATION_ERROR:
-                return "Error: Authentication problem towards U-EB server";
-            case INTERNAL_SERVER_ERROR:
-                return "Error: Internal U-EB server error";
-            case UNKNOWN_HOST_ERROR:
-                return "Error: Cannot reach U-EB server host";
-            case CONNNECTION_ERROR:
-                return "Error: Cannot connect to U-EB server";
-            case OBJECT_NOT_FOUND:
-                return "Error: object not found in U-EB server";
-            default:
-                return "Error: Internal Cambria server problem";
-        }
-    }
-
-    private ActionStatus convertCambriaResponse(CambriaErrorResponse status) {
-        CambriaOperationStatus operationStatus = status.getOperationStatus();
-        switch (operationStatus) {
-            case OK:
-                return ActionStatus.OK;
-            case AUTHENTICATION_ERROR:
-                return ActionStatus.AUTHENTICATION_ERROR;
-            case INTERNAL_SERVER_ERROR:
-                return ActionStatus.GENERAL_ERROR;
-            case UNKNOWN_HOST_ERROR:
-                return ActionStatus.UNKNOWN_HOST;
-            case CONNNECTION_ERROR:
-                return ActionStatus.CONNNECTION_ERROR;
-            case OBJECT_NOT_FOUND:
-                return ActionStatus.OBJECT_NOT_FOUND;
-            default:
-                return ActionStatus.GENERAL_ERROR;
         }
     }
 }

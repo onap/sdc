@@ -966,11 +966,18 @@ BE-distribution-engine-configuration.yaml
     # Topic name for distribution status
     distributionStatusTopicName: SDC-DISTR-STATUS-TOPIC
 
-    # Distribution initialization retry interval time
+    # Ignored, kept for compatibility
     initRetryIntervalSec: 5
 
-    # Distribution initialization maximum interval time
+    # Ignored, kept for compatibility
     initMaxIntervalSec: 60
+
+    # Optional. How often the Kafka health check restarts a stopped status
+    # listener and probes the cluster (default 30)
+    kafkaHealthCheckIntervalSec: 30
+
+    # Optional. Timeout of the Kafka cluster probe (default 10)
+    kafkaHealthCheckTimeoutSec: 10
 
     # Deprecated. Will be removed in future releases
     distribNotifServiceArtifactTypes:
@@ -987,12 +994,13 @@ BE-distribution-engine-configuration.yaml
     environments:
         - <%= node.chef_environment %>
 
+    # Distribution status is consumed continuously by a Kafka listener, not polled
     distributionStatusTopic:
 
-        # Distribution status polling interval
+        # Ignored, kept for compatibility
         pollingIntervalSec: 60
 
-        # Distribution status fetch time
+        # Ignored, kept for compatibility
         fetchTimeSec: 15
 
         # Distribution status consumer group

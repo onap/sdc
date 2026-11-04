@@ -20,31 +20,31 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import org.openecomp.sdc.be.components.kafka.KafkaHandler;
+import org.openecomp.sdc.be.components.kafka.DistributionNotificationPublisher;
+import org.openecomp.sdc.be.components.kafka.DistributionNotificationPublisher.PublishResult;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.distribution.api.client.CambriaOperationStatus;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class DistributionDeleteNotificationSender {
     private static final Logger logger = Logger.getLogger(DistributionDeleteNotificationSender.class.getName());
 
-    private final KafkaHandler kafkaHandler;
+    private final DistributionNotificationPublisher publisher;
 
     private final DistributionEngineConfiguration deConfiguration;
 
-    public DistributionDeleteNotificationSender() {
-        this.kafkaHandler = new KafkaHandler();
-        this.deConfiguration = ConfigurationManager.getConfigurationManager()
-                .getDistributionEngineConfiguration();
+    @Autowired
+    public DistributionDeleteNotificationSender(DistributionNotificationPublisher publisher) {
+        this(publisher, ConfigurationManager.getConfigurationManager().getDistributionEngineConfiguration());
     }
 
-    public DistributionDeleteNotificationSender(KafkaHandler kafkaHandler,
+    public DistributionDeleteNotificationSender(DistributionNotificationPublisher publisher,
             DistributionEngineConfiguration deConfiguration) {
-        this.kafkaHandler = kafkaHandler;
+        this.publisher = publisher;
         this.deConfiguration = deConfiguration;
     }
 
@@ -53,49 +53,20 @@ public class DistributionDeleteNotificationSender {
      * 
      * @param topicName        name of the Kafka topic for delete service
      * @param distributionId   random UUID generated for the notification
-     * @param messageBusData   environment message bus data
      * @param notificationData the payload data to be sent in the Kafka notification
      * @return the action status of the notification
      */
     public ActionStatus sendNotificationForDeleteService(String topicName, String distributionId,
-            EnvironmentMessageBusData messageBusData,
             INotificationData notificationData) {
         logger.debug("sending notification with topicName={}, distributionId={}",
                 topicName,
                 distributionId);
 
-        CambriaErrorResponse status = kafkaHandler.sendNotification(topicName, notificationData,
+        PublishResult status = publisher.publish(topicName, notificationData,
                 deConfiguration.getDistributionDeleteTopic().getMaxWaitingAfterSendingSeconds());
 
         logger.info("sending notification is completed for topicName={}, with status = {}",
                 topicName, status);
-        return convertCambriaResponse(status);
-    }
-
-    /**
-     * This method is used to convert a {@link CambriaErrorResponse} into the
-     * corresponding {@link ActionStatus}.
-     * 
-     * @param status the operation status
-     * @return the mapped ActionStatus based on the operation status
-     */
-    private ActionStatus convertCambriaResponse(CambriaErrorResponse status) {
-        CambriaOperationStatus operationStatus = status.getOperationStatus();
-        switch (operationStatus) {
-            case OK:
-                return ActionStatus.OK;
-            case AUTHENTICATION_ERROR:
-                return ActionStatus.AUTHENTICATION_ERROR;
-            case INTERNAL_SERVER_ERROR:
-                return ActionStatus.GENERAL_ERROR;
-            case UNKNOWN_HOST_ERROR:
-                return ActionStatus.UNKNOWN_HOST;
-            case CONNNECTION_ERROR:
-                return ActionStatus.CONNNECTION_ERROR;
-            case OBJECT_NOT_FOUND:
-                return ActionStatus.OBJECT_NOT_FOUND;
-            default:
-                return ActionStatus.GENERAL_ERROR;
-        }
+        return status == PublishResult.OK ? ActionStatus.OK : ActionStatus.GENERAL_ERROR;
     }
 }

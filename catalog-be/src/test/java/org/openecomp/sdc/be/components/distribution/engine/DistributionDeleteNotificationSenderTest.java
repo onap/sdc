@@ -30,52 +30,50 @@ import static org.mockito.Mockito.when;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.openecomp.sdc.be.components.kafka.KafkaHandler;
+import org.openecomp.sdc.be.components.kafka.DistributionNotificationPublisher;
+import org.openecomp.sdc.be.components.kafka.DistributionNotificationPublisher.PublishResult;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration.DistributionDeleteTopicConfig;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.distribution.api.client.CambriaOperationStatus;
 import org.openecomp.sdc.common.util.ThreadLocalsHolder;
 
 public class DistributionDeleteNotificationSenderTest {
-    private KafkaHandler kafkaHandler;
+    private DistributionNotificationPublisher publisher;
     private DistributionEngineConfiguration distributionConfig;
     private DistributionDeleteNotificationSender deleteNotificationSender;
     private static final String TOPIC_NAME = "delete_topic";
 
     @Before
     public void setUp() {
-        kafkaHandler = Mockito.mock(KafkaHandler.class);
+        publisher = Mockito.mock(DistributionNotificationPublisher.class);
         distributionConfig = Mockito.mock(DistributionEngineConfiguration.class);
-        deleteNotificationSender = new DistributionDeleteNotificationSender(kafkaHandler, distributionConfig);
+        deleteNotificationSender = new DistributionDeleteNotificationSender(publisher, distributionConfig);
     }
 
     @Test
     public void testSendNotificationForDeleteService() {
         INotificationData notificationData = new NotificationDataImpl();
         stubDeleteTopicTimeout(10);
-        when(kafkaHandler.sendNotification(TOPIC_NAME, notificationData, 10L))
-                .thenReturn(new CambriaErrorResponse(CambriaOperationStatus.OK, 200));
+        when(publisher.publish(TOPIC_NAME, notificationData, 10L)).thenReturn(PublishResult.OK);
 
         ActionStatus result = deleteNotificationSender.sendNotificationForDeleteService(
-                TOPIC_NAME, ThreadLocalsHolder.getUuid(), null, notificationData);
+                TOPIC_NAME, ThreadLocalsHolder.getUuid(), notificationData);
 
         assertEquals(ActionStatus.OK, result);
-        verify(kafkaHandler, times(1)).sendNotification(eq(TOPIC_NAME), eq(notificationData), eq(10L));
+        verify(publisher, times(1)).publish(eq(TOPIC_NAME), eq(notificationData), eq(10L));
     }
 
     @Test
     public void testSendNotificationForDeleteService_WhenKafkaNotificationFails() {
         INotificationData notificationData = new NotificationDataImpl();
         stubDeleteTopicTimeout(10);
-        when(kafkaHandler.sendNotification(TOPIC_NAME, notificationData, 10L))
-                .thenReturn(new CambriaErrorResponse(CambriaOperationStatus.INTERNAL_SERVER_ERROR, 200));
+        when(publisher.publish(TOPIC_NAME, notificationData, 10L)).thenReturn(PublishResult.FAILED);
 
         ActionStatus result = deleteNotificationSender.sendNotificationForDeleteService(
-                TOPIC_NAME, ThreadLocalsHolder.getUuid(), null, notificationData);
+                TOPIC_NAME, ThreadLocalsHolder.getUuid(), notificationData);
 
         assertEquals(ActionStatus.GENERAL_ERROR, result);
-        verify(kafkaHandler, times(1)).sendNotification(eq(TOPIC_NAME), eq(notificationData), eq(10L));
+        verify(publisher, times(1)).publish(eq(TOPIC_NAME), eq(notificationData), eq(10L));
     }
 
     private void stubDeleteTopicTimeout(int seconds) {

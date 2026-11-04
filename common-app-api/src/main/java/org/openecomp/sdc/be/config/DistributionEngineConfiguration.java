@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +28,7 @@ import org.openecomp.sdc.common.api.BasicConfiguration;
 import org.openecomp.sdc.common.http.config.ExternalServiceConfig;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -36,13 +37,20 @@ import java.util.Set;
 @Setter
 public class DistributionEngineConfiguration extends BasicConfiguration {
 
+    public static final int DEFAULT_KAFKA_HEALTH_CHECK_INTERVAL_SEC = 30;
+    public static final int DEFAULT_KAFKA_HEALTH_CHECK_TIMEOUT_SEC = 10;
+
     /** Ignored; kept until OOM stops rendering the key (YamlToObjectConverter rejects unknown keys). */
     @Deprecated
     private List<String> uebServers;
     private String distributionNotifTopicName;
     private String distributionStatusTopicName;
     private String kafkaBootStrapServers;
+    /** Ignored; kept until OOM stops rendering the key (YamlToObjectConverter rejects unknown keys). */
+    @Deprecated
     private Integer initRetryIntervalSec;
+    /** Ignored; kept until OOM stops rendering the key (YamlToObjectConverter rejects unknown keys). */
+    @Deprecated
     private Integer initMaxIntervalSec;
     private ComponentArtifactTypesConfig distribNotifServiceArtifactTypes;
     private ComponentArtifactTypesConfig distribNotifResourceArtifactTypes;
@@ -74,9 +82,11 @@ public class DistributionEngineConfiguration extends BasicConfiguration {
     private Integer allowedTimeBeforeStaleSec;
     private String distributionDeleteTopicName;
     private DistributionDeleteTopicConfig distributionDeleteTopic;
+    private Integer kafkaHealthCheckIntervalSec = DEFAULT_KAFKA_HEALTH_CHECK_INTERVAL_SEC;
+    private Integer kafkaHealthCheckTimeoutSec = DEFAULT_KAFKA_HEALTH_CHECK_TIMEOUT_SEC;
 
     public void setEnvironments(List<String> environments) {
-        Set<String> set = new HashSet<>();
+        Set<String> set = new LinkedHashSet<>();
         if (environments != null) {
             set.addAll(environments);
             this.environments = new ArrayList<>(set);

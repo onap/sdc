@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2019 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +27,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.apache.kafka.common.KafkaException;
+import org.openecomp.sdc.be.components.kafka.KafkaClusterProbe;
+import org.openecomp.sdc.be.components.kafka.KafkaCommonConfig;
 import org.openecomp.sdc.be.components.utils.OperationalEnvironmentBuilder;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
@@ -36,24 +41,33 @@ import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
+import org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus;
 import org.openecomp.sdc.common.util.ThreadLocalsHolder;
+import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
+import org.springframework.kafka.listener.MessageListenerContainer;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -81,6 +95,12 @@ public class DistributionEngineTest {
     DistributionDeleteNotificationSender distributionDeleteNotificationSender;
     @Mock
     private DistributionEngineClusterHealth distributionEngineClusterHealth;
+    @Mock
+    private KafkaListenerEndpointRegistry registry;
+    @Mock
+    private KafkaCommonConfig kafkaCommonConfig;
+    @Mock
+    private MessageListenerContainer container;
 
     private DummyDistributionConfigurationManager distributionEngineConfigurationMock;
 
@@ -138,35 +158,6 @@ public class DistributionEngineTest {
     }
 
     @Test
-    void notifyService_kafkaPublishFailureMarksHealthDown() {
-        when(environmentsEngine.getEnvironmentById(ENV_ID)).thenReturn(envs.get(ENV_ID));
-        when(distributionEngineConfigurationMock.getConfigurationMock().getDistributionNotifTopicName()).thenReturn("topic");
-        when(distributionNotificationSender.sendNotification(eq("topic-ENVID"), eq(DISTRIBUTION_ID), any(EnvironmentMessageBusData.class),
-                any(NotificationDataImpl.class), any(Service.class), any(User.class)))
-                .thenReturn(ActionStatus.GENERAL_ERROR);
-
-        ActionStatus actionStatus = testInstance.notifyService(DISTRIBUTION_ID, new Service(), new NotificationDataImpl(), ENV_ID, modifier);
-
-        assertEquals(ActionStatus.GENERAL_ERROR, actionStatus);
-        verify(distributionEngineClusterHealth).setHealthCheckUnavailableAndReportInCaseLastStateIsUp();
-        verify(distributionEngineClusterHealth, never()).setHealthCheckOkAndReportInCaseLastStateIsDown();
-    }
-
-    @Test
-    void notifyService_kafkaPublishSuccessMarksHealthUp() {
-        when(environmentsEngine.getEnvironmentById(ENV_ID)).thenReturn(envs.get(ENV_ID));
-        when(distributionEngineConfigurationMock.getConfigurationMock().getDistributionNotifTopicName()).thenReturn("topic");
-        when(distributionNotificationSender.sendNotification(eq("topic-ENVID"), eq(DISTRIBUTION_ID), any(EnvironmentMessageBusData.class),
-                any(NotificationDataImpl.class), any(Service.class), any(User.class)))
-                .thenReturn(ActionStatus.OK);
-
-        testInstance.notifyService(DISTRIBUTION_ID, new Service(), new NotificationDataImpl(), ENV_ID, modifier);
-
-        verify(distributionEngineClusterHealth).setHealthCheckOkAndReportInCaseLastStateIsDown();
-        verify(distributionEngineClusterHealth, never()).setHealthCheckUnavailableAndReportInCaseLastStateIsUp();
-    }
-
-    @Test
     void notifyServiceSendsForTheConfiguredEnvironmentWithoutUebAddresses() {
         when(environmentsEngine.getEnvironmentById(ENV_ID)).thenReturn(configuredEnvironment());
         when(distributionEngineConfigurationMock.getConfigurationMock().getDistributionNotifTopicName()).thenReturn("topic");
@@ -188,13 +179,13 @@ public class DistributionEngineTest {
         when(distributionEngineConfigurationMock.getConfigurationMock().getDistributionDeleteTopicName()).thenReturn(DELETE_TOPIC);
         String expectedTopicName = DistributionTopics.buildTopicName(DELETE_TOPIC, ENV_ID);
         when(distributionDeleteNotificationSender.sendNotificationForDeleteService(eq(expectedTopicName), eq(DISTRIBUTION_ID),
-                any(EnvironmentMessageBusData.class), eq(notificationData))).thenReturn(ActionStatus.OK);
+                eq(notificationData))).thenReturn(ActionStatus.OK);
 
         ActionStatus actionStatus = testInstance.notifyServiceForDelete(DISTRIBUTION_ID, notificationData, new Service(), ENV_ID, modifier);
 
         assertEquals(ActionStatus.OK, actionStatus);
         verify(distributionDeleteNotificationSender).sendNotificationForDeleteService(eq(expectedTopicName), eq(DISTRIBUTION_ID),
-                any(EnvironmentMessageBusData.class), eq(notificationData));
+                eq(notificationData));
     }
 
     /**
@@ -228,31 +219,159 @@ public class DistributionEngineTest {
     }
 
     @Test
-    void testShutdown() throws Exception {
-        DistributionEngine testSubject;
+    void listenerStartsOnceAndMarksEnvironmentsReady() {
+        enableWithValidConfig(List.of("AUTO", "PROD_TEST"));
+        when(registry.getListenerContainer(DistributionStatusListener.LISTENER_ID)).thenReturn(container);
+        AtomicBoolean running = new AtomicBoolean(false);
+        when(container.isRunning()).thenAnswer(invocation -> running.get());
+        when(container.isChildRunning()).thenReturn(true);
+        doAnswer(invocation -> {
+            running.set(true);
+            return null;
+        }).when(container).start();
 
-        // default test
-        testSubject = createTestSubject();
-        testSubject.shutdown();
+        testInstance.init();
+        assertEquals(StorageOperationStatus.DISTR_ENVIRONMENT_NOT_AVAILABLE, testInstance.isReadyForDistribution("AUTO"));
+        testInstance.startStatusListener();
+        testInstance.startStatusListener();
+
+        verify(container, times(1)).start();
+        verify(container, never()).stop();
+        verify(distributionEngineClusterHealth, Mockito.atLeastOnce()).startHealthCheckTask(any());
+        assertEquals(StorageOperationStatus.OK, testInstance.isReadyForDistribution("AUTO"));
+        assertEquals(StorageOperationStatus.OK, testInstance.isReadyForDistribution("PROD_TEST"));
+        assertTrue(testInstance.isActive());
     }
 
     @Test
-    void initStartsOneStatusConsumerPerEnvironmentAndMarksItReady() {
+    void startListenerToleratesMissingJaas() {
+        enableWithValidConfig(List.of("AUTO"));
+        when(registry.getListenerContainer(DistributionStatusListener.LISTENER_ID)).thenReturn(container);
+        when(kafkaCommonConfig.configurationError()).thenReturn(Optional.of("SASL_JAAS_CONFIG not set"));
+
+        testInstance.init();
+        assertDoesNotThrow(testInstance::startStatusListener);
+
+        verify(container, never()).start();
+        verify(distributionEngineClusterHealth).setHealthCheckUebConfigurationError();
+        verify(distributionEngineClusterHealth, never()).startHealthCheckTask(any());
+        assertNotEquals(StorageOperationStatus.OK, testInstance.isReadyForDistribution("AUTO"));
+    }
+
+    @Test
+    void startListenerToleratesContainerStartFailure() {
+        enableWithValidConfig(List.of("AUTO"));
+        when(registry.getListenerContainer(DistributionStatusListener.LISTENER_ID)).thenReturn(container);
+        doThrow(new KafkaException("boom")).when(container).start();
+
+        testInstance.init();
+        assertDoesNotThrow(testInstance::startStatusListener);
+
+        assertNotEquals(StorageOperationStatus.OK, testInstance.isReadyForDistribution("AUTO"));
+        verify(distributionEngineClusterHealth).setHealthCheckUnavailableAndReportInCaseLastStateIsUp();
+        verify(distributionEngineClusterHealth).startHealthCheckTask(any());
+    }
+
+    @Test
+    void failedFirstStartIsRetriedByTheNextHealthRun() {
+        enableWithValidConfig(List.of("AUTO"));
+        when(registry.getListenerContainer(DistributionStatusListener.LISTENER_ID)).thenReturn(container);
+        AtomicBoolean running = new AtomicBoolean(false);
+        when(container.isRunning()).thenAnswer(invocation -> running.get());
+        when(container.isChildRunning()).thenAnswer(invocation -> running.get());
+        doThrow(new KafkaException("No resolvable bootstrap urls")).doAnswer(invocation -> {
+            running.set(true);
+            return null;
+        }).when(container).start();
+        KafkaClusterProbe probe = mock(KafkaClusterProbe.class);
+        when(probe.isClusterReachable(any())).thenReturn(true);
+        DistributionEngineClusterHealth health = healthDrivenByTheTest(probe);
+        ReflectionTestUtils.setField(testInstance, "distributionEngineClusterHealth", health);
+
+        testInstance.init();
+        testInstance.startStatusListener();
+        assertNotEquals(StorageOperationStatus.OK, testInstance.isReadyForDistribution("AUTO"));
+
+        health.runHealthCheck(testInstance::refreshStatusListener);
+
+        verify(container, times(2)).start();
+        assertEquals(StorageOperationStatus.OK, testInstance.isReadyForDistribution("AUTO"));
+        assertEquals(HealthCheckStatus.UP, health.getHealthCheckInfo().getHealthCheckStatus());
+        health.destroy();
+    }
+
+    @Test
+    void stoppedContainerMakesEnvironmentsUnavailableAndIsRestarted() {
+        enableWithValidConfig(List.of("AUTO"));
+        when(registry.getListenerContainer(DistributionStatusListener.LISTENER_ID)).thenReturn(container);
+        AtomicBoolean running = new AtomicBoolean(false);
+        when(container.isRunning()).thenAnswer(invocation -> running.get());
+        when(container.isChildRunning()).thenReturn(true);
+        doAnswer(invocation -> {
+            running.set(true);
+            return null;
+        }).when(container).start();
+        KafkaClusterProbe probe = mock(KafkaClusterProbe.class);
+        when(probe.isClusterReachable(any())).thenReturn(true);
+        DistributionEngineClusterHealth health = healthDrivenByTheTest(probe);
+        ReflectionTestUtils.setField(testInstance, "distributionEngineClusterHealth", health);
+        testInstance.init();
+        testInstance.startStatusListener();
+        health.runHealthCheck(testInstance::refreshStatusListener);
+        assertEquals(HealthCheckStatus.UP, health.getHealthCheckInfo().getHealthCheckStatus());
+
+        // the consumer thread died on a fatal error: the parent container still reports running
+        when(container.isChildRunning()).thenReturn(false);
+        doThrow(new KafkaException("still failing")).when(container).start();
+        health.runHealthCheck(testInstance::refreshStatusListener);
+
+        verify(container).stop();
+        verify(container, times(2)).start();
+        assertNotEquals(StorageOperationStatus.OK, testInstance.isReadyForDistribution("AUTO"));
+        assertEquals(HealthCheckStatus.DOWN, health.getHealthCheckInfo().getHealthCheckStatus());
+        health.destroy();
+    }
+
+    @Test
+    void disabledEngineNeverStartsListener() {
+        DistributionEngineConfiguration configuration = distributionEngineConfigurationMock.getConfigurationMock();
+        when(configuration.isStartDistributionEngine()).thenReturn(false);
+
+        testInstance.init();
+        testInstance.startStatusListener();
+
+        verifyNoInteractions(registry, container);
+        verify(distributionEngineClusterHealth).setHealthCheckUebIsDisabled();
+    }
+
+    @Test
+    void invalidConfigurationNeverStartsListener() {
+        enableWithValidConfig(List.of("AUTO"));
+        when(distributionEngineConfigurationMock.getConfigurationMock().getDistributionNotifTopicName()).thenReturn(null);
+
+        testInstance.init();
+        testInstance.startStatusListener();
+
+        verifyNoInteractions(registry, container);
+        verify(distributionEngineClusterHealth).setHealthCheckUebConfigurationError();
+    }
+
+    /**
+     * The test calls runHealthCheck itself; the scheduled task would race it.
+     */
+    private static DistributionEngineClusterHealth healthDrivenByTheTest(KafkaClusterProbe probe) {
+        return new DistributionEngineClusterHealth(probe) {
+            @Override
+            public synchronized void startHealthCheckTask(BooleanSupplier listenerRunning) {
+            }
+        };
+    }
+
+    private void enableWithValidConfig(List<String> environments) {
         DistributionEngineConfiguration configuration = distributionEngineConfigurationMock.getConfigurationMock();
         stubValidKafkaOnlyConfig(configuration);
         when(configuration.isStartDistributionEngine()).thenReturn(true);
-        when(configuration.getEnvironments()).thenReturn(List.of("AUTO", "PROD_TEST"));
-        DistributionEnginePollingTask pollingTask = mock(DistributionEnginePollingTask.class);
-        DistributionEngine distributionEngine = spy(testInstance);
-        doReturn(pollingTask).when(distributionEngine).createPollingTask(configuration);
-
-        distributionEngine.init();
-
-        assertEquals(StorageOperationStatus.OK, distributionEngine.isReadyForDistribution("AUTO"));
-        assertEquals(StorageOperationStatus.OK, distributionEngine.isReadyForDistribution("PROD_TEST"));
-        assertTrue(distributionEngine.isActive());
-        verify(pollingTask).startTask("status-AUTO");
-        verify(pollingTask).startTask("status-PROD_TEST");
+        when(configuration.getEnvironments()).thenReturn(environments);
     }
 
     @Test
@@ -267,8 +386,6 @@ public class DistributionEngineTest {
         de.setDistributionNotifTopicName("notif");
         de.setDistributionStatusTopicName("status");
         de.setDistributionDeleteTopicName("delete");
-        de.setInitMaxIntervalSec(8);
-        de.setInitRetryIntervalSec(4);
         de.setDistributionStatusTopic(statusTopic());
         return de;
     }
@@ -277,8 +394,6 @@ public class DistributionEngineTest {
         when(configuration.getDistributionNotifTopicName()).thenReturn("notif");
         when(configuration.getDistributionStatusTopicName()).thenReturn("status");
         when(configuration.getDistributionDeleteTopicName()).thenReturn("delete");
-        when(configuration.getInitMaxIntervalSec()).thenReturn(8);
-        when(configuration.getInitRetryIntervalSec()).thenReturn(4);
         when(configuration.getDistributionStatusTopic()).thenReturn(statusTopic());
     }
 
@@ -472,16 +587,14 @@ public class DistributionEngineTest {
 
         String expectedTopicName = DistributionTopics.buildTopicName(DELETE_TOPIC, ENV_ID);
         when(distributionDeleteNotificationSender.sendNotificationForDeleteService(
-                eq(expectedTopicName), eq(distributionId), any(EnvironmentMessageBusData.class),
-                eq(notificationData)))
+                eq(expectedTopicName), eq(distributionId), eq(notificationData)))
                 .thenReturn(ActionStatus.OK);
 
         ActionStatus action = testInstance.notifyServiceForDelete(distributionId, notificationData, service, ENV_ID,
                 user);
         assertEquals(ActionStatus.OK, action);
         verify(distributionDeleteNotificationSender, times(1)).sendNotificationForDeleteService(
-                eq(expectedTopicName), eq(distributionId), any(EnvironmentMessageBusData.class),
-                eq(notificationData));
+                eq(expectedTopicName), eq(distributionId), eq(notificationData));
     }
 
     @Test
@@ -506,15 +619,13 @@ public class DistributionEngineTest {
 
         String expectedTopicName = DistributionTopics.buildTopicName(DELETE_TOPIC, ENV_ID);
         when(distributionDeleteNotificationSender.sendNotificationForDeleteService(
-                eq(expectedTopicName), eq(distributionId), any(EnvironmentMessageBusData.class),
-                eq(notificationData)))
+                eq(expectedTopicName), eq(distributionId), eq(notificationData)))
                 .thenReturn(ActionStatus.GENERAL_ERROR);
 
         ActionStatus action = testInstance.notifyServiceForDelete(distributionId, notificationData, service, ENV_ID,
                 user);
         assertEquals(ActionStatus.GENERAL_ERROR, action);
         verify(distributionDeleteNotificationSender, times(1)).sendNotificationForDeleteService(
-                eq(expectedTopicName), eq(distributionId), any(EnvironmentMessageBusData.class),
-                eq(notificationData));
+                eq(expectedTopicName), eq(distributionId), eq(notificationData));
     }
 }

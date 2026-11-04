@@ -58,7 +58,6 @@ Modifications copyright (c) 2018 Nokia
           id="attributeDeclarationOrchestrator"/>
     <bean class="org.openecomp.sdc.be.components.attribute.ComponentInstanceOutputAttributeDeclarator"/>
     <bean class="org.openecomp.sdc.be.components.attribute.ComponentInstanceAttributeDeclarator"/>
-    <bean class="org.openecomp.sdc.be.components.kafka.KafkaHandler"/>
     <context:annotation-config/>
     <context:component-scan
             base-package="

@@ -75,9 +75,6 @@ class DistributionEngineConfigTest {
         distributionStatusTopic.setPollingIntervalSec(20);
         deConfiguration.setDistributionStatusTopic(distributionStatusTopic);
 
-        deConfiguration.setInitMaxIntervalSec(8);
-        deConfiguration.setInitRetryIntervalSec(3);
-
         boolean isValid = distributionEngine.validateConfiguration(deConfiguration);
         assertTrue(isValid, "check empty configuration");
 
@@ -106,20 +103,9 @@ class DistributionEngineConfigTest {
         assertTrue(isValid, "check empty configuration");
 
         deConfiguration.setInitMaxIntervalSec(null);
-        isValid = distributionEngine.validateConfiguration(deConfiguration);
-        assertFalse(isValid, "check empty configuration");
-
-        deConfiguration.setInitMaxIntervalSec(8);
-        isValid = distributionEngine.validateConfiguration(deConfiguration);
-        assertTrue(isValid, "check empty configuration");
-
         deConfiguration.setInitRetryIntervalSec(null);
         isValid = distributionEngine.validateConfiguration(deConfiguration);
-        assertFalse(isValid, "check empty configuration");
-
-        deConfiguration.setInitRetryIntervalSec(8);
-        isValid = distributionEngine.validateConfiguration(deConfiguration);
-        assertTrue(isValid, "check empty configuration");
+        assertTrue(isValid, "init intervals are no longer read");
 
     }
 

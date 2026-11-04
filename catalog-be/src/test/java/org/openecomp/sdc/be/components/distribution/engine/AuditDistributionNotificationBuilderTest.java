@@ -22,9 +22,11 @@ package org.openecomp.sdc.be.components.distribution.engine;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.openecomp.sdc.be.components.kafka.DistributionNotificationPublisher.PublishResult;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.RETURNS_DEFAULTS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -46,7 +48,7 @@ public class AuditDistributionNotificationBuilderTest {
     }
      
  
-     private CambriaErrorResponse status;
+     private PublishResult status;
      private Service service;
      private User modifier;
      
@@ -62,5 +64,11 @@ public class AuditDistributionNotificationBuilderTest {
         assert mockBuilder.setTopicName("topicName").setDistributionId("distributionId").setStatus(status)
                 .setService(service).setEnvId("envId").setModifier(modifier).setWorkloadContext("workloadContext")
                 .setTenant("tenant") == mockBuilder;
+    }
+
+    @Test
+    public void statusIsThePublishResult() {
+        AuditDistributionNotificationBuilder builder = new AuditDistributionNotificationBuilder().setStatus(PublishResult.FAILED);
+        assertEquals(PublishResult.FAILED, builder.getStatus());
     }
 }

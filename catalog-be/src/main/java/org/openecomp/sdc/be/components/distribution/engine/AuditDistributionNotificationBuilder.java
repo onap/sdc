@@ -20,6 +20,7 @@
 package org.openecomp.sdc.be.components.distribution.engine;
 
 import lombok.Getter;
+import org.openecomp.sdc.be.components.kafka.DistributionNotificationPublisher.PublishResult;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 
@@ -28,7 +29,7 @@ public class AuditDistributionNotificationBuilder {
 
     private String topicName;
     private String distributionId;
-    private CambriaErrorResponse status;
+    private PublishResult status;
     private Service service;
     private String envId;
     private User modifier;
@@ -45,7 +46,7 @@ public class AuditDistributionNotificationBuilder {
         return this;
     }
 
-    public AuditDistributionNotificationBuilder setStatus(CambriaErrorResponse status) {
+    public AuditDistributionNotificationBuilder setStatus(PublishResult status) {
         this.status = status;
         return this;
     }

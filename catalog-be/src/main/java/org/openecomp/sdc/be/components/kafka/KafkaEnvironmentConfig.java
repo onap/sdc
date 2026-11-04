@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,23 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.openecomp.sdc.be.distribution.api.client;
+package org.openecomp.sdc.be.components.kafka;
 
-public enum CambriaOperationStatus {
-    OK, CONNNECTION_ERROR, NOT_FOUND, TOPIC_ALREADY_EXIST, OBJECT_NOT_FOUND, INTERNAL_SERVER_ERROR, AUTHENTICATION_ERROR, UNKNOWN_HOST_ERROR
+import org.openecomp.sdc.be.components.distribution.engine.DistributionTopics;
+import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class KafkaEnvironmentConfig {
+
+    @Bean
+    public KafkaCommonConfig kafkaCommonConfig() {
+        return new KafkaCommonConfig(ConfigurationManager.getConfigurationManager().getDistributionEngineConfiguration(), System.getenv());
+    }
+
+    @Bean
+    public DistributionTopics distributionTopics() {
+        return new DistributionTopics(ConfigurationManager.getConfigurationManager().getDistributionEngineConfiguration());
+    }
 }

@@ -213,6 +213,12 @@ Modifications copyright (c) 2018-2019 Nokia
         <artifactId>kafka-clients</artifactId>
         <version>3.3.1</version>
       </dependency>
+      <!-- spring-boot-dependencies manages 2.8.11, which is built against kafka-clients 3.1 -->
+      <dependency>
+        <groupId>org.springframework.kafka</groupId>
+        <artifactId>spring-kafka</artifactId>
+        <version>2.9.13</version>
+      </dependency>
       <dependency>
         <groupId>com.google.guava</groupId>
         <artifactId>guava</artifactId>

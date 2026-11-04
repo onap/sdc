@@ -136,10 +136,17 @@ distribution-engine-cluster-health : org.openecomp.sdc.be.components.distributio
 distributionBusinessLogic : org.openecomp.sdc.be.distribution.DistributionBusinessLogic
 distributionDeleteNotificationSender : org.openecomp.sdc.be.components.distribution.engine.DistributionDeleteNotificationSender
 distributionEngine : org.openecomp.sdc.be.components.distribution.engine.DistributionEngine
+distributionKafkaTemplate : kafkaConfig#distributionKafkaTemplate -> org.springframework.kafka.core.KafkaTemplate destroy-method=(inferred)
 distributionMonitoringBusinessLogic : org.openecomp.sdc.be.components.impl.DistributionMonitoringBusinessLogic
+distributionNotificationPublisher : org.openecomp.sdc.be.components.kafka.DistributionNotificationPublisher
 distributionNotificationSender : org.openecomp.sdc.be.components.distribution.engine.DistributionNotificationSender
+distributionProducerFactory : kafkaConfig#distributionProducerFactory -> org.springframework.kafka.core.ProducerFactory destroy-method=(inferred)
 distributionServiceServlet : org.openecomp.sdc.be.servlets.DistributionServiceServlet
 distributionServlet : org.openecomp.sdc.be.distribution.servlet.DistributionServlet
+distributionStatusConsumerFactory : kafkaConfig#distributionStatusConsumerFactory -> org.springframework.kafka.core.ConsumerFactory destroy-method=(inferred)
+distributionStatusListener : org.openecomp.sdc.be.components.distribution.engine.DistributionStatusListener
+distributionStatusNotificationHandler : org.openecomp.sdc.be.components.distribution.engine.DistributionStatusNotificationHandler
+distributionTopics : kafkaEnvironmentConfig#distributionTopics -> org.openecomp.sdc.be.components.distribution.engine.DistributionTopics destroy-method=(inferred)
 element-operation : org.openecomp.sdc.be.model.operations.impl.ElementOperation
 elementServlet : org.openecomp.sdc.be.servlets.ElementServlet
 elementsBusinessLogic : org.openecomp.sdc.be.components.impl.ElementBusinessLogic
@@ -203,7 +210,11 @@ interfacesOperationsConverter : org.openecomp.sdc.be.tosca.InterfacesOperationsC
 janusgraph-client : org.openecomp.sdc.be.dao.config.JanusGraphSpringConfig#janusGraphClient -> org.openecomp.sdc.be.dao.janusgraph.JanusGraphClient primary init-method=createGraph destroy-method=(inferred)
 janusgraph-dao : org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphDao
 janusgraph-generic-dao : org.openecomp.sdc.be.dao.config.JanusGraphSpringConfig#janusGraphGenericDao -> org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao primary destroy-method=(inferred)
-kafkaHandler : org.openecomp.sdc.be.components.kafka.KafkaHandler
+kafkaClusterProbe : org.openecomp.sdc.be.components.kafka.KafkaClusterProbe
+kafkaCommonConfig : kafkaEnvironmentConfig#kafkaCommonConfig -> org.openecomp.sdc.be.components.kafka.KafkaCommonConfig destroy-method=(inferred)
+kafkaConfig : org.openecomp.sdc.be.components.kafka.KafkaConfig
+kafkaEnvironmentConfig : org.openecomp.sdc.be.components.kafka.KafkaEnvironmentConfig
+kafkaListenerContainerFactory : kafkaConfig#kafkaListenerContainerFactory -> org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory destroy-method=(inferred)
 lifecycleBusinessLogic : org.openecomp.sdc.config.CatalogBESpringConfig#lifecycleBusinessLogic -> org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic destroy-method=(inferred)
 lifecycleServlet : org.openecomp.sdc.be.servlets.LifecycleServlet
 lockServlet : org.openecomp.sdc.be.servlets.LockServlet
@@ -237,6 +248,8 @@ org.springframework.context.annotation.internalCommonAnnotationProcessor : org.s
 org.springframework.context.annotation.internalConfigurationAnnotationProcessor : org.springframework.context.annotation.ConfigurationClassPostProcessor
 org.springframework.context.event.internalEventListenerFactory : org.springframework.context.event.DefaultEventListenerFactory
 org.springframework.context.event.internalEventListenerProcessor : org.springframework.context.event.EventListenerMethodProcessor
+org.springframework.kafka.config.internalKafkaListenerAnnotationProcessor : org.springframework.kafka.annotation.KafkaListenerAnnotationBeanPostProcessor
+org.springframework.kafka.config.internalKafkaListenerEndpointRegistry : org.springframework.kafka.config.KafkaListenerEndpointRegistry
 org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration : org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration
 org.springframework.transaction.config.internalTransactionAdvisor : org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration#transactionAdvisor -> org.springframework.transaction.interceptor.BeanFactoryTransactionAttributeSourceAdvisor destroy-method=(inferred)
 org.springframework.transaction.config.internalTransactionalEventListenerFactory : org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration#transactionalEventListenerFactory -> org.springframework.transaction.event.TransactionalEventListenerFactory destroy-method=(inferred)

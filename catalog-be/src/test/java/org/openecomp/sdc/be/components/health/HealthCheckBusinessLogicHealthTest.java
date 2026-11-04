@@ -65,7 +65,7 @@ class HealthCheckBusinessLogicHealthTest extends BeConfDependentTest {
         HealthCheckBusinessLogic healthCheckBusinessLogic = new HealthCheckBusinessLogic();
         PortalHealthCheckBuilder portalHealthCheckBuilder = new PortalHealthCheckBuilder();
         ReflectionTestUtils.setField(healthCheckBusinessLogic, "portalHealthCheck", portalHealthCheckBuilder);
-        DistributionEngineClusterHealth distributionEngineClusterHealth = new DistributionEngineClusterHealth();
+        DistributionEngineClusterHealth distributionEngineClusterHealth = new DistributionEngineClusterHealth(null);
         ReflectionTestUtils.setField(healthCheckBusinessLogic, "distributionEngineClusterHealth",
             distributionEngineClusterHealth);
         SwitchoverDetector switchoverDetector = new SwitchoverDetector();

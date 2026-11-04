@@ -91,6 +91,28 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
     private static final String ALREADY_EXIST = "alreadyExist";
 
     @Test
+    void activateDistributionFailsFastWhenDistributionEngineIsDown() {
+        when(healthCheckBusinessLogic.isDistributionEngineUp()).thenReturn(false);
+
+        Either<Service, ResponseFormat> result = bl.activateDistribution(COMPONNET_ID, "AUTO", user, null);
+
+        assertTrue(result.isRight());
+        Mockito.verifyNoInteractions(distributionEngine);
+        Mockito.verify(toscaOperationFacade, Mockito.never()).getToscaElement(COMPONNET_ID);
+    }
+
+    @Test
+    void activateDistributionProceedsWhenDistributionEngineIsUp() {
+        when(healthCheckBusinessLogic.isDistributionEngineUp()).thenReturn(true);
+        when(toscaOperationFacade.getToscaElement(COMPONNET_ID)).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+
+        Either<Service, ResponseFormat> result = bl.activateDistribution(COMPONNET_ID, "AUTO", user, null);
+
+        assertTrue(result.isRight());
+        Mockito.verify(toscaOperationFacade).getToscaElement(COMPONNET_ID);
+    }
+
+    @Test
     void testGetComponentAuditRecordsCertifiedVersion() {
         Either<List<Map<String, Object>>, ResponseFormat> componentAuditRecords =
             bl.getComponentAuditRecords(CERTIFIED_VERSION, COMPONNET_ID, user.getUserId());

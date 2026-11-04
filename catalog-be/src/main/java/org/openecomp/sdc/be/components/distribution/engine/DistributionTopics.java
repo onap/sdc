@@ -19,12 +19,34 @@
  */
 package org.openecomp.sdc.be.components.distribution.engine;
 
-public final class DistributionTopics {
+import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
 
-    private DistributionTopics() {
+public class DistributionTopics {
+
+    private final DistributionEngineConfiguration deConfiguration;
+
+    public DistributionTopics(DistributionEngineConfiguration deConfiguration) {
+        this.deConfiguration = deConfiguration;
     }
 
     public static String buildTopicName(String topicName, String environment) {
         return topicName + "-" + environment.toUpperCase();
+    }
+
+    public String[] statusTopics() {
+        if (deConfiguration.getEnvironments() == null) {
+            return new String[0];
+        }
+        return deConfiguration.getEnvironments().stream()
+            .map(env -> buildTopicName(deConfiguration.getDistributionStatusTopicName(), env))
+            .toArray(String[]::new);
+    }
+
+    public String notificationTopic(String env) {
+        return buildTopicName(deConfiguration.getDistributionNotifTopicName(), env);
+    }
+
+    public String deleteTopic(String env) {
+        return buildTopicName(deConfiguration.getDistributionDeleteTopicName(), env);
     }
 }

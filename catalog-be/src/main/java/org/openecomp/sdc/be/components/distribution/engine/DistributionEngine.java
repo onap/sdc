@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,24 +24,25 @@ package org.openecomp.sdc.be.components.distribution.engine;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.openecomp.sdc.be.components.distribution.engine.report.DistributionCompleteReporter;
-import org.openecomp.sdc.be.components.kafka.KafkaHandler;
+import org.openecomp.sdc.be.components.kafka.KafkaCommonConfig;
 import org.openecomp.sdc.be.components.validation.ServiceDistributionValidation;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
+import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
+import org.springframework.kafka.listener.MessageListenerContainer;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
@@ -65,13 +67,13 @@ public class DistributionEngine implements IDistributionEngine {
     private ServiceDistributionValidation serviceDistributionValidation;
     @Resource
     private DistributionDeleteNotificationSender distributionDeleteNotificationSender;
-    @Resource
-    private DistributionCompleteReporter distributionCompleteReporter;
-    @Resource
-    private ComponentsUtils componentUtils;
+    @Autowired
+    private KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
+    @Autowired
+    private KafkaCommonConfig kafkaCommonConfig;
 
-    private Map<String, DistributionEnginePollingTask> envNamePerPollingTask = new HashMap<>();
     private Map<String, AtomicBoolean> envNamePerStatus = new HashMap<>();
+    private boolean engineEnabledAndValid;
 
     @Override
     public boolean isActive() {
@@ -106,31 +108,62 @@ public class DistributionEngine implements IDistributionEngine {
             return;
         }
         for (String envName : distributionEngineConfiguration.getEnvironments()) {
-            String topicName = DistributionTopics.buildTopicName(distributionEngineConfiguration.getDistributionStatusTopicName(), envName);
-            logger.debug("start polling distribution status topic {} for environment {}", topicName, envName);
-            DistributionEnginePollingTask pollingTask = createPollingTask(distributionEngineConfiguration);
-            pollingTask.startTask(topicName);
-            envNamePerPollingTask.put(envName, pollingTask);
-            envNamePerStatus.put(envName, new AtomicBoolean(true));
+            envNamePerStatus.put(envName, new AtomicBoolean(false));
         }
+        engineEnabledAndValid = true;
         logger.trace("Exit init method of DistributionEngine");
     }
 
     /**
-     * Each polling task polls from its own thread, and a KafkaConsumer must not be shared between threads, so every task gets its own
-     * KafkaHandler.
+     * First start of the status listener. The health task started here keeps restarting it while it is not running.
      */
-    DistributionEnginePollingTask createPollingTask(DistributionEngineConfiguration distributionEngineConfiguration) {
-        return new DistributionEnginePollingTask(distributionEngineConfiguration, distributionCompleteReporter, componentUtils,
-                distributionEngineClusterHealth, new KafkaHandler());
+    @EventListener(ContextRefreshedEvent.class)
+    public void startStatusListener() {
+        if (!engineEnabledAndValid) {
+            return;
+        }
+        Optional<String> kafkaError = kafkaCommonConfig.configurationError();
+        if (kafkaError.isPresent()) {
+            BeEcompErrorManager.getInstance().logBeUebSystemError(INIT_DISTRIBUTION_ENGINE_FLOW, kafkaError.get());
+            distributionEngineClusterHealth.setHealthCheckUebConfigurationError();
+            return;
+        }
+        refreshStatusListener();
+        distributionEngineClusterHealth.startHealthCheckTask(this::refreshStatusListener);
     }
 
-    @PreDestroy
-    public void shutdown() {
-        logger.info("distribution engine shutdown - start");
-        for (DistributionEnginePollingTask task : envNamePerPollingTask.values()) {
-            task.destroy();
+    /**
+     * Starts the status listener if it is not running and marks every environment ready iff it is running afterwards.
+     *
+     * @return whether the status listener is running
+     */
+    synchronized boolean refreshStatusListener() {
+        MessageListenerContainer container = kafkaListenerEndpointRegistry.getListenerContainer(DistributionStatusListener.LISTENER_ID);
+        boolean running = container != null && startIfNotRunning(container);
+        envNamePerStatus.values().forEach(status -> status.set(running));
+        return running;
+    }
+
+    private boolean startIfNotRunning(MessageListenerContainer container) {
+        if (isRunning(container)) {
+            return true;
         }
+        try {
+            // a consumer that stopped on a fatal error leaves its parent container reporting running, and start() is then a no-op
+            if (container.isRunning()) {
+                container.stop();
+            }
+            container.start();
+        } catch (RuntimeException e) {
+            logger.error("failed to start the distribution status listener", e);
+            BeEcompErrorManager.getInstance().logBeUebSystemError(INIT_DISTRIBUTION_ENGINE_FLOW, e.getMessage());
+            distributionEngineClusterHealth.setHealthCheckUnavailableAndReportInCaseLastStateIsUp();
+        }
+        return isRunning(container);
+    }
+
+    private static boolean isRunning(MessageListenerContainer container) {
+        return container.isRunning() && container.isChildRunning();
     }
 
     /**
@@ -147,8 +180,6 @@ public class DistributionEngine implements IDistributionEngine {
         result = isValidObject(deConfiguration.getDistributionStatusTopic(), methodName, "distributionStatusTopic") && result;
         result = isValidParam(deConfiguration.getDistributionDeleteTopicName(), methodName,
                 "distributionDeleteTopicName") && result;
-        result = isValidObject(deConfiguration.getInitMaxIntervalSec(), methodName, "initMaxIntervalSec") && result;
-        result = isValidObject(deConfiguration.getInitRetryIntervalSec(), methodName, "initRetryIntervalSec") && result;
         result = isValidParam(deConfiguration.getDistributionStatusTopic().getConsumerId(), methodName, "consumerId") && result;
         result = isValidParam(deConfiguration.getDistributionStatusTopic().getConsumerGroup(), methodName, "consumerGroup") && result;
         result = isValidObject(deConfiguration.getDistributionStatusTopic().getFetchTimeSec(), methodName, "fetchTimeSec") && result;
@@ -235,19 +266,9 @@ public class DistributionEngine implements IDistributionEngine {
         ActionStatus notifyServiceStatus = Optional.ofNullable(environmentsEngine.getEnvironmentById(envId)).map(EnvironmentMessageBusData::new).map(
                         messageBusData -> distributionNotificationSender
                                 .sendNotification(topicName, distributionId, messageBusData, notificationData, service, modifier))
-                .map(this::reportKafkaPublishHealth)
                 .orElse(ActionStatus.DISTRIBUTION_ENVIRONMENT_NOT_AVAILABLE);
         logger.debug("Finish notifyService. status is {}", notifyServiceStatus);
         return notifyServiceStatus;
-    }
-
-    private ActionStatus reportKafkaPublishHealth(ActionStatus publishStatus) {
-        if (publishStatus == ActionStatus.OK) {
-            distributionEngineClusterHealth.setHealthCheckOkAndReportInCaseLastStateIsDown();
-        } else {
-            distributionEngineClusterHealth.setHealthCheckUnavailableAndReportInCaseLastStateIsUp();
-        }
-        return publishStatus;
     }
 
     private String buildTopicName(String envName) {
@@ -317,11 +338,9 @@ public class DistributionEngine implements IDistributionEngine {
         logger.debug("topic name for delete - {}", topicName);
 
         ActionStatus deleteServiceNotifStatus = Optional
-                .ofNullable(environmentsEngine.getEnvironmentById(envName)).map(EnvironmentMessageBusData::new).map(
-                        messageBusData -> distributionDeleteNotificationSender
-                                .sendNotificationForDeleteService(topicName, distributionId, messageBusData,
-                                        notificationData))
-                .map(this::reportKafkaPublishHealth)
+                .ofNullable(environmentsEngine.getEnvironmentById(envName)).map(
+                        environment -> distributionDeleteNotificationSender
+                                .sendNotificationForDeleteService(topicName, distributionId, notificationData))
                 .orElse(ActionStatus.DISTRIBUTION_ENVIRONMENT_NOT_AVAILABLE);
         logger.debug("Finish delete notification service. notification status is {}", deleteServiceNotifStatus);
         return deleteServiceNotifStatus;

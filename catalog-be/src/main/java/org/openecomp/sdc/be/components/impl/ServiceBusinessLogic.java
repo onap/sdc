@@ -67,10 +67,10 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.distribution.engine.IDistributionEngine;
 import org.openecomp.sdc.be.components.distribution.engine.INotificationData;
 import org.openecomp.sdc.be.components.distribution.engine.VfModuleArtifactPayload;
+import org.openecomp.sdc.be.components.health.HealthCheckBusinessLogic;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
-import org.openecomp.sdc.be.components.kafka.KafkaHandler;
 import org.openecomp.sdc.be.components.path.ForwardingPathValidator;
 import org.openecomp.sdc.be.components.utils.InterfaceOperationUtils;
 import org.openecomp.sdc.be.components.utils.PropertiesUtils;
@@ -196,12 +196,12 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     private final ServiceCategoryValidator serviceCategoryValidator;
     private final ServiceValidator serviceValidator;
     private final GroupBusinessLogic groupBusinessLogic;
-    private final KafkaHandler kafkaHandler;
     private ForwardingPathOperation forwardingPathOperation;
     private AuditCassandraDao auditCassandraDao;
     private ServiceTypeValidator serviceTypeValidator;
     private List<ServiceCreationPlugin> serviceCreationPluginList;
     private ServiceFunctionValidator serviceFunctionValidator;
+    private HealthCheckBusinessLogic healthCheckBusinessLogic;
 
     public ServiceBusinessLogic(IElementOperation elementDao, IGroupOperation groupOperation, IGroupInstanceOperation groupInstanceOperation,
                                 IGroupTypeOperation groupTypeOperation, GroupBusinessLogic groupBusinessLogic, InterfaceOperation interfaceOperation,
@@ -215,8 +215,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
                                 ComponentDescriptionValidator componentDescriptionValidator, ModelOperation modelOperation,
                                 final ServiceRoleValidator serviceRoleValidator,
                                 final ServiceInstantiationTypeValidator serviceInstantiationTypeValidator,
-                                final ServiceCategoryValidator serviceCategoryValidator, final ServiceValidator serviceValidator,
-                                KafkaHandler kafkaHandler) {
+                                final ServiceCategoryValidator serviceCategoryValidator, final ServiceValidator serviceValidator) {
         super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, groupBusinessLogic, interfaceOperation,
             interfaceLifecycleTypeOperation, artifactsBusinessLogic, artifactToscaOperation, componentContactIdValidator, componentNameValidator,
             componentTagsValidator, componentValidator, componentIconValidator, componentProjectCodeValidator, componentDescriptionValidator);
@@ -231,7 +230,12 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         this.serviceCategoryValidator = serviceCategoryValidator;
         this.serviceValidator = serviceValidator;
         this.groupBusinessLogic = groupBusinessLogic;
-        this.kafkaHandler = kafkaHandler;
+    }
+
+    // optional: the asdctool contexts reuse this bean without a HealthCheckBusinessLogic; activateDistribution then refuses
+    @Autowired(required = false)
+    public void setHealthCheckBusinessLogic(HealthCheckBusinessLogic healthCheckBusinessLogic) {
+        this.healthCheckBusinessLogic = healthCheckBusinessLogic;
     }
 
     @Autowired
@@ -1753,6 +1757,11 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         if (configuredEnvName != null && !configuredEnvName.equals(envName)) {
             log.trace("Update environment name to be {} instead of {}", configuredEnvName, envName);
             envName = configuredEnvName;
+        }
+        if (healthCheckBusinessLogic == null || !healthCheckBusinessLogic.isDistributionEngineUp()) {
+            BeEcompErrorManager.getInstance().logBeSystemError("Distribution Engine is DOWN");
+            log.debug("Distribution Engine is DOWN");
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
         Either<Service, StorageOperationStatus> serviceRes = toscaOperationFacade.getToscaElement(serviceId);
         if (serviceRes.isRight()) {

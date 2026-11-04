@@ -36,6 +36,7 @@ import org.mockito.Mockito;
 import org.openecomp.sdc.ElementOperationMock;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
 import org.openecomp.sdc.be.components.distribution.engine.DistributionEngine;
+import org.openecomp.sdc.be.components.health.HealthCheckBusinessLogic;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.impl.generic.GenericTypeBusinessLogic;
 import org.openecomp.sdc.be.components.path.ForwardingPathValidator;
@@ -134,6 +135,7 @@ class ServiceBusinessLogicBaseTestSetup extends BaseBusinessLogicMock {
     protected ServiceCategoryValidator serviceCategoryValidator = new ServiceCategoryValidator(componentsUtils, mockElementDao);
     protected ServiceValidator serviceValidator = createServiceValidator();
     DistributionEngine distributionEngine = Mockito.mock(DistributionEngine.class);
+    protected HealthCheckBusinessLogic healthCheckBusinessLogic = Mockito.mock(HealthCheckBusinessLogic.class);
     ServiceDistributionValidation serviceDistributionValidation = Mockito.mock(ServiceDistributionValidation.class);
     ComponentInstanceBusinessLogic componentInstanceBusinessLogic = Mockito.mock(ComponentInstanceBusinessLogic.class);
     ForwardingPathValidator forwardingPathValidator = Mockito.mock(ForwardingPathValidator.class);
@@ -201,7 +203,7 @@ class ServiceBusinessLogicBaseTestSetup extends BaseBusinessLogicMock {
             interfaceLifecycleTypeOperation, artifactBl, distributionEngine, componentInstanceBusinessLogic, serviceDistributionValidation,
             forwardingPathValidator, uiComponentDataConverter, artifactToscaOperation, componentContactIdValidator, componentNameValidator,
             componentTagsValidator, componentValidator, componentIconValidator, componentProjectCodeValidator, componentDescriptionValidator,
-            modelOperation, serviceRoleValidator, serviceInstantiationTypeValidator, serviceCategoryValidator, serviceValidator, null);
+            modelOperation, serviceRoleValidator, serviceInstantiationTypeValidator, serviceCategoryValidator, serviceValidator);
         bl.setComponentContactIdValidator(componentContactIdValidator);
         bl.setComponentIconValidator(componentIconValidator);
         bl.setComponentTagsValidator(componentTagsValidator);
@@ -220,6 +222,7 @@ class ServiceBusinessLogicBaseTestSetup extends BaseBusinessLogicMock {
         bl.setComponentsUtils(componentsUtils);
         bl.setCassandraAuditingDao(auditingDao);
         bl.setUserValidations(userValidations);
+        bl.setHealthCheckBusinessLogic(healthCheckBusinessLogic);
 
         mockAuditingDaoLogic();
 
