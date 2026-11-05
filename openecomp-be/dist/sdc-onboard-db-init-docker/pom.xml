@@ -91,12 +91,8 @@
                             <verbose>${verbose}</verbose>
                             <apiVersion>${docker.api.version}</apiVersion>
                             <registry>${docker.registry}</registry>
-                            <authConfig>
-                                <pull>
-                                    <username>${docker.username}</username>
-                                    <password>${docker.password}</password>
-                                </pull>
-                            </authConfig>
+                            <!-- Public base-image pulls must not use the Nexus credentials.
+                                 Push authentication still comes from the configured registry. -->
                             <images>
 
                                 <!-- Build backend image -->
