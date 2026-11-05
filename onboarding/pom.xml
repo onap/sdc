@@ -54,7 +54,7 @@
         <commons.codec.version>${commons-codec}</commons.codec.version>
         <commons.digester.version>2.1</commons.digester.version>
         <commons.lang3.version>${lang3.version}</commons.lang3.version>
-        <datastax.cassandra.version>3.8.0</datastax.cassandra.version>
+        <datastax.cassandra.version>3.11.5</datastax.cassandra.version>
         <http.client.version>${httpclient.version}</http.client.version>
         <http.core.version>${httpcore.version}</http.core.version>
         <httpasyncclient.version>4.1.2</httpasyncclient.version>

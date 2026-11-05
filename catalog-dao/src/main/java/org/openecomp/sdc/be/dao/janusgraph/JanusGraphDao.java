@@ -652,9 +652,9 @@ public class JanusGraphDao {
         }
     }
 
-    private void buildMultipleNegateQueryFromList(Map.Entry<GraphPropertyEnum, Object> entry, JanusGraphQuery query) {
+    private void buildMultipleNegateQueryFromList(Map.Entry<GraphPropertyEnum, Object> entry, JanusGraphQuery query, JanusGraph graph) {
         for (Object listItem : (List<Object>) entry.getValue()) {
-            query.hasNot(entry.getKey().getProperty(), listItem);
+            JanusGraphUtils.hasNotIncludingMissing(graph, query, entry.getKey().getProperty(), listItem);
         }
     }
 
@@ -1293,9 +1293,9 @@ public class JanusGraphDao {
         if (hasNotProps != null && !hasNotProps.isEmpty()) {
             for (Entry<GraphPropertyEnum, Object> entry : hasNotProps.entrySet()) {
                 if (entry.getValue() instanceof List) {
-                    buildMultipleNegateQueryFromList(entry, query);
+                    buildMultipleNegateQueryFromList(entry, query, graph);
                 } else {
-                    query = query.hasNot(entry.getKey().getProperty(), entry.getValue());
+                    query = JanusGraphUtils.hasNotIncludingMissing(graph, query, entry.getKey().getProperty(), entry.getValue());
                 }
             }
         }
