@@ -385,6 +385,55 @@ class JanusGraphDaoTest extends DAOConfDependentTest {
         return vertices.stream().map(vertex -> vertex.value(GraphPropertyEnum.UNIQUE_ID.getProperty())).collect(Collectors.toSet());
     }
 
+    @Test
+    void getByCriteriaIncludesAssetsWithMissingDeletionAndArchiveFlags() {
+        GraphVertex legacy = createVertex(VertexTypeEnum.NODE_TYPE, "legacy");
+        GraphVertex active = createVertex(VertexTypeEnum.NODE_TYPE, "active");
+        active.getVertex().property(GraphPropertyEnum.IS_DELETED.getProperty(), false);
+        active.getVertex().property(GraphPropertyEnum.IS_ARCHIVED.getProperty(), false);
+        GraphVertex deleted = createVertex(VertexTypeEnum.NODE_TYPE, "deleted");
+        deleted.getVertex().property(GraphPropertyEnum.IS_DELETED.getProperty(), true);
+        GraphVertex archived = createVertex(VertexTypeEnum.NODE_TYPE, "archived");
+        archived.getVertex().property(GraphPropertyEnum.IS_ARCHIVED.getProperty(), true);
+        dao.commit();
+
+        Either<List<GraphVertex>, JanusGraphOperationStatus> result = dao.getByCriteria(VertexTypeEnum.NODE_TYPE, Map.of(),
+            Map.of(GraphPropertyEnum.IS_DELETED, true, GraphPropertyEnum.IS_ARCHIVED, true), JsonParseFlagEnum.NoParse);
+
+        assertTrue(result.isLeft());
+        assertEquals(Set.of(legacy.getUniqueId(), active.getUniqueId()), result.left().value().stream()
+            .map(GraphVertex::getUniqueId).collect(Collectors.toSet()));
+    }
+
+    @Test
+    void getByCriteriaIncludesAssetsWithoutOptionalProperties() {
+        createVertex(VertexTypeEnum.NODE_TYPE, "legacy");
+        dao.commit();
+
+        Either<List<GraphVertex>, JanusGraphOperationStatus> result = dao.getByCriteria(VertexTypeEnum.NODE_TYPE, Map.of(),
+            Map.of(GraphPropertyEnum.MODEL_TYPE, "excluded"), JsonParseFlagEnum.NoParse);
+
+        assertTrue(result.isLeft());
+        assertEquals("legacy", result.left().value().get(0).getUniqueId());
+    }
+
+    @Test
+    void getByCriteriaIncludesMissingPropertiesWhenExcludingMultipleValues() {
+        createVertex(VertexTypeEnum.NODE_TYPE, "legacy");
+        GraphVertex allowed = createVertex(VertexTypeEnum.NODE_TYPE, "allowed");
+        allowed.getVertex().property(GraphPropertyEnum.RESOURCE_TYPE.getProperty(), "VFC");
+        GraphVertex excluded = createVertex(VertexTypeEnum.NODE_TYPE, "excluded");
+        excluded.getVertex().property(GraphPropertyEnum.RESOURCE_TYPE.getProperty(), "CVFC");
+        dao.commit();
+
+        Either<List<GraphVertex>, JanusGraphOperationStatus> result = dao.getByCriteria(VertexTypeEnum.NODE_TYPE, Map.of(),
+            Map.of(GraphPropertyEnum.RESOURCE_TYPE, List.of("CVFC", "VF")), JsonParseFlagEnum.NoParse);
+
+        assertTrue(result.isLeft());
+        assertEquals(Set.of("legacy", "allowed"), result.left().value().stream()
+            .map(GraphVertex::getUniqueId).collect(Collectors.toSet()));
+    }
+
     private GraphVertex createVertex(VertexTypeEnum label, String uniqueId) {
         GraphVertex vertex = new GraphVertex(label);
         vertex.setUniqueId(uniqueId);

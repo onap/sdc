@@ -45,7 +45,7 @@ Modifications copyright (c) 2018-2019 Nokia
     <!-- 3rd parties versions -->
     <lang3.version>3.18.0</lang3.version>
     <guava.version>32.1.1-jre</guava.version>
-    <janusgraph.version>0.5.0</janusgraph.version>
+    <janusgraph.version>0.5.3</janusgraph.version>
     <spring.version>5.3.39</spring.version>
     <spring-boot.version>2.7.18</spring-boot.version>
     <mvn.assembly.version>3.6.0</mvn.assembly.version>
@@ -159,7 +159,7 @@ Modifications copyright (c) 2018-2019 Nokia
     <sonar.projectBaseDir>${project.basedir}</sonar.projectBaseDir>
     <sonar.coverage.exclusions>pom.xml,src/test</sonar.coverage.exclusions>
     <!--cassandra -->
-    <cassandra.driver.version>3.8.0</cassandra.driver.version>
+    <cassandra.driver.version>3.11.5</cassandra.driver.version>
     <!-- maven central (Nexus) -->
     <nexus.id.release>nexus</nexus.id.release>
     <nexus.id.snapshot>nexus</nexus.id.snapshot>

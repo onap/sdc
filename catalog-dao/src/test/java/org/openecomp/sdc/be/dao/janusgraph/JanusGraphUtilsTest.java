@@ -20,14 +20,50 @@
 
 package org.openecomp.sdc.be.dao.janusgraph;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import org.janusgraph.core.JanusGraph;
+import org.janusgraph.core.JanusGraphFactory;
+import org.janusgraph.core.JanusGraphVertex;
 import org.janusgraph.graphdb.query.JanusGraphPredicate;
 import org.apache.tinkerpop.gremlin.structure.T;
 import org.junit.Test;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 public class JanusGraphUtilsTest {
+
+    @Test
+    public void exclusionIncludesVerticesWhenPropertyIsNotInSchema() {
+        try (JanusGraph graph = JanusGraphFactory.build().set("storage.backend", "inmemory").open()) {
+            graph.addVertex();
+            graph.tx().commit();
+
+            assertTrue(JanusGraphUtils.hasNotIncludingMissing(graph, graph.query(), "unknown", true)
+                .vertices().iterator().hasNext());
+        }
+    }
+
+    @Test
+    public void nullExclusionRequiresPropertyToExist() {
+        try (JanusGraph graph = JanusGraphFactory.build().set("storage.backend", "inmemory").open()) {
+            graph.addVertex();
+            graph.tx().commit();
+            assertFalse(JanusGraphUtils.hasNotIncludingMissing(graph, graph.query(), "flag", null)
+                .vertices().iterator().hasNext());
+
+            graph.addVertex().property("flag", false);
+            graph.tx().commit();
+            Iterator<JanusGraphVertex> vertices = JanusGraphUtils
+                .hasNotIncludingMissing(graph, graph.query(), "flag", null).vertices().iterator();
+            assertTrue(vertices.hasNext());
+            assertFalse(vertices.next().value("flag"));
+            assertFalse(vertices.hasNext());
+        }
+    }
 
 	@Test
 	public void testBuildNotInPredicate() throws Exception {

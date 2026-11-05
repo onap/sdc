@@ -802,7 +802,7 @@ public class JanusGraphGenericDao {
                 }
                 if (hasNotProps != null && !hasNotProps.isEmpty()) {
                     for (Map.Entry<String, Object> entry : hasNotProps.entrySet()) {
-                        query = query.hasNot(entry.getKey(), entry.getValue());
+                        query = JanusGraphUtils.hasNotIncludingMissing(tGraph, query, entry.getKey(), entry.getValue());
                     }
                 }
                 Iterable<JanusGraphVertex> vertices = query.vertices();
@@ -845,7 +845,7 @@ public class JanusGraphGenericDao {
                     if (QueryType.HAS.equals(prop.getLeft())) {
                         query = query.has(prop.getMiddle(), prop.getRight());
                     } else {
-                        query = query.hasNot(prop.getMiddle(), prop.getRight());
+                        query = JanusGraphUtils.hasNotIncludingMissing(tGraph, query, prop.getMiddle(), prop.getRight());
                     }
                 }
                 Iterable<JanusGraphVertex> vertices = query.vertices();
