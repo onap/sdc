@@ -1,4 +1,5 @@
-FROM python:3.11-slim
+# Use the official registry: the Nexus proxy omits OCI attestations.
+FROM docker.io/library/python:3.11-slim
 
 RUN addgroup sdc && \
     adduser --gecos "sdc sdc,1,1,1" --disabled-password --ingroup sdc --shell /bin/sh sdc
