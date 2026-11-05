@@ -58,7 +58,7 @@ public class OnboardHomePage extends AbstractPageObject {
      * @return returns the next vsp creation page object
      */
     public VspCreationModal clickOnCreateNewVsp() {
-        waitForElementInvisibility(By.xpath(XpathSelector.ONBOARDING_LOADER_DIV.getXpath()));
+        waitForElementAbsence(By.xpath(XpathSelector.ONBOARDING_LOADER_DIV.getXpath()));
         createNewVspBtn.click();
         return new VspCreationModal(webDriver);
     }
@@ -70,7 +70,7 @@ public class OnboardHomePage extends AbstractPageObject {
      * @return returns the next vlm creation page object
      */
     public VlmCreationModal clickOnCreateNewVlm() {
-        waitForElementInvisibility(By.xpath(XpathSelector.ONBOARDING_LOADER_DIV.getXpath()));
+        waitForElementAbsence(By.xpath(XpathSelector.ONBOARDING_LOADER_DIV.getXpath()));
         createNewVlmBtn.click();
         return new VlmCreationModal(webDriver);
     }
@@ -82,7 +82,7 @@ public class OnboardHomePage extends AbstractPageObject {
     private enum XpathSelector {
         ADD_NEW_VSP_BTN("catalog-add-new-vsp", "//button[@data-test-id='%s']"),
         ADD_NEW_VLM_BTN("catalog-add-new-vlm", "//button[@data-test-id='%s']"),
-        ONBOARDING_LOADER_DIV("onboarding-loader-backdrop","//div[@class='%s']");
+        ONBOARDING_LOADER_DIV("onboarding-loader-backdrop", "//div[contains(@class, '%s')]");
 
         @Getter
         private final String id;

@@ -208,6 +208,16 @@ public abstract class AbstractPageObject implements PageObject {
     }
 
     /**
+     * Waits with the default timeout until no element matches the locator. Unlike
+     * {@link #waitForElementInvisibility(By)}, a transparent overlay that still intercepts clicks keeps it waiting.
+     *
+     * @param locator the By locator to search for the element
+     */
+    protected void waitForElementAbsence(final By locator) {
+        getWait(timeoutInSeconds).until(ExpectedConditions.numberOfElementsToBe(locator, 0));
+    }
+
+    /**
      * Waits elements to be clickable with the default timeout.
      *
      * @param xpath the xpath to find the element(s)
