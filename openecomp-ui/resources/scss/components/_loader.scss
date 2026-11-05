@@ -8,6 +8,9 @@
         background-color: $loader-background;
         opacity: 0.5;
     }
+    .onboarding-loader-pending {
+        opacity: 0;
+    }
     .tlv-loader {
         height: 63px;
         width: 63px;

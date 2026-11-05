@@ -24,7 +24,7 @@ const mapStateToProps = ({ loader }) => {
     };
 };
 
-class Loader extends React.Component {
+export class Loader extends React.Component {
     static propTypes = {
         isLoading: PropTypes.bool.isRequired
     };
@@ -33,17 +33,54 @@ class Loader extends React.Component {
         isLoading: false
     };
 
-    shouldComponentUpdate(nextProps) {
-        return nextProps.isLoading !== this.props.isLoading;
+    state = { isVisible: false };
+
+    componentDidMount() {
+        this.updateVisibility();
+    }
+
+    componentDidUpdate(previousProps) {
+        if (previousProps.isLoading !== this.props.isLoading) {
+            this.updateVisibility();
+        }
+    }
+
+    componentWillUnmount() {
+        clearTimeout(this.showTimer);
+        clearTimeout(this.hideTimer);
+    }
+
+    updateVisibility() {
+        clearTimeout(this.hideTimer);
+        if (this.props.isLoading) {
+            if (!this.state.isVisible && !this.showTimer) {
+                this.showTimer = setTimeout(() => {
+                    this.showTimer = null;
+                    if (this.props.isLoading) {
+                        this.setState({ isVisible: true });
+                    }
+                }, 300);
+            }
+        } else if (this.state.isVisible || this.showTimer) {
+            this.hideTimer = setTimeout(() => {
+                clearTimeout(this.showTimer);
+                this.showTimer = null;
+                this.setState({ isVisible: false });
+            }, 100);
+        }
     }
 
     render() {
-        let { isLoading } = this.props;
+        const { isLoading } = this.props;
+        const { isVisible } = this.state;
         return (
             <div className="onboarding-loader">
-                {isLoading && (
-                    <div className="onboarding-loader-backdrop">
-                        <div className="tlv-loader large" />
+                {(isLoading || isVisible) && (
+                    <div
+                        className={`onboarding-loader-backdrop${
+                            isVisible ? '' : ' onboarding-loader-pending'
+                        }`}>
+                        {isVisible && <div className="tlv-loader large" />}
                     </div>
                 )}
             </div>

@@ -79,11 +79,13 @@ const ItemsHelper = {
         );
     },
 
-    async checkItemStatus(dispatch, { itemId, versionId }) {
-        const response = await ItemsHelper.fetchVersion({ itemId, versionId });
+    async checkItemStatus(dispatch, { itemId, versionId, itemPromise }) {
+        const [response, item] = await Promise.all([
+            ItemsHelper.fetchVersion({ itemId, versionId }),
+            itemPromise || ItemsHelper.fetchItem(itemId)
+        ]);
         let state = (response && response.state) || {};
         const { baseId, description, id, name, status } = response;
-        const item = await ItemsHelper.fetchItem(itemId);
         dispatch({
             type: onboardingActionTypes.UPDATE_ITEM_STATUS,
             itemState: state,

@@ -18,15 +18,20 @@ const ScreensHelper = {
 
         if (screenType === screenTypes.LICENSE_MODEL) {
             const { licenseModelId, version, licenseModel, usersList } = props;
-            const item = await ItemsHelper.fetchItem(licenseModelId);
+            const itemPromise = ItemsHelper.fetchItem(licenseModelId);
             let itemStatusPromise =
                 version && screen
                     ? ItemsHelper.checkItemStatus(dispatch, {
                           itemId: licenseModelId,
-                          versionId: version.id
+                          versionId: version.id,
+                          itemPromise
                       })
                     : Promise.resolve();
-            itemStatusPromise.then(updatedVersion => {
+            const metadataPromise = Promise.all([
+                itemPromise,
+                itemStatusPromise
+            ]);
+            return metadataPromise.then(([item, updatedVersion]) => {
                 if (
                     updatedVersion &&
                     updatedVersion.status !== version.status
@@ -109,15 +114,20 @@ const ScreensHelper = {
                 softwareProduct,
                 usersList
             } = props;
-            const item = await ItemsHelper.fetchItem(softwareProductId);
+            const itemPromise = ItemsHelper.fetchItem(softwareProductId);
             let itemStatusPromise =
                 version && screen
                     ? ItemsHelper.checkItemStatus(dispatch, {
                           itemId: softwareProductId,
-                          versionId: version.id
+                          versionId: version.id,
+                          itemPromise
                       })
                     : Promise.resolve();
-            itemStatusPromise.then(updatedVersion => {
+            const metadataPromise = Promise.all([
+                itemPromise,
+                itemStatusPromise
+            ]);
+            return metadataPromise.then(([item, updatedVersion]) => {
                 if (
                     updatedVersion &&
                     updatedVersion.status !== version.status

@@ -62,7 +62,7 @@ public class SoftwareProductOnboarding extends AbstractPageObject {
     public void attachmentScreenIsLoaded() {
         final String attachmentViewXpath = String.format("%s%s", XpathSelector.PAGE_MAIN_DIV.getXpath(), XpathSelector.ATTACHMENT_VIEW.getXpath());
         waitForElementVisibility(By.xpath(attachmentViewXpath));
-        waitForElementInvisibility(By.xpath(XpathSelector.ONBOARDING_LOADER_DIV.getXpath()));
+        waitForElementAbsence(By.xpath(XpathSelector.ONBOARDING_LOADER_DIV.getXpath()));
         final WebElement selectedNavBarGroupItem =
             findSubElement(wrappingElement, XpathSelector.SELECTED_NAV_BAR_GROUP_ITEM.getXpath());
         final String selectedNavBarGroupItemTestId = selectedNavBarGroupItem.getAttribute("data-test-id");
@@ -99,7 +99,7 @@ public class SoftwareProductOnboarding extends AbstractPageObject {
         BNT_SUBMIT("vc-submit-btn", "//button[@data-test-id='%s']"),
         NAV_BAR_GROUP_NAME_XPATH("navbar-group-name", H1_DATA_TEST_ID_XPATH_FORMAT),
         SELECTED_NAV_BAR_GROUP_ITEM("navigation-group-item-name selected", "//button[@class='%s']"),
-        ONBOARDING_LOADER_DIV("onboarding-loader-backdrop", DIV_CLASS_XPATH_FORMAT),
+        ONBOARDING_LOADER_DIV("onboarding-loader-backdrop", "//div[contains(@class, '%s')]"),
         ATTACHMENT_VIEW("vsp-attachments-view", DIV_CLASS_XPATH_FORMAT);
 
         @Getter
