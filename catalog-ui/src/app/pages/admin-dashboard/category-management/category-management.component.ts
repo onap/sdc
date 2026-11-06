@@ -18,7 +18,8 @@
  * ============LICENSE_END=========================================================
  */
 
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
+import {Subscription} from 'rxjs/Subscription';
 import {ButtonModel} from 'app/models/button';
 import {ModalModel} from 'app/models/modal';
 import {IMainCategory, ISubCategory} from 'app/models/category';
@@ -34,7 +35,7 @@ import {AddCategoryModalComponent} from '../add-category-modal/add-category-moda
     styleUrls: ['./category-management.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CategoryManagementComponent implements OnInit {
+export class CategoryManagementComponent implements OnInit, OnDestroy {
 
     readonly SERVICE: string = 'service';
     readonly RESOURCE: string = 'resource';
@@ -49,6 +50,7 @@ export class CategoryManagementComponent implements OnInit {
     private serviceCategories: Array<IMainCategory> = [];
     private resourceCategories: Array<IMainCategory> = [];
     private modalInstance: any;
+    private languageChangedSubscription: Subscription;
 
     constructor(private cacheService: CacheService,
                 private modalService: ModalService,
@@ -61,7 +63,17 @@ export class CategoryManagementComponent implements OnInit {
         this.resourceCategories = this.cacheService.get('resourceCategories');
         this.namePattern = this.validationUtils.getValidationPattern('category');
         this.selectType(this.SERVICE);
+        // OnPush: the translated labels are empty until the language JSON has loaded (see
+        // AdminDashboardComponent), so render again once it has.
+        this.languageChangedSubscription = this.translateService.languageChangedObservable
+            .subscribe(() => this.detectChangesSafe());
         this.detectChangesSafe();
+    }
+
+    ngOnDestroy(): void {
+        if (this.languageChangedSubscription) {
+            this.languageChangedSubscription.unsubscribe();
+        }
     }
 
     selectType(type: string): void {

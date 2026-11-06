@@ -1,5 +1,6 @@
 import 'rxjs/add/observable/of';
 import {Observable} from 'rxjs/Observable';
+import {Subject} from 'rxjs/Subject';
 import {IMainCategory, ISubCategory} from 'app/models/category';
 import {CategoryManagementComponent} from './category-management.component';
 
@@ -57,8 +58,10 @@ function createComp() {
         closeCurrentModal: jest.fn()
     };
 
+    const languageChanged = new Subject<string>();
     const translateService: any = {
-        translate: jest.fn((key: string) => key)
+        translate: jest.fn((key: string) => key),
+        languageChangedObservable: languageChanged
     };
 
     const cdr: any = {detectChanges: jest.fn(), destroyed: false};
@@ -66,7 +69,7 @@ function createComp() {
     const comp = new CategoryManagementComponent(
         cacheService, modalService, validationUtils, translateService, cdr);
 
-    return {comp, cacheService, validationUtils, modalService, translateService, cdr,
+    return {comp, cacheService, validationUtils, modalService, translateService, cdr, languageChanged,
         serviceCategories, resourceCategories, modalInstance, dynamicContentInstance};
 }
 
@@ -344,5 +347,22 @@ describe('CategoryManagementComponent', () => {
         comp.ngOnInit();
         expect(comp.SERVICE).toBe('service');
         expect(comp.RESOURCE).toBe('resource');
+    });
+
+    it('re-runs detectChanges when the language JSON resolves after ngOnInit (cold load)', () => {
+        const {comp, cdr, languageChanged} = createComp();
+        comp.ngOnInit();
+        cdr.detectChanges.mockClear();
+        languageChanged.next('en_US');
+        expect(cdr.detectChanges).toHaveBeenCalled();
+    });
+
+    it('ngOnDestroy unsubscribes from languageChangedObservable', () => {
+        const {comp, cdr, languageChanged} = createComp();
+        comp.ngOnInit();
+        comp.ngOnDestroy();
+        cdr.detectChanges.mockClear();
+        languageChanged.next('en_US');
+        expect(cdr.detectChanges).not.toHaveBeenCalled();
     });
 });
