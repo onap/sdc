@@ -23,7 +23,7 @@ npm ci && npx playwright install chromium           # first time only
 CI=1 SDC_BASE_URL=http://localhost:8285 npx playwright test --reporter=list
 ```
 
-Expected: **141 passed**, under 15 minutes, zero retries. `CI=1` gives the gate's settings (4
+Expected: **164 passed** (one of them an expected failure, SDC-5247), about 15 minutes, zero retries. `CI=1` gives the gate's settings (4
 workers, a test that passes only on its retry fails the run). Anything less is a real finding — read
 [Triage](#triage-when-tests-fail) before touching a spec, because most red runs here have been
 environmental, not test bugs.
@@ -360,6 +360,8 @@ test('...', async ({ sdcPage, api }) => { ... });
 | `tests/accessibility-onboarding.spec.ts` | axe ratchet on the VLM and VSP versions pages and inner screens; **creates a submitted `PwAxeVlm…` (and a `PwAxeVsp…`) per test** |
 | `tests/onboarding-*.spec.ts` | VLM create, VNF/CNF/PNF/ETSI package upload, validation pages, Helm validation (`@helm-validator`), GAB artifacts; ported from the Selenium `onapUiSanity.xml` suite |
 | `tests/design-*.spec.ts` | composition relationships, node and substitution filters, interface operations, properties/inputs/outputs, service General tab; ported from the Selenium `onapUiSanity.xml` suite |
+| `tests/catalog-*.spec.ts` | catalog filters (type, status, category), sort, search kept after Back, checkout; archive/restore of VFs and VSPs and its effect on certify |
+| `tests/admin-*.spec.ts` | category management (create, duplicates, use in create forms) and user search, as `jh0003` |
 | `tests/models-*.spec.ts` | VFC import, ETSI SOL001 model VFs and services, ETSI NS package, TOSCA types imported into a model; **creates a model per run, and models cannot be deleted** |
 
 ### Fixtures
