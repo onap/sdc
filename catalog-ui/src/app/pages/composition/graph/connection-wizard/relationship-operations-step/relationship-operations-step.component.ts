@@ -69,6 +69,9 @@ export class RelationshipOperationsStepComponent implements OnInit, IStepCompone
 
   private loadInterfaceTypeMap(): void {
     this.componentService.getInterfaceTypes(this.component).subscribe(response => {
+      // A new Map, not set() on the old one: an operation form opened before this response
+      // only sees the types through its input changing.
+      const interfaceTypeMap = new Map<string, Array<string>>();
       for (const interfaceType in response) {
         let operationList = response[interfaceType];
         //ignore interfaceTypes that doesn't contain operations
@@ -80,10 +83,11 @@ export class RelationshipOperationsStepComponent implements OnInit, IStepCompone
           .filter(operationType => !existingOperations.find(operation => operation.operationType === operationType));
           if (operationList && operationList.length > 0) {
             operationList.sort();
-            this.interfaceTypeMap.set(interfaceType, operationList);
+            interfaceTypeMap.set(interfaceType, operationList);
           }
         }
       }
+      this.interfaceTypeMap = interfaceTypeMap;
     });
   }
 

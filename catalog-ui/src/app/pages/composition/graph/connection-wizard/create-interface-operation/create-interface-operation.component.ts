@@ -17,7 +17,7 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild} from '@angular/core';
 import {IDropDownOption} from "onap-ui-angular/dist/form-elements/dropdown/dropdown-models";
 import {DropDownComponent} from "onap-ui-angular/dist/components";
 import {PropertyAssignment} from "../../../../../models/properties-inputs/property-assignment";
@@ -30,10 +30,11 @@ import {FormControl, FormGroup, Validators} from "@angular/forms";
   templateUrl: './create-interface-operation.component.html',
   styleUrls: ['./create-interface-operation.component.less']
 })
-export class CreateInterfaceOperationComponent implements OnInit {
+export class CreateInterfaceOperationComponent implements OnInit, OnChanges {
   @Input('interfaceTypeMap') interfaceTypeMap: Map<string, Array<string>>;
   @Input('operation') private operation: Operation;
   @Output('addOperation') addOperation: EventEmitter<Operation> = new EventEmitter<Operation>();
+  @ViewChild('interfaceDropdown') interfaceDropdown: DropDownComponent;
   @ViewChild('operationDropdown') operationDropdown: DropDownComponent;
 
   form: FormGroup;
@@ -90,6 +91,12 @@ export class CreateInterfaceOperationComponent implements OnInit {
     this.isLoading = false;
   }
 
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.interfaceTypeMap && !changes.interfaceTypeMap.firstChange) {
+      this.loadInterfaceOptions();
+    }
+  }
+
   private loadInterfaceOptions() {
     this.interfaceTypeOptions = new Array<TypedDropDownOption>();
     const interfaceTypeList = Array.from(this.interfaceTypeMap.keys());
@@ -97,6 +104,9 @@ export class CreateInterfaceOperationComponent implements OnInit {
     interfaceTypeList.forEach(interfaceType => {
       this.interfaceTypeOptions.push(this.createInterfaceDropdownOption(interfaceType));
     });
+    if (this.interfaceDropdown) {
+      this.interfaceDropdown.allOptions = <IDropDownOption[]> this.interfaceTypeOptions;
+    }
   }
 
   private loadOperationOptions() {

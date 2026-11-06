@@ -34,22 +34,24 @@ import {APP_BASE_HREF} from "@angular/common";
 import {ConnectionWizardService} from "../connection-wizard.service";
 import {ComponentService} from "../../../../../services/component-services/component.service";
 import {WorkspaceService} from "../../../../workspace/workspace.service";
+import {Subject} from "rxjs";
 
 describe('RelationshipOperationsStepComponent', () => {
   let component: RelationshipOperationsStepComponent;
   let fixture: ComponentFixture<RelationshipOperationsStepComponent>;
+  let interfaceTypes: Subject<{ [id: string]: Array<string> }>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ RelationshipOperationsStepComponent, CreateInterfaceOperationComponent,
           CreateInputRowComponent, InterfaceOperationListComponent, TranslatePipe ],
       providers: [
-        {provide: TranslateService, useValue: {}},
+        {provide: TranslateService, useValue: {translate: (phrase: string) => phrase}},
         // The component reads the asset off WorkspaceService (written by the route resolver) rather
         // than out of a route param, so no NavigationService is involved any more.
         {provide: WorkspaceService, useValue: {component: {uniqueId: 'id-1'}}},
-        {provide: ConnectionWizardService, useValue: {}},
-        {provide: ComponentService, useValue: {}},
+        {provide: ConnectionWizardService, useValue: {selectedMatch: {}}},
+        {provide: ComponentService, useValue: {getInterfaceTypes: () => interfaceTypes}},
       ],
       imports: [SdcUiComponentsModule, ReactiveFormsModule, TabModule, UiElementsModule]
 
@@ -59,11 +61,27 @@ describe('RelationshipOperationsStepComponent', () => {
   }));
 
   beforeEach(() => {
+    interfaceTypes = new Subject();
     fixture = TestBed.createComponent(RelationshipOperationsStepComponent);
     component = fixture.componentInstance;
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('offers the interface types in an operation form opened before they loaded', () => {
+    fixture.detectChanges();
+    fixture.nativeElement.querySelector('[data-tests-id="addInterfaceOperation"]').click();
+    fixture.detectChanges();
+
+    interfaceTypes.next({'tosca.interfaces.node.lifecycle.Standard': ['create', 'delete']});
+    fixture.detectChanges();
+    fixture.nativeElement.querySelector('[data-tests-id="interface-name-icon"]').click();
+    fixture.detectChanges();
+
+    const options = Array.from(fixture.nativeElement.querySelectorAll('.sdc-dropdown__option'))
+        .map((option: HTMLElement) => option.textContent.trim());
+    expect(options).toContain('Standard');
   });
 });
