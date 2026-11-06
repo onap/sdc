@@ -1590,6 +1590,7 @@ limitations under the License.
                 <!-- Playwright ships its own Chromium, so the 1.45 GB Selenium grid image is dead
                      weight here — skipping it matters on a disk-constrained GitHub-hosted runner. -->
                 <it.selenium.disabled>true</it.selenium.disabled>
+                <it.helm-validator.disabled>false</it.helm-validator.disabled>
                 <it.playwright.baseUrl>http://localhost:8285</it.playwright.baseUrl>
                 <it.playwright.nodeVersion>v18.20.8</it.playwright.nodeVersion>
                 <it.playwright.npmVersion>10.8.2</it.playwright.npmVersion>

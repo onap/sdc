@@ -45,6 +45,12 @@
 
 import { test as base, expect, Page, APIRequestContext, APIResponse } from '@playwright/test';
 
+/** Epoch ms alone collides across parallel workers, and the backend rejects a duplicate name. */
+export function uniqueName(prefix: string): string {
+    const letters = Array.from({ length: 3 }, () => String.fromCharCode(97 + Math.floor(Math.random() * 26))).join('');
+    return `${prefix}${Date.now()}${letters}`;
+}
+
 // ---------------------------------------------------------------------------
 // Environment
 // ---------------------------------------------------------------------------
@@ -504,18 +510,34 @@ export interface OnboardingItem {
  * needed by the browser, not by direct API calls.
  */
 export class SdcApi {
-    constructor(private request: APIRequestContext, private baseUrl: string) {}
+    constructor(readonly request: APIRequestContext, readonly baseUrl: string) {}
 
-    private get headers() {
+    get headers() {
         return { 'USER_ID': DESIGNER_USER, 'Content-Type': 'application/json' };
     }
 
-    private url(path: string): string {
+    url(path: string): string {
         return `${this.baseUrl}/sdc1/feProxy/rest/v1${path}`;
     }
 
-    private static collectionOf(type: 'resource' | 'service'): string {
+    static collectionOf(type: 'resource' | 'service'): string {
         return type === 'resource' ? 'resources' : 'services';
+    }
+
+    /**
+     * POSTs a create and repeats it while the backend answers 500. Parallel creates can collide on a
+     * JanusGraph edge lock ("Local lock contention" in the BE log), which fails the commit and rolls
+     * it back, so a repeat starts clean. Seeding only: a create that a test is about must not be repeated.
+     */
+    async postCreate(path: string, init: { data: unknown; headers?: Record<string, string>; timeout?: number }): Promise<APIResponse> {
+        for (let attempt = 1; ; attempt++) {
+            const resp = await this.request.post(this.url(path), {
+                headers: { ...this.headers, ...init.headers }, data: init.data, timeout: init.timeout,
+            });
+            if (resp.status() !== 500 || attempt === 3) {
+                return resp;
+            }
+        }
     }
 
     /**
@@ -533,7 +555,7 @@ export class SdcApi {
      * Polled on `filteredDataByParams?include=metadata` specifically because that is the request the
      * workspace fires on entry — the one that actually 404'd, not a proxy for it.
      */
-    private async readable(
+    async readable(
         resp: APIResponse, name: string, type: 'resource' | 'service',
     ): Promise<CreatedAsset> {
         const body = await resp.json().catch(() => ({}));
@@ -572,9 +594,8 @@ export class SdcApi {
 
     /** Creates a VF resource in NOT_CERTIFIED_CHECKOUT state (i.e. immediately editable). */
     async createVf(namePrefix = 'PwVF'): Promise<CreatedAsset> {
-        const name = namePrefix + Date.now();
-        const resp = await this.request.post(this.url('/catalog/resources'), {
-            headers: this.headers,
+        const name = uniqueName(namePrefix);
+        const resp = await this.postCreate('/catalog/resources', {
             data: {
                 name,
                 description: 'created by the Playwright suite',
@@ -605,9 +626,8 @@ export class SdcApi {
      * Service Function), which a VF never renders.
      */
     async createService(namePrefix = 'PwSvc'): Promise<CreatedAsset> {
-        const name = namePrefix + Date.now();
-        const resp = await this.request.post(this.url('/catalog/services'), {
-            headers: this.headers,
+        const name = uniqueName(namePrefix);
+        const resp = await this.postCreate('/catalog/services', {
             data: {
                 name,
                 description: 'created by the Playwright suite',
@@ -654,12 +674,12 @@ export class SdcApi {
             .catch(() => { /* best-effort cleanup; a leaked test asset must not fail the suite */ });
     }
 
-    private onboardingUrl(path: string): string {
+    onboardingUrl(path: string): string {
         return `${this.baseUrl}/sdc1/feProxy/onboarding-api/v1.0${path}`;
     }
 
     /** Onboarding creates answer 200, not 201, and carry the id as `itemId` + `version.id`. */
-    private async onboardingItem(
+    async onboardingItem(
         resp: APIResponse, name: string, collection: 'vendor-license-models' | 'vendor-software-products',
     ): Promise<OnboardingItem> {
         const body = await resp.json().catch(() => ({}));
@@ -678,7 +698,7 @@ export class SdcApi {
 
     /** An empty VLM: no LA/FG/EP/LKG. VendorLicenseFacadeImpl.validate() lets it be submitted as is. */
     async createVlm(namePrefix = 'PwVlm'): Promise<OnboardingItem> {
-        const name = namePrefix + Date.now();
+        const name = uniqueName(namePrefix);
         const resp = await this.request.post(this.onboardingUrl('/vendor-license-models'), {
             headers: this.headers,
             data: { vendorName: name, description: 'created by the Playwright suite', iconRef: 'icon' },
@@ -697,7 +717,7 @@ export class SdcApi {
 
     /** A NetworkPackage VSP with no package uploaded, owned by `vlm`. */
     async createVsp(vlm: OnboardingItem, namePrefix = 'PwVsp'): Promise<OnboardingItem> {
-        const name = namePrefix + Date.now();
+        const name = uniqueName(namePrefix);
         const resp = await this.request.post(this.onboardingUrl('/vendor-software-products'), {
             headers: this.headers,
             data: {

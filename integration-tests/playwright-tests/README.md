@@ -20,10 +20,11 @@ Assuming images are built and the stack is up (see [Starting the stack](#startin
 ```bash
 cd integration-tests/playwright-tests
 npm ci && npx playwright install chromium           # first time only
-SDC_BASE_URL=http://localhost:8285 npx playwright test --reporter=list
+CI=1 SDC_BASE_URL=http://localhost:8285 npx playwright test --reporter=list
 ```
 
-Expected: **31 passed**, ~3.5 minutes, zero retries. Anything less is a real finding — read
+Expected: **141 passed**, under 15 minutes, zero retries. `CI=1` gives the gate's settings (4
+workers, a test that passes only on its retry fails the run). Anything less is a real finding — read
 [Triage](#triage-when-tests-fail) before touching a spec, because most red runs here have been
 environmental, not test bugs.
 
@@ -357,6 +358,9 @@ test('...', async ({ sdcPage, api }) => { ... });
 | `tests/accessibility.spec.ts` | axe ratchet on pages that need no data (dashboard, catalog, onboarding landing, CREATE forms, admin); read-only |
 | `tests/accessibility-workspace.spec.ts` | axe ratchet on every VF and Service workspace tab; **creates a `PwAxeVf…`/`PwAxeSvc…` asset per test** |
 | `tests/accessibility-onboarding.spec.ts` | axe ratchet on the VLM and VSP versions pages and inner screens; **creates a submitted `PwAxeVlm…` (and a `PwAxeVsp…`) per test** |
+| `tests/onboarding-*.spec.ts` | VLM create, VNF/CNF/PNF/ETSI package upload, validation pages, Helm validation (`@helm-validator`), GAB artifacts; ported from the Selenium `onapUiSanity.xml` suite |
+| `tests/design-*.spec.ts` | composition relationships, node and substitution filters, interface operations, properties/inputs/outputs, service General tab; ported from the Selenium `onapUiSanity.xml` suite |
+| `tests/models-*.spec.ts` | VFC import, ETSI SOL001 model VFs and services, ETSI NS package, TOSCA types imported into a model; **creates a model per run, and models cannot be deleted** |
 
 ### Fixtures
 
@@ -383,8 +387,26 @@ test('...', async ({ sdcPage, api }) => { ... });
 
   The gate has since fired for real (CI run 31798342250): one VF stayed 404 for the whole 30 s
   budget while the retry's freshly created asset read back immediately. So the message means *this
-  write did not land*, not *the BE is slow* — a new asset is the way out, which is what `retries: 1`
-  now buys, and the run stays green with a visible `1 flaky` instead of a mystery failure.
+  write did not land*, not *the BE is slow*. `retries: 1` still runs the test once more for its
+  trace, but under `CI` the config sets `failOnFlakyTests`, so a test that only passes on its retry
+  fails the run instead of hiding in the HTML report.
+
+- **`api.postCreate(path, { data })`** — every seeding create goes through it. It repeats the POST
+  while the BE answers 500: parallel creates collide on a JanusGraph edge lock (`Local lock
+  contention` in the BE log), the commit is rolled back, and a repeat starts clean. Only for
+  seeding — a create that a test is *about* must surface its 500.
+- **`uniqueName(prefix)`** — use it for every created name. Workers run in parallel
+  (`fullyParallel: true`, 4 workers in CI), so an epoch-ms suffix alone collides. Packages with a
+  fixed TOSCA type name (the VFC imports) get that name rewritten per test too, or the second import
+  of the same file answers SVC4546.
+- **`fixtures/csar.ts`** — `downloadCsar(page, () => click)` returns a `Csar` (`entries`, `text`,
+  `yaml`, `bytes`, `mainTemplate` via `TOSCA.meta`); `fixtureFile('VNFs/x.zip')` resolves a package
+  under `integration-tests/src/test/resources/Files`, the directory the TestNG API suite reads too.
+- **Area helpers** — `fixtures/onboarding.ts`, `design.ts`, `models.ts`, `catalog.ts`, `admin.ts`
+  hold what one area's specs share (VSP upload/processing, composition `dragLink()` + relationship
+  wizard, model import, admin REST calls as `jh0003`).
+- **`@helm-validator`** — tests tagged so need the `sdc-helm-validator` container, which the Maven
+  profiles start. Set `SDC_SKIP_HELM_VALIDATOR=1` against a stack without it.
 
 ### Selectors are contracts, not conveniences
 
@@ -563,7 +585,8 @@ click-swallowing overlay.
 ## Writing new tests
 
 1. Import from `./fixtures/sdc`, take `{ sdcPage, api }`.
-2. Create data through `api`, not the UI, unless creating it *is* the thing under test.
+2. Create data through `api` (`postCreate`, `uniqueName`), not the UI, unless creating it *is*
+   the thing under test. Tests run in parallel and must not share data.
 3. Navigate with `gotoWorkspaceTab` / `gotoTopLevel`.
 4. **Wait for the thing you are about to assert on**, never `waitForTimeout`. `settles(sdcPage)` is
    not that wait — see *Settle detection* above; `gotoWorkspaceTab` already waits for the tab to
