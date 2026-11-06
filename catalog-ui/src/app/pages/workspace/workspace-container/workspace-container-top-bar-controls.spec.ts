@@ -475,7 +475,6 @@ describe('top-bar template', () => {
             expect(doc.querySelector('[data-tests-id="delete_archive_version"]').getAttribute('aria-label')).toBe('Delete component');
         });
 
-        // Cypress asserts the visible text.
         it('keeps the text labels', () => {
             expect(sprites.map((el) => el.textContent.trim())).toEqual(['Delete', 'Delete', 'Archive', 'Close']);
         });

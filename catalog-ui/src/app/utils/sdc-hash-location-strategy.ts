@@ -24,8 +24,8 @@ import {Injectable} from '@angular/core';
 const NG1_HASH_PREFIX = '!';
 
 /**
- * AngularJS defaulted to the '#!' hash prefix, and every bookmark, Cypress spec and Selenium URL in
- * the tree encodes it. HashLocationStrategy emits a bare '#', so the prefix would silently vanish the
+ * AngularJS defaulted to the '#!' hash prefix, and every bookmark and every Selenium and Playwright
+ * URL in the tree encodes it. HashLocationStrategy emits a bare '#', so the prefix would silently vanish the
  * moment ng1 stops owning the URL. Reading tolerates both forms so old '#/...' links keep working.
  */
 @Injectable()

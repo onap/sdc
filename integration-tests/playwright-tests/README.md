@@ -389,7 +389,7 @@ test('...', async ({ sdcPage, api }) => { ... });
 ### Selectors are contracts, not conveniences
 
 `SEL` in `fixtures/sdc.ts` is the single source of truth. Most entries are **also** depended on
-by Selenium page objects and/or Cypress specs, so changing one breaks three suites. Two in
+by Selenium page objects, so changing one breaks both suites. Two in
 particular:
 
 - `mainRightContainer` / `topBar` are matched by **exact-class** xpath
@@ -449,7 +449,7 @@ never fails; ask whether the element you expect **is** the hit node or contains 
 `angular-ui-router` (CR 2) and then the `angular` package itself (CR 3). Any spec reaching
 `window.angular.…injector().get('$state').go(...)` broke at CR 2 and cannot even be *repaired*
 at CR 3. The URL shape, by contrast, is pinned by `PathUtilities.java:256` ("the component id is
-the segment immediately after `workspace`") and by ~70 Cypress URL lines, so it survives both.
+the segment immediately after `workspace`") and by old bookmarks, so it survives both.
 Navigating this way also exercises deep-linking, which `$state.go()` never did.
 
 Use `gotoWorkspaceTab(page, {id, type, tab})` and `gotoTopLevel(page, '/catalog')`.
@@ -467,9 +467,7 @@ that URL at all: `DefaultUrlSerializer.parse()` drops an empty segment *and ever
 so the tab would be silently lost. `app.routes.ts` therefore declares
 `':previousState/workspace/:type'` as a route of its own, ahead of the id-bearing one — the two
 consume a different segment count, so order alone disambiguates them, and with `:id` absent
-`WorkspaceComponentResolver` takes its create-an-empty-component branch. The single-slash form is
-also what `cypress/integration/service-distribution.spec.js` always used, so that spec was right
-about the shape and wrong only about the era.
+`WorkspaceComponentResolver` takes its create-an-empty-component branch.
 
 ### Assert views with `toBeAttached()`, not `toBeVisible()`
 
@@ -501,8 +499,8 @@ was destroyed and ui-router fell through to `otherwise('dashboard')`. Observed h
 `/!/catalog` → `!` → `!/dashboard`.
 
 `SdcHashLocationStrategy` (`catalog-ui/src/app/utils/`) is the fix: it strips a leading `!` in
-`path()` and re-inserts it in `prepareExternalUrl()`, so the `#!` prefix every bookmark, Cypress
-spec and Selenium URL encodes survives. `gotoCold()` is now a single `page.goto()` — it used to be a
+`path()` and re-inserts it in `prepareExternalUrl()`, so the `#!` prefix every bookmark and
+Selenium URL encodes survives. `gotoCold()` is now a single `page.goto()` — it used to be a
 two-step workaround, and the day it can go back to being one is the day this regressed.
 
 The reload test (*"page reload keeps you on the same workspace tab"*) originally asserted the

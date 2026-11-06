@@ -109,8 +109,8 @@ test.describe('Composition full-bleed layout', () => {
             expect(general.childView!.left).toBeGreaterThan(200);
             expect(general.childView!.top).toBeGreaterThan(90);
 
-            // Deliberately the LEGACY trailing-slash form, which is what ui-router emitted and what 6
-            // Cypress specs and every old bookmark still use. It works because `Location.path()`
+            // Deliberately the LEGACY trailing-slash form, which is what ui-router emitted and what
+            // every old bookmark still uses. It works because `Location.path()`
             // normalises the slash away before the router matches — which is also why the route is
             // declared as bare 'composition' (app.routes.ts). Keep this URL as-is: navigating with the
             // slash is the only thing that pins the compatibility.

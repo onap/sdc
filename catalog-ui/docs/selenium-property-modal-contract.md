@@ -13,8 +13,7 @@
 scalar / container `data-tests-id` and CSS class listed below verbatim. The
 recursive value-editor ids are re-mapped to the `<dynamic-property>` scheme (see
 the recursive rows). The Selenium page objects (`PropertyPopup.java`,
-`DataTestIdEnum.PropertiesPopupEnum`) and the Cypress oracle
-(`edit-property-modal.spec.js`) depend on these selectors to navigate and validate
+`DataTestIdEnum.PropertiesPopupEnum`) depend on these selectors to navigate and validate
 the edit-property modal. Any mismatch breaks the integration test suite.
 
 All scalar / container ids live in the new Angular modal template
@@ -32,7 +31,7 @@ All scalar / container ids live in the new Angular modal template
 | `propertyType` | `pfm.component.html:70` | Selenium `PropertyPopup.getPropertyType()` (DataTestIdEnum line 261); `PropertyPopup.selectPropertyType()` | Dropdown select for property type |
 | `schema-type` | `pfm.component.html:87` | Selenium `PropertyPopup.selectEntrySchema()` (DataTestIdEnum line 262) | Dropdown select for entry schema type (for complex types like map/list) |
 | `description` | `pfm.component.html:111` | Selenium `PropertyPopup.getPropertyDescription()` (DataTestIdEnum line 260) | Text area for property description |
-| `defaultvalue` | `pfm.component.html:160` | Selenium `PropertyPopup.getPropertyValue()` (DataTestIdEnum line 258); Cypress `edit-property-modal.spec.js` | Input field for property value (simple/scalar types only — complex map/list/datatype values are now edited via `<dynamic-property>`, see recursive rows) |
+| `defaultvalue` | `pfm.component.html:160` | Selenium `PropertyPopup.getPropertyValue()` (DataTestIdEnum line 258) | Input field for property value (simple/scalar types only — complex map/list/datatype values are now edited via `<dynamic-property>`, see recursive rows) |
 | `booleantype` | `pfm.component.html:168` | (boolean scalar) | `<select>` shown instead of `defaultvalue` when the scalar type is boolean |
 | `delete_property` | `pfm.component.html:30` | Selenium `PropertyPopup.delete()` via `PropertyPopup.deleteProperty()` (not yet in enum but referenced via button click) | Delete button in the modal top bar |
 | `get-prev` | `pfm.component.html:35` | Selenium `PropertyPopup.getPrev()` (not yet in enum but referenced via button click) | Previous arrow button; navigates to prior property in list |
@@ -54,11 +53,11 @@ actual DOM id has a `value-` prefix.
 
 | data-tests-id (DOM) | Current Template : Line | testId expression | Consumer | Notes |
 |---|---|---|---|---|
-| `add-to-list-{path}` | `dynamic-property.component.html:72` (list), `:73` (map) | `'add-to-list-' + propertyTestsId` | Cypress `edit-property-modal.spec.js` map + list round-trip | **One id for BOTH list and map** add buttons. Cypress: `[data-tests-id^="add-to-list-"]` |
-| `delete-from-list-{path}` | `dynamic-property.component.html:74` | `'delete-from-list-' + propertyTestsId` | Selenium/Cypress via click (delete a list/map item) | One id for both list and map delete |
+| `add-to-list-{path}` | `dynamic-property.component.html:72` (list), `:73` (map) | `'add-to-list-' + propertyTestsId` | (add a list/map item) | **One id for BOTH list and map** add buttons: `[data-tests-id^="add-to-list-"]` |
+| `delete-from-list-{path}` | `dynamic-property.component.html:74` | `'delete-from-list-' + propertyTestsId` | Selenium via click (delete a list/map item) | One id for both list and map delete |
 | `expand-{path}` | `dynamic-property.component.html:75` | `'expand-' + propertyTestsId` | (expand/collapse complex child) | Round expand toggle on complex/list/map rows with children |
-| `value-prop-key-{path}` | `dynamic-property.component.html:40` (`prop-key-` testId) → rendered by `input/ui-element-input.component.html:28` as `value-` + testId | `'prop-key-' + propertyTestsId` | Cypress map round-trip | Map **key** input. Cypress: `[data-tests-id^="value-prop-key-"]` |
-| `value-prop-{path}` | `dynamic-property.component.html:56` (`prop-` testId) → rendered by `ui-element-*` as `value-` + testId | `'prop-' + propertyTestsId` | Cypress map value, list item, nested-datatype leaf | Leaf **value** input (string/dropdown/integer/etc.). Cypress: `[data-tests-id^="value-prop-"]`. **Collision** with the key (below) |
+| `value-prop-key-{path}` | `dynamic-property.component.html:40` (`prop-key-` testId) → rendered by `input/ui-element-input.component.html:28` as `value-` + testId | `'prop-key-' + propertyTestsId` | (map key) | Map **key** input: `[data-tests-id^="value-prop-key-"]` |
+| `value-prop-{path}` | `dynamic-property.component.html:56` (`prop-` testId) → rendered by `ui-element-*` as `value-` + testId | `'prop-' + propertyTestsId` | (map value, list item, nested-datatype leaf) | Leaf **value** input (string/dropdown/integer/etc.): `[data-tests-id^="value-prop-"]`. **Collision** with the key (below) |
 
 ## Path Scheme and Edge Cases
 
@@ -95,7 +94,6 @@ The map **key** input (`value-prop-key-{path}`) and the leaf **value** input
 (`value-prop-{path}`) both start with `value-prop-`. To target the VALUE input
 specifically, exclude the key:
 
-- Cypress: `cy.get('[data-tests-id^="value-prop-"]').not('[data-tests-id^="value-prop-key-"]')`
 - CSS: `[data-tests-id^="value-prop-"]:not([data-tests-id^="value-prop-key-"])`
 
 For a **list** item there is no key input, so `[data-tests-id^="value-prop-"]` alone

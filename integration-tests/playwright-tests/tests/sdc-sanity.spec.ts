@@ -90,8 +90,8 @@ test.describe('SDC sanity', () => {
     });
 
     /**
-     * The '#!' hash prefix is a contract, not cosmetics: every bookmark, all 70 Cypress URL
-     * lines and the Selenium URL builders encode it. AngularJS supplies it today; after CR 2
+     * The '#!' hash prefix is a contract, not cosmetics: every bookmark and the Selenium URL
+     * builders encode it. AngularJS supplies it today; after CR 2
      * SdcHashLocationStrategy must supply it instead. A bare '#/' here means that strategy is
      * missing or misconfigured, which silently breaks every deep link in the product.
      */

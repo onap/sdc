@@ -22,7 +22,7 @@ import {SdcHashLocationStrategy} from './sdc-hash-location-strategy';
 
 /**
  * The '#!' prefix is a compatibility contract, not a style choice: every bookmark users hold, every
- * `cy.visit`/`driver.get` URL in the Cypress + Selenium + Playwright suites, and every link mailed
+ * `driver.get`/`page.goto` URL in the Selenium and Playwright suites, and every link mailed
  * around during design reviews carries it. Angular's HashLocationStrategy emits a bare '#', so
  * without this subclass the prefix silently disappears the moment ng1 stops owning the URL and every
  * one of those URLs 404s into /dashboard. Hence the round-trip assertions below.

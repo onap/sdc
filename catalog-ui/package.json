@@ -19,9 +19,7 @@
     "pretest": "npm run test:tools",
     "test": "jest --coverage",
     "test:tools": "jest --config tools/jest.config.js --runInBand",
-    "test:watch": "jest --watch",
-    "cypress": "npx cypress run",
-    "cypress-headless": "start-server-and-test start http-get://localhost:9000 cypress"
+    "test:watch": "jest --watch"
   },
   "jest": {
     "preset": "jest-preset-angular",
@@ -62,12 +60,10 @@
     "@angular/cli": "1.7.4",
     "@types/jest": "^21.1.2",
     "axe-core": "^4.4.0",
-    "cypress-axe": "^1.0.0",
     "jest-axe": "^5.0.1",
     "codelyzer": "^4.5.0",
     "apache-server-configs": "^2.7.1",
     "cors": "2.7.1",
-    "cypress": "^9.7.0",
     "express": "^4.14.0",
     "http-proxy-middleware": "^0.14.0",
     "jest": "^23.1.0",
@@ -77,8 +73,7 @@
     "json-loader": "^0.5.4",
     "load-grunt-tasks": "3.5.2",
     "onap-ui-common": "1.4.0",
-    "parse5": "4.0.0",
-    "start-server-and-test": "^1.9.1"
+    "parse5": "4.0.0"
   },
   "engines": {},
   "dependencies": {

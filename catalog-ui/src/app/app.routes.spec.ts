@@ -38,8 +38,8 @@ class StubComponent {
  * purely by the path strings and the declaration order, so this keeps that surface under test
  * without dragging in ~30 page components and their DI.
  *
- * Route matching in this app is not a detail: the URLs are hard-coded in the Cypress, Selenium and
- * Playwright suites, and the differences from ui-router (a trailing slash is a real segment; a
+ * Route matching in this app is not a detail: the URLs are hard-coded in the Selenium and Playwright
+ * suites, and the differences from ui-router (a trailing slash is a real segment; a
  * double slash is unrepresentable; `redirectTo` must not carry a wildcard tail) are all invisible
  * until a URL silently lands on /dashboard.
  */
@@ -109,7 +109,7 @@ describe('app.routes', () => {
             .toBe('/catalog/workspace/abc/service/deployment');
     }));
 
-    // The form NavigationService emits and the form a Cypress spec deep-links to. Distinct configs
+    // The form NavigationService emits and the form a deep link uses. Distinct configs
     // from bare 'composition' (see app.routes.ts), so this is not implied by the test above.
     it('matches a composition panel tab', fakeAsync(() => {
         expect(goFromBrowser('/catalog/workspace/abc/resource/composition/details'))

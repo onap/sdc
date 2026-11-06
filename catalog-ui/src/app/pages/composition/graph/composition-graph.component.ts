@@ -68,7 +68,6 @@ import { CompositionGraphPaletteUtils } from './utils/composition-graph-palette-
 import { ServicePathGraphUtils } from './utils/composition-graph-service-path-utils';
 import { RelationshipOperationsStepComponent } from "app/pages/composition/graph/connection-wizard/relationship-operations-step/relationship-operations-step.component";
 
-declare const window: any;
 
 /** One instance on the canvas, as the text alternative lists it. */
 export interface CanvasInstanceItem {
@@ -475,21 +474,6 @@ export class CompositionGraphComponent implements AfterViewInit {
             autolock: this.isViewOnly(),
             autoungrabify: this.isViewOnly()
         });
-
-        // Testing Bridge that allows Cypress tests to select a component on canvas not via DOM
-        if (window.Cypress) {
-            window.testBridge = this.createCanvasTestBridge();
-        }
-    }
-
-    private createCanvasTestBridge(): any {
-        return {
-            selectComponentInstance: (componentName: string) => {
-                const matchingNodesByName = this.nodesGraphUtils.getMatchingNodesByName(this._cy, componentName);
-                const component = new ComponentInstance(matchingNodesByName.first().data().componentInstance);
-                this.selectComponentInstance(component);
-            }
-        };
     }
 
     // -------------------------------------------- ZONES---------------------------------------------------------//

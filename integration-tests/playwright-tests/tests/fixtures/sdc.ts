@@ -36,7 +36,7 @@
  *   `gotoWorkspaceTab()` below navigates by writing the hash URL instead. That URL shape
  *   is a hard contract that survives BOTH CRs: the '#!' prefix is preserved by
  *   SdcHashLocationStrategy and the '/<previousState>/workspace/<id>/<type>/<tab>' shape
- *   is pinned by Selenium (PathUtilities.java) and 70 Cypress URL lines. Navigating by URL
+ *   is pinned by Selenium (PathUtilities.java) and old bookmarks. Navigating by URL
  *   is thus the only framework-agnostic option, AND it additionally exercises deep-linking,
  *   which $state.go() never did.
  *
@@ -75,8 +75,8 @@ export const IS_DEV_SERVER = /:900\d(\/|$)/.test(process.env.SDC_BASE_URL || '')
 // ---------------------------------------------------------------------------
 // Selectors — single source of truth
 //
-// Every selector here is ALSO depended on by Selenium page objects and/or Cypress specs,
-// so they are contracts, not conveniences. Changing one breaks three test suites.
+// Every selector here is ALSO depended on by Selenium page objects, so they are contracts,
+// not conveniences. Changing one breaks both test suites.
 // ---------------------------------------------------------------------------
 
 export const SEL = {
@@ -185,7 +185,7 @@ export const SEL = {
     /**
      * The PA/AO unsaved-changes modal, opened via ModalServiceSdcUI.openCustomModal with
      * testId: "navigate-modal" (properties-assignment.page.component.ts:1301,
-     * attributes-outputs.page.component.ts:696). Its three buttons are a Cypress contract.
+     * attributes-outputs.page.component.ts:696).
      */
     navigateModal: '[data-tests-id="navigate-modal"]',
     discardButton: '[data-tests-id="discardButton"]',
@@ -350,7 +350,7 @@ export async function gotoCold(page: Page, path: string): Promise<void> {
  *
  * The '#!' hash prefix and the '/<previousState>/workspace/<id>/<type>/<tab>' segment order
  * are contracts pinned by Selenium's PathUtilities.java:256 ("the component id is the URL
- * segment immediately after 'workspace'") and by 70 Cypress URL lines. They therefore survive
+ * segment immediately after 'workspace'") and by old bookmarks. They therefore survive
  * the ui-router removal, which is exactly why navigating this way is durable.
  *
  * Uses a HASH ASSIGNMENT rather than page.goto() by default: an in-page hash change is an order
@@ -378,8 +378,7 @@ export async function gotoWorkspaceTab(
     // $state.href's interpolation, but the Angular Router cannot represent that URL at all —
     // DefaultUrlSerializer.parse() drops an empty segment AND everything after it, so the tab
     // would be lost. app.routes.ts therefore declares ':previousState/workspace/:type' as its own
-    // route, ahead of the id-bearing one, and this is the form that matches it. Incidentally it is
-    // also the shape cypress/integration/service-distribution.spec.js always used.
+    // route, ahead of the id-bearing one, and this is the form that matches it.
     const path = id
         ? `/${previousState}/workspace/${id}/${type}/${tab}`
         : `/${previousState}/workspace/${type}/${tab}`;

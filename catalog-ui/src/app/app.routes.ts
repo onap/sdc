@@ -57,7 +57,7 @@ import {UnsavedChangesGuard} from './guards/unsaved-changes.guard';
  * tab switch inside one component reuses the already-fetched component instead of re-fetching it.
  *
  * ui-router declared three of these WITH a trailing slash ('composition/', 'activity_log/',
- * 'deployment/'), and those URLs are hard-coded in the Cypress and Playwright suites — but the routes
+ * 'deployment/'), and old bookmarks and Playwright specs still use that form — but the routes
  * below deliberately DROP it, and must not have it added back. `Location.path()` normalises through
  * `Location.stripTrailingSlash()`, and every URL the router reads from the browser goes through it:
  * both `initialNavigation()` (a deep link or reload) and the `hashchange` subscription. So the router

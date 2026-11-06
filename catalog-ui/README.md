@@ -83,7 +83,7 @@ proxy behavior. Run `npm run test:tools` for only those tests. Karma is not used
 
 ## Running end-to-end tests
 
-Run `npm run cypress` or `npm run cypress-headless` to execute the end-to-end tests via [Cypress](https://www.cypress.io/).
+The end-to-end tests live in `integration-tests/playwright-tests`; see its README.
 
 ## Working with WebStorm
 
