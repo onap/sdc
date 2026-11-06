@@ -841,6 +841,7 @@ Modifications copyright (c) 2018-2019 Nokia
         <configuration>
           <source>11</source>
           <target>11</target>
+          <parameters>true</parameters>
           <forceJavacCompilerUse>true</forceJavacCompilerUse>
         </configuration>
       </plugin>

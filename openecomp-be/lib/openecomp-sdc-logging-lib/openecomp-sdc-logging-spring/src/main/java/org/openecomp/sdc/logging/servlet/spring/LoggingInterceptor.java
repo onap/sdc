@@ -35,7 +35,7 @@ import org.openecomp.sdc.logging.servlet.Tracker;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.servlet.HandlerInterceptor;
 
 /**
  * <p><b>IMPORTANT</b>: For this interceptor to work, all exceptions must be properly handled before being returned to a
@@ -48,7 +48,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
  * @since 02 Aug 2018
  */
 @Component
-public class LoggingInterceptor extends HandlerInterceptorAdapter {
+public class LoggingInterceptor implements HandlerInterceptor {
 
     static final String LOGGING_TRACKER_KEY = "onap.logging.tracker";
     private static final Logger LOGGER = LoggerFactory.getLogger(LoggingInterceptor.class);

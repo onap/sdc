@@ -630,7 +630,7 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
         } catch (HttpStatusCodeException ex) {
             // make my own exception out of this.
             HttpHeaders httpHeaders = ex.getResponseHeaders();
-            logger.warn("Unexpected HTTP Status from endpoint {}", ex.getRawStatusCode());
+            logger.warn("Unexpected HTTP Status from endpoint {}", ex.getStatusCode().value());
 
             if (httpHeaders == null) {
                 throw new ExternalTestingException(ENDPOINT_ERROR_CODE, 500, "Failed to get HTTP Response Headers", ex);
@@ -648,7 +648,7 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
 
             try {
                 JsonObject o = new GsonBuilder().create().fromJson(s, JsonObject.class);
-                throw buildTestingException(ex.getRawStatusCode(), o);
+                throw buildTestingException(ex.getStatusCode().value(), o);
             } catch (JsonParseException e) {
                 logger.warn("unexpected JSON response", e);
                 throw new ExternalTestingException(ENDPOINT_ERROR_CODE, ex.getStatusCode().value(),
