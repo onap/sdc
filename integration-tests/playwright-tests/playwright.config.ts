@@ -6,8 +6,16 @@ export default defineConfig({
   expect: {
     timeout: 10_000,
   },
-  fullyParallel: false,
+  fullyParallel: true,
+  workers: process.env.CI ? 4 : undefined,
   retries: 1,
+  // A test that only passes on its retry still fails the run. The JUnit XML the Gerrit vote reads
+  // reports such a test as passed, so without this a real flake (e.g. a backend read-after-write
+  // 404) is visible only in the HTML report. The retry is kept for its trace.
+  failOnFlakyTests: !!process.env.CI,
+  // The @helm-validator specs need the sdc-helm-validator container, which the Maven profiles start.
+  // Set SDC_SKIP_HELM_VALIDATOR when pointing the suite at a stack without it (dev server, a cluster).
+  grepInvert: process.env.SDC_SKIP_HELM_VALIDATOR ? /@helm-validator/ : undefined,
   reporter: [
     ['list'],
     ['html', { outputFolder: '../target/playwright-report', open: 'never' }],

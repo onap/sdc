@@ -19,7 +19,7 @@
  */
 
 import { Page } from '@playwright/test';
-import { test, expect, login, stubPluginsConfig, settles, IS_DEV_SERVER } from './fixtures/sdc';
+import { test, expect, uniqueName, login, stubPluginsConfig, settles, IS_DEV_SERVER } from './fixtures/sdc';
 
 const VF_TYPE = 'org.openecomp.resource.abstract.nodes.VF';
 const CR_TYPE = 'org.openecomp.resource.abstract.nodes.CR';
@@ -62,7 +62,7 @@ test.describe('CR Base Type', () => {
         await page.getByLabel('Base Type', { exact: true }).fill(VF_TYPE);
         await page.getByLabel('Base Type', { exact: true }).fill(scenario.value);
 
-        const name = 'PwCrBaseType' + Date.now();
+        const name = uniqueName('PwCrBaseType');
         await page.locator('[data-tests-id="name"]').fill(name);
         await page.locator('[data-tests-id="description"]').fill('created by the Playwright suite');
         await page.locator('[data-tests-id="vendorName"]').fill('pwVendor');

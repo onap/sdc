@@ -10,6 +10,8 @@
   },
   "devDependencies": {
     "@playwright/test": "~1.61.1",
-    "axe-core": "4.12.1"
+    "axe-core": "4.12.1",
+    "jszip": "3.10.2",
+    "yaml": "2.9.1"
   }
 }
