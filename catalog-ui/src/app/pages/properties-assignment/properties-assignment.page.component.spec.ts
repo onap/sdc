@@ -22,6 +22,7 @@
 import {ButtonModel} from 'app/models/button';
 import {ModalModel} from 'app/models/modal';
 import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
+import {ComponentInstance} from 'app/models/components-instances/component-instance';
 import {PropertiesAssignmentComponent} from './properties-assignment.page.component';
 import {EventListenerService} from 'app/services/event-listener.service';
 import {EVENTS, WorkspaceMode} from 'app/utils/constants';
@@ -170,5 +171,69 @@ describe('PropertiesAssignmentComponent template', () => {
         expect(adds.map((el) => el.getAttribute('[testId]'))).toEqual([`'properties-add-button'`, `'inputs-add-button'`]);
         expect(adds.map((el) => el.getAttribute('[disabled]'))).toEqual(['!showAddProperties()', '!isSelf()']);
         adds.forEach((el) => expect(el.getAttribute('[type]')).toBe(`'tertiary'`));
+    });
+});
+
+describe('PropertiesAssignmentComponent save', () => {
+
+    const respond = (response: any[]) => ({subscribe: (onSuccess: (r: any) => void) => onSuccess(response)});
+
+    // The save pairs each response entry with the changed row it belongs to; SDC-5244 is the backend
+    // returning them in another order than they were sent.
+    const buildComponent = (services: {topologyTemplateService?: any, componentService?: any}, reset: jest.Mock) => {
+        const instance = new PropertiesAssignmentComponent(
+            {} as any, {} as any,
+            {resetPropertyValue: reset} as any,                   // propertiesUtils
+            {resetInputDefaultValue: reset} as any,               // inputsUtils
+            services.componentService || {} as any,
+            {} as any,
+            {filterDataTypesByModel: jest.fn()} as any,
+            {component: {uniqueId: 'srv-1', model: null}} as any,
+            {push: jest.fn()} as any,
+            {getComponentMode: () => null} as any,
+            {registerObserverCallback: jest.fn(), notifyObservers: jest.fn()} as any,
+            {} as any, {} as any, {} as any,
+            services.topologyTemplateService || {} as any,
+            {} as any, {} as any,
+        );
+        instance.isValidChangedData = true;
+        instance.updateHasChangedData = jest.fn();
+        return instance;
+    };
+
+    const changedProperty = (name: string, value: string) => ({name, parentUniqueId: 'srv-1', getJSONValue: () => value});
+    const changedInput = (uniqueId: string, value: string) => ({uniqueId, name: uniqueId, getJSONDefaultValue: () => value});
+
+    it('resets each saved service property with its own value when the response is in another order', async () => {
+        const reset = jest.fn();
+        const component = buildComponent({topologyTemplateService: {updateServiceProperties: () =>
+            respond([{name: 'designer', value: 'designer1'}, {name: 'descriptor_id', value: 'descriptor_id1'}])}}, reset);
+        component.isPropertiesTabSelected = true;
+        component.selectedInstanceData = Object.assign(Object.create(ComponentInstance.prototype), {originType: 'Service'});
+        component.isSelf = () => true;
+        component.changedData = [changedProperty('descriptor_id', 'descriptor_id1'), changedProperty('designer', 'designer1')] as any;
+
+        await component.saveChangedData();
+
+        expect(reset.mock.calls.map(([prop, value]) => [prop.name, value]))
+            .toEqual(expect.arrayContaining([['descriptor_id', 'descriptor_id1'], ['designer', 'designer1']]));
+        expect(component.changedData).toEqual([]);
+    });
+
+    it('resets each saved input with its own default value when the response is in another order', async () => {
+        const reset = jest.fn();
+        const component = buildComponent({componentService: {updateComponentInputs: () =>
+            respond([{uniqueId: 'in2', defaultValue: 'two', required: false}, {uniqueId: 'in1', defaultValue: 'one', required: true}])}}, reset);
+        component.isInputsTabSelected = true;
+        const first = changedInput('in1', 'one');
+        const second = changedInput('in2', 'two');
+        component.changedData = [first, second] as any;
+
+        await component.saveChangedData();
+
+        expect(reset.mock.calls.map(([input, value]) => [input.uniqueId, value]))
+            .toEqual(expect.arrayContaining([['in1', 'one'], ['in2', 'two']]));
+        expect((first as any).required).toBe(true);
+        expect((second as any).required).toBe(false);
     });
 });

@@ -179,13 +179,13 @@ export class CatalogComponent implements OnInit, OnDestroy {
 
         var modelList = this.cacheService.get('models');
         modelList.sort((o:any, o1:any) => new String(o.modelType).localeCompare(o1.modelType));
-        modelList.forEach(m => {
-            if (m.derivedFrom) {
-                this.models[m.derivedFrom].push(m.name);
-            } else {
-                this.models[m.name] = [];
-            }
-        });
+        // The backend does not list a parent before the models derived from it, so the roots go in
+        // first and every derived model is then filed under its root ancestor.
+        const modelsByName = new Map(modelList.map(m => [m.name, m]));
+        const isRoot = (m) => !m.derivedFrom || !modelsByName.has(m.derivedFrom);
+        const rootOf = (m) => isRoot(m) ? m.name : rootOf(modelsByName.get(m.derivedFrom));
+        modelList.filter(isRoot).forEach(m => this.models[m.name] = []);
+        modelList.filter(m => !isRoot(m)).forEach(m => this.models[rootOf(m)].push(m.name));
         this.models[DEFAULT_MODEL_NAME] = [];
         this.confStatus = this.sdcMenu.statuses;
         this.expandedSection = ["type", "category", "status", "model"];

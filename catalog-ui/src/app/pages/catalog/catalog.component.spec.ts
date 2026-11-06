@@ -1,4 +1,5 @@
 
+import {DEFAULT_MODEL_NAME} from "app/utils/constants";
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 import {ConfigureFn, configureTests} from "../../../jest/test-config.helper";
 import {NO_ERRORS_SCHEMA} from "@angular/core";
@@ -211,6 +212,31 @@ describe('catalog component', () => {
         expect(component.componentInstance.version).toEqual(categoriesElements);
         expect(component.componentInstance.sortBy).toEqual('lastUpdateDate');
         expect(component.componentInstance.reverse).toEqual(true);
+    });
+
+    it('files derived models under their root model whatever order the backend lists them in', () => {
+        const models = [
+            {name: 'derived', modelType: 'NORMATIVE', derivedFrom: 'root'},
+            {name: 'derivedTwice', modelType: 'NORMATIVE', derivedFrom: 'derived'},
+            {name: 'root', modelType: 'NORMATIVE'},
+            {name: 'other', modelType: 'NORMATIVE'},
+        ];
+        cacheServiceMock.get.mockImplementation((key) => key === 'models' ? models : categoriesElements);
+        const component = TestBed.createComponent(CatalogComponent);
+        component.componentInstance.makeSortedCategories = jest.fn().mockImplementation(() => categoriesElements);
+        component.componentInstance.initCategoriesMap = jest.fn();
+        component.componentInstance.initCheckboxesFilter = jest.fn();
+        component.componentInstance.initCheckboxesFilterKeys = jest.fn();
+        component.componentInstance.buildCheckboxLists = jest.fn();
+        component.componentInstance.models = {};
+
+        component.componentInstance.initScopeMembers();
+
+        expect(component.componentInstance.models).toEqual({
+            root: ['derived', 'derivedTwice'],
+            other: [],
+            [DEFAULT_MODEL_NAME]: [],
+        });
     });
 
     it ('should call on catalog component buildCheckboxLists ' , () => {

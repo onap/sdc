@@ -1064,6 +1064,16 @@ export class PropertiesAssignmentComponent implements UnsavedChangesAware {
         });
     }
 
+    /**
+     * Removes and returns the changed row a save response entry belongs to. Responses are not in
+     * request order (a service's properties come back as a map keyed by name), so entries are paired
+     * by identity. Falls back to the first row when nothing matches.
+     */
+    private takeChangedData(matches: (changed: any) => boolean): PropertyFEModel | InputFEModel {
+        const index = this.changedData.findIndex(matches);
+        return this.changedData.splice(index === -1 ? 0 : index, 1)[0];
+    }
+
     saveChangedData = ():Promise<(PropertyBEModel|InputBEModel)[]> => {
         return new Promise((resolve, reject) => {
             if (!this.isValidChangedData) {
@@ -1113,7 +1123,7 @@ export class PropertiesAssignmentComponent implements UnsavedChangesAware {
                         handleSuccess = (response) => {
                             // reset each changed property with new value and remove it from changed properties list
                             response.forEach((resInput) => {
-                                const changedProp = <PropertyFEModel>this.changedData.shift();
+                                const changedProp = <PropertyFEModel>this.takeChangedData(c => (c.origName || c.name) === resInput.name);
                                 this.propertiesUtils.resetPropertyValue(changedProp, resInput.value);
                             });
                         };
@@ -1130,7 +1140,7 @@ export class PropertiesAssignmentComponent implements UnsavedChangesAware {
                         handleSuccess = (response) => {
                             // reset each changed property with new value and remove it from changed properties list
                             response.forEach((resProp) => {
-                                const changedProp = <PropertyFEModel>this.changedData.shift();
+                                const changedProp = <PropertyFEModel>this.takeChangedData(c => (c.origName || c.name) === resProp.name);
                                 this.propertiesUtils.resetPropertyValue(changedProp, resProp.value);
                             });
                             resolve(response);
@@ -1142,7 +1152,7 @@ export class PropertiesAssignmentComponent implements UnsavedChangesAware {
                     handleSuccess = (response) => {
                         // reset each changed property with new value and remove it from changed properties list
                         response.forEach((resProp) => {
-                            const changedProp = <PropertyFEModel>this.changedData.shift();
+                            const changedProp = <PropertyFEModel>this.takeChangedData(c => (c.origName || c.name) === resProp.name);
                             this.propertiesUtils.resetPropertyValue(changedProp, resProp.value);
                         });
                         resolve(response);
@@ -1153,7 +1163,7 @@ export class PropertiesAssignmentComponent implements UnsavedChangesAware {
                     handleSuccess = (response) => {
                         // reset each changed property with new value and remove it from changed properties list
                         response.forEach((resProp) => {
-                            const changedProp = <PropertyFEModel>this.changedData.shift();
+                            const changedProp = <PropertyFEModel>this.takeChangedData(c => (c.origName || c.name) === resProp.name);
                             this.propertiesUtils.resetPropertyValue(changedProp, resProp.value);
                         });
                         resolve(response);
@@ -1172,7 +1182,7 @@ export class PropertiesAssignmentComponent implements UnsavedChangesAware {
                 handleSuccess = (response) => {
                     // reset each changed property with new value and remove it from changed properties list
                     response.forEach((resInput) => {
-                        const changedInput = <InputFEModel>this.changedData.shift();
+                        const changedInput = <InputFEModel>this.takeChangedData(c => c.uniqueId === resInput.uniqueId);
                         this.inputsUtils.resetInputDefaultValue(changedInput, resInput.defaultValue);
                         changedInput.required = resInput.required;
                         changedInput.requiredOrig = resInput.required;
