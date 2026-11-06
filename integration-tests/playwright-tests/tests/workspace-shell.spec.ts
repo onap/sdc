@@ -32,7 +32,7 @@
  * HOW TO RUN: see README.md — `npx playwright test workspace-shell`.
  */
 
-import { test, expect, SEL, settles, dismissTransientModal, gotoWorkspaceTab, currentRoute } from './fixtures/sdc';
+import { test, expect, uniqueName, SEL, settles, dismissTransientModal, gotoWorkspaceTab, currentRoute } from './fixtures/sdc';
 
 test.describe('Workspace shell', () => {
 
@@ -90,7 +90,7 @@ test.describe('Workspace shell', () => {
         await settles(sdcPage);
         await expect(sdcPage.locator(SEL.name)).toBeVisible({ timeout: 15_000 });
 
-        const name = 'PwCreateFlow' + Date.now();
+        const name = uniqueName('PwCreateFlow');
         await sdcPage.locator(SEL.name).fill(name);
         await sdcPage.locator(SEL.description).fill('created by the create-flow guard');
         const cat = sdcPage.locator(SEL.category);
