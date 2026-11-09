@@ -1,7 +1,7 @@
 # SDC Playwright E2E Tests
 
-Playwright end-to-end tests for the SDC frontend, running against the same integration-test
-Docker stack as the Selenium/TestNG suite (Cassandra, backend, onboarding backend, frontend,
+Playwright end-to-end tests for the SDC frontend, running against the integration-test Docker
+stack that the TestNG API suite also uses (Cassandra, backend, onboarding backend, frontend,
 webseal-simulator).
 
 **Why this suite exists.** `catalog-ui` is mid-migration from AngularJS 1.6 to Angular
@@ -684,13 +684,9 @@ Two constraints worth knowing before editing that workflow:
   buys ~30 GB. Without it the job dies mid-build with an ENOSPC that reads like a build error.
   Jenkins ran this on an 8c-8g node that needed no such help.
 
-The Jenkins CSIT jobs in `ci-management/jjb/sdc/sdc-csit.yaml` are unchanged and still run; this
-job is additive, and replaces neither:
-
-| subproject | Maven profile | What runs |
-| --- | --- | --- |
-| `ui` | `docker,run-integration-tests-ui` | TestNG + Selenium (`onapUiSanity.xml`, `helmValidatorTests.xml`) |
-| `api` | `docker,run-integration-tests-api` | TestNG backend API suite |
+This job is the UI gate. The backend API suite runs in the Jenkins CSIT job
+(`ci-management/jjb/sdc/sdc-csit.yaml`, subproject `api`, Maven profile
+`docker,run-integration-tests-api`).
 
 > **Gerrit trigger.** The workflow declares `workflow_dispatch` with the standard `GERRIT_*` input
 > block, which is what `gerrit_to_platform` dispatches into — the same mechanism `gerrit-clm.yaml`
@@ -741,18 +737,3 @@ sed -i 's#https://artifactory\.devops\.telekom\.de/artifactory/api/npm/registry\
 
 Do **not** point this at ONAP's own `npm.public` mirror instead: it resolves, but rewrites the URLs
 to plain `http://nexus3.onap.org`, trading one non-portable lockfile for another.
-
-### The Selenium grid is skipped here
-
-`integration-tests/pom.xml` gates the `selenium/standalone-firefox` container on a new
-`it.selenium.disabled` property, set to `true` **only** in the `run-integration-tests-playwright`
-profile. Playwright drives its own bundled Chromium, so that 1.45 GB image was pure dead weight —
-and on a disk-constrained runner, skipping it is the difference between fitting and not.
-
-The property defaults to `false`, so the two Jenkins profiles above are byte-identical to before.
-Verify with:
-
-```bash
-mvn help:evaluate -Dexpression=it.selenium.disabled -q -DforceStdout \
-  -f integration-tests/pom.xml -P run-integration-tests-ui    # -> false
-```

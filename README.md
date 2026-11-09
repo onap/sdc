@@ -72,7 +72,7 @@ SDC is built from several projects while the parent "sdc" contains the main pom.
 * security-utils    - handle encryption/decryption of passwords
 * onboarding-be     - onboarding backend code
 * onboarding-ui     - onboarding frontend code
-* integration-tests - The integration tests using the docker images to validate Backend API calls and FE with Selenium
+* integration-tests - The integration tests using the docker images to validate Backend API calls (TestNG) and the UI (Playwright)
 * sdc-os-chef       - chefs scripts used for docker creation and startup
 * utils             - set of dev utils used for working with the project locally
 
@@ -118,7 +118,6 @@ The following table shows the SDC containers found after a maven "start-sdc":
     4729b0b7f0fe        onap/sdc-simulator:latest                "sh -c ${JETTY_BASE}…"   9 minutes ago       Up 9 minutes                0.0.0.0:8285->8080/tcp, 0.0.0.0:8286->8443/tcp                                     sdc-simulator-1
     583e0d7fa300        onap/sdc-onboard-cassandra-init:latest   "/home/sdc/startup.sh"   9 minutes ago       Exited (0) 9 minutes ago                                                                                       sdc-onboard-cassandra-init-1
     92085524f19f        onap/sdc-cassandra-init:latest           "/home/sdc/startup.sh"   10 minutes ago      Exited (0) 9 minutes ago                                                                                       sdc-cassandra-init-1
-    c6e90dd7ddaf        selenium/standalone-firefox:2.53.1       "/opt/bin/entry_poin…"   10 minutes ago      Up 10 minutes               0.0.0.0:4444->4444/tcp                                                             standalone-firefox-1
     e02139c0379b        onap/sdc-frontend:latest                 "sh -c ${JETTY_BASE}…"   10 minutes ago      Up 10 minutes               0.0.0.0:6000->6000/tcp, 0.0.0.0:8181->8181/tcp, 0.0.0.0:9443->9443/tcp, 8080/tcp   sdc-frontend-1
     96843fae9e4c        onap/sdc-cassandra:latest                "/root/startup.sh"       10 minutes ago      Up 10 minutes               7000-7001/tcp, 7199/tcp, 9160/tcp, 0.0.0.0:9042->9042/tcp                          sdc-cassandra-1
 
@@ -146,9 +145,8 @@ It's therefore possible to connect your IDE to those debug ports remotely to wal
 
 ### Integration tests
 
-The integration are composed of 2 parts, one to test the BE Apis and another one to test the FE with selenium.
-
-The selenium tests make use of the selenium/standalone-firefox container; its tag is `it.ui.firefox.version` in `integration-tests/pom.xml`.
+The integration tests are composed of 2 parts: TestNG tests of the BE APIs, and Playwright tests of the UI
+(`integration-tests/playwright-tests`, see its README).
 
 About BE APIs tests, onboarding E2E flow :
 Onboarding E2E flow cover following SDC functionality:
@@ -196,9 +194,7 @@ There are 2 options to start them:
 
 * After having started SDC with the command `mvn clean install -P start-sdc`, run the command `mvn clean install -P run-integration-tests`
 * If you want to debug them and run them from your IDE, you must start them from the testNG Suites files, otherwise this won't work.
-  The test suites are located here:
-  * BE: `integration-tests/src/test/resources/ci/testSuites/backend`
-  * FE: `integration-tests/src/test/resources/ci/testSuites/frontend`
+  The test suites are located in `integration-tests/src/test/resources/ci/testSuites/backend`.
 
 #### Integration tests with Helm Validator
 
