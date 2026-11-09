@@ -65,10 +65,6 @@ public class ExtentManager {
         String suiteName = getSuiteName(context);
 
         if (suiteName.equals(suiteNameXml.TESTNG_FAILED_XML_NAME.getValue())) {
-            if (config.isUseBrowserMobProxy()) {
-                setTrafficCaptue(config);
-            }
-
             setReporter(filepath, htmlFile, true);
             String suiteNameFromVersionInfoFile = FileHandling.getKeyByValueFromPropertyFormatFile(filepath + VERSIONS_INFO_FILE_NAME, "suiteName");
             reporterDataDefinition(onboardVersion, osVersion, envData, suiteNameFromVersionInfoFile);
@@ -110,13 +106,6 @@ public class ExtentManager {
         htmlReporter.config().setReportName("SDC Automation Report");
         htmlReporter.config().setChartVisibilityOnOpen(false);
         return htmlReporter;
-    }
-
-    private static void setTrafficCaptue(Config config) {
-        boolean mobProxyStatus = config.isUseBrowserMobProxy();
-        if (mobProxyStatus) {
-            config.setCaptureTraffic(true);
-        }
     }
 
     enum suiteNameXml {

@@ -25,7 +25,6 @@ import java.util.Collections;
 import lombok.Getter;
 import lombok.Setter;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.ServiceInstantiationType;
-import org.onap.sdc.frontend.ci.tests.datatypes.ModelName;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 

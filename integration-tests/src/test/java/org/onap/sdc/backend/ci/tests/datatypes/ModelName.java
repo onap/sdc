@@ -19,18 +19,19 @@
  *  ============LICENSE_END=========================================================
  */
 
-package org.onap.sdc.frontend.ci.tests.datatypes;
+package org.onap.sdc.backend.ci.tests.datatypes;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * Represents values in a category select html element
+ * Stores default SDC model names
  */
 @AllArgsConstructor
 @Getter
-public enum CategorySelect {
-    COMMON_NETWORK_RESOURCES("resourceNewCategory.network l4+.common network resources");
+public enum ModelName {
+    ETSI_SOL001_v2_5_1("ETSI SOL001 v2.5.1"),
+    DEFAULT_MODEL_NAME("SDC AID");
 
-    final String option;
+    private String name;
 }

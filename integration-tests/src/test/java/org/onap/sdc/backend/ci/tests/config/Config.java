@@ -38,7 +38,6 @@ public class Config {
     private static final String SDC_DEFAULT_CONFIG_FILE = "src/test/resources/ci/conf/sdc-conf.yaml";
     private static Config configIt = null;
     private String configurationFile;
-    private String downloadAutomationFolder;
     private boolean systemUnderDebug;
     private boolean rerun;
     private String reportDBhost;
@@ -73,9 +72,6 @@ public class Config {
     private String outputFolder;
     private String reportName;
     private String url;
-    private String remoteTestingMachineIP;
-    private String remoteTestingMachinePort;
-    private boolean remoteTesting;
     private String cassandraHost;
     private String cassandraAuditKeySpace;
     private String cassandraArtifactKeySpace;
@@ -85,11 +81,8 @@ public class Config {
     private boolean cassandraSsl;
     private String cassandraTruststorePath;
     private String cassandraTruststorePassword;
-    private boolean captureTraffic;
-    private boolean useBrowserMobProxy;
     private String sdcHttpMethod;
     private String localDataCenter;
-    private boolean uiSimulator;
 
     private Config() {
         super();
@@ -170,16 +163,13 @@ public class Config {
             + bugs + ", resourcesNotToDelete=" + resourcesNotToDelete + ", resourceCategoriesNotToDelete="
             + resourceCategoriesNotToDelete + ", serviceCategoriesNotToDelete=" + serviceCategoriesNotToDelete
             + ", stopOnClassFailure=" + stopOnClassFailure + ", outputFolder=" + outputFolder + ", reportName="
-            + reportName + ", url=" + url + ", remoteTestingMachineIP=" + remoteTestingMachineIP
-            + ", remoteTestingMachinePort=" + remoteTestingMachinePort + ", remoteTesting=" + remoteTesting
+            + reportName + ", url=" + url
             + ", cassandraHost=" + cassandraHost + ", cassandraAuditKeySpace=" + cassandraAuditKeySpace
             + ", cassandraArtifactKeySpace=" + cassandraArtifactKeySpace + ", cassandraAuthenticate="
             + cassandraAuthenticate + ", cassandraUsername=" + cassandraUsername + ", cassandraPassword="
             + cassandraPassword + ", cassandraSsl=" + cassandraSsl + ", cassandraTruststorePath="
             + cassandraTruststorePath + ", cassandraTruststorePassword=" + cassandraTruststorePassword
-            + ", captureTraffic=" + captureTraffic
-            + ", useBrowserMobProxy=" + useBrowserMobProxy + ", configurationFile=" + configurationFile
-            + ", downloadAutomationFolder=" + downloadAutomationFolder + "]";
+            + ", configurationFile=" + configurationFile + "]";
     }
 
     @Getter
