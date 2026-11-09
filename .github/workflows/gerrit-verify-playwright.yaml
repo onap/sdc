@@ -273,7 +273,6 @@ jobs:
           docker images --format '{{.Repository}}:{{.Tag}}\t{{.Size}}' | grep sdc || true
 
       # Starts the stack, installs Node/npm + Chromium, runs the suite, tears the stack down.
-      # The Selenium grid container is skipped via it.selenium.disabled in this profile.
       #
       # keepContainer stops the containers without removing them, which is what makes the
       # diagnostics step below able to read anything: docker-maven-plugin otherwise deletes
