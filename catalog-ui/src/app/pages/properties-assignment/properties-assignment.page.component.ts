@@ -303,10 +303,14 @@ export class PropertiesAssignmentComponent implements UnsavedChangesAware {
     }
 
     getServiceProperties() {
+        const requestedFor = this.selectedInstanceData;
         this.loadingProperties = true;
         this.topologyTemplateService
         .getServiceProperties(this.component.uniqueId)
         .subscribe((response) => {
+            if (this.selectedInstanceData !== requestedFor) {
+                return;
+            }
             this.serviceBePropertiesMap = new InstanceBePropertiesMap();
             this.serviceBePropertiesMap[this.component.uniqueId] = response;
             this.processInstancePropertiesResponse(this.serviceBePropertiesMap, false);
@@ -337,6 +341,9 @@ export class PropertiesAssignmentComponent implements UnsavedChangesAware {
                 this.componentInstanceService
                 .getComponentInstanceInputs(this.component, instance)
                 .subscribe(response => {
+                    if (this.selectedInstanceData !== instance) {
+                        return;
+                    }
                     instanceBePropertiesMap[instance.uniqueId] = response;
                     this.processInstancePropertiesResponse(instanceBePropertiesMap, true);
                 }, () => {
@@ -350,6 +357,9 @@ export class PropertiesAssignmentComponent implements UnsavedChangesAware {
                 this.componentInstanceService
                 .getComponentInstanceProperties(this.component, instance.uniqueId)
                 .subscribe(response => {
+                    if (this.selectedInstanceData !== instance) {
+                        return;
+                    }
                     instanceBePropertiesMap[instance.uniqueId] = response;
                     this.processInstancePropertiesResponse(instanceBePropertiesMap, false);
                 }, () => {
@@ -365,6 +375,9 @@ export class PropertiesAssignmentComponent implements UnsavedChangesAware {
             this.componentInstanceService
             .getComponentGroupInstanceProperties(this.component, this.selectedInstanceData.uniqueId)
             .subscribe((response) => {
+                if (this.selectedInstanceData !== instance) {
+                    return;
+                }
                 instanceBePropertiesMap[instance.uniqueId] = response;
                 this.processInstancePropertiesResponse(instanceBePropertiesMap, false);
             }, () => {
@@ -377,6 +390,9 @@ export class PropertiesAssignmentComponent implements UnsavedChangesAware {
             this.componentInstanceService
             .getComponentPolicyInstanceProperties(this.component.componentType, this.component.uniqueId, this.selectedInstanceData.uniqueId)
             .subscribe((response) => {
+                if (this.selectedInstanceData !== instance) {
+                    return;
+                }
                 instanceBePropertiesMap[instance.uniqueId] = response;
                 this.processInstancePropertiesResponse(instanceBePropertiesMap, false);
             }, () => {

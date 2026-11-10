@@ -26,6 +26,7 @@ import {ComponentInstance} from 'app/models/components-instances/component-insta
 import {PropertiesAssignmentComponent} from './properties-assignment.page.component';
 import {EventListenerService} from 'app/services/event-listener.service';
 import {EVENTS, WorkspaceMode} from 'app/utils/constants';
+import {Subject} from 'rxjs';
 
 describe('PropertiesAssignmentComponent', () => {
 
@@ -235,5 +236,38 @@ describe('PropertiesAssignmentComponent save', () => {
             .toEqual(expect.arrayContaining([['in1', 'one'], ['in2', 'two']]));
         expect((first as any).required).toBe(true);
         expect((second as any).required).toBe(false);
+    });
+});
+
+describe('PropertiesAssignmentComponent instance selection', () => {
+
+    const componentInstance = (uniqueId: string): ComponentInstance =>
+        Object.assign(Object.create(ComponentInstance.prototype), {uniqueId, originType: 'VFC'});
+
+    const build = () => {
+        const selfLoad = new Subject<PropertyBEModel[]>();
+        const instanceLoad = new Subject<PropertyBEModel[]>();
+        const deps: any[] = new Array(17).fill({});
+        deps[2] = {convertPropertiesMapToFEAndCreateChildren: (map: any) => map};       // propertiesUtils
+        deps[5] = {getComponentInstanceProperties: () => instanceLoad};                 // componentInstanceService
+        deps[7] = {component: {uniqueId: 'vf-1', model: null}};                         // workspaceService
+        deps[9] = {getComponentMode: () => null};                                       // componentModeService
+        deps[10] = {registerObserverCallback: jest.fn(), notifyObservers: jest.fn()};   // eventListenerService
+        deps[14] = {getServiceProperties: () => selfLoad};                              // topologyTemplateService
+        const comp = new (PropertiesAssignmentComponent as any)(...deps) as PropertiesAssignmentComponent;
+        return {comp, selfLoad, instanceLoad};
+    };
+
+    // Declaring an input reselects SELF; a user who picks an instance before that reload returns
+    // must keep seeing the instance, or the declare dialog posts nothing.
+    it('ignores a properties response for an instance that is no longer selected', () => {
+        const {comp, selfLoad, instanceLoad} = build();
+
+        comp.changeSelectedInstance(componentInstance('vf-1'));
+        comp.changeSelectedInstance(componentInstance('nf-1'));
+        instanceLoad.next([new PropertyBEModel({name: 'resourceSubtype'} as any)]);
+        selfLoad.next([new PropertyBEModel({name: 'property1'} as any)]);
+
+        expect(Object.keys(comp.instanceFePropertiesMap)).toEqual(['nf-1']);
     });
 });
