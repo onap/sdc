@@ -4,7 +4,7 @@ import { tap } from 'rxjs/operators';
 import { Distribution } from '../../../models/distribution';
 import { ISdcConfig, SdcConfigToken } from '../../../config/sdc-config.config';
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class DistributionService {
     protected baseUrl;
     private distributionList = [];

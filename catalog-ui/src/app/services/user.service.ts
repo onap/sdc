@@ -29,7 +29,7 @@ import { HttpHelperService } from "./http-helper.service";
 /**
  * User Service provides CRUD for Users. See authentication service for authentication/login.
  */
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class UserService { 
     private url:string;
 

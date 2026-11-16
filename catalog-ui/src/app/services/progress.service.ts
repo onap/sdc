@@ -26,7 +26,7 @@
 'use strict';
 import {Injectable, NgZone} from "@angular/core";
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class ProgressService {
 
     public progresses:any = {};

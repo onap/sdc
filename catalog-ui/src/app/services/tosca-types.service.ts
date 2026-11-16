@@ -24,7 +24,7 @@ import {Observable} from 'rxjs';
 import {ISdcConfig, SdcConfigToken} from '../config/sdc-config.config';
 import {CookieService} from './cookie.service';
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class ToscaTypesService {
 
   protected baseUrl;

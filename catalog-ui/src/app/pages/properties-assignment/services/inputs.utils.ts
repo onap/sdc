@@ -23,7 +23,7 @@ import {InputBEModel} from 'app/models/properties-inputs/input-be-model';
 import {InputFEModel} from 'app/models/properties-inputs/input-fe-model';
 import { DataTypeService } from "app/services/data-type.service";
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class InputsUtils {
 
     constructor(private dataTypeService:DataTypeService) {}

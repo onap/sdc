@@ -23,7 +23,7 @@ import {AttributeFEModel} from "../../../models/attributes-outputs/attribute-fe-
 import {SimpleFlatAttribute} from "app/models/attributes-outputs/simple-flat-attribute";
 import {DerivedFEAttribute} from "../../../models/attributes-outputs/derived-fe-attribute";
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class HierarchyNavService {
   /**
    * Build hierarchy structure for the tree when user selects on table row.

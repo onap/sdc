@@ -37,7 +37,7 @@ export class GabRequest {
 }
 
 // tslint:disable-next-line:max-classes-per-file
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class GabService {
   baseUrl: string;
   gabUrl: string;

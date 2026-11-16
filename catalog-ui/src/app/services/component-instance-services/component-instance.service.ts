@@ -40,7 +40,7 @@ import {HttpHelperService} from '../http-helper.service';
 import {AttributeBEModel} from "../../models/attributes-outputs/attribute-be-model";
 import {OutputBEModel} from "../../models/attributes-outputs/output-be-model";
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class ComponentInstanceService {
 
     protected baseUrl;

@@ -35,7 +35,7 @@ import {ComponentService} from "../services/component-services/component.service
 import {ComponentGenericResponse} from "../services/responses/component-generic-response";
 
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class ComponentFactory {
 
     constructor(private LegacyResourceService: LegacyResourceService,

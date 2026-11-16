@@ -6,7 +6,6 @@ import { DatatableA11yModule } from '../../../components/ui/datatable-a11y/datat
 import { DistributionComponentArtifactTableComponent } from './distribution-component-table/distribution-component-artifact-table/distribution-component-artifact-table.component';
 import { DistributionComponentTableComponent } from './distribution-component-table/distribution-component-table.component';
 import { DistributionComponent } from './distribution.component';
-import { DistributionService } from './distribution.service';
 
 @NgModule({
     declarations: [
@@ -30,7 +29,6 @@ import { DistributionService } from './distribution.service';
         DistributionComponentTableComponent,
         DistributionComponentArtifactTableComponent
     ],
-    providers: [DistributionService]
 })
 export class DistributionModule {
 }

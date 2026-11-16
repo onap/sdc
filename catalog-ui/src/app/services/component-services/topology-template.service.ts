@@ -65,7 +65,7 @@ import {CustomToscaFunction, DefaultCustomFunctions} from "../../models/default-
 /* we need to use this service from now, we will remove component.service when we finish remove the angular1.
  The service is duplicated since we can not use downgrades service with NGXS*/
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class TopologyTemplateService {
 
     protected baseUrl;

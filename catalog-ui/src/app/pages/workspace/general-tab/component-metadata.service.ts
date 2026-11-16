@@ -19,7 +19,7 @@
  */
 import {Injectable} from '@angular/core';
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class ComponentMetadataService {
 
     private static readonly SEPARATOR = '_#_';

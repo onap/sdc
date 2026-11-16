@@ -43,7 +43,7 @@ import {PolicyMetadata, PolicyTpes} from "app/models/policy-metadata";
 import {Resource} from "app/models/components/resource";
 import {SdcConfigToken} from "../config/sdc-config.config";
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class LeftPaletteLoaderService {
 
     private baseUrl: string;

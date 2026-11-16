@@ -40,7 +40,7 @@ import { CompositionGraphGeneralUtils } from './composition-graph-general-utils'
 /**
  * Created by obarda on 11/9/2016.
  */
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class CompositionGraphNodesUtils {
     constructor(private generalGraphUtils: CompositionGraphGeneralUtils,
                 private commonGraphUtils: CommonGraphUtils,

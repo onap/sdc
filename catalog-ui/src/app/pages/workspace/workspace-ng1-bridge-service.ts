@@ -24,7 +24,7 @@ import {Store} from "@ngxs/store";
 import {Injectable} from "@angular/core";
 import {UpdateIsViewOnly} from "../../store/actions/workspace.action";
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class WorkspaceNg1BridgeService {
 
     constructor(private store: Store) {

@@ -26,7 +26,7 @@ import { ISdcConfig, SdcConfigToken } from '../config/sdc-config.config';
 import { CacheService } from './cache.service';
 import { ResourceType } from 'app/utils/constants';
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class ConfigService {
 
     public configuration: IAppConfigurtaion;

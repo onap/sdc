@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {BasePubSub, IPubSubEvent} from "sdc-pubsub";
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class EventBusService extends BasePubSub {
 
     NoWindowOutEvents: Array<string>;

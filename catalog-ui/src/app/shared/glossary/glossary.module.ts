@@ -22,13 +22,11 @@ import {CommonModule} from '@angular/common';
 import {GlossaryDescriptionsComponent} from './glossary-descriptions.component';
 import {GlossaryTermDirective} from './glossary-term.directive';
 import {GlossaryNamePipe, IsGlossaryTermPipe} from './glossary.pipes';
-import {GlossaryService} from './glossary.service';
 
 @NgModule({
     imports: [CommonModule],
     declarations: [GlossaryTermDirective, GlossaryDescriptionsComponent, GlossaryNamePipe, IsGlossaryTermPipe],
     exports: [GlossaryTermDirective, GlossaryDescriptionsComponent, GlossaryNamePipe, IsGlossaryTermPipe],
-    providers: [GlossaryService]
 })
 export class GlossaryModule {
 }

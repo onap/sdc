@@ -27,7 +27,7 @@ import {IUserProperties} from 'app/models/user';
 import { CacheService } from "app/services/cache.service";
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class AuthenticationService {
 
     private _loggedinUser:IUserProperties;

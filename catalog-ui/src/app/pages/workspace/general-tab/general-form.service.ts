@@ -30,7 +30,7 @@ export interface ValidationPatterns {
     comment: RegExp;
 }
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class GeneralFormService {
 
     // Mirrors the AngularJS ng-pattern behaviour: empty value is valid (required handles

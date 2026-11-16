@@ -22,7 +22,7 @@ import { Observable } from 'rxjs';
 import { ISdcConfig, SdcConfigToken } from '../config/sdc-config.config';
 import {ToscaArtifactModel} from "../models/tosca-artifact";
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class ToscaArtifactService {
 
   protected baseUrl;

@@ -28,7 +28,7 @@ export interface ICanvasImage {
     y: number;
 }
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class ImageCreatorService {
 
     private _canvas:HTMLCanvasElement;

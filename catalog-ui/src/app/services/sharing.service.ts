@@ -21,7 +21,7 @@
 import {Injectable} from "@angular/core";
 import {Dictionary} from 'app/utils/dictionary';
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class SharingService {
     private uuidMap:Dictionary<string, string> = new Dictionary<string,string>();
 

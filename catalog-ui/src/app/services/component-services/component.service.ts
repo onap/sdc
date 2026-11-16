@@ -52,7 +52,7 @@ import {FilterConstraint} from "../../models/filter-constraint";
 /*
 PLEASE DO NOT USE THIS SERVICE IN ANGULAR2! Use the topology-template.service instead
  */
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class ComponentService {
 
     protected baseUrl;

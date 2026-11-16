@@ -28,7 +28,6 @@ import {ToscaFunctionModule} from '../properties-assignment/tosca-function/tosca
 import {ConstraintsModule} from '../properties-assignment/constraints/constraints.module';
 import {PropertyMetadataModule} from '../properties-assignment/property-metadata/property-metadata.module';
 import {PropertyFormModalComponent} from './property-form-modal.component';
-import {PropertyFormModalService} from './property-form-modal.service';
 
 // ValidationUtils is now a pure Angular @Injectable provided at the AppModule root, so the modal
 // resolves it by type from the root injector — the local $injector bridge is no longer needed.
@@ -49,9 +48,6 @@ import {PropertyFormModalService} from './property-form-modal.service';
     ],
     entryComponents: [
         PropertyFormModalComponent
-    ],
-    providers: [
-        PropertyFormModalService
     ],
     exports: [
         PropertyFormModalComponent

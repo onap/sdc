@@ -36,7 +36,7 @@ import {ComponentInstanceService} from 'app/services/component-instance-services
  * The old save() only issued the PUT when the property was editable and its value changed; that guard lives in the
  * component (ModulePropertyModalComponent) so this service is BE-call-only.
  */
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class ModulePropertyModalService {
 
     constructor(private componentInstanceService: ComponentInstanceService) {

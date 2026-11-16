@@ -6,7 +6,6 @@ import {UiElementsModule} from "../../ui/ui-elements.module";
 import {CommonModule} from "@angular/common";
 import {FilterChildPropertiesPipe} from "./pipes/filter-child-properties.pipe";
 import {GlobalPipesModule} from "../../../pipes/global-pipes.module";
-import {PropertiesService} from "../../../services/properties.service";
 import {MultilineEllipsisModule} from "../../../shared/multiline-ellipsis/multiline-ellipsis.module";
 
 @NgModule({
@@ -23,7 +22,7 @@ import {MultilineEllipsisModule} from "../../../shared/multiline-ellipsis/multil
         PropertiesTableComponent
     ],
     exports: [PropertiesTableComponent, DynamicPropertyComponent],
-    providers: [FilterChildPropertiesPipe, PropertiesService]
+    providers: [FilterChildPropertiesPipe]
 })
 export class PropertyTableModule {
 }

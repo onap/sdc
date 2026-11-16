@@ -42,7 +42,7 @@ import {CommonGraphUtils} from "../common/common-graph-utils";
 import {GRAPH_EVENTS} from "app/utils/constants";
 import {EventListenerService} from "app/services/event-listener.service";
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class ServicePathGraphUtils {
 
     constructor(

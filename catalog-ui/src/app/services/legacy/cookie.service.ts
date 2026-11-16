@@ -43,7 +43,7 @@ interface ICookieService {
  * `Legacy` prefix: the directory already supplies the qualifier, and keeping the basenames
  * paired makes the eventual dedup diff a one-directory delete.
  */
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class LegacyCookieService implements ICookieService {
 
     private cookie:ICookie;

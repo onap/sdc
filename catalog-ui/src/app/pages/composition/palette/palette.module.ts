@@ -1,12 +1,10 @@
 import { NgModule } from "@angular/core";
-import { CompositionPaletteService } from "./services/palette.service";
 import { PaletteComponent } from "./palette.component";
 import { SdcUiComponentsModule } from "onap-ui-angular";
 import { GlobalPipesModule } from "app/pipes/global-pipes.module";
 import { CommonModule } from "@angular/common";
 import { DndModule } from "ngx-drag-drop";
 import {PaletteElementComponent} from "./palette-element/palette-element.component";
-import {EventListenerService} from "app/services/event-listener.service";
 import {UiElementsModule} from "app/components/ui/ui-elements.module";
 import {GlossaryModule} from "app/shared/glossary/glossary.module";
 
@@ -15,7 +13,6 @@ import {GlossaryModule} from "app/shared/glossary/glossary.module";
     imports: [CommonModule, SdcUiComponentsModule, GlobalPipesModule, UiElementsModule, DndModule, GlossaryModule],
     exports: [PaletteComponent],
     entryComponents: [PaletteComponent],
-    providers: [CompositionPaletteService, EventListenerService]
 })
 export class PaletteModule {
 

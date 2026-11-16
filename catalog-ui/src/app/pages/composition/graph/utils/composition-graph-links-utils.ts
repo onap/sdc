@@ -49,7 +49,7 @@ import {SdcUiServices} from "onap-ui-angular";
 import {CompositionService} from "../../composition.service";
 import {WorkspaceService} from "app/pages/workspace/workspace.service";
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class CompositionGraphLinkUtils {
 
     constructor(private linksFactory: LinksFactory,

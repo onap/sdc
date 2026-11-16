@@ -4,7 +4,7 @@ import { SharingService } from "./sharing.service";
 import { SdcConfigToken, ISdcConfig } from "../config/sdc-config.config";
 
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class HttpHelperService {
     constructor( private sharingService: SharingService,
         @Inject(SdcConfigToken) private sdcConfig: ISdcConfig){}

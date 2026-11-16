@@ -31,7 +31,7 @@ interface ICallbackData {
     args: any[];
 }
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class EventListenerService {
 
     public observerCallbacks: Dictionary<string, ICallbackData[]> = new Dictionary<string, Array<ICallbackData>>();

@@ -6,7 +6,7 @@ import {DisplayModule, Module} from "../models/modules/base-module";
 import {Observable} from "rxjs";
 import {ServerTypeUrl} from "../utils/constants";
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class ModulesService {
 
     protected baseUrl;

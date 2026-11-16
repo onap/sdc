@@ -28,7 +28,6 @@ import {AdminDashboardComponent} from './admin-dashboard.component';
 import {UserManagementComponent} from './user-management/user-management.component';
 import {CategoryManagementComponent} from './category-management/category-management.component';
 import {AddCategoryModalComponent} from './add-category-modal/add-category-modal.component';
-import {CategoryManagementService} from './services/category-management.service';
 
 // ValidationUtils is now a pure Angular @Injectable provided at the AppModule root, so
 // CategoryManagementComponent resolves it by type from the root injector — no local $injector bridge needed.
@@ -49,7 +48,6 @@ import {CategoryManagementService} from './services/category-management.service'
     ],
     exports: [AdminDashboardComponent],
     entryComponents: [AdminDashboardComponent, AddCategoryModalComponent],
-    providers: [CategoryManagementService],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AdminDashboardModule {}

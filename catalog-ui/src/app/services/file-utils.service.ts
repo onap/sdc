@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { WindowRef } from "./window.service";
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class FileUtilsService {
     constructor(private windowRef: WindowRef){}
 

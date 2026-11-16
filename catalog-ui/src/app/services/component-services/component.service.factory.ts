@@ -25,7 +25,7 @@ import {ComponentService} from "./component.service";
 import {ServiceService} from "./service.service";
 import {CacheService} from "../cache.service";
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class ComponentServiceFactory {
 
     componentService: ComponentService;

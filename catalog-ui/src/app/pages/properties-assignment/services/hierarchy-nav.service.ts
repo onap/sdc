@@ -25,7 +25,7 @@ import {PropertyFEModel} from 'app/models/properties-inputs/property-fe-model';
 import {SimpleFlatProperty} from 'app/models/properties-inputs/simple-flat-property';
 
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class HierarchyNavService {
     /**
      * Build hirarchy structure for the tree when user selects on table row.

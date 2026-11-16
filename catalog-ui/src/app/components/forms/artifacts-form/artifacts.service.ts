@@ -16,7 +16,7 @@ import {
     UpdateInstanceArtifactAction
 } from '../../../store/actions/instance-artifacts.actions';
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class ArtifactsService {
 
     constructor(private serviceLoader: SdcUiServices.LoaderService,

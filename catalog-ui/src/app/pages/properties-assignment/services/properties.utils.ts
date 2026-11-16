@@ -31,7 +31,7 @@ import {PropertiesService} from "app/services/properties.service";
 import {PROPERTY_TYPES} from 'app/utils/constants';
 import { SubPropertyToscaFunction } from "app/models/sub-property-tosca-function";
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class PropertiesUtils {
 
     constructor(private dataTypeService:DataTypeService, private propertiesService: PropertiesService) {}

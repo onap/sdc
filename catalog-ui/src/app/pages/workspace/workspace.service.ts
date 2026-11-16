@@ -34,7 +34,11 @@ import {Component as TopologyTemplate} from 'app/models/components/component';
 import {CacheService} from "../../services/cache.service";
 import {IComponentMetadata} from "../../models/component-metadata";
 
-@Injectable()
+// Root-provided, NOT WorkspaceModule-provided: the root NavigationService and the two
+// CanDeactivate guards read the dirty flag off it, and PropertiesAssignmentModule /
+// AttributesOutputsModule inject it without importing WorkspaceModule. One instance in the root
+// injector is also what keeps the flag shared across a tab switch.
+@Injectable({providedIn: 'root'})
 export class WorkspaceService {
 
     public metadata:ComponentMetadata;

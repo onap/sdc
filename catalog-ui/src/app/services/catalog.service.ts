@@ -33,7 +33,7 @@ import { HttpClient, HttpParams } from "@angular/common/http";
 import {DataTypesService} from "./data-types.service";
 import {DataTypeCatalogComponent} from "../models/data-type-catalog-component";
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class CatalogService {
     protected api:IApi;
     protected baseUrl:string;

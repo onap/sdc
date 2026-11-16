@@ -35,7 +35,7 @@ interface IComponentsArray {
     resources: Resource[];
 }
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class HomeService {
     private api: IApi;
     private smallObjectAttributes = [

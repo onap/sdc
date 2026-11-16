@@ -26,7 +26,7 @@ import {WorkspaceMode, ComponentState, Role} from "../../utils/constants";
 import {Component as ComponentData} from 'app/models/components/component';
 import { CacheService } from "../cache.service";
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 
 export class ComponentModeService {
 

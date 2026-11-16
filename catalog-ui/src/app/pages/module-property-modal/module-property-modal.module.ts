@@ -23,7 +23,6 @@ import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {TranslateModule} from 'app/shared/translator/translate.module';
 import {ModulePropertyModalComponent} from './module-property-modal.component';
-import {ModulePropertyModalService} from './module-property-modal.service';
 
 // ValidationUtils is now a pure Angular @Injectable provided at the AppModule root, so the modal
 // resolves it by type from the root injector — the local $injector bridge is no longer needed.
@@ -32,7 +31,6 @@ import {ModulePropertyModalService} from './module-property-modal.service';
     declarations: [ModulePropertyModalComponent],
     imports: [CommonModule, FormsModule, TranslateModule],
     entryComponents: [ModulePropertyModalComponent],
-    providers: [ModulePropertyModalService],
     exports: [ModulePropertyModalComponent]
 })
 export class ModulePropertyModalModule {

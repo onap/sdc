@@ -5,7 +5,7 @@ import { Observable, Subject } from "rxjs";
 import { CacheService } from "../../../services/cache.service";
 
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class ImportVSPService {
 
     constructor(private modalService: SdcUiServices.ModalService,

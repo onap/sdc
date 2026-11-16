@@ -6,7 +6,6 @@ import {NgxDatatableModule} from "@swimlane/ngx-datatable";
 import {UiElementsModule} from "../../../components/ui/ui-elements.module";
 import {InformationArtifactPageComponent} from "./information-artifact-page.component";
 import {ArtifactFormModule} from "../../../components/forms/artifacts-form/artifact-form.module";
-import {ArtifactsService} from "../../../components/forms/artifacts-form/artifacts.service";
 
 @NgModule({
     declarations: [
@@ -26,7 +25,6 @@ import {ArtifactsService} from "../../../components/forms/artifacts-form/artifac
     entryComponents: [
         InformationArtifactPageComponent
     ],
-    providers:[ArtifactsService]
 })
 export class InformationArtifactPageModule {
 }

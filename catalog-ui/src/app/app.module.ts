@@ -25,17 +25,8 @@ import {FormsModule} from '@angular/forms';
 import {AppComponent} from './app.component';
 import {SdcUiComponentsModule} from 'onap-ui-angular';
 import {PropertiesAssignmentModule} from './pages/properties-assignment/properties-assignment.module';
-import {ChangeLifecycleStateHandler} from './utils/change-lifecycle-state-handler';
-import {MenuHandler} from './utils/menu-handler';
-import {ModalsHandler} from './utils/modals-handler';
 import {ConfigService} from './services/config.service';
 import {AuthenticationService} from './services/authentication.service';
-import {CookieService} from './services/cookie.service';
-import {ComponentService} from './services/component-services/component.service';
-import {ComponentServiceFactory} from './services/component-services/component.service.factory';
-import {ServiceService} from './services/component-services/service.service';
-import {ComponentInstanceService} from './services/component-instance-services/component-instance.service';
-import {ModalService} from './services/modal.service';
 import {UiElementsModule} from './components/ui/ui-elements.module';
 import {ConnectionWizardModule} from './pages/composition/graph/connection-wizard/connection-wizard.module';
 import {InterfaceOperationModule} from './pages/interface-operation/interface-operation.module';
@@ -44,8 +35,6 @@ import {
   OperationCreatorInterfaceDefinitionModule
 } from './pages/interface-definition/operation-creator/operation-creator-interface-definition.module';
 import {LayoutModule} from './components/layout/layout.module';
-import {UserService} from './services/user.service';
-import {DynamicComponentService} from './services/dynamic-component.service';
 import {SdcConfig} from './config/sdc-config.config';
 import {SdcMenu} from './config/sdc-menu.config';
 import {TranslateModule} from './shared/translator/translate.module';
@@ -58,14 +47,7 @@ import {ServicePathSelectorModule} from 'app/pages/composition/graph/service-pat
 import {CompositionPanelModule} from 'app/pages/composition/panel/composition-panel.module';
 import {CatalogModule} from './pages/catalog/catalog.module';
 import {HomeModule} from './pages/home/home.module';
-import {WindowRef} from './services/window.service';
-import {CatalogService} from './services/catalog.service';
 import {PluginFrameModule} from './components/ui/plugin/plugin-frame.module';
-import {PluginsService} from './services/plugins.service';
-import {EventBusService} from './services/event-bus.service';
-import {GroupsService} from './services/groups.service';
-import {PoliciesService} from './services/policies.service';
-import {AutomatedUpgradeService} from './pages/automated-upgrade/automated-upgrade.service';
 import {AutomatedUpgradeModule} from './pages/automated-upgrade/automated-upgrade.module';
 import {WorkspaceModule} from './pages/workspace/workspace.module';
 import {AdminDashboardModule} from './pages/admin-dashboard/admin-dashboard.module';
@@ -74,34 +56,15 @@ import {IconsModalModule} from './components/modals/icons-modal/icons-modal.modu
 import {ModulePropertyModalModule} from './pages/module-property-modal/module-property-modal.module';
 import {StandalonePagesModule} from './pages/standalone-pages.module';
 import {ModalsModule} from './components/modals/modals.module';
-import {CacheService} from 'app/services/cache.service';
-import {HomeService} from 'app/services/home.service';
-import {SharingService} from 'app/services/sharing.service';
-import {ArtifactConfigService} from "./services/artifact-config.service";
 import {IUserProperties} from 'app/models/user';
 import {PluginsModule} from './pages/plugins/plugins-module';
-import {WorkspaceNg1BridgeService} from './pages/workspace/workspace-ng1-bridge-service';
 import {NgxsModule} from '@ngxs/store';
 import {NgxsLoggerPluginModule} from '@ngxs/logger-plugin';
 import {NgxsReduxDevtoolsPluginModule} from '@ngxs/devtools-plugin';
 import {EventListenerService} from './services/event-listener.service';
-import {LegacyCookieService} from './services/legacy/cookie.service';
 import {DataTypesService} from './services/data-types.service';
-import {ProgressService} from './services/progress.service';
-import {ValidationUtils} from './utils/validation-utils';
-import {ComponentFactory} from './utils/component-factory';
-import {LegacyComponentService} from './services/legacy/component.service';
-import {LegacyResourceService} from './services/legacy/resource.service';
-import {LegacyServiceService} from './services/legacy/service.service';
-import {LeftPaletteLoaderService} from './services/composition-left-palette.service';
 import {HttpClientModule} from '@angular/common/http';
 import {httpInterceptorProviders} from './interceptors';
-import {HttpHelperService} from './services/http-helper.service';
-import {ModulesService} from "./services/modules.service";
-import {TranslateService} from 'app/shared/translator/translate.service';
-import {FileUtilsService} from './services/file-utils.service';
-import {ImportVSPService} from './components/modals/onboarding-modal/import-vsp.service';
-import {OnboardingService} from './services/onboarding.service';
 import {ServiceConsumptionCreatorModule} from './pages/service-consumption-editor/service-consumption-editor.module';
 import {ServiceDependenciesModule} from './components/logic/service-dependencies/service-dependencies.module';
 import {ServiceDependenciesEditorModule} from './pages/service-dependencies-editor/service-dependencies-editor.module';
@@ -110,29 +73,16 @@ import {DeclareListModule} from './pages/properties-assignment/declare-list/decl
 import {ToscaFunctionModule} from "./pages/properties-assignment/tosca-function/tosca-function.module";
 import {ConstraintsModule} from "./pages/properties-assignment/constraints/constraints.module";
 import {PropertyMetadataModule} from "./pages/properties-assignment/property-metadata/property-metadata.module";
-import {WorkflowService} from './services/workflow.service';
-import {ToscaTypesService} from "./services/tosca-types.service";
 import {InterfaceOperationHandlerModule} from "./pages/composition/interface-operations/operation-creator/interface-operation-handler.module";
 import {AttributesOutputsModule} from "./pages/attributes-outputs/attributes-outputs.module";
-import {ElementService} from "./services/element.service";
-import {ModelService} from "./services/model.service";
-import {ToscaArtifactService} from "./services/tosca-artifact.service";
 import {InterfaceDefinitionModule} from "./pages/interface-definition/interface-definition.module";
 import {TypeWorkspaceModule} from "./pages/type-workspace/type-workspace.module";
 import {DeclareInputModule} from "./pages/properties-assignment/declare-input/declare-input.module";
-import {NavigationService} from "./services/navigation.service";
 import {AppRoutingModule} from "./app-routing.module";
-import {AuthGuard} from "./guards/auth.guard";
 import {LocationStrategy} from '@angular/common';
 import {RouteReuseStrategy} from '@angular/router';
 import {SdcHashLocationStrategy} from './utils/sdc-hash-location-strategy';
 import {SdcRouteReuseStrategy} from './utils/sdc-route-reuse-strategy';
-import {UnsavedChangesFlagGuard} from './guards/unsaved-changes-flag.guard';
-import {UnsavedChangesGuard} from './guards/unsaved-changes.guard';
-import {WorkspaceComponentResolver} from './pages/workspace/workspace-component.resolver';
-import {WorkspaceService} from './pages/workspace/workspace.service';
-import {RouteFocusService} from './services/route-focus.service';
-import {RouteMetadataService} from './services/route-metadata.service';
 import {environment} from '../environments/environment';
 
 
@@ -223,68 +173,10 @@ export function configServiceFactory(config: ConfigService, authService: Authent
   exports: [],
   entryComponents: [],
   providers: [
-    WindowRef,
     httpInterceptorProviders,
-    DataTypesService,
-    SharingService,
-    CacheService,
-    HomeService,
-    ArtifactConfigService,
-    LegacyComponentService,
-    LegacyResourceService,
-    LegacyServiceService,
-    ComponentFactory,
-    LeftPaletteLoaderService,
-    LegacyCookieService,
-    ProgressService,
-    ValidationUtils,
-    ModalsHandler,
-    MenuHandler,
-    ChangeLifecycleStateHandler,
-    UserService,
-    CookieService,
-    ConfigService,
-    ComponentService,
-    ComponentServiceFactory,
-    ModalService,
-    ImportVSPService,
-    OnboardingService,
-    ElementService,
-    ModelService,
-    ToscaArtifactService,
-    ServiceService,
-    AutomatedUpgradeService,
-    WorkflowService,
-    ToscaTypesService,
-    WorkspaceNg1BridgeService,
-    HttpHelperService,
-    AuthenticationService,
-    PoliciesService,
-    GroupsService,
-    ModulesService,
-    DynamicComponentService,
     SdcConfig,
     SdcMenu,
-    ComponentInstanceService,
-    EventListenerService,
     TranslationServiceConfig,
-    TranslateService,
-    PluginsService,
-    CatalogService,
-    EventBusService,
-    FileUtilsService,
-    NavigationService,
-    RouteMetadataService,
-    RouteFocusService,
-    AuthGuard,
-    UnsavedChangesGuard,
-    UnsavedChangesFlagGuard,
-    WorkspaceComponentResolver,
-    // Root-provided, NOT WorkspaceModule-provided: the root NavigationService and the two
-    // CanDeactivate guards read the dirty flag off it, and PropertiesAssignmentModule /
-    // AttributesOutputsModule inject it without importing WorkspaceModule. One instance in the root
-    // injector is also what keeps the flag shared across a tab switch.
-    WorkspaceService,
     // Must be provided HERE and not in AppRoutingModule: RouterModule.forRoot() registers its own
     // `provideLocationStrategy` and RouteReuseStrategy in the module it is imported into, so a
     // competing provider in that same module is ambiguous — the root module's wins.

@@ -46,7 +46,7 @@ import {ComponentGenericResponse} from "../../../../services/responses/component
 import {MatchCapabilitiesRequirementsUtils} from "./match-capability-requirement-utils";
 import {CompositionGraphNodesUtils} from "./";
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class CompositionGraphPaletteUtils {
 
     constructor(private generalGraphUtils:CompositionGraphGeneralUtils,

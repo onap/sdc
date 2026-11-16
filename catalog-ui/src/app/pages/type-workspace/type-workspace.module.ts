@@ -24,21 +24,17 @@ import {NgModule} from '@angular/core';
 import { DatatableA11yModule } from '../../components/ui/datatable-a11y/datatable-a11y.module';
 import {CommonModule} from '@angular/common';
 import {TypeWorkspaceComponent} from "./type-workspace.component";
-import {TypeWorkspaceService} from "./type-workspace.service";
 import {WorkspaceMenuComponent} from "./workspace-menu/workspace-menu.component";
-import {CacheService} from "../../services/cache.service";
 import {UiElementsModule} from "../../components/ui/ui-elements.module";
 import {LayoutModule} from "../../components/layout/layout.module";
 import {TypeWorkspaceGeneralComponent} from './type-workspace-general/type-workspace-general.component';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {TranslateModule} from "../../shared/translator/translate.module";
-import {DataTypeService} from "../../services/data-type.service";
 import { TypeWorkspacePropertiesComponent } from './type-workspace-properties/type-workspace-properties.component';
 import {NgxDatatableModule} from "@swimlane/ngx-datatable";
 import {SvgIconModule} from "onap-ui-angular/dist/svg-icon/svg-icon.module";
 import {ButtonsModule} from "onap-ui-angular/dist/buttons/buttons.module";
 import {TypeWorkspaceToscaArtifactPageComponent} from "./type-workspace-tosca-artifacts/type-workspace-tosca-artifact-page.component";
-import {ModalService} from "../../services/modal.service";
 import {AddPropertyComponent} from './type-workspace-properties/add-property/add-property.component';
 import {InterfaceOperationHandlerModule} from "../composition/interface-operations/operation-creator/interface-operation-handler.module";
 import {AutoCompleteModule} from "onap-ui-angular/dist/autocomplete/autocomplete.module";
@@ -67,13 +63,6 @@ import {ConstraintsModule} from "../properties-assignment/constraints/constraint
         TypeWorkspacePropertiesComponent,
         TypeWorkspaceToscaArtifactPageComponent,
         AddPropertyComponent,
-    ],
-    providers: [
-        CacheService,
-        WorkspaceMenuComponent,
-        DataTypeService,
-        ModalService,
-        TypeWorkspaceService
     ],
     entryComponents: [TypeWorkspaceComponent, AddPropertyComponent],
     exports: [TypeWorkspaceComponent]

@@ -37,7 +37,7 @@ export interface IModalsHandler {
                           propertyOwnerType: string, propertyOwnerId: string, isViewOnly?: boolean): Promise<any>;
 }
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class ModalsHandler implements IModalsHandler {
 
     constructor(private modalService: ModalService) {

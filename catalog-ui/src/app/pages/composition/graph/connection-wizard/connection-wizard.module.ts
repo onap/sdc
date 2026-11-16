@@ -2,7 +2,6 @@ import {ToNodeStepComponent} from "./to-node-step/to-node-step.component";
 import {NgModule} from "@angular/core";
 import {FromNodeStepComponent} from "./from-node-step/from-node-step.component";
 import {PropertiesStepComponent} from "./properties-step/properties-step.component";
-import {ConnectionWizardService} from "./connection-wizard.service";
 import {SelectRequirementOrCapabilityModule} from "../../../../components/logic/select-requirement-or-capability/select-requirement-or-capability.module";
 import {PropertyTableModule} from "../../../../components/logic/properties-table/property-table.module";
 import {FormElementsModule} from "../../../../components/ui/form-components/form-elements.module";
@@ -66,7 +65,6 @@ import {InterfaceOperationListComponent} from './relationship-operations-step/in
         ConnectionWizardHeaderComponent,
         ConnectionPropertiesViewComponent
     ],
-    providers: [ConnectionWizardService]
 })
 export class ConnectionWizardModule {
 }

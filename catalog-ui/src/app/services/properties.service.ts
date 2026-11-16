@@ -25,7 +25,7 @@ import {PropertyBEModel} from 'app/models/properties-inputs/property-be-model';
 import {PropertyDeclareAPIModel} from 'app/models/properties-inputs/property-declare-api-model';
 import {PropertyFEModel} from 'app/models/properties-inputs/property-fe-model';
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class PropertiesService {
 
     constructor() {

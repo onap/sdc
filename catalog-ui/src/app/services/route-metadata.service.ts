@@ -38,7 +38,7 @@ const APP_TITLE = 'SDC';
  * of `changeComponentCsarVersion` / `previousCsarComponent` anywhere in the tree are inside that
  * block itself, so it was clearing keys nobody consumed.
  */
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class RouteMetadataService {
 
     private applied: string = null;

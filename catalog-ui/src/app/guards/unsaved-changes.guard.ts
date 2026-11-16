@@ -36,7 +36,7 @@ export interface UnsavedChangesAware {
  * route silently discarded edits. Their `showUnsavedChangesAlert` was only ever reached from
  * in-page interactions (instance switch, tab switch). Wiring it to route exit closes that hole.
  */
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class UnsavedChangesGuard implements CanDeactivate<UnsavedChangesAware> {
 
     constructor(private router: Router) {

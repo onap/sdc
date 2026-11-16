@@ -39,7 +39,7 @@ import * as _ from 'lodash';
  * transient store; getParam() reads from there, which is why this resolver goes through
  * NavigationService rather than the route snapshot for them.
  */
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class WorkspaceComponentResolver implements Resolve<Component> {
 
     constructor(private componentFactory: ComponentFactory,

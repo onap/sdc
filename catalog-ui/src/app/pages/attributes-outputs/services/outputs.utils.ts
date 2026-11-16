@@ -21,7 +21,7 @@
 import { Injectable } from '@angular/core';
 import {OutputFEModel} from "../../../models/attributes-outputs/output-fe-model";
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class OutputsUtils {
 
     constructor() {}

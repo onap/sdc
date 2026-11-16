@@ -30,7 +30,7 @@ interface IAvailableIconsService {
     getIcons(componentType:ComponentType):Array<string>;
 }
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class AvailableIconsService implements IAvailableIconsService {
     constructor() {
     }

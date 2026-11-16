@@ -5,7 +5,6 @@ import { GlobalPipesModule } from '../../../pipes/global-pipes.module';
 import { AttributesComponent } from './attributes.component';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { DatatableA11yModule } from '../../../components/ui/datatable-a11y/datatable-a11y.module';
-import { TopologyTemplateService } from '../../../services/component-services/topology-template.service';
 import { AttributeModalComponent } from './attribute-modal.component';
 import { TranslateModule } from '../../../shared/translator/translate.module';
 
@@ -28,7 +27,6 @@ import { TranslateModule } from '../../../shared/translator/translate.module';
     entryComponents: [
         AttributesComponent, AttributeModalComponent
     ],
-    providers: [TopologyTemplateService]
 })
 export class AttributesModule {
 }

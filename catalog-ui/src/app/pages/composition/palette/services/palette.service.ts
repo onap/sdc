@@ -12,7 +12,7 @@ import Dictionary = _.Dictionary;
 
 
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class CompositionPaletteService {
 
     protected baseUrl = '';

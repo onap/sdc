@@ -19,13 +19,11 @@
  */
 import {Component, EventEmitter, Input, Output, ViewEncapsulation} from "@angular/core";
 import {TopologyTemplateService} from "../../../services/component-services/topology-template.service";
-import {NgSelectModule} from "@ng-select/ng-select";
 
 @Component({
   selector: 'select-directives',
   templateUrl: './select-directives.component.html',
   styleUrls: ['select-directives.component.less'],
-  providers: [NgSelectModule],
   encapsulation: ViewEncapsulation.None
 })
 

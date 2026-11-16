@@ -1,7 +1,6 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from '@angular/common';
 import { AngularDraggableModule } from 'angular2-draggable';
-import { ModalService } from 'app/services/modal.service';
 import { ErrorMessageComponent } from "./error-message/error-message.component";
 import {ModalComponent} from "./modal.component";
 
@@ -16,7 +15,6 @@ import {ModalComponent} from "./modal.component";
         ModalComponent,
         ErrorMessageComponent
     ],
-    providers: [ModalService]
 })
 export class ModalModule {
 

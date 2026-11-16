@@ -34,7 +34,7 @@ import {CompositionCiNodeBase} from 'app/models/graph/nodes/composition-graph-no
 import {Relationship, RelationshipModel} from 'app/models/graph/relationship';
 import {Injectable} from "@angular/core";
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class LinksFactory {
 
     constructor() {

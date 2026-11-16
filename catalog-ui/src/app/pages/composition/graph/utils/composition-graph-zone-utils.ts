@@ -17,7 +17,7 @@ import {CompositionService} from "../../composition.service";
 import {WorkspaceService} from "app/pages/workspace/workspace.service";
 import { PaletteAnimationComponent } from "app/pages/composition/palette/palette-animation/palette-animation.component";
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class CompositionGraphZoneUtils {
 
     constructor(private dynamicComponentService: DynamicComponentService,

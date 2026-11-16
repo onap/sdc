@@ -39,7 +39,7 @@ export interface IMapRegex {
     string: RegExp;
 }
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class ValidationUtils {
 
     // These six patterns were previously injected as AngularJS `.value()` tokens registered once in

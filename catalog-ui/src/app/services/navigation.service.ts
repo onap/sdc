@@ -108,7 +108,7 @@ const COMPOSITION_PANEL_TABS: string[] =
  */
 const TRANSIENT_PARAMS: string[] = ['componentCsar', 'importedFile', 'resourceType', 'queryParams', 'components', 'state'];
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class NavigationService {
 
     private transientParams: any = {};

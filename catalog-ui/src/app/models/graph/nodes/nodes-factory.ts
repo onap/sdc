@@ -37,7 +37,7 @@ import {ComponentType, ResourceType} from "../../../utils/constants";
 import {ImageCreatorService} from "app/pages/composition/graph/common/image-creator.service";
 import {Injectable} from "@angular/core";
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class NodesFactory {
 
     constructor(private imageCreator: ImageCreatorService) {

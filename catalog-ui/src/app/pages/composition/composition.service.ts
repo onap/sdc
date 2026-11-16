@@ -8,7 +8,7 @@ import {CommonGraphDataService} from "./common/common-graph-data.service";
 import {ForwardingPath} from "../../models/forwarding-path";
 import {SelectedComponentType} from "./common/store/graph.actions";
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class CompositionService extends CommonGraphDataService{
 
     public originComponents: Array<Component>; //This contains the full data set after specifically requesting it. The uniqueId matches the 'componentUid' in the componentInstances array

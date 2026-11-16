@@ -50,7 +50,7 @@ export interface ILegacyResourceService extends ILegacyComponentService {
  * `Legacy` prefix: the directory already supplies the qualifier, and keeping the basenames
  * paired makes the eventual dedup diff a one-directory delete.
  */
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class LegacyResourceService extends LegacyComponentService implements ILegacyResourceService {
 
     constructor(@Inject(SdcConfigToken) sdcConfig: IAppConfigurtaion,

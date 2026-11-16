@@ -26,7 +26,7 @@ import {Injectable} from "@angular/core";
 // so the app throws "Can't resolve all parameters for DataTypeService" and never bootstraps.
 import {Dictionary} from "../utils/dictionary";
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class CacheService {
     private storage:Dictionary<string, any>;
 

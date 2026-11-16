@@ -28,7 +28,7 @@ import {MenuItemGroup} from '../../utils/menu-handler';
  * AngularJS workspace scope. `dataType`, `importFile` and `leftBarTabs` are the only members of
  * that scope any of them ever touched, so the whole bus shrinks to this service.
  */
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class TypeWorkspaceService {
 
     public dataType: DataTypeModel;

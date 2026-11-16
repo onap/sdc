@@ -42,7 +42,7 @@ export interface OnboardingComponents {
     results: Array<ICsarComponent>
 } 
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class OnboardingService {
     private api:IApi;
 

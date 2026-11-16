@@ -42,7 +42,7 @@ import {NavigationService} from '../services/navigation.service';
  *  - **`catalog`'s `resolve.auth`** (:546-555), which rejected when no user was cached — now the
  *    no-user branch below.
  */
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class AuthGuard implements CanActivate {
 
     constructor(private authService: AuthenticationService,

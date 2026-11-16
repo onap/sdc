@@ -41,7 +41,7 @@ export const MAX_POLLS = 100;
  * The poll runs outside the Angular zone: a pending in-zone timer keeps Testability unstable, and
  * the Selenium suite's waitForAngular would sit out the whole bounded wait on every navigation.
  */
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class RouteFocusService {
 
     private subscription: Subscription = null;

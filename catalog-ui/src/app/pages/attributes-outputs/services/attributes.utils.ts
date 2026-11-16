@@ -31,7 +31,7 @@ import { AttributeFEModel } from "app/models/attributes-outputs/attribute-fe-mod
 import { DerivedFEAttribute } from "app/models/attributes-outputs/derived-fe-attribute";
 import {DataTypeModel} from 'app/models/data-types';
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class AttributesUtils {
 
     constructor(private dataTypeService:DataTypeService, private attributesService: AttributesService) {}

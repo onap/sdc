@@ -20,12 +20,10 @@
 
 import { NgModule } from '@angular/core'
 
-import { TranslateService } from "./translate.service";
 import { TranslatePipe } from "./translate.pipe";
 
 
 @NgModule({
-    providers: [TranslateService],
     declarations: [TranslatePipe],
     exports: [TranslatePipe]
 })

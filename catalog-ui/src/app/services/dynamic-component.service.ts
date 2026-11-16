@@ -4,7 +4,7 @@ import {
 
 
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class DynamicComponentService {
 
     constructor(private componentFactoryResolver: ComponentFactoryResolver, private applicationRef: ApplicationRef) { }

@@ -23,7 +23,7 @@ import { Observable } from 'rxjs';
 import { ISdcConfig, SdcConfigToken } from '../config/sdc-config.config';
 import {map} from "rxjs/operators";
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class ElementService {
 
     protected baseUrl;

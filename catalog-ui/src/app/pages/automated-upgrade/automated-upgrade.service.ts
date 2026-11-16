@@ -20,7 +20,7 @@ export enum Placement {
     left = "left"
 }
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class AutomatedUpgradeService {
 
     private vspComponent:Component;

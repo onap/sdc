@@ -138,7 +138,7 @@ export class PhraseTranslator {
 }
 
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class TranslateService {
     private _activeLanguage:string;
     private _languageChangedObservable:ConnectableObservable<string>;

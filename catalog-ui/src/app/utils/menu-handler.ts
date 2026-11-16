@@ -76,7 +76,7 @@ export class MenuItemGroup {
 }
 
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class MenuHandler {
 
     constructor(private navigationService:NavigationService) {

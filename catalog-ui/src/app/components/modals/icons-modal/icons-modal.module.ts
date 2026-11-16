@@ -21,14 +21,12 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {TranslateModule} from 'app/shared/translator/translate.module';
-import {AvailableIconsService} from 'app/services/available-icons.service';
 import {IconsModalComponent} from './icons-modal.component';
 
 @NgModule({
     declarations: [IconsModalComponent],
     imports: [CommonModule, TranslateModule],
     entryComponents: [IconsModalComponent],
-    providers: [AvailableIconsService],
     exports: [IconsModalComponent]
 })
 export class IconsModalModule {

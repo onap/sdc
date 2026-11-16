@@ -41,7 +41,7 @@ import {WorkspaceService} from '../pages/workspace/workspace.service';
  *     the modal. Registering `UnsavedChangesGuard` on the General tab would type-check, run,
  *     find `hasChangedData === undefined`, allow the navigation and silently lose the edit.
  */
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class UnsavedChangesFlagGuard implements CanDeactivate<any> {
 
     constructor(private workspaceService: WorkspaceService,

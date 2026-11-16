@@ -29,7 +29,7 @@ import * as _ from 'lodash';
 /**
  * Created by obarda on 1/1/2017.
  */
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class MatchCapabilitiesRequirementsUtils {
 
     /**

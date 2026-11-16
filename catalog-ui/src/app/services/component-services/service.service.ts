@@ -36,7 +36,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { OperationModel } from '../../models/operation';
 import { ConsumptionInput } from '../../components/logic/service-consumption/service-consumption.component';
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class ServiceService extends ComponentService {
 
     protected baseUrl = "";

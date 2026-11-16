@@ -10,7 +10,7 @@ import { ToscaTypesService } from "../../../services/tosca-types.service";
 
 
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class ReqAndCapabilitiesService {
 
     private capabilityTypesList: CapabilityTypeModel[];

@@ -33,7 +33,7 @@ import { SdcMenuToken } from '../config/sdc-menu.config';
 import { EventListenerService } from '../services/event-listener.service';
 import { ComponentFactory } from './component-factory';
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class ChangeLifecycleStateHandler {
 
     constructor(@Inject(SdcMenuToken) private sdcMenu: IAppMenu,

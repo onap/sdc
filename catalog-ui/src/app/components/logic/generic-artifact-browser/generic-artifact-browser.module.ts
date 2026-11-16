@@ -21,7 +21,6 @@ import {NgModule} from "@angular/core";
 import { DatatableA11yModule } from '../../ui/datatable-a11y/datatable-a11y.module';
 import {GenericArtifactBrowserComponent} from "./generic-artifact-browser.component";
 import {NgxDatatableModule} from "@swimlane/ngx-datatable";
-import {GabService} from "../../../services/gab.service";
 import {BrowserModule} from "@angular/platform-browser";
 import {GenericArtifactBrowserColumnProviderComponent} from "./generic-artifact-browser-column-provider.component";
 import {FormsModule} from "@angular/forms";
@@ -46,7 +45,6 @@ import {ButtonsModule} from "onap-ui-angular/dist/buttons/buttons.module";
         GenericArtifactBrowserColumnProviderComponent
     ],
     exports: [],
-    providers: [GabService]
 })
 export class GenericArtifactBrowserModule {
 }

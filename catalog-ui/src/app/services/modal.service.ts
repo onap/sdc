@@ -11,7 +11,7 @@ import {WizardHeaderBaseComponent} from "app/components/ui/multi-steps-wizard/mu
 import { DynamicComponentService } from 'app/services/dynamic-component.service';
 import { getSdcConfig } from "../config/sdc-config.config.factory";
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class ModalService {
     currentModal: ComponentRef<any>;
 

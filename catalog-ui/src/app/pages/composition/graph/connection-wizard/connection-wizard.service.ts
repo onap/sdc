@@ -10,7 +10,7 @@ import {PropertyFEModel} from 'app/models/properties-inputs/property-fe-model';
 import {Store} from "@ngxs/store";
 import {WorkspaceService} from "../../../workspace/workspace.service";
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class ConnectionWizardService {
     
     connectRelationModel:ConnectRelationModel;

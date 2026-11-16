@@ -46,7 +46,7 @@ export function formatTooltip(entry: GlossaryEntry): string {
  * Text is read from TranslateService on every call rather than cached: en_US.json loads
  * asynchronously, and a value captured before it arrives would stay blank.
  */
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class GlossaryService {
     private byAlias: {[alias: string]: GlossaryTermDef} = {};
 

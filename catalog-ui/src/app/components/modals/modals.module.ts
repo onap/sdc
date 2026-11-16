@@ -8,9 +8,7 @@ import { CommentModalComponent } from 'app/components/modals/comment-modal/comme
 import { PopoverModule } from 'app/components/ui/popover/popover.module';
 import { TranslateModule } from 'app/shared/translator/translate.module';
 import { SdcUiComponentsModule } from 'onap-ui-angular';
-import { OnboardingService } from '../../services/onboarding.service';
 import { DatatableA11yModule } from '../ui/datatable-a11y/datatable-a11y.module';
-import { ImportVSPService } from './onboarding-modal/import-vsp.service';
 import { OnboardingModalComponent } from './onboarding-modal/onboarding-modal.component';
 
 @NgModule({
@@ -23,7 +21,6 @@ import { OnboardingModalComponent } from './onboarding-modal/onboarding-modal.co
         DatatableA11yModule],
     exports: [CommentModalComponent, OnboardingModalComponent],
     entryComponents: [CommentModalComponent, OnboardingModalComponent],
-    providers: [OnboardingService, ImportVSPService]
 })
 
 export class ModalsModule {

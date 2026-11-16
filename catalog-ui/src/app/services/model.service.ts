@@ -22,7 +22,7 @@ import { Observable } from 'rxjs';
 import { ISdcConfig, SdcConfigToken } from '../config/sdc-config.config';
 import {Model} from "../models/model";
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class ModelService {
 
   protected baseUrl;

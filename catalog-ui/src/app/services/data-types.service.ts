@@ -56,7 +56,7 @@ export interface IDataTypesService {
     isDataTypeForDataTypePropertyType(property:DataTypePropertyModel):boolean;
 }
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class DataTypesService implements IDataTypesService {
 
     private baseUrl:string;

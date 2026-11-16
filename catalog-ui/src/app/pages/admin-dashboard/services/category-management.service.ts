@@ -27,7 +27,7 @@ import {IMainCategory, ISubCategory} from 'app/models/category';
 import {SdcConfigToken, ISdcConfig} from 'app/config/sdc-config.config';
 import {HttpHelperService} from 'app/services/http-helper.service';
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class CategoryManagementService {
 
     constructor(private http: HttpClient,

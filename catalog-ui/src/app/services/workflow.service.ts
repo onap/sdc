@@ -16,7 +16,7 @@ interface WorkflowInputParameter extends WorkflowOutputParameter {
     property: string;
 }
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class WorkflowService {
 
     protected baseUrl;

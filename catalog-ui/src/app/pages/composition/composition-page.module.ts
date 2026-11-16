@@ -8,7 +8,6 @@ import {CompositionPageComponent} from "./composition-page.component";
 import {NgxsModule} from "@ngxs/store";
 import {PaletteModule} from "./palette/palette.module";
 import { CompositionPanelModule } from "app/pages/composition/panel/composition-panel.module";
-import {CompositionService} from "./composition.service";
 import {DndModule} from "ngx-drag-drop";
 import {GraphState} from "./common/store/graph.state";
 
@@ -23,7 +22,6 @@ import {GraphState} from "./common/store/graph.state";
             GraphState])],
     exports: [CompositionPageComponent],
     entryComponents: [CompositionPageComponent],
-    providers: [CompositionService]
 })
 export class CompositionPageModule {
 }

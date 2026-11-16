@@ -43,7 +43,7 @@ export interface RequirementAndCapabilities {
     requirements: RequirementsGroup;
 }
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class CompositionGraphGeneralUtils {
 
     public componentRequirementsAndCapabilitiesCaching = new Dictionary<string, RequirementAndCapabilities>();

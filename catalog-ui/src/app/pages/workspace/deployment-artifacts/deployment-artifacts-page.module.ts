@@ -5,7 +5,6 @@ import { DatatableA11yModule } from '../../../components/ui/datatable-a11y/datat
 import {NgxDatatableModule} from "@swimlane/ngx-datatable";
 import {UiElementsModule} from "../../../components/ui/ui-elements.module";
 import {ArtifactFormModule} from "../../../components/forms/artifacts-form/artifact-form.module";
-import {ArtifactsService} from "../../../components/forms/artifacts-form/artifacts.service";
 import {DeploymentArtifactsPageComponent} from "./deployment-artifacts-page.component";
 import {TranslatePipe} from "../../../shared/translator/translate.pipe";
 import {TranslateModule} from "../../../shared/translator/translate.module";
@@ -31,7 +30,6 @@ import {GenericArtifactBrowserModule} from "../../../components/logic/generic-ar
     entryComponents: [
         DeploymentArtifactsPageComponent
     ],
-    providers:[ArtifactsService]
 })
 export class DeploymentArtifactsPageModule {
 }

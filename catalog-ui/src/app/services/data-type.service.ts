@@ -41,7 +41,7 @@ import {AuthenticationService} from "./authentication.service";
  *  It also contains convenience methods to check if a string is a valid dataType, and to retrieve a dataType's properties recursively
  */
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class DataTypeService {
     public dataTypes: DataTypesMap;
     private readonly baseUrl: string;

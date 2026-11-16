@@ -22,7 +22,7 @@ import {Inject, Injectable} from '@angular/core';
 import {ICookie} from "../models/app-config";
 import {ISdcConfig, SdcConfigToken} from "../config/sdc-config.config";
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class CookieService {
 
     private cookie:ICookie;

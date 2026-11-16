@@ -6,7 +6,7 @@ import {IApi, IAppConfigurtaion} from 'app/models/app-config';
 import {Plugin, PluginsConfiguration} from 'app/models/plugins-config';
 import {ISdcConfig, SdcConfigToken} from "../config/sdc-config.config";
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class PluginsService {
 
     public configuration: IAppConfigurtaion;

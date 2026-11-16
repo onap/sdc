@@ -27,7 +27,6 @@ import {CommonModule} from "@angular/common";
 import {FilterChildAttributesPipe} from "./pipes/filter-child-attributes.pipe";
 import {GlobalPipesModule} from "../../../pipes/global-pipes.module";
 import {MultilineEllipsisModule} from "../../../shared/multiline-ellipsis/multiline-ellipsis.module";
-import {AttributesService} from "../../../services/attributes.service";
 
 @NgModule({
   imports: [
@@ -43,7 +42,7 @@ import {AttributesService} from "../../../services/attributes.service";
     AttributesTableComponent
   ],
   exports: [AttributesTableComponent, DynamicAttributeComponent],
-  providers: [FilterChildAttributesPipe, AttributesService]
+  providers: [FilterChildAttributesPipe]
 })
 export class AttributeTableModule {
 }

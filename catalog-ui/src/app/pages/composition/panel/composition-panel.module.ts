@@ -49,7 +49,6 @@ import { ServiceConsumptionModule } from "../../../components/logic/service-cons
 import {SubstitutionFilterTabComponent} from "./panel-tabs/substitution-filter-tab/substitution-filter-tab.component";
 import {SubstitutionFilterModule} from "../../../components/logic/substitution-filter/substitution-filter.module";
 import {InterfaceOperationsComponent} from "../interface-operations/interface-operations.component";
-import {CompositionService} from "../composition.service";
 
 @NgModule({
     declarations: [
@@ -105,7 +104,6 @@ import {CompositionService} from "../composition.service";
     exports: [
         CompositionPanelComponent
     ],
-    providers: [CompositionService]
 })
 export class CompositionPanelModule {
 

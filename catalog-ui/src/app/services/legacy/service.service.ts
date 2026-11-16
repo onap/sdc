@@ -54,7 +54,7 @@ export interface ILegacyServiceService extends ILegacyComponentService {
  * `Legacy` prefix: the directory already supplies the qualifier, and keeping the basenames
  * paired makes the eventual dedup diff a one-directory delete.
  */
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class LegacyServiceService extends LegacyComponentService implements ILegacyServiceService {
 
     public distribution: string = "distribution";

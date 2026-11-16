@@ -24,7 +24,7 @@ import {AttributeBEModel} from "app/models/attributes-outputs/attribute-be-model
 import {DerivedFEAttribute} from "../models/attributes-outputs/derived-fe-attribute";
 import {AttributeDeclareAPIModel} from "app/models/attributes-outputs/attribute-declare-api-model";
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class AttributesService {
 
   constructor() {

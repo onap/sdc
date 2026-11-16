@@ -9,7 +9,7 @@ import {IZoneService} from "../models/graph/zones/zone";
 import { HttpClient } from '@angular/common/http';
 import * as _ from 'lodash';
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class GroupsService implements IZoneService {
 
     protected baseUrl;

@@ -26,13 +26,7 @@ import {BrowserModule} from "@angular/platform-browser";
 import {FilterPropertiesAssignmentComponent} from "../../components/logic/filter-properties-assignment/filter-properties-assignment.component";
 import {InputsTableComponent} from "../../components/logic/inputs-table/inputs-table.component";
 import {PoliciesTableModule} from "../../components/logic/policies-table/policies-table.module";
-import {PropertiesService} from "../../services/properties.service";
-import {DataTypeService} from "../../services/data-type.service";
 import {PropertiesAssignmentComponent} from "./properties-assignment.page.component";
-import {HierarchyNavService} from "./services/hierarchy-nav.service";
-import {PropertiesUtils} from "./services/properties.utils";
-import {InputsUtils} from "./services/inputs.utils";
-import {ComponentModeService} from "../../services/component-services/component-mode.service";
 import {SdcUiComponentsModule} from "onap-ui-angular";
 import {ModalFormsModule} from "app/components/ui/forms/modal-forms.module";
 import {HierarchyNavigationModule} from "../../components/logic/hierarchy-navigtion/hierarchy-navigation.module";
@@ -62,7 +56,7 @@ import {TranslateModule} from '../../shared/translator/translate.module';
   exports: [
     PropertiesAssignmentComponent
   ],
-  providers: [PropertiesService, HierarchyNavService, PropertiesUtils, InputsUtils, DataTypeService, ComponentModeService, PropertyCreatorComponent]
+  providers: [PropertyCreatorComponent]
 })
 export class PropertiesAssignmentModule {
 

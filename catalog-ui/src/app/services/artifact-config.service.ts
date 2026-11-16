@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {CacheService} from './cache.service';
 import {ArtifactType} from "../utils/constants";
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class ArtifactConfigService {
 
   artifactConfigList:Array<object>;

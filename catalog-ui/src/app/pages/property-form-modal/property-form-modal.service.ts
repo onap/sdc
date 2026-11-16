@@ -61,7 +61,7 @@ export interface PropertyFormModalSaveContext {
  * PropertyModel (or void). The ModalsHandler Save callback resolves its deferred and closes the modal —
  * this service never touches the modal.
  */
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class PropertyFormModalService {
 
     constructor(private componentService: ComponentService,

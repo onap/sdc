@@ -26,7 +26,7 @@ import {Observable} from "rxjs";
 import {ComponentMetadata} from "../../models/component-metadata";
 import {ComponentLifecycleState} from "../../models/component-lifecycle-state.enum";
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class ResourceService {
 
   private readonly baseUrl: string;

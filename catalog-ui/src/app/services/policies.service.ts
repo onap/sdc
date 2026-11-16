@@ -31,7 +31,7 @@ import { HttpClient } from "@angular/common/http";
 import * as _ from 'lodash';
 
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class PoliciesService implements IZoneService {
     protected baseUrl;
 

@@ -4,7 +4,6 @@ import {SdcUiComponentsModule} from "onap-ui-angular";
 import { DatatableA11yModule } from '../../../components/ui/datatable-a11y/datatable-a11y.module';
 import {GlobalPipesModule} from "../../../pipes/global-pipes.module";
 import {ActivityLogComponent} from "./activity-log.component";
-import {ActivityLogService} from "../../../services/activity-log.service";
 import {NgxDatatableModule} from "@swimlane/ngx-datatable";
 
 @NgModule({
@@ -24,7 +23,6 @@ import {NgxDatatableModule} from "@swimlane/ngx-datatable";
     entryComponents: [
         ActivityLogComponent
     ],
-    providers: [ ActivityLogService ]
 })
 export class ActivityLogModule {
 }
