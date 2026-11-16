@@ -1,6 +1,7 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    "module": "esnext",
     "types": ["core-js", "node"],
     "paths": {
       "app/*": ["app/*"],

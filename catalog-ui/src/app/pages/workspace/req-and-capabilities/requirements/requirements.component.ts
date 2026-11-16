@@ -7,7 +7,6 @@ import {ReqAndCapabilitiesService} from "../req-and-capabilities.service";
 import {EventListenerService} from "../../../../services/event-listener.service";
 import {ModalComponent} from "onap-ui-angular/dist/modals/modal.component";
 import {SdcUiCommon, SdcUiServices} from "onap-ui-angular";
-import sortedIndexBy = require("lodash/sortedIndexBy");
 
 @Component({
     selector: 'requirements',

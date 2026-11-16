@@ -19,7 +19,6 @@
  */
 
 import { GraphColors, GraphUIObjects} from "app/utils/constants";
-import constant = require("lodash/constant");
 import {ImagesUrl} from "app/utils/constants";
 import {getSdcConfig} from "app/config/sdc-config.config.factory";
 import {CanvasHandleTypes} from 'app/utils/constants';

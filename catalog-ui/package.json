@@ -14,7 +14,7 @@
     "start": "node tools/dev-server.js",
     "start:local": "node tools/dev-server.js",
     "build": "ng build --configuration development --aot=false",
-    "build:prod": "ng build --prod --aot --build-optimizer=false --deploy-url /sdc1/ && node tools/package-production.js",
+    "build:prod": "ng build --prod --aot --deploy-url /sdc1/ && node tools/package-production.js",
     "lint": "tslint -c tslint.json 'src/**/*.ts'",
     "pretest": "npm run test:tools",
     "test": "jest --coverage",
