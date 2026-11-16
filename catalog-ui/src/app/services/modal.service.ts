@@ -104,9 +104,15 @@ export class ModalService {
     }
 
 
-    public addDynamicContentToModal = (modalInstance: ComponentRef<ModalComponent>, dynamicComponentType: Type<any>, dynamicComponentInput?: any) => {
+    /**
+     * Pass `resolver` (the caller's injected ComponentFactoryResolver) when `dynamicComponentType`
+     * is declared in a lazy-loaded module — see DynamicComponentService.createDynamicComponent.
+     */
+    public addDynamicContentToModal = (modalInstance: ComponentRef<ModalComponent>, dynamicComponentType: Type<any>,
+                                       dynamicComponentInput?: any, resolver?: ComponentFactoryResolver) => {
 
-        let dynamicContent = this.dynamicComponentService.createDynamicComponent(dynamicComponentType, modalInstance.instance.dynamicContentContainer);
+        const dynamicContent = this.dynamicComponentService.createDynamicComponent(dynamicComponentType,
+            modalInstance.instance.dynamicContentContainer, resolver);
         dynamicContent.instance.input = dynamicComponentInput;
         modalInstance.instance.dynamicContent = dynamicContent;
         return modalInstance;

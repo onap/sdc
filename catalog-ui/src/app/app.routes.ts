@@ -19,16 +19,13 @@
  */
 
 import {Routes} from '@angular/router';
-import {AdminDashboardComponent} from './pages/admin-dashboard/admin-dashboard.component';
 import {AttributesOutputsComponent} from './pages/attributes-outputs/attributes-outputs.page.component';
 import {CatalogComponent} from './pages/catalog/catalog.component';
 import {CompositionPageComponent} from './pages/composition/composition-page.component';
 import {Error403PageComponent} from './pages/error-403/error-403.component';
-import {GlossaryPageComponent} from './pages/glossary/glossary-page.component';
 import {HomeComponent} from './pages/home/home.component';
 import {InterfaceDefinitionComponent} from './pages/interface-definition/interface-definition.page.component';
 import {InterfaceOperationComponent} from './pages/interface-operation/interface-operation.page.component';
-import {OnboardVendorPageComponent} from './pages/onboard-vendor/onboard-vendor.component';
 import {PluginContextViewPageComponent} from './pages/plugins/plugin-context-view/plugin-context-view.page.component';
 import {PluginTabViewPageComponent} from './pages/plugins/plugin-tab-view/plugin-tab-view.page.component';
 import {PropertiesAssignmentComponent} from './pages/properties-assignment/properties-assignment.page.component';
@@ -126,13 +123,29 @@ export const routes: Routes = [
         data: {permissions: ['DESIGNER'], title: 'Dashboard'}
     },
     {path: 'catalog', component: CatalogComponent, canActivate: [AuthGuard], data: {title: 'Catalog'}},
+    // Lazy-loaded pages. The guard and `data` stay on this parent route: AuthGuard reads
+    // `data.permissions` from the route it guards, and RouteMetadataService picks `data.title` up
+    // from the parent because the module's '' child declares none. The loaders stay inline arrow
+    // functions in object literals — see the AOT note on the workspace routes below.
     {
-        path: 'adminDashboard', component: AdminDashboardComponent, canActivate: [AuthGuard],
+        path: 'adminDashboard',
+        loadChildren: () => import('./pages/admin-dashboard/admin-dashboard.module').then((m) => m.AdminDashboardModule),
+        canActivate: [AuthGuard],
         data: {permissions: ['ADMIN'], title: 'Administration'}
     },
-    {path: 'onboardVendor', component: OnboardVendorPageComponent, canActivate: [AuthGuard], data: {title: 'Onboard'}},
+    {
+        path: 'onboardVendor',
+        loadChildren: () => import('./pages/onboard-vendor/onboard-vendor-page.module').then((m) => m.OnboardVendorPageModule),
+        canActivate: [AuthGuard],
+        data: {title: 'Onboard'}
+    },
     {path: 'plugins/:path', component: PluginTabViewPageComponent, canActivate: [AuthGuard], data: {title: 'Plugin'}},
-    {path: 'glossary', component: GlossaryPageComponent, canActivate: [AuthGuard], data: {title: 'Glossary'}},
+    {
+        path: 'glossary',
+        loadChildren: () => import('./pages/glossary/glossary-page.module').then((m) => m.GlossaryPageModule),
+        canActivate: [AuthGuard],
+        data: {title: 'Glossary'}
+    },
     {path: 'error-403', component: Error403PageComponent, data: {title: 'Access Denied'}},
 
     {

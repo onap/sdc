@@ -20,8 +20,9 @@
 
 import {APP_BASE_HREF, Location} from '@angular/common';
 import {Component} from '@angular/core';
+import {BrowserModule} from '@angular/platform-browser';
 import {fakeAsync, TestBed, tick} from '@angular/core/testing';
-import {ActivatedRouteSnapshot, Router, RouterModule, RouterStateSnapshot, Routes} from '@angular/router';
+import {ActivatedRouteSnapshot, Router, RouterModule, RouterStateSnapshot, ROUTES, Routes} from '@angular/router';
 import {routes} from './app.routes';
 
 @Component({selector: 'app-routes-host', template: '<router-outlet></router-outlet>'})
@@ -48,7 +49,9 @@ function stub(config: Routes): Routes {
         const copy: any = {path: route.path};
         if (route.pathMatch) { copy.pathMatch = route.pathMatch; }
         if (route.redirectTo) { copy.redirectTo = route.redirectTo; }
-        if (route.component) { copy.component = StubComponent; }
+        // A lazy route's module declares a single '' child, so for matching it is equivalent to a
+        // component route; loading the real modules is covered by the 'lazy-loaded pages' test.
+        if (route.component || route.loadChildren) { copy.component = StubComponent; }
         if (route.children) { copy.children = stub(route.children); }
         return copy;
     });
@@ -164,6 +167,64 @@ describe('app.routes', () => {
         while (leaf.firstChild) { leaf = leaf.firstChild; }
         expect(leaf.params).toEqual({previousState: 'dashboard', id: 'abc', type: 'resource', panelTab: 'details'});
     }));
+
+    /**
+     * The guard and `data` must stay on the lazy parent route (AuthGuard reads `data.permissions`
+     * from the route it guards), and each loader must resolve to an NgModule whose routes are a
+     * single '' child — a wrong import path or export name only fails at runtime otherwise.
+     */
+    it('lazy-loads adminDashboard, onboardVendor and glossary with their guard and data', async () => {
+        const expected: {[path: string]: any} = {
+            adminDashboard: {permissions: ['ADMIN'], title: 'Administration'},
+            onboardVendor: {title: 'Onboard'},
+            glossary: {title: 'Glossary'}
+        };
+        for (const path of Object.keys(expected)) {
+            const route = routes.find((r) => r.path === path);
+            expect(route.component).toBeUndefined();
+            expect(route.canActivate.map((g: any) => g.name)).toEqual(['AuthGuard']);
+            expect(route.data).toEqual(expected[path]);
+
+            const moduleType: any = await (route.loadChildren as () => Promise<any>)();
+            // JIT keeps the @NgModule metadata on the class; RouterModule.forChild() contributes
+            // the child routes as a ROUTES provider, nested one array deep via provideRoutes().
+            const flatten = (list: any[]): any[] => [].concat(...list.map((p) => Array.isArray(p) ? flatten(p) : [p]));
+            const imports: any[] = moduleType.__annotations__[0].imports;
+            const childRoutes = imports
+                .filter((i) => i && i.ngModule === RouterModule)
+                .map((i) => flatten(i.providers).find((p: any) => p.provide === ROUTES).useValue);
+            expect(childRoutes.length).toBe(1);
+            expect(childRoutes[0].map((r: any) => r.path)).toEqual(['']);
+            expect(childRoutes[0][0].component).toBeDefined();
+        }
+    });
+
+    /**
+     * A lazy module may not import BrowserModule, even transitively — Angular throws "BrowserModule
+     * has already been loaded" when the chunk loads and the navigation is dropped. onap-ui-angular's
+     * SdcUiComponentsModule pulls it in (autocomplete, dropdown), so importing that library module
+     * anywhere below a lazy route breaks the page. Only a real browser load shows this otherwise.
+     */
+    it('keeps BrowserModule out of every lazy-loaded module', async () => {
+        const offenders: string[] = [];
+        const walk = (moduleType: any, trail: string[], seen: Set<any>) => {
+            const type = moduleType && moduleType.ngModule ? moduleType.ngModule : moduleType;
+            if (!type || seen.has(type)) { return; }
+            seen.add(type);
+            if (type === BrowserModule) {
+                offenders.push(trail.join(' > '));
+                return;
+            }
+            const meta = type.__annotations__ && type.__annotations__.find((a: any) => a && 'imports' in a);
+            ([].concat(...((meta && meta.imports) || []).map((i: any) => Array.isArray(i) ? i : [i])))
+                .forEach((i: any) => walk(i, trail.concat(i && (i.ngModule || i).name), seen));
+        };
+        for (const route of routes.filter((r) => r.loadChildren)) {
+            const moduleType: any = await (route.loadChildren as () => Promise<any>)();
+            walk(moduleType, [moduleType.name], new Set());
+        }
+        expect(offenders).toEqual([]);
+    });
 
     it('declares no duplicate top-level paths', () => {
         const paths = routes.map((r) => r.path);

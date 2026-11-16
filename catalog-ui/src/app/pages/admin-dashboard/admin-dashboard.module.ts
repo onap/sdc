@@ -21,7 +21,7 @@
 import {NgModule, CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {SdcUiComponentsModule} from 'onap-ui-angular';
+import {RouterModule} from '@angular/router';
 import {TranslateModule} from 'app/shared/translator/translate.module';
 
 import {AdminDashboardComponent} from './admin-dashboard.component';
@@ -29,9 +29,18 @@ import {UserManagementComponent} from './user-management/user-management.compone
 import {CategoryManagementComponent} from './category-management/category-management.component';
 import {AddCategoryModalComponent} from './add-category-modal/add-category-modal.component';
 
-// ValidationUtils is now a pure Angular @Injectable provided at the AppModule root, so
-// CategoryManagementComponent resolves it by type from the root injector — no local $injector bridge needed.
-
+/**
+ * Lazy-loaded by the 'adminDashboard' route in app.routes.ts, which keeps the AuthGuard and the
+ * route data; nothing may import this module eagerly.
+ *
+ * Every service these components use is root-provided, so the module provides none: a provider
+ * here would create a second instance in the lazy module's injector. For the same reason it does
+ * not import SdcUiComponentsModule — no template here uses it, and the onap-ui-angular modules
+ * provide their own ModalService, NotificationsService and LoaderService.
+ *
+ * AddCategoryModalComponent is created through ModalService, which must be handed
+ * CategoryManagementComponent's resolver (see DynamicComponentService.createDynamicComponent).
+ */
 @NgModule({
     declarations: [
         AdminDashboardComponent,
@@ -43,11 +52,10 @@ import {AddCategoryModalComponent} from './add-category-modal/add-category-modal
         CommonModule,
         FormsModule,
         ReactiveFormsModule,
-        SdcUiComponentsModule,
-        TranslateModule
+        TranslateModule,
+        RouterModule.forChild([{path: '', component: AdminDashboardComponent}])
     ],
-    exports: [AdminDashboardComponent],
-    entryComponents: [AdminDashboardComponent, AddCategoryModalComponent],
+    entryComponents: [AddCategoryModalComponent],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AdminDashboardModule {}

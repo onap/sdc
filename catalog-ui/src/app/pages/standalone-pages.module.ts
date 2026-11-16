@@ -18,48 +18,25 @@
  * ============LICENSE_END=========================================================
  */
 
-import {NgModule, CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {TranslateModule} from 'app/shared/translator/translate.module';
-import {FormsModule} from '@angular/forms';
-import {LayoutModule} from 'app/components/layout/layout.module';
-import {GlossaryModule} from 'app/shared/glossary/glossary.module';
 
 import {Error403PageComponent} from './error-403/error-403.component';
-import {OnboardVendorPageComponent} from './onboard-vendor/onboard-vendor.component';
-import {GlossaryPageComponent} from './glossary/glossary-page.component';
 
 /**
- * Declares the page components routed to by the 'error-403', 'onboardVendor'
- * and 'glossary' routes in app.routes.ts.
+ * Declares the page routed to by the 'error-403' route in app.routes.ts. It stays eager: it is
+ * where a failed permission check lands, so it must not depend on a chunk download.
  *
- * SdcConfigToken is NOT provided here — it is already root-provided via
- * SdcConfig in AppModule.providers, so OnboardVendorPageComponent receives
- * it from the root injector.
+ * The glossary and onboardVendor pages are lazy-loaded through GlossaryPageModule and
+ * OnboardVendorPageModule.
  */
 @NgModule({
-    declarations: [
-        Error403PageComponent,
-        OnboardVendorPageComponent,
-        GlossaryPageComponent
-    ],
+    declarations: [Error403PageComponent],
     imports: [
         CommonModule,
-        FormsModule,
-        TranslateModule,
-        LayoutModule,
-        GlossaryModule
+        TranslateModule
     ],
-    exports: [
-        Error403PageComponent,
-        OnboardVendorPageComponent,
-        GlossaryPageComponent
-    ],
-    entryComponents: [
-        Error403PageComponent,
-        OnboardVendorPageComponent,
-        GlossaryPageComponent
-    ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    exports: [Error403PageComponent]
 })
 export class StandalonePagesModule {}

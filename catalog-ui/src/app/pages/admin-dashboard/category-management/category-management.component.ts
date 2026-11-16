@@ -18,7 +18,9 @@
  * ============LICENSE_END=========================================================
  */
 
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
+import {
+    ChangeDetectionStrategy, ChangeDetectorRef, Component, ComponentFactoryResolver, OnDestroy, OnInit
+} from '@angular/core';
 import {Subscription} from 'rxjs';
 import {ButtonModel} from 'app/models/button';
 import {ModalModel} from 'app/models/modal';
@@ -56,7 +58,8 @@ export class CategoryManagementComponent implements OnInit, OnDestroy {
                 private modalService: ModalService,
                 private validationUtils: ValidationUtils,
                 private translateService: TranslateService,
-                private cdr: ChangeDetectorRef) {}
+                private cdr: ChangeDetectorRef,
+                private componentFactoryResolver: ComponentFactoryResolver) {}
 
     ngOnInit(): void {
         this.serviceCategories = this.cacheService.get('serviceCategories');
@@ -124,10 +127,13 @@ export class CategoryManagementComponent implements OnInit, OnDestroy {
             new ModalModel('sm', title, null, [okBtn, cancelBtn], 'standard')
         );
 
+        // This component's resolver, not ModalService's root one: AddCategoryModalComponent is an
+        // entry component of the lazy-loaded AdminDashboardModule.
         this.modalService.addDynamicContentToModal(
             this.modalInstance,
             AddCategoryModalComponent,
-            {type: this.type, parentCategory: parent, namePattern: this.namePattern, modelType}
+            {type: this.type, parentCategory: parent, namePattern: this.namePattern, modelType},
+            this.componentFactoryResolver
         );
 
         this.modalInstance.instance.open();

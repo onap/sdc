@@ -1,5 +1,6 @@
 import {of as observableOf, Observable, Subject} from 'rxjs';
 import {IMainCategory, ISubCategory} from 'app/models/category';
+import {AddCategoryModalComponent} from '../add-category-modal/add-category-modal.component';
 import {CategoryManagementComponent} from './category-management.component';
 
 // ---------------------------------------------------------------------------
@@ -63,12 +64,13 @@ function createComp() {
     };
 
     const cdr: any = {detectChanges: jest.fn(), destroyed: false};
+    const componentFactoryResolver: any = {resolveComponentFactory: jest.fn()};
 
     const comp = new CategoryManagementComponent(
-        cacheService, modalService, validationUtils, translateService, cdr);
+        cacheService, modalService, validationUtils, translateService, cdr, componentFactoryResolver);
 
     return {comp, cacheService, validationUtils, modalService, translateService, cdr, languageChanged,
-        serviceCategories, resourceCategories, modalInstance, dynamicContentInstance};
+        serviceCategories, resourceCategories, modalInstance, dynamicContentInstance, componentFactoryResolver};
 }
 
 // ---------------------------------------------------------------------------
@@ -208,6 +210,20 @@ describe('CategoryManagementComponent', () => {
         expect(modalService.createCustomModal).toHaveBeenCalled();
         expect(modalInstance.instance.open).toHaveBeenCalled();
         expect(modalService.addDynamicContentToModal).toHaveBeenCalled();
+    });
+
+    // AddCategoryModalComponent is an entry component of the lazy AdminDashboardModule, which the
+    // root resolver ModalService would otherwise use cannot see.
+    it('createCategoryModal passes its own ComponentFactoryResolver to the modal content', () => {
+        const {comp, modalService, modalInstance, componentFactoryResolver} = createComp();
+        comp.ngOnInit();
+        modalInstance.instance.dynamicContent.instance.save.mockReturnValue(observableOf(makeCategory('New Cat')));
+
+        comp.createCategoryModal(null);
+
+        const args = modalService.addDynamicContentToModal.mock.calls[0];
+        expect(args[1]).toBe(AddCategoryModalComponent);
+        expect(args[3]).toBe(componentFactoryResolver);
     });
 
     // --- OK button callback: top-level category creation ---

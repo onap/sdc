@@ -50,7 +50,6 @@ import {HomeModule} from './pages/home/home.module';
 import {PluginFrameModule} from './components/ui/plugin/plugin-frame.module';
 import {AutomatedUpgradeModule} from './pages/automated-upgrade/automated-upgrade.module';
 import {WorkspaceModule} from './pages/workspace/workspace.module';
-import {AdminDashboardModule} from './pages/admin-dashboard/admin-dashboard.module';
 import {PropertyFormModalModule} from './pages/property-form-modal/property-form-modal.module';
 import {IconsModalModule} from './components/modals/icons-modal/icons-modal.module';
 import {ModulePropertyModalModule} from './pages/module-property-modal/module-property-modal.module';
@@ -154,7 +153,6 @@ export function configServiceFactory(config: ConfigService, authService: Authent
     ServiceDependenciesModule,
     ServiceDependenciesEditorModule,
     WorkspaceModule,
-    AdminDashboardModule,
     PropertyFormModalModule,
     IconsModalModule,
     ModulePropertyModalModule,
