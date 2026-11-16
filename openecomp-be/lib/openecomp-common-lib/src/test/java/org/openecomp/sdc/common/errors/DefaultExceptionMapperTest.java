@@ -56,6 +56,18 @@ class DefaultExceptionMapperTest {
     }
 
     @Test
+    void shouldMapCoreExceptionWithUnmappedIdToExpectationFailed() {
+        DefaultExceptionMapper defaultExceptionMapper = new DefaultExceptionMapper();
+        ErrorCode errorCode = new ErrorCodeBuilder().withId("UNMAPPED_ERROR_ID").withMessage(TEST_MESSAGE)
+            .withCategory(ErrorCategory.APPLICATION).build();
+        CoreException exception = new CoreException(errorCode);
+        try (final Response response = defaultExceptionMapper.toResponse(exception)) {
+            assertEquals(417, response.getStatus());
+            assertEquals(TEST_MESSAGE, ((ErrorCodeAndMessage) response.getEntity()).getMessage());
+        }
+    }
+
+    @Test
     void shouldMapConstraintViolationExceptionToResponse() {
         Mockito.when(constraintViolation.getPropertyPath()).thenReturn(path);
         DefaultExceptionMapper defaultExceptionMapper = new DefaultExceptionMapper();
