@@ -123,7 +123,9 @@
     left: 0;
     background-color: #000;
     opacity: 0.5;
-    z-index: 900;
+    // Above the page layout (side panel 1010), below the toasts (body .sdc-notification-container,
+    // 9999 in override.less) so a notification raised while a modal is open stays dismissable.
+    z-index: 9998;
 
     &.transparent {
         background-color: transparent;
