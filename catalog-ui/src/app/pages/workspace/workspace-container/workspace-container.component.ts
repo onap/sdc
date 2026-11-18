@@ -975,7 +975,7 @@ export class WorkspaceContainerComponent implements OnInit, OnDestroy {
             this.component.lifecycleState === 'CERTIFIED' &&
             this.supportsAutomatedUpgrade()) {
             this.componentService.getDependencies(this.component.componentType, this.component.uniqueId).subscribe((response: IDependenciesServerResponse[]) => {
-                const containsDependencies = response.filter((version) => version.dependencies);
+                const containsDependencies = response.filter((version) => version.dependencies && version.dependencies.length > 0);
                 this.hasNoDependencies = containsDependencies.length === 0;
             });
         }

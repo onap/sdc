@@ -376,6 +376,16 @@ describe('hasNoDependencies', () => {
         (comp as any).verifyIfDependenciesExist();
         expect(comp.hasNoDependencies).toBe(false);
     });
+
+    it('stays true when every version comes back with an empty dependency list', () => {
+        const componentService: any = {
+            archiveComponent: jest.fn(), restoreComponent: jest.fn(), deleteComponent: jest.fn(),
+            getDependencies: jest.fn(() => observableOf([{version: '1.0', dependencies: []}, {version: '2.0'}]))
+        };
+        const {comp} = createComponent({componentService, component: makeComponent({lifecycleState: 'CERTIFIED'})});
+        (comp as any).verifyIfDependenciesExist();
+        expect(comp.hasNoDependencies).toBe(true);
+    });
 });
 
 describe('lifecycleButtonEntries', () => {
