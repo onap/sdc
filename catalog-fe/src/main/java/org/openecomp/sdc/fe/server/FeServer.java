@@ -35,6 +35,7 @@ import org.eclipse.jetty.rewrite.handler.RedirectPatternRule;
 import org.eclipse.jetty.rewrite.handler.RewriteHandler;
 import org.eclipse.jetty.security.ConstraintMapping;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
+import org.eclipse.jetty.server.ForwardedRequestCustomizer;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.SecureRequestCustomizer;
@@ -114,6 +115,9 @@ public final class FeServer {
         httpConfig.setSendServerVersion(false);
         httpConfig.setSendDateHeader(false);
         httpConfig.setHeaderCacheSize(1024);
+        // SDC is reached through a TLS-terminating gateway; without these Jetty sees plain HTTP and redirects the browser to http://.
+        httpConfig.addCustomizer(new ForwardedRequestCustomizer());
+        httpConfig.setRelativeRedirectAllowed(true);
         server.addConnector(httpConnector(server, httpConfig, properties));
         if (Boolean.parseBoolean(properties.getProperty("jetty.ssl.enabled", "true"))) {
             server.addConnector(httpsConnector(server, httpConfig, properties));

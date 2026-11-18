@@ -78,6 +78,7 @@ final class ServerSnapshot {
                 + " idle-timeout=" + serverConnector.getIdleTimeout() + " compliance=" + http.getHttpCompliance());
             lines.add("  send-server-version=" + config.getSendServerVersion() + " send-date-header=" + config.getSendDateHeader()
                 + " header-cache-size=" + config.getHeaderCacheSize() + " secure-port=" + config.getSecurePort()
+                + " relative-redirects=" + config.isRelativeRedirectAllowed()
                 + " customizers=" + config.getCustomizers().stream().map(customizer -> customizer.getClass().getSimpleName())
                 .collect(Collectors.toList()));
         }

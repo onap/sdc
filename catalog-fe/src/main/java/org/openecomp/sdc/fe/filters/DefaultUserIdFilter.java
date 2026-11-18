@@ -55,8 +55,6 @@ public class DefaultUserIdFilter implements Filter {
     private static final Logger log = Logger.getLogger(DefaultUserIdFilter.class.getName());
     private static final String ROOT_PATH = "/";
     private static final String WELCOME_FILE_PATH = "/index.html";
-    private static final String FORWARDED_PROTO_HEADER = "X-Forwarded-Proto";
-    private static final String HTTPS_SCHEME = "https";
 
     /**
      * Declared even though it is empty: the servlet-api this compiles against gives {@code init} and {@code destroy} default implementations, but the
@@ -108,21 +106,6 @@ public class DefaultUserIdFilter implements Filter {
             .anyMatch(cookie -> Constants.ECOMP_PORTAL_COOKIE.equals(cookie.getName()) || Constants.USER_ID.equals(cookie.getName()));
     }
 
-    /**
-     * {@code isSecure()} reports the scheme of the last hop, which is plain HTTP wherever a proxy terminates TLS - SDC is reached that way in OOM,
-     * where an Istio gateway serves HTTPS and forwards to Jetty's HTTP port. Jetty only honours {@code X-Forwarded-Proto} when the
-     * {@code http-forwarded} module is enabled, and it is not, so the header has to be read directly or the cookie would lose its {@code Secure} flag
-     * on exactly the deployments that need it.
-     */
-    private boolean isHttps(final HttpServletRequest request) {
-        final String forwardedProto = request.getHeader(FORWARDED_PROTO_HEADER);
-        if (StringUtils.isNotEmpty(forwardedProto)) {
-            // A proxy chain appends to the list; the first entry is the scheme the browser used.
-            return HTTPS_SCHEME.equalsIgnoreCase(StringUtils.substringBefore(forwardedProto, ",").trim());
-        }
-        return request.isSecure();
-    }
-
     private void addDefaultUserIdCookie(final HttpServletRequest request, final HttpServletResponse response) {
         final Configuration configuration = ConfigurationManager.getConfigurationManager().getConfiguration();
         final String defaultUserId = configuration.getDefaultUserId();
@@ -133,7 +116,7 @@ public class DefaultUserIdFilter implements Filter {
             final Cookie cookie = new Cookie(Constants.USER_ID, CipherUtil.encryptPKC(defaultUserId));
             // The backend decrypts any base64-looking USER_ID, so an encrypted value is the only contract it understands. Deliberately not HttpOnly:
             // the single page application reads this with document.cookie and copies it onto every backend call.
-            cookie.setSecure(isHttps(request));
+            cookie.setSecure(request.isSecure());
             response.addCookie(cookie);
             log.info("Request to {} carries no portal identity, defaulting to user {}", request.getRequestURI(), defaultUserId);
         } catch (final Exception e) {

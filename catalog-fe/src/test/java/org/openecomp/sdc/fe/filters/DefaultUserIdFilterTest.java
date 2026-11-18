@@ -176,47 +176,6 @@ class DefaultUserIdFilterTest {
         assertFalse(mintedCookie().getSecure());
     }
 
-    /**
-     * The deployment that matters: in OOM an Istio gateway terminates TLS and forwards to Jetty's plain HTTP port, so isSecure() is false even though
-     * the browser is on HTTPS. Jetty only honours X-Forwarded-Proto with the http-forwarded module enabled, and the SDC image does not enable it -
-     * verified on the cluster, where Jetty answers an HTTPS request with an http:// redirect. Without this the cookie would lose Secure on precisely
-     * the HTTPS-only deployments that need it, and would be weaker than the PortalServlet cookie it stands in for.
-     */
-    @Test
-    void marksTheCookieSecureWhenAProxyTerminatedTlsUpstream() throws IOException, ServletException {
-        when(request.getRequestURI()).thenReturn(CONTEXT_PATH + "/");
-        when(request.isSecure()).thenReturn(false);
-        when(request.getHeader("X-Forwarded-Proto")).thenReturn("https");
-
-        filter.doFilter(request, response, chain);
-
-        assertEquals(true, mintedCookie().getSecure());
-    }
-
-    /**
-     * A proxy chain appends, so the browser's scheme is the first entry rather than the last.
-     */
-    @Test
-    void readsTheOriginalSchemeFromTheFrontOfAForwardedProtoChain() throws IOException, ServletException {
-        when(request.getRequestURI()).thenReturn(CONTEXT_PATH + "/");
-        when(request.getHeader("X-Forwarded-Proto")).thenReturn("https, http");
-
-        filter.doFilter(request, response, chain);
-
-        assertEquals(true, mintedCookie().getSecure());
-    }
-
-    @Test
-    void doesNotMarkTheCookieSecureWhenTheProxyReportsPlainHttp() throws IOException, ServletException {
-        when(request.getRequestURI()).thenReturn(CONTEXT_PATH + "/");
-        when(request.isSecure()).thenReturn(true);
-        when(request.getHeader("X-Forwarded-Proto")).thenReturn("http");
-
-        filter.doFilter(request, response, chain);
-
-        assertFalse(mintedCookie().getSecure());
-    }
-
     private Cookie mintedCookie() {
         final ArgumentCaptor<Cookie> cookie = ArgumentCaptor.forClass(Cookie.class);
         verify(response).addCookie(cookie.capture());
