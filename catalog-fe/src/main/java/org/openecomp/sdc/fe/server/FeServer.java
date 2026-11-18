@@ -70,6 +70,7 @@ import org.openecomp.sdc.fe.servlets.PortalServlet;
  * The sdc-frontend server: the catalog UI and its proxy at {@code /sdc1}, the onboarding UI at {@code /onboarding}.
  * It is configured the way the Jetty distribution configured it with the image's {@code start.d} files, and reads the
  * same {@code jetty.*} properties those files set, so a deployment that overrode them sets them as system properties.
+ * {@code jetty.ssl.enabled=false} stands in for leaving out the {@code ssl} and {@code https} modules.
  */
 public final class FeServer {
 
@@ -114,7 +115,9 @@ public final class FeServer {
         httpConfig.setSendDateHeader(false);
         httpConfig.setHeaderCacheSize(1024);
         server.addConnector(httpConnector(server, httpConfig, properties));
-        server.addConnector(httpsConnector(server, httpConfig, properties));
+        if (Boolean.parseBoolean(properties.getProperty("jetty.ssl.enabled", "true"))) {
+            server.addConnector(httpsConnector(server, httpConfig, properties));
+        }
 
         DefaultHandler defaultHandler = new DefaultHandler();
         defaultHandler.setShowContexts(false);

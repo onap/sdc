@@ -20,7 +20,13 @@
 
 package org.openecomp.sdc.fe.server;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
+import org.eclipse.jetty.server.ServerConnector;
 import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.fe.wiring.WiringSnapshot;
 
@@ -29,6 +35,18 @@ class FeServerWiringTest {
     @Test
     void serverIsWiredAsSnapshotted() throws Exception {
         WiringSnapshot.assertMatches(ServerSnapshot.render(FeServer.create(new Properties())), "server.txt");
+    }
+
+    @Test
+    void tlsConnectorCanBeTurnedOff() {
+        Properties properties = new Properties();
+        properties.setProperty("jetty.ssl.enabled", "false");
+
+        List<String> protocols = Arrays.stream(FeServer.create(properties).getConnectors())
+            .map(connector -> String.join("+", ((ServerConnector) connector).getProtocols()))
+            .collect(Collectors.toList());
+
+        assertEquals(List.of("http/1.1"), protocols);
     }
 
     @Test
