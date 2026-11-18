@@ -35,6 +35,8 @@ import org.eclipse.jetty.rewrite.handler.RedirectPatternRule;
 import org.eclipse.jetty.rewrite.handler.RewriteHandler;
 import org.eclipse.jetty.security.ConstraintMapping;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
+import org.eclipse.jetty.server.AsyncRequestLogWriter;
+import org.eclipse.jetty.server.CustomRequestLog;
 import org.eclipse.jetty.server.ForwardedRequestCustomizer;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
@@ -71,7 +73,8 @@ import org.openecomp.sdc.fe.servlets.PortalServlet;
  * The sdc-frontend server: the catalog UI and its proxy at {@code /sdc1}, the onboarding UI at {@code /onboarding}.
  * It is configured the way the Jetty distribution configured it with the image's {@code start.d} files, and reads the
  * same {@code jetty.*} properties those files set, so a deployment that overrode them sets them as system properties.
- * {@code jetty.ssl.enabled=false} stands in for leaving out the {@code ssl} and {@code https} modules.
+ * {@code jetty.ssl.enabled=false} stands in for leaving out the {@code ssl} and {@code https} modules, and setting
+ * {@code jetty.requestlog.filePath} for adding the request log module.
  */
 public final class FeServer {
 
@@ -140,7 +143,26 @@ public final class FeServer {
         rewrite.addRule(new RedirectPatternRule("", "/sdc1"));
         rewrite.setHandler(gzip);
         server.setHandler(rewrite);
+        if (properties.getProperty("jetty.requestlog.filePath") != null) {
+            server.setRequestLog(requestLog(properties));
+        }
         return server;
+    }
+
+    /**
+     * What the {@code customrequestlog} module configured. The format is read under the name Jetty 10 and later use as
+     * well as under the Jetty 9.4 one.
+     */
+    private static CustomRequestLog requestLog(Properties properties) {
+        AsyncRequestLogWriter writer = new AsyncRequestLogWriter(
+            Paths.get(properties.getProperty("jetty.requestlog.filePath")).toAbsolutePath().toString());
+        writer.setFilenameDateFormat(properties.getProperty("jetty.requestlog.filenameDateFormat", "yyyy_MM_dd"));
+        writer.setRetainDays(Integer.parseInt(properties.getProperty("jetty.requestlog.retainDays", "90")));
+        writer.setAppend(Boolean.parseBoolean(properties.getProperty("jetty.requestlog.append", "false")));
+        writer.setTimeZone(properties.getProperty("jetty.requestlog.timezone", "GMT"));
+        String format = properties.getProperty("jetty.requestlog.formatString",
+            properties.getProperty("jetty.customrequestlog.formatString", CustomRequestLog.EXTENDED_NCSA_FORMAT));
+        return new CustomRequestLog(writer, format);
     }
 
     private static ServerConnector httpConnector(Server server, HttpConfiguration httpConfig, Properties properties) {
