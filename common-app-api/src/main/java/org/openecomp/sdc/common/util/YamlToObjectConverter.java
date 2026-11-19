@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +26,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 import org.apache.commons.codec.binary.Base64;
 import org.openecomp.sdc.be.config.Configuration.ApplicationL1CacheConfig;
 import org.openecomp.sdc.be.config.Configuration.ApplicationL2CacheConfig;
@@ -55,9 +56,13 @@ import org.yaml.snakeyaml.introspector.PropertyUtils;
 public class YamlToObjectConverter {
 
     private static Logger log = Logger.getLogger(YamlToObjectConverter.class.getName());
-    private static HashMap<String, Constructor> yamlConstructors = new HashMap<>();
+    private static final Map<String, Supplier<Constructor>> yamlConstructors = Map.of(
+        DistributionEngineConfiguration.class.getName(), YamlToObjectConverter::distributionEngineConstructor,
+        org.openecomp.sdc.fe.config.Configuration.class.getName(), YamlToObjectConverter::feConfigurationConstructor,
+        org.openecomp.sdc.be.config.Configuration.class.getName(), YamlToObjectConverter::beConfigurationConstructor,
+        DeploymentArtifactHeatConfiguration.class.getName(), YamlToObjectConverter::deploymentArtifactHeatConstructor);
 
-    static {
+    private static Constructor distributionEngineConstructor() {
         Constructor deConstructor = new Constructor(DistributionEngineConfiguration.class, new LoaderOptions());
         TypeDescription deDescription = new TypeDescription(DistributionEngineConfiguration.class);
         deDescription.putListPropertyType("distributionStatusTopic", DistributionStatusTopicConfig.class);
@@ -67,14 +72,18 @@ public class YamlToObjectConverter {
         deDescription.putListPropertyType("distributionNotificationTopic", DistributionNotificationTopicConfig.class);
         deDescription.putListPropertyType("distributionDeleteTopic", DistributionNotificationTopicConfig.class);
         deConstructor.addTypeDescription(deDescription);
-        yamlConstructors.put(DistributionEngineConfiguration.class.getName(), deConstructor);
-        // FE conf
+        return deConstructor;
+    }
+
+    private static Constructor feConfigurationConstructor() {
         Constructor feConfConstructor = new Constructor(org.openecomp.sdc.fe.config.Configuration.class, new LoaderOptions());
         TypeDescription feConfDescription = new TypeDescription(org.openecomp.sdc.fe.config.Configuration.class);
         feConfDescription.putListPropertyType("systemMonitoring", FeMonitoringConfig.class);
         feConfConstructor.addTypeDescription(feConfDescription);
-        yamlConstructors.put(org.openecomp.sdc.fe.config.Configuration.class.getName(), feConfConstructor);
-        // BE conf
+        return feConfConstructor;
+    }
+
+    private static Constructor beConfigurationConstructor() {
         Constructor beConfConstructor = new Constructor(org.openecomp.sdc.be.config.Configuration.class, new LoaderOptions());
         TypeDescription beConfDescription = new TypeDescription(org.openecomp.sdc.be.config.Configuration.class);
         beConfConstructor.addTypeDescription(beConfDescription);
@@ -95,19 +104,22 @@ public class YamlToObjectConverter {
         beConfDescription.putListPropertyType("applicationL2Cache", ApplicationL2CacheConfig.class);
         // tosca validators config
         beConfDescription.putListPropertyType("toscaValidators", ToscaValidatorsConfig.class);
-        yamlConstructors.put(org.openecomp.sdc.be.config.Configuration.class.getName(), beConfConstructor);
-        // HEAT deployment artifact
+        return beConfConstructor;
+    }
+
+    private static Constructor deploymentArtifactHeatConstructor() {
         Constructor depArtHeatConstructor = new Constructor(DeploymentArtifactHeatConfiguration.class, new LoaderOptions());
         PropertyUtils propertyUtils = new PropertyUtils();
         // Skip properties which are found in YAML but not found in POJO
         propertyUtils.setSkipMissingProperties(true);
         depArtHeatConstructor.setPropertyUtils(propertyUtils);
-        yamlConstructors.put(org.openecomp.sdc.be.config.validation.DeploymentArtifactHeatConfiguration.class.getName(), depArtHeatConstructor);
+        return depArtHeatConstructor;
     }
 
+    // A snakeyaml Constructor keeps per-load state, so every load needs its own instance.
     private static <T> Yaml getYamlByClassName(Class<T> className) {
-        Constructor yamlConstructor = yamlConstructors.get(className.getName());
-        return yamlConstructor == null ? new Yaml() : new Yaml(yamlConstructor);
+        Supplier<Constructor> yamlConstructor = yamlConstructors.get(className.getName());
+        return yamlConstructor == null ? new Yaml() : new Yaml(yamlConstructor.get());
     }
 
     public <T> T convert(final String dirPath, final Class<T> className, final String configFileName) throws YamlConversionException {
