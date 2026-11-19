@@ -21,7 +21,7 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import mockit.Deencapsulation;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -47,6 +47,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
 import org.springframework.kafka.listener.MessageListenerContainer;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -58,6 +59,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -215,7 +217,7 @@ public class DistributionEngineTest {
 
         // default test
         testSubject = createTestSubject();
-        assertThrows(NullPointerException.class, () -> Deencapsulation.invoke(testSubject, "init"));
+        assertThrows(NullPointerException.class, () -> ReflectionTestUtils.invokeMethod(testSubject, "init"));
     }
 
     @Test
@@ -416,22 +418,23 @@ public class DistributionEngineTest {
 
         // default test
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "isValidParam",
+        result = ReflectionTestUtils.invokeMethod(testSubject, "isValidParam",
                 new Object[]{paramValue, methodName, paramName});
     }
 
     @Test
     void testIsValidParam_1() throws Exception {
         DistributionEngine testSubject;
-        List<String> paramValue = null;
+        List<String> paramValue = Collections.emptyList();
         String methodName = "";
         String paramName = "";
         boolean result;
 
         // default test
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "isValidParam",
-                new Object[]{List.class, methodName, paramName});
+        result = ReflectionTestUtils.invokeMethod(testSubject, "isValidParam",
+                new Object[]{paramValue, methodName, paramName});
+        assertFalse(result);
     }
 
     @Test
@@ -445,8 +448,8 @@ public class DistributionEngineTest {
         // test 1
         testSubject = createTestSubject();
         paramValue = null;
-        result = Deencapsulation.invoke(testSubject, "isValidObject",
-                new Object[]{Object.class, methodName, paramName});
+        result = ReflectionTestUtils.invokeMethod(testSubject, "isValidObject",
+                new Object[]{paramValue, methodName, paramName});
         assertEquals(false, result);
     }
 
@@ -458,13 +461,13 @@ public class DistributionEngineTest {
 
         // default test
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "getEnvironmentErrorDescription",
+        result = ReflectionTestUtils.invokeMethod(testSubject, "getEnvironmentErrorDescription",
                 StorageOperationStatus.DISTR_ENVIRONMENT_NOT_AVAILABLE);
-        result = Deencapsulation.invoke(testSubject, "getEnvironmentErrorDescription",
+        result = ReflectionTestUtils.invokeMethod(testSubject, "getEnvironmentErrorDescription",
                 StorageOperationStatus.DISTR_ENVIRONMENT_NOT_FOUND);
-        result = Deencapsulation.invoke(testSubject, "getEnvironmentErrorDescription",
+        result = ReflectionTestUtils.invokeMethod(testSubject, "getEnvironmentErrorDescription",
                 StorageOperationStatus.DISTR_ENVIRONMENT_SENT_IS_INVALID);
-        result = Deencapsulation.invoke(testSubject, "getEnvironmentErrorDescription",
+        result = ReflectionTestUtils.invokeMethod(testSubject, "getEnvironmentErrorDescription",
                 StorageOperationStatus.ARTIFACT_NOT_FOUND);
     }
 
@@ -516,7 +519,7 @@ public class DistributionEngineTest {
 
         // default test
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "buildTopicName", new Object[]{envName});
+        result = ReflectionTestUtils.invokeMethod(testSubject, "buildTopicName", new Object[]{envName});
     }
 
     @Test

@@ -68,42 +68,4 @@ public class SerializationUtilsTest {
 		assertTrue(serializeResult.isRight());
 		assertFalse(serializeResult.right().value());
 	}
-
-	@Test
-	public void testSerializeExtAndDeserializeExtReturnsCorrectObject() {
-
-		final List<String> list = Collections.singletonList("testList");
-
-		Either<byte[], Boolean> serializeResult = SerializationUtils.serializeExt(list);
-		assertTrue(serializeResult.isLeft());
-		byte[] serializeList = serializeResult .left().value();
-
-		Either<List, Boolean> deserializeResult =
-				SerializationUtils.deserializeExt(serializeList,List.class, "testComponent");
-		assertTrue(deserializeResult.isLeft());
-		List<String> deserializeList = deserializeResult.left().value();
-
-		assertEquals(list, deserializeList);
-	}
-
-	@Test
-	public void testSerializeExtReturnsFalseIfObjectIsNotSerializable() {
-
-		final Configuration configuration = new Configuration();
-
-		Either<byte[], Boolean> serializeResult = SerializationUtils.serializeExt(configuration);
-		assertTrue(serializeResult.isRight());
-		assertFalse(serializeResult.right().value());
-	}
-
-	@Test
-	public void testDeserializeExtReturnsFalseIfObjectIsNotSerializable() {
-
-		String testBytes = "wrongBytesToDeserialize";
-
-		Either<List, Boolean> serializeResult =
-				SerializationUtils.deserializeExt(testBytes.getBytes(),List.class, "testComponent");
-		assertTrue(serializeResult.isRight());
-		assertFalse(serializeResult.right().value());
-	}
 }

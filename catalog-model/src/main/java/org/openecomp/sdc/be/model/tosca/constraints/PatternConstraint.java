@@ -39,7 +39,7 @@ public class PatternConstraint extends AbstractStringPropertyConstraint {
     @Getter
     @EqualsAndHashCode.Include
     private String pattern;
-    private Pattern compiledPattern;
+    private transient Pattern compiledPattern;
 
     public PatternConstraint(String pattern) {
         setPattern(pattern);

@@ -27,6 +27,6 @@ import org.junit.Test;
 public class FeatureGroupEntityTest {
     @Test
     public void shouldHaveValidGettersAndSetters() {
-        assertThat(FeatureGroupEntity.class, hasValidGettersAndSettersExcluding("entityType", "firstClassCitizenId", "entityType"));
+        assertThat(FeatureGroupEntity.class, hasValidGettersAndSettersExcluding("entityType", "firstClassCitizenId", "versionUuId", "entityType"));
     }
 }

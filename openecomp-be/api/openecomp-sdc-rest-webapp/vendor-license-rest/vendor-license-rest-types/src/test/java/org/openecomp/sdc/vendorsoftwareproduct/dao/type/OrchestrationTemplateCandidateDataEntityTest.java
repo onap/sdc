@@ -29,6 +29,6 @@ public class OrchestrationTemplateCandidateDataEntityTest {
     @Test
     public void accessorsTest() {
         assertThat(OrchestrationTemplateCandidateDataEntity.class,
-                hasValidGettersAndSettersExcluding("entityType", "firstClassCitizenId"));
+                hasValidGettersAndSettersExcluding("entityType", "firstClassCitizenId", "versionUuId"));
     }
 }

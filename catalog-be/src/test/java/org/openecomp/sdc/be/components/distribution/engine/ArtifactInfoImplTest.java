@@ -23,7 +23,7 @@ package org.openecomp.sdc.be.components.distribution.engine;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-import mockit.Deencapsulation;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.BeConfDependentTest;
@@ -101,14 +101,14 @@ public class ArtifactInfoImplTest extends BeConfDependentTest {
 
 		// test 1
 		artifactDefinition = null;
-		result = Deencapsulation.invoke(ArtifactInfoImpl.class, "getUpdatedRequiredArtifactsFromNamesToUuids",
-				new Object[] { ArtifactDefinition.class, artifacts.getClass() });
+		result = ReflectionTestUtils.invokeMethod(ArtifactInfoImpl.class, "getUpdatedRequiredArtifactsFromNamesToUuids",
+				new Object[] { null, null });
 		Assert.assertEquals(null, result);
 
 		// test 2
 		artifactDefinition = new ArtifactDefinition();
-		result = Deencapsulation.invoke(ArtifactInfoImpl.class, "getUpdatedRequiredArtifactsFromNamesToUuids",
-				new Object[] { ArtifactDefinition.class, artifacts.getClass() });
+		result = ReflectionTestUtils.invokeMethod(ArtifactInfoImpl.class, "getUpdatedRequiredArtifactsFromNamesToUuids",
+				new Object[] { null, null });
 		Assert.assertEquals(null, result);
 	}
 

@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import mockit.Deencapsulation;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.junit.Test;
 
 import java.lang.Thread.UncaughtExceptionHandler;
@@ -65,7 +65,7 @@ public class ExecutorFactoryTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "createThreadFactory",
+		result = ReflectionTestUtils.invokeMethod(testSubject, "createThreadFactory",
 				 name, new UncaughtExceptionHandlerMock());
 	}
 	

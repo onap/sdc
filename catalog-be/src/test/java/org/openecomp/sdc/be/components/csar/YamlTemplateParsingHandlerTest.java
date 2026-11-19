@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.be.components.csar;
 
-import mockit.Deencapsulation;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.util.Lists;
@@ -229,7 +229,7 @@ public class YamlTemplateParsingHandlerTest {
         nodeMap.put("name", "test_name");
         nodeMap.put("type", "test_type");
         nodeTemplateJsonMap.put(ARTIFACTS.getElementName(), nodeMap);
-        Deencapsulation.invoke(testSubject, "setArtifacts", nodeTemplateInfo, nodeTemplateJsonMap);
+        ReflectionTestUtils.invokeMethod(testSubject, "setArtifacts", nodeTemplateInfo, nodeTemplateJsonMap);
         assertNotNull(nodeTemplateInfo.getArtifacts());
     }
 
@@ -243,7 +243,7 @@ public class YamlTemplateParsingHandlerTest {
         map0.put("test_art", map1);
         nodeTemplateJsonMap.put(ARTIFACTS.getElementName(), map0);
         Map<String, Map<String, UploadArtifactInfo>> result;
-        result = Deencapsulation.invoke(testSubject, "createArtifactsModuleFromYaml", nodeTemplateJsonMap);
+        result = ReflectionTestUtils.invokeMethod(testSubject, "createArtifactsModuleFromYaml", nodeTemplateJsonMap);
         assertTrue(MapUtils.isNotEmpty(result));
         assertTrue(MapUtils.isNotEmpty(result.get(ARTIFACTS.getElementName())));
         assertEquals("test_file", result.get(ARTIFACTS.getElementName()).get("test_art").getFile());
@@ -256,7 +256,7 @@ public class YamlTemplateParsingHandlerTest {
         Map<String, String> map1 = new HashMap<>();
         map1.put("file", "test_file");
         map1.put("type", "test_type");
-        Deencapsulation.invoke(testSubject, "addModuleNodeTemplateArtifacts", result, map1, "test_art");
+        ReflectionTestUtils.invokeMethod(testSubject, "addModuleNodeTemplateArtifacts", result, map1, "test_art");
         assertTrue(MapUtils.isNotEmpty(result));
         assertTrue(MapUtils.isNotEmpty(result.get(ARTIFACTS.getElementName())));
         assertEquals("test_file", result.get(ARTIFACTS.getElementName()).get("test_art").getFile());
@@ -269,7 +269,7 @@ public class YamlTemplateParsingHandlerTest {
         map1.put("file", "test_file");
         map1.put("type", "test_type");
         UploadArtifactInfo result;
-        result = Deencapsulation.invoke(testSubject, "buildModuleNodeTemplateArtifact", map1);
+        result = ReflectionTestUtils.invokeMethod(testSubject, "buildModuleNodeTemplateArtifact", map1);
         assertNotNull(result);
         assertEquals("test_file", result.getFile());
         assertEquals("test_type", result.getType());
@@ -281,7 +281,7 @@ public class YamlTemplateParsingHandlerTest {
         map1.put("file", "test_file");
         map1.put("type", "test_type");
         UploadArtifactInfo result = new UploadArtifactInfo();
-        Deencapsulation.invoke(testSubject, "fillArtifact", result, map1);
+        ReflectionTestUtils.invokeMethod(testSubject, "fillArtifact", result, map1);
         assertNotNull(result);
         assertEquals("test_file", result.getFile());
         assertEquals("test_type", result.getType());

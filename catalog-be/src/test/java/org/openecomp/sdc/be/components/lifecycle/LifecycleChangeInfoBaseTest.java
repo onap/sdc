@@ -22,7 +22,7 @@ package org.openecomp.sdc.be.components.lifecycle;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import mockit.Deencapsulation;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.junit.Test;
 
 public class LifecycleChangeInfoBaseTest {
@@ -39,7 +39,7 @@ public class LifecycleChangeInfoBaseTest {
 
 		// default test
 		testSubject = createTestSubject();
-		Deencapsulation.setField(testSubject, "userRemarks", remarks);
+		ReflectionTestUtils.setField(testSubject, "userRemarks", remarks);
 		result = testSubject.getUserRemarks();
 		assertThat(result).isNotEmpty();
 		assertThat(result).isEqualTo(remarks);
@@ -53,6 +53,6 @@ public class LifecycleChangeInfoBaseTest {
 		// default test
 		testSubject = createTestSubject();
 		testSubject.setUserRemarks(userRemarks);
-		assertThat((String)Deencapsulation.getField(testSubject, "userRemarks")).isEqualTo(userRemarks);
+		assertThat((String)ReflectionTestUtils.getField(testSubject, "userRemarks")).isEqualTo(userRemarks);
 	}
 }

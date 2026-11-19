@@ -52,7 +52,6 @@ public class UserValidationsTest {
 	
 	@BeforeEach
 	public void setUp() {
-		//TestUtilsSdc.setFinalStatic(UserValidations.class, "log", LoggerFactory.getLogger(UserValidations.class));
 		MockitoAnnotations.openMocks(this);
 		new ConfigurationManager(new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be"));
 	}

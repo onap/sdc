@@ -559,20 +559,6 @@
       <version>${apache-poi.version}</version>
     </dependency>
 
-    <!-- Temporary, till building the populate task which adding all components
-      to cache. We will use Serialization Utils. -->
-    <dependency>
-      <groupId>de.ruedigermoeller</groupId>
-      <artifactId>fst</artifactId>
-      <version>2.47</version>
-      <exclusions>
-        <exclusion>
-          <groupId>com.fasterxml.jackson.core</groupId>
-          <artifactId>jackson-core</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
     <!-- testing -->
     <dependency>
       <groupId>org.hamcrest</groupId>

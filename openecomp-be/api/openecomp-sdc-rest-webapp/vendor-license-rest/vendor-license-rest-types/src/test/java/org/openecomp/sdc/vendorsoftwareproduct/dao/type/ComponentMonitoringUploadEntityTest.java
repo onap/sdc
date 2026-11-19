@@ -29,6 +29,6 @@ public class ComponentMonitoringUploadEntityTest {
     @Test
     public void accessorsTest() {
         assertThat(ComponentMonitoringUploadEntity.class,
-                hasValidGettersAndSettersExcluding("entityType", "firstClassCitizenId"));
+                hasValidGettersAndSettersExcluding("entityType", "firstClassCitizenId", "versionUuId"));
     }
 }

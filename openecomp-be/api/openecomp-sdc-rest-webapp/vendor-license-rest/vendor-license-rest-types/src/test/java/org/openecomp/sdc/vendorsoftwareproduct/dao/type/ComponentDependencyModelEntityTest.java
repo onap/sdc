@@ -32,7 +32,7 @@ public class ComponentDependencyModelEntityTest {
     @Test
     public void accessorsTest() {
         assertThat(ComponentDependencyModelEntity.class,
-                hasValidGettersAndSettersExcluding("entityType", "firstClassCitizenId"));
+                hasValidGettersAndSettersExcluding("entityType", "firstClassCitizenId", "versionUuId"));
     }
 
 

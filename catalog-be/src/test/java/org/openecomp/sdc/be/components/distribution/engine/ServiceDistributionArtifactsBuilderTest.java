@@ -21,7 +21,7 @@
 package org.openecomp.sdc.be.components.distribution.engine;
 
 import fj.data.Either;
-import mockit.Deencapsulation;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -93,7 +93,7 @@ public class ServiceDistributionArtifactsBuilderTest extends BeConfDependentTest
 
 		// default test
 		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "resolveWorkloadContext", new Object[] { workloadContext });
+		result = ReflectionTestUtils.invokeMethod(testSubject, "resolveWorkloadContext", new Object[] { workloadContext });
 	}
 
 	@Test
@@ -188,9 +188,9 @@ public class ServiceDistributionArtifactsBuilderTest extends BeConfDependentTest
 
 		// default test
 		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "convertServiceArtifactsToArtifactInfo", service);
+		result = ReflectionTestUtils.invokeMethod(testSubject, "convertServiceArtifactsToArtifactInfo", service);
 		service.setToscaArtifacts(toscaArtifacts);
-		result = Deencapsulation.invoke(testSubject, "convertServiceArtifactsToArtifactInfo", service);
+		result = ReflectionTestUtils.invokeMethod(testSubject, "convertServiceArtifactsToArtifactInfo", service);
 	}
 	
 	@Test(expected=NullPointerException.class)
@@ -202,11 +202,11 @@ public class ServiceDistributionArtifactsBuilderTest extends BeConfDependentTest
 
 		// default test
 		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "convertRIsToJsonContanier", service);
+		result = ReflectionTestUtils.invokeMethod(testSubject, "convertRIsToJsonContanier", service);
 		
 		resourceInstances.add(new ComponentInstance());
 		service.setComponentInstances(resourceInstances);
-		result = Deencapsulation.invoke(testSubject, "convertRIsToJsonContanier", service);
+		result = ReflectionTestUtils.invokeMethod(testSubject, "convertRIsToJsonContanier", service);
 	}
 
 	@Test
@@ -218,7 +218,7 @@ public class ServiceDistributionArtifactsBuilderTest extends BeConfDependentTest
 
 		// default test
 		testSubject = createTestSubject();
-		Deencapsulation.invoke(testSubject, "fillJsonContainer", jsonContainer, resource);
+		ReflectionTestUtils.invokeMethod(testSubject, "fillJsonContainer", jsonContainer, resource);
 	}
 
 	@Test
@@ -230,7 +230,7 @@ public class ServiceDistributionArtifactsBuilderTest extends BeConfDependentTest
 
 		// default test
 		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "convertToArtifactsInfoImpl", service, resourceInstance);
+		result = ReflectionTestUtils.invokeMethod(testSubject, "convertToArtifactsInfoImpl", service, resourceInstance);
 	}
 
 	@Test
@@ -242,8 +242,8 @@ public class ServiceDistributionArtifactsBuilderTest extends BeConfDependentTest
 		// test 1
 		testSubject = createTestSubject();
 		categories = null;
-		Deencapsulation.invoke(testSubject, "setCategories",
-				new Object[] { JsonContainerResourceInstance.class, List.class });
+		ReflectionTestUtils.invokeMethod(testSubject, "setCategories",
+				new Object[] { null, null });
 	}
 
 	@Test
@@ -256,9 +256,9 @@ public class ServiceDistributionArtifactsBuilderTest extends BeConfDependentTest
 
 		// default test
 		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "getArtifactsWithPayload", resourceInstance);
+		result = ReflectionTestUtils.invokeMethod(testSubject, "getArtifactsWithPayload", resourceInstance);
 		deploymentArtifacts.put("mock", new ArtifactDefinition());
-		result = Deencapsulation.invoke(testSubject, "getArtifactsWithPayload", resourceInstance);
+		result = ReflectionTestUtils.invokeMethod(testSubject, "getArtifactsWithPayload", resourceInstance);
 	}
 
 	@Test
@@ -314,7 +314,7 @@ public class ServiceDistributionArtifactsBuilderTest extends BeConfDependentTest
 
 		// default test
 		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "isContainsPayload", new Object[] { Map.class });
+		result = ReflectionTestUtils.invokeMethod(testSubject, "isContainsPayload", new Object[] { null });
 	}
 
 	private class INotificationDataMock implements INotificationData {
