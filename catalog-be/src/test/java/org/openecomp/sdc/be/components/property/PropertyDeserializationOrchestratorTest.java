@@ -21,7 +21,7 @@
 package org.openecomp.sdc.be.components.property;
 
 import fj.data.Either;
-import mockit.Deencapsulation;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -96,7 +96,7 @@ public class PropertyDeserializationOrchestratorTest {
 		PropertyDeclarator result;
 
 		// default test
-		result = Deencapsulation.invoke(testSubject, "getPropertyDeclarator", componentInstInputsMap);
+		result = ReflectionTestUtils.invokeMethod(testSubject, "getPropertyDeclarator", componentInstInputsMap);
 	}
 
 	@Test
@@ -109,7 +109,7 @@ public class PropertyDeserializationOrchestratorTest {
 		PropertyDeclarator result;
 
 		// default test
-		result = Deencapsulation.invoke(testSubject, "getPropertyDeclarator", componentInstInputsMap);
+		result = ReflectionTestUtils.invokeMethod(testSubject, "getPropertyDeclarator", componentInstInputsMap);
 	}
 
 	@Test
@@ -122,7 +122,7 @@ public class PropertyDeserializationOrchestratorTest {
 		PropertyDeclarator result;
 
 		// default test
-		result = Deencapsulation.invoke(testSubject, "getPropertyDeclarator", componentInstInputsMap);
+		result = ReflectionTestUtils.invokeMethod(testSubject, "getPropertyDeclarator", componentInstInputsMap);
 	}
 
 	@Test
@@ -135,6 +135,6 @@ public class PropertyDeserializationOrchestratorTest {
 		PropertyDeclarator result;
 
 		// default test
-		result = Deencapsulation.invoke(testSubject, "getPropertyDeclarator", componentInstInputsMap);
+		result = ReflectionTestUtils.invokeMethod(testSubject, "getPropertyDeclarator", componentInstInputsMap);
 	}
 }

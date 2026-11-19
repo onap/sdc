@@ -21,7 +21,7 @@
 package org.openecomp.sdc.be.components.property;
 
 import fj.data.Either;
-import mockit.Deencapsulation;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -65,7 +65,7 @@ public class ComponentInstanceInputPropertyDeceleratorTest {
 		ComponentInstanceInput result;
 
 		// default test
-		result = Deencapsulation.invoke(testSubject, "createDeclaredProperty", prop);
+		result = ReflectionTestUtils.invokeMethod(testSubject, "createDeclaredProperty", prop);
 	}
 
 	@Test
@@ -82,7 +82,7 @@ public class ComponentInstanceInputPropertyDeceleratorTest {
 				Mockito.any(Map.class))).thenReturn(Either.left(new Resource()));
 
 		// default test
-		result = Deencapsulation.invoke(testSubject, "updatePropertiesValues", component, cmptInstanceId, properties);
+		result = ReflectionTestUtils.invokeMethod(testSubject, "updatePropertiesValues", component, cmptInstanceId, properties);
 	}
 
 	@Test
@@ -92,7 +92,7 @@ public class ComponentInstanceInputPropertyDeceleratorTest {
 		Optional<ComponentInstance> result;
 
 		// default test
-		result = Deencapsulation.invoke(testSubject, "resolvePropertiesOwner", component, propertiesOwnerId);
+		result = ReflectionTestUtils.invokeMethod(testSubject, "resolvePropertiesOwner", component, propertiesOwnerId);
 	}
 
 	@Test
@@ -102,7 +102,7 @@ public class ComponentInstanceInputPropertyDeceleratorTest {
 		InputDefinition input = null;
 
 		// default test
-		Deencapsulation.invoke(testSubject, "addPropertiesListToInput", new ComponentInstanceInput(),
+		ReflectionTestUtils.invokeMethod(testSubject, "addPropertiesListToInput", new ComponentInstanceInput(),
 				new InputDefinition());
 	}
 

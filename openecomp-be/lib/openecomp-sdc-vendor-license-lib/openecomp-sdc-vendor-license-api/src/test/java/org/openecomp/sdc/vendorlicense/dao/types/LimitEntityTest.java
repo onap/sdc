@@ -27,6 +27,6 @@ import org.junit.Test;
 public class LimitEntityTest {
     @Test
     public void shouldHaveValidGettersAndSetters() {
-        assertThat(LimitEntity.class, hasValidGettersAndSettersExcluding("entityType", "firstClassCitizenId"));
+        assertThat(LimitEntity.class, hasValidGettersAndSettersExcluding("entityType", "firstClassCitizenId", "versionUuId"));
     }
 }

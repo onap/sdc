@@ -14,7 +14,7 @@
 package org.openecomp.sdc.be.components.property;
 
 import fj.data.Either;
-import mockit.Deencapsulation;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Answers;
@@ -161,7 +161,7 @@ public class PropertyDeclarationOrchestratorTest {
 		String result;
 
 		// default test
-		result = Deencapsulation.invoke(testSubject, "getPropOwnerId", componentInstInputsMap);
+		result = ReflectionTestUtils.invokeMethod(testSubject, "getPropOwnerId", componentInstInputsMap);
 	}
 
 	@Test(expected = IllegalStateException.class)
@@ -170,7 +170,7 @@ public class PropertyDeclarationOrchestratorTest {
 		PropertyDeclarator result;
 
 		// default test
-		result = Deencapsulation.invoke(testSubject, "getPropertyDeclarator", componentInstInputsMap);
+		result = ReflectionTestUtils.invokeMethod(testSubject, "getPropertyDeclarator", componentInstInputsMap);
 	}
 
 	@Test
@@ -181,7 +181,7 @@ public class PropertyDeclarationOrchestratorTest {
 		PropertyDeclarator result;
 
 		// default test
-		result = Deencapsulation.invoke(testSubject, "getPropertyDeclarator", componentInstInputsMap);
+		result = ReflectionTestUtils.invokeMethod(testSubject, "getPropertyDeclarator", componentInstInputsMap);
 
 		assertTrue(result instanceof ComponentInstanceInputPropertyDeclarator);
 	}
@@ -196,7 +196,7 @@ public class PropertyDeclarationOrchestratorTest {
 		PropertyDeclarator result;
 
 		// default test
-		result = Deencapsulation.invoke(testSubject, "getPropertyDeclarator", componentInstInputsMap);
+		result = ReflectionTestUtils.invokeMethod(testSubject, "getPropertyDeclarator", componentInstInputsMap);
 
 		assertTrue(result instanceof ComponentInstancePropertyDeclarator);
 	}
@@ -209,7 +209,7 @@ public class PropertyDeclarationOrchestratorTest {
 		PropertyDeclarator result;
 
 		// default test
-		result = Deencapsulation.invoke(testSubject, "getPropertyDeclarator", componentInstInputsMap);
+		result = ReflectionTestUtils.invokeMethod(testSubject, "getPropertyDeclarator", componentInstInputsMap);
 
 		assertTrue(result instanceof PolicyPropertyDeclarator);
 	}

@@ -22,7 +22,7 @@ package org.openecomp.sdc.be.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import mockit.Deencapsulation;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.javatuples.Pair;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
@@ -79,7 +79,7 @@ public class ForwardingPathUtilsTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "createWrapper", cpOption);
+		result = ReflectionTestUtils.invokeMethod(testSubject, "createWrapper", cpOption);
 		assertThat(result).isInstanceOf(NameIdPairWrapper.class);
 		assertThat(result.getId()).isEqualTo(cpOption.getId());
 	}
@@ -109,7 +109,7 @@ public class ForwardingPathUtilsTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "findForwardingPathToDeleteOnCIDeletion", containerService,
+		result = ReflectionTestUtils.invokeMethod(testSubject, "findForwardingPathToDeleteOnCIDeletion", containerService,
 				componentInstanceId);
 		assertThat(result).isInstanceOf(Map.class);
 	}
@@ -124,7 +124,7 @@ public class ForwardingPathUtilsTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "elementContainsCI", elementDataDefinitions, componentInstanceId);
+		result = ReflectionTestUtils.invokeMethod(testSubject, "elementContainsCI", elementDataDefinitions, componentInstanceId);
 		assertThat(result).isTrue();
 	}
 
@@ -172,7 +172,7 @@ public class ForwardingPathUtilsTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "updateCI", inFP, oldCI, newCI);
+		result = ReflectionTestUtils.invokeMethod(testSubject, "updateCI", inFP, oldCI, newCI);
 		assertThat(result)
 				.isInstanceOf(ForwardingPathDataDefinition.class)
 				.isNotSameAs(inFP);
@@ -191,7 +191,7 @@ public class ForwardingPathUtilsTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "updateElement", element, oldCI, newCI);
+		result = ReflectionTestUtils.invokeMethod(testSubject, "updateElement", element, oldCI, newCI);
 		assertThat(result)
 				.isInstanceOf(ForwardingPathElementDataDefinition.class)
 				.isNotSameAs(element);
@@ -210,7 +210,7 @@ public class ForwardingPathUtilsTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "elementContainsCIAndForwarder", elementDataDefinitions, oldCIId,
+		result = ReflectionTestUtils.invokeMethod(testSubject, "elementContainsCIAndForwarder", elementDataDefinitions, oldCIId,
 				newCI);
 		assertThat(result).isFalse();
 	}
@@ -224,9 +224,9 @@ public class ForwardingPathUtilsTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "ciContainsForwarder", newCI, capabilityID);
+		result = ReflectionTestUtils.invokeMethod(testSubject, "ciContainsForwarder", newCI, capabilityID);
 		newCI.setCapabilities(new HashMap<>());
-		result = Deencapsulation.invoke(testSubject, "ciContainsForwarder", newCI, capabilityID);
+		result = ReflectionTestUtils.invokeMethod(testSubject, "ciContainsForwarder", newCI, capabilityID);
 		assertThat(result).isFalse();
 	}
 
@@ -242,7 +242,7 @@ public class ForwardingPathUtilsTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "elementContainsCIAndDoesNotContainForwarder",
+		result = ReflectionTestUtils.invokeMethod(testSubject, "elementContainsCIAndDoesNotContainForwarder",
 				forwardingPathDataDefinition, oldCIId, newCI);
 		assertThat(result).isFalse();
 	}
@@ -260,7 +260,7 @@ public class ForwardingPathUtilsTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "elementContainsCIAndDoesNotContainForwarder",
+		result = ReflectionTestUtils.invokeMethod(testSubject, "elementContainsCIAndDoesNotContainForwarder",
 				elementDataDefinitions, oldCIId, newCI);
 		assertThat(result).isFalse();
 	}

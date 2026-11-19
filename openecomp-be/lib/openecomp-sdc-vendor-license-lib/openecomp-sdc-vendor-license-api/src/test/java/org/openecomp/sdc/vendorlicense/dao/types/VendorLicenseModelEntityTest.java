@@ -27,6 +27,6 @@ import org.junit.Test;
 public class VendorLicenseModelEntityTest {
     @Test
     public void shouldHaveValidGettersAndSetters() {
-        assertThat(VendorLicenseModelEntity.class, hasValidGettersAndSettersExcluding("entityType", "firstClassCitizenId"));
+        assertThat(VendorLicenseModelEntity.class, hasValidGettersAndSettersExcluding("entityType", "firstClassCitizenId", "versionUuId"));
     }
 }

@@ -20,8 +20,11 @@
 
 package org.openecomp.sdc.securityutil;
 
+import javax.crypto.AEADBadTagException;
+import javax.crypto.ShortBufferException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -67,7 +70,8 @@ public class CipherUtilTest {
             CipherUtil.decryptPKC(DATA, KEY);
           fail();
        } catch (CipherUtilException ex) {
-          assertTrue(ex.getMessage().contains("Input too short"));
+          assertTrue(ExceptionUtils.indexOfType(ex, AEADBadTagException.class) >= 0
+              || ExceptionUtils.indexOfType(ex, ShortBufferException.class) >= 0);
         }
     }
 }

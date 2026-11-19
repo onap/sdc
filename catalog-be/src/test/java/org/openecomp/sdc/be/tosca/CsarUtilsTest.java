@@ -49,7 +49,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-import mockit.Deencapsulation;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -250,7 +250,7 @@ class CsarUtilsTest extends BaseConfDependent {
             .thenReturn(Either.right(ToscaError.GENERAL_ERROR));
 
         try (ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out);) {
-            Deencapsulation.invoke(commonCsarGenerator, "generateCsarZip", component, getFromCS, zip, true, true, "Definitions/", true, false);
+            ReflectionTestUtils.invokeMethod(commonCsarGenerator, "generateCsarZip", component, getFromCS, zip, true, true, "Definitions/", true, false);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -282,7 +282,7 @@ class CsarUtilsTest extends BaseConfDependent {
             .thenReturn(Either.right(ToscaError.GENERAL_ERROR));
 
         try (ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out);) {
-            Deencapsulation.invoke(commonCsarGenerator, "generateCsarZip", component, getFromCS, zip, true, true, "Definitions/", true, false);
+            ReflectionTestUtils.invokeMethod(commonCsarGenerator, "generateCsarZip", component, getFromCS, zip, true, true, "Definitions/", true, false);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -353,7 +353,7 @@ class CsarUtilsTest extends BaseConfDependent {
             .thenReturn(Either.left(Mockito.any(ArtifactDefinition.class)));
 
         try (ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out);) {
-            Deencapsulation.invoke(commonCsarGenerator, "generateCsarZip", component, getFromCS, zip, true, true, "/Definitions", true, false);
+            ReflectionTestUtils.invokeMethod(commonCsarGenerator, "generateCsarZip", component, getFromCS, zip, true, true, "/Definitions", true, false);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -402,7 +402,7 @@ class CsarUtilsTest extends BaseConfDependent {
             .thenReturn(Either.left(toscaTemplate));
 
         try (ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out);) {
-            Deencapsulation.invoke(commonCsarGenerator, "generateCsarZip", component, getFromCS, zip, true, true, "Definitions/", true, false);
+            ReflectionTestUtils.invokeMethod(commonCsarGenerator, "generateCsarZip", component, getFromCS, zip, true, true, "Definitions/", true, false);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -452,7 +452,7 @@ class CsarUtilsTest extends BaseConfDependent {
             .thenReturn(Either.left(toscaTemplate));
 
         try (ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out);) {
-            Deencapsulation.invoke(commonCsarGenerator, "generateCsarZip", component, getFromCS, zip, true, true, "Definitions/", true, false);
+            ReflectionTestUtils.invokeMethod(commonCsarGenerator, "generateCsarZip", component, getFromCS, zip, true, true, "Definitions/", true, false);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -505,7 +505,7 @@ class CsarUtilsTest extends BaseConfDependent {
             .thenReturn(Either.right(CassandraOperationStatus.GENERAL_ERROR));
 
         try (ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out);) {
-            Deencapsulation.invoke(commonCsarGenerator, "generateCsarZip", component, getFromCS, zip, true, "toscaMetaFileName", true, "Definitions/",
+            ReflectionTestUtils.invokeMethod(commonCsarGenerator, "generateCsarZip", component, getFromCS, zip, true, "toscaMetaFileName", true, "Definitions/",
                 true, false);
         } catch (Exception e) {
             e.printStackTrace();
@@ -539,7 +539,7 @@ class CsarUtilsTest extends BaseConfDependent {
         Mockito.when(toscaOperationFacade.getToscaElement(Mockito.any(String.class)))
             .thenReturn(Either.left(componentRI));
 
-        Deencapsulation.invoke(commonCsarGenerator, "addInnerComponentsToCache", componentCache, childComponent);
+        ReflectionTestUtils.invokeMethod(commonCsarGenerator, "addInnerComponentsToCache", componentCache, childComponent);
 
         io.vavr.collection.List<CacheEntry> expected = io.vavr.collection.List.of(entry("esId", "artifactName", componentRI));
         assertEquals(expected, componentCache.all().toList());
@@ -588,7 +588,7 @@ class CsarUtilsTest extends BaseConfDependent {
 
 
         try (ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out)) {
-            List<Triple<String, String, Component>> output = Deencapsulation.invoke(commonCsarGenerator, "writeComponentInterface", new Resource(),
+            List<Triple<String, String, Component>> output = ReflectionTestUtils.invokeMethod(commonCsarGenerator, "writeComponentInterface", new Resource(),
                 zip, fileName, "Definitions/");
             assertNotNull(output);
         }
@@ -602,7 +602,7 @@ class CsarUtilsTest extends BaseConfDependent {
         Mockito.when(artifactCassandraDao.getArtifact(Mockito.any(String.class)))
             .thenReturn(Either.right(CassandraOperationStatus.GENERAL_ERROR));
 
-        Either<byte[], ActionStatus> output = Deencapsulation.invoke(commonCsarGenerator, "getEntryData", cassandraId, childComponent);
+        Either<byte[], ActionStatus> output = ReflectionTestUtils.invokeMethod(commonCsarGenerator, "getEntryData", cassandraId, childComponent);
 
         assertNotNull(output);
         assertTrue(output.isRight());
@@ -616,7 +616,7 @@ class CsarUtilsTest extends BaseConfDependent {
                 sdcSchemaFilesCassandraDao.getSpecificSchemaFiles(Mockito.any(String.class), Mockito.any(String.class)))
             .thenReturn(Either.left(filesData));
 
-        Either<byte[], ResponseFormat> output = Deencapsulation.invoke(commonCsarGenerator, "getLatestSchemaFilesFromCassandra");
+        Either<byte[], ResponseFormat> output = ReflectionTestUtils.invokeMethod(commonCsarGenerator, "getLatestSchemaFilesFromCassandra");
 
         assertNotNull(output);
         assertTrue(output.isRight());
@@ -644,7 +644,7 @@ class CsarUtilsTest extends BaseConfDependent {
         Map<String, List<ArtifactDefinition>> artifacts = new HashMap<>();
         artifacts.put("key", new ArrayList<>());
 
-        Deencapsulation.invoke(testSubject, "addExtractedVfcArtifact", extractedVfcArtifact, artifacts);
+        ReflectionTestUtils.invokeMethod(testSubject, "addExtractedVfcArtifact", extractedVfcArtifact, artifacts);
 
         assertEquals(1, artifacts.get("key").size());
     }
@@ -656,7 +656,7 @@ class CsarUtilsTest extends BaseConfDependent {
         Map<String, List<ArtifactDefinition>> artifacts = new HashMap<>();
         artifacts.put("key1", new ArrayList<>());
 
-        Deencapsulation.invoke(testSubject, "addExtractedVfcArtifact", extractedVfcArtifact, artifacts);
+        ReflectionTestUtils.invokeMethod(testSubject, "addExtractedVfcArtifact", extractedVfcArtifact, artifacts);
 
         assertEquals(0, artifacts.get("key1").size());
         assertEquals(1, artifacts.get("key").size());
@@ -671,7 +671,7 @@ class CsarUtilsTest extends BaseConfDependent {
         Entry<String, byte[]> entry = map.entrySet().iterator().next();
 
         Optional<ImmutablePair<String, ArtifactDefinition>> output =
-            Deencapsulation.invoke(testSubject, "extractVfcArtifact", entry, new HashMap<>());
+            ReflectionTestUtils.invokeMethod(testSubject, "extractVfcArtifact", entry, new HashMap<>());
 
         if (output.isPresent()) {
             assertEquals("to", output.get().left);
@@ -682,7 +682,7 @@ class CsarUtilsTest extends BaseConfDependent {
 
     @Test
     void testDetectArtifactGroupTypeWithExceptionBeingCaught() {
-        Either<ArtifactGroupTypeEnum, Boolean> output = Deencapsulation.invoke(testSubject, "detectArtifactGroupType", "type", Map.class);
+        Either<ArtifactGroupTypeEnum, Boolean> output = ReflectionTestUtils.invokeMethod(testSubject, "detectArtifactGroupType", "type", null);
 
         assertNotNull(output);
         assertTrue(output.isRight());
@@ -695,7 +695,7 @@ class CsarUtilsTest extends BaseConfDependent {
 
         collectedWarningMessages.put("Warning - unrecognized artifact group type {} was received.", new HashSet<>());
         Either<ArtifactGroupTypeEnum, Boolean> output =
-            Deencapsulation.invoke(testSubject, "detectArtifactGroupType", "type", collectedWarningMessages);
+            ReflectionTestUtils.invokeMethod(testSubject, "detectArtifactGroupType", "type", collectedWarningMessages);
 
         assertNotNull(output);
         assertTrue(output.isRight());
@@ -733,7 +733,7 @@ class CsarUtilsTest extends BaseConfDependent {
         Mockito.when(toscaOperationFacade.getToscaElement(Mockito.any(String.class))).thenReturn(Either.left(component),
             Either.right(StorageOperationStatus.BAD_REQUEST));
 
-        Either<Object, ResponseFormat> output = Deencapsulation.invoke(testSubject, "collectComponentCsarDefinition", component);
+        Either<Object, ResponseFormat> output = ReflectionTestUtils.invokeMethod(testSubject, "collectComponentCsarDefinition", component);
 
         assertNotNull(output);
         assertTrue(output.isRight());
@@ -771,7 +771,7 @@ class CsarUtilsTest extends BaseConfDependent {
         Mockito.when(toscaOperationFacade.getToscaElement(Mockito.any(String.class))).thenReturn(Either.left(component),
             Either.left(fetchedComponent), Either.right(StorageOperationStatus.BAD_REQUEST));
 
-        Either<Object, ResponseFormat> output = Deencapsulation.invoke(testSubject, "collectComponentCsarDefinition", component);
+        Either<Object, ResponseFormat> output = ReflectionTestUtils.invokeMethod(testSubject, "collectComponentCsarDefinition", component);
 
         assertNotNull(output);
         assertTrue(output.isRight());
@@ -811,7 +811,7 @@ class CsarUtilsTest extends BaseConfDependent {
         Mockito.when(toscaOperationFacade.getToscaElement(Mockito.any(String.class))).thenReturn(Either.left(component),
             Either.left(fetchedComponent));
 
-        Either<Object, ResponseFormat> output = Deencapsulation.invoke(testSubject, "collectComponentCsarDefinition", component);
+        Either<Object, ResponseFormat> output = ReflectionTestUtils.invokeMethod(testSubject, "collectComponentCsarDefinition", component);
 
         assertNotNull(output);
         assertTrue(output.isLeft());
@@ -867,7 +867,7 @@ class CsarUtilsTest extends BaseConfDependent {
         final Path path = Paths.get(rootPath + "/src/test/resources/sdc.zip");
         final byte[] data = Files.readAllBytes(path);
         try (final ByteArrayOutputStream out = new ByteArrayOutputStream(); final ZipOutputStream zip = new ZipOutputStream(out)) {
-            Deencapsulation.invoke(commonCsarGenerator, "addSchemaFilesFromCassandra", zip, data, nodesFromPackage, "Definitions/");
+            ReflectionTestUtils.invokeMethod(commonCsarGenerator, "addSchemaFilesFromCassandra", zip, data, nodesFromPackage, "Definitions/");
             final IOException actualException = assertThrows(IOException.class, () -> zip.putNextEntry(new ZipEntry("Definitions/nodes.yml")));
             assertEquals("duplicate entry: Definitions/nodes.yml", actualException.getMessage());
         }
@@ -882,7 +882,7 @@ class CsarUtilsTest extends BaseConfDependent {
         final Triple<String, String, Component> triple = Triple.of("fileName", "cassandraId", component);
         dependencies.add(triple);
         final List<String> expectedResult = Arrays.asList("tosca.nodes.Container.Application");
-        final List<String> result = Deencapsulation.invoke(commonCsarGenerator,
+        final List<String> result = ReflectionTestUtils.invokeMethod(commonCsarGenerator,
             "findNonRootNodesFromPackage", dependencies);
         assertTrue(CollectionUtils.isNotEmpty(result));
         assertEquals(expectedResult, result);

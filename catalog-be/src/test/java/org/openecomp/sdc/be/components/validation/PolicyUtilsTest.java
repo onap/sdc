@@ -18,7 +18,7 @@
 package org.openecomp.sdc.be.components.validation;
 
 import fj.data.Either;
-import mockit.Deencapsulation;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.BeConfDependentTest;
 import org.openecomp.sdc.be.components.utils.ComponentInstancePropertyBuilder;
@@ -146,7 +146,7 @@ public class PolicyUtilsTest extends BeConfDependentTest{
 		int result;
 
 		// default test
-		result = Deencapsulation.invoke(PolicyUtils.class, "extractNextPolicyCounterFromUniqueId",
+		result = ReflectionTestUtils.invokeMethod(PolicyUtils.class, "extractNextPolicyCounterFromUniqueId",
 				new Object[] { uniqueId });
 	}
 
@@ -156,7 +156,7 @@ public class PolicyUtilsTest extends BeConfDependentTest{
 		int result;
 
 		// default test
-		result = Deencapsulation.invoke(PolicyUtils.class, "extractNextPolicyCounterFromName",
+		result = ReflectionTestUtils.invokeMethod(PolicyUtils.class, "extractNextPolicyCounterFromName",
 				new Object[] { policyName });
 	}
 
@@ -167,7 +167,7 @@ public class PolicyUtilsTest extends BeConfDependentTest{
 		int result;
 
 		// default test
-		result = Deencapsulation.invoke(PolicyUtils.class, "extractNextPolicyCounter",
+		result = ReflectionTestUtils.invokeMethod(PolicyUtils.class, "extractNextPolicyCounter",
 				new Object[] { policyName, endIndex });
 	}
 
@@ -177,7 +177,7 @@ public class PolicyUtilsTest extends BeConfDependentTest{
 		PolicyDefinition validPolicy = new PolicyDefinition();
 
 		// default test
-		Deencapsulation.invoke(PolicyUtils.class, "validateImmutablePolicyFields",
+		ReflectionTestUtils.invokeMethod(PolicyUtils.class, "validateImmutablePolicyFields",
 				receivedPolicy, validPolicy);
 	}
 
@@ -188,7 +188,7 @@ public class PolicyUtilsTest extends BeConfDependentTest{
 		boolean result;
 
 		// default test
-		result = Deencapsulation.invoke(PolicyUtils.class, "isUpdatedField", new Object[] { oldField, newField });
+		result = ReflectionTestUtils.invokeMethod(PolicyUtils.class, "isUpdatedField", new Object[] { oldField, newField });
 	}
 
 	@Test
@@ -198,8 +198,8 @@ public class PolicyUtilsTest extends BeConfDependentTest{
 		JsonPresentationFields field = null;
 
 		// default test
-		Deencapsulation.invoke(PolicyUtils.class, "logImmutableFieldUpdateWarning",
-				new Object[] { oldValue, newValue, JsonPresentationFields.class });
+		ReflectionTestUtils.invokeMethod(PolicyUtils.class, "logImmutableFieldUpdateWarning",
+				new Object[] { oldValue, newValue, field });
 	}
 
 	@Test

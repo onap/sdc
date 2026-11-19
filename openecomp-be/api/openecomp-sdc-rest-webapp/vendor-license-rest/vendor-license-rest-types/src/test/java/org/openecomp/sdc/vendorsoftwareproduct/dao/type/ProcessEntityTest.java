@@ -32,7 +32,7 @@ public class ProcessEntityTest {
     @Test
     public void accessorsTest() {
         assertThat(ProcessEntity.class,
-                hasValidGettersAndSettersExcluding("entityType", "firstClassCitizenId"));
+                hasValidGettersAndSettersExcluding("entityType", "firstClassCitizenId", "versionUuId"));
     }
 
     @Test
