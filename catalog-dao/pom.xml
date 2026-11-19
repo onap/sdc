@@ -34,7 +34,6 @@ Modifications copyright (c) 2018 Nokia
   </parent>
 
   <properties>
-    <thrift.version>0.13.0</thrift.version>
   </properties>
   <dependencies>
 
@@ -289,7 +288,23 @@ Modifications copyright (c) 2018 Nokia
     <dependency>
       <groupId>org.apache.tinkerpop</groupId>
       <artifactId>gremlin-core</artifactId>
-      <version>3.4.13</version>
+      <version>3.7.3</version>
+    </dependency>
+    <!-- janusgraph-core 1.0 GraphDatabaseConfiguration loads GremlinGroovyScriptEngine in its static initialiser -->
+    <dependency>
+      <groupId>org.apache.tinkerpop</groupId>
+      <artifactId>gremlin-groovy</artifactId>
+      <version>3.7.3</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.ivy</groupId>
+          <artifactId>ivy</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.groovy</groupId>
+          <artifactId>groovy-groovysh</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.janusgraph</groupId>
@@ -353,42 +368,6 @@ Modifications copyright (c) 2018 Nokia
       </exclusions>
     </dependency>
 
-    <dependency>
-      <groupId>org.janusgraph</groupId>
-      <artifactId>janusgraph-cassandra</artifactId>
-      <version>${janusgraph.version}</version>
-      <scope>provided</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>joda-time</groupId>
-          <artifactId>joda-time</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-log4j12</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.thrift</groupId>
-          <artifactId>libthrift</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.codehaus.jackson</groupId>
-          <artifactId>jackson-mapper-asl</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>commons-codec</groupId>
-          <artifactId>commons-codec</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.hibernate</groupId>
-          <artifactId>hibernate-validator</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>javax.validation</groupId>
-          <artifactId>validation-api</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
 
     <dependency>
       <groupId>org.apache.commons</groupId>
@@ -397,12 +376,6 @@ Modifications copyright (c) 2018 Nokia
       <scope>provided</scope>
     </dependency>
 
-    <dependency>
-      <groupId>org.apache.thrift</groupId>
-      <artifactId>libthrift</artifactId>
-      <version>${thrift.version}</version>
-      <scope>test</scope>
-    </dependency>
 
     <!-- CASSANDRA -->
     <dependency>

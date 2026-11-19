@@ -46,7 +46,7 @@ Modifications copyright (c) 2018-2019 Nokia
     <!-- 3rd parties versions -->
     <lang3.version>3.18.0</lang3.version>
     <guava.version>32.1.1-jre</guava.version>
-    <janusgraph.version>0.5.3</janusgraph.version>
+    <janusgraph.version>1.0.1</janusgraph.version>
     <spring.version>5.3.39</spring.version>
     <spring-boot.version>2.7.18</spring-boot.version>
     <mvn.assembly.version>3.6.0</mvn.assembly.version>
@@ -55,7 +55,7 @@ Modifications copyright (c) 2018-2019 Nokia
     <jersey-bom.version>2.35</jersey-bom.version>
     <jakarta.el.version>3.0.4</jakarta.el.version>
 
-    <netty.version>4.1.92.Final</netty.version>
+    <netty.version>4.1.101.Final</netty.version>
     <servlet-api.version>4.0.4</servlet-api.version>
     <wire-mock.version>2.26.3</wire-mock.version>
     <!-- 2.28.0 cannot load the rule_based_routing sampler that the OOM charts' otel-config.yaml uses,
@@ -68,12 +68,12 @@ Modifications copyright (c) 2018-2019 Nokia
     <lombok.version>1.18.24</lombok.version>
     <commons-beanutils>1.11.0</commons-beanutils>
     <commons.io.version>2.14.0</commons.io.version>
-    <commons-configuration>2.8.0</commons-configuration>
+    <commons-configuration>2.10.1</commons-configuration>
     <onap.logging.version>1.6.1</onap.logging.version>
     <apache-commons-text.version>1.10.0</apache-commons-text.version>
     <jaxb-api.version>2.3.1</jaxb-api.version>
     <io.vavr.version>0.9.0</io.vavr.version>
-    <groovy.version>4.0.13</groovy.version>
+    <groovy.version>4.0.23</groovy.version>
     <swagger-core-mvn-plugin.version>2.1.7</swagger-core-mvn-plugin.version>
     <maven-antrun-plugin.version>3.0.0</maven-antrun-plugin.version>
     <hibernate.validator.version>6.2.5.Final</hibernate.validator.version>
@@ -176,7 +176,7 @@ Modifications copyright (c) 2018-2019 Nokia
     <!--jacoco-->
     <jacoco.version>0.8.7</jacoco.version>
 
-    <java.driver.core.version>4.14.1</java.driver.core.version>
+    <java.driver.core.version>4.17.0</java.driver.core.version>
 
     <!-- Surefire parameters  -->
     <surefire.forkCount>1C</surefire.forkCount>
@@ -271,6 +271,16 @@ Modifications copyright (c) 2018-2019 Nokia
         <version>${groovy.version}</version>
       </dependency>
       <dependency>
+        <groupId>org.apache.groovy</groupId>
+        <artifactId>groovy-jsr223</artifactId>
+        <version>${groovy.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.groovy</groupId>
+        <artifactId>groovy-json</artifactId>
+        <version>${groovy.version}</version>
+      </dependency>
+      <dependency>
         <groupId>io.netty</groupId>
         <artifactId>netty-all</artifactId>
         <version>${netty.version}</version>
@@ -356,6 +366,11 @@ Modifications copyright (c) 2018-2019 Nokia
         <version>${opentelemetry-instrumentation-annotations.version}</version>
       </dependency>
       <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-configuration2</artifactId>
+        <version>${commons-configuration}</version>
+      </dependency>
+      <dependency>
         <groupId>org.testcontainers</groupId>
         <artifactId>testcontainers-bom</artifactId>
         <version>${testcontainers.version}</version>
@@ -376,6 +391,13 @@ Modifications copyright (c) 2018-2019 Nokia
         <groupId>com.fasterxml.jackson</groupId>
         <artifactId>jackson-bom</artifactId>
         <version>${jackson.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.datastax.oss</groupId>
+        <artifactId>java-driver-bom</artifactId>
+        <version>${java.driver.core.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>

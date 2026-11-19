@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2019 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +21,7 @@
 
 package org.openecomp.sdc.be.dao.janusgraph;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -30,10 +32,13 @@ import org.janusgraph.graphdb.query.JanusGraphPredicate;
 import org.apache.tinkerpop.gremlin.structure.T;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 public class JanusGraphUtilsTest {
 
     @Test
@@ -74,4 +79,20 @@ public class JanusGraphUtilsTest {
 		// default test
 		result = JanusGraphUtils.buildNotInPredicate(propKey, notInCollection);
 	}
+
+    @Test
+    public void exclusionReturnsOtherValuesAndVerticesWithoutTheProperty() {
+        try (JanusGraph graph = JanusGraphFactory.build().set("storage.backend", "inmemory").open()) {
+            graph.addVertex("name", "x-vertex", "prop", "x");
+            graph.addVertex("name", "y-vertex", "prop", "y");
+            graph.addVertex("name", "no-prop-vertex");
+            graph.tx().commit();
+
+            Set<String> names = new HashSet<>();
+            JanusGraphUtils.hasNotIncludingMissing(graph, graph.query(), "prop", "x").vertices()
+                .forEach(v -> names.add(v.value("name")));
+
+            assertEquals(new HashSet<>(Arrays.asList("y-vertex", "no-prop-vertex")), names);
+        }
+    }
 }
