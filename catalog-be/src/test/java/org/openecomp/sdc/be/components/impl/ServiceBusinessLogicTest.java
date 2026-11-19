@@ -135,7 +135,7 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
         Either<Service, ResponseFormat> createResponse = bl.createService(service, user);
 
         if (createResponse.isRight()) {
-            assertEquals(new Integer(200), createResponse.right().value().getStatus());
+            assertEquals(Integer.valueOf(200), createResponse.right().value().getStatus());
         }
         assertEqualsServiceObject(createServiceObject(true), createResponse.left().value());
     }
@@ -227,7 +227,7 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
         Either<Service, ResponseFormat> createResponse = bl.createService(service, user);
 
         if (createResponse.isRight()) {
-            assertEquals(new Integer(200), createResponse.right().value().getStatus());
+            assertEquals(Integer.valueOf(200), createResponse.right().value().getStatus());
         }
         assertEqualsServiceObject(createServiceObject(true), createResponse.left().value());
     }
@@ -241,7 +241,7 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
         Either<Service, ResponseFormat> createResponse = bl.createService(service, user);
 
         if (createResponse.isRight()) {
-            assertEquals(new Integer(200), createResponse.right().value().getStatus());
+            assertEquals(Integer.valueOf(200), createResponse.right().value().getStatus());
         }
         assertEqualsServiceObject(createServiceObject(true), createResponse.left().value());
     }

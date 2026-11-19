@@ -539,7 +539,7 @@ class ResourceBusinessLogicTest {
             createdResource = bl.createResource(resource, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
             assertThat(createResourceObject(true)).isEqualTo(createdResource);
         } catch (ComponentException e) {
-            assertThat(new Integer(200)).isEqualTo(e.getResponseFormat()
+            assertThat(Integer.valueOf(200)).isEqualTo(e.getResponseFormat()
                 .getStatus());
         }
     }
@@ -1093,7 +1093,7 @@ class ResourceBusinessLogicTest {
             createResourceObjectAfterCreate.setLicenseType(licenseType);
             assertThat(createResourceObjectAfterCreate).isEqualTo(createdResource);
         } catch (ComponentException e) {
-            assertThat(new Integer(200)).isEqualTo(e.getResponseFormat()
+            assertThat(Integer.valueOf(200)).isEqualTo(e.getResponseFormat()
                 .getStatus());
         }
     }

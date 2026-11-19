@@ -83,7 +83,7 @@ public class SdcSchemaUtilsTest {
 		Configuration.CassandrConfig cfg = new Configuration.CassandrConfig();
 		cfg.setCassandraHosts(CASSANDRA_HOSTS);
 		cfg.setCassandraPort(CASSANDRA_PORT);
-		cfg.setReconnectTimeout(new Long(30000));
+		cfg.setReconnectTimeout(30000L);
 		SdcSchemaUtils sdcSchemaUtils = Mockito.mock(SdcSchemaUtils.class);
 		when(sdcSchemaUtils.getCassandraConfig()).thenReturn(cfg);
 		when(sdcSchemaUtils.createCluster()).thenCallRealMethod();
@@ -128,7 +128,7 @@ public class SdcSchemaUtilsTest {
 		cfg.setAuthenticate(true);
 		cfg.setCassandraHosts(CASSANDRA_HOSTS);
 		cfg.setCassandraPort(CASSANDRA_PORT);
-		cfg.setReconnectTimeout(new Long(30000));
+		cfg.setReconnectTimeout(30000L);
 		
 		cfg.setUsername(null);
 		cfg.setPassword(null);
@@ -150,7 +150,7 @@ public class SdcSchemaUtilsTest {
 		cfg.setSsl(true);
 		cfg.setTruststorePath(null);
 		cfg.setTruststorePassword(null);
-		cfg.setReconnectTimeout(new Long(30000));
+		cfg.setReconnectTimeout(30000L);
 		SdcSchemaUtils sdcSchemaUtils = Mockito.mock(SdcSchemaUtils.class);
 		when(sdcSchemaUtils.getCassandraConfig()).thenReturn(cfg);
 		when(sdcSchemaUtils.createCluster()).thenCallRealMethod();
@@ -171,7 +171,7 @@ public class SdcSchemaUtilsTest {
 		cfg.setSsl(true);
 		cfg.setTruststorePath(TRUSTSTORE_PATH);
 		cfg.setTruststorePassword(TRUSTSTORE_PASSWORD);
-		cfg.setReconnectTimeout(new Long(30000));
+		cfg.setReconnectTimeout(30000L);
 		SdcSchemaUtils sdcSchemaUtils = Mockito.mock(SdcSchemaUtils.class);
 		when(sdcSchemaUtils.getCassandraConfig()).thenReturn(cfg);
 		when(sdcSchemaUtils.createCluster()).thenCallRealMethod();

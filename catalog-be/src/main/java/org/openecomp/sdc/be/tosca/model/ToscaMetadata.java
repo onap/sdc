@@ -52,7 +52,7 @@ public class ToscaMetadata implements IToscaMetadata {
     private String model;
 
     public Boolean isEcompGeneratedNaming() {
-        return new Boolean(ecompGeneratedNaming);
+        return Boolean.valueOf(ecompGeneratedNaming);
     }
 
     public void setEcompGeneratedNaming(Boolean ecompGeneratedNaming) {
@@ -60,7 +60,7 @@ public class ToscaMetadata implements IToscaMetadata {
     }
 
     public Boolean getServiceEcompNaming() {
-        return new Boolean(serviceEcompNaming);
+        return Boolean.valueOf(serviceEcompNaming);
     }
 
     public void setServiceEcompNaming(Boolean serviceEcompNaming) {

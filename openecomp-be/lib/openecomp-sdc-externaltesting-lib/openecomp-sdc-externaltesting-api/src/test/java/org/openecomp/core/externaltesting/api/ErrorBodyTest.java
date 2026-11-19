@@ -28,13 +28,13 @@ public class ErrorBodyTest {
     b.setMessage("message");
     b.setCode("code");
 
-    Assert.assertEquals("code match", new Integer(404), b.getHttpStatus());
+    Assert.assertEquals("code match", Integer.valueOf(404), b.getHttpStatus());
     Assert.assertEquals("code message", "message", b.getMessage());
     Assert.assertEquals("code code", "code", b.getCode());
 
     TestErrorBody b2 = new TestErrorBody("code", 404, "message");
 
-    Assert.assertEquals("code match", new Integer(404), b2.getHttpStatus());
+    Assert.assertEquals("code match", Integer.valueOf(404), b2.getHttpStatus());
     Assert.assertEquals("code message", "message", b2.getMessage());
     Assert.assertEquals("code code", "code", b2.getCode());
 

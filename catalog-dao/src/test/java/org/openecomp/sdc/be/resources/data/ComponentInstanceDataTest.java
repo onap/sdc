@@ -36,7 +36,7 @@ public class ComponentInstanceDataTest {
 	@Test
 	public void testCtor() throws Exception {
 		new ComponentInstanceData(new ComponentInstanceDataDefinition());
-		new ComponentInstanceData(new ComponentInstanceDataDefinition(), new Integer(0));
+		new ComponentInstanceData(new ComponentInstanceDataDefinition(), 0);
 		new ComponentInstanceData(new HashMap<>());
 	}
 	

@@ -502,17 +502,17 @@ public class ConfigurationUtils {
 
     public static Object getDefaultFor(Class<?> clazz) {
         if (byte.class == clazz) {
-            return new Byte("0");
+            return (byte) 0;
         } else if (short.class == clazz) {
-            return new Short("0");
+            return (short) 0;
         } else if (int.class == clazz) {
-            return new Integer("0");
+            return 0;
         } else if (float.class == clazz) {
-            return new Float("0");
+            return 0f;
         } else if (long.class == clazz) {
-            return new Long("0");
+            return 0L;
         } else if (double.class == clazz) {
-            return new Double("0");
+            return 0d;
         } else if (boolean.class == clazz) {
             return Boolean.FALSE;
         }

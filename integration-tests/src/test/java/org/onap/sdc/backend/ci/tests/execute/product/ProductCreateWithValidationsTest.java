@@ -77,7 +77,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 		Product actualProduct = ResponseParser.parseToObjectUsingMapper(getProductRes.getResponse(), Product.class);
 		ProductValidationUtils.compareExpectedAndActualProducts(expectedProduct, actualProduct,
 				ComponentOperationEnum.GET_COMPONENT);
-		assertEquals(actualProduct.getIsActive(), new Boolean(false));
+		assertEquals(actualProduct.getIsActive(), Boolean.FALSE);
 		ExpectedProductAudit constructFieldsForAuditValidation = Convertor.constructFieldsForAuditValidation(
 				expectedProduct, CREATE_AUDIT_ACTION, productManager1, ActionStatus.CREATED, Constants.EMPTY_STRING,
 				"0.1", null, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, productUuid);
@@ -181,7 +181,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 		Product actualProduct = ResponseParser.parseToObjectUsingMapper(getProductRes.getResponse(), Product.class);
 		ProductValidationUtils.compareExpectedAndActualProducts(expectedProduct, actualProduct,
 				ComponentOperationEnum.GET_COMPONENT);
-		assertEquals(actualProduct.getIsActive(), new Boolean(false));
+		assertEquals(actualProduct.getIsActive(), Boolean.FALSE);
 		ExpectedProductAudit constructFieldsForAuditValidation = Convertor.constructFieldsForAuditValidation(
 				expectedProduct, CREATE_AUDIT_ACTION, productManager1, ActionStatus.CREATED, Constants.EMPTY_STRING,
 				"0.1", null, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, productUuid);
@@ -294,7 +294,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 		Product actualProduct = ResponseParser.parseToObjectUsingMapper(getProductRes.getResponse(), Product.class);
 		ProductValidationUtils.compareExpectedAndActualProducts(expectedProduct, actualProduct,
 				ComponentOperationEnum.GET_COMPONENT);
-		assertEquals(actualProduct.getIsActive(), new Boolean(false));
+		assertEquals(actualProduct.getIsActive(), Boolean.FALSE);
 		ExpectedProductAudit constructFieldsForAuditValidation = Convertor.constructFieldsForAuditValidation(
 				expectedProduct, CREATE_AUDIT_ACTION, productManager1, ActionStatus.CREATED, Constants.EMPTY_STRING,
 				"0.1", null, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, productUuid);
@@ -320,7 +320,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 		Product actualProduct = ResponseParser.parseToObjectUsingMapper(getProductRes.getResponse(), Product.class);
 		ProductValidationUtils.compareExpectedAndActualProducts(expectedProduct, actualProduct,
 				ComponentOperationEnum.GET_COMPONENT);
-		assertEquals(actualProduct.getIsActive(), new Boolean(false));
+		assertEquals(actualProduct.getIsActive(), Boolean.FALSE);
 		ExpectedProductAudit constructFieldsForAuditValidation = Convertor.constructFieldsForAuditValidation(
 				expectedProduct, CREATE_AUDIT_ACTION, productManager1, ActionStatus.CREATED, Constants.EMPTY_STRING,
 				"0.1", null, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, productUuid);
@@ -388,7 +388,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 		Product actualProduct = ResponseParser.parseToObjectUsingMapper(getProductRes.getResponse(), Product.class);
 		ProductValidationUtils.compareExpectedAndActualProducts(expectedProduct, actualProduct,
 				ComponentOperationEnum.GET_COMPONENT);
-		assertEquals(actualProduct.getIsActive(), new Boolean(false));
+		assertEquals(actualProduct.getIsActive(), Boolean.FALSE);
 		ExpectedProductAudit constructFieldsForAuditValidation = Convertor.constructFieldsForAuditValidation(
 				expectedProduct, CREATE_AUDIT_ACTION, productManager1, ActionStatus.CREATED, Constants.EMPTY_STRING,
 				"0.1", null, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, productUuid);
@@ -414,7 +414,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 		Product actualProduct = ResponseParser.parseToObjectUsingMapper(getProductRes.getResponse(), Product.class);
 		ProductValidationUtils.compareExpectedAndActualProducts(expectedProduct, actualProduct,
 				ComponentOperationEnum.GET_COMPONENT);
-		assertEquals(actualProduct.getIsActive(), new Boolean(false));
+		assertEquals(actualProduct.getIsActive(), Boolean.FALSE);
 		ExpectedProductAudit constructFieldsForAuditValidation = Convertor.constructFieldsForAuditValidation(
 				expectedProduct, CREATE_AUDIT_ACTION, productManager1, ActionStatus.CREATED, Constants.EMPTY_STRING,
 				"0.1", null, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, productUuid);
@@ -438,7 +438,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 		Product actualProduct = ResponseParser.parseToObjectUsingMapper(getProductRes.getResponse(), Product.class);
 		ProductValidationUtils.compareExpectedAndActualProducts(expectedProduct, actualProduct,
 				ComponentOperationEnum.GET_COMPONENT);
-		assertEquals(actualProduct.getIsActive(), new Boolean(false));
+		assertEquals(actualProduct.getIsActive(), Boolean.FALSE);
 		ExpectedProductAudit constructFieldsForAuditValidation = Convertor.constructFieldsForAuditValidation(
 				expectedProduct, CREATE_AUDIT_ACTION, productManager1, ActionStatus.CREATED, Constants.EMPTY_STRING,
 				"0.1", null, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, productUuid);
@@ -491,7 +491,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 		Product actualProduct = ResponseParser.parseToObjectUsingMapper(getProductRes.getResponse(), Product.class);
 		ProductValidationUtils.compareExpectedAndActualProducts(expectedProduct, actualProduct,
 				ComponentOperationEnum.GET_COMPONENT);
-		assertEquals(actualProduct.getIsActive(), new Boolean(false));
+		assertEquals(actualProduct.getIsActive(), Boolean.FALSE);
 		ExpectedProductAudit constructFieldsForAuditValidation = Convertor.constructFieldsForAuditValidation(
 				expectedProduct, CREATE_AUDIT_ACTION, productManager1, ActionStatus.CREATED, Constants.EMPTY_STRING,
 				"0.1", null, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, productUuid);
@@ -566,7 +566,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 		Product actualProduct = ResponseParser.parseToObjectUsingMapper(getProductRes.getResponse(), Product.class);
 		ProductValidationUtils.compareExpectedAndActualProducts(expectedProduct, actualProduct,
 				ComponentOperationEnum.GET_COMPONENT);
-		assertEquals(actualProduct.getIsActive(), new Boolean(false));
+		assertEquals(actualProduct.getIsActive(), Boolean.FALSE);
 		ExpectedProductAudit constructFieldsForAuditValidation = Convertor.constructFieldsForAuditValidation(
 				expectedProduct, CREATE_AUDIT_ACTION, productManager1, ActionStatus.CREATED, Constants.EMPTY_STRING,
 				"0.1", null, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, productUuid);
@@ -592,7 +592,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 		Product actualProduct = ResponseParser.parseToObjectUsingMapper(getProductRes.getResponse(), Product.class);
 		ProductValidationUtils.compareExpectedAndActualProducts(expectedProduct, actualProduct,
 				ComponentOperationEnum.GET_COMPONENT);
-		assertEquals(actualProduct.getIsActive(), new Boolean(false));
+		assertEquals(actualProduct.getIsActive(), Boolean.FALSE);
 		ExpectedProductAudit constructFieldsForAuditValidation = Convertor.constructFieldsForAuditValidation(
 				expectedProduct, CREATE_AUDIT_ACTION, productManager1, ActionStatus.CREATED, Constants.EMPTY_STRING,
 				"0.1", null, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, productUuid);
@@ -639,7 +639,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 		Product actualProduct = ResponseParser.parseToObjectUsingMapper(getProductRes.getResponse(), Product.class);
 		ProductValidationUtils.compareExpectedAndActualProducts(expectedProduct, actualProduct,
 				ComponentOperationEnum.GET_COMPONENT);
-		assertEquals(actualProduct.getIsActive(), new Boolean(false));
+		assertEquals(actualProduct.getIsActive(), Boolean.FALSE);
 		ExpectedProductAudit constructFieldsForAuditValidation = Convertor.constructFieldsForAuditValidation(
 				expectedProduct, CREATE_AUDIT_ACTION, productManager1, ActionStatus.CREATED, Constants.EMPTY_STRING,
 				"0.1", null, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, productUuid);
@@ -697,7 +697,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 		Product actualProduct = ResponseParser.parseToObjectUsingMapper(getProductRes.getResponse(), Product.class);
 		ProductValidationUtils.compareExpectedAndActualProducts(expectedProduct, actualProduct,
 				ComponentOperationEnum.GET_COMPONENT);
-		assertEquals(actualProduct.getIsActive(), new Boolean(false));
+		assertEquals(actualProduct.getIsActive(), Boolean.FALSE);
 		ExpectedProductAudit constructFieldsForAuditValidation = Convertor.constructFieldsForAuditValidation(
 				expectedProduct, CREATE_AUDIT_ACTION, productManager1, ActionStatus.CREATED, Constants.EMPTY_STRING,
 				"0.1", null, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, productUuid);
@@ -723,7 +723,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 		Product actualProduct = ResponseParser.parseToObjectUsingMapper(getProductRes.getResponse(), Product.class);
 		ProductValidationUtils.compareExpectedAndActualProducts(expectedProduct, actualProduct,
 				ComponentOperationEnum.GET_COMPONENT);
-		assertEquals(actualProduct.getIsActive(), new Boolean(false));
+		assertEquals(actualProduct.getIsActive(), Boolean.FALSE);
 		ExpectedProductAudit constructFieldsForAuditValidation = Convertor.constructFieldsForAuditValidation(
 				expectedProduct, CREATE_AUDIT_ACTION, productManager1, ActionStatus.CREATED, Constants.EMPTY_STRING,
 				"0.1", null, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, productUuid);
@@ -768,7 +768,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 		Product actualProduct = ResponseParser.parseToObjectUsingMapper(getProductRes.getResponse(), Product.class);
 		ProductValidationUtils.compareExpectedAndActualProducts(expectedProduct, actualProduct,
 				ComponentOperationEnum.GET_COMPONENT);
-		assertEquals(actualProduct.getIsActive(), new Boolean(false));
+		assertEquals(actualProduct.getIsActive(), Boolean.FALSE);
 		ExpectedProductAudit constructFieldsForAuditValidation = Convertor.constructFieldsForAuditValidation(
 				expectedProduct, CREATE_AUDIT_ACTION, productManager1, ActionStatus.CREATED, Constants.EMPTY_STRING,
 				"0.1", null, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, productUuid);
@@ -794,7 +794,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 		Product actualProduct = ResponseParser.parseToObjectUsingMapper(getProductRes.getResponse(), Product.class);
 		ProductValidationUtils.compareExpectedAndActualProducts(expectedProduct, actualProduct,
 				ComponentOperationEnum.GET_COMPONENT);
-		assertEquals(actualProduct.getIsActive(), new Boolean(false));
+		assertEquals(actualProduct.getIsActive(), Boolean.FALSE);
 		ExpectedProductAudit constructFieldsForAuditValidation = Convertor.constructFieldsForAuditValidation(
 				expectedProduct, CREATE_AUDIT_ACTION, productManager1, ActionStatus.CREATED, Constants.EMPTY_STRING,
 				"0.1", null, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, productUuid);
@@ -820,7 +820,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 		Product actualProduct = ResponseParser.parseToObjectUsingMapper(getProductRes.getResponse(), Product.class);
 		ProductValidationUtils.compareExpectedAndActualProducts(expectedProduct, actualProduct,
 				ComponentOperationEnum.GET_COMPONENT);
-		assertEquals(actualProduct.getIsActive(), new Boolean(false));
+		assertEquals(actualProduct.getIsActive(), Boolean.FALSE);
 		ExpectedProductAudit constructFieldsForAuditValidation = Convertor.constructFieldsForAuditValidation(
 				expectedProduct, CREATE_AUDIT_ACTION, productManager1, ActionStatus.CREATED, Constants.EMPTY_STRING,
 				"0.1", null, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, productUuid);
@@ -883,7 +883,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 		Product actualProduct = ResponseParser.parseToObjectUsingMapper(getProductRes.getResponse(), Product.class);
 		ProductValidationUtils.compareExpectedAndActualProducts(expectedProduct, actualProduct,
 				ComponentOperationEnum.GET_COMPONENT);
-		assertEquals(actualProduct.getIsActive(), new Boolean(false));
+		assertEquals(actualProduct.getIsActive(), Boolean.FALSE);
 		ExpectedProductAudit constructFieldsForAuditValidation = Convertor.constructFieldsForAuditValidation(
 				expectedProduct, CREATE_AUDIT_ACTION, productManager1, ActionStatus.CREATED, Constants.EMPTY_STRING,
 				"0.1", null, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, productUuid);
@@ -927,7 +927,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 		Product actualProduct = ResponseParser.parseToObjectUsingMapper(getProductRes.getResponse(), Product.class);
 		ProductValidationUtils.compareExpectedAndActualProducts(expectedProduct, actualProduct,
 				ComponentOperationEnum.GET_COMPONENT);
-		assertEquals(actualProduct.getIsActive(), new Boolean(false));
+		assertEquals(actualProduct.getIsActive(), Boolean.FALSE);
 		ExpectedProductAudit constructFieldsForAuditValidation = Convertor.constructFieldsForAuditValidation(
 				expectedProduct, CREATE_AUDIT_ACTION, productManager1, ActionStatus.CREATED, Constants.EMPTY_STRING,
 				"0.1", null, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, productUuid);
@@ -991,7 +991,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 		Product actualProduct = ResponseParser.parseToObjectUsingMapper(getProductRes.getResponse(), Product.class);
 		ProductValidationUtils.compareExpectedAndActualProducts(expectedProduct, actualProduct,
 				ComponentOperationEnum.GET_COMPONENT);
-		assertEquals(actualProduct.getIsActive(), new Boolean(false));
+		assertEquals(actualProduct.getIsActive(), Boolean.FALSE);
 		ExpectedProductAudit constructFieldsForAuditValidation = Convertor.constructFieldsForAuditValidation(
 				expectedProduct, CREATE_AUDIT_ACTION, productManager1, ActionStatus.CREATED, Constants.EMPTY_STRING,
 				"0.1", null, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, productUuid);
@@ -1055,7 +1055,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 		Product actualProduct = ResponseParser.parseToObjectUsingMapper(getProductRes.getResponse(), Product.class);
 		ProductValidationUtils.compareExpectedAndActualProducts(expectedProduct, actualProduct,
 				ComponentOperationEnum.GET_COMPONENT);
-		assertEquals(actualProduct.getIsActive(), new Boolean(false));
+		assertEquals(actualProduct.getIsActive(), Boolean.FALSE);
 		ExpectedProductAudit constructFieldsForAuditValidation = Convertor.constructFieldsForAuditValidation(
 				expectedProduct, CREATE_AUDIT_ACTION, productManager1, ActionStatus.CREATED, Constants.EMPTY_STRING,
 				"0.1", null, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, productUuid);
@@ -1119,7 +1119,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 		Product actualProduct = ResponseParser.parseToObjectUsingMapper(getProductRes.getResponse(), Product.class);
 		ProductValidationUtils.compareExpectedAndActualProducts(expectedProduct, actualProduct,
 				ComponentOperationEnum.GET_COMPONENT);
-		assertEquals(actualProduct.getIsActive(), new Boolean(false));
+		assertEquals(actualProduct.getIsActive(), Boolean.FALSE);
 		ExpectedProductAudit constructFieldsForAuditValidation = Convertor.constructFieldsForAuditValidation(
 				expectedProduct, CREATE_AUDIT_ACTION, productManager1, ActionStatus.CREATED, Constants.EMPTY_STRING,
 				"0.1", null, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, productUuid);
@@ -1513,7 +1513,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 		Product actualProduct = ResponseParser.parseToObjectUsingMapper(getProductRes.getResponse(), Product.class);
 		ProductValidationUtils.compareExpectedAndActualProducts(expectedProduct, actualProduct,
 				ComponentOperationEnum.GET_COMPONENT);
-		assertEquals(actualProduct.getIsActive(), new Boolean(false));
+		assertEquals(actualProduct.getIsActive(), Boolean.FALSE);
 		ExpectedProductAudit constructFieldsForAuditValidation = Convertor.constructFieldsForAuditValidation(
 				expectedProduct, CREATE_AUDIT_ACTION, productManager1, ActionStatus.CREATED, Constants.EMPTY_STRING,
 				"0.1", null, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, productUuid);
@@ -1612,7 +1612,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 		Product actualProduct = ResponseParser.parseToObjectUsingMapper(getProductRes.getResponse(), Product.class);
 		ProductValidationUtils.compareExpectedAndActualProducts(expectedProduct, actualProduct,
 				ComponentOperationEnum.GET_COMPONENT);
-		assertEquals(actualProduct.getIsActive(), new Boolean(false));
+		assertEquals(actualProduct.getIsActive(), Boolean.FALSE);
 		ExpectedProductAudit constructFieldsForAuditValidation = Convertor.constructFieldsForAuditValidation(
 				expectedProduct, CREATE_AUDIT_ACTION, productManager1, ActionStatus.CREATED, Constants.EMPTY_STRING,
 				"0.1", null, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, productUuid);
@@ -1671,7 +1671,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 		Product actualProduct = ResponseParser.parseToObjectUsingMapper(getProductRes.getResponse(), Product.class);
 		ProductValidationUtils.compareExpectedAndActualProducts(expectedProduct, actualProduct,
 				ComponentOperationEnum.GET_COMPONENT);
-		assertEquals(actualProduct.getIsActive(), new Boolean(false));
+		assertEquals(actualProduct.getIsActive(), Boolean.FALSE);
 	}
 
 	@Test
@@ -1691,7 +1691,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 		Product actualProduct = ResponseParser.parseToObjectUsingMapper(getProductRes.getResponse(), Product.class);
 		ProductValidationUtils.compareExpectedAndActualProducts(expectedProduct, actualProduct,
 				ComponentOperationEnum.GET_COMPONENT);
-		assertEquals(actualProduct.getIsActive(), new Boolean(true));
+		assertEquals(actualProduct.getIsActive(), Boolean.TRUE);
 	}
 
 	@Test

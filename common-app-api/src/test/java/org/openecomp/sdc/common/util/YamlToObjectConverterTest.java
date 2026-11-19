@@ -187,8 +187,8 @@ public class YamlToObjectConverterTest {
     }
 
     private void assertThatCreatedObjectIsValid(Configuration result) {
-        assertEquals(result.getBeHttpPort(),new Integer(8080));
-        assertEquals(result.getBeSslPort(),new Integer(8443));
+        assertEquals(result.getBeHttpPort(),Integer.valueOf(8080));
+        assertEquals(result.getBeSslPort(),Integer.valueOf(8443));
         assertEquals(result.getVersion(),"1.1.0");
         assertEquals(result.getUsers().size(),1);
         assertEquals(result.getUsers().get("tom"),"passwd");

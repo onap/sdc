@@ -53,7 +53,7 @@ public class VlmZusammenUtil {
         if (val instanceof Double) {
             return ((Double) val).intValue();
         } else if (val instanceof String) {
-            return new Integer((String) val);
+            return Integer.valueOf((String) val);
         } else if (val instanceof Integer) {
             return (Integer) val;
         }

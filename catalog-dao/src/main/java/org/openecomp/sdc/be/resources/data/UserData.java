@@ -106,7 +106,7 @@ public class UserData extends GraphNode {
     // right name?
     public void setLastLoginTime() {
         Date d = new Date();
-        this.lastLoginTime = new Long(d.getTime()); // this is in milli-seconds
+        this.lastLoginTime = d.getTime(); // this is in milli-seconds
 
         // divide by 1000 to get
 
