@@ -28,22 +28,15 @@ import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.T;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.utils.CassandraTestHelper;
 import org.openecomp.sdc.be.utils.DAOConfDependentTest;
 
 class CassandraClientTest extends DAOConfDependentTest {
 
     private CassandraClient createTestSubject() {
         return new CassandraClient();
-    }
-
-    @BeforeAll
-    public static void startServer() {
-        CassandraTestHelper.startServer();
     }
 
     @Test
