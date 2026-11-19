@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2019 Nokia. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,23 +22,27 @@ package org.openecomp.sdc.common.util;
 
 import org.apache.commons.codec.binary.Base64;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration.DistributionDeleteTopicConfig;
+import org.openecomp.sdc.be.config.validation.DeploymentArtifactHeatConfiguration;
 import org.openecomp.sdc.common.http.client.api.HttpClient;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashMap;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.openecomp.sdc.exception.YamlConversionException;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.Constructor;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertFalse;
@@ -55,22 +60,6 @@ public class YamlToObjectConverterTest {
             "  key: value";
 
     private YamlToObjectConverter yamlToObjectConverter;
-    private static HashMap<String, Constructor> yamlConstructors;
-
-    /**
-     * This method is to initialize the static block before class loads.
-     * 
-     * @throws Exception if exception occurs while getting the fields from class.
-     */
-    @BeforeClass
-    public static void init() throws Exception {
-        Class.forName("org.openecomp.sdc.common.util.YamlToObjectConverter");
-        Field field = Class.forName("org.openecomp.sdc.common.util.YamlToObjectConverter")
-                .getDeclaredField("yamlConstructors");
-        field.setAccessible(true);
-        yamlConstructors = (HashMap<String, Constructor>) field.get(null);
-    }
-
     @Before
     public void setUp() {
         yamlToObjectConverter = new YamlToObjectConverter();
@@ -203,19 +192,14 @@ public class YamlToObjectConverterTest {
      */
     @Test
     public void testContainsDistributionDeleteTopic() throws Exception {
-        assertTrue(yamlConstructors.containsKey("org.openecomp.sdc.be.config.DistributionEngineConfiguration"));
-
-        Constructor constructor = yamlConstructors.get("org.openecomp.sdc.be.config.DistributionEngineConfiguration");
-        assertNotNull(constructor);
-
         String yamlStr = "distributionDeleteTopicName: SDC-DELETE-TOPIC\n" +
                 "distributionDeleteTopic:\n" +
                 "  maxWaitingAfterSendingSeconds: 10\n" +
                 "  maxThreadPoolSize: 20\n" +
                 "  minThreadPoolSize: 5\n";
 
-        Yaml yaml = new Yaml(constructor);
-        DistributionEngineConfiguration distributionEngineConfiguration = yaml.load(yamlStr);
+        DistributionEngineConfiguration distributionEngineConfiguration =
+                yamlToObjectConverter.convert(yamlStr.getBytes(StandardCharsets.UTF_8), DistributionEngineConfiguration.class);
         assertEquals("SDC-DELETE-TOPIC", distributionEngineConfiguration.getDistributionDeleteTopicName());
 
         DistributionDeleteTopicConfig deleteTopicConfig = distributionEngineConfiguration.getDistributionDeleteTopic();
@@ -224,5 +208,39 @@ public class YamlToObjectConverterTest {
         assertEquals(Integer.valueOf(10), deleteTopicConfig.getMaxWaitingAfterSendingSeconds());
         assertEquals(Integer.valueOf(20), deleteTopicConfig.getMaxThreadPoolSize());
         assertEquals(Integer.valueOf(5), deleteTopicConfig.getMinThreadPoolSize());
+    }
+
+    @Test
+    public void convertIsSafeForConcurrentCallers() throws Exception {
+        StringBuilder heat = new StringBuilder("heat_template_version: 2013-05-23\nparameters:\n");
+        for (int i = 0; i < 200; i++) {
+            heat.append("  p").append(i).append(":\n    type: string\n    default: v").append(i).append("\n");
+        }
+        byte[] payload = heat.toString().getBytes(StandardCharsets.UTF_8);
+        int threads = 8;
+        ExecutorService executor = Executors.newFixedThreadPool(threads);
+        CountDownLatch start = new CountDownLatch(1);
+        List<Future<Integer>> results = new ArrayList<>();
+        for (int t = 0; t < threads; t++) {
+            results.add(executor.submit(() -> {
+                start.await();
+                int invalid = 0;
+                for (int i = 0; i < 300; i++) {
+                    DeploymentArtifactHeatConfiguration converted =
+                            new YamlToObjectConverter().convert(payload, DeploymentArtifactHeatConfiguration.class);
+                    if (converted == null || converted.getHeat_template_version() == null) {
+                        invalid++;
+                    }
+                }
+                return invalid;
+            }));
+        }
+        start.countDown();
+        int invalid = 0;
+        for (Future<Integer> result : results) {
+            invalid += result.get(2, TimeUnit.MINUTES);
+        }
+        executor.shutdown();
+        assertEquals(0, invalid);
     }
 }
