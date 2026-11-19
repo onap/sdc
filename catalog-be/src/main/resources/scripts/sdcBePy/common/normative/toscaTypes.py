@@ -54,7 +54,10 @@ def _create_normatives_type(file_dir, sdc_be_proxy, types, update_version):
         result = _send_request(sdc_be_proxy, file_dir, normative_type, update_version)
         results.append(result)
         if result[1] is None or result[1] not in response_codes:
-            raise ResourceCreationError("Failed creating normative type " + normative_type + ". " + str(result[1]),
+            message = "Failed creating normative type " + normative_type + ". " + str(result[1])
+            if result[2]:
+                message += ": " + result[2]
+            raise ResourceCreationError(message,
                                         1,
                                         normative_type)
     return results
