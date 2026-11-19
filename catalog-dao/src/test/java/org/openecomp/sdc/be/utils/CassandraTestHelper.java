@@ -17,36 +17,31 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  * Modifications copyright (c) 2018 Nokia
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
  * ================================================================================
  */
 package org.openecomp.sdc.be.utils;
 
 import com.datastax.driver.core.Cluster;
-import java.io.IOException;
-import org.apache.cassandra.exceptions.ConfigurationException;
-import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
+import java.net.InetSocketAddress;
+import org.testcontainers.cassandra.CassandraContainer;
 
 public class CassandraTestHelper {
 
     public static final String SERVER = "localhost";
-    private static final int BINARY_PORT = 9142;
+    private static final CassandraContainer CASSANDRA = new CassandraContainer("cassandra:3.11.19");
 
     private CassandraTestHelper() {
     }
 
-    public static void startServer() {
-        try {
-            EmbeddedCassandraServerHelper.startEmbeddedCassandra(80000);
-        } catch (ConfigurationException | IOException ex) {
-            throw new RuntimeException(ex);
+    public static synchronized void startServer() {
+        if (!CASSANDRA.isRunning()) {
+            CASSANDRA.start();
         }
     }
 
     public static Cluster createCluster() {
-        return Cluster.builder().addContactPoint(SERVER).withPort(BINARY_PORT).build();
-    }
-
-    public static Cluster createClusterWithNoSession() {
-        return Cluster.builder().addContactPoint(SERVER).build();
+        InetSocketAddress contactPoint = CASSANDRA.getContactPoint();
+        return Cluster.builder().addContactPoint(contactPoint.getHostString()).withPort(contactPoint.getPort()).build();
     }
 }
