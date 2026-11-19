@@ -220,7 +220,7 @@ class JanusGraphDaoMockTest extends DAOConfDependentTest {
     @Test
     void testSetEdgeProperties() throws Exception {
 
-        Element element = Mockito.mock(Element.class);
+        Element element = Mockito.mock(Element.class, Mockito.RETURNS_DEEP_STUBS);
         Map<EdgePropertyEnum, Object> properties = new HashMap<>();
 
         // test 1

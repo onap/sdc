@@ -48,7 +48,7 @@ public class JanusGraphUtils {
             return query;
         }
         // Catalog exclusion filters must include legacy assets without deletion/archive flags;
-        // JanusGraph 0.5.3's hasNot(key, value) excludes missing properties.
+        // JanusGraph's hasNot(key, value) excludes missing properties.
         return query.has(key, new OrJanusPredicate(Arrays.asList(Cmp.EQUAL, Cmp.NOT_EQUAL)), Arrays.asList(null, value));
     }
 

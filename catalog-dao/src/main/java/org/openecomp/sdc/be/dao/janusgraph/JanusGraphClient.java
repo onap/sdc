@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.LongSupplier;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import org.apache.commons.configuration.BaseConfiguration;
+import org.apache.commons.configuration2.BaseConfiguration;
 import org.apache.tinkerpop.gremlin.structure.T;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.janusgraph.core.InvalidElementException;
