@@ -607,8 +607,8 @@ public class NodeTypeOperation extends ToscaElementOperation {
         try {
             fetchedDerivedResources.removeIf(graphVertex -> !isValidForVendorRelease(graphVertex, vendorRelease));
             fetchedDerivedResources.sort((d1, d2) -> {
-                return new Double(Double.parseDouble((String) d1.getMetadataProperty(GraphPropertyEnum.VERSION)))
-                    .compareTo(Double.parseDouble((String) d2.getMetadataProperty(GraphPropertyEnum.VERSION)));
+                return Double.compare(Double.parseDouble((String) d1.getMetadataProperty(GraphPropertyEnum.VERSION)),
+                    Double.parseDouble((String) d2.getMetadataProperty(GraphPropertyEnum.VERSION)));
             });
             int actualHighestIndex = fetchedDerivedResources.size() - 1;
             derivedResource.add(fetchedDerivedResources.get(actualHighestIndex));

@@ -632,7 +632,7 @@ public class ArtifactOperation {
     private void updateVersionAndDate(ArtifactDataDefinition artifactData, String oldVesrion) {
         long time = System.currentTimeMillis();
         artifactData.setPayloadUpdateDate(time);
-        int newVersion = new Integer(oldVesrion).intValue();
+        int newVersion = Integer.parseInt(oldVesrion);
         newVersion++;
         artifactData.setArtifactVersion(String.valueOf(newVersion));
     }
