@@ -70,7 +70,7 @@ concurrency:
 
 env:
   # SDC is Java 11 source/target — do NOT raise this to match other ONAP repos on 17.
-  JAVA_VERSION: "11"
+  JAVA_VERSION: "17"
   JAVA_DISTRIBUTION: "temurin"
   NODE_VERSION: "18"
   NPM_REGISTRY: "https://nexus3.onap.org/repository/npm.public/npm/-/"
