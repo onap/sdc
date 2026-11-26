@@ -1,4 +1,4 @@
-FROM python:3.11-alpine
+FROM python:3.15-alpine
 
 USER root
 
@@ -9,10 +9,13 @@ ENV HOME=/home/onap
 # Needed for pycurl SSL backend selection
 ENV PYCURL_SSL_LIBRARY=openssl
 
+# Without a TTY, Python block-buffers stdout and job logs only arrive in 8 KiB bursts
+ENV PYTHONUNBUFFERED=1
+
 # Install runtime libcurl, build and install pycurl, then remove build deps
 RUN apk add --no-cache libcurl && \
     apk add --no-cache --virtual .build-deps build-base curl-dev openssl-dev && \
-    pip install --no-cache-dir pycurl==7.44.1 && \
+    pip install --no-cache-dir pycurl==7.49.0 && \
     apk del .build-deps
 
 ENV ONAP_LOG=/home/onap/logs
