@@ -1,9 +1,14 @@
 import json
+import logging
+import os
 from io import BytesIO
 
-import pycurl
+import urllib3
 
 from sdcBePy.common.helpers import check_arguments_not_none
+
+CONNECTION_FAILED = 111
+FILE_CONTENT_TYPE = "application/octet-stream"
 
 def get_url(ip, port, protocol):
     return "%s://%s:%s" % (protocol, ip, port)
@@ -11,7 +16,6 @@ def get_url(ip, port, protocol):
 
 class SdcBeProxy:
 
-    BODY_SEPARATOR = "\r\n\r\n"
     CHARTSET = 'UTF-8'
 
     def __init__(self, be_ip, be_port, header, scheme, tls_cert, tls_key, tls_key_pw, ca_cert, user_id="jh0003",
@@ -20,7 +24,7 @@ class SdcBeProxy:
             raise AttributeError("The be_host, be_port, scheme or admin_user are missing")
         url = get_url(be_ip, be_port, scheme)
         self.con = connector if connector \
-            else CurlConnector(url, user_id, header, tls_cert, tls_key, tls_key_pw, ca_cert, protocol=scheme, debug=debug)
+            else HttpConnector(url, user_id, header, tls_cert, tls_key, tls_key_pw, ca_cert, protocol=scheme, debug=debug)
 
     def check_backend(self):
         return self.con.get('/sdc2/rest/v1/user/jh0003')
@@ -65,128 +69,75 @@ class SdcBeProxy:
 
     def get_response_from_buffer(self):
         value = self.con.buffer.getvalue()
-        self.con.buffer.truncate(0)
         self.con.buffer.seek(0)
+        self.con.buffer.truncate()
+        return value.decode(self.CHARTSET)
 
-        response = value.decode(self.CHARTSET).split(self.BODY_SEPARATOR)
-        return response[len(response) - 1] if len(response) > 1 else response[0]
 
-class CurlConnector:
-    CONTENT_TYPE_HEADER = "Content-Type: application/json"
-    ACCEPT_HEADER = "Accept: application/json; charset=UTF-8"
+def file_part(path):
+    with open(path, "rb") as file:
+        return os.path.basename(path), file.read(), FILE_CONTENT_TYPE
 
-    def __init__(self, url, user_id_header, header, tls_cert, tls_key, tls_key_pw, ca_cert, buffer=None, protocol="http", debug=False):
-        self.__debug = debug
-        self.__protocol = protocol
-        self.__tls_cert = tls_cert
-        self.__tls_key = tls_key
-        self.__tls_key_pw = tls_key_pw
-        self.__ca_cert = ca_cert
-        self.c = self.__build_default_curl()
 
-        self.user_header = "USER_ID: " + user_id_header
+def build_tls_options(tls_cert, tls_key, tls_key_pw, ca_cert):
+    has_client_cert = tls_cert is not None and tls_key is not None
+    options = {"cert_reqs": "CERT_REQUIRED" if has_client_cert and ca_cert is not None else "CERT_NONE"}
+    if options["cert_reqs"] == "CERT_REQUIRED":
+        options["ca_certs"] = ca_cert
+    if has_client_cert:
+        options.update(cert_file=tls_cert, key_file=tls_key, key_password=tls_key_pw)
+    return options
+
+
+class HttpConnector:
+    JSON_HEADERS = {"Content-Type": "application/json", "Accept": "application/json; charset=UTF-8"}
+
+    def __init__(self, url, user_id_header, header, tls_cert, tls_key, tls_key_pw, ca_cert, buffer=None,
+                 protocol="http", debug=False):
         self.url = url
+        self.buffer = buffer if buffer is not None else BytesIO()
+        self.__identity = {"USER_ID": user_id_header}
+        # toscaTypes logs this attribute directly
+        self.user_header = "USER_ID: " + user_id_header
+        if header is not None:
+            self.__identity["Authorization"] = "Basic " + header
 
-        if not buffer:
-            self.buffer = BytesIO()
-
-        if header is None:
-            self.basicauth_header = ""
-        else:
-            self.basicauth_header = "Authorization: Basic " + header
+        tls_options = build_tls_options(tls_cert, tls_key, tls_key_pw, ca_cert) if protocol == "https" else {}
+        if tls_options.get("cert_reqs") == "CERT_NONE":
+            urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+        if debug:
+            urllib3.add_stderr_logger(logging.DEBUG)
+        self.__pool = urllib3.PoolManager(retries=False, **tls_options)
 
     def get(self, path, buffer=None, with_buffer=False):
+        target = (buffer or self.buffer) if with_buffer else None
         try:
-            self.c.setopt(pycurl.URL, self.url + path)
-            self.c.setopt(pycurl.HTTPHEADER, [self.user_header,
-                                              CurlConnector.CONTENT_TYPE_HEADER,
-                                              CurlConnector.ACCEPT_HEADER,
-                                              self.basicauth_header])
-
-            if with_buffer:
-                write = self.buffer.write if not buffer else buffer.write
-                self.c.setopt(pycurl.WRITEFUNCTION, write)
-
-            self.c.perform()
-            return self.c.getinfo(pycurl.RESPONSE_CODE)
-        except pycurl.error:
-            return 111
+            return self.__send("GET", path, target, headers={**self.__identity, **self.JSON_HEADERS})
+        except urllib3.exceptions.HTTPError:
+            return CONNECTION_FAILED
 
     def post(self, path, data):
         try:
-            self.c.setopt(pycurl.URL, self.url + path)
-            self.c.setopt(pycurl.POST, 1)
-
-            self.c.setopt(pycurl.HTTPHEADER, [self.user_header,
-                                              CurlConnector.CONTENT_TYPE_HEADER,
-                                              CurlConnector.ACCEPT_HEADER,
-                                              self.basicauth_header])
-
-            self.c.setopt(pycurl.POSTFIELDS, data)
-
-            self.c.perform()
-            self.c.setopt(pycurl.POST, 0)
-
-            return self.c.getinfo(pycurl.RESPONSE_CODE)
-        except pycurl.error:
-            return 111
+            return self.__send("POST", path, None, body=data.encode("utf-8"),
+                               headers={**self.__identity, **self.JSON_HEADERS})
+        except urllib3.exceptions.HTTPError:
+            return CONNECTION_FAILED
 
     def post_file(self, path, post_body, buffer=None):
         try:
-            self.c.setopt(pycurl.URL, self.url + path)
-            self.c.setopt(pycurl.POST, 1)
-            self.c.setopt(pycurl.HTTPHEADER, [self.user_header, self.basicauth_header])
-
-            self.c.setopt(pycurl.HTTPPOST, post_body)
-
-            write = self.buffer.write if not buffer else buffer.write
-            self.c.setopt(pycurl.WRITEFUNCTION, write)
-
-            self.c.perform()
-            self.c.setopt(pycurl.POST, 0)
-            return self.c.getinfo(pycurl.RESPONSE_CODE)
-        except pycurl.error as ex:
+            return self.__send("POST", path, buffer or self.buffer, fields=post_body, headers=self.__identity)
+        except urllib3.exceptions.HTTPError as ex:
             print(ex)
-            return 111
+            return CONNECTION_FAILED
 
     def put_file(self, path, post_body, response_write_buffer=None):
-        curl = self.__build_default_curl()
-        curl.setopt(pycurl.URL, self.url + path)
-        curl.setopt(pycurl.HTTPHEADER, [self.user_header, self.basicauth_header])
-        curl.setopt(pycurl.CUSTOMREQUEST, "PUT")
+        return self.__send("PUT", path, response_write_buffer or self.buffer, fields=post_body,
+                           headers=self.__identity)
 
-        curl.setopt(pycurl.HTTPPOST, post_body)
-
-        write = self.buffer.write if not response_write_buffer else response_write_buffer.write
-        curl.setopt(pycurl.WRITEFUNCTION, write)
-
-        curl.perform()
-        response_code = curl.getinfo(pycurl.RESPONSE_CODE)
-        curl.close()
-        return response_code
-
-    def __build_default_curl(self):
-        curl = pycurl.Curl()
-        if not self.__debug:
-            # disable printing not necessary logs in the terminal
-            curl.setopt(pycurl.WRITEFUNCTION, lambda x: None)
-        else:
-            curl.setopt(pycurl.VERBOSE, 1)
-
-        if self.__protocol == 'https':
-            curl.setopt(pycurl.SSL_VERIFYPEER, 0)
-            curl.setopt(pycurl.SSL_VERIFYHOST, 0)
-            if self.__tls_cert is not None and self.__tls_key is not None:
-                curl.setopt(curl.SSLCERT, self.__tls_cert)
-                curl.setopt(curl.SSLKEY, self.__tls_key)
-                if self.__tls_key_pw is not None:
-                  curl.setopt(curl.KEYPASSWD, self.__tls_key_pw)
-                if self.__ca_cert is not None:
-                    curl.setopt(pycurl.SSL_VERIFYPEER, 1)
-                    curl.setopt(pycurl.SSL_VERIFYHOST, 2)
-                    curl.setopt(curl.CAINFO, self.__ca_cert)
-        curl.setopt(pycurl.HEADER, True)
-        return curl
-
-    def __del__(self):
-        self.c.close()
+    def __send(self, method, path, buffer, **kwargs):
+        response = self.__pool.request(method, self.url + path, redirect=False, **kwargs)
+        if buffer is not None:
+            buffer.seek(0)
+            buffer.truncate()
+            buffer.write(response.data)
+        return response.status

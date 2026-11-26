@@ -1,11 +1,10 @@
 import json
 import zipfile
 import os
-import pycurl
 
 from sdcBePy.common.errors import ResourceCreationError
 from sdcBePy.common.logger import print_name_and_return_code, print_and_exit, log, debug
-from sdcBePy.common.sdcBeProxy import SdcBeProxy
+from sdcBePy.common.sdcBeProxy import SdcBeProxy, file_part
 
 
 def process_and_create_normative_types(normative_type,
@@ -108,7 +107,7 @@ def _create_send_body(file_dir, element_name):
 
     json_as_str = json.dumps(json_data)
 
-    return [('resourceMetadata', json_as_str), ('resourceZip', (pycurl.FORM_FILE, path))]
+    return [('resourceMetadata', json_as_str), ('resourceZip', file_part(path))]
 
 
 def _results_ok(results, response_codes):

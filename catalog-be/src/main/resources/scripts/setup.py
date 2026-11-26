@@ -43,5 +43,5 @@ setup(
             "sdcconsumerinit=sdcBePy.consumers.run:main",
             "sdcinit=sdcBePy.tosca.run:run"
         ]
-    }, install_requires=['pycurl']
+    }, install_requires=['urllib3>=2.8.0,<3']
 )

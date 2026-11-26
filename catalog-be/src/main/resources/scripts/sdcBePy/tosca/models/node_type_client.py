@@ -1,6 +1,7 @@
 #  -
 #   ============LICENSE_START=======================================================
 #   Copyright (C) 2021 Nordix Foundation.
+#   Modifications Copyright (C) 2026 Deutsche Telekom. All rights reserved.
 #   ================================================================================
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -30,9 +31,8 @@
 from io import BytesIO
 from pathlib import Path
 
-import pycurl
-
 from sdcBePy.common import logger
+from sdcBePy.common.sdcBeProxy import file_part
 
 
 class NodeTypeClient:
@@ -47,20 +47,15 @@ class NodeTypeClient:
 
         multi_part_form_data = []
 
-        node_type_yaml_param = ('nodeTypesYaml', (pycurl.FORM_FILE, str(node_type_yaml_path)))
+        node_type_yaml_param = ('nodeTypesYaml', file_part(str(node_type_yaml_path)))
         multi_part_form_data.append(node_type_yaml_param)
 
-        node_type_metadata_json_param = ('nodeTypeMetadataJson', (
-            pycurl.FORM_CONTENTS, node_type_metadata_json_str,
-            pycurl.FORM_CONTENTTYPE, 'application/json'
-        ))
+        node_type_metadata_json_param = ('nodeTypeMetadataJson',
+                                         (None, node_type_metadata_json_str, 'application/json'))
         multi_part_form_data.append(node_type_metadata_json_param)
 
         if is_update is not None:
-            create_new_version_param = ('createNewVersion', (
-                pycurl.FORM_CONTENTS, str(is_update).lower(),
-                pycurl.FORM_CONTENTTYPE, 'text/plain'
-            ))
+            create_new_version_param = ('createNewVersion', (None, str(is_update).lower(), 'text/plain'))
             multi_part_form_data.append(create_new_version_param)
 
         response_buffer = BytesIO()

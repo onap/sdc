@@ -1,5 +1,6 @@
 # ============LICENSE_START=======================================================
 #  Copyright (C) 2021 Nordix Foundation
+#  Modifications Copyright (C) 2026 Deutsche Telekom. All rights reserved.
 #  ===============================================================================
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -19,10 +20,9 @@ import json
 from io import BytesIO
 from pathlib import Path
 
-import pycurl
-
 from sdcBePy.common import logger
 from sdcBePy.common.normative.main import process_element_list, process_type_list
+from sdcBePy.common.sdcBeProxy import file_part
 from sdcBePy.tosca.models.normativeElementsList import get_normative_element_candidate_list, \
     get_normative_element_with_metadata_list
 
@@ -41,14 +41,11 @@ class ModelClient:
 
         multi_part_form_data = []
 
-        model_zip_param = ('modelImportsZip', (pycurl.FORM_FILE, str(model_imports_zip_path)))
+        model_zip_param = ('modelImportsZip', file_part(str(model_imports_zip_path)))
         multi_part_form_data.append(model_zip_param)
 
         json_payload = self.__parse_to_json_str(model_payload_dict)
-        model_param = ('model', (
-            pycurl.FORM_CONTENTS, json_payload,
-            pycurl.FORM_CONTENTTYPE, 'application/json'
-        ))
+        model_param = ('model', (None, json_payload, 'application/json'))
         multi_part_form_data.append(model_param)
 
         response_buffer = BytesIO()
@@ -66,7 +63,7 @@ class ModelClient:
 
         multi_part_form_data = []
 
-        model_zip_post = ('modelImportsZip', (pycurl.FORM_FILE, str(model_imports_zip_path)))
+        model_zip_post = ('modelImportsZip', file_part(str(model_imports_zip_path)))
         multi_part_form_data.append(('modelName', model_name))
         multi_part_form_data.append(model_zip_post)
 

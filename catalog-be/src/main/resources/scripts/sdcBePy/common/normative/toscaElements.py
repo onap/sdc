@@ -1,10 +1,8 @@
 import json
 import zipfile
 
-import pycurl
-
 from sdcBePy.common.logger import debug, log, print_name_and_return_code, print_and_exit
-from sdcBePy.common.sdcBeProxy import SdcBeProxy
+from sdcBePy.common.sdcBeProxy import SdcBeProxy, file_part
 from sdcBePy.common.errors import ResourceCreationError
 
 
@@ -88,7 +86,7 @@ def _create_zip_file_multi_part(element_form_name, type_file_name, element_name)
     zf.close()
 
     tosca_type_zip_path = type_file_name + ".zip"
-    tosca_type_zip_part = (element_form_name, (pycurl.FORM_FILE, tosca_type_zip_path))
+    tosca_type_zip_part = (element_form_name, file_part(tosca_type_zip_path))
     return tosca_type_zip_part
 
 

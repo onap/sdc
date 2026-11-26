@@ -6,17 +6,8 @@ USER root
 RUN addgroup -g 101 -S onap && adduser -u 101 -S -G onap -h /home/onap onap
 ENV HOME=/home/onap
 
-# Needed for pycurl SSL backend selection
-ENV PYCURL_SSL_LIBRARY=openssl
-
 # Without a TTY, Python block-buffers stdout and job logs only arrive in 8 KiB bursts
 ENV PYTHONUNBUFFERED=1
-
-# Install runtime libcurl, build and install pycurl, then remove build deps
-RUN apk add --no-cache libcurl && \
-    apk add --no-cache --virtual .build-deps build-base curl-dev openssl-dev && \
-    pip install --no-cache-dir pycurl==7.49.0 && \
-    apk del .build-deps
 
 ENV ONAP_LOG=/home/onap/logs
 RUN mkdir -p $ONAP_LOG && chown onap:onap $ONAP_LOG
@@ -25,8 +16,10 @@ USER onap
 
 # Copy and install Python sdcBePy package
 COPY --chown=onap:onap scripts /home/onap/scripts
+# sdcBePy's unit tests only run in CI here, as part of the image build
 RUN cd /home/onap/scripts && \
-    pip install --no-cache-dir --user .
+    pip install --no-cache-dir --user . && \
+    python -m unittest discover -s sdcBePy/tests
 
 ENV PATH=$PATH:/home/onap/.local/bin
 
