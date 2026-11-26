@@ -5,6 +5,10 @@
     <property scope="system" name="ECOMP-subcomponent-name" value="SDC-FE"/>
     <property file="${config.home}/catalog-fe/configuration.yaml"/>
     <property scope="context" name="enable-all-log" value="false"/>
+    <!-- all.log only receives events when enable-all-log is true, True or TRUE -->
+    <property name="all-log-level-true" value="TRACE"/>
+    <property name="all-log-level-True" value="TRACE"/>
+    <property name="all-log-level-TRUE" value="TRACE"/>
     <property name="p_msg" value="%replace(%replace(%replace(%replace(%msg){'\t','\\\\t'}){'\n', '\\\\n'}){'\\\|', '-'}){'\r','\\\\r'}"/>
     <property name="p_ex" value="%replace(%replace(%replace(%replace(%exception{full}){'\t','\\\\t'}){'\n', '\\\\n'}){'\\\|', '-'}){'\r','\\\\r'}"/>
     <property name="p_debugInfo" value="%replace(%replace(%replace(%replace(%thread # %level # %logger{35} # %msg){'\t','\\\\t'}){'\n', '\\\\n'}){'\\\|', '-'}){'\r','\\\\r'}"/>
@@ -20,28 +24,24 @@
 
 
     <!-- All log -->
-    <if condition='property("enable-all-log").equalsIgnoreCase("true")'>
-        <then>
-            <appender name="ALL_ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
-                <file>${log.home}/${ECOMP-component-name}/${ECOMP-subcomponent-name}/all.log</file>
+    <appender name="ALL_ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.home}/${ECOMP-component-name}/${ECOMP-subcomponent-name}/all.log</file>
 
-                <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-                    <fileNamePattern>${log.home}/${ECOMP-component-name}/${ECOMP-subcomponent-name}/all.log.%i
-                    </fileNamePattern>
-                    <minIndex>1</minIndex>
-                    <maxIndex>10</maxIndex>
-                </rollingPolicy>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>${log.home}/${ECOMP-component-name}/${ECOMP-subcomponent-name}/all.log.%i
+            </fileNamePattern>
+            <minIndex>1</minIndex>
+            <maxIndex>10</maxIndex>
+        </rollingPolicy>
 
-                <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-                    <maxFileSize>20MB</maxFileSize>
-                </triggeringPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>20MB</maxFileSize>
+        </triggeringPolicy>
 
-                <encoder>
-                    <pattern>${all-log-pattern}</pattern>
-                </encoder>
-            </appender>
-        </then>
-    </if>
+        <encoder>
+            <pattern>${all-log-pattern}</pattern>
+        </encoder>
+    </appender>
 
 
     <!-- Debug log -->
@@ -49,12 +49,15 @@
         <file>${log.home}/${ECOMP-component-name}/${ECOMP-subcomponent-name}/debug.log</file>
 
         <!-- accept INFO, DEBUG and TRACE level -->
-        <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
-            <evaluator> <!-- defaults to type ch.qos.logback.classic.boolex.JaninoEventEvaluator -->
-                <expression>return level &lt;= INFO;</expression>
-            </evaluator>
-            <OnMismatch>DENY</OnMismatch>
-            <OnMatch>ACCEPT</OnMatch>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>DENY</onMatch>
+            <onMismatch>NEUTRAL</onMismatch>
+        </filter>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>WARN</level>
+            <onMatch>DENY</onMatch>
+            <onMismatch>NEUTRAL</onMismatch>
         </filter>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
@@ -102,6 +105,9 @@
 
     <!-- Asynchronicity Configurations -->
     <appender name="ASYNC_ALL" class="ch.qos.logback.classic.AsyncAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>${all-log-level-${enable-all-log}:-OFF}</level>
+        </filter>
         <appender-ref ref="ALL_ROLLING"/>
     </appender>
 
@@ -117,11 +123,7 @@
     <root level="INFO">
         <appender-ref ref="ASYNC_ERROR"/>
         <appender-ref ref="ASYNC_DEBUG"/>
-        <if condition='property("enable-all-log").equalsIgnoreCase("true")'>
-            <then>
-                <appender-ref ref="ASYNC_ALL"/>
-            </then>
-        </if>
+        <appender-ref ref="ASYNC_ALL"/>
     </root>
 
     <logger name="org.openecomp.sdc" level="INFO"/>

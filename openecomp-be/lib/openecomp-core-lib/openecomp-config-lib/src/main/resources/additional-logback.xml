@@ -32,12 +32,20 @@
 		</filter>
 
 		<!-- accept DEBUG and TRACE level -->
-		<filter class="ch.qos.logback.core.filter.EvaluatorFilter">
-			<evaluator> <!-- defaults to type ch.qos.logback.classic.boolex.JaninoEventEvaluator -->
-				<expression>return level &lt;= DEBUG;</expression>
-			</evaluator>
-			<OnMismatch>DENY</OnMismatch>
-			<OnMatch>NEUTRAL</OnMatch>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>ERROR</level>
+			<onMatch>DENY</onMatch>
+			<onMismatch>NEUTRAL</onMismatch>
+		</filter>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>WARN</level>
+			<onMatch>DENY</onMatch>
+			<onMismatch>NEUTRAL</onMismatch>
+		</filter>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>INFO</level>
+			<onMatch>DENY</onMatch>
+			<onMismatch>NEUTRAL</onMismatch>
 		</filter>
 
 		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
