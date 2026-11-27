@@ -652,12 +652,6 @@ dcae:
     port: 8080
     healthCheckUri: "/dcae/healthCheck"
 
-ecompPortal:
-    protocol: https
-    host: ecomp-portal-web-tdevn2.mtn23a.ecomp.cci.att.com
-    port: 8443
-    healthCheckUri: "/ecompui/portalApi/healthCheck"
-
 switchoverDetector:
     gBeFqdn: AIO-BE.ecomp.idns.cip.com
     gFeFqdn: AIO-FE.ecomp.idns.cip.com
@@ -832,7 +826,6 @@ healthStatusExclude:
    - DE
    - DMAAP
    - DMAAP_PRODUCER
-   - ECOMP_PORTAL
 
 # This configuration entry lists all node type names prefix that shall be allowed on SDC.
 definedResourceNamespace:

@@ -115,11 +115,6 @@
           <artifactId>spring-boot-autoconfigure</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>org.openecomp.ecompsdkos</groupId>
-          <artifactId>epsdk-fw</artifactId>
-        </exclusion>
-
-        <exclusion>
           <groupId>org.onap.sdc.common</groupId>
           <artifactId>onap-common-lib</artifactId>
         </exclusion>
@@ -136,47 +131,6 @@
       </exclusions>
 
       <scope>compile</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onap.portal.sdk</groupId>
-      <artifactId>epsdk-fw</artifactId>
-      <version>${ecomp.version}</version>
-      <scope>compile</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>com.att.nsa</groupId>
-          <artifactId>cambriaClient</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.att.nsa</groupId>
-          <artifactId>dmaapClient</artifactId>
-        </exclusion>
-        <exclusion>
-          <artifactId>slf4j-log4j12</artifactId>
-          <groupId>org.slf4j</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>log4j</artifactId>
-          <groupId>log4j</groupId>
-        </exclusion>
-        <exclusion>
-          <groupId>javax.servlet</groupId>
-          <artifactId>javax.servlet-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.onap.aaf.authz</groupId>
-          <artifactId>aaf-cadi-aaf</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.onap.aaf.authz</groupId>
-          <artifactId>aaf-cadi-client</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.onap.aaf.authz</groupId>
-          <artifactId>aaf-cadi-core</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <!-- ASDC dependencies end -->
@@ -372,7 +326,6 @@
       </exclusions>
     </dependency>
 
-    <!-- Explicitly specified in order to override older version included by epsdk-fw -->
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-annotations</artifactId>

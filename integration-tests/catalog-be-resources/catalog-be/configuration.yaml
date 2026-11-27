@@ -1167,7 +1167,6 @@ healthStatusExclude:
    - DMAAP_PRODUCER
    - ON_BOARDING
    - DCAE
-   - PORTAL
    - External API
 
 #Auto Healing

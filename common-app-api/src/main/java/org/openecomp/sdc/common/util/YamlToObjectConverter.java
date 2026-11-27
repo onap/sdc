@@ -33,7 +33,6 @@ import org.openecomp.sdc.be.config.Configuration.ApplicationL1CacheConfig;
 import org.openecomp.sdc.be.config.Configuration.ApplicationL2CacheConfig;
 import org.openecomp.sdc.be.config.Configuration.ArtifactTypeConfig;
 import org.openecomp.sdc.be.config.Configuration.BeMonitoringConfig;
-import org.openecomp.sdc.be.config.Configuration.EcompPortalConfig;
 import org.openecomp.sdc.be.config.Configuration.OnboardingConfig;
 import org.openecomp.sdc.be.config.Configuration.SwitchoverDetectorConfig;
 import org.openecomp.sdc.be.config.Configuration.ToscaValidatorsConfig;
@@ -94,8 +93,6 @@ public class YamlToObjectConverter {
         beConfDescription.putMapPropertyType("serviceDeploymentArtifacts", String.class, ArtifactTypeConfig.class);
         // onboarding
         beConfDescription.putListPropertyType("onboarding", OnboardingConfig.class);
-        // ecompPortal
-        beConfDescription.putListPropertyType("ecompPortal", EcompPortalConfig.class);
         // switchoverDetector
         beConfDescription.putListPropertyType("switchoverDetector", SwitchoverDetectorConfig.class);
         // ApplicationL1Cache

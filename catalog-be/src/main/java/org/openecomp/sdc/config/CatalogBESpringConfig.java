@@ -21,17 +21,12 @@
  */
 package org.openecomp.sdc.config;
 
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.onap.portalsdk.core.onboarding.exception.CipherUtilException;
-import org.onap.sdc.security.PortalClient;
 import org.openecomp.sdc.be.auditing.impl.ConfigurationProvider;
 import org.openecomp.sdc.be.components.impl.ComponentLocker;
 import org.openecomp.sdc.be.components.impl.lock.ComponentLockAspect;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.ecomp.PortalApiApplicationContext;
 import org.openecomp.sdc.be.ecomp.converters.AssetMetadataConverter;
-import org.openecomp.sdc.be.filters.PortalConfiguration;
 import org.openecomp.sdc.be.filters.ThreadLocalUtils;
 import org.openecomp.sdc.be.tosca.CommonCsarGenerator;
 import org.openecomp.sdc.be.tosca.DefaultCsarGenerator;
@@ -94,11 +89,6 @@ public class CatalogBESpringConfig {
         return new AssetMetadataConverter();
     }
 
-    @Bean
-    public PortalApiApplicationContext portalApiApplicationContext() {
-        return new PortalApiApplicationContext();
-    }
-
     @Bean(name = "componentLockAspect")
     @Order(BEFORE_TRANSACTION_MANAGER)
     public ComponentLockAspect componentLockAspect() {
@@ -106,24 +96,8 @@ public class CatalogBESpringConfig {
     }
 
     @Bean
-    public CloseableHttpClient httpClientConnectionManager() {
-        HttpClientFactory httpClientFactory = new HttpClientFactory();
-        return httpClientFactory.createHttpClient();
-    }
-
-    @Bean
-    public PortalConfiguration portalConfiguration() throws CipherUtilException {
-        return new PortalConfiguration();
-    }
-
-    @Bean
     public ThreadLocalUtils threadLocalUtils() {
         return new ThreadLocalUtils();
-    }
-
-    @Bean
-    public PortalClient portalClient() throws CipherUtilException {
-        return new PortalClient(httpClientConnectionManager(), portalConfiguration());
     }
 
     @Bean(name = "defaultCsarGenerator")

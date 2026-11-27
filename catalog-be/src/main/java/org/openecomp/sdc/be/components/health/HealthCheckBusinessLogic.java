@@ -25,7 +25,6 @@ import static org.apache.http.HttpStatus.SC_INTERNAL_SERVER_ERROR;
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_BE;
 import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_CASSANDRA;
-import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_ECOMP_PORTAL;
 import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_JANUSGRAPH;
 import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_ON_BOARDING;
 import static org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus.DOWN;
@@ -93,8 +92,6 @@ public class HealthCheckBusinessLogic {
     private DistributionEngineClusterHealth distributionEngineClusterHealth;
     @Resource
     private CassandraHealthCheck cassandraHealthCheck;
-    @Resource
-    private PortalHealthCheckBuilder portalHealthCheck;
     @Autowired
     private SwitchoverDetector switchoverDetector;
     private volatile List<HealthCheckInfo> prevBeHealthCheckInfos = null;
@@ -148,8 +145,6 @@ public class HealthCheckBusinessLogic {
         healthCheckInfos.add(getCassandraHealthCheck());
         // Amdocs
         healthCheckInfos.add(getHostedComponentsBeHealthCheck(HC_COMPONENT_ON_BOARDING, buildOnBoardingHealthCheckUrl()));
-        //ECOMP Portal
-        healthCheckInfos.add(portalHealthCheck.getHealthCheckInfo());
         return healthCheckInfos;
     }
 
@@ -209,7 +204,7 @@ public class HealthCheckBusinessLogic {
                 HttpResponse<String> httpResponse = HttpRequest.get(healthCheckUrl, new HttpClientConfig(new Timeouts(timeout, timeout)));
                 int statusCode = httpResponse.getStatusCode();
                 String aggDescription = "";
-                if ((statusCode == SC_OK || statusCode == SC_INTERNAL_SERVER_ERROR) && !componentName.equals(HC_COMPONENT_ECOMP_PORTAL)) {
+                if (statusCode == SC_OK || statusCode == SC_INTERNAL_SERVER_ERROR) {
                     String response = httpResponse.getResponse();
                     log.trace("{} Health Check response: {}", componentName, response);
                     ObjectMapper mapper = new ObjectMapper();

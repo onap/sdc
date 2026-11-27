@@ -63,7 +63,6 @@ Modifications copyright (c) 2018-2019 Nokia
     <opentelemetry-javaagent.version>2.27.0</opentelemetry-javaagent.version>
     <!-- kept in step with opentelemetry-javaagent.version; only the agent acts on @WithSpan, the annotation is inert -->
     <opentelemetry-instrumentation-annotations.version>2.27.0</opentelemetry-instrumentation-annotations.version>
-    <ecomp.version>3.4.0</ecomp.version>
     <cadi.version>2.1.21</cadi.version>
     <lombok.version>1.18.24</lombok.version>
     <commons-beanutils>1.11.0</commons-beanutils>

@@ -36033,8 +36033,6 @@ components:
           $ref: '#/components/schemas/DmaapProducerConfiguration'
         dmeConfiguration:
           $ref: '#/components/schemas/DmeConfiguration'
-        ecompPortal:
-          $ref: '#/components/schemas/EcompPortalConfig'
         enableAutoHealing:
           type: boolean
         environmentContext:
@@ -36580,26 +36578,6 @@ components:
       properties:
         lookupUriFormat:
           type: string
-    EcompPortalConfig:
-      type: object
-      properties:
-        defaultFunctionalMenu:
-          type: string
-        healthCheckUri:
-          type: string
-        host:
-          type: string
-        pollingInterval:
-          type: integer
-          format: int32
-        port:
-          type: integer
-          format: int32
-        protocol:
-          type: string
-        timeoutMs:
-          type: integer
-          format: int32
     Endpoint:
       type: object
       properties:

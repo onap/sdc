@@ -21,16 +21,12 @@ package org.openecomp.sdc.be.filters;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.onap.sdc.security.AuthenticationCookie;
 import org.onap.sdc.security.IUsersThreadLocalHolder;
-import org.onap.sdc.security.PortalClient;
-import org.onap.sdc.security.RestrictionAccessFilterException;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.model.User;
@@ -45,8 +41,6 @@ public class ThreadLocalUtils implements IUsersThreadLocalHolder {
 
     private static final Logger log = Logger.getLogger(ThreadLocalUtils.class);
     @Autowired
-    private PortalClient portalClient;
-    @Autowired
     private UserBusinessLogic userBusinessLogic;
 
     @Override
@@ -55,26 +49,6 @@ public class ThreadLocalUtils implements IUsersThreadLocalHolder {
         userContext = new UserContext(authenticationCookie.getUserID(), authenticationCookie.getRoles(), authenticationCookie.getFirstName(),
                 authenticationCookie.getLastName());
         ThreadLocalsHolder.setUserContext(userContext);
-    }
-
-    protected void setUserContext(HttpServletRequest httpRequest) {
-        final String userId = httpRequest.getHeader(Constants.USER_ID_HEADER);
-        if (userId != null) {
-            Set<String> roles = null;
-            try {
-                final Optional<String> userRolesFromPortalOptional = portalClient.fetchUserRolesFromPortal(userId);
-                if (userRolesFromPortalOptional.isPresent()) {
-                    roles = new HashSet<>(List.of(userRolesFromPortalOptional.get()));
-                }
-            } catch (RestrictionAccessFilterException e) {
-                log.debug("Failed to fetch user ID - {} from portal", userId);
-                log.debug(e.getMessage());
-            }
-            final UserContext userContext = new UserContext(userId, roles, null, null);
-            ThreadLocalsHolder.setUserContext(userContext);
-        } else {
-            log.debug("user_id value in req header is null, userContext will not be initialized");
-        }
     }
 
     protected void setUserContextFromDB(HttpServletRequest httpRequest) {

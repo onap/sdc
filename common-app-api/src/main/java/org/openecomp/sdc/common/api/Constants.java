@@ -144,7 +144,6 @@ public final class Constants {
     public static final String HC_COMPONENT_CATALOG_FACADE_MS = "CATALOG_FACADE_MS";
     //external HealthCheck components
     public static final String HC_COMPONENT_ON_BOARDING = "ON_BOARDING";
-    public static final String HC_COMPONENT_ECOMP_PORTAL = "PORTAL";
     //Plugin BL
     public static final String PLUGIN_BL_COMPONENT = "pluginStatusBL";
     public static final String DEFAULT_MODEL_NAME = "SDC AID";

@@ -33,12 +33,12 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import org.apache.commons.lang3.StringUtils;
-import org.onap.portalsdk.core.onboarding.exception.CipherUtilException;
-import org.onap.portalsdk.core.onboarding.util.CipherUtil;
 import org.onap.sdc.security.AuthenticationCookie;
 import org.onap.sdc.security.RepresentationUtils;
 import org.openecomp.sdc.common.impl.MutableHttpServletRequest;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.common.util.UserIdCipher;
+import org.openecomp.sdc.common.util.UserIdCipherException;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.fe.Constants;
 import org.openecomp.sdc.fe.config.Configuration;
@@ -57,7 +57,7 @@ public class PortalServlet extends HttpServlet {
     private static final String NEW_LINE = System.getProperty("line.separator");
     private static Logger log = Logger.getLogger(PortalServlet.class.getName());
 
-    private static String getUserIdFromCookie(HttpServletRequest request) throws CipherUtilException {
+    private static String getUserIdFromCookie(HttpServletRequest request) throws UserIdCipherException {
         String userId = "";
         Cookie[] cookies = request.getCookies();
         Cookie userIdcookie = null;
@@ -69,7 +69,7 @@ public class PortalServlet extends HttpServlet {
             }
         }
         if (userIdcookie != null) {
-            userId = CipherUtil.decrypt(userIdcookie.getValue());
+            userId = UserIdCipher.decrypt(userIdcookie.getValue());
         }
         return userId;
     }
@@ -115,7 +115,7 @@ public class PortalServlet extends HttpServlet {
      * @throws IOException
      */
     private void addRequestHeadersUsingWebseal(final HttpServletRequest request, final HttpServletResponse response)
-        throws ServletException, IOException, CipherUtilException {
+        throws ServletException, IOException, UserIdCipherException {
         response.setContentType("text/html");
         // Create new request object to dispatch
         MutableHttpServletRequest mutableRequest = new MutableHttpServletRequest(request);
@@ -193,7 +193,7 @@ public class PortalServlet extends HttpServlet {
         try {
             AuthenticationCookie authenticationCookie = new AuthenticationCookie(userId, firstName, lastName);
             String cookieAsJson = RepresentationUtils.toRepresentation(authenticationCookie);
-            encryptedCookie = CipherUtil.encryptPKC(cookieAsJson, confCookie.getSecurityKey());
+            encryptedCookie = UserIdCipher.encryptPkc(cookieAsJson, confCookie.getSecurityKey());
             isBuildCookieCompleted = true;
         } catch (Exception e) {
             log.error(" Cookie Encryption failed ", e);
@@ -249,12 +249,12 @@ public class PortalServlet extends HttpServlet {
      * @param headers
      */
     private void addCookies(final HttpServletResponse response, final HttpServletRequest request, final String[] headers)
-        throws CipherUtilException {
+        throws UserIdCipherException {
         for (var i = 0; i < headers.length; i++) {
             final var currHeader = ValidationUtils.sanitizeInputString(headers[i]);
             final var headerValue = ValidationUtils.sanitizeInputString(request.getHeader(currHeader));
             if (headerValue != null) {
-                final var cookie = new Cookie(currHeader, CipherUtil.encryptPKC(headerValue));
+                final var cookie = new Cookie(currHeader, UserIdCipher.encryptPkc(headerValue));
                 cookie.setSecure(true);
                 response.addCookie(cookie);
             }

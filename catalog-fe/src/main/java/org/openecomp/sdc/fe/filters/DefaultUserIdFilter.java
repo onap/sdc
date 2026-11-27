@@ -32,8 +32,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
-import org.onap.portalsdk.core.onboarding.util.CipherUtil;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.common.util.UserIdCipher;
 import org.openecomp.sdc.fe.Constants;
 import org.openecomp.sdc.fe.config.Configuration;
 import org.openecomp.sdc.fe.config.ConfigurationManager;
@@ -113,7 +113,7 @@ public class DefaultUserIdFilter implements Filter {
             return;
         }
         try {
-            final Cookie cookie = new Cookie(Constants.USER_ID, CipherUtil.encryptPKC(defaultUserId));
+            final Cookie cookie = new Cookie(Constants.USER_ID, UserIdCipher.encryptPkc(defaultUserId));
             // The backend decrypts any base64-looking USER_ID, so an encrypted value is the only contract it understands. Deliberately not HttpOnly:
             // the single page application reads this with document.cookie and copies it onto every backend call.
             cookie.setSecure(request.isSecure());

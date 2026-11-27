@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2020 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2026 Deutsche Telekom AG. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,24 +17,17 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.openecomp.sdc.asdctool.migration.config.mocks;
+package org.openecomp.sdc.common.util;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import org.openecomp.sdc.be.components.health.PortalHealthCheckBuilder;
-import org.springframework.stereotype.Component;
+public class UserIdCipherException extends Exception {
 
-@Component("portalHealthCheckBusinessLogic")
-public class PortalHealthCheckBuilderMock extends PortalHealthCheckBuilder {
+    private static final long serialVersionUID = 1L;
 
-    @Override
-    @PostConstruct
-    public PortalHealthCheckBuilder init() {
-        return null;
+    public UserIdCipherException(String message) {
+        super(message);
     }
 
-    @Override
-    @PreDestroy
-    protected void destroy() {
+    public UserIdCipherException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

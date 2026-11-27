@@ -46,9 +46,6 @@ import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.glassfish.jersey.servlet.ServletContainer;
 import org.onap.config.impl.ConfigurationFilter;
 import org.onap.config.impl.ContextListener;
-import org.onap.portalsdk.core.onboarding.crossapi.PortalRestAPIProxy;
-import org.onap.portalsdk.core.onboarding.listener.UserContextListener;
-import org.onap.portalsdk.core.onboarding.listener.UserSessionListener;
 import org.openecomp.sdc.be.filters.BasicAuthenticationFilter;
 import org.openecomp.sdc.be.filters.BeServletFilter;
 import org.openecomp.sdc.be.filters.CatalogTenantTokenFilter;
@@ -70,8 +67,8 @@ import org.togglz.servlet.TogglzFilter;
 
 /**
  * The catalog-be web application, as the Jetty distribution assembled it from the WAR's {@code web.xml}, the
- * {@code web-fragment.xml} files of togglz-console and togglz-servlet, the {@code @WebServlet}, {@code @WebFilter} and
- * {@code @WebListener} classes of epsdk-fw and onap-configuration-management-core, and Jetty's {@code webdefault.xml}.
+ * {@code web-fragment.xml} files of togglz-console and togglz-servlet, the {@code @WebFilter} and {@code @WebListener}
+ * classes of onap-configuration-management-core, and Jetty's {@code webdefault.xml}.
  * Boot reads none of these.
  */
 public final class CatalogBeWebApp extends AbstractConfiguration {
@@ -107,8 +104,6 @@ public final class CatalogBeWebApp extends AbstractConfiguration {
         context.setSecurityHandler(traceDisabled());
 
         context.addEventListener(new BEAppContextListener());
-        context.addEventListener(new UserSessionListener());
-        context.addEventListener(new UserContextListener());
         context.addEventListener(new ContextListener());
         context.addEventListener(new LogbackServletContextListener());
 
@@ -147,7 +142,6 @@ public final class CatalogBeWebApp extends AbstractConfiguration {
             StorageExceptionMapper.class,
             MixinModelWriter.class,
             ObjectMapperProvider.class)));
-        jersey.setInitParameter("exclude_url_endpoints", "/api/v3/analytics,/api/v3/storeAnalytics");
         jersey.setInitOrder(1);
 
         ServletHolder distribution = addServlet(context, "jerseyDistribution", ServletContainer.class, true, "/sdc/*");
@@ -166,10 +160,6 @@ public final class CatalogBeWebApp extends AbstractConfiguration {
             BasicAuthenticationFilter.class)));
         distribution.setInitOrder(1);
 
-        // web.xml declared the portal servlet without a mapping; the @WebServlet annotation of the same class added a
-        // second, mapped instance under the class name.
-        addServlet(context, "ECOMPServlet", PortalRestAPIProxy.class, true).setInitOrder(3);
-        addServlet(context, PortalRestAPIProxy.class.getName(), PortalRestAPIProxy.class, false, "/api/v3/*");
         addServlet(context, "ViewStatusMessages", ViewStatusMessagesServlet.class, true, "/lbClassicStatus");
         addServlet(context, "TogglzConsoleServlet", TogglzConsoleServlet.class, false, "/catalog/togglz/*");
 

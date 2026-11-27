@@ -153,7 +153,6 @@ public class Configuration extends BasicConfiguration {
     private String workloadContext;
     private EnvironmentContext environmentContext;
     private List<GabConfig> gabConfig;
-    private EcompPortalConfig ecompPortal;
     private List<ArtifactConfiguration> artifacts;
     private Map<String, Map<String, List<String>>> componentAllowedInstanceTypes;
     private ExternalCsarStore externalCsarStore;
@@ -369,22 +368,6 @@ public class Configuration extends BasicConfiguration {
         private boolean enabled;
         private String issuer;
         private String audience;
-    }
-
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    @ToString(onlyExplicitlyIncluded = true)
-    public static class EcompPortalConfig {
-
-        private String protocol = "https";
-        private String host;
-        private Integer port;
-        private String healthCheckUri;
-        @ToString.Include
-        private String defaultFunctionalMenu;
-        private Integer pollingInterval;
-        private Integer timeoutMs;
     }
 
     @Getter

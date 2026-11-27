@@ -111,7 +111,6 @@ healthStatusExclude:
    - DMAAP
    - DCAE
    - DMAAP_PRODUCER
-   - PORTAL
    - CATALOG_FACADE_MS
    - External API
 

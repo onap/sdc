@@ -34,7 +34,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tinkerpop.gremlin.structure.Edge;
-import org.onap.portalsdk.core.onboarding.util.CipherUtil;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.utils.UserStatusEnum;
@@ -49,6 +48,7 @@ import org.openecomp.sdc.common.kpi.api.ASDCKpiApi;
 import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ThreadLocalsHolder;
+import org.openecomp.sdc.common.util.UserIdCipher;
 import org.openecomp.sdc.exception.ResponseFormat;
 
 @org.springframework.stereotype.Component
@@ -84,7 +84,7 @@ public class UserBusinessLogic {
     private String decryptUserId(final String userId) {
         if (StringUtils.isNotEmpty(userId) && isUserBase64Encoded(userId)) {
             try {
-                return CipherUtil.decryptPKC(userId);
+                return UserIdCipher.decryptPkc(userId);
             } catch (final Exception e) {
                 return userId;
             }

@@ -343,12 +343,6 @@ onboarding:
     port: 8080
     healthCheckUri: "/onboarding-api/v1.0/healthcheck"
 
-ecompPortal:
-    protocol: https
-    host: ecomp-portal-web-tdevn2.mtn23a.ecomp.cci.att.com
-    port: 8443
-    healthCheckUri: "/ecompui/portalApi/healthCheck"
-
 switchoverDetector:
     gBeFqdn: AIO-BE.ecomp.idns.cip.com
     gFeFqdn: AIO-FE.ecomp.idns.cip.com

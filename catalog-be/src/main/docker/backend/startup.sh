@@ -19,7 +19,7 @@ export JAVA_OPTIONS="$JAVA_OPTIONS -Dconfig.home=$JETTY_BASE/config \
        -Djavax.net.ssl.trustStore=$JETTY_BASE/etc/org.onap.sdc.trust.jks \
        -Djavax.net.ssl.trustStorePassword=z+KEj;t+,KN^iimSiS89e#p0"
 
-# resources/ holds the key.properties and portal.properties a deployment mounts, plugins/ the jars that
+# resources/ holds the key.properties a deployment mounts, plugins/ the jars that
 # sdc-backend-all-plugins adds; lib/ comes from the jar's manifest.
 cd $JETTY_BASE
 java $OTEL_OPTS $JAVA_OPTIONS -cp "$JETTY_BASE/catalog-be.jar:$JETTY_BASE/resources:$JETTY_BASE/plugins/*" \

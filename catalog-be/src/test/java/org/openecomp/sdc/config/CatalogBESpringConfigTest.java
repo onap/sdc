@@ -24,9 +24,7 @@ package org.openecomp.sdc.config;
 
 import static org.mockito.Mockito.mock;
 
-import org.apache.http.impl.client.CloseableHttpClient;
 import org.junit.Test;
-import org.onap.sdc.security.PortalClient;
 import org.openecomp.sdc.be.auditing.impl.ConfigurationProvider;
 import org.openecomp.sdc.be.components.impl.ComponentLocker;
 import org.openecomp.sdc.be.components.impl.lock.ComponentLockAspect;
@@ -34,7 +32,6 @@ import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphClient;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.ecomp.converters.AssetMetadataConverter;
-import org.openecomp.sdc.be.filters.PortalConfiguration;
 import org.openecomp.sdc.be.filters.ThreadLocalUtils;
 import org.openecomp.sdc.be.tosca.CommonCsarGenerator;
 import org.openecomp.sdc.be.tosca.DefaultCsarGenerator;
@@ -86,26 +83,6 @@ public class CatalogBESpringConfigTest {
     }
 
     @Test
-    public void testHttpClientConnectionManager() throws Exception {
-        CatalogBESpringConfig testSubject;
-        CloseableHttpClient result;
-
-        // default test
-        testSubject = createTestSubject();
-        result = testSubject.httpClientConnectionManager();
-    }
-
-    @Test
-    public void testPortalConfiguration() throws Exception {
-        CatalogBESpringConfig testSubject;
-        PortalConfiguration result;
-
-        // default test
-        testSubject = createTestSubject();
-        result = testSubject.portalConfiguration();
-    }
-
-    @Test
     public void testThreadLocalUtils() throws Exception {
         CatalogBESpringConfig testSubject;
         ThreadLocalUtils result;
@@ -113,16 +90,6 @@ public class CatalogBESpringConfigTest {
         // default test
         testSubject = createTestSubject();
         result = testSubject.threadLocalUtils();
-    }
-
-    @Test
-    public void testPortalClient() throws Exception {
-        CatalogBESpringConfig testSubject;
-        PortalClient result;
-
-        // default test
-        testSubject = createTestSubject();
-        result = testSubject.portalClient();
     }
 
 }

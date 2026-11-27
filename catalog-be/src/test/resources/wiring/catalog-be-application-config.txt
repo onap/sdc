@@ -190,7 +190,6 @@ healingPipelineDao : org.openecomp.sdc.be.dao.config.JanusGraphSpringConfig#heal
 healthCheckBusinessLogic : org.openecomp.sdc.be.components.health.HealthCheckBusinessLogic
 heat-parameter-operation : org.openecomp.sdc.be.model.operations.impl.HeatParametersOperation
 heatEnvArtifactsMergeBusinessLogic : org.openecomp.sdc.be.components.merge.heat.HeatEnvArtifactsMergeBusinessLogic
-httpClientConnectionManager : org.openecomp.sdc.config.CatalogBESpringConfig#httpClientConnectionManager -> org.apache.http.impl.client.CloseableHttpClient destroy-method=(inferred)
 idMapper : org.openecomp.sdc.be.model.jsonjanusgraph.utils.IdMapper
 importUtils : org.openecomp.sdc.be.components.impl.ImportUtils
 input-operation : org.openecomp.sdc.be.model.operations.impl.InputsOperation
@@ -271,10 +270,6 @@ policyTypeBusinessLogic : org.openecomp.sdc.be.components.impl.PolicyTypeBusines
 policyTypeImportManager : org.openecomp.sdc.be.components.impl.PolicyTypeImportManager
 policyTypesEndpoint : org.openecomp.sdc.be.servlets.PolicyTypesEndpoint
 policyVersionUpdater : org.openecomp.sdc.be.components.impl.policy.PolicyVersionUpdater
-portalApiApplicationContext : org.openecomp.sdc.config.CatalogBESpringConfig#portalApiApplicationContext -> org.openecomp.sdc.be.ecomp.PortalApiApplicationContext destroy-method=(inferred)
-portalClient : org.openecomp.sdc.config.CatalogBESpringConfig#portalClient -> org.onap.sdc.security.PortalClient destroy-method=(inferred)
-portalConfiguration : org.openecomp.sdc.config.CatalogBESpringConfig#portalConfiguration -> org.openecomp.sdc.be.filters.PortalConfiguration destroy-method=(inferred)
-portalHealthCheckBusinessLogic : org.openecomp.sdc.be.components.health.PortalHealthCheckBuilder
 privateKeyReaderImpl : org.openecomp.sdc.be.csar.security.PrivateKeyReaderImpl
 productBusinessLogic : org.openecomp.sdc.be.components.impl.ProductBusinessLogic
 prometheusMetricsServlet : org.openecomp.sdc.be.servlets.PrometheusMetricsServlet

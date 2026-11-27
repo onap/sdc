@@ -332,38 +332,6 @@ limitations under the License.
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.onap.portal.sdk</groupId>
-            <artifactId>epsdk-fw</artifactId>
-            <version>${ecomp.version}</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>log4j</groupId>
-                    <artifactId>log4j</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.owasp.esapi</groupId>
-                    <artifactId>esapi</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>javax.servlet</groupId>
-                    <artifactId>javax.servlet-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.onap.aaf.authz</groupId>
-                    <artifactId>aaf-cadi-aaf</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.onap.aaf.authz</groupId>
-                    <artifactId>aaf-cadi-client</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.onap.aaf.authz</groupId>
-                    <artifactId>aaf-cadi-core</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
             <groupId>org.functionaljava</groupId>
             <artifactId>functionaljava</artifactId>
             <version>${functionaljava.version}</version>
@@ -582,7 +550,6 @@ limitations under the License.
                             <target>
 
 
-                                <chmod file="${it.catalog.resource}/resource/portal.properties" perm="755" />
                                 <chmod file="${it.catalog.resource}/resource/key.properties" perm="755" />
 
 
@@ -902,7 +869,6 @@ limitations under the License.
                                         <volume>${it.catalog.resource}/catalog-be/distribution-engine-configuration.yaml:/app/jetty/config/catalog-be/distribution-engine-configuration.yaml</volume>
                                         <volume>${it.catalog.resource}/catalog-be/janusgraph.properties:/app/jetty/config/catalog-be/janusgraph.properties</volume>
                                         <volume>${it.catalog.resource}/resource/key.properties:/app/jetty/resources/key.properties</volume>
-                                        <volume>${it.catalog.resource}/resource/portal.properties:/app/jetty/resources/portal.properties</volume>
                                         <volume>${it.catalog.resource}/ready-probe.sh:/app/jetty/ready-probe.sh</volume>
                                         <volume>${it.shared.volume}:/app/jetty/logs</volume>
 

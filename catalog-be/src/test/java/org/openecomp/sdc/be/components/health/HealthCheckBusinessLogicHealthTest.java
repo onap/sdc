@@ -20,10 +20,7 @@
 
 package org.openecomp.sdc.be.components.health;
 
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.LinkedList;
@@ -35,7 +32,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.onap.portalsdk.core.onboarding.exception.CipherUtilException;
 import org.openecomp.sdc.be.components.BeConfDependentTest;
 import org.openecomp.sdc.be.components.distribution.engine.DistributionEngineClusterHealth;
 import org.openecomp.sdc.be.components.impl.CassandraHealthCheck;
@@ -44,7 +40,6 @@ import org.openecomp.sdc.be.switchover.detector.SwitchoverDetector;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.api.HealthCheckInfo;
 import org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus;
-import org.openecomp.sdc.common.http.client.api.HttpExecuteException;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.apache.commons.lang3.tuple.Pair;
@@ -63,8 +58,6 @@ class HealthCheckBusinessLogicHealthTest extends BeConfDependentTest {
     private HealthCheckBusinessLogic createTestSubject() {
 
         HealthCheckBusinessLogic healthCheckBusinessLogic = new HealthCheckBusinessLogic();
-        PortalHealthCheckBuilder portalHealthCheckBuilder = new PortalHealthCheckBuilder();
-        ReflectionTestUtils.setField(healthCheckBusinessLogic, "portalHealthCheck", portalHealthCheckBuilder);
         DistributionEngineClusterHealth distributionEngineClusterHealth = new DistributionEngineClusterHealth(null);
         ReflectionTestUtils.setField(healthCheckBusinessLogic, "distributionEngineClusterHealth",
             distributionEngineClusterHealth);
@@ -97,6 +90,20 @@ class HealthCheckBusinessLogicHealthTest extends BeConfDependentTest {
     }
 
     @Test
+    void healthCheckDoesNotReportPortal() {
+        HealthCheckBusinessLogic testSubject = createTestSubject();
+        testSubject.init();
+        try {
+            List<String> names = testSubject.getBeHealthCheckInfosStatus().getRight().stream()
+                .map(HealthCheckInfo::getHealthCheckComponent).collect(Collectors.toList());
+            Assertions.assertFalse(names.contains("PORTAL"));
+            Assertions.assertTrue(names.contains("ON_BOARDING"));
+        } finally {
+            testSubject.destroy();
+        }
+    }
+
+    @Test
     void testIsDistributionEngineUp() throws Exception {
         HealthCheckBusinessLogic testSubject;
         // default test
@@ -121,58 +128,6 @@ class HealthCheckBusinessLogicHealthTest extends BeConfDependentTest {
         // default test
         testSubject = createTestSubject();
         healthCheckInfos.add(testSubject.getJanusGraphHealthCheck());
-    }
-
-    @Test
-    void testGetPortalHealthCheckSuccess() throws Exception {
-        PortalHealthCheckBuilder testSubject = spy(PortalHealthCheckBuilder.class);
-        String healthCheckURL = testSubject.buildPortalHealthCheckUrl();
-        int timeout = 3000;
-        doReturn(200).when(testSubject).getStatusCode(healthCheckURL, timeout);
-        testSubject.init();
-        testSubject.runTask();
-        HealthCheckInfo hci = testSubject.getHealthCheckInfo();
-        Assertions.assertEquals("PORTAL", hci.getHealthCheckComponent());
-        Assertions.assertEquals(HealthCheckInfo.HealthCheckStatus.UP, hci.getHealthCheckStatus());
-        Assertions.assertEquals("OK", hci.getDescription());
-    }
-
-    @Test
-    void testGetPortalHealthCheckFailureMissingConfig() throws Exception {
-        PortalHealthCheckBuilder testSubject = new PortalHealthCheckBuilder();
-        testSubject.init(null);
-        HealthCheckInfo hci = testSubject.getHealthCheckInfo();
-        Assertions.assertEquals("PORTAL", hci.getHealthCheckComponent());
-        Assertions.assertEquals(HealthCheckInfo.HealthCheckStatus.DOWN, hci.getHealthCheckStatus());
-        Assertions.assertEquals("PORTAL health check configuration is missing", hci.getDescription());
-    }
-
-    @Test
-    void testGetPortalHealthCheckFailureErrorResponse() throws HttpExecuteException, CipherUtilException {
-        PortalHealthCheckBuilder testSubject = spy(PortalHealthCheckBuilder.class);
-        String healthCheckURL = testSubject.buildPortalHealthCheckUrl();
-        int timeout = 3000;
-        doReturn(404).when(testSubject).getStatusCode(healthCheckURL, timeout);
-        testSubject.init(testSubject.getConfiguration());
-        testSubject.runTask();
-        HealthCheckInfo hci = testSubject.getHealthCheckInfo();
-        Assertions.assertEquals("PORTAL", hci.getHealthCheckComponent());
-        Assertions.assertEquals(HealthCheckInfo.HealthCheckStatus.DOWN, hci.getHealthCheckStatus());
-        Assertions.assertEquals("PORTAL responded with 404 status code", hci.getDescription());
-    }
-
-    @Test
-    void testGetPortalHealthCheckFailureNoResponse() throws HttpExecuteException, CipherUtilException {
-        PortalHealthCheckBuilder testSubject = spy(PortalHealthCheckBuilder.class);
-        String healthCheckURL = testSubject.buildPortalHealthCheckUrl();
-        int timeout = 3000;
-        doThrow(HttpExecuteException.class).when(testSubject).getStatusCode(healthCheckURL, timeout);
-        testSubject.init(testSubject.getConfiguration());
-        testSubject.runTask();
-        HealthCheckInfo hci = testSubject.getHealthCheckInfo();
-        Assertions.assertEquals("PORTAL", hci.getHealthCheckComponent());
-        Assertions.assertEquals(HealthCheckInfo.HealthCheckStatus.DOWN, hci.getHealthCheckStatus());
-        Assertions.assertEquals("PORTAL is not available", hci.getDescription());
     }
 
     @Test
